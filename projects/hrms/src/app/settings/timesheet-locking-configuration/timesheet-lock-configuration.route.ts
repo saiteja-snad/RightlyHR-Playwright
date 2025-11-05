@@ -6,4 +6,14 @@ import { PublishedTimesheetLockComponent } from './published-timesheet-lock/publ
 export default [
      { path: 'pending-for-submission', component: PendingTimesheetLockComponent },
      { path: 'published', component: PublishedTimesheetLockComponent },
+
+
+//       {
+//         path: 'timesheet-locking',
+//         children: [
+//             // { path: '', redirectTo: 'pendingleavecategory', pathMatch: 'full' },
+//             { path: 'pending-for-submission', loadComponent: () => import('./pending-timesheet-lock/pending-timesheet-lock.component').then((m) => m.PendingTimesheetLockComponent) },
+//             { path: 'published', loadComponent: () => import('./published-timesheet-lock/published-timesheet-lock.component').then((m) => m.PublishedTimesheetLockComponent) },
+//         ]
+//     },
 ] as unknown as Route[];

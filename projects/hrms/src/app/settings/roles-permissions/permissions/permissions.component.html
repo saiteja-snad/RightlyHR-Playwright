@@ -54,7 +54,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Roles' || per.fields === 'Employee Fields Module'|| per.fields === 'Settings Timeoff Module' || 
                                 per.fields === 'Assets Management Configuration Module' || per.fields === 'Dynamic Forms Module' || 
-                                per.fields === 'Project Management Configuration Module' || per.fields === 'Attendance Configuration Module'|| per.fields === 'Timesheet Locking Configuration Module'">
+                                per.fields === 'Project Management Configuration Module' || per.fields === 'Attendance Configuration Module'|| per.fields === 'Timesheet Configuration Module'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -4497,7 +4497,7 @@
                             </tr>
                         </ng-container>
                         <!-- TIMESHEET LOCKING TABS -->
-                         <!-- <tr>
+                         <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingtimesheetlocking
@@ -4532,7 +4532,7 @@
                                         [disabled]=" isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                                 </td>
                             </tr>
-                        </ng-container> -->
+                        </ng-container>
                     </tbody>
                 </table>
             </div>

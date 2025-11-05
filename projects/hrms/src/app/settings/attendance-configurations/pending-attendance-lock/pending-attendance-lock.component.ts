@@ -103,19 +103,25 @@ export class PendingAttendanceLockComponent implements OnInit, OnDestroy {
   /* Get Attendance Locks */
   /* This method fetches the attendance locks based on pagination and search query */
   getAttendanceLocks(pagenum: number, pagesize: number, year?: number) {
-    const params: { pageNumber: number; pageSize: number; search?: string; year?: number } = {
-      pageNumber: pagenum,
-      pageSize: pagesize,
-    };
+     const categoryIds = '1,2,3,17,18';
+    // const params: { pageNumber: number; pageSize: number; search?: string; year?: number } = {
+      
+      const params: any = {
+    pageNumber: pagenum,
+    pageSize: pagesize,
+    categoryIds: categoryIds,
+  };
 
-    if (this.searchText) {
-      params.search = this.searchText;
-    }
-    if (year) {
-      params.year = year;
-    }
+    // if (this.searchText) {
+    //   params.search = this.searchText;
+    // }
+    // if (year) {
+    //   params.year = year;
+    // }
     this.dataLoad = true;
-    this.http.getpagentiontData(`AttendanceLockConfigurations/getall`,'').pipe(takeUntil(this.destroy$))
+     const queryString = `?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}&categoryIds=${encodeURIComponent(params.categoryIds)}`;
+
+    this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.attendanceLockData = response.items;

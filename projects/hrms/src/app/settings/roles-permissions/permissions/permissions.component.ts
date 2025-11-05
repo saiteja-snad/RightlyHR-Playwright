@@ -517,10 +517,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
-  //   TymesheetTypeFields = [
-  //   'Timesheet Locking Pending Tab',
-  //   'Timesheet Locking Published Tab'
-  // ];
+    TymesheetTypeFields = [
+    'Timesheet Locking Pending Tab',
+    'Timesheet Locking Published Tab'
+  ];
   sidebarTabsFields = [
     'Dashboard',
     'My Info',

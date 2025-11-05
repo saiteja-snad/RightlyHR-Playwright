@@ -28,7 +28,7 @@ export interface IAttendanceLockResponse {
   statusCounts: StatusCounts;
 }
 
-export interface IAttendanceLockItem {
+export interface ITimesheetLockItem {
   id: number;
   startDate: string; 
   createdDate: string;

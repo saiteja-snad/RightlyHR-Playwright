@@ -1441,6 +1441,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: formValue.timesheetId || this.timesheetdata.timesheetId,
       weekStart: this.formattedweakendStart,
       employeeId: this.employeeId,
+      moduleId: 30,
       entries,
     };
   }

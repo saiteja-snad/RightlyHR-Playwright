@@ -50,10 +50,11 @@ export const MODULE_INFOS = {
     //attendance Configuration Module Info
    
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
-    SETTINGS_LOCKINGSYSTEM_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+    SETTINGS_LOCKINGSYSTEM_MODULE_INFO: "Enables administrators to lock attendance and timesheet data for selected periods to maintain accuracy and prevent further modifications.",
     // locking system
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULEE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
-    SETTINGS_TIMESHEETLOCKING_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+    SETTINGS_TIMESHEETLOCKING_MODULE_INFO: "Administrators can lock employee timesheets for a selected period to ensure data integrity, prevent modifications, and maintain compliance with attendance policies..",
+    SETTINGS_TIMESHEET_LOCKING_TABS: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     
     //Pms Module Info
     PMS_REVIEW_CYCLE_LIST_MODULE_INFO: "This module enables creation and tracking of employee review cycles with department, team, and location-level mapping. Users can create review cycles and link them to specific business units in order to track their status, such as Created or Initiated.",

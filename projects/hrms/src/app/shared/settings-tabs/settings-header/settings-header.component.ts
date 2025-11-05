@@ -198,14 +198,18 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
     }
-    //  else if (url.startsWith('/settings/timesheet-locking-configuration/pending-for-submission')) {
-    //   this.moduleName = 'Timesheet Locking Configuration';
-    //   this.componentName = 'Pending For Submission';
+    // else if (url.startsWith('/settings/timesheet-locking-configuration')) {
+    //   this.moduleName = 'Timesheet Configuration';
+    //   this.componentName = 'Timesheet Locking';
     // }
-    // else if (url.startsWith('/settings/timesheet-locking-configuration/published')) {
-    //   this.moduleName = 'Timesheet Locking Configuration';
-    //   this.componentName = 'Published';
-    // }
+     else if (url.startsWith('/settings/timesheet-locking-configuration/pending-for-submission')) {
+      this.moduleName = 'Timesheet Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/timesheet-locking-configuration/published')) {
+      this.moduleName = 'Timesheet Configuration';
+      this.componentName = 'Published';
+    }
   }
 
   navigateToSettings() {

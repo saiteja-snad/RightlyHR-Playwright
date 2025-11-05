@@ -138,9 +138,9 @@
                         </p-accordion-panel>
                     </li>
                     }
-                    @if(rbac.allowedToAccess('Attendance Configuration Module.view')){
+                    <!-- @if(rbac.allowedToAccess('Attendance Configuration Module.view')){ -->
                     <!--Attendance Configuration-->
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/attendance-configuration')">
+                    <!-- <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/attendance-configuration')">
                         <p-accordion-panel value="6">
                             <p-accordion-header>
                                 <div>
@@ -153,10 +153,10 @@
                             </p-accordion-header>
                         </p-accordion-panel>
                     </li>
-                    }
-                     @if(rbac.allowedToAccess('Timesheet Locking Configuration Module.view')){
+                    } -->
+                     @if(rbac.allowedToAccess('Timesheet Configuration Module.view')){
                     <!--Time Off-->
-                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/timesheet-locking-configuration')">
+                    <li class="accordian-list-item">
                         <p-accordion-panel value="2">
                             <p-accordion-header>
                                 <div>
@@ -172,7 +172,7 @@
                             </p-accordion-content>
                         </p-accordion-panel>
                     </li>
-                    }
+                    }                    
                 </p-accordion>
             </ul>
         </div>

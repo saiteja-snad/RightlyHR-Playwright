@@ -11,6 +11,7 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
+                <th>Project Name</th>
                 <th>Phase / Milestone Name</th>
                 <th>Start Date</th>
                 <th>End Date</th>
@@ -27,17 +28,30 @@
                 <tbody>
                 <ng-container *ngIf="(phaseData?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of phaseData">
-                        <td>{{ data.phaseName || '-' }}</td>
-                        <td>{{ data.startDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data.endDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data.kickoffDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data.effectiveDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data.allocatedHours || '-' }}</td>
-                        <td>{{ data.pendingApprovalAuthority?.name  || '-'}}</td>
-                        <td>{{ data.description || '-' }}</td>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                         <td>{{ data?.project?.projectName || '-' }}</td>
+                        <td>{{ data?.phaseName || '-' }}</td>
+                        <td>{{ data?.startDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data?.endDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data?.kickoffDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data?.effectiveDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data?.allocatedHours || '-' }}</td>
+                        <td>{{ data?.pendingApprovalAuthority?.name  || '-'}}</td>
+                        <td class="text-center">
+                        <div>
+                            <div *ngIf="data.description; else noReason" type="button" [ngbPopover]="requestedComments">
+                            <app-info-icon />
+                            </div>
+                            <ng-template #requestedComments>
+                            <p class="mb-0">{{ data.description }}</p>
+                            </ng-template>
+                            <ng-template #noReason>
+                            <span>-</span>
+                            </ng-template>
+                        </div>
+                        </td>
+                        @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
-                            <td class="text-center">
+                        <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -79,7 +93,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Update Resource' | translate}}</p>
+                <p class="popup-heading mb-0">{{'Update Phase/Milestone' | translate}}</p>
             </div>
         </div>
         <div class="custom-main-popup-content">

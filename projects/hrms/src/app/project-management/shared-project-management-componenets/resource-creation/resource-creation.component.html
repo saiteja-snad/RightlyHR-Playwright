@@ -8,11 +8,6 @@
     <div class="custom-main-popup-content">
         <form [formGroup]="addResourceForm" autocomplete="off" (ngSubmit)="addResources()">
             <div class="row">
-
- 
-
-          
-
                 <!-- Resource Name -->
                 <div class="col-md-6 mb-3">
                     <label for="resourceName" class="form-label custom-label mb-2">Resource Name<span
@@ -119,8 +114,23 @@
 
                       <!-- Authority Name -->
                 <div class="col-md-6 mb-3">
-                    <label for="resourceAuthority" class="form-label custom-label mb-2">Timesheet Approval Authority<span
-                            class="text-danger">*</span></label>
+                                       <div class="d-flex gap-2">
+                            <label for="resourceName" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
+                            @if( this.resoucesDropDownData && this.resoucesDropDownData!.length > 0){
+                            <span class="text-danger">*</span>
+                            }
+                        </label>
+                        @if(this.resoucesDropDownData && this.resoucesDropDownData!.length == 0){
+                        <div>
+                            <a type="button" [ngbPopover]="description">
+                                <app-info-icon />
+                            </a>
+                        </div>
+                        <ng-template #description>
+                            <p class="mb-0">{{ 'This field will be enabled after allocating resources to this phase'}}</p>
+                        </ng-template>
+                        }
+                        </div>
                     <div class="custom-p-select-content">
                         <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
                             [showClear]="false" placeholder="Please select resource name" formControlName="resourceAuthority"

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -14,9 +14,10 @@ import moment from 'moment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-resource-creation',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SelectModule],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbPopover, SelectModule, InfoIconComponent],
   templateUrl: './resource-creation.component.html',
   styleUrl: './resource-creation.component.scss'
 })
@@ -59,7 +60,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     this.getAllActiveEmployees();
     this.createResourceForm();
     this.getdatabaedonRoute();
-    this.getPhaseData();
+
     this.DepartmentList();
     this.addResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -123,6 +124,9 @@ onRoleChange(selectedValue: any) {
     if (selectedValue) {
       this.selectedPhaseId = selectedValue.value.value;
       const projectId = selectedValue.value.projectId;
+          // Reset approval authority
+    this.addResourceForm.patchValue({ resourceAuthority: null });
+    this.addResourceForm.get('resourceAuthority')?.disable();
       this.getResourceData(this.projectId,this.selectedPhaseId);
       
     }
@@ -142,6 +146,7 @@ onRoleChange(selectedValue: any) {
         if (projectId) {
           this.getProjects(projectId);
           this.projectId = parseInt(projectId);
+           this.getPhaseData();
           
         }
       });
@@ -178,7 +183,7 @@ onRoleChange(selectedValue: any) {
       allowweekendWork: [false],
       color: ['#FFFFFF'],
       resourcePhase : [null, Validators.required],
-      resourceAuthority : [null]
+      resourceAuthority : [{value: null, disabled: true}]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -236,7 +241,22 @@ onRoleChange(selectedValue: any) {
             billable: project.isBillable,
             allowweekendWork: project.isWeekendWorkAllowed
           });
+
+                    // Reset dependent dropdowns
+          this.phaseDropdown = [];
+          this.resoucesDropDownData = [];
+          this.addResourceForm.patchValue({
+            resourcePhase: null,
+            resourceAuthority: null
+          });
+
+          this.addResourceForm.get('resourcePhase')?.reset();
+          this.addResourceForm.get('resourceAuthority')?.reset();
+          this.addResourceForm.get('resourceAuthority')?.disable();
+
           this.getJobrole();
+          this.getPhaseData();
+
         }
       },
       error: (err) => {
@@ -283,25 +303,34 @@ onRoleChange(selectedValue: any) {
       entityRefId: projectId,
       phaseId:phaseId
     };
-    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
-      next: (data: any) => {
-        this.resourcesData = data.data;
-        // 🔥 Build dropdown array
-      this.resoucesDropDownData = this.resourcesData
-        .filter(r => r.employee) // ensure employee exists
-        .map(r => ({
-          label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-          value: r.employee.id
-        }));
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .subscribe({
+        next: (data: any) => {
+          if (data?.data?.length > 0) {
+            this.resourcesData = data.data;
+            this.resoucesDropDownData = this.resourcesData
+              .filter((r) => r.employee)
+              .map((r) => ({
+                label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+                value: r.employee.id,
+              }));
 
-        console.log(this.resoucesDropDownData);
-        
-      },
-      error: (reason: any) => {
-        console.error(reason);
-        
-      }
-    });
+            if (this.resoucesDropDownData?.length > 0) {
+              this.addResourceForm.get('resourceAuthority')?.enable();
+              this.addResourceForm
+                .get('resourceAuthority')
+                ?.setValidators([Validators.required]);
+            }
+          } else {
+            this.resoucesDropDownData = [];
+            this.addResourceForm.get('resourceAuthority')?.disable();
+          }
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
   }
 
   onClickEmployee(event: any) {

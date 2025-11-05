@@ -31,8 +31,8 @@ export class BasicInfoComponent {
   JobroleDetails = [] as any;
   isEditMode = false;
   selectedId: number | null = null;
-  selectedDeleteRole: any = null;
-  @ViewChild('updatepopup') updatepopup: any;
+  selectedFieldConfig: any = null;
+  selectedDeleteConfigItem: any = null;
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
   AddForm!: FormGroup;
@@ -78,36 +78,10 @@ export class BasicInfoComponent {
       selectedEmployee: [''],
       selectedRole: ['']
     });
-    this.getgradeid();
-    this.getJobrole();
     this.getBasicInfoFields();
     this.getAllEmployeeDetails();
     this.getAllRoles();
     this.getBasicInfoFieldsConfigList();
-  }
-
-  getJobrole() {
-    this.loader = true;
-    this.subscription = this.http
-      .getData('DesignationGradeMapper?sort=designationName')
-      .subscribe({
-        next: (data: any) => {
-          this.loader = false;
-          this.JobroleDetails = data;
-        },
-        error: (error: any) => {
-          this.loader = false;
-
-        }
-      });
-  }
-  getgradeid() {
-    this.subscription = this.http.getData('GradeTable').subscribe({
-      next: (data: any) => {
-        // console.log(data);
-        this.gradedetails = data;
-      },
-    });
   }
 
   getBasicInfoFields() {
@@ -161,7 +135,7 @@ export class BasicInfoComponent {
   getAllRoles(): void {
     this.subscription = this.http.getData('FusionRole').subscribe({
       next: (data: any) => {
-        this.roles = data as IRoles[]
+        this.roles = data as IRoles[];
       },
       error: (error: any) => {
         console.log(error);
@@ -170,36 +144,63 @@ export class BasicInfoComponent {
   }
 
 
-  // Method to save field configuration
+  // Method to save field configuration (handles both create and update)
   saveFieldConfig(modal: any) {
     if (this.fieldConfigForm.valid) {
-      const formValue = this.fieldConfigForm.value;
-      const selectedFields = formValue.fieldNames || [];
+      const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
       let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : formValue.selectedRole;
 
-      const request = {
-        columnNames: selectedFields,
-        moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Basic Info",
-        displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
-        requiresApproval: formValue.approvalRequired || false,
-        approvalType: formValue.approvalType || "",
-        approvalAuthority: approvalAuthority.toString() || '',
-        createdBy: loggedInUser.employeeId,
-      };
+      if (this.isEditMode) {
+        // Update operation
+        const request = {
+          columnName: this.selectedFieldConfig.columnName,
+          moduleName: this.selectedFieldConfig.moduleName,
+          displayName: this.selectedFieldConfig.displayName,
+          requiresApproval: formValue.approvalRequired || false,
+          approvalType: formValue.approvalType || "",
+          approvalAuthority: approvalAuthority.toString() || '',
+          updatedBy: loggedInUser.employeeId,
+        };
 
-      this.subscription = this.http.postdata('EmployeeInfoApproval', request).subscribe({
-        next: () => {
-          modal.close();
-          this.conformationPopup.openSuccessModal('Field configuration saved successfully');
-          this.fieldConfigForm.reset();
-          this.getBasicInfoFieldsConfigList();
-        },
-        error: (error: any) => {
-          const errorMessage = error.error?.Message;
-          this.conformationPopup.openErrorModal(errorMessage);
-        }
-      });
+        this.subscription = this.http.putData(`EmployeeInfoApproval/${this.selectedFieldConfig.id}`, request).subscribe({
+          next: () => {
+            modal.close();
+            this.conformationPopup.openSuccessModal('Field configuration updated successfully');
+            this.resetFieldConfigForm();
+            this.getBasicInfoFieldsConfigList();
+          },
+          error: (error: any) => {
+            const errorMessage = error.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
+          }
+        });
+      } else {
+        // Create operation
+        const selectedFields = formValue.fieldNames || [];
+        const request = {
+          columnNames: selectedFields,
+          moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Basic Info",
+          displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
+          requiresApproval: formValue.approvalRequired || false,
+          approvalType: formValue.approvalType || "",
+          approvalAuthority: approvalAuthority.toString() || '',
+          createdBy: loggedInUser.employeeId,
+        };
+
+        this.subscription = this.http.postdata('EmployeeInfoApproval', request).subscribe({
+          next: () => {
+            modal.close();
+            this.conformationPopup.openSuccessModal('Field configuration saved successfully');
+            this.resetFieldConfigForm();
+            this.getBasicInfoFieldsConfigList();
+          },
+          error: (error: any) => {
+            const errorMessage = error.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
+          }
+        });
+      }
     }
   }
 
@@ -207,82 +208,68 @@ export class BasicInfoComponent {
     modal.close();
   }
 
-  // Method to open the update modal dialog
-  openupdateDialog(jobroletypelist: any) {
-    this.selectedId = jobroletypelist.id;
-    this.updateForm.patchValue({ Updatejobrole: jobroletypelist.designationName });
-    this.updateForm.patchValue({ updategradeId: jobroletypelist.gradeId });
-    this.modalService.open(this.updatepopup, {
-      backdrop: 'static',
-      centered: true
-    });
-  }
-  //  UPDATE
-  updateJobroletype(modal: any) {
-    if (this.updateForm.valid && this.selectedId) {
-      const request: jobRoleDATA = {
-        id: this.selectedId,
-        designationName: this.updateForm.value.Updatejobrole.trim(),
-        gradeId: Number(this.updateForm.value.updategradeId)
-      };
-
-      this.subscription = this.http.postdata('DesignationGradeMapper/UPDATER', request).subscribe({
-        next: () => {
-
-          this.getJobrole();
-          modal.close();
-          this.conformationPopup.openSuccessModal('Job Role updated successfully');
-          this.resetForm();
-        },
-        error: (error: any) => {
-          const errorMessage = error.error?.Message;
-          this.conformationPopup.openErrorModal(errorMessage);
-        }
-      });
-    }
-  }
   // Method to open the delete modal dialog
   // DELETE
-  opendelete(jobroletypelist: any) {
-    this.selectedDeleteRole = jobroletypelist;
+  opendelete(configItem: any) {
+    this.selectedDeleteConfigItem = configItem;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
   onDelete(modal: any) {
-    if (!this.selectedDeleteRole) return;
+    if (!this.selectedDeleteConfigItem) return;
 
-    this.subscription = this.http
-      .getData(`DesignationGradeMapper/deleteById/${this.selectedDeleteRole.id}`)
-      .subscribe({
-        next: () => {
-          modal.close();
-          this.getJobrole();
-          this.conformationPopup.openSuccessModal('Job Role deleted successfully');
-
-        },
-        error: (error: any) => {
-          const errorMessage = error.error?.Message;
-          this.conformationPopup.openErrorModal(errorMessage);
-
-        }
-      });
+    this.subscription = this.http.deleteData(`EmployeeInfoApproval/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
+      next: () => {
+        modal.close();
+        this.getBasicInfoFieldsConfigList();
+        this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
+      },
+      error: (error: any) => {
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
   }
   closeDelete(modal: any) {
     modal.dismiss();
   };
 
-
-  resetForm() {
-    this.AddForm.reset();
-    this.isEditMode = false;
-    this.selectedId = null;
-  }
-
   // Method to open field configuration popup
   openFieldConfigDialog() {
+    this.isEditMode = false;
+    this.selectedFieldConfig = null;
+    this.fieldConfigForm.reset();
+    this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
       centered: true
     });
+  }
+
+  // Method to open update field configuration dialog
+  openUpdateFieldConfigDialog(fieldConfig: any) {
+    this.isEditMode = true;
+    this.selectedFieldConfig = fieldConfig;
+    this.fieldConfigForm.patchValue({
+      fieldNames: [fieldConfig.columnName],
+      approvalRequired: fieldConfig.requiresApproval || false,
+      approvalType: fieldConfig.approvalType || '',
+      selectedEmployee: fieldConfig.approvalType === 'EMP' ? Number(fieldConfig.approvalAuthority) : '',
+      selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : ''
+    });
+    // Disable fieldNames control to make it non-editable in edit mode
+    this.fieldConfigForm.get('fieldNames')?.disable();
+    this.modalService.open(this.fieldConfigpopup, {
+      backdrop: 'static',
+      centered: true
+    });
+  }
+
+  // Reset field config form
+  resetFieldConfigForm() {
+    this.fieldConfigForm.reset();
+    this.fieldConfigForm.get('fieldNames')?.enable();
+    this.isEditMode = false;
+    this.selectedFieldConfig = null;
   }
 
 

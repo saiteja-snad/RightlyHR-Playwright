@@ -30,8 +30,8 @@ export class ProjectViewComponent implements OnInit {
   projectId!: number;
   addContactForm!: FormGroup;
   addDocumentForm!: FormGroup;
-  datepickerForm!: FormGroup;
   datepickerFormData!: FormGroup;
+
   ranges: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourcesData = [] as IResource[];
@@ -46,7 +46,7 @@ export class ProjectViewComponent implements OnInit {
 
     this.createContactForm();
     this.createDocumentForm();
-    this.createDatepickerForm();
+
     // this.setDefaultRanges();
     // this.setDefaultWeek();
     this.datepickerFormdata();
@@ -68,8 +68,8 @@ export class ProjectViewComponent implements OnInit {
   }
 
   resetForm() {
-    this.datepickerForm.get('dateRange')?.reset();
-    this.datepickerForm.get('resourceId')?.reset();
+    this.datepickerFormData.get('dateRange')?.reset();
+    this.datepickerFormData.get('resourceId')?.reset();
     this.http.setRequest(null);
     this.http.setDateRange(null, null, null);
   }
@@ -151,7 +151,7 @@ export class ProjectViewComponent implements OnInit {
   }
 
   // isFormCompletelyValid(): boolean {
-  //   const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+  //   const formValue = this.datepickerFormData.getRawValue(); // includes disabled controls
   //   return !!formValue.dateRange && !!formValue.resourceId;
   // }
 
@@ -193,12 +193,12 @@ export class ProjectViewComponent implements OnInit {
         this.projectsData = Array.isArray(res?.data) ? res.data : [];
         if (this.projectsData?.length > 0) {
           const project = this.projectsData[0];
-          this.datepickerForm.get('projectName')?.enable({ emitEvent: false });
-          this.datepickerForm.patchValue({
+          this.datepickerFormData.get('projectName')?.enable({ emitEvent: false });
+          this.datepickerFormData.patchValue({
             projectName: project?.projectName,
           });
-          this.datepickerForm.get('projectName')?.disable({ emitEvent: false });
-          //  this.datepickerForm.get('projectName')?.disable();
+          this.datepickerFormData.get('projectName')?.disable({ emitEvent: false });
+          //  this.datepickerFormData.get('projectName')?.disable();
           this.clientsId = project?.client?.clientId ?? null;
           this.inactiveStatus = (res?.data ?? []).some((p: any) =>
             p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
@@ -214,23 +214,15 @@ export class ProjectViewComponent implements OnInit {
     });
   }
 
-  // Create reactive form
-  createDatepickerForm() {
-    this.datepickerForm = this.fb.group({
-      dateRange: [null, Validators.required],
-      resourceId: [{ value: null, disabled: true }],
-      // projectName: [null],
-    });
-  }
 
   // Enable resourceId when dateRange is selected
   enableResourceOnDateChange() {
-    this.datepickerForm.get('dateRange')?.valueChanges.subscribe(value => {
+    this.datepickerFormData.get('dateRange')?.valueChanges.subscribe(value => {
       if (value && value[0] && value[1]) {
         this.getAllresourcesData();
-        this.datepickerForm.get('resourceId')?.enable();
+        this.datepickerFormData.get('resourceId')?.enable();
       } else {
-        this.datepickerForm.get('resourceId')?.disable();
+        this.datepickerFormData.get('resourceId')?.disable();
       }
     });
   }
@@ -257,14 +249,14 @@ export class ProjectViewComponent implements OnInit {
   setDefaultWeek() {
     const startOfWeek = dayjs().startOf('isoWeek').toDate();
     const endOfWeek = dayjs().endOf('isoWeek').toDate();
-    this.datepickerForm.patchValue({
+    this.datepickerFormData.patchValue({
       dateRange: [startOfWeek, endOfWeek]
     });
   }
 
   selectRange(range: string) {
     if (this.ranges[range]) {
-      this.datepickerForm.patchValue({
+      this.datepickerFormData.patchValue({
         dateRange: this.ranges[range]
       });
     }

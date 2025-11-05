@@ -13,3 +13,12 @@
     font-size: var(--fontsize16);
     color: var(--primary-color);
 }
+
+.project-name {
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+}

@@ -119,7 +119,7 @@ export class SkillsetDashboardComponent {
 
   ComponentnameDisplay() {
     if (this.router.url === '/skill-management/dashboard') {
-      this.componentname = 'Skill Set Dashboard';
+      this.componentname = 'Dashboard';
     }
   }
 

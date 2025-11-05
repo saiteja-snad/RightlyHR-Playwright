@@ -120,7 +120,7 @@ export class SkillDirectoryManagementComponent {
   }
   ComponentnameDisplay() {
     if (this.router.url === '/skill-management/directory') {
-      this.componentname = 'Skill Set Directory';
+      this.componentname = 'Directory';
     }
   }
   onSearch() {

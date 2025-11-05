@@ -48,20 +48,20 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   }
   ngOnInit(): void {
-    
+
     this.updateProjectForm();
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-        this.route.queryParams.subscribe(params => {
-          const projectId = params['id'];
-          if (projectId) {
-            this.projectId = parseInt(projectId);
-            // this.getProjects(this.projectId)
-            this.getPhaseData();
-          }
-        });
-        this.http.phaseDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-          this.getPhaseData();
-        });
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.route.queryParams.subscribe(params => {
+      const projectId = params['id'];
+      if (projectId) {
+        this.projectId = parseInt(projectId);
+        // this.getProjects(this.projectId)
+        this.getPhaseData();
+      }
+    });
+    this.http.phaseDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.getPhaseData();
+    });
   }
 
 updateProjectForm() {
@@ -183,6 +183,8 @@ updateProjectForm() {
     approvalidAuthority: data.pendingApprovalAuthority?.id ?? null,
     phaseDescription: data.description
     });
+
+    this.getResourceData(this.projectId, this.phaseId, true);
   }
 
 udpatePhase(){
@@ -243,7 +245,58 @@ if (this.updatePhaseForm.invalid) {
     this.modalService.dismissAll();
   }
 
+  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
+
+    const params: any = {
+      status: 'Active',
+      entityType: 'project',
+      entityRefId: projectId
+    };
+
+    if (phaseId) {
+      params.phaseId = phaseId;
+    }
+
+    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+      next: (data: any) => {
+        this.loading = false;
+
+        const resourceList = data?.data ?? [];
+
+        // Build dropdown list
+        const dropdownList = resourceList
+          .filter((r: any) => r.employee)
+          .map((r: any) => ({
+            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+            value: r.employee.id
+          }));
+
+        if (isPopupCall) {
+          this.authorityList = dropdownList;
+
+          if (dropdownList.length > 0) {
+            this.updatePhaseForm.get('approvalidAuthority')?.enable(); // enable dropdown
+          } else {
+            this.updatePhaseForm.get('approvalidAuthority')?.disable(); // disable if no resources
+          }
+
+        } else {
+          this.authorityList = dropdownList;
+        }
+      },
+      error: (reason: any) => {
+        this.loading = false;
+        console.error(reason);
+      }
+    });
+  }
+
+
   ngOnDestroy(): void {
-    
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

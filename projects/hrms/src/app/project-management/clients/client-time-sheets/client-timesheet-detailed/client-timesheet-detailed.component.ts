@@ -52,8 +52,6 @@ export class ClientTimesheetDetailedComponent {
   }
 
   navigateView(projectdata: any, employeeId: any): void {
-    console.log(projectdata.projectId, employeeId);
-
     const resourceData = {
       employeeId: employeeId,
       clientId: parseInt(this.clientId),
@@ -67,6 +65,8 @@ export class ClientTimesheetDetailedComponent {
       }
     });
   }
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();

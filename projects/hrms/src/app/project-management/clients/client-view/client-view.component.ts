@@ -57,6 +57,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   loading: boolean | undefined;
   clientsId!: any;
   inactiveClientStatus: any;
+  resourceDataids = {} as any;
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
@@ -64,19 +65,21 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     const now = new Date();
-
+    this.createDatepickerForm();
+    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+    this.setDefaultmounth();
+    this.getResourcesByClient(this.resourceDataids?.projectId);
     this.route.queryParams.subscribe(params => {
       const clientID = params['id'];
       if (clientID) {
         this.clientid = clientID;
         this.getClientsData(clientID);
         this.getprojectbyid(clientID)
-        this.getResourcesByClient(clientID);
+
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
-    this.createDatepickerForm();
-    this.setDefaultmounth();
+
     this.createDocumentForm();
     this.getAllActiveEmployees();
     this.getEAV();
@@ -168,8 +171,8 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   // Update this method to accept both clientId and projectId
-  getResourcesByClient(clientId: any,) {
-    this.http.getData(`ProjectResource?status=Active&clientId=${clientId}&isProjectRequired=true`)
+  getResourcesByClient(projectId: any,) {
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {

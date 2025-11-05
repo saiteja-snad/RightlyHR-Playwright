@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
+
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -24,6 +25,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule, 
@@ -36,6 +38,7 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 
 export class TimesheetsSummaryViewComponent {
   moduleinfo: string = '';
+  routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
   activeEmplist = [] as any;
@@ -86,6 +89,7 @@ export class TimesheetsSummaryViewComponent {
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.updateModuleInfo()
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
@@ -133,7 +137,7 @@ export class TimesheetsSummaryViewComponent {
       this.getEmployeeId(employeed);
     }
     else {
-    //  this.getProjectSummary(this.employeeId);
+      //  this.getProjectSummary(this.employeeId);
       this.getEmployeeId(this.employeeId);
     }
   }
@@ -148,6 +152,18 @@ export class TimesheetsSummaryViewComponent {
       },
     });
   }
+
+  updateModuleInfo() {
+    const urlWithoutQuery = this.router.url.split('?')[0];
+
+    this.routeToInfoMap = {
+      '/project-management/timesheet/mysummary': MODULE_INFOS.My_Timesheet_Summary_view,
+      '/project-management/timesheet/summary': MODULE_INFOS.Team_Timesheet_Summary_view
+    };
+    this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
+  }
+
+
 
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
@@ -221,11 +237,14 @@ export class TimesheetsSummaryViewComponent {
           submitted: '00:00',
           rejected: '00:00'
         };
+
         this.approved = this.convertTimeToHours(tsSummary?.approved);
         this.submitted = this.convertTimeToHours(tsSummary?.submitted);
         this.rejected = this.convertTimeToHours(tsSummary?.rejected);
-        // Percentages for bar visualization
+
+        // ✅ Percentages for bar visualization
         const total = this.approved + this.submitted + this.rejected;
+
         // avoid division by 0
         if (total > 0) {
           this.approvedPercent = (this.approved / total) * 100;
@@ -259,7 +278,7 @@ export class TimesheetsSummaryViewComponent {
       }
     });
   }
- 
+
   resetCharts() {
     this.projectTypeGraphData = { labels: [], datasets: [] };
     this.estimatedVsActualGraphData = { labels: [], datasets: [] };

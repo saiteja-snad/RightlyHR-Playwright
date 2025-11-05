@@ -11,7 +11,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-phases-creation',
@@ -31,6 +31,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   authorityList: IProjectAuthority[] = [];
   loading = false;
   projectId: any;
+  subscription!: Subscription;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
@@ -220,6 +221,10 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-
+  this.destroy$.next(true);
+    this.destroy$.complete();
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

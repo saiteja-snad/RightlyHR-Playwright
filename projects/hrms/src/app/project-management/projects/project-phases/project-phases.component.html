@@ -93,7 +93,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Update Phase/Milestone' | translate}}</p>
+                <p class="popup-heading mb-0">{{'Update Phase / Milestone' | translate}}</p>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -104,7 +104,7 @@
                     <label for="phaseName" class="form-label custom-label mb-2">Phase / Milestone Name<span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="phaseName" minlength="2"
-                        maxlength="101" placeholder="Please enter project name"
+                        maxlength="101" placeholder="Please enter phase / milestone name"
                         (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div class="error-msg" *ngIf="updatePhaseForm.get('phaseName')?.touched">
                         <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
@@ -195,10 +195,10 @@
                 <!--Timesheet Approval Authority-->
                 <div class="col-md-6 mb-3">
                     <div class="d-flex gap-2">
-                        <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority'
-                            | translate}}
+                        <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority'| translate}}
+                            <span *ngIf="isAuthorityRequired" class="text-danger">*</span>
                         </label>
-                        <div>
+                        <div *ngIf="authorityList.length === 0">
 
                             <div>
                                 <a type="button" [ngbPopover]="description">

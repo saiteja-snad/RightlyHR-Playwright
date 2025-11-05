@@ -124,6 +124,7 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
       '/project-management/clients/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
       '/project-management/clients/details/timesheet/phases': MODULE_INFOS.Resource_Summary,
+      '/project-management/projects/details/phases': MODULE_INFOS.Resource_Summary,
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
@@ -197,8 +198,8 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/mysummary') {
       this.componentname = 'My Timesheet Summary';
     }
-    else if (currentUrl === '/project-management/clients/details/phases') {
-      this.componentname = 'Phases/Milestones';
+    else if (currentUrl === '/project-management/clients/details/phases' || currentUrl === '/project-management/projects/details/phases') {
+      this.componentname = 'Phases / Milestones';
     }
 
     else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' || '/project-management/projects/details/timesheet/resource-summary') {

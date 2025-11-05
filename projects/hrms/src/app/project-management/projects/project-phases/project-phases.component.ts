@@ -41,6 +41,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   authorityList: IProjectAuthority[] = [];
   phaseId: any;
+  isAuthorityRequired = false;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
@@ -275,10 +276,22 @@ if (this.updatePhaseForm.invalid) {
           this.authorityList = dropdownList;
 
           if (dropdownList.length > 0) {
-            this.updatePhaseForm.get('approvalidAuthority')?.enable(); // enable dropdown
-          } else {
-            this.updatePhaseForm.get('approvalidAuthority')?.disable(); // disable if no resources
-          }
+  const control = this.updatePhaseForm.get('approvalidAuthority');
+
+  control?.enable();
+  control?.setValidators([Validators.required]);   // ✅ Add required
+  control?.updateValueAndValidity();
+
+  this.isAuthorityRequired = true; // for * in UI
+} else {
+  const control = this.updatePhaseForm.get('approvalidAuthority');
+
+  control?.disable();
+  control?.clearValidators();      // ✅ Remove required
+  control?.updateValueAndValidity();
+
+  this.isAuthorityRequired = false;
+}
 
         } else {
           this.authorityList = dropdownList;

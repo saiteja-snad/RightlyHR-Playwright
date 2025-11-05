@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,13 +13,16 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { jobRoleDATA } from '../../../employee-fields/job/jobrole/jobrole-model';
+import { IRoles } from '../../../roles-permissions/permissions/permission.model';
+import { AuthService } from '../../../../services/auth.service';
 
 
 @Component({
   selector: 'app-basic-info',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, ToggleSwitchModule, DataLoaderContentComponent],
   templateUrl: './basic-info.component.html',
-  styleUrl: './basic-info.component.scss'
+  styleUrl: './basic-info.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class BasicInfoComponent {
   subscription!: Subscription;
@@ -38,11 +41,13 @@ export class BasicInfoComponent {
 
   // Static data for the popup fields
   fieldOptions = [] as any;
+  basicInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
     { label: 'Employee', value: 'EMP' },
     { label: 'Role', value: 'ROLE' }
   ];
-  activeEmplist = [];
+  activeEmplist = [] as any;
+  roles = [] as any;
 
   constructor(
     private modalService: NgbModal,
@@ -51,6 +56,7 @@ export class BasicInfoComponent {
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
+    private authService: AuthService,
   ) {
 
   }
@@ -69,13 +75,15 @@ export class BasicInfoComponent {
       fieldNames: [[], Validators.required],
       approvalRequired: [false],
       approvalType: [''],
-      managerType: [''],
-      selectedEmployee: ['']
+      selectedEmployee: [''],
+      selectedRole: ['']
     });
     this.getgradeid();
     this.getJobrole();
     this.getBasicInfoFields();
     this.getAllEmployeeDetails();
+    this.getAllRoles();
+    this.getBasicInfoFieldsConfigList();
   }
 
   getJobrole() {
@@ -119,6 +127,25 @@ export class BasicInfoComponent {
     });
   }
 
+  getBasicInfoFieldsConfigList() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Basic Info'
+    }
+    this.http.getDataIncludeParams(`EmployeeInfoApproval/getEmployeeInfoApprovals`, params).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.basicInfoFieldsConfigList = data.data
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
+  }
+
   getAllEmployeeDetails() {
     const status = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
@@ -131,33 +158,25 @@ export class BasicInfoComponent {
     });
   }
 
-  //ADD
-  addjobrole(modal: any) {
-    const request: jobRoleDATA = {
-      designationName: this.AddForm.value.Addjobrole.trim(),
-      gradeId: Number(this.AddForm.value.gradeId)
-    };
-
-    this.subscription = this.http.postdata('DesignationGradeMapper', request).subscribe({
-      next: () => {
-
-        this.getJobrole();
-        modal.close();
-        this.conformationPopup.openSuccessModal('Job Role added successfully');
-        this.resetForm();
+  getAllRoles(): void {
+    this.subscription = this.http.getData('FusionRole').subscribe({
+      next: (data: any) => {
+        this.roles = data as IRoles[]
       },
       error: (error: any) => {
-        const errorMessage = error.error?.Message;
-        this.conformationPopup.openErrorModal(errorMessage);
+        console.log(error);
       }
-    });
+    })
   }
+
 
   // Method to save field configuration
   saveFieldConfig(modal: any) {
     if (this.fieldConfigForm.valid) {
       const formValue = this.fieldConfigForm.value;
       const selectedFields = formValue.fieldNames || [];
+      let loggedInUser = this.authService.getToken();
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : formValue.selectedRole;
 
       const request = {
         columnNames: selectedFields,
@@ -165,9 +184,8 @@ export class BasicInfoComponent {
         displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
         requiresApproval: formValue.approvalRequired || false,
         approvalType: formValue.approvalType || "",
-        approvalEntity: formValue.managerType || "",
-        approvalAuthority: formValue.selectedEmployee || 0,
-        createdBy: 0
+        approvalAuthority: approvalAuthority.toString() || '',
+        createdBy: loggedInUser.employeeId,
       };
 
       this.subscription = this.http.postdata('EmployeeInfoApproval', request).subscribe({
@@ -175,6 +193,7 @@ export class BasicInfoComponent {
           modal.close();
           this.conformationPopup.openSuccessModal('Field configuration saved successfully');
           this.fieldConfigForm.reset();
+          this.getBasicInfoFieldsConfigList();
         },
         error: (error: any) => {
           const errorMessage = error.error?.Message;

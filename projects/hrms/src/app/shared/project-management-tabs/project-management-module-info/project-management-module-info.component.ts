@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MODULE_INFOS } from '../../modules-info';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../module-information/module-information.component";
 import { CommonModule } from '@angular/common';
@@ -18,19 +18,24 @@ import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-
 export class ProjectManagementModuleInfoComponent {
   moduleinfo: string = '';
   componentname: string = '';
+  employename: any;
   clientID: any;
   clients: any = {};
+  subscription!: Subscription;
   lastUrl: string = ''
   currentUrl: string = '';
   routeToInfoMap!: { [key: string]: string };
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  resourceDataids = {} as any;
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     const clientProjectId = localStorage.getItem('clientProjectId');
+    this.getEmployeeId(this.resourceDataids?.employeeId)
+
     if (clientProjectId) {
       this.getClientsData(clientProjectId);
       this.clientID = clientProjectId;
@@ -52,6 +57,17 @@ export class ProjectManagementModuleInfoComponent {
         this.clients = {};
         console.error('Error fetching clients:', err);
       }
+    });
+  }
+
+  getEmployeeId(employeeId: any) {
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employename = data;
+      },
+      error: (reason) => {
+        console.log(reason)
+      },
     });
   }
 
@@ -160,6 +176,9 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/mysummary') {
       this.componentname = 'My Timesheet Summary';
     }
+       else if (currentUrl === '/project-management/projects/details/timesheet/resource-summary') {
+      this.componentname = this.employename?.firstName && this.employename?.middleName  && this.employename?.lastName;
+    }
   }
 
   isShowClientRoute(): boolean {
@@ -190,6 +209,18 @@ export class ProjectManagementModuleInfoComponent {
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
+  isShowtimesheetforresourceclient(): boolean {
+    const showPaths = [
+      '/project-management/clients/details/timesheet/resource-summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+  isShowtimesheetforresourceproject() {
+    const showPaths = [
+      '/project-management/projects/details/timesheet/resource-summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
   isHideInfo(): boolean {
     const hidePaths = [
       '/project-management/clients/add'
@@ -209,6 +240,17 @@ export class ProjectManagementModuleInfoComponent {
   navigatetomy() {
     this.router.navigate(['project-management/timesheet/mytimesheet']);
   }
+
+  navigatetodetaliedtoclicent() {
+    const clientProjectId = localStorage.getItem('clientProjectId');
+    this.router.navigate(['project-management/clients/details/timesheet/detailed'], { queryParams: { id: clientProjectId } });
+  }
+
+  navigatetodetaliedtoproject() {
+    this.router.navigate(['/project-management/projects/details/timesheet/detailed'], { queryParams: { id: this.resourceDataids?.projectId } });
+  }
+
+
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');
     if (clientProjectId) {

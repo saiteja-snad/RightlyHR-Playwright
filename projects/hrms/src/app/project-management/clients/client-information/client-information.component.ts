@@ -118,7 +118,7 @@ export class ClientInformationComponent {
       overtimeEligibility: client.overtimeEligibile,
       billable: client.billable,
       allowWeekendWork: client.weekendWorkAllowed,
-      color : client.meta.graphData.color
+      color : client?.meta?.graphData?.color
     });
     this.clientAttachment = client.logoPath
     this.displayClientAttachment = client.logoPath ? client.logoPath.split('/').pop() : null;

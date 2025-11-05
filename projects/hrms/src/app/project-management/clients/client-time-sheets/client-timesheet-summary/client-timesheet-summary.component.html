@@ -43,14 +43,11 @@
                             <th class="text-center">{{'Status'|translate}}</th>
                         </thead>
                         <tbody>
-                            <tr>
                             <tr *ngFor="let roles of projectSummeryData">
                                 <td>{{roles.project.projectName}}</td>
-                                <td>{{roles.loggedHours}}/{{roles.allocatedHours}}hrs</td>
+                                <td><span class="logged-hrs">{{roles.loggedHours}}</span>/{{roles.allocatedHours}}hrs</td>
                                 <td class="text-center">
-                                    <span class="status-badge" [ngClass]="getStatusClass(roles.status)">
-                                        {{ roles.status }}
-                                    </span>
+                                    <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>
                                 </td>
                             </tr>
                         </tbody>

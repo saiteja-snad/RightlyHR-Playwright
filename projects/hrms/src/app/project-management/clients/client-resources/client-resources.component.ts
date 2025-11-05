@@ -384,7 +384,7 @@ selectedEntityRefId: number = 0;
 
   onClickEmployee(event: any) {
     const employeeId = event.value; // just the ID
-    this.selectedEmployee = this.employeeDetails.find(employeeId);
+    this.selectedEmployee = this.employeeDetails?.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
       resourcePhone: this.selectedEmployee

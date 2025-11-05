@@ -397,7 +397,7 @@ onPhaseChange(selectedValue: any) {
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
       phaseId : this.selectedPhaseId,
-      pendingApprovalAuthority : formValue.resourceAuthority.value,
+      pendingApprovalAuthority : formValue?.resourceAuthority?.value,
       meta: {
       graphData: {
         color: formValue.color

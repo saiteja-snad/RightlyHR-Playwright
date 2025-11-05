@@ -136,15 +136,6 @@ export class SkillsetDashboardComponent {
 
   onCheckemployeeProficiency(statusValue: any) {
     this.selectedStatus = !statusValue || statusValue === 'All Proficiencies' ? 'All Proficiencies' : statusValue;
-       const allProficienciesSelected = this.selectedStatus.includes('All Proficiencies');
-  // Case 1: If "All Proficiencies" is selected, deselect all others
-  if (allProficienciesSelected && this.selectedStatus.length > 1) {
-    this.selectedStatus = ['All Proficiencies'];
-  }
-  // Case 2: If any other skill is selected, deselect "All Proficiencies"
-  else if (!allProficienciesSelected && this.selectedStatus.length > 0) {
-    this.selectedStatus = this.selectedStatus.filter(s => s !== 'All Proficiencies');
-  }
     this.skilllevelGraph();
     this.skillByDepartmentGraph()
     this.getSkillSetTableData()
@@ -528,15 +519,7 @@ export class SkillsetDashboardComponent {
   }
 
   onSkillSelectionChange(): void {
-    const allSkillSelected = this.selectedSkills.includes('All Skills');
-  // Case 1: If "All Skills" is selected, deselect all others
-  if (allSkillSelected && this.selectedSkills.length > 1) {
-    this.selectedSkills = ['All Skills'];
-  }
-  // Case 2: If any other skill is selected, deselect "All Skills"
-  else if (!allSkillSelected && this.selectedSkills.length > 0) {
-    this.selectedSkills = this.selectedSkills.filter(s => s !== 'All Skills');
-  }
+ 
     this.skilllevelGraph()
     this.skillByDepartmentGraph()
     this.getSkillSetTableData()

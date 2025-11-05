@@ -51,7 +51,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   loader: boolean | undefined;
   departmentIds: number[] = [];
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
-    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
+    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) { }
 
   ngOnInit() {
@@ -76,15 +76,15 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.StartndendDateValidation();
     });
   }
-selectedRoleId: number = 0;
-selectedEntityRefId: number = 0;
+  selectedRoleId: number = 0;
+  selectedEntityRefId: number = 0;
 
-onRoleChange(selectedValue: any) {
-  if (selectedValue) {
-    this.selectedRoleId = selectedValue.roleId;
-    this.selectedEntityRefId = selectedValue.entityReferenceId;
+  onRoleChange(selectedValue: any) {
+    if (selectedValue) {
+      this.selectedRoleId = selectedValue.roleId;
+      this.selectedEntityRefId = selectedValue.entityReferenceId;
+    }
   }
-}
 
   initializeForms() {
     this.updateResourceForm = this.fb.group({
@@ -101,8 +101,8 @@ onRoleChange(selectedValue: any) {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color : [''],
-      resourceRole: [null,Validators.required]
+      color: [''],
+      resourceRole: [null, Validators.required]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -112,7 +112,7 @@ onRoleChange(selectedValue: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
-          this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
+        this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
         if (project) {
           this.projectStartDate = new Date(project.startDate);
@@ -120,7 +120,7 @@ onRoleChange(selectedValue: any) {
           // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
           // this.updateResourceForm.updateValueAndValidity();
         }
-         this.getJobrole();
+        this.getJobrole();
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
           p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
         ) ? 'inactive' : 'active';
@@ -131,32 +131,32 @@ onRoleChange(selectedValue: any) {
       },
     });
   }
-getJobrole() {
-  this.loader = true;
-  const departmentParam = this.departmentIds?.join(',') || '';
+  getJobrole() {
+    this.loader = true;
+    const departmentParam = this.departmentIds?.join(',') || '';
 
-  this.subscription = this.http
-    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
-    .subscribe({
-      next: (response: any) => {
-        this.loader = false;
-        if (response && response.success && Array.isArray(response.data)) {
-          this.projectRoleDropdown = response.data.map((item: any) => ({
-            label: `${item.roleName}`,
-            value: {
-              roleId: item.id,
-              entityReferenceId: item.entity?.entityReferenceId || 0
-            }
-          }));
-        } else {
-          this.projectRoleDropdown = [];
-        }
-      },
-      error: () => {
-        this.loader = false;
-      },
-    });
-}
+    this.subscription = this.http
+      .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
+      .subscribe({
+        next: (response: any) => {
+          this.loader = false;
+          if (response && response.success && Array.isArray(response.data)) {
+            this.projectRoleDropdown = response.data.map((item: any) => ({
+              label: `${item.roleName}`,
+              value: {
+                roleId: item.id,
+                entityReferenceId: item.entity?.entityReferenceId || 0
+              }
+            }));
+          } else {
+            this.projectRoleDropdown = [];
+          }
+        },
+        error: () => {
+          this.loader = false;
+        },
+      });
+  }
   // validateAllocationHours(project: any): ValidatorFn {
   //   return (control: AbstractControl): ValidationErrors | null => {
   //     const form = control as FormGroup;
@@ -215,29 +215,29 @@ getJobrole() {
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
-       (r: any) => r.value.roleId === data.projectRoleId
+      (r: any) => r.value.roleId === data.projectRoleId
     );
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-resourcePhone:
-  data?.employee
-    ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
-    : '-',
+      resourcePhone:
+        data?.employee
+          ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+          : '-',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
       projectName: this.projectsData[0]?.projectName,
       projectType: this.projectsData[0]?.projectType,
       startDate: this.formatDateToLocal(data.startDate),
-        endDate: this.formatDateToLocal(data.endDate),
-        // allocatedFrequencyType: data?.allocatedFrequencyType,
+      endDate: this.formatDateToLocal(data.endDate),
+      // allocatedFrequencyType: data?.allocatedFrequencyType,
       billable: data.billable,
 
       allowweekendWork: data.weekendWorkAllowed,
-        resourceRole: selectedRole ? selectedRole.value : null,
-      color : data?.meta?.graphData?.color
+      resourceRole: selectedRole ? selectedRole.value : null,
+      color: data?.meta?.graphData?.color
     });
   }
 

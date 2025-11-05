@@ -1,8 +1,30 @@
 <div>
     <div class="component-header-content">
-        <div>
-            <app-project-management-module-info />
+        <div class="heading-content">
+            <div class="commpoment-name">Project Management<span class="ms-1">
+                    <i class="bi bi-chevron-double-right"></i></span></div>
+            @if(isShowtimesheetforteamRoute()){
+            <div class="commpoment-name">
+                <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            }
+            @if(isShowtimesheetformyRoute()){
+            <div class="commpoment-name">
+                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            }
+            <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
+                {{employename?.lastName}}</div>
+
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
         </div>
+        <!-- <div>
+            <app-project-management-module-info />
+        </div>  -->
 
         <div class="d-flex align-items-center gap-3">
             <div class="total-hrs">{{"Total Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
@@ -13,15 +35,18 @@
                         <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
                             selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                     </div>
+
                     <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
+                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
+                        Team(Timesheet).view')) {
                         <div class="d-flex align-items-center gap-2">
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
-                                    resetFilterOnHide="true" optionLabel="label" formControlName="resourceId"
-                                    optionValue="value"[showClear]="true" [resetFilterOnHide]="true" placeholder="please select employee"
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
+                                    [showClear]="true" (onChange)="onCheckemployee($event.value)"
+                                    [resetFilterOnHide]="true" placeholder="please select employee"
                                     class="form-select custom-select"></p-select>
                             </div>
                         </div>
@@ -31,10 +56,11 @@
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
-                                  optionLabel="label" optionValue="value"
-                                    formControlName="resourceId" [showClear]="true" [resetFilterOnHide]="true"
-                                    placeholder="please select employee" class="form-select custom-select"></p-select>
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    optionValue="value" formControlName="resourceId"
+                                    (onChange)="onCheckemployee($event.value)" [showClear]="true"
+                                    [resetFilterOnHide]="true" placeholder="please select employee"
+                                    class="form-select custom-select"></p-select>
                             </div>
                         </div>
                         }
@@ -44,13 +70,15 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
                                     name="myteamemployees" placeholder="please select employee"
-                                    formControlName="resourceId" [filter]="true" [showClear]="true" [resetFilterOnHide]="true"
-                                    class="form-select custom-select" [autoDisplayFirst]="false" required>
+                                    formControlName="resourceId" [filter]="true" [showClear]="true"
+                                    [resetFilterOnHide]="true" class="form-select custom-select"
+                                    [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
                         </div>
                         }
                     </div>
+
                     <div>
                         <button class="custom-btn btn-primary" type="submit">Apply</button>
                     </div>
@@ -76,9 +104,7 @@
                     <tbody>
                         <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let row of attendanceSummaryData">
-
                                 <td class="text-center">{{row.date | dateformat }}</td>
-
                                 <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
                                     row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                                 <td class="text-center">
@@ -90,8 +116,6 @@
                                     </ng-container>
                                     <ng-template #noEntries>-</ng-template>
                                 </td>
-
-
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
@@ -109,24 +133,28 @@
 
             <div class="timesheet-graph-content p-3">
                 <div class="time-sheet-graph-card">
-                    <div class="summary-header mb-2">Timesheet Summary</div>
+                   <div class="d-flex justify-content-between">
+                     <div class="summary-header mb-2">Timesheet Summary</div>
+                    <div></div></div>
                     <div class="stacked-progress-container py-4">
                         <!-- overlay color bar -->
                         <div class="stacked-progress-overlay mb-3"
-                            [style.background]="'linear-gradient(to right, ' + 
-                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                            + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
-                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                            [style.background]="
+                                           (approvedPercent + submittedPercent + rejectedPercent) === 0
+                                        ? '#e0e0e0'
+                                        : 'linear-gradient(to right, ' +
+                                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' +
+                                            submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' +
+                                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
                         </div>
 
                         <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: {{ approved }}Hrs</div>
-                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ submitted }}Hrs
-                            </div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: {{ rejected }}Hrs</div>
+                            <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
+                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{
+                                displaySubmitted }}Hrs</div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="dashed-line my-3"></div>
@@ -170,7 +198,6 @@
                                         <th>Client Name</th>
                                         <th>Project Name</th>
                                         <th>Logged Hours</th>
-
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -179,24 +206,23 @@
                                         <td>{{ entry.clientName }}</td>
                                         <td>{{ entry.projectName }}</td>
                                         <td>{{ entry.loggedHours }} hrs</td>
-                                        <td [ngClass]="{
-                                'approved': entry.status === 'Processed',
-                                'rejected': entry.status === 'Rejected',
-                                'waiting': entry.status === 'Waiting for Approval',
-                                'draft': entry.status === 'draft'
-                            }">
-                                            {{ entry.status }}
-                                        </td>
+                                        <td [ngClass]="{'approved': entry.status === 'Processed', 
+                                        'rejected': entry.status === 'Rejected', 'waiting': entry.status === 'Waiting for Approval', 
+                                        'draft': entry.status === 'draft'}">{{ entry.status }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <!-- <div class="popup-table-footer">
-                    {{"Logged Hours" | translate}}: <b>8:00hrs</b>
-                </div> -->
+                            {{"Logged Hours" | translate}}: <b>8:00hrs</b>
+                        </div> -->
                     </div>
                 </div>
             </div>
         </ng-template>
     </div>
 </div>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

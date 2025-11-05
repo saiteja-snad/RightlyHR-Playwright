@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Project } from '../../../../Interfaces/projects.model';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule,ReactiveFormsModule,TranslateModule,FormsModule, ChartModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -41,8 +41,8 @@ export class ClientTimesheetSummaryComponent {
   // Burn Down Data variables
   burndownData: any;
   burndownOptions: any;
-  projectSummeryData:any;
-   datepickerForm!: FormGroup;
+  projectSummeryData: any;
+  datepickerForm!: FormGroup;
   projectsDataDrown: Project[] = [];
   clientsId!: any;
   selectedDeptProjectId: any = null;
@@ -56,18 +56,18 @@ export class ClientTimesheetSummaryComponent {
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
   ];
+  // project name
+  projectNames: any;
 
-  constructor(private http: HttpService,private route: ActivatedRoute,private fb: FormBuilder) { }
+  constructor(private http: HttpService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit() {
-      this.createClientForm();
-   this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
-    const clientID = params['id'];
-    this.getprojectbyid(clientID);
-   });
-    this.http.requestclienttimesheetdata$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((request) => {
+    this.createClientForm();
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
+      const clientID = params['id'];
+      this.getprojectbyid(clientID);
+    });
+    this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
       if (request && request.dateRange) {
         // Call API with date filter (if BehaviorSubject has data)
         this.projectSummery(request);
@@ -75,7 +75,7 @@ export class ClientTimesheetSummaryComponent {
         this.departmentWiseContributionGraph(request);
         this.projectTypeChart(request);
         this.estimatedActualChart(request);
-         this.billableChart(request);
+        this.billableChart(request);
         this.burnDownChart(request);
       } else {
         // Call API without any date filter
@@ -85,17 +85,41 @@ export class ClientTimesheetSummaryComponent {
         this.projectTypeChart();
         this.estimatedActualChart();
         this.billableChart();
-         this.burnDownChart();    
-         // 🧹 Reset form dropdowns here
+        this.burnDownChart();
+        // Reset form dropdowns here
         this.datepickerForm.reset({
           projectId: '',
           status: ''
         });
-        this.selectedDeptProjectId = null;    
+        this.selectedDeptProjectId = null;
       }
     });
   }
-  
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'On Track':
+        return 'on-track';
+      case 'Delayed':
+        return 'delayed';
+      case 'Progress':
+      case 'In Progress':
+        return 'progress';
+      case 'Not Started':
+        return 'not-started';
+      case 'Inactive/Closed':
+        return 'inactive';
+      default:
+        return '';
+    }
+  }
+
+  // Just an example to generate different colors
+  getColor(index: number): string {
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FFC300', '#9B59B6', '#1ABC9C', '#E67E22', '#34495E'];
+    return colors[index % colors.length];
+  }
+
   // get all project based on client for filter use
   getprojectbyid(clientID: any): void {
     this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -103,7 +127,6 @@ export class ClientTimesheetSummaryComponent {
         this.projectsDataDrown = Array.isArray(res?.data) ? res.data : [];
         // store the clientId from the first project if exists
         const statuses = this.projectsDataDrown.map(p => p.status);
-
         if (this.projectsDataDrown.length > 0) {
           const project = this.projectsDataDrown[0];
           this.clientsId = project?.client?.clientId ?? null;
@@ -118,6 +141,7 @@ export class ClientTimesheetSummaryComponent {
       }
     });
   }
+
   // initialization of form
   createClientForm() {
     this.datepickerForm = this.fb.group({
@@ -125,6 +149,7 @@ export class ClientTimesheetSummaryComponent {
       status: ['']
     });
   }
+
   filters: any = {
     projectId: null,
     status: null,
@@ -140,8 +165,8 @@ export class ClientTimesheetSummaryComponent {
     this.filters.status = event?.value || null;
     this.projectSummery(this.filters);
   }
- 
- // Project wise Resource Count
+
+  // Project wise Resource Count
   projectSummery(request?: any) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
@@ -168,17 +193,14 @@ export class ClientTimesheetSummaryComponent {
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-            this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
-          },
-          error: (err) => {
-            console.error('Error fetching project-wise resource count chart:', err);
-          }
-        });
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+        },
+        error: (err) => {
+          console.error('Error fetching project-wise resource count chart:', err);
+        }
+      });
     });
   }
 
@@ -195,12 +217,6 @@ export class ClientTimesheetSummaryComponent {
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
 
-      // if (request?.projectId) {
-      //   queryParams.push(`projectId=${request.projectId}`);
-      // }
-      // if (request?.resourceId) {
-      //   queryParams.push(`resourceId=${request.resourceId}`);
-      // }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
@@ -211,24 +227,19 @@ export class ClientTimesheetSummaryComponent {
         apiUrl += `?${queryParams.join('&')}`;
       }
 
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-
-            const data = res?.data || [];
-            if (!data.length) {
-              this.projectResourceData = {
-                labels: [],
-                datasets: []
-              };
-              return;
-            }
-
-            // Extract data from API response
-            const labels = data.map((item: any) => item.projectName);
-            const resourceCounts = data.map((item: any) => item.resourceCount);
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const data = res?.data || [];
+          if (!data.length) {
+            this.projectResourceData = {
+              labels: [],
+              datasets: []
+            };
+            return;
+          }
+          // Extract data from API response
+          const labels = data.map((item: any) => item.projectName);
+          const resourceCounts = data.map((item: any) => item.resourceCount);
           // Assign chart data
           this.projectResourceData = {
             labels: labels,
@@ -269,13 +280,14 @@ export class ClientTimesheetSummaryComponent {
       });
     });
   }
-    onDeptProjectChange(event: any) {
-  // event is the selected projectId
-  const selectedProjectId = event?.value;
-  const request = { projectId: selectedProjectId };
-  this.selectedDeptProjectId = selectedProjectId;
-  this.departmentWiseContributionGraph(request);
-}
+
+  onDeptProjectChange(event: any) {
+    // event is the selected projectId
+    const selectedProjectId = event?.value;
+    const request = { projectId: selectedProjectId };
+    this.selectedDeptProjectId = selectedProjectId;
+    this.departmentWiseContributionGraph(request);
+  }
 
   // Department wise Contribution
   departmentWiseContributionGraph(request?: any) {
@@ -302,41 +314,35 @@ export class ClientTimesheetSummaryComponent {
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            const apiData = res?.data?.data || [];
-            if (!Array.isArray(apiData) || apiData.length === 0) {
-              this.departmentContributionData = [];
-              return;
-            }
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const apiData = res?.data?.data || [];
+          if (!Array.isArray(apiData) || apiData.length === 0) {
+            this.departmentContributionData = [];
+            return;
+          }
+          // Extract chart data
+          const labels = apiData.map((item: any) => item.name);
+          const dataValues = apiData.map((item: any) => item.percentage);
+          this.departmentContributionData = {
+            labels: labels,
+            datasets: [
+              {
+                data: dataValues,
+                backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+              }
+            ]
+          };
 
-            // Extract chart data
-            const labels = apiData.map((item: any) => item.name);
-            const dataValues = apiData.map((item: any) => item.percentage);
-
-
-
-            this.departmentContributionData = {
-              labels: labels,
-              datasets: [
-                {
-                  data: dataValues,
-                  backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-                }
-              ]
-            };
-
-            this.departmentContributionOptions = {
-              cutout: '75%',
-              plugins: {
-                legend: { position: 'right', labels: { usePointStyle: true } },
-              },
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching Role-wise hours:', err);
+          this.departmentContributionOptions = {
+            cutout: '75%',
+            plugins: {
+              legend: { position: 'right', labels: { usePointStyle: true } },
+            },
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching Role-wise hours:', err);
           this.departmentContributionData = [];
         }
       });
@@ -351,10 +357,8 @@ export class ClientTimesheetSummaryComponent {
         this.projectTypeData = [];
         return;
       }
-
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/project-type-summary/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -365,11 +369,8 @@ export class ClientTimesheetSummaryComponent {
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
           const data = res?.data || [];
           if (!data.length) {
             this.projectTypeData = { labels: [], datasets: [] };
@@ -448,7 +449,7 @@ export class ClientTimesheetSummaryComponent {
             const chartData = res.data.data;
             const labels = chartData.map((item: any) => item.name);
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
-            const actualHours = chartData.map((item: any) => item.actualHours);
+            const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
             const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
             this.estimatedVsActualData = {
               labels: labels,
@@ -518,7 +519,7 @@ export class ClientTimesheetSummaryComponent {
         return;
       }
       // Base URL
-      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}`;
+      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}?groupBy=project`;
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -537,15 +538,19 @@ export class ClientTimesheetSummaryComponent {
             this.billableData = { labels: [], datasets: [] };
             return;
           }
-
-          // Utility to convert "HH:mm" to decimal hours
-          const convertToHours = (timeStr: string): number => {
+          // Utility to handle both "HH:mm" and decimal string formats
+          const convertToHours = (timeStr: string | number): number => {
             if (!timeStr) return 0;
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            return hours + minutes / 60;
+            const str = timeStr.toString();
+            if (str.includes(':')) {
+              const [hours, minutes] = str.split(':').map(Number);
+              return hours + minutes / 60;
+            }
+            return parseFloat(str); // directly convert decimal string to number
           };
 
-          // Extract dynamic labels and data
+          // Example usage
+          // const chartData = response.data.data;
           const labels = chartData.map((item: any) => item.name);
           const billable = chartData.map((item: any) => convertToHours(item.billableHours));
           const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
@@ -630,20 +635,10 @@ export class ClientTimesheetSummaryComponent {
             return;
           }
 
-          const project = projectCharts[0];
-          const projectName = project.projectName || 'Project';
+          // --- Store all project names ---
+          this.projectNames = projectCharts.map((p: any) => p.projectName || `Project ${p.projectId}`);
 
-          // --- Group by Week ---
-          const idealLine = project.idealLine.map((item: any) => ({
-            date: new Date(item.date),
-            remainingHours: item.remainingHours
-          }));
-          const actualLine = project.actualLine.map((item: any) => ({
-            date: new Date(item.date),
-            remainingHours: item.remainingHours
-          }));
-
-          // Group by week (starting Monday)
+          // --- Function to group by week ---
           const groupByWeek = (line: any[]) => {
             const weeks: Record<string, number> = {};
             line.forEach((item) => {
@@ -652,41 +647,47 @@ export class ClientTimesheetSummaryComponent {
               monday.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Monday of that week
               const sunday = new Date(monday);
               sunday.setDate(monday.getDate() + 6);
-              const label = `${monday.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}-${sunday.toLocaleDateString('en-GB', 
+              const label = `${monday.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}-${sunday.toLocaleDateString('en-GB',
                 { day: '2-digit', month: 'short' })}`;
               weeks[label] = item.remainingHours;
             });
             return weeks;
           };
 
-          const idealByWeek = groupByWeek(idealLine);
-          const actualByWeek = groupByWeek(actualLine);
+          // --- Collect all labels and datasets dynamically ---
+          const allLabelsSet = new Set<string>();
+          const datasets: any[] = [];
 
-          const labels = Object.keys(idealByWeek);
-          const idealValues = Object.values(idealByWeek);
-          const actualValues = Object.values(actualByWeek);
+          // Predefined color palette (extendable)
+          const colors = [
+            '#42A5F5', '#E91E63', '#9C27B0', '#FF9800', '#4CAF50',
+            '#795548', '#009688', '#F44336', '#3F51B5', '#8BC34A'
+          ];
+
+          projectCharts.forEach((project: any, index: number) => {
+            const actualLine = project.actualLine.map((item: any) => ({
+              date: new Date(item.date),
+              remainingHours: item.remainingHours
+            }));
+
+            const actualByWeek = groupByWeek(actualLine);
+            Object.keys(actualByWeek).forEach(label => allLabelsSet.add(label));
+
+            datasets.push({
+              label: `${project.projectName || 'Project ' + project.projectId}`,
+              data: Object.values(actualByWeek),
+              borderColor: colors[index % colors.length],
+              borderWidth: 2,
+              fill: false,
+              tension: 0.3
+            });
+          });
+
+          const labels = Array.from(allLabelsSet);
 
           this.burndownData = {
             labels,
-            datasets: [
-              {
-                label: `${projectName} - Ideal Line`,
-                data: idealValues,
-                borderColor: '#42A5F5',
-                borderWidth: 2,
-                borderDash: [5, 5],
-                fill: false,
-                tension: 0.3
-              },
-              {
-                label: `${projectName} - Actual Line`,
-                data: actualValues,
-                borderColor: '#E91E63',
-                borderWidth: 2,
-                fill: false,
-                tension: 0.3
-              }
-            ]
+            datasets
           };
 
           this.burndownOptions = {

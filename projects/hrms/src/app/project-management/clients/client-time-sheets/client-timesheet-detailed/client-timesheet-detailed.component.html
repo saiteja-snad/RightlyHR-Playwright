@@ -1,1 +1,44 @@
-<p>client-timesheet-detailed works!</p>
+<div class="client-detailed-content">
+    <div class="custom-accordians">
+        <div class="custom-accordian-data-content">
+            <p-accordion>
+                <p-accordion-panel *ngFor="let project of projectDetails; let i = index" [value]="i">
+                    <p-accordion-header>
+                        <div>{{ project.project.projectName }}</div>
+                        <div>Total Logged Hours: {{ project.totalProjectHours }} HRs</div>
+                    </p-accordion-header>
+
+                    <p-accordion-content>
+                        <div class="custom-p-multi-select-table custom-accordian-table">
+                            <p-table [value]="project.project.resources" dataKey="resourceId">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Resource Name</th>
+                                        <th>Role</th>
+                                        <th>Start Date</th>
+                                        <th>Days Spent</th>
+                                        <th>Logged Hours</th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-entry>
+                                    <tr>
+                                        <td>
+                                            <a class="project-name cursor" (click)="navigateView(project.project,entry.employee.id )">
+                                                {{ entry.employee.name}}
+                                            </a>
+                                        </td>
+                                        <td>{{ entry.roleName }}</td>
+                                        <td>{{ entry.startDate | date: 'yyyy-MM-dd' }}</td>
+                                        <td>{{ entry.daysSpent }}</td>
+                                        <td>{{ entry.loggedHours }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+        </div>
+    </div>
+</div>

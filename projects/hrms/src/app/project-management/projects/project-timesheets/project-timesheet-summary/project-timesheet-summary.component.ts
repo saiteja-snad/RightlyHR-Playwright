@@ -7,7 +7,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { backgroundSize } from 'html2canvas/dist/types/css/property-descriptors/background-size';
+
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -45,6 +45,8 @@ export class ProjectTimesheetSummaryComponent {
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
   ];
+  // project name
+  projectName: any;
 
   constructor(private router: Router, public formValidation: FormValidationsService,
     private http: HttpService, private route: ActivatedRoute) { }
@@ -56,8 +58,8 @@ export class ProjectTimesheetSummaryComponent {
         this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
         this.roleWiseHoursGraph(dateRange.startDate, dateRange.endDate);
         this.createGaugeChart();
-        this.estimatedActualChart();
-        this.billableChart();
+        this.estimatedActualChart(dateRange.startDate, dateRange.endDate);
+        this.billableChart(dateRange.startDate, dateRange.endDate);
         this.burnDownChart(dateRange.startDate, dateRange.endDate);
       } else {
         this.projectResourceSummary();
@@ -70,6 +72,13 @@ export class ProjectTimesheetSummaryComponent {
     });
   }
 
+  getProgressColor(utilization: number): string {
+    if (utilization >= 75) return '#22c55e'; // green
+    if (utilization >= 40) return '#facc15'; // yellow
+    if (utilization > 0) return '#ef4444';   // red
+    return '#e5e7eb'; // gray for 0%
+  }
+  
   projectResourceSummary(startDate?: string, endDate?: string): void {
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
@@ -157,22 +166,32 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
-  estimatedActualChart() {
+  estimatedActualChart(startDate?: string, endDate?: string) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
         this.estimatedVsActualData = [];
         return;
       }
+      //  Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
 
-      this.http.getData(`ProjectManagementGraph/project/allocated-vs-actual/${projectid}?groupBy=role`).pipe(takeUntil(this.destroy$)).subscribe({
+      // Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectid}?groupBy=role`;
+      if (startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           if (res?.success && res?.data?.data?.length) {
             const chartData = res.data.data;
             const labels = chartData.map((item: any) => item.name);
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
-            const actualHours = chartData.map((item: any) => item.actualHours);
-            const overdueHours = chartData.map((item: any) => item.overDue ? (item.allocateHours - item.actualHours) : 0);
+            const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
+            const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
 
             this.estimatedVsActualData = {
               labels: labels,
@@ -233,7 +252,7 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
-  billableChart() {
+  billableChart(startDate?: string, endDate?: string) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
@@ -241,11 +260,21 @@ export class ProjectTimesheetSummaryComponent {
         return;
       }
 
-      this.http.getData(`ProjectManagementGraph/project/billable-non-billable/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+      //  Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
+
+      // Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/billable-non-billable/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // Correct extraction based on your actual structure
           const apiData = res?.data?.data || res?.data || [];
-
           if (!Array.isArray(apiData) || apiData.length === 0) {
             console.warn('No valid billable data found:', apiData);
             this.billableData = [];
@@ -328,6 +357,8 @@ export class ProjectTimesheetSummaryComponent {
             remainingHours: number;
           }
 
+          this.projectName = res?.data?.projectName;
+
           const idealLine: LineData[] = res?.data?.idealLine || [];
           const actualLine: LineData[] = res?.data?.actualLine || [];
 
@@ -350,7 +381,8 @@ export class ProjectTimesheetSummaryComponent {
               const start = new Date(weekStart);
               const end = new Date(start);
               end.setDate(start.getDate() + 6);
-              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${end.toLocaleDateString('en-US', 
+                { month: 'short', day: 'numeric' })}`;
               const avgHours = items.reduce((sum, i) => sum + i.remainingHours, 0) / items.length;
               weeks.push({ label, avgHours });
             });
@@ -395,11 +427,7 @@ export class ProjectTimesheetSummaryComponent {
           // Chart options
           this.burndownOptions = {
             plugins: {
-              legend: {
-                display: true,
-                position: 'top',
-                labels: { boxWidth: 12, color: '#333' },
-              },
+              legend: { display: false, },
               tooltip: { mode: 'index', intersect: false },
             },
             scales: {

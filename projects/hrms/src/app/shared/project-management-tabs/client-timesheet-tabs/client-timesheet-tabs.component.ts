@@ -21,8 +21,8 @@ export class ClientTimesheetTabsComponent {
 
   ngOnInit(): void {
     this.navTabs = [
-      { label: 'Summary', link: '/project-management/clients/details/timesheet/summary', permission: { feature: 'Project Details Tab', action: 'view' } },
-      { label: 'Detailed', link: '/project-management/clients/details/timesheet/detailed', permission: { feature: 'Contact Info Tab', action: 'view' } },
+      { label: 'Summary', link: '/project-management/clients/details/timesheet/summary', permission: { feature: 'Client Timesheets', action: 'view' } },
+      { label: 'Detailed', link: '/project-management/clients/details/timesheet/detailed', permission: { feature: 'Client Detailed Tab', action: 'view' } },
     ];
     this.filterTabsByRbac();
   }
@@ -36,19 +36,25 @@ export class ClientTimesheetTabsComponent {
     });
   }
 
-  isActiveRoute(link: string): boolean {
-    const currentUrl = this.router.url;
-    // Exact match or starts with followed by `/` to avoid partial matches
-    return currentUrl === link || currentUrl.startsWith(link + '/');
-  }
-
   isDocumentTabActive(link: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
-    // For Documents tab, check both documents and inactivedocuments routes
-    if (link === '/project-management/projects/details/documents') {
-      return currentUrl.includes('/project-management/projects/details/documents') ||
-        currentUrl.includes('/project-management/projects/details/inactivedocuments');
+    
+    // For Timesheets tab, match both summary and detailed routes
+    if (link === '/project-management/clients/details/timesheet') {
+      return currentUrl === '/project-management/clients/details/timesheet/summary' ||
+        currentUrl === '/project-management/clients/details/timesheet/detailed';
     }
+    
+    // For Detailed tab, only match detailed route
+    if (link === '/project-management/clients/details/timesheet/detailed') {
+      return currentUrl === '/project-management/clients/details/timesheet/detailed';
+    }
+    
+    // For Summary tab, only match summary route
+    if (link === '/project-management/clients/details/timesheet/summary') {
+      return currentUrl === '/project-management/clients/details/timesheet/summary';
+    }
+    
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }

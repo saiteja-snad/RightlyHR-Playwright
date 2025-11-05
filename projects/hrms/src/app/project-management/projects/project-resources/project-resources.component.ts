@@ -112,7 +112,7 @@ onRoleChange(selectedValue: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
-          this.departmentIds = this.projectsData[0].departments?.map((d: any) => d.departmentId) || [];
+          this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
         if (project) {
           this.projectStartDate = new Date(project.startDate);

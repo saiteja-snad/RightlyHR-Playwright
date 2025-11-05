@@ -152,8 +152,8 @@
   color: var(--primary-color);
 }
 
-.offcanvas-body {
-  padding-top: 1rem;
+.custom-offcanvas-body {
+  width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 90dvh;

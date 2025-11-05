@@ -1,9 +1,8 @@
 import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { Chip } from "primeng/chip";
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +24,7 @@ import moment from 'moment';
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
-  imports: [TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
+  imports: [TabsModule, Chip, RouterModule, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
     DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule, NgbPopoverModule,
     ModuleInformationComponent, TranslateModule],
   templateUrl: './skill-directory-management.component.html',
@@ -78,8 +77,8 @@ export class SkillDirectoryManagementComponent {
   routeToInfoMap!: { [key: string]: string };
   activeTabIndex = 0;
 
-  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer, private offcanvasService: NgbOffcanvas,
-    private readonly modalService: NgbModal, private openmodalservice: OpenModalService, private router: Router) { }
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer, 
+    private offcanvasService: NgbOffcanvas, private openmodalservice: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -103,6 +102,7 @@ export class SkillDirectoryManagementComponent {
       { label: 'Projects' },
     ];
   }
+
   updateModuleInfo() {
     const url = this.router.url;
     this.ComponentnameDisplay();
@@ -118,11 +118,13 @@ export class SkillDirectoryManagementComponent {
       this.updateModuleInfo();
     });
   }
+
   ComponentnameDisplay() {
     if (this.router.url === '/skill-management/directory') {
       this.componentname = 'Directory';
     }
   }
+
   onSearch() {
     this.page = 1;
     this.getEmployeeSkills();
@@ -173,21 +175,21 @@ export class SkillDirectoryManagementComponent {
     return emp.skills.filter((s: any) => s.isActive);
   }
 
- get employeeStatusDisplay(): string {
-  const emp = this.selectedEmployee;
-  if (!emp) return '-';
-  if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
-    const lastProject = emp.projects
-      .filter((p: any) => p.endDate)
-      .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
-    if (lastProject?.endDate) {
-      const formattedDate = moment(lastProject.endDate).format('MMM DD, YYYY');
-      return `Committed until ${formattedDate}`;
+  get employeeStatusDisplay(): string {
+    const emp = this.selectedEmployee;
+    if (!emp) return '-';
+    if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
+      const lastProject = emp.projects
+        .filter((p: any) => p.endDate)
+        .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
+      if (lastProject?.endDate) {
+        const formattedDate = moment(lastProject.endDate).format('MMM DD, YYYY');
+        return `Committed until ${formattedDate}`;
+      }
     }
+    return emp.employeeProjectStatus || '-';
   }
 
-  return emp.employeeProjectStatus || '-';
-}
   getProficiencyClass(level: string): string {
     switch (level?.toLowerCase()) {
       case 'beginner': return 'chip-beginner';
@@ -196,7 +198,6 @@ export class SkillDirectoryManagementComponent {
       default: return 'chip-default';
     }
   }
-
 
   openOffcanvas(content: TemplateRef<any>, emp: any) {
     this.selectedEmployee = { ...emp };
@@ -218,12 +219,15 @@ export class SkillDirectoryManagementComponent {
       panelClass: 'employee-offcanvas'
     });
   }
+
   close(modal: any) {
     modal.close();
   }
+
   getSkillsByLevel(level: string, skills: any[]) {
     return skills.filter(s => s.proficiencyLevel?.toLowerCase() === level.toLowerCase());
   }
+
   getEmployeeProfile(employeeId: number) {
     this.isloading = true;
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -315,7 +319,6 @@ export class SkillDirectoryManagementComponent {
       }
     });
   }
-
 
   getCategory() {
     const params = {

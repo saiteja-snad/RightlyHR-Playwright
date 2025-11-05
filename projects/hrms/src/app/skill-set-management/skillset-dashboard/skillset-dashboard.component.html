@@ -152,8 +152,9 @@
 <!-- view Details Content  -->
 <ng-template #content let-offcanvas>
     <div class="custom-offcanvas-header p-2">
-       <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b> 
-        <span *ngIf="employeeList?.length">({{employeeList.length }})</span></div>
+        <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b>
+            <span *ngIf="employeeList?.length" class="ms-2">({{employeeList.length }})</span>
+        </div>
         <div>
             <a (click)="close(offcanvas)">
                 <img src="icons/close.png" alt="Close Icon" class="close-icon">
@@ -161,17 +162,17 @@
         </div>
     </div>
 
-    <div class="offcanvas-body">
+    <div class="custom-offcanvas-body p-3">
         <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
-         <!-- Search -->
-    <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1">
-            <i class="bi bi-search"></i>
-        </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
-            [(ngModel)]="searchQuery" (input)="searchSubject.next(selectedSkillName)" />
-    </div>
-            
+        <!-- Search -->
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
+                [(ngModel)]="searchQuery" (input)="searchSubject.next(selectedSkillName)" />
+        </div>
+
         <div *ngFor="let emp of employeeList" class="profile-content mb-2">
             <div>
                 <ng-container *ngIf="emp.profileImage; else showProfileIcon">
@@ -196,7 +197,7 @@
                         {{ emp.proficiencyLevel }}
                     </div>
                 </div>
-                
+
             </div>
         </div>
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">

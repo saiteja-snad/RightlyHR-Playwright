@@ -37,15 +37,14 @@
                     </div>
 
                     <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
-                        Team(Timesheet).view')) {
+                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
                         <div class="d-flex align-items-center gap-2">
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
                                     formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
-                                    [showClear]="true" (onChange)="onCheckemployee($event.value)"
+                                    [showClear]="true" 
                                     [resetFilterOnHide]="true" placeholder="please select employee"
                                     class="form-select custom-select"></p-select>
                             </div>
@@ -58,7 +57,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
                                     optionValue="value" formControlName="resourceId"
-                                    (onChange)="onCheckemployee($event.value)" [showClear]="true"
+                                    [showClear]="true"
                                     [resetFilterOnHide]="true" placeholder="please select employee"
                                     class="form-select custom-select"></p-select>
                             </div>

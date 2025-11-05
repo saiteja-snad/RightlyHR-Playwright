@@ -31,7 +31,6 @@ export class ProjectViewComponent implements OnInit {
   addContactForm!: FormGroup;
   addDocumentForm!: FormGroup;
   datepickerFormData!: FormGroup;
-
   ranges: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourcesData = [] as IResource[];

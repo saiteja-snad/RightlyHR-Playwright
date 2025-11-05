@@ -1,0 +1,252 @@
+<div>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">Project Management<span class="ms-1">
+                    <i class="bi bi-chevron-double-right"></i></span></div>
+            @if(isShowtimesheetforteamRoute()){
+            <div class="commpoment-name">
+                <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            }
+            @if(isShowtimesheetformyRoute()){
+            <div class="commpoment-name">
+                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            }
+            <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
+                {{employename?.lastName}}</div>
+
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+        <!-- <div>
+            <app-project-management-module-info />
+        </div>  -->
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="total-hrs">{{"Total Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+
+            <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
+                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                    </div>
+
+                    <div *ngIf="this.employeeId !== this.empdata?.employeeId">
+                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                                {{'Select Employee'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
+                                    [showClear]="true" 
+                                    [resetFilterOnHide]="true" placeholder="please select employee"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+                        }
+                        @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                                {{'Select Employee'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    optionValue="value" formControlName="resourceId"
+                                    [showClear]="true"
+                                    [resetFilterOnHide]="true" placeholder="please select employee"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+                        }
+                        @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
+                                    name="myteamemployees" placeholder="please select employee"
+                                    formControlName="resourceId" [filter]="true" [showClear]="true"
+                                    [resetFilterOnHide]="true" class="form-select custom-select"
+                                    [autoDisplayFirst]="false" required>
+                                </p-select>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                    <div>
+                        <button class="custom-btn btn-primary" type="submit">Apply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-timesheets-tabs />
+        </div>
+
+        <div class="d-flex w-100 gap-3">
+            <div class="custom-table-content w-100">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <th class="text-center">{{'Date' | translate}}</th>
+                        <th class="text-center">{{'Logged Hours' | translate }}</th>
+                        <th class="text-center">{{'Summary' | translate}}</th>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
+                            <tr *ngFor="let row of attendanceSummaryData">
+                                <td class="text-center">{{row.date | dateformat }}</td>
+                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
+                                    row.dailySummary.loggedHHMM + ' Hrs'}}</td>
+                                <td class="text-center">
+                                    <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                        <a>
+                                            <app-info-icon class="cursor"
+                                                (click)="openModal(row.entries, summaryforlogs)" />
+                                        </a>
+                                    </ng-container>
+                                    <ng-template #noEntries>-</ng-template>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+
+            <div class="timesheet-graph-content p-3">
+                <div class="time-sheet-graph-card">
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Timesheet Summary</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
+                                class="module-icon">
+                            <ng-template #timesheetSummaryContent>
+                                <div class="module-info-text">{{TimesheetSummary}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="stacked-progress-container py-4">
+                        <!-- overlay color bar -->
+                        <div class="stacked-progress-overlay mb-3"
+                            [style.background]="
+                                           (approvedPercent + submittedPercent + rejectedPercent) === 0
+                                        ? '#e0e0e0'
+                                        : 'linear-gradient(to right, ' +
+                                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' +
+                                            submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' +
+                                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                        </div>
+
+                        <div class="progress-labels">
+                            <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
+                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{
+                                displaySubmitted }}Hrs</div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashed-line my-3"></div>
+
+                <div class="time-sheet-graph-card">
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Project Wise Hours Summary</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata"
+                                class="module-icon">
+                            <ng-template #projectwisehoursSummarydata>
+                                <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="circular-chart">
+                        <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                    </div>
+                </div>
+
+                <div class="dashed-line my-3"></div>
+
+                <div class="time-sheet-graph-card">
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Allocated vs Actual Hours</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
+                                class="module-icon">
+                            <ng-template #resourceSummaryContent>
+                                <div class="module-info-text">{{AllocatedActualhours}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="bar-chart">
+                        <p-chart type="bar" [data]="estimatedVsActualGraphData"
+                            [options]="estimatedVsActualGraphOptions" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Summary-->
+        <ng-template #summaryforlogs let-modal>
+            <div class="custom-main-popup-container" ngbAutofocus>
+                <div class="custom-poup-header-content popup-header-border">
+                    <div>
+                        <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
+                    </div>
+                    <div>
+                        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    </div>
+                </div>
+                <div class="custom-main-popup-content">
+                    <div class="popup-table-wrapper">
+                        <div class="popup-table-scroll-container">
+                            <table class="popup-table">
+                                <thead>
+                                    <tr>
+                                        <th>Client Name</th>
+                                        <th>Project Name</th>
+                                        <th>Logged Hours</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let entry of selectedEntries">
+                                        <td>{{ entry.clientName }}</td>
+                                        <td>{{ entry.projectName }}</td>
+                                        <td>{{ entry.loggedHours }} hrs</td>
+                                        <td [ngClass]="{'approved': entry.status === 'Processed', 
+                                        'rejected': entry.status === 'Rejected', 'waiting': entry.status === 'Waiting for Approval', 
+                                        'draft': entry.status === 'draft'}">{{ entry.status }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- <div class="popup-table-footer">
+                            {{"Logged Hours" | translate}}: <b>8:00hrs</b>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

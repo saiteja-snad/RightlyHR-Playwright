@@ -3,16 +3,13 @@
     height: 2rem;
 }
 
-.total-hrs {
-    color: #858991;
-    font-weight: 500;
-    font-size: var(--fontsize12);
-}
+
 
 .total-duration {
     font-size: var(--fontsize15) !important;
     font-weight: 600;
     color: var(--primary-color);
+    cursor: pointer;
 }
 
 .week-change-btn-prev {
@@ -131,26 +128,47 @@
     border-radius: 6px;
 }
 
-
-
 .rejected {
     border: 1px solid rgba(234, 54, 44, 1) !important;
     border-radius: 6px;
 }
-
-
 
 .waiting {
     border: 1px solid rgba(252, 185, 16, 1) !important;
     border-radius: 6px;
 }
 
+.draft {
+    border: 1px solid rgba(51, 151, 232, 1) !important;
+    border-radius: 6px;
+}
 
+.holiday {
+    border: 1px solid rgba(167, 0, 208, 1) !important;
+    border-radius: 6px;
+}
+
+.leave {
+    border: 1px solid rgba(242, 144, 0, 1) !important;
+    border-radius: 6px;
+}
 
 .circular-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+}
+
+.circle-holiday {
+    background-color: #A700D0;
+}
+
+.circle-leave {
+    background-color: #F29000;
+}
+
+.circle-blue {
+    background-color: #3397E8;
 }
 
 .circle-green {
@@ -175,8 +193,13 @@
     width: 1rem;
 }
 
+.component-left-tabs-container {
+    height: calc(100dvh - 8rem) !important;
+}
+
 .custom-table-content {
     border: 1px solid #CCDAEC !important;
+    height: calc(100dvh - 8rem) !important;
 
     td {
         border: 1px solid #CCDAEC !important;
@@ -218,7 +241,8 @@
             }
         }
 
-        td:first-child, td:last-child {
+        td:first-child,
+        td:last-child {
             background-color: #FFFF !important;
         }
     }
@@ -230,9 +254,8 @@
     }
 }
 
-
 .custom-select-btn.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: auto; /* so click still triggers stopPropagation */
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: auto;
 }

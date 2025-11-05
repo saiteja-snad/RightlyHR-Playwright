@@ -57,22 +57,35 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   loading: boolean | undefined;
   clientsId!: any;
   inactiveClientStatus: any;
+  resourceDataids = {} as any;
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit() {
-    this.createDatepickerForm();
+
     const now = new Date();
+    this.createDatepickerForm();
+    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+    this.setDefaultmounth();
+    this.getResourcesByClient(this.resourceDataids?.projectId);
     this.route.queryParams.subscribe(params => {
       const clientID = params['id'];
       if (clientID) {
         this.clientid = clientID;
         this.getClientsData(clientID);
-        this.getprojectbyid(clientID);
+        this.getprojectbyid(clientID)
+
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
+    this.http.clickingonresource$.subscribe((triggered) => {
+      if (triggered) {
+        this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+        this.setDefaultmounth();
+        this.getResourcesByClient(this.resourceDataids?.projectId);
+      }
+    });
     this.createDocumentForm();
     this.getAllActiveEmployees();
     this.getEAV();
@@ -84,6 +97,24 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  // Create reactive form
+  createDatepickerForm() {
+    this.datepickerForm = this.fb.group({
+      dateRange: [null],
+      projectId: [{ value: null }, Validators.required],
+      resourceId: [{ value: null }, Validators.required]
+    });
+  }
+  setDefaultmounth() {
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth]
+    });
+  }
+
+
 
   getClientsData(clientID: any): void {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -99,10 +130,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   // initialization of form
   resetForm() {
     this.datepickerForm.reset();
-    this.datepickerForm.get('projectId')?.disable();
-    this.datepickerForm.get('resourceId')?.disable();
+    //this.datepickerForm.get('projectId')?.disable();
+    //this.datepickerForm.get('resourceId')?.disable();
     this.http.clearRequestclienttimesheet();
     this.http.setRequestclienttimesheet(null);
+    this.setDefaultmounth()
   }
 
   // initialization of form
@@ -146,8 +178,8 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   // Update this method to accept both clientId and projectId
-  getResourcesByClient(clientId: any, projectId: any) {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}&clientId=${clientId}&isProjectRequired=true`)
+  getResourcesByClient(projectId: any,) {
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -167,7 +199,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.datepickerForm.get('resourceId')?.reset();
     this.resourcesData = [];
     if (projectId) {
-      this.getResourcesByClient(this.clientid, projectId);
+      this.getResourcesByClient(this.clientid);
     }
   }
 
@@ -198,9 +230,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const formValue = this.datepickerForm.value;
     // Check if any field has value
     return (
-      (formValue.dateRange && formValue.dateRange.length > 0) ||
-      formValue.projectId !== null && formValue.projectId !== undefined ||
-      (formValue.resourceId && formValue.resourceId.length > 0)
+      (formValue.dateRange && formValue.dateRange.length > 0)
+      //  formValue.projectId !== null && formValue.projectId !== undefined ||
+      //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
   opencontactModal(content: any) {
@@ -409,14 +441,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Create reactive form
-  createDatepickerForm() {
-    this.datepickerForm = this.fb.group({
-      dateRange: [null, Validators.required],
-      projectId: [{ value: null, disabled: true }, Validators.required],
-      resourceId: [{ value: null, disabled: true }, Validators.required]
-    });
-  }
+
 
   enableProjectAndResourceOnDateChange() {
     this.datepickerForm.get('dateRange')?.valueChanges.subscribe(value => {
@@ -430,57 +455,28 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Define predefined ranges
-  setDefaultRanges() {
-    this.ranges = {
-      Today: [dayjs().toDate(), dayjs().toDate()],
-      Yesterday: [dayjs().subtract(1, 'day').toDate(), dayjs().subtract(1, 'day').toDate()],
-      'Last 7 Days': [dayjs().subtract(6, 'day').toDate(), dayjs().toDate()],
-      'This Month': [dayjs().startOf('month').toDate(), dayjs().endOf('month').toDate()],
-      'Last Month': [
-        dayjs().subtract(1, 'month').startOf('month').toDate(),
-        dayjs().subtract(1, 'month').endOf('month').toDate()
-      ]
-    };
-  }
 
   get rangeKeys(): string[] {
     return this.ranges ? Object.keys(this.ranges) : [];
   }
 
-  setDefaultWeek() {
-    const startOfWeek = dayjs().startOf('isoWeek').toDate();
-    const endOfWeek = dayjs().endOf('isoWeek').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfWeek, endOfWeek]
-    });
-  }
 
-  // Select a range programmatically
-  selectRange(range: string) {
-    if (this.ranges[range]) {
-      this.datepickerForm.patchValue({
-        dateRange: this.ranges[range]
-      });
-    }
-  }
 
   isFormCompletelyValid(): boolean {
     const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
-    return !!formValue.dateRange && !!formValue.projectId && !!formValue.resourceId;
+    return !!formValue.dateRange;
   }
 
   onSubmit() {
     const dateRangeArray = this.datepickerForm.value.dateRange || [];
     const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
-    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : startDate;
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
     const request = {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerForm.value.resourceId,
-      clientId: this.clientsId,
-      projectId: this.projectId
+
     };
-    this.http.setRequestclienttimesheet(request);
+    this.http.setRequest(request);
     // Send `request` to API if needed
   }
 

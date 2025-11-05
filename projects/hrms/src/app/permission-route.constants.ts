@@ -92,7 +92,7 @@ export const SETTINGS_ASSEST_CONFIGURATION_TABS = [
 ];
 // Attendance Locking
 export const SETTINGS_AttendanceLock_TABS = [
-  
+
   { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
   { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
 ];
@@ -575,6 +575,7 @@ export const CLIENTS_ROUTES = [
   },
 ];
 
+
 export const PROJECTS_ROUTES = [
   {
     route: '/project-management/projects/active',
@@ -609,6 +610,11 @@ export const PROJECTS_ROUTES = [
     permission: 'Documents Tab.view'
   }
 ];
+
+export const TIME_SHEETS_TABS = [
+  { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+  { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+]
 
 export const ON_BEHALF_OF = [
   { route: '/on-behalf-of/on-behalf-of-wfh', permission: 'On Behalf Of WFH.view' },

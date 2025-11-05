@@ -23,6 +23,12 @@ export interface Client {
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
 
+  meta : {
+    graphData : {
+      color : string;
+    }
+  }
+
   contact: {
     contactId: number;
     entityRefId: number;

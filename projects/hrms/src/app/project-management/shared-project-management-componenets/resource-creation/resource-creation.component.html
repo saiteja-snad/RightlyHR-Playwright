@@ -147,6 +147,12 @@
                         class="form-control custom-input " [maxlength]="5"
                         (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
                 </div>
+
+                <!--Color Picker-->
+                <div class="col-md-6 mb-3">
+                    <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
+                    <input type="color" id="color" class="form-control custom-input" formControlName="color" />
+                </div>
                 <!-- <div class="custom-p-select-content w-50">
                             <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false"
                                 [showClear]="false" placeholder="Please select frequency"

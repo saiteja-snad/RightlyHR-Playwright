@@ -53,7 +53,8 @@
             <th>Project Type</th>
             <th>Verticals</th>
             <th>Status</th>
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus !=='inactive' ){
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) 
+            && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
           </thead>
@@ -62,7 +63,7 @@
               <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
                 <tr *ngFor="let project of filteredProjects; let i = index">
                   <td>{{ project.client.clientName }}</td>
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a></td>
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
                   <td>{{ project.startDate | dateformat }}</td>
                   <td>{{ project.endDate | dateformat }}</td>
                   <td>{{ project.effectiveDate | dateformat }}</td>
@@ -284,6 +285,12 @@
             </div>
           </div>
           
+          </div>
+
+          <!--Color Picker-->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label">{{'Color' | translate}}</label>
+            <input type="color" class="form-control custom-input" formControlName="updatecolor" />
           </div>
 
            <!-- Project Description -->

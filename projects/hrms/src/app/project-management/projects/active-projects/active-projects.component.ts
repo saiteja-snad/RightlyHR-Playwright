@@ -56,9 +56,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
   resourcesData = [] as IResource[];
-   departmentlist = [] as any;
-
-  inactiveClientStatus: any
+  departmentlist = [] as any;
+  inactiveClientStatus: any;
+  
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
@@ -188,7 +188,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatebillable: [false],
       updateallowweekendWork: [false],
       updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
-      approvalidAuthority: [{value:null,disabled:true}]
+      approvalidAuthority: [{value:null,disabled:true}],
+      updatecolor : ['']
     });
      this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -284,7 +285,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds, 
-
+      updatecolor : project.meta.graphData.color
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
@@ -322,7 +323,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       status: 'Active',
       pendingApprovalAuthorityId: formValue.approvalidAuthority,
       departmentIds: departmentIds,
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue.updatecolor
+      }
+      }
     };
     this.loading = true;
     this.http.putData(`Project/${this.selectedProjectId}`, payload).subscribe({

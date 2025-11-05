@@ -1,0 +1,24 @@
+.client-detailed-content {
+    width: 100%;
+    height: calc(100dvh - 12.25rem) !important;
+}
+
+.custom-p-multi-select-table .p-datatable-table-container {
+    min-height: 30vh !important;
+    max-height: 45vh !important;
+}
+
+.total-hrs {
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    color: var(--primary-color);
+}
+
+.project-name {
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+}

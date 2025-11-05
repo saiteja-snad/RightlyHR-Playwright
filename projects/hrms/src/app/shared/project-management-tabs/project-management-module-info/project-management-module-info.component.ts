@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MODULE_INFOS } from '../../modules-info';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../module-information/module-information.component";
 import { CommonModule } from '@angular/common';
@@ -18,24 +18,59 @@ import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-
 export class ProjectManagementModuleInfoComponent {
   moduleinfo: string = '';
   componentname: string = '';
+  employename: any;
   clientID: any;
   clients: any = {};
+  subscription!: Subscription;
   lastUrl: string = ''
   currentUrl: string = '';
   routeToInfoMap!: { [key: string]: string };
   destroy$: Subject<boolean> = new Subject<boolean>();
-
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, public rbac: RbacService) { }
+  resourceDataids = {} as any;
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     const clientProjectId = localStorage.getItem('clientProjectId');
+
+
     if (clientProjectId) {
       this.getClientsData(clientProjectId);
       this.clientID = clientProjectId;
     }
+    this.http.request$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(request => {
+        const currentUrl = this.router.url.split('?')[0];
+
+        // ✅ Always read localStorage first (default)
+        this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+
+        // ✅ Determine employeeId
+        const employeeId = request?.resourceId || this.resourceDataids?.employeeId;
+
+        // ✅ If both dateRange and resourceId are in request$, use request's data
+        if (request && request.dateRange && request.resourceId) {
+          this.resourceDataids = {
+            ...this.resourceDataids, // keep existing keys like clientId, projectId
+            employeeId: request.resourceId
+          };
+        }
+
+        // ✅ If we are on the correct route and have an employeeId, load employee name
+        if (
+          (currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
+            currentUrl === '/project-management/clients/details/timesheet/resource-summary') &&
+          employeeId
+        ) {
+          this.getEmployeeId(employeeId, currentUrl);
+        }
+      });
   }
+
+
 
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
@@ -54,6 +89,7 @@ export class ProjectManagementModuleInfoComponent {
       }
     });
   }
+
 
   updateModuleInfo() {
     const urlWithoutQuery = this.router.url.split('?')[0];
@@ -75,10 +111,18 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/details/documents': MODULE_INFOS.Documents_Project,
       '/project-management/clients/details/documents': MODULE_INFOS.CLIENT_Documents_INFO,
       '/project-management/projects/details/resources': MODULE_INFOS.Resources_Project,
-      '/project-management/clients/details/timesheet': MODULE_INFOS.CLIENT_Timesheet_INFO,
-      '/project-management/projects/details/timesheet': MODULE_INFOS.Project_Timesheet_INFO,
+      '/project-management/projects/details/timesheet/summary': MODULE_INFOS.PROJECT_Time_sheet_SUMMARY_VIEW,
+      '/project-management/projects/details/timesheet/detailed': MODULE_INFOS.PROJECT_Detalied_view,
       '/project-management/projects/details/inactivedocuments': MODULE_INFOS.Inactive_Documents_Project,
-      '/project-management/clients/details/inactivedocuments': MODULE_INFOS.Inactive_CLIENT_Documents_INFO
+      '/project-management/clients/details/inactivedocuments': MODULE_INFOS.Inactive_CLIENT_Documents_INFO,
+      '/project-management/timesheet/mytimesheet': MODULE_INFOS.My_Timesheet_MODULE_INFO,
+      '/project-management/timesheet/teamtimesheet': MODULE_INFOS.Team_Timesheet_MODULE_INFO,
+      '/project-management/timesheet/mysummary': MODULE_INFOS.My_Timesheet_Summary_view,
+      '/project-management/timesheet/summary': MODULE_INFOS.Team_Timesheet_Summary_view,
+      '/project-management/clients/details/timesheet/summary': MODULE_INFOS.CLIENT_Summary_view,
+      '/project-management/clients/details/timesheet/detailed': MODULE_INFOS.CLIENT_Detalied_view,
+      '/project-management/projects/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
+      '/project-management/clients/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
@@ -115,7 +159,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/resources') {
       this.componentname = 'Resources';
     }
-    else if (currentUrl === '/project-management/clients/details/timesheet') {
+    else if (currentUrl === '/project-management/clients/details/timesheet/summary' || currentUrl === '/project-management/clients/details/timesheet/detailed') {
       this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/clients/details/documents') {
@@ -133,15 +177,54 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/projects/details/resources') {
       this.componentname = 'Resources';
     }
-    else if (currentUrl === '/project-management/projects/details/timesheet') {
+    else if (currentUrl === '/project-management/projects/details/timesheet/summary' || currentUrl === '/project-management/projects/details/timesheet/detailed') {
       this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/projects/details/documents') {
       this.componentname = 'Documents';
     }
-    else if (currentUrl === '/project-management/time-sheet') {
-      this.componentname = 'Timesheets';
+    else if (currentUrl === '/project-management/timesheet/mytimesheet') {
+      this.componentname = 'My Timesheets';
     }
+
+    else if (currentUrl === '/project-management/timesheet/teamtimesheet') {
+      this.componentname = 'Team Timesheets';
+    }
+    else if (currentUrl === '/project-management/timesheet/summary') {
+      this.componentname = 'Timesheet Summary';
+    }
+    else if (currentUrl === '/project-management/timesheet/mysummary') {
+      this.componentname = 'My Timesheet Summary';
+    }
+
+    else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' || '/project-management/projects/details/timesheet/resource-summary') {
+      this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+      const employeeId = this.resourceDataids?.employeeId;
+
+      if (employeeId) {
+        this.getEmployeeId(employeeId, currentUrl);
+      }
+    }
+  }
+
+
+  getEmployeeId(employeeId: any, currentUrl: string) {
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employename = data;
+        const fullName = `${this.employename.firstName || ''} ${this.employename.middleName || ''} ${this.employename.lastName || ''}`.trim();
+
+        if (
+          currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
+          currentUrl === '/project-management/clients/details/timesheet/resource-summary'
+        ) {
+          this.componentname = fullName || 'Employee';
+        }
+      },
+      error: (reason) => {
+        console.error(reason);
+      },
+    });
   }
 
   isShowClientRoute(): boolean {
@@ -159,6 +242,31 @@ export class ProjectManagementModuleInfoComponent {
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
+  isShowtimesheetforteamRoute(): boolean {
+    const showPaths = [
+      '/project-management/timesheet/summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  isShowtimesheetformyRoute(): boolean {
+    const showPaths = [
+      '/project-management/timesheet/mysummary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+  isShowtimesheetforresourceclient(): boolean {
+    const showPaths = [
+      '/project-management/clients/details/timesheet/resource-summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+  isShowtimesheetforresourceproject() {
+    const showPaths = [
+      '/project-management/projects/details/timesheet/resource-summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
   isHideInfo(): boolean {
     const hidePaths = [
       '/project-management/clients/add'
@@ -170,6 +278,27 @@ export class ProjectManagementModuleInfoComponent {
     this.router.navigate(['project-management/clients/active']);
     localStorage.removeItem('clientProjectId');
   }
+
+  navigatetoteam() {
+    this.router.navigate(['project-management/timesheet/teamtimesheet']);
+  }
+
+  navigatetomy() {
+    this.router.navigate(['project-management/timesheet/mytimesheet']);
+  }
+
+  navigatetodetaliedtoclicent() {
+    const clientProjectId = localStorage.getItem('clientProjectId');
+    this.router.navigate(['project-management/clients/details/timesheet/detailed'], { queryParams: { id: clientProjectId } });
+    localStorage.removeItem('clientProjectId');
+
+  }
+
+  navigatetodetaliedtoproject() {
+    this.router.navigate(['/project-management/projects/details/timesheet/detailed'], { queryParams: { id: this.resourceDataids?.projectId } });
+
+  }
+
 
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');

@@ -116,7 +116,8 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       billable: [false],
       allowweekendWork: [false],
       approvalidAuthority: [{value:null,disabled:true}],
-      department:[null, Validators.required]
+      department:[null, Validators.required],
+      color: ['#FFFFFF'],
     });
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -203,7 +204,12 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
       status: 'Active',  
       departmentIds: departmentIds,         // or get from form
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue.color
+        }
+      }
     };
     this.loading = true;
     this.http.postdata('Project', payload).subscribe({

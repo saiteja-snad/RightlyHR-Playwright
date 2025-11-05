@@ -7,10 +7,10 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-project-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
+  imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover],
   templateUrl: './project-timesheet-summary.component.html',
   styleUrl: './project-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -47,6 +47,13 @@ export class ProjectTimesheetSummaryComponent {
   ];
   // project name
   projectName: any;
+  //Graph Infos
+  resourceSummaryInfo = "The Resource Summary widget displays the list of resources assigned to the project along with their roles, total hours utilized, and utilization percentage. It helps track team effort and workload distribution within the project.";
+  projectCompletionRateInfo = "The Project Completion Rate widget visually represents the overall progress of the project. It indicates the percentage of work completed based on logged hours versus planned hours.";
+  roleWiseHoursInfo = "The Role-wise Hours widget provides a graphical representation of total hours logged by each role. It helps analyse time distribution across different functions such as development, testing, or design.";
+  estimatedvsActualHoursInfo = "The Estimated vs Actual Hours widget compares planned project hours with the actual hours logged. This helps evaluate project efficiency and identify deviations from the original estimates.";
+  billablevsNonBillableHoursInfo = "The Billable vs Non-Billable Hours widget displays the ratio of billable work hours to non-billable activities. It helps assess project profitability and resource utilization.";
+  projectBurndownInfo = "The Project Burndown Chart visually tracks project progress over time. It shows the remaining work against the planned schedule, helping managers monitor task completion and stay on track with deadlines.";
 
   constructor(private router: Router, public formValidation: FormValidationsService,
     private http: HttpService, private route: ActivatedRoute) { }

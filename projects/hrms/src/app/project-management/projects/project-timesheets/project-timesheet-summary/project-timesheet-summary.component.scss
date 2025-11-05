@@ -5,13 +5,6 @@
     overflow-y: auto;
 }
 
-.grid-display-row1 {
-    display: grid;
-    grid-template-columns: 7fr 5fr;
-    grid-template-rows: auto;
-    gap: 1rem;
-    align-items: stretch;
-}
 .time-sheet-graph-card {
     width: 100%;
     padding: 0.5rem;
@@ -38,13 +31,26 @@
     font-weight: 500;
     font-size: var(--fontsize12);
     color: #222222;
+
+    .popover-body {
+        padding: 0.325rem !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-size: var(--fontsize10);
+    }
 }
 
 .project-summary-table {
     height: 18rem !important;
 
-    th,
-    td {
+    th, td {
         padding: 0.75rem !important;
         font-size: var(--fontsize12) !important;
     }
@@ -60,20 +66,6 @@
         color: var(--primary-color);
         text-decoration: underline;
     }
-}
-
-.grid-display-row2 {
-    display: grid;
-    grid-template-columns: 5fr 7fr;
-    grid-template-rows: auto;
-    gap: 1rem;
-}
-
-.grid-display-row3 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto;
-    gap: 1rem;
 }
 
 .circular-chart {
@@ -163,25 +155,25 @@
 }
 
 .progress-wrapper {
-  position: relative;
-  width: 120px;
-  height: 8px;
-  background-color: #f3f4f6;
-  border-radius: 10px;
-  overflow: hidden;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 8px;
+    position: relative;
+    width: 120px;
+    height: 8px;
+    background-color: #f3f4f6;
+    border-radius: 10px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
 }
 
 .progress-bar {
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.6s ease;
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s ease;
 }
 
 .logged-hours {
-  font-size: 13px;
-  color: #374151;
-  vertical-align: middle;
+    font-size: 13px;
+    color: #374151;
+    vertical-align: middle;
 }

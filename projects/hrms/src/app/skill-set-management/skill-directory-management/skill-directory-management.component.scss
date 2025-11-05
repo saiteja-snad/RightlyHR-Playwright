@@ -1,97 +1,88 @@
-.custom-p-multiSelect-content {
-  min-width: 200px !important;
-}
-
 .custom-table-content {
   height: calc(100dvh - 15rem) !important;
   border-bottom-left-radius: 0rem !important;
   border-bottom-right-radius: 0rem !important;
-
-  .p-chip {
-    border: 1px solid #D1D9E2 !important;
-    background: #F8FBFF !important;
-    font-weight: 400;
-    font-size: var(--fontsize14) !important;
-
-    .skill-name {
-      color: var(--primary-color) !important;
-    }
-
-    .skill-level {
-      color: #73809D !important;
-    }
-  }
 }
-
+.skill-view{
+  min-width: 150px !important;
+}
 .pagination-content {
-  border-bottom-left-radius: 0.5rem !important;
-  border-bottom-right-radius: 0.5rem !important;
+  border-radius: 0.5rem !important;
+  border-top-left-radius: 0rem !important;
+  border-top-right-radius: 0rem !important;
 }
 
-.custom-main-popup-content {
-  position: relative;
-  border-radius: 1rem;
-
-  .cross-btn {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-  }
+.employee-offcanvas-body {
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
 }
 
+/* Profile Section */
 .profile-content {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   color: var(--primary-color);
 
   .profile-image {
-    width: 4rem;
-    height: 4rem;
+    width: 4.25rem;
+    height: 4.25rem;
     border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0px 0px 10px #0b3a8333;
     object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(11, 58, 131, 0.2);
   }
 
   .name {
     font-size: var(--fontsize16);
     font-weight: 600;
     text-transform: capitalize;
+    color: var(--primary-color);
   }
 
-  .sub-text {
+  .designation {
     font-size: var(--fontsize14);
-    font-weight: 400;
+    color: #909090;
   }
 
-  .department {
-    color: #909090 !important;
-  }
-
-  .project-status {
-    font-weight: 400;
-    font-size: 12px;
-    padding: 0.25rem 1rem;
+  .status-badge {
+    display: inline-block;
+    background: #ECF1F5;
+    border-radius: 2rem;
+    font-size: var(--fontsize12);
+    padding: 0.35rem 1rem;
+    color: #0b3a83;
   }
 }
 
-.custom-card-bg {
-  width: max-content;
-  background-color: #ECF1F5 !important;
-  border-radius: 0.625rem;
+.dashed-border {
+  border-bottom: 1px dashed #d6d6d6;
 }
 
+/* Tabs */
 .custom-skill-set-tabs {
-  .p-tab {
-    padding: 0.5rem 1rem !important;
+  .p-tablist {
+    background: #ECF1F5;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    display: inline-flex;
+    gap: 0.25rem;
   }
 
   .p-tablist-tab-list {
+    background: #ECF1F5;
     font-weight: 700;
     font-size: var(--fontsize14) !important;
-    margin-bottom: 0.5rem !important;
+  }
+
+  .p-tab {
+    padding: 0.5rem 1rem !important;
+    border: none !important;
+    background: transparent !important;
+    color: #8E8E8E !important;
+    font-weight: 600 !important;
+    border-radius: 0rem;
+    transition: 0.2s;
   }
 
   .p-tablist-active-bar {
@@ -99,110 +90,114 @@
   }
 
   .p-tab-active {
+    font-weight: 600 !important;
     border-color: var(--primary-color) !important;
     color: var(--primary-color) !important;
-    border-bottom: 1px solid var(--primary-color) !important;
+    border-bottom: 2px solid var(--primary-color) !important;
   }
 }
 
-.skill-set-container {
+.custom-offcanvas-content {
   position: relative;
   width: 100%;
-  height: 30dvh;
+  height: 65dvh;
+  overflow-x: hidden;
   overflow-y: auto;
+}
 
-  .skills-section {
+/* Skill Sections */
+.skills-group {
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  .skill-set-display-card {
+    width: 100%;
     padding: 0.625rem;
-    border-left: 2px solid var(--primary-color) !important;
+    border-radius: 0.5rem;
+    background: #ECF1F5;
 
-    .skills-title {
-      font-weight: 600;
-      font-size: var(--fontsize13);
-      color: var(--primary-color);
+    p-chip {
+      background: #F8FBFF !important;
+      border: none !important;
+      border-radius: 1.25rem !important;
+      font-size: var(--fontsize12) !important;
+      padding: 0.325rem 1rem !important;
+      color: var(--primary-color) !important;
+      font-weight: 400;
+    }
+  }
+
+  .level-heading {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0.5rem 0;
+
+    &.expert {
+      color: #00a912;
     }
 
-    .skill-text {
+    &.intermediate {
+      color: #9a00f3;
+    }
+
+    &.beginner {
+      color: #f8af13;
+    }
+  }
+}
+
+/* Projects */
+.projects-container {
+  .project-card {
+    background: #f8fbff;
+    border-radius: 0.5rem;
+    padding: 0.625rem;
+    border-left: 3px solid var(--primary-color);
+
+    .project-name {
+      font-size: var(--fontsize13);
       font-weight: 600;
-      font-size: var(--fontsize12) !important;
+      color: var(--primary-color);
+      margin-bottom: 0.25rem;
+    }
+
+    .project-role {
+      font-size: var(--fontsize13);
       color: #8D9BB1;
     }
 
-    .p-chip {
-      border-radius: 1rem;
-      font-size: var(--fontsize12) !important;
-      padding: 0.325rem 0.75rem !important;
-      background: #FFF !important;
-      color: var(--primary-color) !important;
-      gap: 0rem !important;
+    .project-dates {
+      font-size: var(--fontsize13);
+      color: #9499A1;
     }
   }
 }
 
-.dashed-border {
-  width: 100%;
-  height: 2px;
-  border-bottom: 2px dashed #CBCBCB;
+.close-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-left: 21rem;
+  margin-top: 1rem;
 }
 
-.status-badge {
-  text-transform: capitalize;
-}
-
-.status-available {
-  color: #00A912;
-}
-
-.status-committed {
-  color: #E0A101;
-}
-
-p-chip {
-  display: inline-flex;
-  align-items: center;
-  margin: 4px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  background-color: #fff;
-  font-weight: 500;
-  border: 1.5px solid transparent;
-  color: var(--primary-color);
-}
-
-.skill-name {
-  font-size: 14px;
-  color: var(--primary-color);
-}
-
-.proficiency {
-  font-size: 11px;
-  color: var(--primary-color);
-}
-
-.chip-beginner {
-  border-color: #F8AF13;
-}
-
-.chip-intermediate {
-  border-color: #9A00F3;
-}
-
-.chip-expert {
-  border-color: #00A912;
-}
-
-.chip-default {
-  border-color: #ccc;
-}
 .clear-all-btn {
-    background: none;
-    border: none;
-    text-decoration: underline;
-    padding: 0;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 .clear-all-btn:focus {
-    outline: none;
+  outline: none;
+}
+
+.bi-eye-fill {
+  font-size: var(--fontsize20);
+  color: var(--primary-color) !important;
 }

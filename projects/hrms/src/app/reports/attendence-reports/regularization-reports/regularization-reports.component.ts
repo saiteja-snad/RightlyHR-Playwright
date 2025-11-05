@@ -135,7 +135,8 @@ getAllEmployees() {
 }
 
 getTeam() {
-  this.http.getData('PendingApprovalsAuthority/getAll').pipe(takeUntil(this.destroy$)).subscribe({
+  const statuses = 'Active';
+  this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).pipe(takeUntil(this.destroy$)).subscribe({
     next: (data: any) => {
       this.teamManagerDetails = data
         .map((employee: any) => {

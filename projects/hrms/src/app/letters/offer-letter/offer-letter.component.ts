@@ -307,6 +307,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.address = this.employeeaddress?.employeeAddresses.find(
         (address: IAddress) => address?.type?.toLowerCase() == Value?.value?.toLowerCase()
       );
+      console.log(this.address);
+      
     }
     this.prospectiveEmpData.addressLine1 = this.address?.addressLine1;
     this.prospectiveEmpData.addressLine2 = this.address?.addressLine2;

@@ -33,12 +33,10 @@
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber
-                                ||'' }}</td>
+                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources
-                            Tab.delete'))
+                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
@@ -112,22 +110,26 @@
                             class="form-control custom-input" placeholder="Designation" readonly />
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Role<span
-                                class="text-danger">*</span></label>
-                        <input type="text" formControlName="resourceRole"
-                            (keydown)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
-                            placeholder="Please enter role" />
-                        <div class="error-msg">
+               
+
+                     <div class="col-md-6 mb-3">
+                <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+                <div class="custom-p-select-content">
+                <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value" [filter]="true"
+                    [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole" placeholder="Please select role"
+                    class="form-select custom-select" (onChange)="onRoleChange($event.value)">
+                </p-select>
+
+
+                </div>
+                <div class="error-msg">
                             <div
                                 *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
                             <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || 
-                            updateResourceForm.get('resourceRole')?.errors?.['maxlength'] || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] 
-                            || updateResourceForm.get('resourceRole')?.errors?.['minlength']">{{ 'Role must be between
-                                2-50 characters characters' | translate }}</div>
+                            updateResourceForm.get('resourceRole')?.errors?.['maxlength'] || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">{{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
-                    </div>
+            </div>
 
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">
@@ -157,8 +159,7 @@
 
                     <!-- Phone Number -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number<span
-                                class="text-danger">*</span></label>
+                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
                         <input type="text" id="resourcePhone" formControlName="resourcePhone"
                             class="form-control custom-input" placeholder="Please enter phone number" readonly />
                     </div>

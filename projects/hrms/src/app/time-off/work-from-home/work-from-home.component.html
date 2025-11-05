@@ -67,13 +67,78 @@
     <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
     </ng-template>
-
-    <div class="employee-fields-main-container d-flex gap-3 w-100">
+    
+  @if(!loadingGraph){
+    <div class="graph-grid w-100 mb-3">
+        <div class="cards-grid-container">
+            @for (item of wfhBalancesdetails; track $index) {
+            <div class="leaves-category-card">
+                <div>
+                    <p class="leave-content-text text-wrap m-0 mb-2" [style.color]="'#FF2E22'">{{
+                        'WFH' }}</p>
+                    <div class="d-flex gap-2">
+                        <div class="leave-category-text">
+                            <p class="m-0">Booked</p>
+                            <p class="m-0">{{item.booked ? item.booked  :'0'}}</p>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p class="m-0">Processed</p>
+                            @if (item.processed) {
+                            <p class="m-0">{{item.processed ? item.processed : '0'}}</p>
+                            }
+                            @else {
+                            <p class="m-0">0</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-content">
+                    <div class="circular-progress" [style.background]="'conic-gradient(' + '#FF2E22'+ ' '  +
+                 getProgress(item) + 'deg, ' + getTransparentColor('#FF2E22', 0.3) + ' 0deg)'">
+                        <span class="progress-value">
+                            <span class="avaliable-leaves-text">{{ getAvailablewfhs(item) }}</span>
+                            <span class="total-leaves-text">/{{item.totalBalance}}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+    @else {
+    <div class="graph-grid w-100 mb-3">
+        <div class="cards-grid-container">
+            <div class="leaves-category-card" *ngFor="let i of [1,2,3,4]">
+                <div>
+                    <p-skeleton width="7rem" height="1.2rem" styleClass="mb-2"></p-skeleton>
+                    <div class="d-flex gap-2">
+                        <div class="leave-category-text">
+                            <p-skeleton width="3rem" height="1rem" styleClass="mb-2"></p-skeleton>
+                            <p-skeleton width="2rem" height="1.2rem"></p-skeleton>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p-skeleton width="3rem" height="1rem" styleClass="mb-2"></p-skeleton>
+                            <p-skeleton width="2rem" height="1.2rem"></p-skeleton>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-content mt-3">
+                    <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+    <div class="d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
             <app-wfh-approvaltabs />
         </div>
+
         <div class="component-right-content">
-            <router-outlet />
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>

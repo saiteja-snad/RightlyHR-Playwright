@@ -7,6 +7,7 @@ import {
   EXPENSE_TABS,
   IT_SUPPORT_TEAM_TICKETS_TABS,
   COMP_OFF_SUB_TABS,
+  TIMESHEET_REPORTS_TABS,
   ON_BEHALF_OF_TABS,
   PERMISSIONS_SUB_TABS,
   REGULARIZATION_SUB_TABS,
@@ -26,6 +27,7 @@ import {
   PENDING_APPROVALS_COMP_OFF_SUB_TABS,
   PENDING_APPROVALS_PERMISSIONS_SUB_TABS,
   PENDING_APPROVALS_REGULARIZATION_SUB_TABS,
+  PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS,
   SEPARATION_REQUEST_SUB_TABS,
   RECALL_REQUEST_SUB_TABS,
   DESK_REQUEST_SUB_TABS,
@@ -59,11 +61,17 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
+  FLEXIBLE_WFH_ALLOCATION_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
   ON_BEHALF_OF_REMOTELOGIN_TABS,
+<<<<<<< HEAD
   SKILL_MANAGEMENT_TABS
+=======
+  EXTRA_HOURS_SUB_TABS,
+  CARDS_SUB_TABS,
+>>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -310,9 +318,16 @@ export class AccessNavigationService {
             }
           }
         }
-
+        if (this.rbac.allowedToAccess('Timesheet Reports.view')) {
+          for (const item of TIMESHEET_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
-          return (route = '/reports/monthly-attandance-reports');
+          return (route = '/reports/monthly-attendance-reports');
         }
 
         if (this.rbac.allowedToAccess('Policy Reports.view')) {
@@ -415,6 +430,18 @@ export class AccessNavigationService {
           }
         }
 
+<<<<<<< HEAD
+=======
+        if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
+          for (const item of EXTRA_HOURS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+       
+>>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -484,6 +511,21 @@ export class AccessNavigationService {
                 '/time-off/pending-approvals/regularization-request'
               ) {
                 for (const item of PENDING_APPROVALS_REGULARIZATION_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Extra Hours Tab.view'
+            ) {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/extra-hours-request'
+              ) {
+                for (const item of PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -708,7 +750,19 @@ export class AccessNavigationService {
           }
         }
         break;
+<<<<<<< HEAD
 
+=======
+        case '/card-management':
+        if (this.rbac.allowedToAccess('Cards Management.view')) {
+          for (const item of CARDS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+>>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
       case '/project-management/clients/active':
         if (this.rbac.allowedToAccess('Clients.view')) {
           for (const item of CLIENTS_ROUTES) {
@@ -996,7 +1050,15 @@ export class AccessNavigationService {
           }
         }
         break;
-
+      case '/reports/timesheet-reports':
+        if (this.rbac.allowedToAccess('Timesheet Reports.view')) {
+          for (const item of TIMESHEET_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/reports/monthly-attandance-reports':
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
           return (route = '/reports/monthly-attandance-reports');
@@ -1132,6 +1194,15 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')) {
           return (route =
             '/settings/timeoff-configurations/flexible-leave-allocation');
+        }
+        break;
+         case '/settings/timeoff-configurations/flexible-wfh-allocation':
+        if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
+         for (const item of FLEXIBLE_WFH_ALLOCATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 
@@ -1338,6 +1409,19 @@ export class AccessNavigationService {
           }
         }
         break;
+<<<<<<< HEAD
+=======
+
+      case '/time-off/extra-hours':
+        if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
+          for (const item of EXTRA_HOURS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
+>>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
     
       case '/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {
@@ -1475,6 +1559,21 @@ export class AccessNavigationService {
                 '/time-off/pending-approvals/regularization-request'
               ) {
                 for (const item of PENDING_APPROVALS_REGULARIZATION_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Extra Hours Tab.view'
+            ) {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/extra-hours-request'
+              ) {
+                for (const item of PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -1634,6 +1733,16 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/time-off/pending-approvals/extra-hours-request':
+        if (this.rbac.allowedToAccess('Extra Hours Tab.view')) {
+          for (const item of PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
 
       case '/time-off/pending-approvals/separation-request':
         if (this.rbac.allowedToAccess('Separation Request Tab.view')) {

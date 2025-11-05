@@ -298,7 +298,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     const employeeId = this.empdata.employeeId;
     this.http.getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`).subscribe({
       next: (response: any) => {
-        this.conformationPopup.openSuccessModal('Password updated successfully');
+        this.conformationPopup.openSuccessModal('Regenerate credentials generated successfully and shared with the employee via email');
+        
       },
       error: (error: any) => {
         console.log(error);
@@ -663,6 +664,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'contactor-info': "Contractor Info",
+    'cards': 'Cards',
     // Documents
     'general-documents': 'Documents',
     'letter-acknowledge-documents': 'Letter Acknowledgement',
@@ -719,6 +721,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/myinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
+
+
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       // Personal Info perosnal
@@ -751,6 +756,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
+      '/personalinfo/job/cards': MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
+
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';

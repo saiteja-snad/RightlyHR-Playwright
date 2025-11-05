@@ -1,0 +1,499 @@
+<div class="custom-main-component-container">
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="this.getCardDetails()"
+            class="form-control custom-search-input" placeholder="Search" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+   @if(rbac.allowedToAccess('Cards Available.view')){
+ <div class="custom-table-content">
+        @if (!loader) {
+        <table class="w-100">
+            <thead>
+                <th>{{'Issued Date'|translate}}</th>
+                <th>{{'Card Number'|translate}}</th>
+                <th>{{'Card Type'|translate}}</th>
+                <th>{{'Card Holder Name'|translate}}</th>
+                <th>{{'Bank Name'|translate}}</th>
+                <!-- <th>{{'Card Expiry Month'|translate}}</th>
+                <th>{{'Card Expiry Year'|translate}}</th> -->
+                <th>{{'Expiry Date' | translate}}</th>
+                <!-- <th>{{'Allocated History'|translate}}</th> -->
+                <th>{{'Status'|translate}}</th>
+                <th *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
+                rbac.allowedToAccess('Cards Available.create')">{{'Actions'|translate}}</th>
+            </thead>
+            <tbody>
+                @if( cardDetails.length > 0){
+                <tr *ngFor="let item of cardDetails ">
+                    <!-- issued date -->
+                    <td>{{item?.issuedDate?(item.issuedDate| dateformat ):'-'}}</td>
+                    <!-- card number -->
+                    <td>{{item?.cardNumberMasked?item?.cardNumberMasked:'-'}}</td>
+                    <!-- card type -->
+                    <td>{{item?.cardType?item?.cardType:'-'}}</td>
+                    <!--Card Holder Name-->
+                    <td>{{item?.cardHolderName ? item?.cardHolderName:'-'}}</td>
+                    <!-- bank name -->
+                    <td>{{item?.issuedBankName ? item?.issuedBankName:'-'}}</td>
+                    <!-- expiry month -->
+                    <!-- <td>{{item?.expiryMonth?item?.expiryMonth:'-'}}</td> -->
+                    <!-- expity year -->
+                    <!-- <td>{{item?.expiryYear?item?.expiryYear:'-'}}</td> -->
+                     <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}</td>
+                    <!-- allocated history -->
+                    <!-- <td>
+                         @if (item.allocations) {
+                    <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
+                        <app-info-icon />
+                    </div>
+                    
+                    }
+                    @else{-}
+                    </td> -->
+                    <!-- status -->
+                    <td>{{item?.status ? item?.status:'-'}}</td>
+                    <!-- actions -->
+                    <td *ngIf="rbac.allowedToAccess('Cards Available.delete') || rbac.allowedToAccess('Cards Available.update') || 
+                        rbac.allowedToAccess('Cards Available.create')">
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Cards Available.view')">
+                                    <a class="dropdown-item" (click)="navigateToAsset(item.cardId)">View History</a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Cards Available.update')">
+                                    <a class="dropdown-item" (click)="updatePopup(cardupdate,item)">Update</a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Cards Available.create')">
+                                    <a class="dropdown-item" (click)="allocatePopup(Allocated,item)">Allocate</a>
+                                </li>
+                                <li *ngIf="rbac.allowedToAccess('Cards Available.delete')">
+                                    <a class="dropdown-item" (click)="holdPopup(holdCard,item)">Hold</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+                @if (cardDetails.length === 0) {
+                <tr>
+                    <app-no-data-found />
+                </tr>
+                }
+            </tbody>
+        </table>
+        } @else {
+        <app-data-loader-content />
+        }
+    </div>
+   }
+   
+
+    <div class="pagination-content" *ngIf="cardDetails.length > 0">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                    (+first + + rows) }} of {{ collectionSize }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+</div>
+
+<!--Card details update popup-->
+<ng-template #cardupdate let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">Update a card</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="updateDetailsForm" (ngSubmit)="updateCardDetails(updateDetailsForm)">
+                <div class="row">
+                    <div class="mb-3 col-md-6">
+                        <label for="Card Name" class="form-label custom-label mb-2">Card Number<span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <!-- visible card number -->
+                            <input class="form-control custom-input login-input border-right-none" formControlName="cardNumber"
+                                placeholder="Enter card number" *ngIf="visible">
+                            <span class="input-group-text border-left-none" (click)="toggleCardView()" (keypress)="allowonlynumbers($event)" *ngIf="visible">
+                                <i [ngClass]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                            </span>
+                        
+                            <!-- unvisible card number -->
+                            <input class="form-control custom-input login-input border-right-none" formControlName="displayCardNumber"
+                                placeholder="Enter card number" *ngIf="!visible">
+                            <span class="input-group-text border-left-none" (click)="toggleCardView()"  *ngIf="!visible">
+                                <i [ngClass]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                            </span>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('cardNumber')?.hasError('required') && updateDetailsForm.get('cardNumber')?.touched">
+                            Card number is required
+                        </div>
+                        
+                        <!-- Show when pattern invalid -->
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('cardNumber')?.hasError('pattern') && updateDetailsForm.get('cardNumber')?.touched">
+                            Card number must be 16 digits
+                        </div>
+                        
+                        <!-- Show when Luhn check fails -->
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('cardNumber')?.hasError('validateCCNumber') && updateDetailsForm.get('cardNumber')?.touched">
+                            Enter a valid card number
+                        </div>
+                    </div>
+
+                    <!-- Card Type Field -->
+                    <div class="mb-3 col-md-6">
+                        <label for="subLocation" class="form-label custom-label mb-2">Card Type
+                            <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="cardTypeList" optionLabel="label" optionValue="value" formControlName="cardType"
+                                placeholder="Select card type" class="form-select custom-select"></p-select>
+                        </div>
+                        <div *ngIf="updateDetailsForm.get('cardType')?.invalid && updateDetailsForm.get('cardType')?.touched"
+                            class="error-msg">Card type is required</div>
+                    </div>
+
+                    <!-- Desk Name Field -->
+                    <div class="col-md-6 mb-3">
+                        <label for="assetId" class="form-label custom-label mb-2">Card Category
+                            <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <input type="text" class="form-control custom-input text-capitalize" formControlName="cardCategory"
+                                placeholder="Card category" readonly>
+                        </div>
+                        <!-- <div *ngIf="updateDetailsForm.get('cardCategory')?.invalid && updateDetailsForm.get('cardCategory')?.touched">
+                            <div class="error-msg">Card category is required</div>
+                        </div> -->
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="Department" class="form-label custom-label mb-2">Bank Name
+                            <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" optionValue="bankName1"
+                                [resetFilterOnHide]="true" filterBy="bankName1" formControlName="bankName"
+                                placeholder="Select bank name" class="form-select custom-select"></p-select>
+                            <!-- <input type="text" class="form-control custom-input" formControlName="bankName"
+                                placeholder="Enter card holder name"
+                                (keypress)="formValidations.restrictInitialSpace($event)"> -->
+                        </div>
+                        <div class="error-msg" *ngIf="updateDetailsForm.controls['bankName'].invalid && (updateDetailsForm.controls['bankName'].touched 
+                            || updateDetailsForm.controls['bankName'].dirty)">
+                            <span *ngIf="updateDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
+                        </div>
+                    </div>
+
+                    <!-- Card Holder Name -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">
+                            {{ 'Card Holder Name' | translate }}<span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control custom-input" formControlName="cardHolderName"
+                            placeholder="Please enter cardholder name" (keypress)="formValidations.restrictInitialSpace($event)">
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('cardHolderName')?.invalid && updateDetailsForm.get('cardHolderName')?.touched">
+                            Card Holder Name is required
+                        </div>
+                    </div>
+
+                    <!-- Issue Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'Date of Issue' | translate }}<span class="text-danger">*</span></label>
+                        <input type="date" id="issueDate" formControlName="issueDate" class="form-control custom-input" />
+                        <div class="error-msg" *ngIf="updateDetailsForm.get('issueDate')?.invalid && updateDetailsForm.get('issueDate')?.touched">
+                            Date of Issue is required
+                        </div>
+                    </div>
+
+                    <!-- Expiry Month -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">
+                            {{ 'Expiry Month (MM)' | translate }}<span class="text-danger">*</span>
+                        </label>
+                        <input type="number" class="form-control custom-input" formControlName="expiryMonth"
+                            placeholder="Enter month (1–12)" (keypress)="formValidations.restrictInitialSpace($event)" />
+                        <div class="error-msg" *ngIf=" updateDetailsForm.get('expiryMonth')?.invalid && updateDetailsForm.get('expiryMonth')?.touched">
+                            <div *ngIf="updateDetailsForm.get('expiryMonth')?.errors?.['required']">
+                                Expiry month is required
+                            </div>
+                            <div *ngIf="updateDetailsForm.get('expiryMonth')?.errors?.['maxlength']">
+                                Maximum 2 digits allowed
+                            </div>
+                            <div *ngIf="updateDetailsForm.get('expiryMonth')?.errors?.['max']">
+                                Must be between 1–12
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expiry Year -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'Expiry Year (YYYY)' | translate }}<span class="text-danger">*</span></label>
+                        <input type="number" class="form-control custom-input" formControlName="expiryYear" placeholder="Enter expiry year"
+                            (keypress)="formValidations.restrictInitialSpace($event)" />
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('expiryYear')?.invalid && updateDetailsForm.get('expiryYear')?.touched">
+                            <div *ngIf="updateDetailsForm.get('expiryYear')?.errors?.['required']">
+                                Expiry year is required
+                            </div>
+                            <div *ngIf="updateDetailsForm.get('expiryYear')?.errors?.['pattern']">
+                                Maximum 4 digits allowed
+                            </div>
+                            <div *ngIf="updateDetailsForm.get('expiryYear')?.errors?.['pastYear']">
+                                Must be a valid current or future year
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit Limit -->
+                    <div class="col-md-6 mb-3" *ngIf="updateDetailsForm.get('cardType')?.value?.toLowerCase() !== 'debit'">
+                        <label class="form-label custom-label mb-2">{{ 'Credit Limit' | translate }}<span class="text-danger">*</span></label>
+                        <input type="number" class="form-control custom-input" min="0" formControlName="creditLimit" placeholder="Enter credit limit">
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('creditLimit')?.hasError('required') && updateDetailsForm.get('creditLimit')?.touched">
+                            Credit Limit is required
+                        </div>
+                        
+                        <div class="error-msg"
+                            *ngIf="updateDetailsForm.get('creditLimit')?.hasError('min') && updateDetailsForm.get('creditLimit')?.touched">
+                            Must be a positive number
+                        </div>
+                    </div>
+
+                    <!-- Shared Limit -->
+                    <div class="col-md-6 mb-3 pt-3">
+                        <div class="form-check form-switch pt-4">
+                            <input class="form-check-input" type="checkbox" formControlName="sharedLimit">
+                            <label class="form-label custom-toggle-label">Shared Limit</label>
+                        </div>
+                        <div class="error-msg" *ngIf="updateDetailsForm.get('sharedLimit')?.invalid && 
+                        updateDetailsForm.get('sharedLimit')?.touched">Shared Limit is required</div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDetailsForm.invalid">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- confirmation popup -->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to Cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss();close()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--Aloocated popup-->
+<ng-template #Allocated let-modal>
+    <form autocomplete="off" [formGroup]="allocateDetailsForm " (ngSubmit)="allocationformsubmit(allocateDetailsForm)">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">Allocate</p>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content">
+                <div class="row">
+                    <!-- Allocated On -->
+                    <div class="col-md-6 mb-3">
+                        <label for="allocatedDate" class="form-label custom-label mb-2">Allocated Date<span class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="allocatedDate" />
+                        <div *ngIf="allocateDetailsForm.get('allocatedDate')?.touched && allocateDetailsForm.get('allocatedDate')?.invalid" class="error-msg">
+                            <div *ngIf="allocateDetailsForm.get('allocatedDate')?.errors?.['required']">{{'Allocated Date is required'|translate}}</div>
+                        </div>
+                    </div>
+
+                    <!-- Allocated to -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Allocated To' | translate}}<span class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="getAllEmployeeInfo" [filter]="true" class="custom-select w-100" filterBy="fullName"
+                                [showClear]="false" formControlName="employeeId" optionValue="employeeId" placeholder="Please select employee"
+                                optionLabel="fullName">
+                            </p-select>
+                            <div *ngIf="allocateDetailsForm.get('employeeId')?.touched && allocateDetailsForm.get('employeeId')?.invalid" class="error-msg">
+                                <div *ngIf="allocateDetailsForm.get('employeeId')?.errors?.['required']">Allocated To is required</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12 mb-3">
+                        <label for="description" class="form-label custom-label mb-2">Comments<span class="error-msg">*</span></label>
+                        <textarea type="text" name="rejectReason" class="form-control custom-input" placeholder="Please provide comments"
+                            rows="3" maxlength="250" formControlName="description"
+                            (keypress)="formValidations.restrictInitialSpace($event)"></textarea>
+                        <div class="mt-1 textarea-count-text">
+                            <span class="color">{{ allocateDetailsForm.get('description')?.value?.length || 0 }}/250</span>
+                        </div>
+                        <div *ngIf="allocateDetailsForm.get('description')?.touched && allocateDetailsForm.get('description')?.invalid" class="error-msg">
+                            <div *ngIf="allocateDetailsForm.get('description')?.errors?.['required']">Comments are required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">
+                        {{ 'Cancel' | translate }}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="allocateDetailsForm.invalid">
+                        {{ 'Submit' | translate }}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--hold poup-->
+<ng-template #holdCard let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to Hold this card?</p>
+        </div>
+        <form autocomplete="off" [formGroup]="holdDetailsForm" (ngSubmit)="holdCards(holdDetailsForm)">
+          <div class="custom-main-popup-content">
+        
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Reason' | translate}}<span
+                                class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="reasonDetails" optionLabel="value" [filter]="true" optionValue="value"
+                                [resetFilterOnHide]="true" filterBy="value" formControlName="reason"
+                                placeholder="Select reason" class="form-select custom-select"></p-select>
+                            <div *ngIf="holdDetailsForm.get('reason')?.touched && holdDetailsForm.get('reason')?.invalid"
+                                class="error-msg">
+                                <div *ngIf="holdDetailsForm.get('reason')?.errors?.['required']">Reason is required</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- addictionalcomments -->
+                    <div class="col-md-12 mb-3">
+                        <label for="addictionalcomments" class="form-label custom-label mb-2">{{'Additional Comments'|translate}}<span class="error-msg">*</span></label>
+                        <textarea type="text" name="rejectReason" class="form-control custom-input"
+                            placeholder="Please provide comments" rows="3" maxlength="250" formControlName="addictionalcomments"
+                            (keypress)="formValidations.restrictInitialSpace($event)"></textarea>
+                        <div class="mt-1 textarea-count-text">
+                            <span class="color">{{ holdDetailsForm.get('addictionalcomments')?.value?.length || 0
+                                }}/250</span>
+                        </div>
+                        <div *ngIf="holdDetailsForm.get('addictionalcomments')?.touched && holdDetailsForm.get('addictionalcomments')?.invalid"
+                            class="error-msg">
+                            <div *ngIf="holdDetailsForm.get('addictionalcomments')?.errors?.['required']">Additional Comments
+                                are required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">Cancel</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="holdDetailsForm.invalid">Submit</button>
+        </div>
+        </form>
+        
+    </div>
+</ng-template>
+<!-- View comments Modal -->
+<ng-template #historyPopup let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'History Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div class="custom-table-content custom-height">
+        <table class="w-100">
+          <thead>
+            <tr>
+             <th class="text-nowrap">{{'Allocated By' | translate}}</th>
+              <th class="text-nowrap">{{'Allocated To' | translate}}</th>
+              <th class="text-nowrap">{{'Allocated On' | translate}}</th>
+              <th class="text-nowrap">{{'Released On' | translate}}</th>
+              <th class="text-nowrap">{{'Release Reason' |translate}}</th>
+              <th class="text-nowrap">{{'Additional Comments' |translate}}</th>
+              <th class="text-nowrap">{{'Status' | translate}}</th>
+            </tr>
+          </thead>
+          <tbody>
+              @if(allocated_history.length>0){
+            <tr *ngFor="let item of allocated_history">
+              <td>{{item?.assignedBy?.name?item?.assignedBy?.name:'-'}}</td>
+              <td>{{item?.employee?.name?item.employee.name:'-'}}</td>
+              <td>{{item?.allocatedDate?(item?.allocatedDate| dateformat) :'-'}}</td>
+              <td>{{item?.releasedDate?(item?.releasedDate|dateformat):'-'}}</td>
+             <td>
+                @if (item.reason) {
+                <div>
+                    <a type="button" [ngbPopover]="reason">
+                        <app-info-icon />
+                    </a>
+                    <ng-template #reason>
+                        <p class="mb-0">{{item.reason}}</p>
+                    </ng-template>
+                </div>
+                }
+                @else{-}
+            </td>
+            <td>
+                @if (item.additionalComments) {
+                <div>
+                    <a type="button" [ngbPopover]="additionalcomments">
+                        <app-info-icon />
+                    </a>
+                    <ng-template #additionalcomments>
+                        <p class="mb-0">{{item.additionalComments}}</p>
+                    </ng-template>
+                </div>
+                }
+                @else{-}
+            </td>
+              <td>{{item?.allocationStatus?item?.allocationStatus:'-'}}</td>
+            </tr>
+            }
+            
+            @else {
+            <tr>
+              <app-no-data-found />
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-template>

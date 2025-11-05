@@ -11,13 +11,13 @@
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
                     <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
-                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)">
+                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)" (mousedown)="$event.preventDefault()">
                     </p-datepicker>
                 </div>
-                <button class="custom-btn btn-primary week-change-btn-prev" (click)="previousWeek()">
+                <button class="custom-btn btn-primary week-change-btn-prev" (mousedown)="$event.preventDefault()" (click)="previousWeek()">
                     <i class="bi bi-chevron-left"></i>
                 </button>
-                <button class="custom-btn btn-primary week-change-btn-next" (click)="nextWeek()">
+                <button class="custom-btn btn-primary week-change-btn-next" (mousedown)="$event.preventDefault()" (click)="nextWeek()">
                     <i class="bi bi-chevron-right"></i>
                 </button>
             </div>
@@ -97,7 +97,7 @@
                         <td>
                             <div class="dropdown" >
                                 <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"   [class.disabled]="employeeSelected"  (click)="onDropdownClick($event)">
+                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"   [class.disabled]="employeeSelected || hasAnyDuration(project)"  (click)="onDropdownClick($event)">
                                     <u>{{ project.value.selectedProject?.clientName &&
                                         project.value.selectedProject?.projectName
                                         ? project.value.selectedProject.clientName + ' - ' +
@@ -387,7 +387,7 @@
             </div>
 
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a  (click)="modal.dismiss()" (mousedown)="$event.preventDefault()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -453,7 +453,7 @@
 
                     <button type="button" class="custom-btn btn-secondary w-100"
                         (click)="openModalforconformation(confirmationpopup)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary w-100" [disabled]="spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary w-100" [disabled]="!isDayFormDirtyOrFilled(dayForm) || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}..</span>

@@ -116,12 +116,12 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  calculateTotalExpensesAmount(): void {
-    this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
-      return total + parseFloat(item.get('expense_Amount')?.value || null);
-    }, 0);
-  }
-
+calculateTotalExpensesAmount(): void {
+  this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
+    const value = Number(item.get('expense_Amount')?.value) || 0;
+    return total + value;
+  }, 0);
+}
   opendeletModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

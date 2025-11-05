@@ -45,7 +45,7 @@ export class ClientResourcesComponent {
   projectsData: Project[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   inactiveClientStatus: any;
-
+  projectRoleDropdown: any[] = [];
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute, 
     private conformationPopup: OpenModalService) { }
@@ -83,7 +83,7 @@ export class ClientResourcesComponent {
     this.updateResourceForm = this.fb.group({
       resourceName: [null, Validators.required],
       resourceEmail: [null, Validators.required],
-      resourcePhone: [null, Validators.required],
+      resourcePhone: [null],
       designation: [null, Validators.required],
       projectName: [null, Validators.required],
       projectType: [null, Validators.required],
@@ -130,6 +130,38 @@ export class ClientResourcesComponent {
     });
   }
 
+  getJobrole(departmentIds?: number[],roleId?:number) {
+    if(!departmentIds) return ;
+    const departmentParam = departmentIds?.join(',') || '';
+    this.subscription = this.http
+    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
+    .subscribe({
+      next: (response: any) => {
+        // this.loader = false;
+        if (response && response.success && Array.isArray(response.data)) {
+          this.projectRoleDropdown = response.data.map((item: any) => ({
+            label: `${item.roleName}`,
+            value: {
+              roleId: item.id,
+              entityReferenceId: item.entity?.entityReferenceId || 0
+            }
+          }));
+          const selectedRole = this.projectRoleDropdown.find(
+            (r: any) => r.value.roleId === roleId
+          );
+          this.updateResourceForm.patchValue({
+          resourceRole: selectedRole ? selectedRole.value : null
+          });
+        } else {
+          this.projectRoleDropdown = [];
+        }
+      },
+      error: () => {
+        // this.loader = false;
+      },
+    });
+}
+
   selectproject(projectId: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -143,15 +175,31 @@ export class ClientResourcesComponent {
       },
     });
   }
+selectedRoleId: number = 0;
+selectedEntityRefId: number = 0;
 
+  onRoleChange(selectedValue: any) {
+  if (selectedValue) {
+    this.selectedRoleId = selectedValue.roleId;
+    this.selectedEntityRefId = selectedValue.entityReferenceId;
+  }
+}
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
+    console.log(data);
+    const departmentIds = data?.project?.departments?.map((d: any) => d.departmentId) || [];
+    this.getJobrole(departmentIds, data?.projectRoleId);
     this.ResourceId = data?.resourceId;
+    this.projectId = data?.project?.projectId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee?.workPhoneNumber ? `${data?.employee?.workPhoneCountryCode ?? ''} ${data?.employee?.workPhoneNumber ?? ''}` : '',
+      resourcePhone:
+  data?.employee
+    ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+    : '-',
+
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours,
       projectName: data.project.projectId,
@@ -161,7 +209,7 @@ export class ClientResourcesComponent {
       // allocatedFrequencyType: data?.allocatedFrequencyType,
       billable: data.billable,
       allowweekendWork: data.weekendWorkAllowed,
-      resourceRole: data.role
+      // resourceRole: selectedRole ? selectedRole.value : null
     });
   }
 
@@ -199,7 +247,10 @@ export class ClientResourcesComponent {
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}` : ''
+      resourcePhone: this.selectedEmployee
+  ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
+  : '-'
+
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
   }
@@ -233,6 +284,8 @@ export class ClientResourcesComponent {
       return;
     }
     const formValue = this.updateResourceForm.value;
+    const projectRoleId = formValue.resourceRole.roleId;
+    const  projectDepartmentId =formValue.resourceRole.entityReferenceId;
     const payload = {
       entityType: "project",
       entityRefId: formValue.projectName ?? this.projectId,
@@ -246,7 +299,8 @@ export class ClientResourcesComponent {
       weekendWorkAllowed: formValue.allowweekendWork,
       status: "Active",
       allocatedBy: this.empinfo.employeeId,
-      role: formValue.resourceRole
+      projectRoleId: projectRoleId,
+      projectDepartmentId: projectDepartmentId,
     };
     this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({
       next: (res) => {
@@ -265,7 +319,7 @@ export class ClientResourcesComponent {
     const formValue = this.updateResourceForm.value;
     const payload = {
       entityType: "project",
-      entityRefId: this.clientID,
+      entityRefId: this.projectId,
       employeeId: formValue.resourceName,
       startDate: formValue.startDate,
       endDate: formValue.endDate,

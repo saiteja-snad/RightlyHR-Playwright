@@ -169,7 +169,7 @@
             <i class="bi bi-search"></i>
         </span>
         <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
-            [(ngModel)]="SearchTerm" (input)="getViewSkillDetails()" />
+            [(ngModel)]="searchQuery" (input)="searchSubject.next(selectedSkillName)" />
     </div>
             
         <div *ngFor="let emp of employeeList" class="profile-content mb-2">

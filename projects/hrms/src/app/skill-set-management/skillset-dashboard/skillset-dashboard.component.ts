@@ -8,7 +8,7 @@ import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
-import { filter, Subscription } from 'rxjs';
+import { debounceTime, filter, Subject, Subscription } from 'rxjs';
 import { ChartData, DepartmentCount, SkillProficiencyCount, SummaryCard, SkillSummary, EmployeeSkill, TopSkill } from '../../Interfaces/skill-dashboard.model';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { environment } from '../../../environments/environment.dev';
@@ -55,7 +55,7 @@ export class SkillsetDashboardComponent {
   employeeList: EmployeeSkill[] = [];
   totalSkillCount: number = 0;
   totalDepartmentSkillCount: number = 0;
-  searchQuery: string = '';
+  searchQuery : string = '';
   selectedStatus: string[] = ['All Proficiencies'];
   selectedSkills: string[] = ['All Skills'];
   MySkills: any[] = [];
@@ -64,7 +64,7 @@ export class SkillsetDashboardComponent {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   componentname: string = '';
-  SearchTerm: string = '';
+  searchSubject = new Subject<string>();
   EmpProficiency = [
     { label: 'All Proficiencies', value: 'All Proficiencies' },
     { label: 'Beginner', value: 'Beginner' },
@@ -90,6 +90,11 @@ export class SkillsetDashboardComponent {
     this.initiateUpdateModuleInfo();
     this.getMultiskills();
     this.selectedStatus = ['All Proficiencies'];
+    this.searchSubject.pipe(
+    debounceTime(250) // waits 400ms after typing stops
+     ).subscribe((skillName) => {
+    this.getViewSkillDetails(skillName);
+    });
   }
 
 
@@ -425,10 +430,13 @@ export class SkillsetDashboardComponent {
   }
 
   getViewSkillDetails(skillName?: string): void {
-    this.isloading = true;
+    // this.isloading = true;
     const params: any = {};
     if (skillName && skillName.trim() !== '') {
       params.skillName = skillName;
+    }
+    if (this.searchQuery && this.searchQuery.trim() !== '') {
+      params.search = this.searchQuery;
     }
     if (this.selectedStatus?.length) {
       if (this.selectedStatus.includes('All Proficiencies')) {
@@ -447,7 +455,8 @@ export class SkillsetDashboardComponent {
           }));
           this.noDataFound = this.employeeList.length === 0;
           console.log(this.employeeList);
-        } else {
+        } 
+        else {
           this.employeeList = [];
           this.noDataFound = true;
         }

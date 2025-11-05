@@ -30,6 +30,20 @@
     font-weight: 600;
     font-size: var(--fontsize14);
     color: var(--primary-color) !important;
+
+    .popover-body {
+        padding: 0.325rem !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-size: var(--fontsize10);
+    }
 }
 
 .circular-chart {

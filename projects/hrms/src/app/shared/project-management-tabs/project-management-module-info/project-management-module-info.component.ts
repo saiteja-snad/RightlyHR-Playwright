@@ -25,7 +25,7 @@ export class ProjectManagementModuleInfoComponent {
   routeToInfoMap!: { [key: string]: string };
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, public rbac: RbacService) { }
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
@@ -79,15 +79,12 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/details/timesheet/detailed': MODULE_INFOS.PROJECT_Detalied_view,
       '/project-management/projects/details/inactivedocuments': MODULE_INFOS.Inactive_Documents_Project,
       '/project-management/clients/details/inactivedocuments': MODULE_INFOS.Inactive_CLIENT_Documents_INFO,
-      '/project-management/timesheet/mytimesheet':MODULE_INFOS.My_Timesheet_MODULE_INFO,
-      '/project-management/timesheet/teamtimesheet':MODULE_INFOS. Team_Timesheet_MODULE_INFO,
-      '/project-management/timesheet/mysummary':MODULE_INFOS.My_Timesheet_Summary_view,
-      '/project-management/timesheet/summary':MODULE_INFOS.Team_Timesheet_Summary_view,
-      '/project-management/clients/details/timesheet/summary':MODULE_INFOS.CLIENT_Summary_view,
-      '/project-management/clients/details/timesheet/detailed':MODULE_INFOS.CLIENT_Detalied_view
-      
-
-
+      '/project-management/timesheet/mytimesheet': MODULE_INFOS.My_Timesheet_MODULE_INFO,
+      '/project-management/timesheet/teamtimesheet': MODULE_INFOS.Team_Timesheet_MODULE_INFO,
+      '/project-management/timesheet/mysummary': MODULE_INFOS.My_Timesheet_Summary_view,
+      '/project-management/timesheet/summary': MODULE_INFOS.Team_Timesheet_Summary_view,
+      '/project-management/clients/details/timesheet/summary': MODULE_INFOS.CLIENT_Summary_view,
+      '/project-management/clients/details/timesheet/detailed': MODULE_INFOS.CLIENT_Detalied_view
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
@@ -177,8 +174,6 @@ export class ProjectManagementModuleInfoComponent {
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
-
-
 
   isShowtimesheetforteamRoute(): boolean {
     const showPaths = [

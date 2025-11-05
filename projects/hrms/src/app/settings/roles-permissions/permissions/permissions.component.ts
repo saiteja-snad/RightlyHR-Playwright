@@ -410,6 +410,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsEmployeeJobFields = [
     'Job Role',
+    'IT Support Category',
+    'IT Support Sub-Category',
     'Job Type',
     'Probation Status',
     'Background check Status',

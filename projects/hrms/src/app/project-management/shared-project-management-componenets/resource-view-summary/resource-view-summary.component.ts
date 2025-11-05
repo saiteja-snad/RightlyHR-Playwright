@@ -19,6 +19,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, TranslateModule, CommonModule, NgbPopoverModule, 
@@ -59,7 +60,7 @@ export class ResourceViewSummaryComponent {
   estimatedVsActualData: any;
   estimatedVsActualGraphData: any;
   estimatedVsActualGraphOptions: any;
-  employename: any
+  employename: any;
   // progress bar variables
   progressBarData: any;
   approved = 0;
@@ -74,6 +75,9 @@ export class ResourceViewSummaryComponent {
   displayApproved!: string;
   displaySubmitted!: string;
   displayRejected!: string;
+  // billable vs non billable
+  billableVsNonBillableGraphData: any;
+  billableVsNonBillableGraphOptions: any;
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
@@ -93,8 +97,6 @@ export class ResourceViewSummaryComponent {
       this.getProjectSummary();
     });
     this.setDefaultmounth();
-    this.projectTypeChart();
-    this.estimatedActualChart();
   }
 
   setDefaultmounth() {
@@ -135,11 +137,11 @@ export class ResourceViewSummaryComponent {
         // this.totalhrs = data?.totalLoggedHHMM;
         // this.projectTypeData = data?.graphSummary?.projectWiseSummary;
         // this.estimatedVsActualData = data?.graphSummary?.allocatedVsActualSummary;
-        const tsSummary = res?.data?.graphSummary?.timesheetSummary;
+        const tsSummary = res?.data?.statusSummary;
 
-        this.approved = this.convertTimeToHours(tsSummary?.approved);
-        this.submitted = this.convertTimeToHours(tsSummary?.submitted);
-        this.rejected = this.convertTimeToHours(tsSummary?.rejected);
+        this.approved = this.convertTimeToHours(tsSummary?.approvedHours);
+        this.submitted = this.convertTimeToHours(tsSummary?.waitingForApprovalHours);
+        this.rejected = this.convertTimeToHours(tsSummary?.rejectedHours);
 
         const total = this.approved + this.submitted + this.rejected || 1;
         this.approvedPercent = (this.approved / total) * 100;
@@ -150,8 +152,8 @@ export class ResourceViewSummaryComponent {
         this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
         this.displayRejected = this.formatHoursToHHMM(this.rejected);
 
-        this.projectTypeChart();
         this.estimatedActualChart();
+        this.billableVSNonBillable();
       },
       error: err => {
         this.loading = false;
@@ -171,148 +173,103 @@ export class ResourceViewSummaryComponent {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-  // Project Type (Pie)
-  projectTypeChart() {
-    if (!this.projectTypeData || this.projectTypeData.length === 0) return;
-
-    // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.projectName);
-
-    // Convert "HH:mm" string → numeric hours for plotting
-    const data = this.projectTypeData.map((item: any) => {
-      const [hours, minutes] = item.hours.split(':').map(Number);
-      return hours + minutes / 60;
-    });
-
-    // Keep original HH:mm values for display
-    const originalTimes = this.projectTypeData.map((item: any) => item.hours);
-
-    // Chart colors
-    const backgroundColors = [
-      '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
-      '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
-    ].slice(0, labels.length);
-
-    // Chart data
-    this.projectTypeGraphData = {
-      labels,
-      datasets: [
-        {
-          label: 'Project Hours (in hrs)',
-          data,
-          backgroundColor: backgroundColors,
-        },
-      ],
-    };
-
-    // Chart options
-    this.projectTypeGraphOptions = {
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { usePointStyle: true },
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const index = context.dataIndex;
-              const timeString = originalTimes[index]; // e.g., "02:35"
-              return `${context.label}: ${timeString} hrs`;
-            },
-          },
-        },
-      },
-    };
-  }
-
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
-    // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
-    // Convert estimated hours to numbers (already numeric strings)
-    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
-    // Convert "HH:mm" to numeric hours for actualHours
-    const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHours.split(':').map(Number);
-      return h + (m / 60);
-    });
-    // Keep original HH:mm format for display
-    const actualDisplay = this.estimatedVsActualData.map((item: any) => item.actualHours);
-    // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
-    // Chart datasets
-    this.estimatedVsActualGraphData = {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Estimated Hours',
-          backgroundColor: '#1A237E',
-          data: estimatedData,
-          stack: 'Estimated'
-        },
-        {
-          label: 'Actual Hours',
-          backgroundColor: '#90CAF9',
-          data: actualData,
-          stack: 'ActualOverdue'
-        },
-        {
-          label: 'Over Due',
-          backgroundColor: '#FF5252',
-          data: overdueData,
-          stack: 'ActualOverdue'
-        }
-      ]
-    };
+    const dateRange = this.resourceDataids?.dateRange || [];
+    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+    const { projectId, employeeId } = this.resourceDataids;
 
-    // Chart options
-    this.estimatedVsActualGraphOptions = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { usePointStyle: true }
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const datasetLabel = context.dataset.label || '';
-              const index = context.dataIndex;
-              if (datasetLabel === 'Actual Hours') {
-                // show actualHours as HH:mm hrs
-                const timeStr = actualDisplay[index];
-                return `${datasetLabel}: ${timeStr} hrs`;
-              } else if (datasetLabel === 'Estimated Hours') {
-                return `${datasetLabel}: ${context.raw.toFixed(2)} hrs`;
-              } else {
-                return `${datasetLabel}: ${context.raw} hrs`;
-              }
+    const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&groupBy=employee`;
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const chart = res?.data?.chart;
+        if (!chart) {
+          this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+          return;
+        }
+
+        // Only show Allocated and Actual Hours
+        const labels = ['Allocated Hours', 'Actual Hours'];
+        const hours = [chart.allocated, chart.actual];
+
+        // Assign Pie Chart Data
+        this.estimatedVsActualGraphData = {
+          labels,
+          datasets: [
+            {
+              data: hours,
+              backgroundColor: ['#EE7956', '#5A00D8'], // Allocated / Actual
+              hoverBackgroundColor: ['#EE7956', '#5A00D8']
             }
+          ]
+        };
+
+        // Chart Options
+        this.estimatedVsActualGraphOptions = {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
           }
-        }
+        };
       },
-      scales: {
-        x: {
-          stacked: false,
-          grid: { display: false },
-          title: { display: false }
-        },
-        y: {
-          stacked: true,
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Hours'
-          }
-        }
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching estimated vs actual chart data:', err);
+        this.estimatedVsActualGraphData = { labels: [], datasets: [] };
       }
-    };
+    });
+  }
+
+  billableVSNonBillable() {
+    const dateRange = this.resourceDataids?.dateRange || [];
+    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+    const { clientId, projectId, employeeId } = this.resourceDataids;
+
+    const url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&groupBy=emp`;
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const chartData = res?.data?.chartData || [];
+
+        // Extract labels and data
+        const labels = chartData.map((item: any) => item.label);
+        const hours = chartData.map((item: any) => item.hours);
+
+        // Assign Pie Chart Data
+        this.billableVsNonBillableGraphData = {
+          labels: labels,
+          datasets: [
+            {
+              data: hours,
+              backgroundColor: ['#0F358A', '#A2B5E2'], // Billable / Non-Billable colors
+              hoverBackgroundColor: ['#0F358A', '#A2B5E2']
+            }
+          ]
+        };
+
+        // Chart options
+        this.billableVsNonBillableGraphOptions = {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+          }
+        };
+      },
+      error: err => {
+        this.loading = false;
+        console.error('Error fetching billable vs non-billable data:', err);
+        this.billableVsNonBillableGraphData = { labels: [], datasets: [] };
+      }
+    });
   }
 
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
-
   }
 }

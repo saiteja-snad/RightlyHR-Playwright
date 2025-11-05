@@ -90,7 +90,7 @@ onRoleChange(selectedValue: any) {
     this.updateResourceForm = this.fb.group({
       resourceName: [null, Validators.required],
       resourceEmail: [null, [Validators.required, Validators.email]],
-      resourcePhone: [null, Validators.required],
+      resourcePhone: [null],
       designation: [null, Validators.required],
       projectName: [null, Validators.required],
       projectType: [null, Validators.required],
@@ -215,15 +215,17 @@ getJobrole() {
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
-  (r: any) => r.label === data.projectRoleName
-);
-
+       (r: any) => r.value.roleId === data.projectRoleId
+    );
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee?.workPhoneNumber ? `${data?.employee?.workPhoneCountryCode ?? ''} ${data?.employee?.workPhoneNumber ?? ''}` : '',
+resourcePhone:
+  data?.employee
+    ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+    : '-',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
       projectName: this.projectsData[0]?.projectName,
@@ -273,8 +275,7 @@ getJobrole() {
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
-      ${this.selectedEmployee.contactnumber ?? ''}` : ''
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-'
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
   }

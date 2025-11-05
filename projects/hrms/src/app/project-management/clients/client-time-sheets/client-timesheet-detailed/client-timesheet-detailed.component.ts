@@ -8,9 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule],
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, DateformatPipe],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',
   encapsulation: ViewEncapsulation.None

@@ -110,18 +110,6 @@ export class ResourceViewSummaryComponent {
   //   });
   // }
 
-  convertTimeToHours(time: string): number {
-    if (!time) return 0;
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours + minutes / 60; // e.g., "02:30" → 2.5
-  }
-
-  formatHoursToHHMM(hours: number): string {
-    const h = Math.floor(hours);
-    const m = Math.round((hours - h) * 60);
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-  }
-
   getProjectSummary() {
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
@@ -138,14 +126,25 @@ export class ResourceViewSummaryComponent {
         }));
         // this.totalhrs = data?.totalLoggedHHMM;
         const tsSummary = res?.data?.statusSummary;
-
+        // Convert to decimal hours
         this.approved = this.convertTimeToHours(tsSummary?.approvedHours);
         this.submitted = this.convertTimeToHours(tsSummary?.waitingForApprovalHours);
         this.rejected = this.convertTimeToHours(tsSummary?.rejectedHours);
-
+        // Total hours (prevent divide-by-zero)
         const total = this.approved + this.submitted + this.rejected || 1;
+        // Calculate percentages for the gradient
+        this.approvedPercent = (this.approved / total) * 100;
+        this.submittedPercent = (this.submitted / total) * 100;
+        this.rejectedPercent = (this.rejected / total) * 100;
+        // Convert back for display labels (HH:mm)
+        this.displayApproved = this.formatHoursToHHMM(this.approved);
+        this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
         this.displayRejected = this.formatHoursToHHMM(this.rejected);
-
+        // Colors (use whatever palette you prefer)
+        this.approvedColor = '#00A912';   // green
+        this.submittedColor = '#FFC107';  // blue
+        this.rejectedColor = '#EA362C';   // red
+        // Graph Functions
         this.estimatedActualChart();
         this.billableVSNonBillable();
       },
@@ -263,6 +262,18 @@ export class ResourceViewSummaryComponent {
         this.billableVsNonBillableGraphData = { labels: [], datasets: [] };
       }
     });
+  }
+
+  convertTimeToHours(time: string): number {
+    if (!time) return 0;
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours + (minutes / 60);
+  }
+
+  formatHoursToHHMM(hours: number): string {
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    return `${h}:${m.toString().padStart(2, '0')}`;
   }
 
   ngOnDestroy() {

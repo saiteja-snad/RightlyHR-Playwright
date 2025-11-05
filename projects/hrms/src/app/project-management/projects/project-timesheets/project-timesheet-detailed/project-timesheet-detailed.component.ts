@@ -14,8 +14,8 @@ import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 
 export class ProjectTimesheetDetailedComponent {
   projectEmployeeDetails: any;
-  projectId: any
-  clientId: any
+  projectId: any;
+  clientId: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
@@ -67,14 +67,12 @@ export class ProjectTimesheetDetailedComponent {
       projectId: this.projectId
     };
     localStorage.setItem('resourceData', JSON.stringify(resourceData));
-
     this.router.navigate(['/project-management/projects/details/timesheet/resource-summary'], {
       queryParams: { id: this.projectId }
     }).then(() => {
       this.http.notifyresource(); 
     });
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

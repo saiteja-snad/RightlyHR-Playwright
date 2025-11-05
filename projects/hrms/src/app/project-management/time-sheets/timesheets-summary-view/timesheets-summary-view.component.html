@@ -133,9 +133,16 @@
 
             <div class="timesheet-graph-content p-3">
                 <div class="time-sheet-graph-card">
-                   <div class="d-flex justify-content-between">
-                     <div class="summary-header mb-2">Timesheet Summary</div>
-                    <div></div></div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Timesheet Summary</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
+                                class="module-icon">
+                            <ng-template #timesheetSummaryContent>
+                                <div class="module-info-text">{{TimesheetSummary}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
                     <div class="stacked-progress-container py-4">
                         <!-- overlay color bar -->
                         <div class="stacked-progress-overlay mb-3"
@@ -160,7 +167,16 @@
                 <div class="dashed-line my-3"></div>
 
                 <div class="time-sheet-graph-card">
-                    <div class="summary-header mb-2">Project Wise Hours Summary</div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Project Wise Hours Summary</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata"
+                                class="module-icon">
+                            <ng-template #projectwisehoursSummarydata>
+                                <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
                     <div class="circular-chart">
                         <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
                     </div>
@@ -169,7 +185,16 @@
                 <div class="dashed-line my-3"></div>
 
                 <div class="time-sheet-graph-card">
-                    <div class="summary-header mb-4">Allocated vs Actual Hours</div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Allocated vs Actual Hours</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
+                                class="module-icon">
+                            <ng-template #resourceSummaryContent>
+                                <div class="module-info-text">{{AllocatedActualhours}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
                     <div class="bar-chart">
                         <p-chart type="bar" [data]="estimatedVsActualGraphData"
                             [options]="estimatedVsActualGraphOptions" />

@@ -84,7 +84,9 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/timesheet/mysummary': MODULE_INFOS.My_Timesheet_Summary_view,
       '/project-management/timesheet/summary': MODULE_INFOS.Team_Timesheet_Summary_view,
       '/project-management/clients/details/timesheet/summary': MODULE_INFOS.CLIENT_Summary_view,
-      '/project-management/clients/details/timesheet/detailed': MODULE_INFOS.CLIENT_Detalied_view
+      '/project-management/clients/details/timesheet/detailed': MODULE_INFOS.CLIENT_Detalied_view,
+      '/project-management/projects/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
+      '/project-management/clients/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }

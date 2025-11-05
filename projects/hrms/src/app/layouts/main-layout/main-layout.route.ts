@@ -57,10 +57,6 @@ export default [
     { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
     { path: 'project-management', component: ProjectManagementLayoutComponent, loadChildren: () => import('../../project-management/project-management.route') },
     { path: 'on-behalf-of', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/on-behalf-of.route') },
-<<<<<<< HEAD
-    { path: 'skill-management', component: SkillsetManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../skill-set-management/skillset-management.route') }
-=======
+    { path: 'skill-management', component: SkillsetManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../skill-set-management/skillset-management.route') },
     { path: 'card-management', component: CardsManagementLayoutComponent, loadChildren: () => import('../../cards-management/cards-management.route') },
-    { path: 'skill-directory', component: SkillDirectoryManagementComponent, canActivate: [authGuard] }
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
 ] as Route[];

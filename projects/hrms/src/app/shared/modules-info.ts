@@ -238,18 +238,11 @@ export const MODULE_INFOS = {
     Project_Timesheet_INFO: 'Monitor hours logged by your project team. Review submitted entries, approve timesheets, and maintain accurate records to keep projects on track and ensure accountability.',
     Inactive_Documents_Project: "Store and access inactive project-related documents in a single location. Upload key deliverables, reference materials, and signed files, keeping your team organized and ensuring everyone has the resources they need.",
     Inactive_CLIENT_Documents_INFO: "Store and access Inactive client-related documents in a single, secure location. Upload MSAs, NDAs, and other critical files, track signed copies, and ensure your team can quickly retrieve documents whenever needed for smooth operations.",
-<<<<<<< HEAD
-
-    //Skillset Info
-        SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Dashboard provides a comprehensive overview of employee skills and proficiency levels across the organization. It displays key insights such as total employee count, committed and available employees, skill proficiency distribution, top skills, and department-wise skill breakdown. The dashboard helps management identify skill strengths, resource availability, and training needs efficiently.",
-        SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
-
-}
-=======
      JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO:"The Cards section in My Info allows employees to view all cards currently allocated to them. Employees can check key details such as card number, issued date, and expiry month. This ensures transparency and helps employees stay informed about their assigned company cards.",
     JOB_MODULE_PERSONAL_CARD_MODULE_INFO:"The Cards section in Employee Info allows employees to view all cards currently allocated to them. Employees can check key details such as card number, issued date, and expiry month. This ensures transparency and helps employees stay informed about their assigned company cards.",
     //Cards Management Module Info
     CARDS_MANAGEMENT_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
     CARDS_HISTORY_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
+    SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Dashboard provides a comprehensive overview of employee skills and proficiency levels across the organization. It displays key insights such as total employee count, committed and available employees, skill proficiency distribution, top skills, and department-wise skill breakdown. The dashboard helps management identify skill strengths, resource availability, and training needs efficiently.",
+    SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
 }
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77

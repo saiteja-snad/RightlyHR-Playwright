@@ -159,8 +159,6 @@ export const REGULARIZATION_SUB_TABS = [
   { route: '/time-off/regularization/rejected', permission: 'Rejected (Regularization).view', },
 ]
 
-<<<<<<< HEAD
-=======
 export const EXTRA_HOURS_SUB_TABS = [
   { route: '/time-off/extra-hours/waiting-for-approval', permission: 'Waiting For Approval (Extra Hours).view' },
   // { route: '/time-off/extra-hours/approved', permission: 'Approved (Extra Hours).view' },
@@ -168,7 +166,6 @@ export const EXTRA_HOURS_SUB_TABS = [
   { route: '/time-off/extra-hours/rejected', permission: 'Rejected (Extra Hours).view', },
 ]
 
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
 export const STANDARD_REPORTS_TABS = [
   { route: '/reports/standard-reports/employee-data', permission: 'Employee Master Data.view' },
   { route: '/reports/standard-reports/job-data', permission: 'Job Location Wise Data.view' },
@@ -626,16 +623,15 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/rejected', permission: 'Rejected (On Behalf Of RemoteLogin).view', },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
 ]
-<<<<<<< HEAD
 
 export const SKILL_MANAGEMENT_TABS = [
   { route: '/skill-management/dashboard', permission: 'Skills Dashboard.view' },
   { route: '/skill-management/directory', permission: 'Skills Directory.view' },
-=======
+]
+
 export const CARDS_SUB_TABS = [
   { route: '/card-management/details', permission: 'Cards Available.view' },
   { route: '/card-management/expiry', permission: 'Cards Expired.view' },
   { route: '/card-management/allocated', permission: 'Cards Allocated.view' },
   { route: '/card-management/hold', permission: 'Cards Hold.view' },
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
 ]

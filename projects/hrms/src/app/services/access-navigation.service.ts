@@ -66,12 +66,9 @@ import {
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
   ON_BEHALF_OF_REMOTELOGIN_TABS,
-<<<<<<< HEAD
-  SKILL_MANAGEMENT_TABS
-=======
+  SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -430,8 +427,6 @@ export class AccessNavigationService {
           }
         }
 
-<<<<<<< HEAD
-=======
         if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
           for (const item of EXTRA_HOURS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -441,7 +436,6 @@ export class AccessNavigationService {
         }
 
        
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -750,9 +744,6 @@ export class AccessNavigationService {
           }
         }
         break;
-<<<<<<< HEAD
-
-=======
         case '/card-management':
         if (this.rbac.allowedToAccess('Cards Management.view')) {
           for (const item of CARDS_SUB_TABS) {
@@ -762,7 +753,6 @@ export class AccessNavigationService {
           }
         }
         break;
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
       case '/project-management/clients/active':
         if (this.rbac.allowedToAccess('Clients.view')) {
           for (const item of CLIENTS_ROUTES) {
@@ -1409,8 +1399,6 @@ export class AccessNavigationService {
           }
         }
         break;
-<<<<<<< HEAD
-=======
 
       case '/time-off/extra-hours':
         if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
@@ -1421,7 +1409,6 @@ export class AccessNavigationService {
           }
         }
       break;
->>>>>>> e6bf808e63c00c801d09d3e43765d5bc2e2b9c77
     
       case '/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {

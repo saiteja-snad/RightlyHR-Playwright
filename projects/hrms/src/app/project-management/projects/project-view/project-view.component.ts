@@ -18,10 +18,11 @@ import { IResource } from '../../../Interfaces/project-management/resources.mode
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import dayjs, { Dayjs } from 'dayjs';
+import { PhasesCreationComponent } from "../../shared-project-management-componenets/phases-creation/phases-creation.component";
 @Component({
   selector: 'app-project-view',
   imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule, TranslateModule,
-    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select],
+    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select, PhasesCreationComponent],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss'
 })

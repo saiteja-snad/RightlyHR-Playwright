@@ -1,0 +1,32 @@
+<div class="custom-main-component-container">
+    <ng-container *ngIf="loading; else maincontent">
+        <ng-template #loadingSpinner>
+            <div>
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <th>Phase / Milestone Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Kickoff Date</th>
+                <th>Effective Date</th>
+                <th>Allocated Hours</th>
+                <th>Timesheet Approval Authority</th>
+                <th>Phase Description</th>
+                @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                && inactiveStatus !== 'inactive'){
+                <th class="text-center">{{"Action" | translate}}</th>
+                }
+            </table>
+            <tbody>
+
+            </tbody>
+        </div>
+    </ng-template>
+
+</div>

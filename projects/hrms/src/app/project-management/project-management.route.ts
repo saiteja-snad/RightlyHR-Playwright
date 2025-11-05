@@ -24,6 +24,7 @@ import { ProjectResourcesComponent } from './projects/project-resources/project-
 import { ProjectDetailesComponent } from './projects/project-detailes/project-detailes.component';
 import { InactiveClientDocumentsComponent } from './clients/inactive-client-documents/inactive-client-documents.component';
 import { InactiveProjectDocumentsComponent } from './projects/inactive-project-documents/inactive-project-documents.component';
+import { ProjectPhasesComponent } from './projects/project-phases/project-phases.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -76,6 +77,7 @@ export default [
                     { path: 'timesheet', component: ProjectTimesheetsComponent },
                     { path: 'documents', component: ProjectDocumentsComponent },
                     { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
+                    { path: 'phases', component: ProjectPhasesComponent}
                 ],
             }
         ],

@@ -6,6 +6,19 @@
 
     @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !==
     'inactive'){
+    <div *ngIf="isActive('/project-management/projects/details/phases')">
+      <button
+        type="button"
+        class="custom-btn btn-primary"
+        (click)="openModal(addPhaseModal)"
+      >
+        {{ "Add Phase/Milestone" }}
+      </button>
+    </div>
+    }
+
+    @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !==
+    'inactive'){
     <div *ngIf="isActive('/project-management/projects/details/contact-info')">
       <button
         type="button"
@@ -128,4 +141,8 @@
 
 <ng-template #addContactmodal let-modal>
   <app-project-contact-info-creation />
+</ng-template>
+
+<ng-template #addPhaseModal let-modal>
+  <app-phases-creation/>
 </ng-template>

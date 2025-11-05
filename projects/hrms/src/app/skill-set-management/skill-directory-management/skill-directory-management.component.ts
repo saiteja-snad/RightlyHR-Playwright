@@ -1,5 +1,5 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { Chip } from "primeng/chip";
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -21,6 +21,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import moment from 'moment';
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
@@ -75,8 +76,9 @@ export class SkillDirectoryManagementComponent {
   componentname: string = '';
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
+  activeTabIndex = 0;
 
-  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer, private offcanvasService: NgbOffcanvas,
     private readonly modalService: NgbModal, private openmodalservice: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
@@ -121,12 +123,6 @@ export class SkillDirectoryManagementComponent {
       this.componentname = 'Skill Set Directory';
     }
   }
-
-  onCheckemployeeStatus(statusValue: any) {
-    this.selectedStatus = !statusValue || statusValue === 'All Status' ? 'All Status' : statusValue;
-    this.getEmployeeSkills();
-  }
-
   onSearch() {
     this.page = 1;
     this.getEmployeeSkills();
@@ -177,31 +173,21 @@ export class SkillDirectoryManagementComponent {
     return emp.skills.filter((s: any) => s.isActive);
   }
 
-  get employeeStatusDisplay(): string {
-    const emp = this.selectedEmployee;
-    if (!emp) return '-';
-    if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
-      const lastProject = emp.projects
-        .filter((p: any) => p.endDate)
-        .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
-      if (lastProject?.endDate) {
-        const formattedDate = new Date(lastProject.endDate).toLocaleDateString('en-GB', {
-          day: '2-digit', month: 'short', year: 'numeric'
-        });
-        return `Committed until ${formattedDate}`;
-      }
+ get employeeStatusDisplay(): string {
+  const emp = this.selectedEmployee;
+  if (!emp) return '-';
+  if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
+    const lastProject = emp.projects
+      .filter((p: any) => p.endDate)
+      .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
+    if (lastProject?.endDate) {
+      const formattedDate = moment(lastProject.endDate).format('MMM DD, YYYY');
+      return `Committed until ${formattedDate}`;
     }
-    return emp.employeeProjectStatus || '-';
   }
 
-  getStatusClass(status: string): string {
-    if (!status) return '';
-    const normalized = status.toLowerCase();
-    if (normalized === 'available') return 'status-available';
-    if (normalized === 'committed') return 'status-committed';
-    return '';
-  }
-
+  return emp.employeeProjectStatus || '-';
+}
   getProficiencyClass(level: string): string {
     switch (level?.toLowerCase()) {
       case 'beginner': return 'chip-beginner';
@@ -211,12 +197,12 @@ export class SkillDirectoryManagementComponent {
     }
   }
 
-  openModal(content: any, emp: any) {
+
+  openOffcanvas(content: TemplateRef<any>, emp: any) {
     this.selectedEmployee = { ...emp };
     const employeeId = emp?.employee?.employeeId;
-    if (employeeId) {
-      this.getEmployeeProfile(employeeId);
-    }
+    if (employeeId) this.getEmployeeProfile(employeeId);
+
     const allSkills = emp.skills || [];
     this.selectedEmployee.techSkills = allSkills.filter(
       (s: any) => s.isActive && s.skillCategory.toLowerCase().includes('technical')
@@ -224,9 +210,20 @@ export class SkillDirectoryManagementComponent {
     this.selectedEmployee.softSkills = allSkills.filter(
       (s: any) => s.isActive && s.skillCategory.toLowerCase().includes('soft')
     );
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
-  }
 
+    this.offcanvasService.open(content, {
+      position: 'end',
+      scroll: true,
+      backdrop: true,
+      panelClass: 'employee-offcanvas'
+    });
+  }
+  close(modal: any) {
+    modal.close();
+  }
+  getSkillsByLevel(level: string, skills: any[]) {
+    return skills.filter(s => s.proficiencyLevel?.toLowerCase() === level.toLowerCase());
+  }
   getEmployeeProfile(employeeId: number) {
     this.isloading = true;
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -298,26 +295,26 @@ export class SkillDirectoryManagementComponent {
     });
   }
 
-getMultiskills() {
-  this.loader = true;
-  this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
-    next: (response: any) => {
-      if (response?.success && Array.isArray(response.data)) {
-        this.multiSkillOptions = response.data.map((skill: any) => ({
-          label: skill.skillName,
-          value: skill.skillName
-        }));
-      } else {
-        this.multiSkillOptions = [];
+  getMultiskills() {
+    this.loader = true;
+    this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
+      next: (response: any) => {
+        if (response?.success && Array.isArray(response.data)) {
+          this.multiSkillOptions = response.data.map((skill: any) => ({
+            label: skill.skillName,
+            value: skill.skillName
+          }));
+        } else {
+          this.multiSkillOptions = [];
+        }
+        this.loader = false;
+      },
+      error: (reason: any) => {
+        console.error('Error fetching skills:', reason);
+        this.loader = false;
       }
-      this.loader = false;
-    },
-    error: (reason: any) => {
-      console.error('Error fetching skills:', reason);
-      this.loader = false;
-    }
-  });
-}
+    });
+  }
 
 
   getCategory() {

@@ -8,10 +8,10 @@
 .custom-background-card {
   border-radius: 0.625rem;
 
-  .skill-set-header {
-    font-weight: 400;
-    font-size: var(--fontsize14);
-    color: #8E8E8E;
+  .skill-section-title{
+    font-weight: 600;
+    font-size: var(--fontsize13);
+    color: #9A9B9D;
   }
 
   .p-chip {
@@ -86,4 +86,22 @@ input:focus {
   .inside-input {
     background-color: var(--input-bg-color) !important;
   }
+  
+}
+
+.dashed-border {
+  width: 100%;
+  height: 1px;
+  border-bottom: 2px dashed #CBCBCB;
+}
+.beginner {
+  color: #F8AF13 !important; 
+}
+
+.intermediate {
+  color: #9A00F3 !important; 
+}
+
+.expert {
+  color: #00A912 !important; 
 }

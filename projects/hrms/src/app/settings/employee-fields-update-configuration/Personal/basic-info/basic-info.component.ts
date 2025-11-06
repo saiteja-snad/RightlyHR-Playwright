@@ -87,7 +87,7 @@ export class BasicInfoComponent {
   getBasicInfoFields() {
     const params = 'Personal';
     const param = 'Basic Info';
-    this.http.getDatabyentityvalueForFieldUpdate(`EmployeeApprovalFields/getApprovalFields`, params, param).subscribe({
+    this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
       next: (data: any) => {
         if (data.data.length > 0) {
           this.fieldOptions = data.data
@@ -106,7 +106,7 @@ export class BasicInfoComponent {
       displayName: 'Personal',
       moduleName: 'Basic Info'
     }
-    this.http.getDataIncludeParams(`EmployeeInfoApproval/getEmployeeInfoApprovals`, params).subscribe({
+    this.http.getDataIncludeParams(`EmployeeInfoFieldConfig/getEmployeeInfoApprovals`, params).subscribe({
       next: (data: any) => {
         if (data.data.length > 0) {
           this.basicInfoFieldsConfigList = data.data
@@ -163,7 +163,7 @@ export class BasicInfoComponent {
           updatedBy: loggedInUser.employeeId,
         };
 
-        this.subscription = this.http.putData(`EmployeeInfoApproval/${this.selectedFieldConfig.id}`, request).subscribe({
+        this.subscription = this.http.putData(`EmployeeInfoFieldConfig/${this.selectedFieldConfig.id}`, request).subscribe({
           next: () => {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
@@ -188,7 +188,7 @@ export class BasicInfoComponent {
           createdBy: loggedInUser.employeeId,
         };
 
-        this.subscription = this.http.postdata('EmployeeInfoApproval', request).subscribe({
+        this.subscription = this.http.postdata('EmployeeInfoFieldConfig', request).subscribe({
           next: () => {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
@@ -217,7 +217,7 @@ export class BasicInfoComponent {
   onDelete(modal: any) {
     if (!this.selectedDeleteConfigItem) return;
 
-    this.subscription = this.http.deleteData(`EmployeeInfoApproval/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
+    this.subscription = this.http.deleteData(`EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
       next: () => {
         modal.close();
         this.getBasicInfoFieldsConfigList();

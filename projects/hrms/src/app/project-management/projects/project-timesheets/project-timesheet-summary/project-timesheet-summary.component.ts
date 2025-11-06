@@ -9,9 +9,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-project-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover, NoDataFoundComponent],
+  imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover, NoDataFoundComponent, SkeletonModule],
   templateUrl: './project-timesheet-summary.component.html',
   styleUrl: './project-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -56,9 +57,15 @@ export class ProjectTimesheetSummaryComponent {
   estimatedvsActualHoursInfo = "The Estimated vs Actual Hours widget compares planned project hours with the actual hours logged. This helps evaluate project efficiency and identify deviations from the original estimates.";
   billablevsNonBillableHoursInfo = "The Billable vs Non-Billable Hours widget displays the ratio of billable work hours to non-billable activities. It helps assess project profitability and resource utilization.";
   projectBurndownInfo = "The Project Burndown Chart visually tracks project progress over time. It shows the remaining work against the planned schedule, helping managers monitor task completion and stay on track with deadlines.";
+  // data loader
+  resourceSummaryLoader = false;
+  projectCompletionRateLoader = false;
+  roleWiseHoursLoader = false;
+  estimatedvsActualHoursLoader = false;
+  billablevsNonBillableHoursLoader = false;
+  projectBurndownLoader = false;
 
-  constructor(private router: Router, public formValidation: FormValidationsService,
-    private http: HttpService, private route: ActivatedRoute) { }
+  constructor(private router: Router, public formValidation: FormValidationsService, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.http.getDateRangeObservable().pipe(takeUntil(this.destroy$)).subscribe(dateRange => {
@@ -89,6 +96,7 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   projectResourceSummary(startDate?: string, endDate?: string): void {
+    this.resourceSummaryLoader = true;
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
@@ -108,9 +116,11 @@ export class ProjectTimesheetSummaryComponent {
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
+          this.resourceSummaryLoader = false;
         },
         error: (err) => {
           console.error('Error fetching clients:', err);
+          this.resourceSummaryLoader = false;
         }
       });
     });
@@ -118,6 +128,7 @@ export class ProjectTimesheetSummaryComponent {
 
   // Department wise Contribution
   roleWiseHoursGraph(startDate?: string, endDate?: string) {
+    this.roleWiseHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
@@ -161,10 +172,12 @@ export class ProjectTimesheetSummaryComponent {
             cutout: '60%',
             plugins: { legend: { display: false } },
           };
+          this.roleWiseHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching Role-wise hours:', err);
           this.roleWiseHoursData = [];
+          this.roleWiseHoursLoader = false;
         },
       });
     });
@@ -172,6 +185,7 @@ export class ProjectTimesheetSummaryComponent {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart(startDate?: string, endDate?: string) {
+    this.estimatedvsActualHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
@@ -243,9 +257,11 @@ export class ProjectTimesheetSummaryComponent {
           } else {
             this.estimatedVsActualData = [];
           }
+          this.estimatedvsActualHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching estimated vs actual chart:', err);
+          this.estimatedvsActualHoursLoader = false;
         }
       });
     });
@@ -253,6 +269,7 @@ export class ProjectTimesheetSummaryComponent {
 
   // Billable vs Non-Billable Hours (Stacked Bar)
   billableChart(startDate?: string, endDate?: string) {
+    this.billablevsNonBillableHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
@@ -273,7 +290,6 @@ export class ProjectTimesheetSummaryComponent {
           // Correct extraction based on your actual structure
           const apiData = res?.data?.data || res?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
-            console.warn('No valid billable data found:', apiData);
             this.billableData = [];
             return;
           }
@@ -320,9 +336,11 @@ export class ProjectTimesheetSummaryComponent {
               },
             },
           };
+          this.billablevsNonBillableHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching billable chart:', err);
+          this.billablevsNonBillableHoursLoader = false;
         }
       });
     });
@@ -330,6 +348,7 @@ export class ProjectTimesheetSummaryComponent {
 
   // Project Burndown Chart (Line)
   burnDownChart(startDate?: string, endDate?: string): void {
+    this.projectBurndownLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
       const projectId = params['id'];
       if (!projectId) {
@@ -431,10 +450,12 @@ export class ProjectTimesheetSummaryComponent {
             },
             maintainAspectRatio: false,
           };
+          this.projectBurndownLoader = false;
         },
         error: (err) => {
           console.error('Error fetching burndown chart:', err);
           this.burndownData = [];
+          this.projectBurndownLoader = false;
         },
       });
     });
@@ -495,30 +516,30 @@ export class ProjectTimesheetSummaryComponent {
 
   //graphs no data found conditions
   get hasroleWiseHoursData(): boolean {
-    return !!(
-      this.roleWiseHoursData?.datasets?.length &&
-      this.roleWiseHoursData.datasets[0]?.data?.length
-    );
+    const datasets = this.roleWiseHoursData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasestimatedActualHoursData(): boolean {
-    return !!(
-      this.estimatedVsActualData?.datasets?.length &&
-      this.estimatedVsActualData.datasets[0]?.data?.length
-    );
+    const datasets = this.estimatedVsActualData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasbillableData(): boolean {
-    return !!(
-      this.billableData?.datasets?.length &&
-      this.billableData.datasets[0]?.data?.length
-    );
+    const datasets = this.billableData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasburndownData(): boolean {
-    return !!(
-      this.burndownData?.datasets?.length &&
-      this.burndownData.datasets[0]?.data?.length
-    );
+    const datasets = this.burndownData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 }

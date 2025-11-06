@@ -12,6 +12,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Project } from '../../../Interfaces/projects.model';
 
 @Component({
   selector: 'app-phases-creation',
@@ -32,6 +33,9 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   loading = false;
   projectId: any;
   subscription!: Subscription;
+  projectsDataDrown: Project[] = [];
+  projectMinStartDate!: string;
+  projectMaxEndDate!: string;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
@@ -39,7 +43,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createProjectForm();
-    this.getcontactbaedonRoute();
+    this.getdatabaedonRoute();
   }
 
   createProjectForm() {
@@ -109,6 +113,8 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       const startedDate = new Date(StartDate);
       const endedDate = new Date(EndDate);
       this.startndEndDateValid = endedDate > startedDate;
+      const projectStart = new Date(this.projectMinStartDate);
+    const projectEnd = new Date(this.projectMaxEndDate);
     } else {
       this.startndEndDateValid = true;
     }
@@ -163,16 +169,44 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
-  getcontactbaedonRoute(): void {
+  getdatabaedonRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
       this.route.queryParams.subscribe(params => {
         const projectId = params['id'];
         if (projectId) {
+          this.getProjects(projectId);
           this.projectId = parseInt(projectId);
+          
+        }
+      });
+    } else if (fullPath.startsWith('/project-management/clients')) {
+      this.projectId = null
+      this.route.queryParams.subscribe(params => {
+        const clientID = params['id'];
+        if (clientID) {
+          // this.addResourceForm.get('projectName')?.enable();
+          // this.getclientProjects(clientID);
         }
       });
     }
+  }
+
+  getProjects(projectId: string) {
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDataDrown = res?.data ?? [];
+        const project = this.projectsDataDrown[0];
+        if (project) {
+          this.projectMinStartDate = project.startDate?.split('T')[0];
+          this.projectMaxEndDate = project.endDate?.split('T')[0];
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectsDataDrown = [];
+      },
+    });
   }
 
   savePhase() { 

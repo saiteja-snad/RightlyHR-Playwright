@@ -55,6 +55,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   phaseDropdown: any[] = [];
   selectedPhaseId : any;
   resoucesDropDownData = [] as any[];
+  defaultPendingAuthorityId : any;
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
     public formValidation: FormValidationsService,) { }
@@ -105,7 +106,33 @@ onRoleChange(selectedValue: any) {
       this.getResourceData(this.projectId,this.selectedPhaseId, true);
       
     }
+
+  //   if (selectedValue?.value) {
+  //   const phase = selectedValue.value;
+  //   console.log(phase);
+    
+  //   this.selectedPhaseId = phase.value ?? null;
+  //   this.projectStartDate = phase.startDate ?? null;
+  //   this.projectEndDate = phase.endDate ?? null;
+
+  //   // Update validators safely
+  //   this.updateResourceForm.get('startDate')?.updateValueAndValidity();
+  //   this.updateResourceForm.get('endDate')?.updateValueAndValidity();
+  //   console.log(this.projectStartDate,this.projectEndDate);
+    
+  //   // Reset approval authority safely
+  //   const resourceAuthorityControl = this.updateResourceForm.get('resourceAuthority');
+  //   if (resourceAuthorityControl) {
+  //     resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
+  //     resourceAuthorityControl.disable();
+  //   }
+
+  //   if (this.projectId != null && this.selectedPhaseId != null) {
+  //     this.getResourceData(this.projectId, this.selectedPhaseId);
+  //   }
+  // }
   }
+  
 
   initializeForms() {
     this.updateResourceForm = this.fb.group({
@@ -242,49 +269,64 @@ getJobrole() {
   //   });
   // }
 
-  getResourceData(projectId: number, phaseId?:number, isPopupCall: boolean = false) {
+  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
 
-    const params : any = {
+    const params: any = {
       status: 'Active',
       entityType: 'project',
       entityRefId: projectId
     };
 
     if (phaseId) {
-    params.phaseId = phaseId;
+      params.phaseId = phaseId;
     }
 
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
         this.loading = false;
-         if (isPopupCall) {
-        // ✅ DO NOT TOUCH TABLE DATA
-        const popupData = data.data ?? [];
+        if (isPopupCall) {
+          // DO NOT TOUCH TABLE DATA
+          const popupData = data.data ?? [];
 
-        this.resoucesDropDownData = popupData
-          .filter((r : any) => r.employee)
-          .map((r : any) => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
+          this.resoucesDropDownData = popupData
+            .filter((r: any) => r.employee)
+            .map((r: any) => ({
+              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+              value: r.employee.id
+            }));
+          this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
+        } else {
+          // NORMAL CALL - UPDATE TABLE DATA
+          this.resourcesData = data.data ?? [];
 
-      } else {
-        // ✅ NORMAL CALL - UPDATE TABLE DATA
-        this.resourcesData = data.data ?? [];
+          this.resoucesDropDownData = this.resourcesData
+            .filter(r => r.employee)
+            .map(r => ({
+              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+              value: r.employee.id
+            }));
+          this.defaultPendingAuthorityId = this.resourcesData[0]?.pendingApprovalAuthority?.id ?? null;
+        }
+        const authorityControl = this.updateResourceForm.get('resourceAuthority');
+        if (this.resoucesDropDownData.length === 0) {
+          authorityControl?.disable();
+          authorityControl?.reset();
+        }
+        else {
+          authorityControl?.enable();
 
-        this.resoucesDropDownData = this.resourcesData
-          .filter(r => r.employee)
-          .map(r => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
-      }
-        
+          // Auto-patch default only if user has not selected anything before
+          const hasExistingValue = authorityControl?.value;
+          if (!hasExistingValue && this.defaultPendingAuthorityId) {
+            authorityControl?.patchValue(this.defaultPendingAuthorityId);
+          }
+        }
+
       },
       error: (reason: any) => {
         this.loading = false;
         console.error(reason);
-        
+
       }
     });
   }
@@ -292,37 +334,43 @@ getJobrole() {
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
-       (r: any) => r.value.roleId === data.projectRoleId
+      (r: any) => r.value.roleId === data.projectRoleId
     );
     const selectedPhase = this.phaseDropdown.find(
-  (r: any) => r.value === data?.phase?.phaseId
+      (r: any) => r.value === data?.phase?.phaseId
     );
-    const selctedAuthority = this.resoucesDropDownData.find(
+    const authorityFromResource = this.resoucesDropDownData.find(
       (r: any) => r.value === data?.pendingApprovalAuthority?.id
-    )
+    );
+    let authorityValueToPatch = authorityFromResource?.value ?? null;
+
+    // ✅ 2️⃣ If not found, fallback to phase-level pending authority
+    if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
+      authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
+    }
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-resourcePhone:
-  data?.employee
-    ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
-    : '-',
+      resourcePhone:
+        data?.employee
+          ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+          : '-',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
       projectName: this.projectsData[0]?.projectName,
       projectType: this.projectsData[0]?.projectType,
       startDate: this.formatDateToLocal(data?.startDate),
-        endDate: this.formatDateToLocal(data?.endDate),
-        // allocatedFrequencyType: data?.allocatedFrequencyType,
+      endDate: this.formatDateToLocal(data?.endDate),
+      // allocatedFrequencyType: data?.allocatedFrequencyType,
       billable: data.billable,
 
       allowweekendWork: data.weekendWorkAllowed,
-        resourceRole: selectedRole ? selectedRole.value : null,
-      color : data?.meta?.graphData?.color,
-      resourcePhase : selectedPhase ? selectedPhase.value : null,
-      resourceAuthority : selctedAuthority ? selctedAuthority.value : null
+      resourceRole: selectedRole ? selectedRole.value : null,
+      color: data?.meta?.graphData?.color,
+      resourcePhase: selectedPhase ? selectedPhase.value : null,
+      resourceAuthority: authorityValueToPatch
     });
   }
 
@@ -412,7 +460,7 @@ resourcePhone:
       //role: formValue.resourceRole,
       projectRoleId: projectRoleId,
       projectDepartmentId: projectDepartmentId,
-      pendingApprovalAuthority : formValue.resourceAuthority.value,
+      pendingApprovalAuthority : formValue.resourceAuthority,
       phaseId : formValue.resourcePhase,
       meta: {
         graphData: {
@@ -516,7 +564,12 @@ resourcePhone:
         this.phaseData = data.data;
         this.phaseDropdown = this.phaseData.map(p => ({
         label: p.phaseName,
-        value: p.phaseId
+        value: p.phaseId,
+        projectId:p?.project?.projectId,
+        clientId:p?.project?.clientId,
+        startDate: p?.startDate,
+        endDate: p?.endDate,
+        pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
       }));
       },
       error: (reason: any) => {

@@ -9,6 +9,7 @@ export interface IPhases {
     endDate: string;
     status: string;
   };
+  reason:string;
   phaseName: string;
   description: string;
   allocatedHours: number;

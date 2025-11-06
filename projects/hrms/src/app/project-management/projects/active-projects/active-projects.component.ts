@@ -177,8 +177,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform = this.fb.group({
       updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
       updateclientName: [null, Validators.required],
-      // updatestartDate: [null, Validators.required],
-      // updateendDate: [null, Validators.required],
+      updatestartDate: [null, Validators.required],
+      updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],
       // updatekickoffDate: [null, Validators.required],
       updateprojectType: [null, Validators.required],
@@ -274,8 +274,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
       updateclientName: project.client?.clientId,  // ensure p-select has clientId
-      // updatestartDate: this.formatDateToLocal(project.startDate),
-      // updateendDate: this.formatDateToLocal(project.endDate),
+      updatestartDate: this.formatDateToLocal(project.startDate),
+      updateendDate: this.formatDateToLocal(project.endDate),
       // updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
       // updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
       updateprojectType: project.projectType, // ensure p-select has id

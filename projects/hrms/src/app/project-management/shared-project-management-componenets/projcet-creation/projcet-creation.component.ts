@@ -105,8 +105,8 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     this.addprojectform = this.fb.group({
       projectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(101)]],
       clientName: [{ value: null, disabled: true }, Validators.required],
-      // startDate: [null, Validators.required],
-      // endDate: [null, Validators.required],
+      startDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       // effectiveDate: [null, Validators.required],
       // kickoffDate: [null, Validators.required],
       projectType: [null, Validators.required],
@@ -196,8 +196,8 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       isOvertimeEligibile: formValue.overtimeEligible,
       isBillable: formValue.billable,
       isWeekendWorkAllowed: formValue.allowweekendWork,
-      // startDate: formValue.startDate,
-      // endDate: formValue.endDate,
+      startDate: formValue.startDate,
+      endDate: formValue.endDate,
       // effectiveDate: formValue.effectiveDate,
       // kickoffDate: formValue.kickoffDate,
       // pendingApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement

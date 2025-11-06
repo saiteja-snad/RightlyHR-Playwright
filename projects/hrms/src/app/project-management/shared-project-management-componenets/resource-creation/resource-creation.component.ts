@@ -135,7 +135,7 @@ onPhaseChange(selectedValue: any) {
     // Reset approval authority safely
     const resourceAuthorityControl = this.addResourceForm.get('resourceAuthority');
     if (resourceAuthorityControl) {
-      resourceAuthorityControl.patchValue(null);
+      resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
       resourceAuthorityControl.disable();
     }
 
@@ -517,6 +517,7 @@ onPhaseChange(selectedValue: any) {
         clientId:p?.project?.clientId,
         startDate: p?.startDate,
         endDate: p?.endDate,
+        pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
       }));
         this.spinnerLoader = false;
       },

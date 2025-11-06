@@ -77,22 +77,23 @@
                     </div> -->
                 </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                    <p-select [options]="projectRoleDropdown" optionLabel="label" [filter]="true" [resetFilterOnHide]="true"
-                        filterBy="label" formControlName="resourceRole" placeholder="Please select role"
-                        class="form-select custom-select" (onChange)="onRoleChange($event.value)">
-                    </p-select>
-                </div>
-                <div class="error-msg">
-                    <div *ngIf=" addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required'] ">
-                        Role is required
+                <div class="col-md-6 mb-3">
+                    <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="projectRoleDropdown" optionLabel="label" [filter]="true" [resetFilterOnHide]="true"
+                            filterBy="label" formControlName="resourceRole" placeholder="Please select role"
+                            class="form-select custom-select" (onChange)="onRoleChange($event.value)">
+                        </p-select>
+                    </div>
+                    <div class="error-msg">
+                        <div
+                            *ngIf=" addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required'] ">
+                            Role is required
+                        </div>
                     </div>
                 </div>
-            </div>
 
-                           <!--Phase/Milestone Name-->
+                <!--Phase/Milestone Name-->
                 <div class="col-md-6 mb-3">
                     <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
                             class="text-danger">*</span></label>
@@ -114,11 +115,8 @@
 
                       <!-- Authority Name -->
                 <div class="col-md-6 mb-3">
-                                       <div class="d-flex gap-2">
-                            <label for="resourceName" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
-                            @if( this.resoucesDropDownData && this.resoucesDropDownData!.length > 0){
-                            <span class="text-danger">*</span>
-                            }
+                    <div class="d-flex gap-2">
+                        <label for="resourceName" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
                         </label>
                         @if(this.resoucesDropDownData && this.resoucesDropDownData!.length == 0){
                         <div>
@@ -130,15 +128,15 @@
                             <p class="mb-0">{{ 'This field will be enabled after allocating resources to this phase'}}</p>
                         </ng-template>
                         }
-                        </div>
+                    </div>
                     <div class="custom-p-select-content">
-                        <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
+                        <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label" optionValue="value"
                             [showClear]="false" placeholder="Please select resource name" formControlName="resourceAuthority"
                             class="custom-select w-100" resetFilterOnHide="true" (onChange)="onAuthorityChange($event.value)">
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="addResourceForm.get('resourceAuthority')?.touched && 
-                    addResourceForm.get('resourceAuthority')?.invalid">Resource Name is required</div>
+                                    addResourceForm.get('resourceAuthority')?.invalid">Resource Name is required</div>
                 </div>
 
                 <!-- Resource Email -->
@@ -195,6 +193,8 @@
                     <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
                         class="form-control custom-input " [maxlength]="5"
                         (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
+                        <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && 
+                    addResourceForm.get('resourceAllocationhrs')?.invalid">Allocation Hours is required</div>
                 </div>
 
                 <!--Color Picker-->

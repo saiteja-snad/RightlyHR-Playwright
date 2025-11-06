@@ -50,7 +50,7 @@ export const MODULE_INFOS = {
     //attendance Configuration Module Info
    
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
-    SETTINGS_LOCKINGSYSTEM_MODULE_INFO: "Enables administrators to lock attendance and timesheet data for selected periods to maintain accuracy and prevent further modifications.",
+    SETTINGS_LOCKINGSYSTEM_MODULE_INFO: "The Locking System module manages data access by defining restricted periods during which modifications are not allowed. Once a period is locked, users are prevented from adding or updating information within that timeframe.",
     // locking system
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULEE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     SETTINGS_TIMESHEETLOCKING_MODULE_INFO: "The Timesheet locking module enables Admin/HR to lock employee timesheets for a specific period, preventing any further edits or submissions once locked. It ensures data accuracy and compliance with payroll and reporting deadlines.",

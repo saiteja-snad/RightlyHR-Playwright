@@ -4523,21 +4523,21 @@
                             </tr>
                         </ng-container>
                         <!-- attendance locking -->
-                        <tr>
+                         <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingattendance
-                                        (change)="toggleSelectAll(AttendanceTypeFields, selectAllsettingattendance?.checked, isonlyviewfunction.bind(this))"
+                                        (change)="toggleSelectAll(AttendanceTypeFields,selectAllsettingattendance?.checked,isAttendanceLockingTabsCheckboxDisabled.bind(this))"
                                         [checked]="isAllSelected(AttendanceTypeFields)"
                                         [indeterminate]="isSomeSelected(AttendanceTypeFields)"
                                         [disabled]="!roleToFilter?.id">
-                                    <div>Attendance Locking Type Tabs</div>
+                                         <div>Attendance Locking Type Tabs</div>
                                 </div>
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Attendance Pending Tab' || per.fields === 'Attendance Published Tab'">
+                                      *ngIf="per.fields === 'Attendance Pending Tab' || per.fields === 'Attendance Published Tab'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -4545,54 +4545,54 @@
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Update')"
+                                        [disabled]="isDisabled(per.fields, 'Update') ||!roleToFilter?.id">
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
-                                        (change)="onCheckboxChange(per, 'Create')"
-                                        [disabled]="isDisabled(per.fields, 'Create') ||!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Create')" [disabled]="!roleToFilter?.id">
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
                                         (change)="onCheckboxChange(per, 'Delete')"
-                                        [disabled]=" isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
+                                        [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                                 </td>
                             </tr>
                         </ng-container>
-                        <!-- TIMESHEET LOCKING TABS -->
-                         <tr>
+                         <!-- TIMESHEET LOCKING TABS -->
+                        <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingtimesheetlocking
-                                        (change)="toggleSelectAll(TymesheetTypeFields, selectAllsettingtimesheetlocking?.checked, isonlyviewfunction.bind(this))"
+                                        (change)="toggleSelectAll(TymesheetTypeFields,selectAllsettingtimesheetlocking?.checked,isTimesheetLockingTabsCheckboxDisabled.bind(this))"
                                         [checked]="isAllSelected(TymesheetTypeFields)"
                                         [indeterminate]="isSomeSelected(TymesheetTypeFields)"
                                         [disabled]="!roleToFilter?.id">
-                                    <div>Timesheet Locking Type Tabs</div>
+                                     <div>Timesheet Locking Type Tabs</div>
                                 </div>
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Timesheet Locking Pending Tab' || per.fields === 'Timesheet Locking Published Tab'">
-                                 <td class="text-align-center">{{ per.fields }}</td>
+                                   *ngIf="per.fields === 'Timesheet Locking Pending Tab' || per.fields === 'Timesheet Locking Published Tab'">
+                                <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
                                         (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Update')"
+                                        [disabled]="isDisabled(per.fields, 'Update') ||!roleToFilter?.id">
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
-                                        (change)="onCheckboxChange(per, 'Create')"
-                                        [disabled]="isDisabled(per.fields, 'Create') ||!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Create')" [disabled]="!roleToFilter?.id">
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
                                         (change)="onCheckboxChange(per, 'Delete')"
-                                        [disabled]=" isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
+                                        [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                                 </td>
                             </tr>
                         </ng-container>

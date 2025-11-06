@@ -2058,6 +2058,33 @@ selectAllOnBehalfOfRemoteLogin = [
     }
     return false;
   }
+  
+  isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+    isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

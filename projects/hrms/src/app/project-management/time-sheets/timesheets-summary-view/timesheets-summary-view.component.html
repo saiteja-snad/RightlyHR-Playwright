@@ -173,8 +173,10 @@
             
                 <div class="time-sheet-graph-card p-3 py-4">
                     <div class="rolewise-chart-grid gap-3">
-                        <div>
+                         <div class="bar-chart graph-no-data-content">
+                     <ng-container *ngIf="hasprojectWiseHoursData; else noData">
                             <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                    </ng-container> 
                         </div>
                 
                         <div class="legends-view">
@@ -188,6 +190,7 @@
                                 <div class="hrs-display text-nowrap col-md-4">{{item.hours}} HRs</div>
                             </div>
                         </div>
+                         <ng-template #noData><app-no-data-found /></ng-template>
                     </div>
                 </div>
 
@@ -203,10 +206,15 @@
                     </div>
                 </div>
 
-                <div class="time-sheet-graph-card p-3 py-4">
-                    <div class="bar-chart">
-                        <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                <div class="time-sheet-graph-card p-3 py-4 ">
+                    <div class="bar-chart graph-no-data-content">
+                     <ng-container *ngIf="hasallocatedvsactualData; else noData">
+                      <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                   </ng-container> 
+                    <!-- <div class="bar-chart">
+                        <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" /> -->
                     </div>
+                     <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
         </div>

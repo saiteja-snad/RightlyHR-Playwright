@@ -1,6 +1,7 @@
 <div class="custom-main-component-container time-sheet-summary-container">
     <div class="row">
         <div class="col-lg-7 mb-3">
+            @if (!resourceSummaryLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Resource Summary</div>
@@ -43,6 +44,11 @@
                     }
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-5 mb-3">
@@ -73,6 +79,7 @@
         </div>
 
         <div class="col-lg-5 mb-3">
+            @if (!roleWiseHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Role wise Hours</div>
@@ -108,9 +115,15 @@
                     <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-7 mb-3">
+            @if (!estimatedvsActualHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
@@ -139,9 +152,15 @@
                     <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-6 mb-3">
+            @if (!billablevsNonBillableHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
@@ -168,9 +187,15 @@
                     <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-6 mb-3">
+            @if (!projectBurndownLoader) {
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
@@ -199,6 +224,11 @@
                     <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
     </div>
 </div>

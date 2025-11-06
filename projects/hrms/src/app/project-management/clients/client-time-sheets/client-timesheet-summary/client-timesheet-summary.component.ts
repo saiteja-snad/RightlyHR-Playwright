@@ -10,9 +10,11 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Project } from '../../../../Interfaces/projects.model';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule, NoDataFoundComponent],
+  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, 
+    ChartModule, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -63,13 +65,21 @@ export class ClientTimesheetSummaryComponent {
   // project name
   projectNames: any;
   // Graph Info
-  projectsummaryinfo = 'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status'
-  ProjectwiseResourceCountInfo = "Represents the total number of employees assigned to each project, providing insight into resource allocation and team size per project "
-  DepartmentwiseContributionInfo = "Shows how different departments are contributing across projects, giving a visual understanding of departmental workload and involvement. "
-  ProjectType = 'Displays the distribution of projects based on their type (e.g., internal, client-based, or support), enabling quick analysis of project categories handled by the organization. '
-  EstimatedActualHours = 'Compares the estimated hours allocated for each project against the actual hours logged, helping to identify project efficiency and time variance. '
-  BillablevsNonBillableHours = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.  '
-  ProjectBurndownChart = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends. '
+  projectsummaryinfo = 'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status';
+  ProjectwiseResourceCountInfo = "Represents the total number of employees assigned to each project, providing insight into resource allocation and team size per project";
+  DepartmentwiseContributionInfo = "Shows how different departments are contributing across projects, giving a visual understanding of departmental workload and involvement.";
+  ProjectTypeInfo = 'Displays the distribution of projects based on their type (e.g., internal, client-based, or support), enabling quick analysis of project categories handled by the organization.';
+  EstimatedActualHoursInfo = 'Compares the estimated hours allocated for each project against the actual hours logged, helping to identify project efficiency and time variance.';
+  BillablevsNonBillableHoursInfo = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.';
+  ProjectBurndownChartInfo = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends.';
+  // data loader
+  projectsummaryLoader = false;
+  ProjectwiseResourceCountLoader = false;
+  DepartmentwiseContributionLoader = false;
+  ProjectTypeLoader = false;
+  EstimatedActualHoursLoader = false;
+  BillablevsNonBillableHoursLoader = false;
+  ProjectBurndownChartLoader = false;
 
   constructor(private http: HttpService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
@@ -77,7 +87,7 @@ export class ClientTimesheetSummaryComponent {
     this.createClientForm();
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
       const clientID = params['id'];
-      this.getprojectbyid(clientID);
+      this.getClientById(clientID);
     });
     this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
       if (request && request.dateRange) {
@@ -133,7 +143,7 @@ export class ClientTimesheetSummaryComponent {
   }
 
   // get all project based on client for filter use
-  getprojectbyid(clientID: any): void {
+  getClientById(clientID: any): void {
     this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = Array.isArray(res?.data) ? res.data : [];
@@ -180,6 +190,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Project wise Resource Count
   projectSummery(request?: any) {
+    this.projectsummaryLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -207,9 +218,11 @@ export class ClientTimesheetSummaryComponent {
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+          this.projectsummaryLoader = false;
         },
         error: (err) => {
           console.error('Error fetching project-wise resource count chart:', err);
+          this.projectsummaryLoader = false;
         }
       });
     });
@@ -217,6 +230,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Project wise Resource Count
   projectWiseResourceCountGraph(request?: any) {
+    this.ProjectwiseResourceCountLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -288,9 +302,11 @@ export class ClientTimesheetSummaryComponent {
               }
             }
           };
+          this.ProjectwiseResourceCountLoader = false;
         },
         error: (err) => {
           console.error('Error fetching project-wise resource count chart:', err);
+          this.ProjectwiseResourceCountLoader = false;
         }
       });
     });
@@ -306,6 +322,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Department wise Contribution
   departmentWiseContributionGraph(request?: any) {
+    this.DepartmentwiseContributionLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -355,10 +372,12 @@ export class ClientTimesheetSummaryComponent {
               legend: { display: false }
             },
           };
+          this.DepartmentwiseContributionLoader = false;
         },
         error: (err) => {
           console.error('Error fetching Role-wise hours:', err);
           this.departmentContributionData = [];
+          this.DepartmentwiseContributionLoader = false;
         }
       });
     });
@@ -366,6 +385,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Project Type (Pie)
   projectTypeChart(request?: any) {
+    this.ProjectTypeLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -415,9 +435,11 @@ export class ClientTimesheetSummaryComponent {
               },
             }
           };
+          this.ProjectTypeLoader = false;
         },
         error: (err) => {
           console.error('Error fetching project type summary chart:', err);
+          this.ProjectTypeLoader = false;
         }
       });
     });
@@ -425,6 +447,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart(request?: any) {
+    this.EstimatedActualHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -498,9 +521,11 @@ export class ClientTimesheetSummaryComponent {
           } else {
             this.estimatedVsActualData = [];
           }
+          this.EstimatedActualHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching estimated vs actual chart:', err);
+          this.EstimatedActualHoursLoader = false;
         }
       });
     });
@@ -508,6 +533,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Billable vs Non-Billable Hours (Stacked Bar)
   billableChart(request?: any) {
+    this.BillablevsNonBillableHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -595,9 +621,11 @@ export class ClientTimesheetSummaryComponent {
             },
             maintainAspectRatio: false,
           };
+          this.BillablevsNonBillableHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching billable/non-billable chart data:', err);
+          this.BillablevsNonBillableHoursLoader = false;
         }
       });
     });
@@ -605,13 +633,13 @@ export class ClientTimesheetSummaryComponent {
 
   // Project Burndown Chart (Line)
   burnDownChart(request?: any) {
+    this.ProjectBurndownChartLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
         this.burndownData = [];
         return;
       }
-
       let apiUrl = `ProjectManagementGraph/client/burndownchart/${clientID}`;
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -703,9 +731,11 @@ export class ClientTimesheetSummaryComponent {
             },
             maintainAspectRatio: false
           };
+          this.ProjectBurndownChartLoader = false;
         },
         error: (err) => {
           console.error('Error fetching burndown chart data:', err);
+          this.ProjectBurndownChartLoader = false;
         }
       });
     });
@@ -713,44 +743,44 @@ export class ClientTimesheetSummaryComponent {
 
   //graphs no data found conditions
   get hasProjectResourceData(): boolean {
-    return !!(
-      this.projectResourceData?.datasets?.length &&
-      this.projectResourceData.datasets[0]?.data?.length
-    );
+    const datasets = this.projectResourceData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasDepartmentWiseData(): boolean {
-    return !!(
-      this.departmentContributionData?.datasets?.length &&
-      this.departmentContributionData.datasets[0]?.data?.length
-    );
+    const datasets = this.departmentContributionData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasProjectTypeData(): boolean {
-    return !!(
-      this.projectTypeData?.datasets?.length &&
-      this.projectTypeData.datasets[0]?.data?.length
-    );
+    const datasets = this.projectTypeData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasestimatedActualHoursData(): boolean {
-    return !!(
-      this.estimatedVsActualData?.datasets?.length &&
-      this.estimatedVsActualData.datasets[0]?.data?.length
-    );
+    const datasets = this.estimatedVsActualData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasbillableData(): boolean {
-    return !!(
-      this.billableData?.datasets?.length &&
-      this.billableData.datasets[0]?.data?.length
-    );
+    const datasets = this.billableData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 
   get hasburndownData(): boolean {
-    return !!(
-      this.burndownData?.datasets?.length &&
-      this.burndownData.datasets[0]?.data?.length
-    );
+    const datasets = this.burndownData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 }

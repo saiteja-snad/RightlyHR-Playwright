@@ -26,11 +26,12 @@ import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
+import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
     NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent,
-    ModuleInformationComponent],
+    ModuleInformationComponent, Skeleton],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -87,7 +88,10 @@ export class TimesheetsSummaryViewComponent {
   ProjectwisehoursSummary = 'The Project-Wise hours summary widget represents a pie chart visualization of the hours logged across different assigned projects. It displays each project along with the total submitted hours, providing a clear graphical representation of effort distribution and helping managers analyse time allocation effectively. '
   AllocatedActualhours = 'The Allocated and Actual Hours widget provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts. '
   TimesheetSummary = 'The Timesheet Summary widget provides a visual representation of timesheet data through a line diagram. It consolidates the total hours that are approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.  '
-
+  // content loaders variables
+  tableLoader = false;
+  allocatedVsActualLoader = false;
+  projectwisehour = false;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute) { }
 
@@ -303,6 +307,7 @@ export class TimesheetsSummaryViewComponent {
 
   // Project Type (Pie)
   projectTypeChart() {
+    this.projectwisehour =true;
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
     // Extract labels
     const labels = this.projectTypeData.map((item: any) => item.projectName);
@@ -341,10 +346,12 @@ export class TimesheetsSummaryViewComponent {
         legend: {display: false },
       },
     };
+    this.projectwisehour = false;
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
+      this.allocatedVsActualLoader = true;
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
@@ -405,6 +412,7 @@ export class TimesheetsSummaryViewComponent {
         }
       }
     };
+      this.allocatedVsActualLoader = false;
   }
 
   navigatetoteam() {

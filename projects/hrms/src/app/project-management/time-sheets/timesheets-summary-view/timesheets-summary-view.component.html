@@ -170,16 +170,16 @@
                         </ng-template>
                     </div>
                 </div>
-            
+                @if (!projectwisehour) {
                 <div class="time-sheet-graph-card p-3 py-4">
                     <div class="rolewise-chart-grid gap-3">
-                         <div class="bar-chart graph-no-data-content">
-                     <ng-container *ngIf="hasprojectWiseHoursData; else noData">
-                            <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
-                    </ng-container> 
+                        <div class="bar-chart graph-no-data-content">
+                            <ng-container *ngIf="hasprojectWiseHoursData; else noData">
+                                <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                            </ng-container>
                         </div>
                 
-                        <div class="legends-view">
+                        <div class="legends-view">      
                             <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
                                 <div class="col-md-8">
                                     <div class="d-flex align-items-center gap-1">
@@ -188,36 +188,46 @@
                                     </div>
                                 </div>
                                 <div class="hrs-display text-nowrap col-md-4">{{item.hours}} HRs</div>
-                            </div>
+                            </div>             
                         </div>
-                         <ng-template #noData><app-no-data-found /></ng-template>
+                        <ng-template #noData><app-no-data-found /></ng-template>               
                     </div>
                 </div>
-
-                <div class="dashed-line my-3"></div>
-
-                <div class="summary-header d-flex gap-2 pb-3">
-                    <div>Allocated vs Actual Hours</div>
-                    <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
-                        <ng-template #resourceSummaryContent>
-                            <div class="module-info-text">{{AllocatedActualhours}}</div>
-                        </ng-template>
-                    </div>
+                }@else {
+                <div class="chart-card-skeleton">
+                    <p-skeleton width="100%" height="100%" borderRadius="12px" />
                 </div>
-
-                <div class="time-sheet-graph-card p-3 py-4 ">
-                    <div class="bar-chart graph-no-data-content">
-                     <ng-container *ngIf="hasallocatedvsactualData; else noData">
-                      <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
-                   </ng-container> 
-                    <!-- <div class="bar-chart">
-                        <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" /> -->
+                }
+                @if (!allocatedVsActualLoader) {
+                <div class="dashed-line my-3">
+                    <div class="summary-header d-flex gap-2 pb-3">
+                        <div>Allocated vs Actual Hours</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                            <ng-template #resourceSummaryContent>
+                                <div class="module-info-text">{{AllocatedActualhours}}</div>
+                            </ng-template>
+                        </div>
                     </div>
-                     <ng-template #noData><app-no-data-found /></ng-template>
+
+                    <div class="time-sheet-graph-card p-3 py-4 ">
+                        <div class="bar-chart graph-no-data-content">
+                            <ng-container *ngIf="hasallocatedvsactualData; else noData">
+                                <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                            </ng-container>
+                            <!-- <div class="bar-chart">
+                                                        <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" /> -->
+                        </div>
+                        <ng-template #noData><app-no-data-found /></ng-template>
+                    </div>
+
                 </div>
-            </div>
-        </div>
+                }@else {
+                <div class="chart-card-skeleton">
+                    <p-skeleton width="100%" height="100%" borderRadius="12px" />
+                </div>
+                }
+                <!-- </div> -->
 
         <!--Summary-->
         <ng-template #summaryforlogs let-modal>

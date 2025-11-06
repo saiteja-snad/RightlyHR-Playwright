@@ -4,6 +4,15 @@
 
 .custom-table-content {
     height: calc(100dvh - 15.5rem) !important;
+
+    th, td {
+        font-size: var(--fontsize14) !important;
+    }
+
+    th {
+        font-weight: 600 !important;
+        text-transform: capitalize !important;
+    }
 }
 
 .timesheet-graph-content {
@@ -126,4 +135,9 @@
         font-size: 0.75rem;
         color: #0A0A0A;
     }
+}
+
+.hrs-text {
+    color: #5E5E5E !important;
+    font-weight: 600 !important;
 }

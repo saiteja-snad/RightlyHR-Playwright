@@ -154,6 +154,7 @@ export class ProjectTimesheetSummaryComponent {
               {
                 data: dataValues,
                 backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
               },
             ],
           };
@@ -244,7 +245,7 @@ export class ProjectTimesheetSummaryComponent {
                   beginAtZero: true,
                   title: {
                     display: true, text: 'Hours', color: '#505050',
-                    font: { size: 9 },
+                    font: { size: 12 },
                   },
                   ticks: {
                     color: '#72777B',
@@ -338,7 +339,7 @@ export class ProjectTimesheetSummaryComponent {
                 beginAtZero: true,
                 title: {
                   display: true, text: 'Hours', color: '#505050',
-                  font: { size: 9 },
+                  font: { size: 12 },
                 },
                 ticks: {
                   color: '#72777B',

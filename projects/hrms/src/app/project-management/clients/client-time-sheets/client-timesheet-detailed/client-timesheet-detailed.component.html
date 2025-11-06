@@ -4,8 +4,8 @@
             <p-accordion>
                 <p-accordion-panel *ngFor="let project of projectDetails; let i = index" [value]="i">
                     <p-accordion-header>
-                        <div>{{ project.project.projectName }}</div>
-                        <div>Total Logged Hours: {{ project.totalProjectHours }} HRs</div>
+                        <div class="accordian-header-text text-truncate">{{ project.project.projectName }}</div>
+                        <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span><span class="hrs-text">{{ project.totalProjectHours }} HRs</span></div>
                     </p-accordion-header>
 
                     <p-accordion-content>

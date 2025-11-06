@@ -53,8 +53,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   maxMonth: Date = moment().add(1, 'months').endOf('month').toDate();
   selectedclientid: any;
   selectedprojectid: any;
+  selectedPhaseId: any;
   selectedProjectName: any;
   selectedClientname: any;
+  selectedPhaseName: any;
   selectedShiftDetails: any;
   clients: any[] = [];
   noclientproject = false;
@@ -174,16 +176,33 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     let isEffective = false;
     if (matchedResource && !matchedResource?.isNoClientProject) {
-      isEffective =
-        resourcestartdate && entryDateObj
-          ? entryDateObj.getTime() >= resourcestartdate.getTime()
-          : false;
+      // Check resource date range
+      const resourceDateValid = resourcestartdate && entryDateObj
+        ? entryDateObj.getTime() >= resourcestartdate.getTime()
+        : true;
+      
+      const resourceEndValid = resourceenddate && entryDateObj
+        ? entryDateObj.getTime() <= resourceenddate.getTime()
+        : true;
 
-      isEffective =
-        resourceenddate && entryDateObj
-          ? entryDateObj.getTime() <= resourceenddate.getTime()
-          : false;
+      // Check phase date range if phase exists
+      let phaseDateValid = true;
+      if (matchedResource.phase && entryDateObj) {
+        const phaseStartDate = matchedResource.phase.startDate ? new Date(matchedResource.phase.startDate) : null;
+        const phaseEndDate = matchedResource.phase.endDate ? new Date(matchedResource.phase.endDate) : null;
+        
+        if (phaseStartDate) {
+          phaseStartDate.setHours(0, 0, 0, 0);
+          phaseDateValid = phaseDateValid && entryDateObj.getTime() >= phaseStartDate.getTime();
+        }
+        
+        if (phaseEndDate) {
+          phaseEndDate.setHours(0, 0, 0, 0);
+          phaseDateValid = phaseDateValid && entryDateObj.getTime() <= phaseEndDate.getTime();
+        }
+      }
 
+      isEffective = resourceDateValid && resourceEndValid && phaseDateValid;
     } else {
       // No-client/no-project → always effective
       isEffective = true;
@@ -215,6 +234,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       clientId: [{ value: day?.clientId || null, disabled: !shouldEnable }],
       projectId: [{ value: day?.projectId || null, disabled: !shouldEnable }],
       projectName: [{ value: day?.projectName || '', disabled: !shouldEnable }],
+      phaseId: [{ value: day?.phaseId || null, disabled: !shouldEnable }],
+      phaseName: [{ value: day?.phaseName || '', disabled: !shouldEnable }],
       entryDate: [{ value: dateValue || '', disabled: !shouldEnable }],
       startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }],
       endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }],
@@ -311,13 +332,17 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         clientName: 'No Client',
         projectId: null,
         projectName: 'No Project',
+        phaseId:  null,
+        phaseName: null,
       };
-    } else if (project && project.projectId) {
+    } else if (project && project.projectId && project.phaseId) {
       selectedProject = {
         clientId: project.clientId,
         clientName: project.clientName ?? '',
         projectId: project.projectId,
         projectName: project.projectName ?? '',
+        phaseId: project.phaseId || null,
+        phaseName: project.phaseName ?? '',
       };
     }
 
@@ -327,6 +352,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       projectName: [project?.projectName || ''],
       clientId: [project?.clientId || null],
       clientName: [project?.clientName || null],
+      phaseId: [project?.phaseId || null],
+      phaseName: [project?.phaseName || null],
       selectedProject: [selectedProject],
       isNoClientProject: [!!project?.isNoClientProject],
       searchTerm: [''],
@@ -589,7 +616,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.resourcesArrayList = res.data;
         const rawData = res.data;
         this.clients = rawData.reduce((acc: any[], curr: any) => {
+          const clientId = curr?.client?.clientId || 0;
           let existingClient = acc.find((c) => c.clientId === curr.client.clientId);
+               // Build phase object (if exists)
+          const phaseObj = curr.phase ? {
+            phaseId: curr.phase.phaseId,
+            phaseName: curr.phase.phaseName,
+            allocatedHours: curr.phase.allocatedHours,
+            status: curr.phase.status,
+            startDate: curr.phase.startDate,
+            endDate: curr.phase.endDate,
+          } : null;
+
           const projectObj = {
             projectId: curr?.project?.projectId,
             projectName: curr?.project?.projectName,
@@ -600,17 +638,37 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             isWeekendAllowed: curr?.project?.isWeekendAllowed || curr?.client?.isWeekendAllowed,
             isOverTimeAllowed: curr?.project?.isOverTimeAllowed || curr?.client?.isOverTimeAllowed,
             isBillable: curr?.project?.isbillable || curr?.client?.isbillable,
+            phases: phaseObj ? [phaseObj] : [],
           }
-          if (existingClient) {
-            existingClient.projects.push(projectObj);
-          } else {
-            acc.push({
-              clientId: curr?.client?.clientId,
-              clientName: curr?.client?.clientName,
-              projects: [projectObj],
+          if (!existingClient) {
+            // Create new client
+            existingClient = {
+              clientId: clientId,
+              clientName: curr?.client?.clientName || 'No Client',
+              projects: [],
               shift: curr?.shift,
-            });
+            };
+            acc.push(existingClient);
           }
+
+          // 🔹 Find existing project in that client
+          let existingProject = existingClient.projects.find(
+            (p: any) => p.projectId === projectObj.projectId
+          );
+
+          if (!existingProject) {
+            // Add new project
+            existingClient.projects.push(projectObj);
+          } else if (phaseObj) {
+            // Add phase only if not already present
+            const phaseExists = existingProject.phases.some(
+              (ph: any) => ph.phaseId === phaseObj.phaseId
+            );
+            if (!phaseExists) {
+              existingProject.phases.push(phaseObj);
+            }
+          }
+
           return acc;
         }, []);
         // If "No Client/Project" flag is not set, add it manually
@@ -622,6 +680,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
               {
                 projectId: 0,
                 projectName: 'No Project',
+                phases: [],
                 startDate: null,
                 endDate: null,
                 status: null,
@@ -634,6 +693,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             ],
           });
         }
+        console.log('Client → Project → Phase structure:', this.clients);
       }
     });
   }
@@ -841,6 +901,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       approvalStatus: 'draft',
       clientId: projectValue.selectedProject?.clientId || null,
       projectId: projectValue.selectedProject?.projectId || null,
+      phaseId: projectValue.selectedProject?.phaseId || null,
       timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
@@ -954,24 +1015,48 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   // dropdown filter
-  getFilteredClientsForRow(project: AbstractControl): any[] {
-    const term = (project.get('searchTerm')?.value || '').trim().toLowerCase();
-    if (!term) return this.clients;
-    return this.clients
-      .map((client) => {
-        if (client.clientName.toLowerCase().includes(term)) {
-          return client;
-        }
-        const filteredProjects = client.projects.filter((p: any) =>
-          p.projectName.toLowerCase().includes(term)
-        );
-        if (filteredProjects.length > 0) {
-          return { ...client, projects: filteredProjects }; // fallback only when filtering
-        }
-        return null;
-      })
-      .filter((c: any) => c && c.projects.length > 0);
-  }
+ // 🔹 Filter Clients, Projects, and Phases based on search term
+getFilteredClientsForRow(project: AbstractControl): any[] {
+  const term = (project.get('searchTerm')?.value || '').trim().toLowerCase();
+  if (!term) return this.clients;
+
+  return this.clients
+    .map((client) => {
+      // 1️⃣ If client name matches
+      if (client.clientName.toLowerCase().includes(term)) {
+        return client;
+      }
+
+      // 2️⃣ Filter projects inside client
+      const filteredProjects = client.projects
+        .map((proj: any) => {
+          // If project name matches
+          if (proj.projectName.toLowerCase().includes(term)) {
+            return proj;
+          }
+
+          // Otherwise filter by phase name
+          const filteredPhases = proj.phases?.filter((ph: any) =>
+            ph.phaseName?.toLowerCase().includes(term)
+          );
+
+          if (filteredPhases && filteredPhases.length > 0) {
+            return { ...proj, phases: filteredPhases };
+          }
+
+          return null;
+        })
+        .filter((p: any) => p !== null);
+
+      if (filteredProjects.length > 0) {
+        return { ...client, projects: filteredProjects };
+      }
+
+      return null;
+    })
+    .filter((c: any) => c && c.projects.length > 0);
+}
+
 
   // Helper method to determine if a date is weekend/holiday/leave
   getDayStatus(date: Date): { isBlocked: boolean; blockReason: string; isLeave: boolean } {
@@ -997,6 +1082,32 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isLeave: existingDayData?.isLeave || false
     };
   }
+
+  // Helper method to check if a date is valid for the selected phase
+  isDateValidForPhase(date: Date, selectedResource: any): boolean {
+    if (!selectedResource?.phase) {
+      return true; // No phase restrictions
+    }
+
+    const phaseStartDate = selectedResource.phase.startDate ? new Date(selectedResource.phase.startDate) : null;
+    const phaseEndDate = selectedResource.phase.endDate ? new Date(selectedResource.phase.endDate) : null;
+    
+    if (phaseStartDate) {
+      phaseStartDate.setHours(0, 0, 0, 0);
+      if (date < phaseStartDate) {
+        return false;
+      }
+    }
+    
+    if (phaseEndDate) {
+      phaseEndDate.setHours(0, 0, 0, 0);
+      if (date > phaseEndDate) {
+        return false;
+      }
+    }
+
+    return true;
+  }
   onDropdownClick(event: MouseEvent) {
     if (!this.employeeSelected) {
       event.stopPropagation(); // stop event bubbling
@@ -1005,7 +1116,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   selectedProject: { clientName: string; projectName: string } | null = null;
-  selectProjectForRow(row: AbstractControl, client: any, project: any) {
+  selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any =null) {
     console.log("ahsd");
 
     this.selectedProjectResource = null
@@ -1013,27 +1124,33 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // Extract previous values (if user is switching projects)
     const prevClientId = form.get('clientId')?.value;
     const prevProjectId = form.get('projectId')?.value;
+    const prevPhaseId = form.get('phaseId')?.value;
     // Patch project details
     form.patchValue({
       clientId: client.clientId,
       projectId: project.projectId,
       clientName: client.clientName,
       projectName: project.projectName,
+      phaseId: phase ? phase.phaseId : null,
+      phaseName: phase ? phase.phaseName : null,
       selectedProject: {
         clientId: client.clientId,
         clientName: client.clientName,
         projectId: project.projectId,
         projectName: project.projectName,
+        phaseId: phase ? phase.phaseId : null,
+        phaseName: phase ? phase.phaseName : null
       },
     });
 
     // Skip redundant selection
-    if (prevClientId === client?.clientId && prevProjectId === project?.projectId) {
+    if (prevClientId === client?.clientId && prevProjectId === project?.projectId && prevPhaseId === (phase ? phase.phaseId : null)) {
       console.log('Same project/client selected — no update needed.');
       return;
     }
     const selectedResource = this.resourcesArrayList.find(
-      (res: any) => res.project?.projectId === project.projectId &&
+      (res: any) => res.project?.projectId === project.projectId && 
+        res?.phase?.phaseId === (phase ? phase.phaseId : null) &&
         res.client?.clientId === client.clientId
     );
     if (selectedResource) {
@@ -1048,9 +1165,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isBillable: billableCheck,
       previousProjectId: prevProjectId || null,
       previousClientId: prevClientId || null,
+      previousPhaseId: prevPhaseId || null
     };
 
-    // ✅ Add projectId only if not 0
+    // ✅ Add phaseId only if phase exists and not 0
+    if (phase && phase.phaseId && phase.phaseId !== 0) {
+      payload.phaseId = phase.phaseId;
+    }
+
+      // ✅ Add projectId only if not 0
     if (project?.projectId && project.projectId !== 0) {
       payload.projectId = project.projectId;
     }
@@ -1074,6 +1197,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.selectedProjectName = project.projectName;
     this.selectedClientname = client.clientName;
     this.selectedShiftDetails = client.shift;
+    this.selectedPhaseId = phase ? phase.phaseId : null;
+    this.selectedPhaseName = phase ? phase.phaseName : null;
     // Update billable controls for all days
 
     // Days array
@@ -1083,7 +1208,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const entryDate = this.weekDates[index];
       // Get day status (weekend/holiday/leave)
       const dayStatus = this.getDayStatus(entryDate);
-      const { isBlocked, blockReason, isLeave } = dayStatus;
+      let { isBlocked, blockReason, isLeave } = dayStatus;
+      
+      // Check if date is valid for the selected phase
+      const isPhaseValid = this.isDateValidForPhase(entryDate, this.selectedProjectResource);
+      if (!isPhaseValid && this.selectedProjectResource?.phase) {
+        isBlocked = true;
+        blockReason = 'Phase Date Restriction';
+      }
+      
       // Update form controls with day status
       dayForm.patchValue({
         isBlocked,
@@ -1099,12 +1232,36 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       let isEffective = true;
       if (
         this.selectedProjectResource &&
-        this.selectedProjectResource.project?.projectId !== 0 &&
-        this.selectedProjectResource.startDate
+        this.selectedProjectResource.project?.projectId !== 0
       ) {
-        const resourceStartDate = new Date(this.selectedProjectResource.startDate);
-        resourceStartDate.setHours(0, 0, 0, 0);
-        isEffective = entryDate >= resourceStartDate;
+        // Check resource date range
+        if (this.selectedProjectResource.startDate) {
+          const resourceStartDate = new Date(this.selectedProjectResource.startDate);
+          resourceStartDate.setHours(0, 0, 0, 0);
+          isEffective = isEffective && entryDate >= resourceStartDate;
+        }
+        
+        if (this.selectedProjectResource.endDate) {
+          const resourceEndDate = new Date(this.selectedProjectResource.endDate);
+          resourceEndDate.setHours(0, 0, 0, 0);
+          isEffective = isEffective && entryDate <= resourceEndDate;
+        }
+
+        // Check phase date range if phase exists
+        if (this.selectedProjectResource.phase) {
+          const phaseStartDate = this.selectedProjectResource.phase.startDate ? new Date(this.selectedProjectResource.phase.startDate) : null;
+          const phaseEndDate = this.selectedProjectResource.phase.endDate ? new Date(this.selectedProjectResource.phase.endDate) : null;
+          
+          if (phaseStartDate) {
+            phaseStartDate.setHours(0, 0, 0, 0);
+            isEffective = isEffective && entryDate >= phaseStartDate;
+          }
+          
+          if (phaseEndDate) {
+            phaseEndDate.setHours(0, 0, 0, 0);
+            isEffective = isEffective && entryDate <= phaseEndDate;
+          }
+        }
       }
 
       // Enable/disable fields based on conditions
@@ -1138,19 +1295,29 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // this.addProject();
   }
 
-  // Check if any projects under this client are unselected
-  hasUnselectedProjects(client: any): boolean {
-    return client.projects.some((p: any) => {
-      const isNoClientProject = client.clientId === 0 && p.projectId === 0;
-      if (isNoClientProject) {
-        return !this.selectedProjectIds.includes(0); // check against 0
-      }
-      return !this.selectedProjectIds.includes(p.projectId);
-    });
-  }
+hasUnselectedProjectPhases(client: any): boolean {
+  return client.projects.some((project: any) => {
+    if (project.phases && project.phases.length > 0) {
+      return project.phases.some(
+        (phase: any) => !this.selectedPhaseIds.includes(phase.phaseId)
+      );
+    }
+    const isNoClientProject = client.clientId === 0 && project.projectId === 0;
+    if (isNoClientProject) {
+      return !this.selectedPhaseIds.includes(0);
+    }
+    return !this.selectedPhaseIds.includes(project.projectId);
+  });
+}
 
-  showprojectlength(projects: any[], selectedProjectIds: any[]): number {
-    return projects.filter((p) => !selectedProjectIds.includes(p.projectId)).length;
+
+  showProjectsLength(projects: any[], selectedPhaseIds: any[]): number {
+    return projects.filter((p) => {
+      if (p.phases && p.phases.length > 0) {
+        return p.phases.some((ph: any) => !selectedPhaseIds.includes(ph.phaseId));
+      }
+      return !selectedPhaseIds.includes(p.projectId);
+    }).length;
   }
 
   hasAnyDuration(project: AbstractControl): boolean {
@@ -1158,12 +1325,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return days.some(day => project.get(day)?.get('duration')?.value && project.get(day)?.get('approvalStatus')?.value.toLowerCase() !== 'not entered');
   }
 
-  // Get all selected project IDs across all rows
-  get selectedProjectIds(): any[] {
-    return this.projects.controls
-      .map((ctrl: AbstractControl) => ctrl.value?.projectId)
-      .filter((id) => id !== undefined && id !== null); // 0 will be kept
-  }
+get selectedPhaseIds(): any[] {
+  return this.projects.controls
+    .map((ctrl: AbstractControl) => {
+      const project = ctrl.value?.selectedProject;
+      return project?.phaseId ?? project?.projectId;
+    })
+    .filter((id) => id !== undefined && id !== null);
+}
+
 
   //OPEN TIME ENTERIY
   openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
@@ -1385,6 +1555,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       approvalStatus: 'draft',
       clientId: formValue.clientId || this.selectedclientid || null,
       projectId: formValue.projectId || this.selectedprojectid || null,
+      phaseId: formValue.phaseId ||this.selectedPhaseId || null,
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
@@ -1403,6 +1574,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedprojectid = null;
         this.selectedProjectName = null;
         this.selectedClientname = null;
+        this.selectedPhaseId = null;
+        this.selectedPhaseName = null;
         this.selectedProjectResource = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
@@ -1451,6 +1624,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             approverId: day.approverId || 0,
             clientId: project.selectedProject?.clientId || 0,
             projectId: project.selectedProject?.projectId || 0,
+            phaseId: project.selectedProject?.phaseId || 0,
             entryDate: moment(this.weekDates[idx]).format('YYYY-MM-DD'),
             durationSeconds: this.hhmmToSeconds(day.duration),
             description: day.description || '',
@@ -1485,6 +1659,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedprojectid = null;
         this.selectedProjectName = null;
         this.selectedClientname = null;
+        this.selectedPhaseId = null;
+        this.selectedPhaseName = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
@@ -1564,7 +1740,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       draft: status === 'draft',
       holiday: blockReasons === 'Holiday',
       // weekend:blockReasons==='Weekend',
-      leave: blockReasons === 'Leave'
+      leave: blockReasons === 'Leave',
+      'phase-restricted': blockReasons === 'Phase Date Restriction'
     };
   }
 

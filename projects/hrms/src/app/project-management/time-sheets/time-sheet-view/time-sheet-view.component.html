@@ -109,11 +109,15 @@
                                         data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
                                         [class.disabled]="employeeSelected || hasAnyDuration(project)"
                                         (click)="onDropdownClick($event)">
-                                        <u>{{ project.value.selectedProject?.clientName &&
-                                            project.value.selectedProject?.projectName
-                                            ? project.value.selectedProject.clientName + ' - ' +
-                                            project.value.selectedProject.projectName
-                                            : 'Select Project or Client' }}</u>
+                                        <u>{{ 
+                                            project.value.isNoClientProject 
+                                            ? 'No Client - No Project'
+                                            : (project.value.selectedProject?.clientName && project.value.selectedProject?.projectName
+                                                ? (project.value.selectedProject?.phaseName 
+                                                    ? project.value.selectedProject.clientName + ' - ' + project.value.selectedProject.projectName + ' - ' + project.value.selectedProject.phaseName
+                                                    : project.value.selectedProject.clientName + ' - ' + project.value.selectedProject.projectName)
+                                                : 'Select Project or Client')
+                                        }}</u>
                                     </div>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li>
@@ -124,22 +128,43 @@
                                             <p-accordion>
                                                 <ng-container *ngFor="let client of getFilteredClientsForRow(project)">
                                                     <p-accordion-panel [value]="client.clientName"
-                                                        *ngIf="hasUnselectedProjects(client)">
+                                                        *ngIf="hasUnselectedProjectPhases(client)">
                                                         <p-accordion-header>
                                                             {{ client.clientName | titlecase }}
                                                             <small class="text-muted ms-2">
                                                                 ({{
-                                                                showprojectlength(client.projects,selectedProjectIds)
+                                                                showProjectsLength(client.projects,selectedPhaseIds)
                                                                 }}Projects)
                                                             </small>
                                                         </p-accordion-header>
                                                         <p-accordion-content>
                                                             <ul class="ps-0">
                                                                 <ng-container *ngFor="let p of client.projects">
-                                                                    <li class="list-project-name cursor"
-                                                                        (click)="selectProjectForRow(project, client, p)"
-                                                                        *ngIf="!selectedProjectIds.includes(p.projectId)">
+                                                                    <li class="list-project-name">
+                                                                        <!-- 🔹 If project has phases, show project name as header -->
+                                                                        <div *ngIf="p.phases && p.phases.length > 0" class="fw-bold">{{ p.projectName }}</div>
+
+                                                                        <!-- 🔹 If project has phases, show them -->
+                                                                        <ul class="ps-3 mb-1" *ngIf="p.phases && p.phases.length > 0">
+                                                                        <ng-container *ngFor="let ph of p.phases">
+                                                                        <li
+                                                                            class="cursor text-secondary"
+                                                                            *ngIf="!selectedPhaseIds.includes(ph.phaseId)"
+                                                                            (click)="selectProjectForRow(project, client, p, ph)"
+                                                                        >
+                                                                            {{ ph.phaseName }}
+                                                                        </li>
+                                                                        </ng-container>
+                                                                        </ul>
+
+                                                                        <!-- 🔹 If project has no phases, make project name clickable -->
+                                                                        <div
+                                                                        *ngIf="(!p.phases || p.phases.length === 0) && !selectedPhaseIds.includes(p.projectId)"
+                                                                        class="cursor text-secondary fw-bold"
+                                                                        (click)="selectProjectForRow(project, client, p, null)"
+                                                                        >
                                                                         {{ p.projectName }}
+                                                                        </div>
                                                                     </li>
                                                                 </ng-container>
                                                             </ul>
@@ -174,6 +199,14 @@
                                         </a>
                                         <ng-template #description>
                                             <p class="mb-0">{{ project.get('mon.rejectReason')?.value}}</p>
+                                        </ng-template>
+                                    </div>
+                                    <div *ngIf="project.get('mon.blockReason')?.value === 'Phase Date Restriction'" class="ms-2">
+                                        <a type="button" [ngbPopover]="phaseRestriction">
+                                            <app-info-icon></app-info-icon>
+                                        </a>
+                                        <ng-template #phaseRestriction>
+                                            <p class="mb-0">This date is outside the phase's active period</p>
                                         </ng-template>
                                     </div>
                                 </div>
@@ -392,6 +425,10 @@
                         <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-yellow"></div>
                             <div class="status-text">Waiting for Approval</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="circular-dot circle-orange"></div>
+                            <div class="status-text">Phase Restricted</div>
                         </div>
                     </div>
                 </div>

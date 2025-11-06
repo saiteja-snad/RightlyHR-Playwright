@@ -145,7 +145,21 @@ export class TimesheetsSummaryViewComponent {
       this.getEmployeeId(this.employeeId);
     }
   }
+ //graphs no data found conditions
+  get hasprojectWiseHoursData(): boolean {
+    return !!(
+      this.projectTypeGraphData?.datasets?.length &&
+      this.projectTypeGraphData.datasets[0]?.data?.length
+    );
+  }
 
+   get hasallocatedvsactualData(): boolean {
+    return !!(
+      this.estimatedVsActualGraphData?.datasets?.length &&
+      this.estimatedVsActualGraphData.datasets[0]?.data?.length
+    );
+  }
+ 
   getEmployeeId(employeeId: any) {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {

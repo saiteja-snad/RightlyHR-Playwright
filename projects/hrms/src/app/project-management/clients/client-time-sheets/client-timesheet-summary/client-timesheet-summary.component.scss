@@ -31,8 +31,8 @@
 
 .summary-header {
     align-items: center;
-    font-weight: 500;
-    font-size: var(--fontsize13);
+    font-weight: 600;
+    font-size: var(--fontsize14);
     color: #222222;
 
     .popover-body {
@@ -66,8 +66,7 @@
     height: 18rem !important;
     border: 1.68px solid #FFFFFF !important;
 
-    th,
-    td {
+    th, td {
         padding: 0.625rem !important;
     }
 

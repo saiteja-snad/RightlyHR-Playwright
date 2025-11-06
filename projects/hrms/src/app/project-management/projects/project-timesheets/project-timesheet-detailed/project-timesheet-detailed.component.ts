@@ -35,23 +35,17 @@ export class ProjectTimesheetDetailedComponent {
         this.projectEmployeeDetails = [];
         return;
       }
-
       // Build the API URL conditionally
       let url = `ProjectResource/getClientProjectResourceSummary?projectId=${projectid}`;
-
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           console.log(res);
           const projectData = res?.data?.[0]?.project;
           const clientData = res?.data?.[0]?.client;
-
           this.projectId = projectData?.projectId || null;
           this.clientId = clientData?.clientId || null;
-
-          // ✅ Access nested resources inside project
+          // Access nested resources inside project
           this.projectEmployeeDetails = projectData?.resources || [];
-
-          console.log('Resources:', this.projectEmployeeDetails);
         },
         error: (err) => {
           console.error('Error fetching clients:', err);
@@ -70,7 +64,7 @@ export class ProjectTimesheetDetailedComponent {
     this.router.navigate(['/project-management/projects/details/timesheet/resource-summary'], {
       queryParams: { id: this.projectId }
     }).then(() => {
-      this.http.notifyresource(); 
+      this.http.notifyresource();
     });
   }
 
@@ -78,5 +72,4 @@ export class ProjectTimesheetDetailedComponent {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
-
 }

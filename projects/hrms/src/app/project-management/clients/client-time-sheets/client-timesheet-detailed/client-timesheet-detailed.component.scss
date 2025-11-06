@@ -9,9 +9,11 @@
 }
 
 .total-hrs {
-    font-weight: 600;
-    font-size: var(--fontsize16);
-    color: var(--primary-color);
+    color: #858991 !important;
+}
+
+.hrs-text {
+    color: var(--primary-color) !important;
 }
 
 .project-name {
@@ -21,4 +23,21 @@
     text-decoration: none;
     color: var(--primary-color);
     text-decoration: underline;
+}
+
+.custom-p-multi-select-table {
+    .p-datatable-thead>tr>th {
+        font-weight: 600 !important;
+        font-size: var(--fontsize14) !important;
+        text-transform: capitalize !important;
+    }
+}
+
+.accordian-header-text {
+    width: 300px !important;
+}
+
+.total-hrs-text{
+    width: 250px !important;
+    text-align: left !important;
 }

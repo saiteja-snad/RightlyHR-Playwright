@@ -15,14 +15,14 @@
                         </div>
 
                         <div class="d-flex gap-2 align-items-center">
-                            <div class="custom-p-select-content">
+                            <div class="custom-p-select-content custom-icon">
                                 <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
                                     [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
                                     [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
                                     class="form-select custom-select" (onChange)="onProjectChange($event)" />
                             </div>
                         
-                            <div class="custom-p-select-content">
+                            <div class="custom-p-select-content custom-icon">
                                 <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
                                     formControlName="status" placeholder="Please select status"
                                     [showClear]="!!datepickerForm.get('status')?.value" class="form-select custom-select"

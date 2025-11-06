@@ -13,7 +13,7 @@
                     <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let row of attendanceSummaryData">
                             <td class="text-center">{{row.date | dateformat }}</td>
-                            <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
+                            <td class="hrs-text">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                             <td class="text-center">
                                 <ng-container *ngIf="row.entries[0]?.summary; else noEntries">
                                     <a type="button" [ngbPopover]="description">
@@ -69,7 +69,7 @@
                                     <div class="legend-name text-nowrap">{{ item.label }}</div>
                                 </div>
                             </div>
-                            <div class="hrs-display text-nowrap col-md-3">{{ item.value }}</div>
+                            <div class="hrs-display text-nowrap col-md-3">{{ item.value }} Hrs</div>
                         </div>
                     </div>
                 </div>
@@ -97,9 +97,9 @@
                     (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'"></div>
                 
                     <div class="progress-labels">
-                        <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }} Hrs</div>
-                        <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }} Hrs</div>
-                        <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }} Hrs</div>
+                        <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }} h</div>
+                        <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }} h</div>
+                        <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }} h</div>
                     </div>
                 </div>
             </div>
@@ -131,7 +131,7 @@
                                     <div class="legend-name text-nowrap">{{ item.label }}</div>
                                 </div>
                             </div>
-                            <div class="hrs-display text-nowrap col-md-3">{{ item.value }}</div>
+                            <div class="hrs-display text-nowrap col-md-3">{{ item.value }} Hrs</div>
                         </div>
                     </div>
                 </div>

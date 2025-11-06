@@ -344,6 +344,7 @@ export class ClientTimesheetSummaryComponent {
               {
                 data: dataValues,
                 backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
               }
             ]
           };
@@ -401,6 +402,7 @@ export class ClientTimesheetSummaryComponent {
               {
                 data: counts,
                 backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
               }
             ]
           };

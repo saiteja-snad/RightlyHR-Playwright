@@ -18,10 +18,12 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { FormsModule } from '@angular/forms';
+import { Paginator } from "primeng/paginator";
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [ReactiveFormsModule, ChartModule, TranslateModule, CommonModule, NgbPopoverModule, 
-    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule],
+  imports: [ReactiveFormsModule, ChartModule,FormsModule, TranslateModule, CommonModule, NgbPopoverModule,
+    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -80,6 +82,18 @@ export class ResourceViewSummaryComponent {
   allocatedVsActualInfo = "The Allocated and Actual Hours module provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts.";
   timesheetSummaryInfo = "The Timesheet Summary module provides a visual representation of timesheet data through a line diagram. It consolidates the total hours submitted, approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.";
   billableVsNonbillableInfo = "The Billable and Non-Billable Hours module provides a graphical representation comparing total billable hours with non-billable hours. This visual summary helps employees and managers analyze resource utilization, monitor project profitability, and maintain an effective balance between revenue-generating and internal activities.";
+  // pagination
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
@@ -110,12 +124,45 @@ export class ResourceViewSummaryComponent {
   //   });
   // }
 
+  // called for pagination 
+  onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.getProjectSummary();
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getProjectSummary();
+  }
+
+  // Called when first size changes
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getProjectSummary();
+  }
+
   getProjectSummary() {
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
-    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}`;
+
+    // Reset pagination if filters exist
+    // if (this.resourceDataids?.dateRange  && Object.keys(this.resourceDataids?.dateRange ).length > 0) {
+    //   var page  = 1;
+    //   var pagesize = 10; // or whatever your default size is
+    // }else{
+    var page = this.page;
+    var pagesize = this.pageSize;
+    // }
+    // Reset pagination if filters exist
+    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=${page}&pageSize=${pagesize}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -124,6 +171,7 @@ export class ResourceViewSummaryComponent {
           ...item,
           entries: item.entries ?? []
         }));
+        this.collectionSize = res.data.pagination.totalCount;
         // this.totalhrs = data?.totalLoggedHHMM;
         const tsSummary = res?.data?.statusSummary;
         // Convert to decimal hours
@@ -168,12 +216,15 @@ export class ResourceViewSummaryComponent {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    const dateRange = this.resourceDataids?.dateRange || [];
-    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    // const dateRange = this.resourceDataids?.dateRange || [];
+    const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+    // const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    // const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+    // const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { projectId, employeeId } = this.resourceDataids;
-    const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&groupBy=employee`;
+    const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chart = res?.data?.chart;

@@ -1,45 +1,66 @@
 <div class="custom-main-component-container">
     <div class="d-flex w-100 gap-3">
-        <div class="custom-table-content w-100">
-            @if (!loading) {
-            <table class="w-100">
-                <thead>
-                    <th class="text-center">{{'Date' | translate}}</th>
-                    <th>{{'Logged Hours' | translate }}</th>
-                    <th class="text-center">{{'Description' | translate}}</th>
-                    <th>{{'Status' | translate }}</th>
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
-                        <tr *ngFor="let row of attendanceSummaryData">
-                            <td class="text-center">{{row.date | dateformat }}</td>
-                            <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
-                            <td class="text-center">
-                                <ng-container *ngIf="row.entries[0]?.summary; else noEntries">
-                                    <a type="button" [ngbPopover]="description">
-                                        <app-info-icon />
-                                    </a>
-                                    <ng-template #description>
-                                        <p class="mb-0">{{ row.entries[0]?.summary }}</p>
-                                    </ng-template>
-                                </ng-container>
-                                <ng-template #noEntries>-</ng-template>
-                            </td>
-                            <td [style.color]="row.dailySummary.colour"><b>
-                                <span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b>
-                            </td>
-                        </tr>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
-            }
-            @else {
-            <app-data-loader-content />
+        <div class="w-100">
+            <div class="custom-table-content w-100">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <th class="text-center">{{'Date' | translate}}</th>
+                        <th>{{'Logged Hours' | translate }}</th>
+                        <th class="text-center">{{'Description' | translate}}</th>
+                        <th>{{'Status' | translate }}</th>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
+                            <tr *ngFor="let row of attendanceSummaryData">
+                                <td class="text-center">{{row.date | dateformat }}</td>
+                                <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + '
+                                    Hrs'}}</td>
+                                <td class="text-center">
+                                    <ng-container *ngIf="row.entries[0]?.summary; else noEntries">
+                                        <a type="button" [ngbPopover]="description">
+                                            <app-info-icon />
+                                        </a>
+                                        <ng-template #description>
+                                            <p class="mb-0">{{ row.entries[0]?.summary }}</p>
+                                        </ng-template>
+                                    </ng-container>
+                                    <ng-template #noEntries>-</ng-template>
+                                </td>
+                                <td [style.color]="row.dailySummary.colour"><b>
+                                        <span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+            @if(collectionSize > 0){
+            <div class="pagination-content">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows)}} of {{collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
             }
         </div>
 

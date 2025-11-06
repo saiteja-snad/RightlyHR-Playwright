@@ -169,7 +169,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.http.getData(url).subscribe({
       next: (res: any) => {
         this.dataload = false;
-        this.collectionSize = res.data.totalCount;
+        this.collectionSize = res.data.pagination.totalCount;
         if (res.success) {
           // flatten all day entities into one array of entries (optional for counts)
           const allEntries = res.data.items

@@ -10,9 +10,11 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, 
+    DateformatPipe, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -24,6 +26,7 @@ export class ClientTimesheetDetailedComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   clientId: any;
   projectId: any;
+  contentLoader = false;
 
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
@@ -32,6 +35,7 @@ export class ClientTimesheetDetailedComponent {
   }
 
   getResourceDetails(): void {
+    this.contentLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       this.clientId = clientID;
@@ -41,13 +45,14 @@ export class ClientTimesheetDetailedComponent {
       }
       // Build the API URL conditionally
       let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
-
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.projectDetails = res?.data;
+          this.contentLoader = false;
         },
         error: (err) => {
           console.error('Error fetching clients:', err);
+          this.contentLoader = false;
         }
       });
     });
@@ -65,14 +70,12 @@ export class ClientTimesheetDetailedComponent {
         id: parseInt(this.clientId),
       }
     }).then(() => {
-      this.http.notifyresource(); 
+      this.http.notifyresource();
     });
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }
-
 }

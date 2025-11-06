@@ -20,10 +20,12 @@ import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
+import { SkeletonModule } from 'primeng/skeleton';
+
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule,
-    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator],
+  imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
+    DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator, SkeletonModule],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -95,9 +97,8 @@ export class ResourceViewSummaryComponent {
     { label: 25, value: 25 }
   ];
   // content loaders variables
-  tableloader = false;
+  tableLoader = false;
   allocatedVsActualLoader = false;
-  timesheetSummaryLoader = false;
   billableVsNonbillableLoader = false;
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
@@ -157,6 +158,7 @@ export class ResourceViewSummaryComponent {
   }
 
   getProjectSummary() {
+    this.tableLoader = true;
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
@@ -203,6 +205,7 @@ export class ResourceViewSummaryComponent {
         // Graph Functions
         this.estimatedActualChart();
         this.billableVSNonBillable();
+        this.tableLoader = false;
       },
       error: err => {
         this.loading = false;
@@ -213,6 +216,7 @@ export class ResourceViewSummaryComponent {
         this.totalEntries = 0;
         this.timesheetSummaryChartData = { labels: [], datasets: [] };
         this.timesheetutilizeSummaryChartData = { labels: [], datasets: [] };
+        this.tableLoader = false;
       }
     });
   }
@@ -221,6 +225,7 @@ export class ResourceViewSummaryComponent {
     this.selectedEntries = entries;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
   //graphs no data found conditions
   get hasroleWiseHoursData(): boolean {
     return !!(
@@ -229,15 +234,16 @@ export class ResourceViewSummaryComponent {
     );
   }
 
-   get hasallocatedvsactualData(): boolean {
+  get hasallocatedvsactualData(): boolean {
     return !!(
       this.estimatedVsActualGraphData?.datasets?.length &&
       this.estimatedVsActualGraphData.datasets[0]?.data?.length
     );
   }
- 
+
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
+    this.allocatedVsActualLoader = true;
     // const dateRange = this.resourceDataids?.dateRange || [];
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
@@ -281,16 +287,19 @@ export class ResourceViewSummaryComponent {
             legend: { display: false },
           }
         };
+        this.allocatedVsActualLoader = false;
       },
       error: (err) => {
         this.loading = false;
         console.error('Error fetching estimated vs actual chart data:', err);
         this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+        this.allocatedVsActualLoader = false;
       }
     });
   }
 
   billableVSNonBillable() {
+    this.billableVsNonbillableLoader = true;
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
@@ -309,7 +318,6 @@ export class ResourceViewSummaryComponent {
           value: hours[index],
           color: colors[index]
         }));
-
         // Assign Pie Chart Data
         this.billableVsNonBillableGraphData = {
           labels: labels,
@@ -327,11 +335,13 @@ export class ResourceViewSummaryComponent {
             legend: { display: false },
           }
         };
+        this.billableVsNonbillableLoader = false;
       },
       error: err => {
         this.loading = false;
         console.error('Error fetching billable vs non-billable data:', err);
         this.billableVsNonBillableGraphData = { labels: [], datasets: [] };
+        this.billableVsNonbillableLoader = false;
       }
     });
   }

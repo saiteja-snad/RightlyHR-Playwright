@@ -8,9 +8,10 @@ import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-project-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover],
+  imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover, NoDataFoundComponent],
   templateUrl: './project-timesheet-summary.component.html',
   styleUrl: './project-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -86,7 +87,7 @@ export class ProjectTimesheetSummaryComponent {
     if (utilization > 0) return '#ef4444';   // red
     return '#e5e7eb'; // gray for 0%
   }
-  
+
   projectResourceSummary(startDate?: string, endDate?: string): void {
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
@@ -99,16 +100,13 @@ export class ProjectTimesheetSummaryComponent {
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;
-
       // Build the API URL conditionally
       let url = `ProjectManagementGraph/project/resource-summary/${projectid}`;
       if (startDate && endDate) {
         url += `?startDate=${startDate}&endDate=${endDate}`;
       }
-
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          // this.projectResourceData.get('clientName')?.enable();
           this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
         },
         error: (err) => {
@@ -161,9 +159,7 @@ export class ProjectTimesheetSummaryComponent {
           // Chart options
           this.roleWiseHoursOptions = {
             cutout: '60%',
-            plugins: {
-              legend: { display: false },
-            },
+            plugins: { legend: { display: false } },
           };
         },
         error: (err) => {
@@ -186,13 +182,11 @@ export class ProjectTimesheetSummaryComponent {
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;
-
       // Build the API URL conditionally
       let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectid}?groupBy=role`;
       if (startDate && endDate) {
         url += `&startDate=${startDate}&endDate=${endDate}`;
       }
-
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           if (res?.success && res?.data?.data?.length) {
@@ -201,7 +195,6 @@ export class ProjectTimesheetSummaryComponent {
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
             const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
             const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
-
             this.estimatedVsActualData = {
               labels: labels,
               datasets: [
@@ -225,7 +218,6 @@ export class ProjectTimesheetSummaryComponent {
                 }
               ]
             };
-
             this.estimatedVsActualOptions = {
               responsive: true,
               barThickness: 30,
@@ -243,14 +235,8 @@ export class ProjectTimesheetSummaryComponent {
                 y: {
                   stacked: true,
                   beginAtZero: true,
-                  title: {
-                    display: true, text: 'Hours', color: '#505050',
-                    font: { size: 12 },
-                  },
-                  ticks: {
-                    color: '#72777B',
-                    font: { size: 11 },
-                  },
+                  title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
+                  ticks: { color: '#72777B', font: { size: 11 } },
                 },
               },
             };
@@ -273,18 +259,15 @@ export class ProjectTimesheetSummaryComponent {
         this.billableData = [];
         return;
       }
-
       //  Get stored date range from HttpService
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;
-
       // Build the API URL conditionally
       let url = `ProjectManagementGraph/project/billable-non-billable/${projectid}`;
       if (startDate && endDate) {
         url += `?startDate=${startDate}&endDate=${endDate}`;
       }
-
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // Correct extraction based on your actual structure
@@ -294,12 +277,10 @@ export class ProjectTimesheetSummaryComponent {
             this.billableData = [];
             return;
           }
-
           // Extract data safely
           const labels = apiData.map((item: any) => item.name || 'N/A');
           const billable = apiData.map((item: any) => item.billableHours || 0);
           const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
-
           // Chart data
           this.billableData = {
             labels,
@@ -318,15 +299,12 @@ export class ProjectTimesheetSummaryComponent {
               },
             ],
           };
-
           // Chart options
           this.billableOptions = {
             responsive: true,
             barThickness: 30,
             plugins: {
-              legend: {
-                display: false,
-              },
+              legend: { display: false },
             },
             scales: {
               x: {
@@ -337,14 +315,8 @@ export class ProjectTimesheetSummaryComponent {
               y: {
                 stacked: true,
                 beginAtZero: true,
-                title: {
-                  display: true, text: 'Hours', color: '#505050',
-                  font: { size: 12 },
-                },
-                ticks: {
-                  color: '#72777B',
-                  font: { size: 11 },
-                },
+                title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
+                ticks: { color: '#72777B', font: { size: 11 } },
               },
             },
           };
@@ -368,7 +340,6 @@ export class ProjectTimesheetSummaryComponent {
       const dateRange = this.http.getCurrentDateRange();
       const start = dateRange?.startDate ?? null;
       const end = dateRange?.endDate ?? null;
-
       // Build API URL conditionally
       let url = `ProjectManagementGraph/project/burndownchart/${projectId}`;
       if (start && end) {
@@ -380,16 +351,13 @@ export class ProjectTimesheetSummaryComponent {
             date: string;
             remainingHours: number;
           }
-
           this.projectName = res?.data?.projectName;
           const idealLine: LineData[] = res?.data?.idealLine || [];
           const actualLine: LineData[] = res?.data?.actualLine || [];
-
           // Helper function to group data by week (Sunday–Saturday)
           const groupByWeek = (data: LineData[]) => {
             const weeks: { label: string; avgHours: number }[] = [];
             if (!data.length) return weeks;
-
             const grouped: Record<string, LineData[]> = {};
             data.forEach(item => {
               const date = new Date(item.date);
@@ -399,29 +367,24 @@ export class ProjectTimesheetSummaryComponent {
               if (!grouped[key]) grouped[key] = [];
               grouped[key].push(item);
             });
-
             Object.entries(grouped).forEach(([weekStart, items]) => {
               const start = new Date(weekStart);
               const end = new Date(start);
               end.setDate(start.getDate() + 6);
-              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}-${end.toLocaleDateString('en-US', 
+              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}-${end.toLocaleDateString('en-US',
                 { month: 'short', day: 'numeric' })}`;
               const avgHours = items.reduce((sum, i) => sum + i.remainingHours, 0) / items.length;
               weeks.push({ label, avgHours });
             });
-
             return weeks;
           };
-
           // Apply grouping
           const idealWeeks = groupByWeek(idealLine);
           const actualWeeks = groupByWeek(actualLine);
-
           // Labels and data for chart
           const labels = idealWeeks.map(w => w.label);
           const idealData = idealWeeks.map(w => w.avgHours);
           const actualData = actualWeeks.map(w => w.avgHours);
-
           // Chart.js dataset
           this.burndownData = {
             labels,
@@ -446,7 +409,6 @@ export class ProjectTimesheetSummaryComponent {
               },
             ],
           };
-
           // Chart options
           this.burndownOptions = {
             responsive: true,
@@ -457,30 +419,14 @@ export class ProjectTimesheetSummaryComponent {
             scales: {
               x: {
                 grid: { display: false },
-                title: {
-                  display: true,
-                  text: 'Weeks',
-                  color: '#141414',
-                  font: { size: 11 },
-                },
-                ticks: {
-                  color: '#141414',
-                  font: { size: 11 },
-                },
+                title: { display: true, text: 'Weeks', color: '#141414', font: { size: 11 } },
+                ticks: { color: '#141414', font: { size: 11 } },
               },
               y: {
                 stacked: true,
                 beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'No. of Hours',
-                  color: '#141414',
-                  font: { size: 11 },
-                },
-                ticks: {
-                  color: '#72777B',
-                  font: { size: 11 },
-                },
+                title: { display: true, text: 'No. of Hours', color: '#141414', font: { size: 11 } },
+                ticks: { color: '#72777B', font: { size: 11 } },
               },
             },
             maintainAspectRatio: false,
@@ -523,7 +469,6 @@ export class ProjectTimesheetSummaryComponent {
               }
             ]
           };
-
           this.gaugeOptions = {
             responsive: true,
             plugins: {
@@ -546,5 +491,34 @@ export class ProjectTimesheetSummaryComponent {
   getNeedleRotation(): string {
     const angle = (this.completionRate / 100) * 180 - 90;
     return `rotate(${angle}deg)`;
+  }
+
+  //graphs no data found conditions
+  get hasroleWiseHoursData(): boolean {
+    return !!(
+      this.roleWiseHoursData?.datasets?.length &&
+      this.roleWiseHoursData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasestimatedActualHoursData(): boolean {
+    return !!(
+      this.estimatedVsActualData?.datasets?.length &&
+      this.estimatedVsActualData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasbillableData(): boolean {
+    return !!(
+      this.billableData?.datasets?.length &&
+      this.billableData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasburndownData(): boolean {
+    return !!(
+      this.burndownData?.datasets?.length &&
+      this.burndownData.datasets[0]?.data?.length
+    );
   }
 }

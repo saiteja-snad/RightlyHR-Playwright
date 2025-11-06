@@ -133,17 +133,20 @@
                     </div>
                 </div>
 
-                <div class="rolewise-chart-grid">
-                    <div>
-                        <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
-                    </div>
-            
-                    <div class="legends-view">
-                        <div class="d-flex align-items-center gap-1" *ngFor="let item of projectTypeLableData">
-                            <div class="legend-circle" [ngStyle]="{ 'background-color': item.projectTypeColor?.graphData?.color }"></div>
-                            <div class="legend-name">{{ item.projectType }}</div>
+                <div class="rolewise-chart-grid graph-no-data-content">
+                    <ng-container *ngIf="hasProjectTypeData; else noData">
+                        <div>
+                            <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
                         </div>
-                    </div>
+                
+                        <div class="legends-view">
+                            <div class="d-flex align-items-center gap-1" *ngFor="let item of projectTypeLableData">
+                                <div class="legend-circle" [ngStyle]="{ 'background-color': item.projectTypeColor?.graphData?.color }"></div>
+                                <div class="legend-name">{{ item.projectType }}</div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
         </div>
@@ -169,8 +172,11 @@
                     </div>
                 </div>
 
-                <div class="bar-chart">
-                    <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
+                <div class="bar-chart graph-no-data-content">
+                    <ng-container *ngIf="hasestimatedActualHoursData; else noData">
+                        <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
         </div>
@@ -188,7 +194,6 @@
                             </ng-template>
                         </div>
                     </div>
-
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
@@ -196,9 +201,12 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="burndown-chart">
-                    <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+        
+                <div class="burndown-chart graph-no-data-content">
+                    <ng-container *ngIf="hasbillableData; else noData">
+                        <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
         </div>
@@ -207,13 +215,13 @@
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
-                    <div >Project Burndown Chart</div>
-                    <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectBurndownChartdata" class="module-icon">
-                        <ng-template #projectBurndownChartdata>
-                            <div class="module-info-text">{{ProjectBurndownChart}}</div>
-                        </ng-template>
-                    </div>
+                        <div>Project Burndown Chart</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectBurndownChartdata" class="module-icon">
+                            <ng-template #projectBurndownChartdata>
+                                <div class="module-info-text">{{ProjectBurndownChart}}</div>
+                            </ng-template>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of projectNames; let i = index">
@@ -222,9 +230,12 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="burndown-chart">
-                    <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+        
+                <div class="burndown-chart graph-no-data-content">
+                    <ng-container *ngIf="hasburndownData; else noData">
+                        <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
         </div>

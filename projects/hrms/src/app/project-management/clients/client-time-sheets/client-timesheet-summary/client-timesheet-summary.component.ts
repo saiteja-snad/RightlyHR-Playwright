@@ -70,7 +70,7 @@ export class ClientTimesheetSummaryComponent {
   EstimatedActualHours = 'Compares the estimated hours allocated for each project against the actual hours logged, helping to identify project efficiency and time variance. '
   BillablevsNonBillableHours = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.  '
   ProjectBurndownChart = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends. '
-  
+
   constructor(private http: HttpService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -569,8 +569,8 @@ export class ClientTimesheetSummaryComponent {
             responsive: true,
             barThickness: 30,
             scales: {
-              x: { 
-                stacked: true, 
+              x: {
+                stacked: true,
                 ticks: { color: '#141414', font: { size: 11 } },
               },
               y: {
@@ -723,6 +723,34 @@ export class ClientTimesheetSummaryComponent {
     return !!(
       this.departmentContributionData?.datasets?.length &&
       this.departmentContributionData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasProjectTypeData(): boolean {
+    return !!(
+      this.projectTypeData?.datasets?.length &&
+      this.projectTypeData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasestimatedActualHoursData(): boolean {
+    return !!(
+      this.estimatedVsActualData?.datasets?.length &&
+      this.estimatedVsActualData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasbillableData(): boolean {
+    return !!(
+      this.billableData?.datasets?.length &&
+      this.billableData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasburndownData(): boolean {
+    return !!(
+      this.burndownData?.datasets?.length &&
+      this.burndownData.datasets[0]?.data?.length
     );
   }
 }

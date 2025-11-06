@@ -9,9 +9,10 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Project } from '../../../../Interfaces/projects.model';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule],
+  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule, NoDataFoundComponent],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -708,5 +709,20 @@ export class ClientTimesheetSummaryComponent {
         }
       });
     });
+  }
+
+  //graphs no data found conditions
+  get hasProjectResourceData(): boolean {
+    return !!(
+      this.projectResourceData?.datasets?.length &&
+      this.projectResourceData.datasets[0]?.data?.length
+    );
+  }
+
+  get hasDepartmentWiseData(): boolean {
+    return !!(
+      this.departmentContributionData?.datasets?.length &&
+      this.departmentContributionData.datasets[0]?.data?.length
+    );
   }
 }

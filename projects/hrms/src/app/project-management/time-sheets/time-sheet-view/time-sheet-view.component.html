@@ -110,9 +110,9 @@
                                         [class.disabled]="employeeSelected || hasAnyDuration(project)"
                                         (click)="onDropdownClick($event)">
                                         <u>{{ project.value.selectedProject?.clientName &&
-                                            project.value.selectedProject?.projectName
+                                            project.value.selectedProject?.projectName && project.value.selectedProject?.phaseName
                                             ? project.value.selectedProject.clientName + ' - ' +
-                                            project.value.selectedProject.projectName
+                                            project.value.selectedProject.projectName + ' - ' + project.value.selectedProject?.phaseName
                                             : 'Select Project or Client' }}</u>
                                     </div>
                                     <ul class="dropdown-menu custom-dropdown-menu">
@@ -124,22 +124,42 @@
                                             <p-accordion>
                                                 <ng-container *ngFor="let client of getFilteredClientsForRow(project)">
                                                     <p-accordion-panel [value]="client.clientName"
-                                                        *ngIf="hasUnselectedProjects(client)">
+                                                        *ngIf="hasUnselectedProjectPhases(client)">
                                                         <p-accordion-header>
                                                             {{ client.clientName | titlecase }}
                                                             <small class="text-muted ms-2">
                                                                 ({{
-                                                                showprojectlength(client.projects,selectedProjectIds)
+                                                                showProjectsLength(client.projects,selectedPhaseIds)
                                                                 }}Projects)
                                                             </small>
                                                         </p-accordion-header>
                                                         <p-accordion-content>
                                                             <ul class="ps-0">
                                                                 <ng-container *ngFor="let p of client.projects">
-                                                                    <li class="list-project-name cursor"
-                                                                        (click)="selectProjectForRow(project, client, p)"
-                                                                        *ngIf="!selectedProjectIds.includes(p.projectId)">
-                                                                        {{ p.projectName }}
+                                                                    <li class="list-project-name">
+                                                                        <div class="fw-bold">{{ p.projectName }}</div>
+
+                                                                        <!-- 🔹 If project has phases, show them -->
+                                                                        <ul class="ps-3 mb-1" *ngIf="p.phases && p.phases.length > 0">
+                                                                        <li
+                                                                            class="cursor text-secondary"
+                                                                            *ngFor="let ph of p.phases"
+                                                                            (click)="selectProjectForRow(project, client, p, ph)"
+                                                                            [ngClass]="{ 'disabled': selectedPhaseIds.includes(ph.phaseId) }"
+                                                                        >
+                                                                            {{ ph.phaseName }}
+                                                                        </li>
+                                                                        </ul>
+
+                                                                        <!-- 🔹 If project has no phases -->
+                                                                        <div
+                                                                        *ngIf="!p.phases || p.phases.length === 0"
+                                                                        class="cursor text-secondary"
+                                                                        (click)="selectProjectForRow(project, client, p, null)"
+                                                                        [ngClass]="{ 'disabled': selectedPhaseIds.includes(p.projectId) }"
+                                                                        >
+                                                                        
+                                                                        </div>
                                                                     </li>
                                                                 </ng-container>
                                                             </ul>

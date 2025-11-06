@@ -479,7 +479,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerForm.value.resourceId,
     };
-    this.http.setRequest(request);
+    this.http.setRequest({ ...request, resetPagination: true });
     // Send `request` to API if needed
   }
 

@@ -102,6 +102,10 @@ export class ResourceViewSummaryComponent {
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
       if (request) {
+        if (request.resetPagination) {
+      this.page = 1;
+      this.first = 0;
+    }
         this.resourceDataids = {
           ...this.resourceDataids, // keep clientId & projectId from localStorage
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
@@ -269,12 +273,11 @@ export class ResourceViewSummaryComponent {
   }
 
   billableVSNonBillable() {
-    const dateRange = this.resourceDataids?.dateRange || [];
-    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+      const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
-    const url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&groupBy=emp`;
+    const url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=emp`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];

@@ -22,11 +22,11 @@ import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [ReactiveFormsModule, ChartModule,FormsModule, TranslateModule, CommonModule, NgbPopoverModule,
+  imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule,
     NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ResourceViewSummaryComponent {
@@ -94,6 +94,11 @@ export class ResourceViewSummaryComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  // content loaders variables
+  tableloader = false;
+  allocatedVsActualLoader = false;
+  timesheetSummaryLoader = false;
+  billableVsNonbillableLoader = false;
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
@@ -103,9 +108,9 @@ export class ResourceViewSummaryComponent {
     this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
       if (request) {
         if (request.resetPagination) {
-      this.page = 1;
-      this.first = 0;
-    }
+          this.page = 1;
+          this.first = 0;
+        }
         this.resourceDataids = {
           ...this.resourceDataids, // keep clientId & projectId from localStorage
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
@@ -156,7 +161,6 @@ export class ResourceViewSummaryComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
-
     // Reset pagination if filters exist
     // if (this.resourceDataids?.dateRange  && Object.keys(this.resourceDataids?.dateRange ).length > 0) {
     //   var page  = 1;
@@ -273,7 +277,7 @@ export class ResourceViewSummaryComponent {
   }
 
   billableVSNonBillable() {
-      const { startDate, endDate } = this.resourceDataids?.dateRange || {};
+    const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;

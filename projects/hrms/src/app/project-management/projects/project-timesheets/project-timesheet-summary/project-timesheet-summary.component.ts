@@ -154,6 +154,7 @@ export class ProjectTimesheetSummaryComponent {
               {
                 data: dataValues,
                 backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
               },
             ],
           };

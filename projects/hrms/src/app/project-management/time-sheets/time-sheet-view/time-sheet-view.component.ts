@@ -176,16 +176,33 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     let isEffective = false;
     if (matchedResource && !matchedResource?.isNoClientProject) {
-      isEffective =
-        resourcestartdate && entryDateObj
-          ? entryDateObj.getTime() >= resourcestartdate.getTime()
-          : false;
+      // Check resource date range
+      const resourceDateValid = resourcestartdate && entryDateObj
+        ? entryDateObj.getTime() >= resourcestartdate.getTime()
+        : true;
+      
+      const resourceEndValid = resourceenddate && entryDateObj
+        ? entryDateObj.getTime() <= resourceenddate.getTime()
+        : true;
 
-      isEffective =
-        resourceenddate && entryDateObj
-          ? entryDateObj.getTime() <= resourceenddate.getTime()
-          : false;
+      // Check phase date range if phase exists
+      let phaseDateValid = true;
+      if (matchedResource.phase && entryDateObj) {
+        const phaseStartDate = matchedResource.phase.startDate ? new Date(matchedResource.phase.startDate) : null;
+        const phaseEndDate = matchedResource.phase.endDate ? new Date(matchedResource.phase.endDate) : null;
+        
+        if (phaseStartDate) {
+          phaseStartDate.setHours(0, 0, 0, 0);
+          phaseDateValid = phaseDateValid && entryDateObj.getTime() >= phaseStartDate.getTime();
+        }
+        
+        if (phaseEndDate) {
+          phaseEndDate.setHours(0, 0, 0, 0);
+          phaseDateValid = phaseDateValid && entryDateObj.getTime() <= phaseEndDate.getTime();
+        }
+      }
 
+      isEffective = resourceDateValid && resourceEndValid && phaseDateValid;
     } else {
       // No-client/no-project → always effective
       isEffective = true;
@@ -1065,6 +1082,32 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
       isLeave: existingDayData?.isLeave || false
     };
   }
+
+  // Helper method to check if a date is valid for the selected phase
+  isDateValidForPhase(date: Date, selectedResource: any): boolean {
+    if (!selectedResource?.phase) {
+      return true; // No phase restrictions
+    }
+
+    const phaseStartDate = selectedResource.phase.startDate ? new Date(selectedResource.phase.startDate) : null;
+    const phaseEndDate = selectedResource.phase.endDate ? new Date(selectedResource.phase.endDate) : null;
+    
+    if (phaseStartDate) {
+      phaseStartDate.setHours(0, 0, 0, 0);
+      if (date < phaseStartDate) {
+        return false;
+      }
+    }
+    
+    if (phaseEndDate) {
+      phaseEndDate.setHours(0, 0, 0, 0);
+      if (date > phaseEndDate) {
+        return false;
+      }
+    }
+
+    return true;
+  }
   onDropdownClick(event: MouseEvent) {
     if (!this.employeeSelected) {
       event.stopPropagation(); // stop event bubbling
@@ -1081,6 +1124,7 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
     // Extract previous values (if user is switching projects)
     const prevClientId = form.get('clientId')?.value;
     const prevProjectId = form.get('projectId')?.value;
+    const prevPhaseId = form.get('phaseId')?.value;
     // Patch project details
     form.patchValue({
       clientId: client.clientId,
@@ -1094,18 +1138,19 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
         clientName: client.clientName,
         projectId: project.projectId,
         projectName: project.projectName,
-        phaseId: phase.phaseId,
-        phaseName: phase.phaseName 
+        phaseId: phase ? phase.phaseId : null,
+        phaseName: phase ? phase.phaseName : null
       },
     });
 
     // Skip redundant selection
-    if (prevClientId === client?.clientId && prevProjectId === project?.projectId  ) {
+    if (prevClientId === client?.clientId && prevProjectId === project?.projectId && prevPhaseId === (phase ? phase.phaseId : null)) {
       console.log('Same project/client selected — no update needed.');
       return;
     }
     const selectedResource = this.resourcesArrayList.find(
-      (res: any) => res.project?.projectId === project.projectId && res?.phase?.phaseId === phase.phaseId &&
+      (res: any) => res.project?.projectId === project.projectId && 
+        res?.phase?.phaseId === (phase ? phase.phaseId : null) &&
         res.client?.clientId === client.clientId
     );
     if (selectedResource) {
@@ -1120,10 +1165,11 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
       isBillable: billableCheck,
       previousProjectId: prevProjectId || null,
       previousClientId: prevClientId || null,
+      previousPhaseId: prevPhaseId || null
     };
 
-    // ✅ Add projectId only if not 0
-    if (phase.phaseId && phase.phaseId !== 0) {
+    // ✅ Add phaseId only if phase exists and not 0
+    if (phase && phase.phaseId && phase.phaseId !== 0) {
       payload.phaseId = phase.phaseId;
     }
 
@@ -1162,7 +1208,15 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
       const entryDate = this.weekDates[index];
       // Get day status (weekend/holiday/leave)
       const dayStatus = this.getDayStatus(entryDate);
-      const { isBlocked, blockReason, isLeave } = dayStatus;
+      let { isBlocked, blockReason, isLeave } = dayStatus;
+      
+      // Check if date is valid for the selected phase
+      const isPhaseValid = this.isDateValidForPhase(entryDate, this.selectedProjectResource);
+      if (!isPhaseValid && this.selectedProjectResource?.phase) {
+        isBlocked = true;
+        blockReason = 'Phase Date Restriction';
+      }
+      
       // Update form controls with day status
       dayForm.patchValue({
         isBlocked,
@@ -1178,12 +1232,36 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
       let isEffective = true;
       if (
         this.selectedProjectResource &&
-        this.selectedProjectResource.project?.projectId !== 0 &&
-        this.selectedProjectResource.startDate
+        this.selectedProjectResource.project?.projectId !== 0
       ) {
-        const resourceStartDate = new Date(this.selectedProjectResource.startDate);
-        resourceStartDate.setHours(0, 0, 0, 0);
-        isEffective = entryDate >= resourceStartDate;
+        // Check resource date range
+        if (this.selectedProjectResource.startDate) {
+          const resourceStartDate = new Date(this.selectedProjectResource.startDate);
+          resourceStartDate.setHours(0, 0, 0, 0);
+          isEffective = isEffective && entryDate >= resourceStartDate;
+        }
+        
+        if (this.selectedProjectResource.endDate) {
+          const resourceEndDate = new Date(this.selectedProjectResource.endDate);
+          resourceEndDate.setHours(0, 0, 0, 0);
+          isEffective = isEffective && entryDate <= resourceEndDate;
+        }
+
+        // Check phase date range if phase exists
+        if (this.selectedProjectResource.phase) {
+          const phaseStartDate = this.selectedProjectResource.phase.startDate ? new Date(this.selectedProjectResource.phase.startDate) : null;
+          const phaseEndDate = this.selectedProjectResource.phase.endDate ? new Date(this.selectedProjectResource.phase.endDate) : null;
+          
+          if (phaseStartDate) {
+            phaseStartDate.setHours(0, 0, 0, 0);
+            isEffective = isEffective && entryDate >= phaseStartDate;
+          }
+          
+          if (phaseEndDate) {
+            phaseEndDate.setHours(0, 0, 0, 0);
+            isEffective = isEffective && entryDate <= phaseEndDate;
+          }
+        }
       }
 
       // Enable/disable fields based on conditions
@@ -1217,33 +1295,29 @@ getFilteredClientsForRow(project: AbstractControl): any[] {
     // this.addProject();
   }
 
-// Check if any unselected phases or projects exist for a client
 hasUnselectedProjectPhases(client: any): boolean {
-  console.log(client,this.selectedPhaseIds);
-  
   return client.projects.some((project: any) => {
     if (project.phases && project.phases.length > 0) {
-      // true if *any* phase is not yet selected
       return project.phases.some(
         (phase: any) => !this.selectedPhaseIds.includes(phase.phaseId)
       );
     }
-
-    // fallback: projects with no phases
     const isNoClientProject = client.clientId === 0 && project.projectId === 0;
     if (isNoClientProject) {
       return !this.selectedPhaseIds.includes(0);
     }
-
     return !this.selectedPhaseIds.includes(project.projectId);
   });
 }
 
 
   showProjectsLength(projects: any[], selectedPhaseIds: any[]): number {
-    console.log(projects);
-    
-    return projects.filter((p) => !selectedPhaseIds.includes(p.projectId)).length;
+    return projects.filter((p) => {
+      if (p.phases && p.phases.length > 0) {
+        return p.phases.some((ph: any) => !selectedPhaseIds.includes(ph.phaseId));
+      }
+      return !selectedPhaseIds.includes(p.projectId);
+    }).length;
   }
 
   hasAnyDuration(project: AbstractControl): boolean {
@@ -1251,10 +1325,12 @@ hasUnselectedProjectPhases(client: any): boolean {
     return days.some(day => project.get(day)?.get('duration')?.value && project.get(day)?.get('approvalStatus')?.value.toLowerCase() !== 'not entered');
   }
 
-// ✅ 1. Collect all selected phase IDs properly
 get selectedPhaseIds(): any[] {
   return this.projects.controls
-    .map((ctrl: AbstractControl) => ctrl.value?.phaseId)
+    .map((ctrl: AbstractControl) => {
+      const project = ctrl.value?.selectedProject;
+      return project?.phaseId ?? project?.projectId;
+    })
     .filter((id) => id !== undefined && id !== null);
 }
 
@@ -1548,6 +1624,7 @@ get selectedPhaseIds(): any[] {
             approverId: day.approverId || 0,
             clientId: project.selectedProject?.clientId || 0,
             projectId: project.selectedProject?.projectId || 0,
+            phaseId: project.selectedProject?.phaseId || 0,
             entryDate: moment(this.weekDates[idx]).format('YYYY-MM-DD'),
             durationSeconds: this.hhmmToSeconds(day.duration),
             description: day.description || '',
@@ -1663,7 +1740,8 @@ get selectedPhaseIds(): any[] {
       draft: status === 'draft',
       holiday: blockReasons === 'Holiday',
       // weekend:blockReasons==='Weekend',
-      leave: blockReasons === 'Leave'
+      leave: blockReasons === 'Leave',
+      'phase-restricted': blockReasons === 'Phase Date Restriction'
     };
   }
 

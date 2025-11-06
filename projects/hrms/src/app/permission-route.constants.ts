@@ -608,6 +608,10 @@ export const PROJECTS_ROUTES = [
   {
     route: '/project-management/projects/details/inactivedocuments',
     permission: 'Documents Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/phases',
+    permission: 'Documents Tab.view'
   }
 ];
 

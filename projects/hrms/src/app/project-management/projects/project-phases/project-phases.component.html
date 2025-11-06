@@ -21,7 +21,7 @@
                 <!-- <th>Timesheet Approval Authority</th> -->
                 <th class="text-center">Phase / Milestone Description</th>
                 <th class="text-center">Status</th>
-                @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project Phases Tab.delete'))
                 && inactiveStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
@@ -68,34 +68,18 @@
                             </ng-template>
                         </td>
 
-                        @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                        @if((rbac.allowedToAccess('Project Phases Tab.update'))
                             && inactiveStatus !== 'inactive'){
                         <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
-                                    <!-- <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Resources Tab.update')){
-                                        <li *ngFor="let action of getActionsByStatus(data.status)">
-                                            <a class="dropdown-item" (click)="handleAction(action, data)">
-                                                <i class="bi" [ngClass]="getActionIcon(action)"></i> {{ action }}
-                                            </a>
-                                        </li>
-                                        }
-                                        @if(rbac.allowedToAccess('Resources Tab.delete')){
-                                        <li (click)="openModal(deleteconformation,'m',data)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                        }
-                                    </ul> -->
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li>
+                                        <!-- <li>
                                              <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)"> <i
                                                     class="bi bi-pencil me-2"></i>Update </a> 
-                                        </li>
+                                        </li> -->
                                         <li *ngFor="let action of getActionsByStatus(data.status)">
                                             <a class="dropdown-item" (click)="handleAction(action, data)">
                                                 <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action }}
@@ -303,7 +287,7 @@
     <form [formGroup]="reasonForm" (ngSubmit)="submitReason(modal)">
         <div class="result-popup-content" ngbAutofocus>
             <div>
-                <img src="icons/reject.png" alt="icon" class="confirmation-delete-icon">
+                <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{ modalData?.title }}</p>
             </div>
 
@@ -344,7 +328,7 @@
     <form [formGroup]="extendForm" (ngSubmit)="submitExtend(modal)">
         <div class="result-popup-content" ngbAutofocus>
             <div>
-                <img src="icons/reject.png" alt="icon" class="confirmation-delete-icon">
+                <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">Extend Phase End Date</p>
             </div>
 

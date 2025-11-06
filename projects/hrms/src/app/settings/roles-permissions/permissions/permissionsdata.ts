@@ -907,6 +907,8 @@ export const permissionsData = [
   { fields: 'Resources Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Phases Tab', View: false, Update: false, Create: false, Delete: false },
+
   //Documents
   { fields: 'NDA Document', View: false, Update: false, Create: false, Delete: false },
   { fields: 'MSA Document', View: false, Update: false, Create: false, Delete: false },

@@ -52,6 +52,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
+  @ViewChild('updateResourcemodal') updateResourcemodal !:any;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
@@ -204,22 +205,28 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  openModal(content: any, size: any, data: IPhases) {
-    this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
-    this.phaseId = data.phaseId;
+  handleUpdateAction(phase: IPhases) {
+    this.phaseId = phase.phaseId;
+
+    // Patch form values
     this.updatePhaseForm.patchValue({
-      phaseName: data.phaseName,
-      allocatedHours: data.allocatedHours,
-    startDate: data.startDate?.substring(0,10),
-    endDate: data.endDate?.substring(0,10),
-    kickoffDate: data.kickoffDate?.substring(0,10),
-    effectiveDate: data.effectiveDate?.substring(0,10),
-    approvalidAuthority: data.pendingApprovalAuthority?.id ?? null,
-    phaseDescription: data.description
+      phaseName: phase.phaseName,
+      allocatedHours: phase.allocatedHours,
+      startDate: phase.startDate?.substring(0, 10),
+      endDate: phase.endDate?.substring(0, 10),
+      kickoffDate: phase.kickoffDate?.substring(0, 10),
+      effectiveDate: phase.effectiveDate?.substring(0, 10),
+      approvalidAuthority: phase.pendingApprovalAuthority?.id ?? null,
+      phaseDescription: phase.description
     });
 
+    // Load resources THEN open modal
     this.getResourceData(this.projectId, this.phaseId, true);
+
+    // Open modal after everything is ready
+    this.modalService.open(this.updateResourcemodal, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
 
   udpatePhase() {
     if (this.updatePhaseForm.invalid) {
@@ -374,12 +381,12 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
 
   statusMap: Record<string, string> = {
-    'Activate Phase': 'active',
-    'Put Phase On Hold': 'hold',
-    'Cancel Phase': 'cancelled',
-    'Close Phase': 'closed',
-    'Resume Phase': 'active',
-    'Extend Phase': 'extended',   // extend keeps active unless moved to "extended"
+    'Are you sure you want to activate?': 'active',
+    'Are you sure you want to put on hold?': 'hold',
+    'Are you sure you want to cancel?': 'cancelled',
+    'Are you sure you want to close?': 'closed',
+    'Are you sure you want to resume?': 'active',
+    'Are you sure you want to extend?': 'extended',   // extend keeps active unless moved to "extended"
   };
 
   getActionsByStatus(status: string): string[] {
@@ -390,26 +397,29 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   handleAction(action: string, phase: IPhases) {
     switch (action) {
+      case 'Update':
+        this.handleUpdateAction(phase);
+        break;
       case 'Active':
-        this.openReasonModal('Activate Phase', phase);
+        this.openReasonModal('Are you sure you want to activate?', phase);
         break;
       case 'Hold':
-        this.openReasonModal('Put Phase On Hold', phase);
+        this.openReasonModal('Are you sure you want to put on hold?', phase);
         break;
       case 'Cancel':
-        this.openReasonModal('Cancel Phase', phase);
+        this.openReasonModal('Are you sure you want to cancel?', phase);
         break;
       case 'Close':
-        this.openReasonModal('Close Phase', phase);
+        this.openReasonModal('Are you sure you want to close?', phase);
         break;
       case 'Extend':
         this.openExtendModal(phase);
         break;
       case 'Resume':
-        this.openReasonModal('Resume Phase', phase);
+        this.openReasonModal('Are you sure you want to resume?', phase);
         break;
       case 'Reactivate':
-        this.openReasonModal('Reactivate Phase', phase);
+        this.openReasonModal('Are you sure you want to extend?', phase);
         break;
     }
   }
@@ -546,7 +556,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       Close: 'bi-check-circle',
       Extend: 'bi-calendar-plus',
       Resume: 'bi-arrow-repeat',
-      Reactivate: 'bi-arrow-clockwise'
+      Reactivate: 'bi-arrow-clockwise',
+      Update: 'bi bi-pencil'
     }[action] || 'bi-question-circle';
   }
 

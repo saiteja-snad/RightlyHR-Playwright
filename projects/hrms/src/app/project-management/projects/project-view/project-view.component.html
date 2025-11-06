@@ -4,7 +4,7 @@
       <app-project-management-module-info />
     </div>
 
-    @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'inactive'){
+    @if(rbac.allowedToAccess('Project Phases Tab.create') && inactiveStatus !== 'inactive'){
     <div *ngIf="isActive('project-management/projects/details/phases')" (click)="openPhaseModal()">
       <button type="button" class="custom-btn btn-primary">
         {{ "Add Phase / Milestone" }}

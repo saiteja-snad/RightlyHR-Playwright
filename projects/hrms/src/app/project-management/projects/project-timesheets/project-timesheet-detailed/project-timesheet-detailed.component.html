@@ -11,6 +11,7 @@
                 </tr>
             </thead>
             <tbody>
+                     @if(projectEmployeeDetails.length > 0){
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
                     <td>
                         <a class="project-name cursor" (click)="navigateView(project.employee.id)">{{ project.employee?.name }}
@@ -21,6 +22,9 @@
                     <td>{{ project.daysSpent || '-' }} Days</td>
                     <td>{{ project.loggedHours || '0' }} Hrs</td>
                 </tr>
+            }@else {
+                  <app-no-data-found/>
+            }
             </tbody>
         </table>
     </div>

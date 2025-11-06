@@ -2,7 +2,6 @@
     <div class="d-flex w-100 gap-3">
         <div class="w-100">
             <div class="custom-table-content w-100">
-                @if (!loading) {
                 <table class="w-100">
                     <thead>
                         <th class="text-center">{{'Date' | translate}}</th>
@@ -39,10 +38,6 @@
                         </ng-template>
                     </tbody>
                 </table>
-                }
-                @else {
-                <app-data-loader-content />
-                }
             </div>
             @if(collectionSize > 0){
             <div class="pagination-content">
@@ -77,11 +72,10 @@
             </div>
 
             <div class="time-sheet-graph-card p-4">
-                <div class="rolewise-chart-grid gap-4">
-                    <div>
-                        <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
-                    </div>
-                    
+                <div class="rolewise-chart-grid gap-4 graph-no-data-content">
+                         <ng-container *ngIf="hasallocatedvsactualData; else noData">
+                      <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                   </ng-container>                  
                     <div class="legends-view">
                         <div class="row gap-0 mb-1" *ngFor="let item of estimatedVsActualData">
                             <div class="col-md-9">
@@ -93,7 +87,9 @@
                             <div class="hrs-display text-nowrap col-md-3">{{ item.value }} Hrs</div>
                         </div>
                     </div>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
+
             </div>
         
             <div class="dashed-line my-3"></div>
@@ -137,12 +133,11 @@
                     </ng-template>
                 </div>
             </div>
-
             <div class="time-sheet-graph-card p-4">
-               <div class="rolewise-chart-grid gap-4">
-                    <div>
+               <div class="rolewise-chart-grid gap-4 graph-no-data-content">
+                   <ng-container *ngIf="hasroleWiseHoursData; else noData">
                         <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />
-                    </div>
+                   </ng-container>
                     
                     <div class="legends-view">
                         <div class="row gap-0 mb-1" *ngFor="let item of billableVsNonBillableData">
@@ -155,7 +150,8 @@
                             <div class="hrs-display text-nowrap col-md-3">{{ item.value }} Hrs</div>
                         </div>
                     </div>
-                </div>
+                     <ng-template #noData><app-no-data-found /></ng-template>
+                </div>        
             </div>
         </div>
     </div>

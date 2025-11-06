@@ -9,9 +9,10 @@ import { AccordionModule } from 'primeng/accordion';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, DateformatPipe],
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',
   encapsulation: ViewEncapsulation.None

@@ -5,9 +5,10 @@ import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-project-timesheet-detailed',
-  imports: [CommonModule, DateformatPipe],
+  imports: [CommonModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './project-timesheet-detailed.component.html',
   styleUrl: './project-timesheet-detailed.component.scss'
 })

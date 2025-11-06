@@ -217,7 +217,21 @@ export class ResourceViewSummaryComponent {
     this.selectedEntries = entries;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+  //graphs no data found conditions
+  get hasroleWiseHoursData(): boolean {
+    return !!(
+      this.billableVsNonBillableGraphData?.datasets?.length &&
+      this.billableVsNonBillableGraphData.datasets[0]?.data?.length
+    );
+  }
 
+   get hasallocatedvsactualData(): boolean {
+    return !!(
+      this.estimatedVsActualGraphData?.datasets?.length &&
+      this.estimatedVsActualGraphData.datasets[0]?.data?.length
+    );
+  }
+ 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     // const dateRange = this.resourceDataids?.dateRange || [];

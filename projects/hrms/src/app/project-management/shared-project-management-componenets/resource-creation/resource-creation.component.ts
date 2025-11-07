@@ -380,6 +380,11 @@ onPhaseChange(selectedValue: any) {
     }
     this.spinnerLoader = true;
     const formValue = this.addResourceForm.value;
+    // Convert startDate to a Date object for comparison
+    const startDate = new Date(formValue.startDate);
+    const today = new Date();
+    // Determine status based on start date
+    const status = startDate > today ? 'Assigned' : 'Active';
     const payload = {
       entityType: "project",
       entityRefId: this.projectId,
@@ -393,7 +398,7 @@ onPhaseChange(selectedValue: any) {
       overtimeEligibile: formValue.overtimeEligible,
       billable: formValue.billable,
       weekendWorkAllowed: formValue.allowweekendWork,
-      status: "Active",
+      status: status,
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
       phaseId : this.selectedPhaseId,

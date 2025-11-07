@@ -3,8 +3,6 @@
     height: 2rem;
 }
 
-
-
 .total-duration {
     font-size: var(--fontsize15) !important;
     font-weight: 600;
@@ -38,7 +36,7 @@
     max-height: 400px;
     overflow-y: auto;
     border-radius: 0.75rem;
-    padding: 0.75rem;
+    padding: 0.55rem;
     border: 1px solid #DAE2ED;
     box-shadow: 0px 0px 10.88px 0px #0B3A8333;
     margin-top: 0.25rem !important;
@@ -64,7 +62,7 @@
     .p-accordionpanel {
         margin-bottom: 1rem !important;
         border: 2px solid #E8ECF3 !important;
-        border-radius: 0.25rem !important;
+        border-radius: 0.5rem !important;
         overflow: hidden !important;
     }
 
@@ -80,6 +78,10 @@
         color: var(--primary-color) !important;
     }
 
+    .p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader {
+        border-bottom: 1px solid #E8ECF3 !important;
+    }
+
     .p-accordioncontent-content {
         padding: 0.75rem !important;
         border-bottom-left-radius: 0.5rem !important;
@@ -90,11 +92,18 @@
         transform: rotate(180deg);
     }
 
-    .list-project-name {
+    .list-project {
         font-weight: 400;
-        font-size: 12px;
+        font-size: var(--fontsize12);
         color: #637084;
         padding: 0.5rem 1rem;
+        background-color: #EEF2F6;
+        border-radius: 0.25rem;
+    }
+
+    .phase-name {
+        font-size: var(--fontsize10) !important;
+        color: #000000;
     }
 }
 

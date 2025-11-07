@@ -42,6 +42,7 @@ export interface TimesheetEntry {
   entryId: number;
   projectId: number;
   projectName: string;
+  phaseName: string;
   clientId: number;
   clientName: string;
   entryDate: string;    // "2025-10-06T00:00:00"

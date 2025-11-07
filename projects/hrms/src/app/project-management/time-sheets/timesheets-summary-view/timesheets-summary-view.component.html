@@ -221,6 +221,7 @@
                                     <tr>
                                         <th>Client Name</th>
                                         <th>Project Name</th>
+                                        <th>Phase/Milestone</th>
                                         <th>Logged Hours</th>
                                         <th>Status</th>
                                     </tr>
@@ -229,6 +230,7 @@
                                     <tr *ngFor="let entry of selectedEntries">
                                         <td>{{ entry.clientName }}</td>
                                         <td>{{ entry.projectName }}</td>
+                                        <td>{{ entry.phaseName }}</td>
                                         <td>{{ entry.loggedHours }} hrs</td>
                                         <td [ngClass]="{'approved': entry.status === 'Processed', 
                                         'rejected': entry.status === 'Rejected', 'waiting': entry.status === 'Waiting for Approval', 

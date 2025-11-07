@@ -358,6 +358,10 @@ export class ResourceViewSummaryComponent {
     return `${h}:${m.toString().padStart(2, '0')}`;
   }
 
+  get totalPercent(): number {
+    return this.approvedPercent + this.submittedPercent + this.rejectedPercent;
+  }
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

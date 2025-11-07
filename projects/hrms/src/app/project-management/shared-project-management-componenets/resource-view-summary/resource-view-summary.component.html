@@ -116,11 +116,10 @@
             <div class="time-sheet-graph-card">
                 <div class="stacked-progress-container py-4">
                     <!-- overlay color bar -->
-                    <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, '
-                    + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, '
-                    + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + 
-                    (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'"></div>
-                
+                    <div class="stacked-progress-overlay mb-3" [style.background]="totalPercent === 0 ? '#E5E7EB' : 
+                    'linear-gradient(to right, ' + approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + 
+                    submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + 
+                    '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'"></div>
                     <div class="progress-labels">
                         <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }} h</div>
                         <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }} h</div>

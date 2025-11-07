@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { from, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -18,10 +18,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent],
+    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,NgbPopover],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
@@ -756,6 +757,7 @@ updateResourceStatus(payload: any, modal?: any) {
   }
 
 submitReason(modal: any) {
+  debugger
   if (this.reasonForm.invalid) {
     this.reasonForm.markAllAsTouched();
     return;
@@ -786,7 +788,7 @@ const payload = {
   ...{
     entityType: "project",
     entityRefId: this.projectId,
-    employeeId: data.employee?.employeeId,
+    employeeId: data.employee?.id,
     startDate: data.startDate,
     endDate: data.endDate,
     allocatedHours: data.allocatedHours,
@@ -796,8 +798,8 @@ const payload = {
     status,
     reason,
     allocatedBy: this.empinfo.employeeId,
-    projectRoleId: data.projectRole?.roleId,
-    projectDepartmentId: data.projectRole?.entityReferenceId,
+    projectRoleId: data?.projectRoleId,
+    projectDepartmentId: data?.projectDepartmentId,
     pendingApprovalAuthority: data.pendingApprovalAuthority,
     phaseId: data.phase?.phaseId,
     meta: data.meta || {

@@ -279,10 +279,11 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   this.updatePhaseStatus({
     phaseId: this.phaseId,
-    status: 'yet to start',
+    status: 'in progress',
     startDate: formValue.startDate,
     endDate: formValue.endDate,
     phaseName: formValue.phaseName,
+    timesheetApprovalAuthorityId: formValue.approvalidAuthority,
     meta: { graphData: { color: formValue.updatecolor } }
   });
   }
@@ -294,15 +295,17 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   startDate?: string,
   endDate?: string,
   phaseName?: string,
-  meta?: any
+  meta?: any,
+  timesheetApprovalAuthorityId?:any,
 }, modal?: any) {
   this.loading = true;
 
   const payload: any = {
     projectId: this.projectId,
-    phaseId: options.phaseId,
-    phaseName: options.phaseName || this.modalData?.phase?.phaseName,
-    status: options.status,
+    phaseId: options?.phaseId,
+    phaseName: options?.phaseName || this.modalData?.phase?.phaseName,
+    status: options?.status,
+    timesheetApprovalAuthorityId: options?.timesheetApprovalAuthorityId,
     updatedBy: parseInt(this.empinfo.employeeId)
   };
 
@@ -429,8 +432,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   statusActionsMap: Record<string, string[]> = {
     'yet to start': ['Start', 'Update'],
-    'in progress': ['Hold', 'Mark as Completed', 'Extend'],
-    'extended': ['Hold', 'Mark as Completed', 'Extend'],
+    'in progress': ['Hold', 'Mark as Completed', 'Extend', 'Update'],
+    'extended': ['Hold', 'Mark as Completed', 'Extend', 'Update'],
     'hold': ['Resume Phase', 'Mark as Completed'],
     'completed': ['Close Phase', 'Extend'],
     'closed': []

@@ -47,5 +47,6 @@ export interface IResource {
         fusionEmployeeId : string;
         name : string;
         workMail : string;
-    }
+    },
+    reason : string;
 }

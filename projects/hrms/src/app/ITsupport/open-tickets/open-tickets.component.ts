@@ -70,7 +70,9 @@ export class OpenTicketsComponent implements OnInit,OnDestroy {
       deskdetails: [{ value: '', disabled: true }, [Validators.required]],
       department: [{ value: '', disabled: true }, [Validators.required]],
       team: [{ value: '', disabled: true }, [Validators.required]],
-      type: [{ value: '', disabled: true }, [Validators.required]],
+      // type: [{ value: '', disabled: true }, [Validators.required]],
+      category: [{ value: '', disabled: true }, [Validators.required]],
+      subcategory: [{ value: '', disabled: true }, [Validators.required]],
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
       description: [{ value: '', disabled: true }, [Validators.required]],
@@ -91,7 +93,9 @@ export class OpenTicketsComponent implements OnInit,OnDestroy {
       deskdetails: this.selectedTickets.deskNo,
       department: this.selectedTickets.departmentName,
       team: this.selectedTickets.subdepartmentName,
-      type: this.selectedTickets.type,
+      // type: this.selectedTickets.type,
+      category: this.selectedTickets.categoryName,
+      subcategory: this.selectedTickets.subcategoryName,
       priority: this.selectedTickets.priority,
       subject: this.selectedTickets.subject,
       description: this.selectedTickets.description,
@@ -164,6 +168,10 @@ export class OpenTicketsComponent implements OnInit,OnDestroy {
     this.itTicketDetails.createdAt = this.selectedTickets.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();;
     this.itTicketDetails.isdeleted = false;
+    this.itTicketDetails.categoryId= this.selectedTickets.categoryId,
+    this.itTicketDetails.subcategoryId=this.selectedTickets.subcategoryId,
+    this.itTicketDetails.categoryName= this.selectedTickets.categoryName,
+    this.itTicketDetails.subcategoryName= this.selectedTickets.subcategoryName
     if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
       this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
     }

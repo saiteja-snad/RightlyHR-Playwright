@@ -1,0 +1,290 @@
+.cards-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+
+  .summary-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1.18px solid #DCE3E9;
+    border-radius: 0.625rem;
+    background-color: #FFF;
+    gap: 1rem;
+    box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+    .icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    .summary-title {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .summary-value {
+      font-size: var(--fontsize18);
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
+}
+
+.grid-display-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.graph-card {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #FFFFFF;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+}
+
+.graph-header {
+  font-weight: 500;
+  font-size: var(--fontsize14) !important;
+  color: #222222;
+}
+
+.skill-chart-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  min-width: 480px;
+  height: 320px;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.skill-chart-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+  min-width: 180px;
+}
+
+.skill-proficiency-content {
+  .skill-chart-right {
+    max-width: 180px !important;
+  }
+}
+
+.skill-chart-left {
+  canvas {
+    width: 240px !important;
+  }
+}
+
+/* Legend Items */
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: #444;
+  font-weight: 500;
+  gap: 0.2rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-label {
+  flex: 1;
+  color: #555;
+  margin-left: 0.5rem;
+  text-transform: capitalize;
+}
+
+.legend-value {
+  font-weight: 700;
+  color: #000;
+  min-width: 55px;
+  text-align: left;
+}
+
+//  Table chips styles 
+.custom-table-content {
+  height: calc(100dvh - 15rem) !important;
+  border-bottom-left-radius: 0rem !important;
+  border-bottom-right-radius: 0rem !important;
+
+  .p-chip {
+    border: 1px solid #D1D9E2 !important;
+    background: #F8FBFF !important;
+    font-weight: 400;
+    font-size: var(--fontsize14) !important;
+
+    .skill-name {
+      color: var(--primary-color) !important;
+    }
+
+    .skill-level {
+      color: #73809D !important;
+    }
+  }
+}
+
+// offcanvas stylings
+.custom-offcanvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.custom-offcanvas-title {
+  font-weight: 500;
+  font-size: var(--fontsize15);
+  color: var(--primary-color);
+}
+
+.custom-offcanvas-body {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 90dvh;
+}
+
+.profile-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #FFFFFF;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+  border: 1px solid #DCE3E9;
+  box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+  .profile-image {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0px 0px 10px #0b3a8333;
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: var(--fontsize14);
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--primary-color);
+  }
+
+  .designation {
+    color: #6b7280;
+    font-size: var(--fontsize12);
+  }
+}
+
+/* --- Skill Level Colors --- */
+.skill-level {
+  font-weight: 400;
+  font-size: var(--fontsize14);
+  text-transform: capitalize;
+}
+
+.skill-level.text-purple {
+  color: #6f42c1;
+}
+
+.skill-level.text-success {
+  color: #16a34a;
+}
+
+.skill-level.text-warning {
+  color: #f59e0b;
+}
+
+/* --- Proficiency Text Colors --- */
+.beginner-text {
+  color: #F8AF13 !important;
+  font-weight: 500;
+}
+
+.intermediate-text {
+  color: #9A00F3 !important;
+  font-weight: 500;
+}
+
+.expert-text {
+  color: #00A912 !important;
+  font-weight: 500;
+}
+
+.view-link {
+  color: var(--primary-color);
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.project-resource-graph canvas {
+  height: 250px !important;
+}
+
+.custom-p-multiSelect-content {
+  min-width: 200px !important;
+  max-width: 300px !important;
+}
+
+.custom-table-content {
+  height: 45vh !important;
+}
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.clear-all-btn:focus {
+  outline: none;
+}
+
+.p-chart {
+  overflow-x: auto;
+}
+
+.bar-chart {
+  canvas {
+    height: 320px !important;
+  }
+}
+.close-icon {
+  width: 2rem;
+  height: 2rem;
+ margin-left:10rem;
+}
+.status-badge {
+  text-transform: capitalize;
+}
+
+.status-available {
+  color: #00A912;
+  font-size: var(--fontsize12);
+}
+
+.status-committed {
+  color: #E0A101;
+  font-size: var(--fontsize12);
+}

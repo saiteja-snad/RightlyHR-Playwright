@@ -148,18 +148,29 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ? new Date(matchedResource.startDate)
       : null;
 
+    const resourceenddate = matchedResource?.endDate
+      ? new Date(matchedResource.endDate)
+      : null;
+
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
+    }
+     if (resourceenddate) {
+      resourceenddate.setHours(0, 0, 0, 0);
     }
     if (entryDateObj) {
       entryDateObj.setHours(0, 0, 0, 0);
     }
+
 
     let isEffective = false;
     if (matchedResource && !matchedResource?.isNoClientProject) {
       isEffective =
         resourcestartdate && entryDateObj
           ? entryDateObj.getTime() >= resourcestartdate.getTime()
+          : false;
+        isEffective =  resourceenddate && entryDateObj
+          ? entryDateObj.getTime() <= resourceenddate.getTime()
           : false;
     } else {
       // No-client/no-project → always effective

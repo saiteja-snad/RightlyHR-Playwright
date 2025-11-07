@@ -468,125 +468,104 @@ getJobrole() {
     return this.router.url.includes(route);
   }
 
-  updateResources() {
-    if (this.updateResourceForm.invalid) {
-      this.updateResourceForm.markAllAsTouched();
-      return;
-    }
+  // updateResources() {
+  //   if (this.updateResourceForm.invalid) {
+  //     this.updateResourceForm.markAllAsTouched();
+  //     return;
+  //   }
 
-    const formValue = this.updateResourceForm.value;
+  //   const formValue = this.updateResourceForm.value;
+  //   const projectRoleId = formValue.resourceRole.roleId;
+  //   const projectDepartmentId = formValue.resourceRole.entityReferenceId;
+  //   const payload = {
+  //     entityType: "project",
+  //     entityRefId: this.projectId,
+  //     employeeId: formValue.resourceName,
+  //     startDate: formValue.startDate,
+  //     endDate: formValue.endDate,
+  //     allocatedHours: formValue.resourceAllocationhrs || null,
+  //     // allocatedFrequencyType: formValue.allocatedFrequencyType || null,
+  //     overtimeEligibile: formValue.overtimeEligible,
+  //     billable: formValue.billable,
+  //     weekendWorkAllowed: formValue.allowweekendWork,
+  //     status: "Active",
+  //     allocatedBy: this.empinfo.employeeId,
+  //     //role: formValue.resourceRole,
+  //     projectRoleId: projectRoleId,
+  //     projectDepartmentId: projectDepartmentId,
+  //     pendingApprovalAuthority : formValue.resourceAuthority,
+  //     phaseId : formValue.resourcePhase,
+  //     meta: {
+  //       graphData: {
+  //         color: formValue.color
+  //       }
+  //     }
 
+  //   };
+  //   this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({
+  //     next: (res) => {
+  //       this.modalService.dismissAll();
+  //       this.conformationPopup.openSuccessModal('Resource updated successfully');
+  //       this.getResourceData(this.projectId);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error occured:', err);
+  //       this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
+  //     }
+  //   });
+  // }
+
+updateResources() {
+  if (this.updateResourceForm.invalid) {
+    this.updateResourceForm.markAllAsTouched();
+    return;
+  }
+
+  const formValue = this.updateResourceForm.value;
   const projectRoleId = formValue.resourceRole.roleId;
   const projectDepartmentId = formValue.resourceRole.entityReferenceId;
 
-  this.updateResourceStatus({
-    resourceId: this.ResourceId,
+  const payload = {
+    entityType: "project",
+    entityRefId: this.projectId,
+    employeeId: formValue.resourceName,
     startDate: formValue.startDate,
     endDate: formValue.endDate,
     allocatedHours: formValue.resourceAllocationhrs || null,
     overtimeEligibile: formValue.overtimeEligible,
     billable: formValue.billable,
     weekendWorkAllowed: formValue.allowweekendWork,
-    status: 'Active',
+    status: "Active",
+    allocatedBy: this.empinfo.employeeId,
     projectRoleId,
     projectDepartmentId,
     pendingApprovalAuthority: formValue.resourceAuthority,
     phaseId: formValue.resourcePhase,
     meta: {
-      graphData: { color: formValue.color }
+      graphData: {
+        color: formValue.color
+      }
     }
-  });
-
-
-    // const formValue = this.updateResourceForm.value;
-    // const projectRoleId = formValue.resourceRole.roleId;
-    // const projectDepartmentId = formValue.resourceRole.entityReferenceId;
-    // const payload = {
-    //   entityType: "project",
-    //   entityRefId: this.projectId,
-    //   employeeId: formValue.resourceName,
-    //   startDate: formValue.startDate,
-    //   endDate: formValue.endDate,
-    //   allocatedHours: formValue.resourceAllocationhrs || null,
-    //   // allocatedFrequencyType: formValue.allocatedFrequencyType || null,
-    //   overtimeEligibile: formValue.overtimeEligible,
-    //   billable: formValue.billable,
-    //   weekendWorkAllowed: formValue.allowweekendWork,
-    //   status: "Active",
-    //   allocatedBy: this.empinfo.employeeId,
-    //   //role: formValue.resourceRole,
-    //   projectRoleId: projectRoleId,
-    //   projectDepartmentId: projectDepartmentId,
-    //   pendingApprovalAuthority : formValue.resourceAuthority,
-    //   phaseId : formValue.resourcePhase,
-    //   meta: {
-    //     graphData: {
-    //       color: formValue.color
-    //     }
-    //   }
-
-    // };
-    // this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({
-    //   next: (res) => {
-    //     this.modalService.dismissAll();
-    //     this.conformationPopup.openSuccessModal('Resource updated successfully');
-    //     this.getResourceData(this.projectId);
-    //   },
-    //   error: (err) => {
-    //     console.error('Error occured:', err);
-    //     this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
-    //   }
-    // });
-  }
-
-
-  updateResourceStatus(options: {
-  resourceId: number;
-  status?: string;
-  reason?: string;
-  startDate?: string;
-  endDate?: string;
-  allocatedHours?: number;
-  overtimeEligibile?: boolean;
-  billable?: boolean;
-  weekendWorkAllowed?: boolean;
-  projectRoleId?: number;
-  projectDepartmentId?: number;
-  pendingApprovalAuthority?: string;
-  phaseId?: number;
-  meta?: any;
-}, modal?: any) {
-
-  this.loading = true;
-
-  const payload: any = {
-    entityType: 'project',
-    entityRefId: this.projectId,
-    updatedBy: parseInt(this.empinfo.employeeId)
   };
 
-  // Add only provided fields
-  Object.entries(options).forEach(([key, value]) => {
-    if (value !== undefined) payload[key] = value;
-  });
+  this.updateResourceStatus(payload);
+}
 
-  this.http.putData(`ProjectResource/${options.resourceId}`, payload).subscribe({
+updateResourceStatus(payload: any, modal?: any) {
+  const resourceId = payload.resourceId || this.ResourceId;
+  if (!resourceId) {
+    console.error('Resource ID missing.');
+    return;
+  }
+
+  this.http.putData(`ProjectResource/${resourceId}`, payload).subscribe({
     next: (res) => {
-      if (modal) modal.close();
-      this.loading = false;
-      this.updateResourceForm?.reset();
-      this.reasonForm?.reset();
-      this.extendForm?.reset();
-
-      this.conformationPopup.openSuccessModal(
-        options.status
-          ? `Resource ${options.status} successfully`
-          : 'Resource updated successfully'
-      );
+      if (modal) this.modalService.dismissAll();
+      this.conformationPopup.openSuccessModal('Resource updated successfully');
       this.getResourceData(this.projectId);
     },
     error: (err) => {
-      this.loading = false;
+      console.error('Error occurred:', err);
       this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
     }
   });
@@ -777,57 +756,100 @@ getJobrole() {
     this.modalService.open(this.extendModal, { centered: true, size: 'md', backdrop: 'static' });
   }
 
-  submitReason(modal: any) {
-    if (this.reasonForm.invalid) {
-      this.reasonForm.markAllAsTouched();
-      return;
-    }
-
-    const reason = this.reasonForm.value.reason;
-    const title = this.modalData?.title ?? '';
-    const resourceId = this.modalData?.data?.resourceId;
-
-    if (!resourceId) {
-      console.error('Resource ID missing.');
-      return;
-    }
-
-    // Map modal title → backend status
-    const statusMap: Record<string, string> = {
-      'Are you sure you want to release this resource?': 'Released',
-      'Are you sure you want to activate?': 'Active',
-      'Are you sure you want to put on hold?': 'On Hold',
-      'Are you sure you want to resume?': 'Active'
-    };
-
-    const status = statusMap[title] || 'Active';
-
-    this.updateResourceStatus({ resourceId, status, reason }, modal);
+submitReason(modal: any) {
+  if (this.reasonForm.invalid) {
+    this.reasonForm.markAllAsTouched();
+    return;
   }
 
+  const reason = this.reasonForm.value.reason;
+  const title = this.modalData?.title ?? '';
+  const resource = this.modalData?.data;
 
-  submitExtend(modal: any) {
-    if (this.extendForm.invalid) {
-      this.extendForm.markAllAsTouched();
-      return;
-    }
-
-    const { newStartDate, newEndDate, extendReason } = this.extendForm.value;
-    const resourceId = this.modalData?.data?.resourceId;
-
-    if (!resourceId) {
-      console.error('Resource ID missing for extension');
-      return;
-    }
-
-    this.updateResourceStatus({
-      resourceId,
-      startDate: newStartDate,
-      endDate: newEndDate,
-      reason: extendReason,
-      status: 'Extended'
-    }, modal);
+  if (!resource?.resourceId) {
+    console.error('Resource ID missing.');
+    return;
   }
+
+  const statusMap: Record<string, string> = {
+    'Are you sure you want to activate?': 'Active',
+    'Are you sure you want to put on hold?': 'On Hold',
+    'Are you sure you want to release this resource?': 'Released',
+    'Are you sure you want to resume?': 'Active'
+  };
+
+  const status = statusMap[title] || 'Active';
+
+  // Build payload same as update, but reuse existing resource values
+  const payload = {
+    entityType: "project",
+    entityRefId: this.projectId,
+    employeeId: resource.employee?.employeeId,
+    startDate: resource.startDate,
+    endDate: resource.endDate,
+    allocatedHours: resource.allocatedHours,
+    overtimeEligibile: resource.overtimeEligibile,
+    billable: resource.billable,
+    weekendWorkAllowed: resource.weekendWorkAllowed,
+    status,
+    reason,
+    allocatedBy: resource.allocatedBy,
+    projectRoleId: resource.projectRole?.roleId,
+    projectDepartmentId: resource.projectRole?.entityReferenceId,
+    pendingApprovalAuthority: resource.pendingApprovalAuthority,
+    phaseId: resource.phase?.phaseId,
+    meta: resource.meta || {
+      graphData: {
+        color: resource.meta?.graphData?.color || '#cccccc'
+      }
+    }
+  };
+
+  this.updateResourceStatus(payload, modal);
+}
+
+
+
+submitExtend(modal: any) {
+  if (this.extendForm.invalid) {
+    this.extendForm.markAllAsTouched();
+    return;
+  }
+
+  const { newStartDate, newEndDate, extendReason } = this.extendForm.value;
+  const resource = this.modalData?.data;
+
+  if (!resource?.resourceId) {
+    console.error('Resource ID missing for extension');
+    return;
+  }
+
+  const payload = {
+    entityType: "project",
+    entityRefId: this.projectId,
+    employeeId: resource.employee?.employeeId,
+    startDate: newStartDate,
+    endDate: newEndDate,
+    allocatedHours: resource.allocatedHours,
+    overtimeEligibile: resource.overtimeEligibile,
+    billable: resource.billable,
+    weekendWorkAllowed: resource.weekendWorkAllowed,
+    status: "Extended",
+    reason: extendReason,
+    allocatedBy: resource.allocatedBy,
+    projectRoleId: resource.projectRole?.roleId,
+    projectDepartmentId: resource.projectRole?.entityReferenceId,
+    pendingApprovalAuthority: resource.pendingApprovalAuthority,
+    phaseId: resource.phase?.phaseId,
+    meta: resource.meta || {
+      graphData: {
+        color: resource.meta?.graphData?.color || '#cccccc'
+      }
+    }
+  };
+
+  this.updateResourceStatus(payload, modal);
+}
 
 
   ngOnDestroy() {

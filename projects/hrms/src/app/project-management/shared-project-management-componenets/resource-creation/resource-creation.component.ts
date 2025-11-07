@@ -509,7 +509,11 @@ onPhaseChange(selectedValue: any) {
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
-        this.phaseData = data?.data;
+        this.phaseData = (data?.data || []).filter(
+        (p: any) =>
+          p?.status?.toLowerCase() === 'in progress' ||
+          p?.status?.toLowerCase() === 'extended'
+      );
         this.phaseDropdown = this.phaseData?.map(p => ({
         label: p?.phaseName,
         value: p?.phaseId,

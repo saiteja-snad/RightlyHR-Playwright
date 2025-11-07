@@ -21,6 +21,7 @@
                     <th>Phone Number</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Status</th>
                     @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                     && inactiveStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -38,9 +39,26 @@
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                            <td>
+                            <div>
+                                <span>{{ (data?.status | titlecase) || '-' }}</span>
+                        
+                                <ng-container *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                                    <span type="button" [ngbPopover]="statusReasonPopover">
+                                        <app-info-icon />
+                                    </span>
+                                </ng-container>
+                        
+                                <ng-template #noStatusReason></ng-template>
+                            </div>
+                        
+                            <ng-template #statusReasonPopover>
+                                <p class="mb-0">{{ data.reason }}</p>
+                            </ng-template>
+                        </td>
                             @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
-                            <td class="text-center">
+                            <td class="text-center" *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -70,6 +88,9 @@
                                     </ul>
                                 </div>
                             </td>
+                            <ng-template #noActions>
+                                <td class="text-center text-muted">-</td>
+                            </ng-template>
                             }
                         </tr>
                     </ng-container>

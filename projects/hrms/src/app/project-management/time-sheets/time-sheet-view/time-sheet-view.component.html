@@ -374,10 +374,10 @@
                             <div class="circular-dot circle-yellow"></div>
                             <div class="status-text">Waiting for Approval</div>
                         </div>
-                        <div class="d-flex align-items-center gap-1">
+                        <!-- <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-orange"></div>
                             <div class="status-text">Phase Restricted</div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </form>
@@ -407,8 +407,7 @@
             <form [formGroup]="dayForm" *ngIf="dayForm" (ngSubmit)="saveDayEntry()">
                 <div class="mb-4">
                     <p class="day mb-2">{{dayForm.get('entryDate')?.value | dateformat}} </p>
-                    <p class="project-name">{{dayForm.get('clientName')?.value || selectedClientname || 'No Client'}}-
-                        {{dayForm.get('projectName')?.value || selectedProjectName || 'No Project' }}</p>
+                    <p class="project-name">{{dayForm.get('clientName')?.value || selectedClientname || 'No Client'}}@if((dayForm.get('projectName')?.value || selectedProjectName)) { - {{dayForm.get('projectName')?.value || selectedProjectName}} }@if(!(dayForm.get('projectName')?.value || selectedProjectName)) { - No Project }@if((dayForm.get('phaseName')?.value || selectedPhaseName)) { - {{dayForm.get('phaseName')?.value || selectedPhaseName}} }</p>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mb-3">

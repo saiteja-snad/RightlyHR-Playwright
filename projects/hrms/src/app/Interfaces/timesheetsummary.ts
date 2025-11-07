@@ -48,6 +48,7 @@ export interface TimesheetEntry {
   entryDate: string;    // "2025-10-06T00:00:00"
   loggedHours: number;
   status: string;
+  loggedHHMM: string;
   summary: string;
   allocatedHours: number;
 }

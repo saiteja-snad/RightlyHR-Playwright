@@ -129,8 +129,8 @@ notifyresource() {
   // Observable for components to subscribe to
   selectedEmployeeIdTimesheet$ = this.selectedEmployeeIdTimesheet.asObservable();
   // Method to update the employeeId
-  setEmployeeIdTimesheet(id: any, projectId: number, request: any): void {
-    this.selectedEmployeeIdTimesheet.next({ id, projectId, request });
+  setEmployeeIdTimesheet(id: any, phaseId: number, request: any): void {
+    this.selectedEmployeeIdTimesheet.next({ id, phaseId, request });
   }
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);

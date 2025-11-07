@@ -47,9 +47,9 @@
                         placeholder="Please select project" class="form-select custom-select"
                         (onChange)="onProjectChange($event)">
                     </p-select> -->
-                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="displayName" formControlName="projectId"
-                        defaultLabel="Please select project" class="form-select custom-select"
+                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
+                        defaultLabel="Please select phase" class="form-select custom-select"
                         (onChange)="onProjectChange($event)">
                     </p-multiSelect>
 

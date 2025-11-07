@@ -53,6 +53,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
   @ViewChild('updateResourcemodal') updateResourcemodal !:any;
+  @ViewChild('startconfirmationpopup') startconfirmationpopup !:any;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
@@ -455,7 +456,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   handleAction(action: string, phase: IPhases) {
     switch (action) {
       case 'Start':
-        this.openReasonModal('Are you sure you want to start?', phase);
+        this.openStartModal(phase);
         break;
       case 'Update':
         this.handleUpdateAction(phase);
@@ -495,6 +496,11 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     this.modalData = { title, phase };
     this.reasonForm.reset();
     this.modalService.open(this.reasonModal, { centered: true, backdrop: 'static' });
+  }
+
+  openStartModal(phase: IPhases) {
+    this.modalData = { phase };
+    this.modalService.open(this.startconfirmationpopup, { centered: true, backdrop: 'static' });
   }
 
   openExtendModal(phase: IPhases) {
@@ -632,25 +638,44 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   // }
 
   submitExtend(modal: any) {
-  if (this.extendForm.invalid) {
-    this.extendForm.markAllAsTouched();
-    return;
+    if (this.extendForm.invalid) {
+      this.extendForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.extendForm.value;
+    const phase = this.modalData?.phase;
+
+    const startDate = this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : phase?.startDate;
+    const endDate = formValue.newEndDate;
+
+    this.updatePhaseStatus({
+      phaseId: this.phaseId,
+      status: 'extended',
+      startDate,
+      endDate,
+      reason: formValue.extendReason
+    }, modal);
   }
 
-  const formValue = this.extendForm.value;
-  const phase = this.modalData?.phase;
+  confirmStart(modal: any) {
+    const phase = this.modalData?.phase;
+    if (!phase?.phaseId) {
+      console.error('Phase ID is missing. Cannot update phase.');
+      return;
+    }
 
-  const startDate = this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : phase?.startDate;
-  const endDate = formValue.newEndDate;
+    const status = 'in progress'; // status to update when phase starts
+    const startDate = new Date().toISOString(); // current date in ISO format
 
-  this.updatePhaseStatus({
-    phaseId: this.phaseId,
-    status: 'extended',
-    startDate,
-    endDate,
-    reason: formValue.extendReason
-  }, modal);
-}
+    const payload = {
+      phaseId: phase.phaseId,
+      status,
+      startDate
+    };
+
+    this.updatePhaseStatus(payload, modal);
+  }
 
 
   ngOnDestroy(): void {

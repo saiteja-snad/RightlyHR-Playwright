@@ -43,7 +43,7 @@
                             <div>
                                 <span>{{ (data?.status | titlecase) || '-' }}</span>
                         
-                                <ng-container *ngIf="data?.reason && data.status?.toLowerCase() !== 'in progress'; else noStatusReason">
+                                <ng-container *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
                                     <span type="button" [ngbPopover]="statusReasonPopover">
                                         <app-info-icon />
                                     </span>

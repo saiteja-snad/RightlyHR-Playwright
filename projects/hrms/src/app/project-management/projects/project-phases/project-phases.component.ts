@@ -527,8 +527,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
 
     // Set min/max ranges
-    this.projectMinStartDate = phaseStart;
-    this.projectMaxEndDate = phase.endDate?.substring(0, 10);
+    // this.projectMinStartDate = phaseStart;
+    // this.projectMaxEndDate = phase.endDate?.substring(0, 10);
 
     this.startndEndDateValid = true;
     this.modalService.open(this.extendModal, { centered: true, size: 'md', backdrop: 'static' });

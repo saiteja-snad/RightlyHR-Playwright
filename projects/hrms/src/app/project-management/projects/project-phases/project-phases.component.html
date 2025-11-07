@@ -247,7 +247,7 @@
                     <textarea id="phaseDescription"
                         (input)="formValidation.validateInput(updatePhaseForm.get('phaseDescription'))" maxlength="500"
                         formControlName="phaseDescription" class="form-control custom-input"
-                        placeholder="Please enter project description"></textarea>
+                        placeholder="Please enter phase / milestone description"></textarea>
                     <div class="textarea-count-text">{{ updatePhaseForm.get("phaseDescription")?.value?.length || 0}}/500
                     </div>
                 </div>

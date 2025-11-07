@@ -58,7 +58,7 @@
                         </td>
                             @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
-                            <td class="text-center">
+                            <td class="text-center" *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -88,6 +88,9 @@
                                     </ul>
                                 </div>
                             </td>
+                            <ng-template #noActions>
+                                <td class="text-center text-muted">-</td>
+                            </ng-template>
                             }
                         </tr>
                     </ng-container>

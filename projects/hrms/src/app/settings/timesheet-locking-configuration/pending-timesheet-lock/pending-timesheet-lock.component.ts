@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
@@ -31,6 +31,8 @@ TimesheetLockForm!: FormGroup;
   todayString: string = '';
   fromDateString: string | null = null;
   toDateString: string | null = null;
+  @ViewChild('errormodal') errormodal!: TemplateRef<any>;
+
   // categoriesList: Category[] = [];
   TimesheetLockData: ITimesheetLockItem[] = [];
   TimesheetLockDatacount: number = 0;
@@ -63,6 +65,7 @@ TimesheetLockForm!: FormGroup;
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  errormodaldata: any;
 
   /* OnInit Lifecycle Hook */
   /* This method initializes the component, fetching necessary data and setting up the form */
@@ -324,7 +327,8 @@ TimesheetLockForm!: FormGroup;
         },
         error: (error: any) => {
           this.spinnerLoader = false;
-          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to add Timesheet lock');
+          this.errormodaldata = error.error.message || 'Failed to add Timesheet lock';
+        this.modalService.open(this.errormodal,{ centered: true});
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -437,7 +441,8 @@ patchTimesheetlock() {
           error: (error: any) => {
             this.modalService.dismissAll();
             this.spinnerLoader = false;
-            this.confirmationModal.openErrorModal(error?.error?.message || 'Failed to update Timesheet lock');
+           this.errormodaldata = error.error.message || 'Failed to update Timesheet lock';
+        this.modalService.open(this.errormodal,{ centered: true });
           },
           complete: () => {
             this.spinnerLoader = false;
@@ -473,7 +478,8 @@ patchTimesheetlock() {
       },
       error: (error: any) => {
         this.spinnerLoader = false;
-        this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to publish Timesheet lock');
+            this.errormodaldata = error.error.message || 'Failed to publish Timesheet lock';
+        this.modalService.open(this.errormodal,{ centered: true});
       },
       complete: () => {
         this.spinnerLoader = false;
@@ -508,7 +514,8 @@ patchTimesheetlock() {
         },
         error: (error: any) => {
           this.spinnerLoader = false;
-          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to delete Timesheet lock');
+            this.errormodaldata = error.error.message ||  'Failed to delete Timesheet lock' ;
+        this.modalService.open(this.errormodal,{ centered: true});
         },
         complete: () => {
           this.spinnerLoader = false;

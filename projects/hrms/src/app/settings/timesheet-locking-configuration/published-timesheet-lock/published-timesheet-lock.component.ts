@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
@@ -42,6 +42,7 @@ export class PublishedTimesheetLockComponent {
   collectionSize!: number;
   searchQuery = '';
   first = 0;
+    @ViewChild('errormodal') errormodal!: TemplateRef<any>;
   totalRecords = 0;
   currentDate: Date = new Date();
   yearDetails: number[] = [];
@@ -62,6 +63,7 @@ export class PublishedTimesheetLockComponent {
 categoriesList = [
     {moduleName:'Timesheet', value:'30'}
   ];
+  errormodaldata: any;
   /* OnInit Lifecycle Hook */
   /* This method initializes the component, fetching necessary data and setting up the form */
   ngOnInit(): void {
@@ -409,7 +411,8 @@ patchTimesheetlock() {
           error: (error: any) => {
             this.modalService.dismissAll();
             this.spinnerLoader = false;
-            this.confirmationModal.openErrorModal(error?.error?.message || 'Failed to update Timesheet lock');
+          this.errormodaldata = error.error.message;
+         this.modalService.open(this.errormodal,{ centered: true });
           },
           complete: () => {
             this.spinnerLoader = false;
@@ -444,7 +447,8 @@ patchTimesheetlock() {
       },
       error: (error: any) => {
         this.spinnerLoader = false;
-        this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to publish Timesheet lock');
+        this.errormodaldata = error?.error?.message || 'Failed to publish Timesheet lock';
+        this.modalService.open(this.errormodal, { centered: true});
       },
       complete: () => {
         this.spinnerLoader = false;
@@ -478,7 +482,8 @@ patchTimesheetlock() {
         },
         error: (error: any) => {
           this.spinnerLoader = false;
-          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to delete Timesheet lock');
+          this.errormodaldata = error?.error?.message || 'Failed to delete Timesheet lock';
+        this.modalService.open(this.errormodal, { centered: true});
         },
         complete: () => {
           this.spinnerLoader = false;

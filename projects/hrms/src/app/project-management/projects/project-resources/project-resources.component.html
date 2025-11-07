@@ -21,6 +21,7 @@
                     <th>Phone Number</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                     <th>Status</th>
                     @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                     && inactiveStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -38,6 +39,7 @@
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                             <td>{{ data?.status || '-' }}</td>
                             @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <td class="text-center">

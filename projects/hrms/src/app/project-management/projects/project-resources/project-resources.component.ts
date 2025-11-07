@@ -521,6 +521,7 @@ updateResources() {
   }
 
   const formValue = this.updateResourceForm.value;
+  console.log('payload',formValue);
   const projectRoleId = formValue.resourceRole.roleId;
   const projectDepartmentId = formValue.resourceRole.entityReferenceId;
 
@@ -786,7 +787,7 @@ const payload = {
   ...{
     entityType: "project",
     entityRefId: this.projectId,
-    employeeId: data.employee?.employeeId,
+    employeeId: data.employee?.id,
     startDate: data.startDate,
     endDate: data.endDate,
     allocatedHours: data.allocatedHours,
@@ -796,8 +797,8 @@ const payload = {
     status,
     reason,
     allocatedBy: this.empinfo.employeeId,
-    projectRoleId: data.projectRole?.roleId,
-    projectDepartmentId: data.projectRole?.entityReferenceId,
+    projectRoleId: data.projectRoleId,
+    projectDepartmentId: data.projectDepartmentId,
     pendingApprovalAuthority: data.pendingApprovalAuthority,
     phaseId: data.phase?.phaseId,
     meta: data.meta || {
@@ -833,7 +834,7 @@ submitExtend(modal: any) {
   const payload = {
     entityType: "project",
     entityRefId: this.projectId,
-    employeeId: resource.employee?.employeeId,
+    employeeId: resource.employee?.id,
     startDate: newStartDate,
     endDate: newEndDate,
     allocatedHours: resource.allocatedHours,
@@ -843,8 +844,8 @@ submitExtend(modal: any) {
     status: "Extended",
     reason: extendReason,
     allocatedBy: resource.allocatedBy,
-    projectRoleId: resource.projectRole?.roleId,
-    projectDepartmentId: resource.projectRole?.entityReferenceId,
+    projectRoleId: resource.projectRoleId,
+    projectDepartmentId: resource.projectDepartmentId,
     pendingApprovalAuthority: resource.pendingApprovalAuthority,
     phaseId: resource.phase?.phaseId,
     meta: resource.meta || {

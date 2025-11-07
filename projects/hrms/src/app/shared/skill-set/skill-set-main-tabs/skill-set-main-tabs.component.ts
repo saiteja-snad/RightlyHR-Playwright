@@ -14,14 +14,10 @@ import { RbacService } from '../../../services/rbac.service';
 export class SkillSetMainTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    {
-      label: 'Directory', link: '/skill-management/directory', icon: 'main-menu-icons/skill-directory.png',
-      permission: { feature: 'Skills Directory', action: 'view' }
-    },
-    {
-      label: 'Dashboard', link: '/skill-management/dashboard', icon: 'main-menu-icons/skill-dashboard.png',
-      permission: { feature: 'Skills Dashboard', action: 'view' }
-    },
+    { label: 'Dashboard', link: '/skill-management/dashboard', icon: 'main-menu-icons/skill-dashboard.png',
+      permission: { feature: 'Skills Dashboard', action: 'view' } },
+    { label: 'Directory', link: '/skill-management/directory', icon: 'main-menu-icons/skill-directory.png',
+      permission: { feature: 'Skills Directory', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }

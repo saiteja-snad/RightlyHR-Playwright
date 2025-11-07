@@ -625,8 +625,8 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
 ]
 
 export const SKILL_MANAGEMENT_TABS = [
-  { route: '/skill-management/directory', permission: 'Skills Directory.view' },
   { route: '/skill-management/dashboard', permission: 'Skills Dashboard.view' },
+  { route: '/skill-management/directory', permission: 'Skills Directory.view' },
 ]
 
 export const CARDS_SUB_TABS = [

@@ -304,7 +304,6 @@ getJobrole() {
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
 
     const params: any = {
-      status: 'Active',
       entityType: 'project',
       entityRefId: projectId
     };
@@ -764,9 +763,11 @@ submitReason(modal: any) {
 
   const reason = this.reasonForm.value.reason;
   const title = this.modalData?.title ?? '';
-  const resource = this.modalData?.data;
+  const data = this.modalData?.data;
 
-  if (!resource?.resourceId) {
+  // Try to extract ID safely
+  const resourceId = data?.resourceId || data?.id || data?.resource?.resourceId;
+  if (!resourceId) {
     console.error('Resource ID missing.');
     return;
   }
@@ -777,33 +778,38 @@ submitReason(modal: any) {
     'Are you sure you want to release this resource?': 'Released',
     'Are you sure you want to resume?': 'Active'
   };
-
   const status = statusMap[title] || 'Active';
 
-  // Build payload same as update, but reuse existing resource values
-  const payload = {
+  // Use full payload structure
+const payload = {
+  resourceId,
+  ...{
     entityType: "project",
     entityRefId: this.projectId,
-    employeeId: resource.employee?.employeeId,
-    startDate: resource.startDate,
-    endDate: resource.endDate,
-    allocatedHours: resource.allocatedHours,
-    overtimeEligibile: resource.overtimeEligibile,
-    billable: resource.billable,
-    weekendWorkAllowed: resource.weekendWorkAllowed,
+    employeeId: data.employee?.employeeId,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    allocatedHours: data.allocatedHours,
+    overtimeEligibile: data.overtimeEligibile,
+    billable: data.billable,
+    weekendWorkAllowed: data.weekendWorkAllowed,
     status,
     reason,
-    allocatedBy: resource.allocatedBy,
-    projectRoleId: resource.projectRole?.roleId,
-    projectDepartmentId: resource.projectRole?.entityReferenceId,
-    pendingApprovalAuthority: resource.pendingApprovalAuthority,
-    phaseId: resource.phase?.phaseId,
-    meta: resource.meta || {
+    allocatedBy: this.empinfo.employeeId,
+    projectRoleId: data.projectRole?.roleId,
+    projectDepartmentId: data.projectRole?.entityReferenceId,
+    pendingApprovalAuthority: data.pendingApprovalAuthority,
+    phaseId: data.phase?.phaseId,
+    meta: data.meta || {
       graphData: {
-        color: resource.meta?.graphData?.color || '#cccccc'
+        color: data.meta?.graphData?.color || ''
       }
     }
-  };
+  }
+};
+
+  // Add the id back in case backend expects it in URL
+  payload['resourceId'] = resourceId;
 
   this.updateResourceStatus(payload, modal);
 }

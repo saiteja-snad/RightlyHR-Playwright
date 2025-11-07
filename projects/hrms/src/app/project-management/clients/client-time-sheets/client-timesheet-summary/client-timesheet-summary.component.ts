@@ -278,6 +278,7 @@ export class ClientTimesheetSummaryComponent {
             ]
           };
           // Chart options
+         // Chart options
           this.projectResourceOptions = {
             indexAxis: 'y', // Horizontal bar
             plugins: {
@@ -286,19 +287,35 @@ export class ClientTimesheetSummaryComponent {
             scales: {
               x: {
                 title: {
-                  display: true, text: 'Resource Count', color: '#505050',
+                  display: true,
+                  text: 'Resource Count',
+                  color: '#505050',
                   font: { size: 10, weight: 400 }
                 },
                 grid: { display: false },
-                ticks: { color: '#505050', font: { size: 10, weight: '400' } },
+                ticks: {
+                  color: '#505050',
+                  font: { size: 10, weight: '400' },
+                  stepSize: 1,
+                  // Add explicit typing for 'value'
+                  callback: (value: number | string) => {
+                    const numValue = Number(value);
+                    return Number.isInteger(numValue) ? numValue : '';
+                  }
+                },
               },
               y: {
                 title: {
-                  display: true, text: 'Projects', color: '#505050',
+                  display: true,
+                  text: 'Projects',
+                  color: '#505050',
                   font: { size: 10, weight: 400 },
                 },
                 grid: { display: false },
-                ticks: { color: '#505050', font: { size: 10, weight: '400' } },
+                ticks: {
+                  color: '#505050',
+                  font: { size: 10, weight: '400' }
+                },
               }
             }
           };

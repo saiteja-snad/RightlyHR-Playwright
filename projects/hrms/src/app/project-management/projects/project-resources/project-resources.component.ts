@@ -801,7 +801,7 @@ const payload = {
     allocatedBy: this.empinfo.employeeId,
     projectRoleId: data?.projectRoleId,
     projectDepartmentId: data?.projectDepartmentId,
-    pendingApprovalAuthority: data.pendingApprovalAuthority,
+    pendingApprovalAuthority: data?.pendingApprovalAuthority?.id,
     phaseId: data.phase?.phaseId,
     meta: data.meta || {
       graphData: {

@@ -14,6 +14,7 @@
                 <div class="custom-table-content project-summary-table">
                     <table class="w-100">
                         <thead>
+                             <th>{{'Phase/Milestone'|translate}}</th>
                             <th>{{'Resource Name'|translate}}</th>
                             <th>{{'Role'|translate}}</th>
                             <th>{{'Hours Utilized'|translate}}</th>
@@ -22,18 +23,19 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectResourceSummaryData">
-                                <td>{{roles.employeeName}}</td>
-                                <td>{{roles.projectRole}}</td>
+                                 <td>{{roles?.phase || "-"}}</td>
+                                <td>{{roles?.employeeName}}</td>
+                                <td>{{roles?.projectRole}}</td>
                                 <td>
                                     <div class="progress-wrapper">
-                                        <div class="progress-bar" [ngStyle]="{width: roles.utilizationPercent + '%', 
-                                            backgroundColor: getProgressColor(roles.utilizationPercent)}"></div>
+                                        <div class="progress-bar" [ngStyle]="{width: roles?.utilizationPercent + '%', 
+                                            backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
                                     </div>
                                     <!-- <span class="logged-hours">{{ roles.totalLoggedHours }}</span> -->
                                 </td>
                                 <!-- <td>{{roles.totalLoggedHours}}</td> -->
-                                <td>{{roles.totalLoggedHours}}/{{roles.totalAllocatedHours}}</td>
-                                <td>{{roles.utilizationPercent}}</td>
+                                <td>{{roles?.totalLoggedHours}}/{{roles?.totalAllocatedHours}}</td>
+                                <td>{{roles?.utilizationPercent}}</td>
                             </tr>
                         </tbody>
                     </table>

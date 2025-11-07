@@ -223,6 +223,7 @@
                                         <th>Project Name</th>
                                         <th>Phase/Milestone</th>
                                         <th>Logged Hours</th>
+                                        <th>Description</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -232,9 +233,28 @@
                                         <td>{{ entry?.projectName }}</td>
                                         <td>{{ entry?.phaseName || '-' }}</td>
                                         <td>{{ entry?.loggedHHMM }} hrs</td>
+                                        <td class="text-center">
+                                        <div>
+                                            <span>
+                                            <div *ngIf="entry.summary; else noRequestedComments" type="button"
+                                                [ngbPopover]="requestedComments">
+                                                <app-info-icon />
+                                            </div>
+                                            <ng-template #requestedComments>
+                                                <div>
+                                                <p class="mb-0">{{ entry.summary }}</p>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template #noRequestedComments>
+                                                <span>-</span>
+                                            </ng-template>
+                                            </span>
+                                        </div>
+                                        </td>
                                         <td [ngClass]="{'approved': entry.status === 'Processed', 
                                         'rejected': entry.status === 'Rejected', 'waiting': entry.status === 'Waiting for Approval', 
-                                        'draft': entry.status === 'draft'}">{{ entry.status }}</td>
+                                        'draft': entry.status === 'draft'}">{{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status
+                                         }}</td>
                                     </tr>
                                 </tbody>
                             </table>

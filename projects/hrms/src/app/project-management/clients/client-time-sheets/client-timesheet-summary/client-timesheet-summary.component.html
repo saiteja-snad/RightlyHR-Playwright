@@ -42,7 +42,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectSummeryData">
-                                <td>{{roles.project.projectName}}</td>
+                                <td class="project-name">{{roles.project.projectName}}</td>
                                 <td><span class="logged-hrs">{{roles.loggedHours}}</span>/{{roles.allocatedHours}}hrs</td>
                                 <td class="text-center">
                                     <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>

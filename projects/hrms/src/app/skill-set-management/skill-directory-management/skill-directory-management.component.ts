@@ -21,12 +21,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import moment from 'moment';
+import { SkillSetMainTabsComponent } from "../../shared/skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
   imports: [TabsModule, Chip, RouterModule, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
     DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule, NgbPopoverModule,
-    ModuleInformationComponent, TranslateModule],
+    ModuleInformationComponent, TranslateModule, SkillSetMainTabsComponent],
   templateUrl: './skill-directory-management.component.html',
   styleUrl: './skill-directory-management.component.scss',
   encapsulation: ViewEncapsulation.None

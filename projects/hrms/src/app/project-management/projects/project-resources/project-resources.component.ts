@@ -561,7 +561,7 @@ updateResourceStatus(payload: any, modal?: any) {
 
   this.http.putData(`ProjectResource/${resourceId}`, payload).subscribe({
     next: (res) => {
-      if (modal) this.modalService.dismissAll();
+      this.modalService.dismissAll();
       this.conformationPopup.openSuccessModal('Resource updated successfully');
       this.getResourceData(this.projectId);
     },

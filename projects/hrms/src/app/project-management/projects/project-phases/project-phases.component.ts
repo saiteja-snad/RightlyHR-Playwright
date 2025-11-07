@@ -551,94 +551,23 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // submitReason(modal: any) {
-  //   if (this.reasonForm.invalid) {
-  //     this.reasonForm.markAllAsTouched();
-  //     return;
-  //   }
-
-  //   this.loading = true;
-
-  //   const reason = this.reasonForm.value.reason;
-  //   const phase = this.modalData?.phase;
-  //   const status = this.statusMap[this.modalData?.title ?? '']; // map popup title to status
-
-  //   const payload = {
-  //     projectId: this.projectId,
-  //     phaseId: phase?.phaseId,
-  //     phaseName: phase?.phaseName,
-  //     status: status,
-  //     reason: reason,
-  //     updatedBy: parseInt(this.empinfo.employeeId)
-  //   };
-
-  //   this.http.putData(`ProjectPhases/update/${phase?.phaseId}`, payload).subscribe({
-  //     next: (res) => {
-  //       modal.close();
-  //       this.loading = false;
-  //       this.reasonForm.reset();
-  //       this.conformationPopup.openSuccessModal(`Phase ${status} successfully`);
-  //       this.getPhaseData();
-  //     },
-  //     error: (err) => {
-  //       this.loading = false;
-  //       this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
-  //     }
-  //   });
-  // }
-
   submitReason(modal: any) {
-  if (this.reasonForm.invalid) {
-    this.reasonForm.markAllAsTouched();
-    return;
+    if (this.reasonForm.invalid) {
+      this.reasonForm.markAllAsTouched();
+      return;
+    }
+
+    const reason = this.reasonForm.value.reason;
+    const status = this.statusMap[this.modalData?.title ?? '']; // map popup title to status
+    const phaseId = this.modalData?.phase?.phaseId;
+
+    if (!phaseId) {
+      console.error('Phase ID is missing. Cannot update phase.');
+      return;
+    }
+
+    this.updatePhaseStatus({ phaseId, status, reason }, modal);
   }
-
-  const reason = this.reasonForm.value.reason;
-  const status = this.statusMap[this.modalData?.title ?? '']; // map popup title to status
-  const phaseId = this.modalData?.phase?.phaseId;
-
-  if (!phaseId) {
-    console.error('Phase ID is missing. Cannot update phase.');
-    return;
-  }
-
-  this.updatePhaseStatus({ phaseId, status, reason }, modal);
-}
-
-
-  // submitExtend(modal: any) {
-  //   if (this.extendForm.invalid) {
-  //     this.extendForm.markAllAsTouched();
-  //     return;
-  //   }
-
-  //   this.loading = true;
-  //   const formValue = this.extendForm.value;
-
-  //   const payload = {
-  //     projectId: this.projectId,
-  //     phaseName: this.modalData?.phase?.phaseName,
-  //     status: 'extended',
-  //     startDate: this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : this.modalData?.phase?.startDate,
-  //     endDate: formValue.newEndDate,
-  //     reason: formValue.extendReason,
-  //     updatedBy: parseInt(this.empinfo.employeeId),
-  //   };
-
-  //   this.http.putData(`ProjectPhases/update/${this.phaseId}`, payload).subscribe({
-  //     next: (res) => {
-  //       modal.close();
-  //       this.loading = false;
-  //       this.extendForm.reset();
-  //       this.conformationPopup.openSuccessModal('Phase extended successfully');
-  //       this.getPhaseData();
-  //     },
-  //     error: (err) => {
-  //       this.loading = false;
-  //       this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to extend phase');
-  //     }
-  //   });
-  // }
 
   submitExtend(modal: any) {
     if (this.extendForm.invalid) {

@@ -23,18 +23,18 @@ import { Category, ITimesheetLockItem} from '../timesheet-lock.modal';
   styleUrl: './pending-timesheet-lock.component.scss'
 })
 export class PendingTimesheetLockComponent {
-attendanceLockForm!: FormGroup;
-  updateAttendanceLockForm!: FormGroup;
-  publishAttendanceLockForm!: FormGroup;
+TimesheetLockForm!: FormGroup;
+  updateTimesheetLockForm!: FormGroup;
+  publishTimesheetLockForm!: FormGroup;
   dataLoad = false;
   spinnerLoader = false;
   todayString: string = '';
   fromDateString: string | null = null;
   toDateString: string | null = null;
   // categoriesList: Category[] = [];
-  attendanceLockData: ITimesheetLockItem[] = [];
-  attendanceLockDatacount: number = 0;
-  selectedAttedanceLock: ITimesheetLockItem | undefined;
+  TimesheetLockData: ITimesheetLockItem[] = [];
+  TimesheetLockDatacount: number = 0;
+  selectedTimesheetLock: ITimesheetLockItem | undefined;
   searchText = '';
   empInfo = {} as Ipersonal;
   page = 1;
@@ -70,11 +70,11 @@ attendanceLockForm!: FormGroup;
     this.http.triggerRefresh();
     this.empInfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.todayString = this.formatDate(new Date());
-    this.getAttendanceLocks(this.page, this.pageSize);
-    this.initializeAttendanceLockForm('add');
+    this.getTimesheetLocks(this.page, this.pageSize);
+    this.initializeTimesheetLockForm('add');
   //  this.getCategoriesList();
-    this.attendanceLockForm.get('toDate')?.disable();
-    this.attendanceLockForm.get('effectiveDate')?.disable();
+    this.TimesheetLockForm.get('toDate')?.disable();
+    this.TimesheetLockForm.get('effectiveDate')?.disable();
   }
 
   /* Constructor */
@@ -88,13 +88,13 @@ attendanceLockForm!: FormGroup;
   ) { }
   // track for pending for submession data
   get pendingSubmissionData(): ITimesheetLockItem[] {
-    return this.attendanceLockData?.filter(att => att.status === 'Pending for Submission') || [];
+    return this.TimesheetLockData?.filter(att => att.status === 'Pending for Submission') || [];
   }
   /* Get Categories List */
-  /* This method fetches the list of categories for attendance locks *
-  /* Get Attendance Locks */
-  /* This method fetches the attendance locks based on pagination and search query */
-  getAttendanceLocks(pagenum: number, pagesize: number, year?: number) {
+  /* This method fetches the list of categories for timesheet locks *
+  /* Get Timesheet Locks */
+  /* This method fetches the timesheet locks based on pagination and search query */
+  getTimesheetLocks(pagenum: number, pagesize: number, year?: number) {
      const categoryIds = '30';
       const params: any = {
     pageNumber: pagenum,
@@ -113,8 +113,8 @@ attendanceLockForm!: FormGroup;
     this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.attendanceLockData = response.items;
-            this.attendanceLockDatacount = response.statusCounts.PendingforSubmission;
+          this.TimesheetLockData = response.items;
+            this.TimesheetLockDatacount = response.statusCounts.PendingforSubmission;
           this.collectionSize = response.totalCount;
           this.page = response.page;
           this.pageSize = response.pageSize;
@@ -132,12 +132,12 @@ attendanceLockForm!: FormGroup;
   /* Search Text Change */
   /* This method is triggered when the search text changes */
   onSearchTextChange(): void {
-    this.getAttendanceLocks(this.page, this.pageSize);
+    this.getTimesheetLocks(this.page, this.pageSize);
   }
   // This method is triggered when the year  changes
   onYearChange(year: number) {
     this.selectedYear = year;
-    this.getAttendanceLocks(this.page, this.pageSize, this.selectedYear);
+    this.getTimesheetLocks(this.page, this.pageSize, this.selectedYear);
   }
   /* Pagination */
   /* This method handles the pagination changes */
@@ -145,7 +145,7 @@ attendanceLockForm!: FormGroup;
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getAttendanceLocks(this.page, this.pageSize);
+    this.getTimesheetLocks(this.page, this.pageSize);
   }
 
   /* Page Size Change */
@@ -155,12 +155,12 @@ attendanceLockForm!: FormGroup;
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getAttendanceLocks(this.page, this.pageSize);
+    this.getTimesheetLocks(this.page, this.pageSize);
   }
 
-  /* Initialize Attendance Lock Form */
-  /* This method initializes the form for adding or updating attendance locks */
-  initializeAttendanceLockForm(formType: 'add' | 'update') {
+  /* Initialize Timesheet Lock Form */
+  /* This method initializes the form for adding or updating timesheet locks */
+  initializeTimesheetLockForm(formType: 'add' | 'update') {
     const formGroup = this.fb.group({
       categoryType: ['', Validators.required],
       fromDate: ['', [Validators.required]],
@@ -181,9 +181,9 @@ attendanceLockForm!: FormGroup;
     formGroup.get('effectiveDate')?.setValidators([Validators.required, this.effectiveAfterToDateValidator.bind(this, formGroup)]);
 
     if (formType === 'add') {
-      this.attendanceLockForm = formGroup;
+      this.TimesheetLockForm = formGroup;
     } else {
-      this.updateAttendanceLockForm = formGroup;
+      this.updateTimesheetLockForm = formGroup;
     }
   }
 
@@ -229,7 +229,7 @@ attendanceLockForm!: FormGroup;
 
     this.fromDateString = form.get('fromDate')?.value;
     this.toDateString = form.get('toDate')?.value;
-    this.attendanceLockForm.get('toDate')?.enable();
+    this.TimesheetLockForm.get('toDate')?.enable();
     const fromDate = form.get('fromDate')?.value;
     const toDate = form.get('toDate')?.value;
     this.toDateInvalid = !!fromDate && !!toDate && new Date(toDate) < new Date(fromDate);
@@ -238,7 +238,7 @@ attendanceLockForm!: FormGroup;
   /* This method handles changes in the 'toDate' field */
   onToDateChange(form: FormGroup) {
     this.toDateString = form.get('toDate')?.value;
-    this.attendanceLockForm.get('effectiveDate')?.enable();
+    this.TimesheetLockForm.get('effectiveDate')?.enable();
     const toDate = form.get('toDate')?.value;
     const effectiveDate = form.get('effectiveDate')?.value;
     const fromDate = form.get('fromDate')?.value;
@@ -284,25 +284,25 @@ attendanceLockForm!: FormGroup;
   return this.formatDate(minDate);
 
   }
-  /* Open Add Attendance Lock Modal */
+  /* Open Add Timesheet Lock Modal */
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.toDateInvalid = false;
     this.effectiveDateInvalid = false;
   }
 
-  /* Close Add Attendance Lock Modal */
+  /* Close Add Timesheet Lock Modal */
   /* This method resets the form and closes the modal */
   close() {
-    this.attendanceLockForm.get('toDate')?.disable();
-    this.attendanceLockForm.get('effectiveDate')?.disable();
-    this.attendanceLockForm.reset();
+    this.TimesheetLockForm.get('toDate')?.disable();
+    this.TimesheetLockForm.get('effectiveDate')?.disable();
+    this.TimesheetLockForm.reset();
     this.modalService.dismissAll();
   }
 
-  /* Add Attendance Lock */
-  /* This method adds a new attendance lock */
-  addAttendanceLock(form: FormGroup) {
+  /* Add Timesheet Lock */
+  /* This method adds a new Timesheet lock */
+  addTimesheetLock(form: FormGroup) {
     if (form.valid) {
       this.spinnerLoader = true;
       const formData = form.value;
@@ -320,29 +320,29 @@ attendanceLockForm!: FormGroup;
         next: (response: any) => {
           this.modalService.dismissAll();
           this.http.triggerRefresh();
-          this.confirmationModal.openSuccessModal('Timesheet Lock added successfully');
+          this.confirmationModal.openSuccessModal('Timesheet lock added successfully');
         },
         error: (error: any) => {
           this.spinnerLoader = false;
-          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to add Timesheet Lock');
+          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to add Timesheet lock');
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.attendanceLockForm.reset();
-          this.getAttendanceLocks(this.page, this.pageSize);
+          this.TimesheetLockForm.reset();
+          this.getTimesheetLocks(this.page, this.pageSize);
         }
       });
     }
   }
 
-  /* Open Update Attendance Lock Modal */
-  /* This method opens the modal for updating an existing attendance lock */
+  /* Open Update Timesheet Lock Modal */
+  /* This method opens the modal for updating an existing Timesheet lock */
   isPublished = false;
-  openUpdateModal(content: any, selectedAttendance: ITimesheetLockItem) {
-    this.selectedAttedanceLock = selectedAttendance;
-    this.isPublished = selectedAttendance.status === 'Published';
-    this.initializeAttendanceLockForm('update');
-    this.patchAttendancelock();
+  openUpdateModal(content: any, selectedTimesheet: ITimesheetLockItem) {
+    this.selectedTimesheetLock = selectedTimesheet;
+    this.isPublished = selectedTimesheet.status === 'Published';
+    this.initializeTimesheetLockForm('update');
+    this.patchTimesheetlock();
     this.toDateInvalid = false;
     this.effectiveDateInvalid = false;
 
@@ -350,61 +350,58 @@ attendanceLockForm!: FormGroup;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Parse fromDate and toDate from the selected attendance lock
-    const fromDate = new Date(selectedAttendance.startDate);
+    // Parse fromDate and toDate from the selected timesheet lock
+    const fromDate = new Date(selectedTimesheet.startDate);
     fromDate.setHours(0, 0, 0, 0);
-    const toDate = new Date(selectedAttendance.endDate);
+    const toDate = new Date(selectedTimesheet.endDate);
     toDate.setHours(0, 0, 0, 0);
 
     // Disable/Enable form controls based on status
     if (this.isPublished) {
-      this.updateAttendanceLockForm.get('categoryType')?.disable();
-      // this.updateAttendanceLockForm.get('fromDate')?.disable();
-      // this.updateAttendanceLockForm.get('toDate')?.disable();
-
+      this.updateTimesheetLockForm.get('categoryType')?.disable();
       if (fromDate > today) {
-        this.updateAttendanceLockForm.get('fromDate')?.enable();
+        this.updateTimesheetLockForm.get('fromDate')?.enable();
       } else {
-        this.updateAttendanceLockForm.get('fromDate')?.disable();
+        this.updateTimesheetLockForm.get('fromDate')?.disable();
       }
       // Enable toDate if it's in the future
       if (toDate > today) {
-        this.updateAttendanceLockForm.get('toDate')?.enable();
+        this.updateTimesheetLockForm.get('toDate')?.enable();
       } else {
-        this.updateAttendanceLockForm.get('toDate')?.disable();
+        this.updateTimesheetLockForm.get('toDate')?.disable();
       }
-      this.updateAttendanceLockForm.get('effectiveDate')?.enable();
+      this.updateTimesheetLockForm.get('effectiveDate')?.enable();
     }
     else {
-      this.updateAttendanceLockForm.get('categoryType')?.enable();
-      this.updateAttendanceLockForm.get('fromDate')?.enable();
-      this.updateAttendanceLockForm.get('toDate')?.enable();
-      this.updateAttendanceLockForm.get('effectiveDate')?.enable();
+      this.updateTimesheetLockForm.get('categoryType')?.enable();
+      this.updateTimesheetLockForm.get('fromDate')?.enable();
+      this.updateTimesheetLockForm.get('toDate')?.enable();
+      this.updateTimesheetLockForm.get('effectiveDate')?.enable();
     }
     this.openModal(content);
   }
 
-  /* Patch Attendance Lock */
-  /* This method patches the form with the selected attendance lock data */
-patchAttendancelock() {
-  if (!this.selectedAttedanceLock) return;
+  /* Patch Timesheet Lock */
+  /* This method patches the form with the selected timesheet lock data */
+patchTimesheetlock() {
+  if (!this.selectedTimesheetLock) return;
 
   // Find the category that matches the selected moduleId
   const matchedCategory = this.categoriesList.find(
-    cat => cat.value === this.selectedAttedanceLock?.module?.moduleId?.toString()
+    cat => cat.value === this.selectedTimesheetLock?.module?.moduleId?.toString()
   );
 
-  this.updateAttendanceLockForm.patchValue({
+  this.updateTimesheetLockForm.patchValue({
     categoryType: matchedCategory ? matchedCategory.value : '',
-    fromDate: this.formatDate(new Date(this.selectedAttedanceLock.startDate)),
-    toDate: this.formatDate(new Date(this.selectedAttedanceLock.endDate)),
-    effectiveDate: this.formatDate(new Date(this.selectedAttedanceLock.effectiveDate))
+    fromDate: this.formatDate(new Date(this.selectedTimesheetLock.startDate)),
+    toDate: this.formatDate(new Date(this.selectedTimesheetLock.endDate)),
+    effectiveDate: this.formatDate(new Date(this.selectedTimesheetLock.effectiveDate))
   });
 }
 
-  /* Update Attendance Lock */
-  /* This method updates the selected attendance lock */
-  updateAttendanceLock(form: FormGroup) {
+  /* Update Timesheet Lock */
+  /* This method updates the selected timesheet lock */
+  updateTimesheetLock(form: FormGroup) {
     if (form.valid) {
       this.spinnerLoader = true;
 
@@ -430,93 +427,93 @@ patchAttendancelock() {
         updatedBy: this.empInfo.employeeId || 0,
       };
 
-      this.http.putData(`AttendanceLockConfigurations/${this.selectedAttedanceLock?.id}`, payload)
+      this.http.putData(`AttendanceLockConfigurations/${this.selectedTimesheetLock?.id}`, payload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-            this.confirmationModal.openSuccessModal('Timesheet Lock updated successfully');
+            this.confirmationModal.openSuccessModal('Timesheet lock updated successfully');
           },
           error: (error: any) => {
             this.modalService.dismissAll();
             this.spinnerLoader = false;
-            this.confirmationModal.openErrorModal(error?.error?.message || 'Failed to update Timesheet Lock');
+            this.confirmationModal.openErrorModal(error?.error?.message || 'Failed to update Timesheet lock');
           },
           complete: () => {
             this.spinnerLoader = false;
-            this.updateAttendanceLockForm.reset();
-            this.selectedAttedanceLock = undefined;
-            this.getAttendanceLocks(this.page, this.pageSize);
+            this.updateTimesheetLockForm.reset();
+            this.selectedTimesheetLock = undefined;
+            this.getTimesheetLocks(this.page, this.pageSize);
           }
         });
     }
   }
 
-  // Publish Attendance Lock
-  /* This method publishes the selected attendance lock */
+  // Publish Timesheet Lock
+  /* This method publishes the selected timesheet lock */
   statuspublish = true;
-  PublishAttendanceLock() {
-    if (!this.selectedAttedanceLock) return;
+  PublishTimesheetLock() {
+    if (!this.selectedTimesheetLock) return;
     this.spinnerLoader = true;
     const payload = {
-      startDate: (this.selectedAttedanceLock.startDate),
-      endDate: (this.selectedAttedanceLock.endDate),
-      effectiveDate: (this.selectedAttedanceLock.effectiveDate),
-      moduleId: this.selectedAttedanceLock.module?.moduleId || 0,
+      startDate: (this.selectedTimesheetLock.startDate),
+      endDate: (this.selectedTimesheetLock.endDate),
+      effectiveDate: (this.selectedTimesheetLock.effectiveDate),
+      moduleId: this.selectedTimesheetLock.module?.moduleId || 0,
       status: 'Published',
       updatedBy: this.empInfo.employeeId || 0,
     };
 
-    this.http.putData(`AttendanceLockConfigurations/${this.selectedAttedanceLock.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.putData(`AttendanceLockConfigurations/${this.selectedTimesheetLock.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
         this.http.triggerRefresh();
-        this.confirmationModal.openSuccessModal('Timesheet Lock published successfully');
+        this.confirmationModal.openSuccessModal('Timesheet lock published successfully');
         this.statuspublish = false;
       },
       error: (error: any) => {
         this.spinnerLoader = false;
-        this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to publish Timesheet Lock');
+        this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to publish Timesheet lock');
       },
       complete: () => {
         this.spinnerLoader = false;
-        this.attendanceLockForm.reset();
-        this.getAttendanceLocks(this.page, this.pageSize);
+        this.TimesheetLockForm.reset();
+        this.getTimesheetLocks(this.page, this.pageSize);
       }
     });
   }
-  /* Open Delete Attendance Lock Modal */
-  /* This method opens the modal for deleting an attendance lock */
-  openDeleteModal(content: any, selectedAttendance: ITimesheetLockItem) {
-    this.selectedAttedanceLock = selectedAttendance;
+  /* Open Delete Timesheet Lock Modal */
+  /* This method opens the modal for deleting an Timesheet lock */
+  openDeleteModal(content: any, selectedTimesheet: ITimesheetLockItem) {
+    this.selectedTimesheetLock = selectedTimesheet;
     this.openModal(content);
   }
-  /* Open Publish Attendance Lock Modal */
-  /* This method opens the modal for publishing an attendance lock */
-  openPublishModal(content: any, selectedAttendance: ITimesheetLockItem) {
-    this.selectedAttedanceLock = selectedAttendance;
+  /* Open Publish Timesheet Lock Modal */
+  /* This method opens the modal for publishing an Timesheet lock */
+  openPublishModal(content: any, selectedTimesheet: ITimesheetLockItem) {
+    this.selectedTimesheetLock = selectedTimesheet;
     this.openModal(content);
   }
 
-  /* Delete Attendance Lock */
-  /* This method deletes the selected attendance lock */
-  deleteAttendanceLock() {
-    if (this.selectedAttedanceLock) {
+  /* Delete Timesheet Lock */
+  /* This method deletes the selected Timesheet lock */
+  deleteTimesheetLock() {
+    if (this.selectedTimesheetLock) {
       this.spinnerLoader = true;
-      this.http.deleteData(`AttendanceLockConfigurations/${this.selectedAttedanceLock.id}`).pipe(takeUntil(this.destroy$)).subscribe({
+      this.http.deleteData(`AttendanceLockConfigurations/${this.selectedTimesheetLock.id}`).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
           this.http.triggerRefresh();
-          this.confirmationModal.openSuccessModal('Timesheet Lock deleted successfully');
+          this.confirmationModal.openSuccessModal('Timesheet lock deleted successfully');
         },
         error: (error: any) => {
           this.spinnerLoader = false;
-          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to delete Timesheet Lock');
+          this.confirmationModal.openErrorModal(error.error.message ? error.error.message : 'Failed to delete Timesheet lock');
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.getAttendanceLocks(this.page, this.pageSize);
-          this.selectedAttedanceLock = undefined;
+          this.getTimesheetLocks(this.page, this.pageSize);
+          this.selectedTimesheetLock = undefined;
         }
       });
     }

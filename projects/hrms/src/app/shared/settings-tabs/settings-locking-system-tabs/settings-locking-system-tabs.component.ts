@@ -27,7 +27,8 @@ export class SettingsLockingSystemTabsComponent {
       label: 'Timesheet Locking',
       link: '/settings/timesheet-locking-configuration',
       permission: { feature: 'Timesheet Configuration Module', action: 'view' },
-      icon:'/main-menu-icons/project-management-timesheet.png',
+      icon:'/main-menu-icons/timesheetlocking.png',
+      // projects\hrms\public\main-menu-icons\timesheetlocking.png
       subjectText:MODULE_INFOS.SETTINGS_TIMESHEETLOCKING_MODULE_INFO,
     }
   ];

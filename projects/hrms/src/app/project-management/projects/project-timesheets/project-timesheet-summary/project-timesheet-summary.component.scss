@@ -7,6 +7,7 @@
 
 .time-sheet-graph-card {
     width: 100%;
+    height: 100%;
     padding: 0.5rem;
     border: 1.52px solid #FFFFFF;
     border-radius: 0.5rem;
@@ -28,8 +29,8 @@
 }
 
 .summary-header {
-    font-weight: 500;
-    font-size: var(--fontsize12);
+    font-weight: 600;
+    font-size: var(--fontsize14);
     color: #222222;
 
     .popover-body {
@@ -50,31 +51,58 @@
 .project-summary-table {
     height: 18rem !important;
 
-    th, td {
+    th,
+    td {
         padding: 0.75rem !important;
         font-size: var(--fontsize12) !important;
     }
 
     th {
         color: #3B3B3B !important;
+        font-weight: 600 !important;
     }
 
     .project-name {
-        font-weight: 700;
-        font-style: Bold;
-        text-decoration: none;
+        font-weight: 600;
         color: var(--primary-color);
-        text-decoration: underline;
+    }
+
+    .logged-hrs {
+        color: #000000;
+        font-weight: 500 !important;
     }
 }
 
-.circular-chart {
+.rolewise-chart-grid {
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 
     canvas {
-        height: 304px !important;
+        height: 210px !important;
+    }
+
+    .legend-circle {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+
+    .legend-name {
+        color: #323130;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .hrs-display {
+        font-weight: 400;
+        font-size: 0.75rem;
+        color: #747474;
+
+        .actual {
+            color: #000000 !important;
+        }
     }
 }
 
@@ -176,4 +204,28 @@
     font-size: 13px;
     color: #374151;
     vertical-align: middle;
+}
+
+.no-data-image {
+    width: 156px !important;
+    height: 130px !important;
+}
+
+.graph-no-data-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 30vh;
+}
+
+.chart-card-skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 30vh;
+  margin: 0 auto;
+  background: transparent;
+
+  .p-skeleton {
+    background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+  }
 }

@@ -57,13 +57,13 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   loading: boolean | undefined;
   clientsId!: any;
   inactiveClientStatus: any;
+  datepickerFormDataforsummary!: FormGroup;
   resourceDataids = {} as any;
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit() {
-
     const now = new Date();
     this.createDatepickerForm();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
@@ -74,8 +74,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       if (clientID) {
         this.clientid = clientID;
         this.getClientsData(clientID);
-        this.getprojectbyid(clientID)
-
+        this.getprojectbyid(clientID);
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
@@ -87,6 +86,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       }
     });
     this.createDocumentForm();
+    this.datepickerforsummaryview();
     this.getAllActiveEmployees();
     this.getEAV();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -98,6 +98,15 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  datepickerforsummaryview() {
+    this.datepickerFormDataforsummary = this.fb.group({
+      dateRange: [null],
+
+    });
+    // detect when user selects date range
+
+  }
+
   // Create reactive form
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
@@ -106,6 +115,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       resourceId: [{ value: null }, Validators.required]
     });
   }
+
   setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
@@ -113,8 +123,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       dateRange: [startOfMonth, endOfMonth]
     });
   }
-
-
 
   getClientsData(clientID: any): void {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -235,6 +243,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
+
   opencontactModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
@@ -441,8 +450,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     );
   }
 
-
-
   enableProjectAndResourceOnDateChange() {
     this.datepickerForm.get('dateRange')?.valueChanges.subscribe(value => {
       if (value && value[0] && value[1]) {
@@ -455,12 +462,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
-
   get rangeKeys(): string[] {
     return this.ranges ? Object.keys(this.ranges) : [];
   }
-
-
 
   isFormCompletelyValid(): boolean {
     const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
@@ -474,17 +478,31 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const request = {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerForm.value.resourceId,
-
     };
-    this.http.setRequest(request);
+    this.http.setRequest({ ...request, resetPagination: true });
     // Send `request` to API if needed
+  }
+
+
+  onSubmitforsummary() {
+    const dateRangeArray = this.datepickerFormDataforsummary.value.dateRange || [];
+    const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
+       const request = {
+      dateRange: { startDate, endDate },
+      // resourceId: this.datepickerForm.value.resourceId,
+      // clientId: this.clientsId,
+      // projectId: this.projectId
+    };
+    this.http.setRequestclienttimesheet(request);
+    // Send `request` to API if needed
+
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
       this.http.clearRequestclienttimesheet();
-
     }
   }
 }

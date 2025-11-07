@@ -9,9 +9,12 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Project } from '../../../../Interfaces/projects.model';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule],
+  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, 
+    ChartModule, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -25,12 +28,14 @@ export class ClientTimesheetSummaryComponent {
     { label: 'Inactive/Closed', value: 'Inactive/Closed' }
   ];
   // Project wise Resource Count variables
+  projectResourcesLableData: any;
   projectResourceData: any;
   projectResourceOptions: any;
   // Department wise Contribution variables
   departmentContributionData: any;
   departmentContributionOptions: any;
   // Project Type Data variables
+  projectTypeLableData: any;
   projectTypeData: any;
   projectTypeOptions: any;
   // Estimated Vs ActualData variables
@@ -59,21 +64,30 @@ export class ClientTimesheetSummaryComponent {
   ];
   // project name
   projectNames: any;
+  // Graph Info
+  projectsummaryinfo = 'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status';
+  ProjectwiseResourceCountInfo = "Represents the total number of employees assigned to each project, providing insight into resource allocation and team size per project";
+  DepartmentwiseContributionInfo = "Shows how different departments are contributing across projects, giving a visual understanding of departmental workload and involvement.";
+  ProjectTypeInfo = 'Displays the distribution of projects based on their type (e.g., internal, client-based, or support), enabling quick analysis of project categories handled by the organization.';
+  EstimatedActualHoursInfo = 'Compares the estimated hours allocated for each project against the actual hours logged, helping to identify project efficiency and time variance.';
+  BillablevsNonBillableHoursInfo = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.';
+  ProjectBurndownChartInfo = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends.';
+  // data loader
+  projectsummaryLoader = false;
+  ProjectwiseResourceCountLoader = false;
+  DepartmentwiseContributionLoader = false;
+  ProjectTypeLoader = false;
+  EstimatedActualHoursLoader = false;
+  BillablevsNonBillableHoursLoader = false;
+  ProjectBurndownChartLoader = false;
 
-  projectsummaryinfo = 'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status'
-  ProjectwiseResourceCountInfo = "Represents the total number of employees assigned to each project, providing insight into resource allocation and team size per project "
-  DepartmentwiseContributionInfo = "Shows how different departments are contributing across projects, giving a visual understanding of departmental workload and involvement. "
-  ProjectType = 'Displays the distribution of projects based on their type (e.g., internal, client-based, or support), enabling quick analysis of project categories handled by the organization. '
-  EstimatedActualHours = 'Compares the estimated hours allocated for each project against the actual hours logged, helping to identify project efficiency and time variance. '
-  BillablevsNonBillableHours = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.  '
-  ProjectBurndownChart = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends. '
   constructor(private http: HttpService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.createClientForm();
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
       const clientID = params['id'];
-      this.getprojectbyid(clientID);
+      this.getClientById(clientID);
     });
     this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
       if (request && request.dateRange) {
@@ -129,7 +143,7 @@ export class ClientTimesheetSummaryComponent {
   }
 
   // get all project based on client for filter use
-  getprojectbyid(clientID: any): void {
+  getClientById(clientID: any): void {
     this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = Array.isArray(res?.data) ? res.data : [];
@@ -176,6 +190,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Project wise Resource Count
   projectSummery(request?: any) {
+    this.projectsummaryLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -193,7 +208,6 @@ export class ClientTimesheetSummaryComponent {
       if (request?.projectId) {
         queryParams.push(`projectId=${request.projectId}`);
       }
-
       if (request?.status) {
         queryParams.push(`status=${request.status}`);
       }
@@ -204,9 +218,11 @@ export class ClientTimesheetSummaryComponent {
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+          this.projectsummaryLoader = false;
         },
         error: (err) => {
           console.error('Error fetching project-wise resource count chart:', err);
+          this.projectsummaryLoader = false;
         }
       });
     });
@@ -214,6 +230,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Project wise Resource Count
   projectWiseResourceCountGraph(request?: any) {
+    this.ProjectwiseResourceCountLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -224,17 +241,14 @@ export class ClientTimesheetSummaryComponent {
       let apiUrl = `ProjectManagementGraph/client/project-wise-resource/${clientID}`;
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           const data = res?.data || [];
@@ -263,8 +277,8 @@ export class ClientTimesheetSummaryComponent {
               }
             ]
           };
-
           // Chart options
+         // Chart options
           this.projectResourceOptions = {
             indexAxis: 'y', // Horizontal bar
             plugins: {
@@ -273,37 +287,43 @@ export class ClientTimesheetSummaryComponent {
             scales: {
               x: {
                 title: {
-                  display: true, text: 'Resource Count', color: '#505050',
+                  display: true,
+                  text: 'Resource Count',
+                  color: '#505050',
                   font: { size: 10, weight: 400 }
                 },
                 grid: { display: false },
                 ticks: {
                   color: '#505050',
-                  font: {
-                    size: 10,
-                    weight: '400'
+                  font: { size: 10, weight: '400' },
+                  stepSize: 1,
+                  // Add explicit typing for 'value'
+                  callback: (value: number | string) => {
+                    const numValue = Number(value);
+                    return Number.isInteger(numValue) ? numValue : '';
                   }
                 },
               },
               y: {
                 title: {
-                  display: true, text: 'Projects', color: '#505050',
+                  display: true,
+                  text: 'Projects',
+                  color: '#505050',
                   font: { size: 10, weight: 400 },
                 },
                 grid: { display: false },
                 ticks: {
                   color: '#505050',
-                  font: {
-                    size: 10,
-                    weight: '400'
-                  }
+                  font: { size: 10, weight: '400' }
                 },
               }
             }
           };
+          this.ProjectwiseResourceCountLoader = false;
         },
         error: (err) => {
           console.error('Error fetching project-wise resource count chart:', err);
+          this.ProjectwiseResourceCountLoader = false;
         }
       });
     });
@@ -319,6 +339,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Department wise Contribution
   departmentWiseContributionGraph(request?: any) {
+    this.DepartmentwiseContributionLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -327,7 +348,6 @@ export class ClientTimesheetSummaryComponent {
       }
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/deptwisecontribution/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -337,7 +357,6 @@ export class ClientTimesheetSummaryComponent {
       if (request?.projectId) {
         queryParams.push(`projectId=${request.projectId}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
@@ -345,6 +364,7 @@ export class ClientTimesheetSummaryComponent {
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           const apiData = res?.data?.data || [];
+          this.projectResourcesLableData = res?.data?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
             this.departmentContributionData = [];
             return;
@@ -352,26 +372,29 @@ export class ClientTimesheetSummaryComponent {
           // Extract chart data
           const labels = apiData.map((item: any) => item.name);
           const dataValues = apiData.map((item: any) => item.percentage);
+          const backgroundColors = apiData.map((item: any) => item.meta?.graphData?.color || '#CCCCCC'); // fallback gray
           this.departmentContributionData = {
             labels: labels,
             datasets: [
               {
                 data: dataValues,
-                backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+                backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
               }
             ]
           };
-
           this.departmentContributionOptions = {
-            cutout: '75%',
+            cutout: '60%',
             plugins: {
               legend: { display: false }
             },
           };
+          this.DepartmentwiseContributionLoader = false;
         },
         error: (err) => {
           console.error('Error fetching Role-wise hours:', err);
           this.departmentContributionData = [];
+          this.DepartmentwiseContributionLoader = false;
         }
       });
     });
@@ -379,6 +402,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Project Type (Pie)
   projectTypeChart(request?: any) {
+    this.ProjectTypeLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -400,6 +424,7 @@ export class ClientTimesheetSummaryComponent {
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           const data = res?.data || [];
+          this.projectTypeLableData = res?.data || [];
           if (!data.length) {
             this.projectTypeData = { labels: [], datasets: [] };
             return;
@@ -407,24 +432,18 @@ export class ClientTimesheetSummaryComponent {
           // Extract project type names and their counts
           const labels = data.map((item: any) => item.projectType);
           const counts = data.map((item: any) => item.projectTypeCount);
-
+          const backgroundColors = data.map((item: any) => item.projectTypeColor?.graphData?.color || '#CCCCCC'); // fallback gray
           // Assign chart data dynamically
           this.projectTypeData = {
             labels: labels,
             datasets: [
               {
                 data: counts,
-                backgroundColor: [
-                  '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
-                  '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
-                ],
-                hoverBackgroundColor: [
-                  '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
-                ]
+                backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
               }
             ]
           };
-
           // Chart options
           this.projectTypeOptions = {
             plugins: {
@@ -433,9 +452,11 @@ export class ClientTimesheetSummaryComponent {
               },
             }
           };
+          this.ProjectTypeLoader = false;
         },
         error: (err) => {
           console.error('Error fetching project type summary chart:', err);
+          this.ProjectTypeLoader = false;
         }
       });
     });
@@ -443,6 +464,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart(request?: any) {
+    this.EstimatedActualHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -492,37 +514,35 @@ export class ClientTimesheetSummaryComponent {
                 }
               ]
             };
-
+            // options
             this.estimatedVsActualOptions = {
               responsive: true,
               barThickness: 30,
               plugins: {
-                legend: {
-                  display: false,
-                  position: 'top'
-                },
+                legend: { display: false },
               },
               scales: {
                 x: {
                   stacked: false, // show Estimated vs Actual+Overdue as separate bars
                   grid: { display: false },
+                  ticks: { color: '#141414', font: { size: 11 } },
                 },
                 y: {
                   stacked: true,
                   beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: 'Hours'
-                  }
+                  title: { display: true, text: 'Hours', color: '#505050', font: { size: 9 } },
+                  ticks: { color: '#72777B', font: { size: 11 } },
                 }
               }
             };
           } else {
             this.estimatedVsActualData = [];
           }
+          this.EstimatedActualHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching estimated vs actual chart:', err);
+          this.EstimatedActualHoursLoader = false;
         }
       });
     });
@@ -530,6 +550,7 @@ export class ClientTimesheetSummaryComponent {
 
   // Billable vs Non-Billable Hours (Stacked Bar)
   billableChart(request?: any) {
+    this.BillablevsNonBillableHoursLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
@@ -548,7 +569,6 @@ export class ClientTimesheetSummaryComponent {
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           const chartData = res?.data?.data || [];
@@ -566,13 +586,11 @@ export class ClientTimesheetSummaryComponent {
             }
             return parseFloat(str); // directly convert decimal string to number
           };
-
           // Example usage
           // const chartData = response.data.data;
           const labels = chartData.map((item: any) => item.name);
           const billable = chartData.map((item: any) => convertToHours(item.billableHours));
           const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
-
           // Assign dynamic chart data
           this.billableData = {
             labels: labels,
@@ -589,17 +607,20 @@ export class ClientTimesheetSummaryComponent {
               },
             ],
           };
-
           // Chart options
           this.billableOptions = {
             responsive: true,
             barThickness: 30,
             scales: {
-              x: { stacked: true, title: { display: true, text: 'Projects' } },
+              x: {
+                stacked: true,
+                ticks: { color: '#141414', font: { size: 11 } },
+              },
               y: {
                 stacked: true,
                 beginAtZero: true,
-                title: { display: true, text: 'Total Hours' },
+                title: { display: true, text: 'Hours', color: '#505050', font: { size: 9 } },
+                ticks: { color: '#72777B', font: { size: 11 } },
               },
             },
             plugins: {
@@ -617,9 +638,11 @@ export class ClientTimesheetSummaryComponent {
             },
             maintainAspectRatio: false,
           };
+          this.BillablevsNonBillableHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching billable/non-billable chart data:', err);
+          this.BillablevsNonBillableHoursLoader = false;
         }
       });
     });
@@ -627,13 +650,13 @@ export class ClientTimesheetSummaryComponent {
 
   // Project Burndown Chart (Line)
   burnDownChart(request?: any) {
+    this.ProjectBurndownChartLoader = true;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
         this.burndownData = [];
         return;
       }
-
       let apiUrl = `ProjectManagementGraph/client/burndownchart/${clientID}`;
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -652,10 +675,8 @@ export class ClientTimesheetSummaryComponent {
             this.burndownData = { labels: [], datasets: [] };
             return;
           }
-
           // --- Store all project names ---
           this.projectNames = projectCharts.map((p: any) => p.projectName || `Project ${p.projectId}`);
-
           // --- Function to group by week ---
           const groupByWeek = (line: any[]) => {
             const weeks: Record<string, number> = {};
@@ -671,26 +692,21 @@ export class ClientTimesheetSummaryComponent {
             });
             return weeks;
           };
-
           // --- Collect all labels and datasets dynamically ---
           const allLabelsSet = new Set<string>();
           const datasets: any[] = [];
-
           // Predefined color palette (extendable)
           const colors = [
             '#42A5F5', '#E91E63', '#9C27B0', '#FF9800', '#4CAF50',
             '#795548', '#009688', '#F44336', '#3F51B5', '#8BC34A'
           ];
-
           projectCharts.forEach((project: any, index: number) => {
             const actualLine = project.actualLine.map((item: any) => ({
               date: new Date(item.date),
               remainingHours: item.remainingHours
             }));
-
             const actualByWeek = groupByWeek(actualLine);
             Object.keys(actualByWeek).forEach(label => allLabelsSet.add(label));
-
             datasets.push({
               label: `${project.projectName || 'Project ' + project.projectId}`,
               data: Object.values(actualByWeek),
@@ -700,14 +716,11 @@ export class ClientTimesheetSummaryComponent {
               tension: 0.3
             });
           });
-
           const labels = Array.from(allLabelsSet);
-
           this.burndownData = {
             labels,
             datasets
           };
-
           this.burndownOptions = {
             plugins: {
               legend: { display: false },
@@ -722,23 +735,69 @@ export class ClientTimesheetSummaryComponent {
             },
             scales: {
               x: {
-                title: { display: true, text: 'Weeks' },
                 grid: { display: false },
-                ticks: { autoSkip: true, maxRotation: 45, minRotation: 45 }
+                title: { display: true, text: 'Weeks', color: '#141414', font: { size: 11 } },
+                ticks: { color: '#141414', font: { size: 11 } },
               },
               y: {
-                title: { display: true, text: 'Remaining Hours' },
+                stacked: true,
                 beginAtZero: true,
-                grid: { color: '#f0f0f0' }
-              }
+                title: { display: true, text: 'No. of Hours', color: '#141414', font: { size: 11 } },
+                ticks: { color: '#72777B', font: { size: 11 } },
+              },
             },
             maintainAspectRatio: false
           };
+          this.ProjectBurndownChartLoader = false;
         },
         error: (err) => {
           console.error('Error fetching burndown chart data:', err);
+          this.ProjectBurndownChartLoader = false;
         }
       });
     });
+  }
+
+  //graphs no data found conditions
+  get hasProjectResourceData(): boolean {
+    const datasets = this.projectResourceData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+  get hasDepartmentWiseData(): boolean {
+    const datasets = this.departmentContributionData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+  get hasProjectTypeData(): boolean {
+    const datasets = this.projectTypeData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+  get hasestimatedActualHoursData(): boolean {
+    const datasets = this.estimatedVsActualData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+  get hasbillableData(): boolean {
+    const datasets = this.billableData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+  get hasburndownData(): boolean {
+    const datasets = this.burndownData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some(value => value > 0);
   }
 }

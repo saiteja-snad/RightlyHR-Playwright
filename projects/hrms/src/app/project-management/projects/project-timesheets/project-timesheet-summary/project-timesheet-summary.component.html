@@ -1,6 +1,7 @@
 <div class="custom-main-component-container time-sheet-summary-container">
     <div class="row">
         <div class="col-lg-7 mb-3">
+            @if (!resourceSummaryLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Resource Summary</div>
@@ -12,6 +13,7 @@
                     </div>
                 </div>
                 <div class="custom-table-content project-summary-table">
+                    @if( projectResourceSummaryData.length > 0){
                     <table class="w-100">
                         <thead>
                             <th>{{'Resource Name'|translate}}</th>
@@ -22,23 +24,31 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectResourceSummaryData">
-                                <td>{{roles.employeeName}}</td>
-                                <td>{{roles.projectRole}}</td>
+                                <td class="project-name">{{roles.employeeName}}</td>
+                                <td class="logged-hrs">{{roles.projectRole}}</td>
                                 <td>
                                     <div class="progress-wrapper">
                                         <div class="progress-bar" [ngStyle]="{width: roles.utilizationPercent + '%', 
-                                            backgroundColor: getProgressColor(roles.utilizationPercent)}"></div>
+                                        backgroundColor: getProgressColor(roles.utilizationPercent)}"></div>
                                     </div>
-                                    <!-- <span class="logged-hours">{{ roles.totalLoggedHours }}</span> -->
                                 </td>
-                                <!-- <td>{{roles.totalLoggedHours}}</td> -->
-                                <td>{{roles.totalLoggedHours}}/{{roles.totalAllocatedHours}}</td>
-                                <td>{{roles.utilizationPercent}}</td>
+                                <td><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
+                                <td class="logged-hrs">{{roles.utilizationPercent}} %</td>
                             </tr>
                         </tbody>
                     </table>
+                    } @else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-5 mb-3">
@@ -53,7 +63,6 @@
                         </ng-template>
                     </div>
                 </div>
-            
                 <div class="gauge-container">
                     <p-chart type="doughnut" [data]="gaugeData" [options]="gaugeOptions" />
                     <div class="guage-background"></div>
@@ -63,7 +72,6 @@
                     </div>
                     <!-- center circle -->
                     <div class="needle-base"></div>
-            
                     <!-- percentage label -->
                     <div class="gauge-label">{{ completionRate.toFixed(2) }}%</div>
                 </div>
@@ -71,6 +79,7 @@
         </div>
 
         <div class="col-lg-5 mb-3">
+            @if (!roleWiseHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Role wise Hours</div>
@@ -82,13 +91,39 @@
                         </ng-template>
                     </div>
                 </div>
-                <div class="circular-chart">
-                    <p-chart type="pie" [data]="roleWiseHoursData" [options]="roleWiseHoursOptions" />
+                <div class="rolewise-chart-grid graph-no-data-content">
+                    <ng-container *ngIf="hasroleWiseHoursData; else noData">
+                        <div>
+                            <p-chart type="pie" [data]="roleWiseHoursData" [options]="roleWiseHoursOptions" />
+                        </div>
+
+                        <div class="legends-view">
+                            <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
+                                        <div class="legend-name">{{ item.name }}</div>
+                                    </div>
+                                </div>
+                                <div class="hrs-display text-nowrap col-md-4">
+                                    <span class="actual">{{item.actualHours}}</span>/
+                                    <span>{{item.allocateHours}} hrs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-7 mb-3">
+            @if (!estimatedvsActualHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
@@ -101,7 +136,7 @@
                             </ng-template>
                         </div>
                     </div>
-            
+
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
@@ -109,14 +144,23 @@
                         </div>
                     </div>
                 </div>
-            
-                <div class="bar-chart">
-                    <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
+
+                <div class="bar-chart graph-no-data-content">
+                    <ng-container *ngIf="hasestimatedActualHoursData; else noData">
+                        <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-6 mb-3">
+            @if (!billablevsNonBillableHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
@@ -136,13 +180,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="burndown-chart">
-                    <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+                <div class="burndown-chart graph-no-data-content">
+                    <ng-container *ngIf="hasbillableData; else noData">
+                        <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <div class="col-lg-6 mb-3">
+            @if (!projectBurndownLoader) {
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
@@ -155,7 +208,7 @@
                             </ng-template>
                         </div>
                     </div>
-                
+
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': '#FF4848' }"></span>
@@ -164,10 +217,18 @@
                     </div>
                 </div>
 
-                <div class="burndown-chart">
-                    <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+                <div class="burndown-chart graph-no-data-content">
+                    <ng-container *ngIf="hasburndownData; else noData">
+                        <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+                    </ng-container>
+                    <ng-template #noData><app-no-data-found /></ng-template>
                 </div>
             </div>
+            }@else {
+            <div class="chart-card-skeleton">
+                <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
         </div>
     </div>
 </div>

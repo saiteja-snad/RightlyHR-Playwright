@@ -285,7 +285,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       // updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds, 
-      updatecolor : project.meta.graphData.color
+      updatecolor : project?.meta?.graphData?.color
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;

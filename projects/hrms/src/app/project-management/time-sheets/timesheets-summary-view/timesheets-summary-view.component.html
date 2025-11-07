@@ -131,33 +131,29 @@
             </div>
 
             <div class="timesheet-graph-content p-3">
-                <div class="time-sheet-graph-card">
-                    <div class="summary-header d-flex gap-2 mb-2">
-                        <div>Timesheet Summary</div>
-                        <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
-                                class="module-icon">
-                            <ng-template #timesheetSummaryContent>
-                                <div class="module-info-text">{{TimesheetSummary}}</div>
-                            </ng-template>
-                        </div>
+                <div class="summary-header d-flex gap-2 pb-3">
+                    <div>Timesheet Summary</div>
+                    <div>
+                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent" class="module-icon">
+                        <ng-template #timesheetSummaryContent>
+                            <div class="module-info-text">{{TimesheetSummary}}</div>
+                        </ng-template>
                     </div>
-                    <div class="stacked-progress-container py-4">
+                </div>
+
+                <div class="time-sheet-graph-card p-3 py-4">
+                    <div class="stacked-progress-container">
                         <!-- overlay color bar -->
                         <div class="stacked-progress-overlay mb-3"
-                            [style.background]="
-                                           (approvedPercent + submittedPercent + rejectedPercent) === 0
-                                        ? '#e0e0e0'
-                                        : 'linear-gradient(to right, ' +
-                                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' +
-                                            submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' +
-                                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                            [style.background]="(approvedPercent + submittedPercent + rejectedPercent) === 0 ? '#E5E7EB' : 
+                            'linear-gradient(to right, ' + approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + 
+                            submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
+                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
                         </div>
 
                         <div class="progress-labels">
                             <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
-                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{
-                                displaySubmitted }}Hrs</div>
+                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }}Hrs</div>
                             <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
                         </div>
                     </div>
@@ -165,89 +161,118 @@
 
                 <div class="dashed-line my-3"></div>
 
-                <div class="time-sheet-graph-card">
-                    <div class="summary-header d-flex gap-2 mb-2">
-                        <div>Project Wise Hours Summary</div>
-                        <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata"
-                                class="module-icon">
-                            <ng-template #projectwisehoursSummarydata>
-                                <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
-                            </ng-template>
-                        </div>
-                    </div>
-                    <div class="circular-chart">
-                        <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                <div class="summary-header d-flex gap-2 pb-3">
+                    <div>Project Wise Hours Summary</div>
+                    <div>
+                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata" class="module-icon">
+                        <ng-template #projectwisehoursSummarydata>
+                            <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
+                        </ng-template>
                     </div>
                 </div>
 
-                <div class="dashed-line my-3"></div>
-
-                <div class="time-sheet-graph-card">
-                    <div class="summary-header d-flex gap-2 mb-2">
+                @if (!projectwisehour) {
+                <div class="time-sheet-graph-card p-3 py-4">
+                    <div class="rolewise-chart-grid gap-3">
+                        <div class="bar-chart">
+                            <ng-container *ngIf="hasprojectWiseHoursData; else noData">
+                                <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                            </ng-container>
+                        </div>
+                
+                        <div class="legends-view">      
+                            <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
+                                <div class="col-md-7">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                        <div class="legend-name">{{ item.label }}</div>
+                                    </div>
+                                </div>
+                                <div class="hrs-display text-nowrap col-md-5">{{item.hours}} h</div>
+                            </div>             
+                        </div>
+                        <ng-template #noData>
+                            <div class="graph-no-data-content">
+                                <app-no-data-found />
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+                }@else {
+                <div class="chart-card-skeleton">
+                    <p-skeleton width="100%" height="100%" borderRadius="12px" />
+                </div>
+                }
+                @if (!allocatedVsActualLoader) {
+                <div class="dashed-line my-3">
+                    <div class="summary-header d-flex gap-2 pb-3">
                         <div>Allocated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
-                                class="module-icon">
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
                             <ng-template #resourceSummaryContent>
                                 <div class="module-info-text">{{AllocatedActualhours}}</div>
                             </ng-template>
                         </div>
                     </div>
-                    <div class="bar-chart">
-                        <p-chart type="bar" [data]="estimatedVsActualGraphData"
-                            [options]="estimatedVsActualGraphOptions" />
+
+                    <div class="time-sheet-graph-card p-3 py-4 ">
+                        <div class="bar-chart graph-no-data-content">
+                            <ng-container *ngIf="hasallocatedvsactualData; else noData">
+                                <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                            </ng-container>
+                        </div>
+                        <ng-template #noData><app-no-data-found /></ng-template>
                     </div>
                 </div>
+                }@else {
+                <div class="chart-card-skeleton">
+                    <p-skeleton width="100%" height="100%" borderRadius="12px" />
+                </div>
+                }
             </div>
         </div>
-
-        <!--Summary-->
-        <ng-template #summaryforlogs let-modal>
-            <div class="custom-main-popup-container" ngbAutofocus>
-                <div class="custom-poup-header-content popup-header-border">
-                    <div>
-                        <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
-                    </div>
-                    <div>
-                        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-                    </div>
-                </div>
-                <div class="custom-main-popup-content">
-                    <div class="popup-table-wrapper">
-                        <div class="popup-table-scroll-container">
-                            <table class="popup-table">
-                                <thead>
-                                    <tr>
-                                        <th>Client Name</th>
-                                        <th>Project Name</th>
-                                        <th>Phase/Milestone</th>
-                                        <th>Logged Hours</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let entry of selectedEntries">
-                                        <td>{{ entry?.clientName }}</td>
-                                        <td>{{ entry?.projectName }}</td>
-                                        <td>{{ entry?.phaseName || '-' }}</td>
-                                        <td>{{ entry?.loggedHHMM }} hrs</td>
-                                        <td [ngClass]="{'approved': entry.status === 'Processed', 
-                                        'rejected': entry.status === 'Rejected', 'waiting': entry.status === 'Waiting for Approval', 
-                                        'draft': entry.status === 'draft'}">{{ entry.status }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- <div class="popup-table-footer">
-                            {{"Logged Hours" | translate}}: <b>8:00hrs</b>
-                        </div> -->
-                    </div>
-                </div>
-            </div>
-        </ng-template>
     </div>
 </div>
+
+<!--Summary-->
+<ng-template #summaryforlogs let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Project Name</th>
+                                <th>Logged Hours</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let entry of selectedEntries">
+                                <td>{{ entry.clientName }}</td>
+                                <td>{{ entry.projectName }}</td>
+                                <td>{{ entry.loggedHours }} hrs</td>
+                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
+                                 'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">{{ entry.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <div class="popup-table-footer">{{"Logged Hours" | translate}}: <b>8:00hrs</b></div> -->
+            </div>
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />

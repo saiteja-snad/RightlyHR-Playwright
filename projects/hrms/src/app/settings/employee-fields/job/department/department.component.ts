@@ -164,7 +164,7 @@ export class DepartmentComponent {
       sno: this.selectedDeleteDep.sno,
        meta : JSON.stringify({
         graphData : {
-          color : this.selectedDeleteDep.meta.graphData.color
+          color : this.selectedDeleteDep?.meta?.graphData?.color
         }
       })
     };

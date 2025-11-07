@@ -12,13 +12,11 @@ import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
 import { IAuthority } from '../../Interfaces/letters-model';
-import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
-import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })

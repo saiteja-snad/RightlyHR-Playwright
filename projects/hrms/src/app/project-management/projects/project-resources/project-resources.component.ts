@@ -68,7 +68,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   projectMaxEndDate!: string;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
-    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
+    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) { }
 
   ngOnInit() {
@@ -95,15 +95,15 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     });
     this.ExtendDateForm();
   }
-selectedRoleId: number = 0;
-selectedEntityRefId: number = 0;
+  selectedRoleId: number = 0;
+  selectedEntityRefId: number = 0;
 
-onRoleChange(selectedValue: any) {
-  if (selectedValue) {
-    this.selectedRoleId = selectedValue.roleId;
-    this.selectedEntityRefId = selectedValue.entityReferenceId;
+  onRoleChange(selectedValue: any) {
+    if (selectedValue) {
+      this.selectedRoleId = selectedValue.roleId;
+      this.selectedEntityRefId = selectedValue.entityReferenceId;
+    }
   }
-}
 
   // onPhaseChange(selectedValue: any) {
   //   if (selectedValue) {
@@ -195,7 +195,7 @@ onRoleChange(selectedValue: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
-          this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
+        this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
         if (project) {
           this.projectStartDate = this.formatDateToLocal(project.startDate);
@@ -203,7 +203,7 @@ onRoleChange(selectedValue: any) {
           // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
           // this.updateResourceForm.updateValueAndValidity();
         }
-         this.getJobrole();
+        this.getJobrole();
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
           p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
         ) ? 'inactive' : 'active';
@@ -214,32 +214,32 @@ onRoleChange(selectedValue: any) {
       },
     });
   }
-getJobrole() {
-  this.loader = true;
-  const departmentParam = this.departmentIds?.join(',') || '';
+  getJobrole() {
+    this.loader = true;
+    const departmentParam = this.departmentIds?.join(',') || '';
 
-  this.subscription = this.http
-    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
-    .subscribe({
-      next: (response: any) => {
-        this.loader = false;
-        if (response && response.success && Array.isArray(response.data)) {
-          this.projectRoleDropdown = response.data.map((item: any) => ({
-            label: `${item.roleName}`,
-            value: {
-              roleId: item.id,
-              entityReferenceId: item.entity?.entityReferenceId || 0
-            }
-          }));
-        } else {
-          this.projectRoleDropdown = [];
-        }
-      },
-      error: () => {
-        this.loader = false;
-      },
-    });
-}
+    this.subscription = this.http
+      .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
+      .subscribe({
+        next: (response: any) => {
+          this.loader = false;
+          if (response && response.success && Array.isArray(response.data)) {
+            this.projectRoleDropdown = response.data.map((item: any) => ({
+              label: `${item.roleName}`,
+              value: {
+                roleId: item.id,
+                entityReferenceId: item.entity?.entityReferenceId || 0
+              }
+            }));
+          } else {
+            this.projectRoleDropdown = [];
+          }
+        },
+        error: () => {
+          this.loader = false;
+        },
+      });
+  }
   // validateAllocationHours(project: any): ValidatorFn {
   //   return (control: AbstractControl): ValidationErrors | null => {
   //     const form = control as FormGroup;
@@ -423,7 +423,7 @@ getJobrole() {
         this.employeeDetails = data.map((employee: any) => {
           return {
             ...employee,
-            id: employee.employeeId, // ✅ force number
+            id: employee.employeeId, // force number
             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };

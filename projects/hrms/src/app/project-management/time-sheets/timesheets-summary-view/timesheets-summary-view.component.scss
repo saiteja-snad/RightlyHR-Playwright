@@ -4,6 +4,15 @@
 
 .custom-table-content {
     height: calc(100dvh - 8rem) !important;
+
+    th, td {
+        font-size: var(--fontsize14) !important;
+    }
+
+    th {
+        font-weight: 600 !important;
+        text-transform: capitalize !important;
+    }
 }
 
 .timesheet-graph-content {
@@ -18,18 +27,15 @@
 
 .time-sheet-graph-card {
     width: 100%;
-    padding: 0.5rem;
-    border: 1.52px solid #FFFFFF;
+    border: 1px solid #FFFFFF;
     border-radius: 0.5rem;
-    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-    display: flex;
-    flex-direction: column;
+    background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
 }
 
 .summary-header {
-    font-weight: 500;
-    font-size: var(--fontsize12);
-    color: #222222;
+    font-weight: 600;
+    font-size: var(--fontsize14);
+    color: var(--primary-color);
 
     .popover-body {
         padding: 0.325rem !important;
@@ -45,7 +51,6 @@
         font-size: var(--fontsize10);
     }
 }
-
 
 .circular-chart {
     display: flex;
@@ -74,7 +79,7 @@
 }
 
 .stacked-progress-container {
-  position: relative;
+    position: relative;
 }
 
 .stacked-progress-overlay {
@@ -84,36 +89,33 @@
 }
 
 .progress-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: var(--fontsize12);
-  font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 500;
+    flex-wrap: wrap;
 }
 
 .label {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 .approved {
-   color:  rgba(0, 169, 18, 1) !important;
-
+    color: rgba(0, 169, 18, 1) !important;
 }
 
 .rejected {
-    color:  rgba(234, 54, 44, 1) !important;
- 
+    color: rgba(234, 54, 44, 1) !important;
 }
 
 .waiting {
-    color:  rgba(252, 185, 16, 1) !important;
-
+    color: rgba(252, 185, 16, 1) !important;
 }
-
 
 .total-hrs {
     color: rgba(133, 137, 145, 1);
     font-weight: 500;
-    font-size: var(--fontsize12);
+    font-size: var(--fontsize14);
     cursor: pointer;
 }
 
@@ -122,3 +124,57 @@
     font-weight: 600;
     color: var(--primary-color);
 }
+
+.rolewise-chart-grid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    canvas {
+        width: 9rem !important;
+        height: 9rem !important;
+    }
+
+    .legend-circle {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+    }
+
+    .legend-name {
+        color: #323130;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .hrs-display {
+        font-weight: 600;
+        font-size: 0.75rem;
+        color: #0A0A0A;
+    }
+}
+
+.no-data-image {
+    width: 156px !important;
+    height: 130px !important;
+}
+
+.graph-no-data-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 30vh;
+}
+
+.chart-card-skeleton {
+  width: 100%;
+  height: 24vh;
+  margin: 0 auto;
+  background: transparent;
+ 
+  .p-skeleton {
+    background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+  }
+}
+ 

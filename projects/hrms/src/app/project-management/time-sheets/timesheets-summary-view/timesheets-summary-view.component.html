@@ -37,7 +37,7 @@
                     </div>
 
                     <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
+                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
                         <div class="d-flex align-items-center gap-2">
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>

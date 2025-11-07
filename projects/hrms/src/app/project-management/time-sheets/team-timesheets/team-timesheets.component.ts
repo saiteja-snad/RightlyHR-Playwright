@@ -83,7 +83,7 @@ export class TeamTimesheetsComponent {
         if (res?.success) {
           this.resourcesList = res.data
             // ✅ Remove employee by ID
-            .filter((emp: IResourceDetail) => emp.id !== EmployeeId)
+            .filter((emp: IResourceDetail) => emp.id !== EmployeeId && emp.isReportee == true)
             // ✅ Add fullName for dropdown
             .map((emp: IResourceDetail) => ({
               ...emp,
@@ -112,6 +112,8 @@ export class TeamTimesheetsComponent {
     if (employeed === null) {
       this.page = 1;
       this.datepickerForm.get('resourceId')?.setValue(null);
+      console.log(employeed);
+      
       this.getteamsummary();
     }
   }

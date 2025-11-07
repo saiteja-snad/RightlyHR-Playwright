@@ -189,7 +189,7 @@ export class TimesheetsSummaryViewComponent {
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
       next: (res: any) => {
         if (res?.success) {
-          this.resourcesList = res.data.filter((emp: IResourceDetail) => emp.id !== EmployeeId && emp.isReportee == true).map((emp: IResourceDetail) => ({
+          this.resourcesList = res.data.filter((emp: IResourceDetail) => emp.id !== EmployeeId).map((emp: IResourceDetail) => ({
             ...emp,
             fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
             key: 'team'

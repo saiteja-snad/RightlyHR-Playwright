@@ -22,6 +22,8 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import moment from 'moment';
 import { SkillSetMainTabsComponent } from "../../shared/skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
+import { SummaryCard } from '../../Interfaces/skill-dashboard.model';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
@@ -40,6 +42,7 @@ export class SkillDirectoryManagementComponent {
   MySkills: any[] = [];
   imageUrl: any
   date!: Date[];
+  summaryCards: SummaryCard[] = [];
   @ViewChild('datePicker') datePicker: any;
   subscription!: Subscription;
   monthStartDate!: Date;
@@ -70,6 +73,7 @@ export class SkillDirectoryManagementComponent {
     { label: 'Committed', value: 'Committed' },
     { label: 'Available', value: 'Available' }
   ]
+
   displayLabel!: string;
   multiSkillOptions: any[] = [];
   isloading: boolean = false;
@@ -77,8 +81,13 @@ export class SkillDirectoryManagementComponent {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   activeTabIndex = 0;
+  selectedSkillName: string = '';
+  allEmployees: any[] = [];
+  employeeList: any[] = [];
+  filteredEmployees: any[] = [];
+  employeeSummary: any = {};
 
-  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer, 
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
     private offcanvasService: NgbOffcanvas, private openmodalservice: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
@@ -102,6 +111,7 @@ export class SkillDirectoryManagementComponent {
       { label: 'Skills' },
       { label: 'Projects' },
     ];
+    this.getEmployeeDirectorySummary()
   }
 
   updateModuleInfo() {
@@ -130,7 +140,14 @@ export class SkillDirectoryManagementComponent {
     this.page = 1;
     this.getEmployeeSkills();
   }
-
+  private searchTimer: any;
+  
+  onSearch1(): void {
+  clearTimeout(this.searchTimer);
+  this.searchTimer = setTimeout(() => {
+    this.getEmployeeDirectorySummary();
+  }, 400); 
+}
   onSkillSelectionChange(): void {
     this.getEmployeeSkills();
   }
@@ -367,6 +384,117 @@ export class SkillDirectoryManagementComponent {
         },
       });
   }
+ getEmployeeDirectorySummary(): void {
+  const params: any = {};
+
+  //  Send search text to backend
+  if (this.searchQuery?.trim()) {
+    params.searchQuery = this.searchQuery.trim();
+  }
+
+  this.isloading = true;
+
+  this.subscription = this.http
+    .getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params)
+    .subscribe({
+      next: (res: any) => {
+        this.isloading = false;
+
+        if (res?.data) {
+          this.employeeSummary = res.data;
+
+          this.allEmployees = (this.employeeSummary.allEmployeesList ?? []).map((emp: any) => ({
+            ...emp,
+            profileImage: this.getImageUrl(emp.profileImage),
+          }));
+
+          this.summaryCards = [
+            {
+              title: 'Total Resources',
+              key: 'totalEmployees',
+              value: this.employeeSummary.totalEmployees ?? 0,
+              icons: './icons/Total Employee Count.png',
+            },
+            {
+              title: 'Updated Resources',
+              key: 'skilledEmployees',
+              value: this.employeeSummary.skilledEmployees ?? 0,
+              icons: './icons/Available Employees Count.png',
+            },
+            {
+              title: 'Resources Not yet Updated',
+              key: 'unSkilledEmployees',
+              value: this.employeeSummary.unSkilledEmployees ?? 0,
+              icons: './icons/Not Updated.png',
+            },
+          ];
+        } else {
+          this.employeeSummary = {};
+          this.allEmployees = [];
+          this.summaryCards = [];
+        }
+      },
+      error: (reason) => {
+        this.isloading = false;
+        console.error('Error fetching employee directory summary:', reason);
+      },
+    });
+}
+
+
+
+
+  private getImageUrl(imagePath: string): string | null {
+    if (!imagePath) return null;
+
+    const lowerPath = imagePath.toLowerCase();
+
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+
+
+    if (lowerPath.startsWith('profilepics/')) {
+      return `${environment.viewUrl.replace(/\/$/, '')}/${imagePath}`;
+    }
+
+    // Fallback for other paths
+    return `${environment.ApiUrl.replace(/\/$/, '')}/EmployeeData/DownloadProfilePic?filename=${imagePath}`;
+  }
+
+
+  openEnd2(content: TemplateRef<any>, card: any): void {
+    this.isloading = true;
+    this.selectedSkillName = card.title;
+
+    let list: any[] = [];
+
+    switch (card.key) {
+      case 'totalEmployees':
+        list = this.employeeSummary.allEmployeesList || [];
+        break;
+      case 'skilledEmployees':
+        list = this.employeeSummary.skilledEmployeesList || [];
+        break;
+      case 'unSkilledEmployees':
+        list = this.employeeSummary.unSkilledEmployeesList || [];
+        break;
+      default:
+        list = [];
+    }
+
+
+    this.employeeList = list.map(emp => ({
+      ...emp,
+      profileImage: emp.profileImage ? this.getImageUrl(emp.profileImage) : null
+    }));
+
+    this.isloading = false;
+    this.offcanvasService.open(content, { position: 'end' });
+  }
+
+
+
 
   clearAllFilters(): void {
     this.selectedStatus = 'All Status';

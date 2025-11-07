@@ -28,7 +28,7 @@ export class MyInfoPersonalTabsComponent implements OnInit {
       { label: 'Bank Info', link: '/myinfo/personal/bank-details', icon: '/my-info-icons/bank-details-icon.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
       { label: 'Academics', link: '/myinfo/personal/education-details', icon: '/my-info-icons/education-icon.png', permission: { feature: 'My Info Education Details', action: 'view' } },
       // { label: 'Visa Details', link: '/myinfo/personal/visa-details', icon: '/my-info-icons/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
-      { label: 'Skill Info', link: '/myinfo/personal/my-skills', icon: '/my-info-icons/skill 1.png' ,permission: { feature: 'My Skills', action: 'view' } },
+      { label: 'Skills', link: '/myinfo/personal/my-skills', icon: '/my-info-icons/skill 1.png' ,permission: { feature: 'My Skills', action: 'view' } },
 
     ];
     this.filterTabsByRbac();

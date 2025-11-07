@@ -52,7 +52,7 @@
                         </td>
                         <td>
                             <div>
-                                <span>{{ (data?.status | titlecase) || '-' }}</span>
+                                <span>{{ formatStatus(data?.status) || '-' }}</span>
                         
                                 <ng-container *ngIf="data.reason && data.status?.toLowerCase() !== 'in progress'; else noStatusReason">
                                     <span type="button" [ngbPopover]="statusReasonPopover">
@@ -292,7 +292,7 @@
     <div>
       <img src="icons/reject.png" alt="confirmation icon" class="confirmation-delete-icon">
       <p class="confirmation-text">
-        {{ 'Are you sure you want to start this phase?' | translate }}
+        {{ 'Are you sure you want to start the phase?' | translate }}
       </p>
     </div>
     <div class="custom-modal-footer">
@@ -354,7 +354,7 @@
         <div class="result-popup-content" ngbAutofocus>
             <div>
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">Are you sure you want to extend phase?</p>
+                <p class="confirmation-text">Are you sure you want to extend this phase?</p>
             </div>
 
             <!-- Start Date -->
@@ -372,7 +372,7 @@
             <div class="mb-3 mt-3">
                 <label for="newEndDate" class="form-label custom-label mb-2">End Date <span class="text-danger">*</span></label>
                 <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
-                    [min]="extendForm.get('newStartDate')?.value" [max]="projectMaxEndDate" />
+                    [min]="projectMinEndDate" [max]="projectMaxEndDate" />
                 <div class="error-msg" *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
                     End Date is required
                 </div>

@@ -66,6 +66,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   @ViewChild('deleteconformation') deleteconformation!: any;
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
+  selectedResource: any;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
@@ -105,45 +106,40 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
   }
 
-  // onPhaseChange(selectedValue: any) {
-  //   if (selectedValue) {
-  //     this.selectedPhaseId = selectedValue.value
-  //   }
-  // }
+  onPhaseChange(event: any) {
+    if (!event?.value) return;
 
-  onPhaseChange(selectedValue: any) {   
-    if (selectedValue) {
-      this.selectedPhaseId = selectedValue.value;
-      const projectId = selectedValue.value.projectId;
-      this.getResourceData(this.projectId,this.selectedPhaseId, true);
-      
+    const selectedPhaseId = event.value;
+    const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
+
+    if (selectedPhase) {
+      this.selectedPhaseId = selectedPhase.value;
+      this.projectStartDate = selectedPhase.startDate ?? null;
+      this.projectEndDate = selectedPhase.endDate ?? null;
+
+      // Automatically patch authority from phase if available
+      const phaseAuthority = selectedPhase?.pendingApprovalAuthority ?? null;
+
+      const authorityControl = this.updateResourceForm.get('resourceAuthority');
+      if (authorityControl) {
+        authorityControl.patchValue(phaseAuthority);
+        // Disable the control if the authority is auto-set from phase
+        if (phaseAuthority) {
+          authorityControl.disable();
+        } else {
+          authorityControl.enable();
+        }
+      }
+
+      // Update validators for date fields
+      this.updateResourceForm.get('startDate')?.updateValueAndValidity();
+      this.updateResourceForm.get('endDate')?.updateValueAndValidity();
+
+      // Fetch resources related to the selected phase
+      this.getResourceData(this.projectId, this.selectedPhaseId, true);
     }
-
-  //   if (selectedValue?.value) {
-  //   const phase = selectedValue.value;
-  //   console.log(phase);
-    
-  //   this.selectedPhaseId = phase.value ?? null;
-  //   this.projectStartDate = phase.startDate ?? null;
-  //   this.projectEndDate = phase.endDate ?? null;
-
-  //   // Update validators safely
-  //   this.updateResourceForm.get('startDate')?.updateValueAndValidity();
-  //   this.updateResourceForm.get('endDate')?.updateValueAndValidity();
-  //   console.log(this.projectStartDate,this.projectEndDate);
-    
-  //   // Reset approval authority safely
-  //   const resourceAuthorityControl = this.updateResourceForm.get('resourceAuthority');
-  //   if (resourceAuthorityControl) {
-  //     resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
-  //     resourceAuthorityControl.disable();
-  //   }
-
-  //   if (this.projectId != null && this.selectedPhaseId != null) {
-  //     this.getResourceData(this.projectId, this.selectedPhaseId);
-  //   }
-  // }
   }
+
   
 
   initializeForms() {
@@ -240,29 +236,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         },
       });
   }
-  // validateAllocationHours(project: any): ValidatorFn {
-  //   return (control: AbstractControl): ValidationErrors | null => {
-  //     const form = control as FormGroup;
-  //     const hours = form.get('resourceAllocationhrs')?.value;
-  //     const frequency = form.get('allocatedFrequencyType')?.value;
-  //     if (!hours || !frequency || !this.projectStartDate || !this.projectEndDate) {
-  //       return null;
-  //     }
-  //     // calculate working days between start & end
-  //     const workingDays = this.getWorkingDays(
-  //       this.projectStartDate,
-  //       this.projectEndDate,
-  //       project.isWeekendWorkAllowed
-  //     );
-  //     // allowed hours = workingDays × 8
-  //     const allowedHours = workingDays * 8;
-  //     // validation
-  //     if (hours > allowedHours) {
-  //       return { invalidAllocation: { maxAllowed: allowedHours } };
-  //     }
-  //     return null;
-  //   };
-  // }
 
   getWorkingDays(startDate: Date, endDate: Date, allowWeekend: boolean): number {
     let workingDays = 0;
@@ -276,31 +249,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
     return workingDays;
   }
-
-  // getResourceData(id: any) {
-  //   const projectId = id;
-  //   const params = {
-  //     status: 'Active',
-  //     entityType: 'project',
-  //     entityRefId: projectId,
-  //   };
-  //   this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
-  //     next: (data: any) => {
-  //       this.resourcesData = data.data;
-  //       this.loading = false;
-
-  //       this.resoucesDropDownData = this.resourcesData
-  //       .filter(r => r.employee) // ensure employee exists
-  //       .map(r => ({
-  //         label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-  //         value: r.employee.id
-  //       }));
-  //     },
-  //     error: (reason: any) => {
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
 
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
 
@@ -364,6 +312,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any, size: any, data: any) {
+    this.selectedResource = data;
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
       (r: any) => r.value.roleId === data.projectRoleId
@@ -380,6 +329,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
       authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
     }
+
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
@@ -467,92 +417,50 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
+  
+  updateResources() {
+    if (this.updateResourceForm.invalid) {
+      this.updateResourceForm.markAllAsTouched();
+      return;
+    }
 
-  // updateResources() {
-  //   if (this.updateResourceForm.invalid) {
-  //     this.updateResourceForm.markAllAsTouched();
-  //     return;
-  //   }
+    this.loader = true;
+    const formValue = this.updateResourceForm.value;
 
-  //   const formValue = this.updateResourceForm.value;
-  //   const projectRoleId = formValue.resourceRole.roleId;
-  //   const projectDepartmentId = formValue.resourceRole.entityReferenceId;
-  //   const payload = {
-  //     entityType: "project",
-  //     entityRefId: this.projectId,
-  //     employeeId: formValue.resourceName,
-  //     startDate: formValue.startDate,
-  //     endDate: formValue.endDate,
-  //     allocatedHours: formValue.resourceAllocationhrs || null,
-  //     // allocatedFrequencyType: formValue.allocatedFrequencyType || null,
-  //     overtimeEligibile: formValue.overtimeEligible,
-  //     billable: formValue.billable,
-  //     weekendWorkAllowed: formValue.allowweekendWork,
-  //     status: "Active",
-  //     allocatedBy: this.empinfo.employeeId,
-  //     //role: formValue.resourceRole,
-  //     projectRoleId: projectRoleId,
-  //     projectDepartmentId: projectDepartmentId,
-  //     pendingApprovalAuthority : formValue.resourceAuthority,
-  //     phaseId : formValue.resourcePhase,
-  //     meta: {
-  //       graphData: {
-  //         color: formValue.color
-  //       }
-  //     }
+    const projectRoleId = formValue.resourceRole.roleId;
+    const projectDepartmentId = formValue.resourceRole.entityReferenceId;
 
-  //   };
-  //   this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({
-  //     next: (res) => {
-  //       this.modalService.dismissAll();
-  //       this.conformationPopup.openSuccessModal('Resource updated successfully');
-  //       this.getResourceData(this.projectId);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error occured:', err);
-  //       this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
-  //     }
-  //   });
-  // }
+    // 🟡 Determine final status — if previously assigned, stay assigned
+    const currentStatus = this.selectedResource?.status?.toLowerCase();
+    const finalStatus = currentStatus === 'assigned' ? 'Assigned' : 'Active';
 
-updateResources() {
-  if (this.updateResourceForm.invalid) {
-    this.updateResourceForm.markAllAsTouched();
-    return;
+    const payload = {
+      entityType: 'project',
+      entityRefId: this.projectId,
+      employeeId: formValue.resourceName,
+      startDate: formValue.startDate,
+      endDate: formValue.endDate,
+      allocatedHours: formValue.resourceAllocationhrs || null,
+      overtimeEligibile: formValue.overtimeEligible,
+      billable: formValue.billable,
+      weekendWorkAllowed: formValue.allowweekendWork,
+      status: finalStatus,
+      allocatedBy: this.empinfo.employeeId,
+      projectRoleId,
+      projectDepartmentId,
+      pendingApprovalAuthority: formValue.resourceAuthority,
+      phaseId: formValue.resourcePhase,
+      meta: {
+        graphData: {
+          color: formValue.color
+        }
+      }
+    };
+
+    this.updateResourceStatus(payload, null, 'Resource updated successfully');
   }
 
-  const formValue = this.updateResourceForm.value;
-  console.log('payload',formValue);
-  const projectRoleId = formValue.resourceRole.roleId;
-  const projectDepartmentId = formValue.resourceRole.entityReferenceId;
-
-  const payload = {
-    entityType: "project",
-    entityRefId: this.projectId,
-    employeeId: formValue.resourceName,
-    startDate: formValue.startDate,
-    endDate: formValue.endDate,
-    allocatedHours: formValue.resourceAllocationhrs || null,
-    overtimeEligibile: formValue.overtimeEligible,
-    billable: formValue.billable,
-    weekendWorkAllowed: formValue.allowweekendWork,
-    status: "Active",
-    allocatedBy: this.empinfo.employeeId,
-    projectRoleId,
-    projectDepartmentId,
-    pendingApprovalAuthority: formValue.resourceAuthority,
-    phaseId: formValue.resourcePhase,
-    meta: {
-      graphData: {
-        color: formValue.color
-      }
-    }
-  };
-
-  this.updateResourceStatus(payload);
-}
-
-updateResourceStatus(payload: any, modal?: any) {
+  updateResourceStatus(payload: any, modal?: any, successMessage?: string) {
   const resourceId = payload.resourceId || this.ResourceId;
   if (!resourceId) {
     console.error('Resource ID missing.');
@@ -561,8 +469,9 @@ updateResourceStatus(payload: any, modal?: any) {
 
   this.http.putData(`ProjectResource/${resourceId}`, payload).subscribe({
     next: (res) => {
+      this.loader = false;
       this.modalService.dismissAll();
-      this.conformationPopup.openSuccessModal('Resource updated successfully');
+      this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
       this.getResourceData(this.projectId);
     },
     error: (err) => {
@@ -571,6 +480,7 @@ updateResourceStatus(payload: any, modal?: any) {
     }
   });
 }
+
 
 
   oncheckdates(value: any) {
@@ -652,7 +562,11 @@ updateResourceStatus(payload: any, modal?: any) {
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.phaseData = data.data;
+         this.phaseData = (data?.data || []).filter(
+        (p: any) =>
+          p?.status?.toLowerCase() === 'in progress' ||
+          p?.status?.toLowerCase() === 'extended'
+      );
         this.phaseDropdown = this.phaseData.map(p => ({
         label: p.phaseName,
         value: p.phaseId,
@@ -675,12 +589,40 @@ updateResourceStatus(payload: any, modal?: any) {
     'on hold': ['Resume', 'Release Resource']
   };
 
-  statusMap: Record<string, string> = {
-    'Are you sure you want to activate?': 'active',
-    'Are you sure you want to put on hold?': 'on hold',
-    'Are you sure you want to release this resource?': 'released',
-    'Are you sure you want to resume?': 'active'
+  // Titles for confirmation popups
+  confirmationMessages: Record<string, { title: string, nextStatus: string, successMessage: string }> = {
+    'Active': {
+      title: 'Are you sure you want to activate this resource?',
+      nextStatus: 'Active',
+      successMessage: 'Resource activated successfully'
+    },
+    'On Hold': {
+      title: 'Are you sure you want to put this resource on hold?',
+      nextStatus: 'On Hold',
+      successMessage: 'Resource put on hold successfully'
+    },
+    'Resume': {
+      title: 'Are you sure you want to resume this resource?',
+      nextStatus: 'Active',
+      successMessage: 'Resource resumed successfully'
+    },
+    'Release': {
+      title: 'Are you sure you want to release this resource?',
+      nextStatus: 'Released',
+      successMessage: 'Resource released successfully'
+    },
+    'Release Resource': {
+      title: 'Are you sure you want to release this resource?',
+      nextStatus: 'Released',
+      successMessage: 'Resource released successfully'
+    },
+    'Update': {
+      title: 'Are you sure you want to update this resource?',
+      nextStatus: 'Active',
+      successMessage: 'Resource updated successfully'
+    }
   };
+
 
   getActionIcon(action: string) {
     return {
@@ -700,25 +642,17 @@ updateResourceStatus(payload: any, modal?: any) {
   }
 
   handleAction(action: string, data: any) {
-    switch (action) {
-      case 'Update':
-        this.openModal(this.updateResourcemodal, 'lg', data);
-        break;
-      case 'Release':
-      case 'Release Resource':
-        this.openReasonModal('Are you sure you want to release this resource?', data);
-        break;
-      case 'Active':
-        this.openReasonModal('Are you sure you want to activate?', data);
-        break;
-      case 'On Hold':
-        this.openReasonModal('Are you sure you want to put on hold?', data);
-        break;
-      case 'Resume':
-        this.openReasonModal('Are you sure you want to resume?', data);
-        break;
+    const config = this.confirmationMessages[action];
+
+    if (!config) return;
+
+    if (action === 'Update') {
+      this.openModal(this.updateResourcemodal, 'lg', data);
+    } else {
+      this.openReasonModal(config.title, data);
     }
   }
+
 
 
   openReasonModal(title: string, data: any) {
@@ -757,108 +691,91 @@ updateResourceStatus(payload: any, modal?: any) {
     this.modalService.open(this.extendModal, { centered: true, size: 'md', backdrop: 'static' });
   }
 
-submitReason(modal: any) {
-  debugger
-  if (this.reasonForm.invalid) {
-    this.reasonForm.markAllAsTouched();
-    return;
-  }
-
-  const reason = this.reasonForm.value.reason;
-  const title = this.modalData?.title ?? '';
-  const data = this.modalData?.data;
-
-  // Try to extract ID safely
-  const resourceId = data?.resourceId || data?.id || data?.resource?.resourceId;
-  if (!resourceId) {
-    console.error('Resource ID missing.');
-    return;
-  }
-
-  const statusMap: Record<string, string> = {
-    'Are you sure you want to activate?': 'Active',
-    'Are you sure you want to put on hold?': 'On Hold',
-    'Are you sure you want to release this resource?': 'Released',
-    'Are you sure you want to resume?': 'Active'
-  };
-  const status = statusMap[title] || 'Active';
-
-  // Use full payload structure
-const payload = {
-  resourceId,
-  ...{
-    entityType: "project",
-    entityRefId: this.projectId,
-    employeeId: data.employee?.id,
-    startDate: data.startDate,
-    endDate: data.endDate,
-    allocatedHours: data.allocatedHours,
-    overtimeEligibile: data.overtimeEligibile,
-    billable: data.billable,
-    weekendWorkAllowed: data.weekendWorkAllowed,
-    status,
-    reason,
-    allocatedBy: this.empinfo.employeeId,
-    projectRoleId: data?.projectRoleId,
-    projectDepartmentId: data?.projectDepartmentId,
-    pendingApprovalAuthority: data?.pendingApprovalAuthority?.id,
-    phaseId: data.phase?.phaseId,
-    meta: data.meta || {
-      graphData: {
-        color: data.meta?.graphData?.color || ''
-      }
+  submitReason(modal: any) {
+    if (this.reasonForm.invalid) {
+      this.reasonForm.markAllAsTouched();
+      return;
     }
-  }
-};
 
-  // Add the id back in case backend expects it in URL
-  payload['resourceId'] = resourceId;
+    const reason = this.reasonForm.value.reason;
+    const title = this.modalData?.title ?? '';
+    const data = this.modalData?.data;
+    const resourceId = data?.resourceId;
 
-  this.updateResourceStatus(payload, modal);
-}
-
-
-
-submitExtend(modal: any) {
-  if (this.extendForm.invalid) {
-    this.extendForm.markAllAsTouched();
-    return;
-  }
-
-  const { newStartDate, newEndDate, extendReason } = this.extendForm.value;
-  const resource = this.modalData?.data;
-
-  if (!resource?.resourceId) {
-    console.error('Resource ID missing for extension');
-    return;
-  }
-
-  const payload = {
-    entityType: "project",
-    entityRefId: this.projectId,
-    employeeId: resource.employee?.id,
-    startDate: newStartDate,
-    endDate: newEndDate,
-    allocatedHours: resource.allocatedHours,
-    overtimeEligibile: resource.overtimeEligibile,
-    billable: resource.billable,
-    weekendWorkAllowed: resource.weekendWorkAllowed,
-    status: "Extended",
-    reason: extendReason,
-    allocatedBy: resource.allocatedBy,
-    projectRoleId: resource.projectRoleId,
-    projectDepartmentId: resource.projectDepartmentId,
-    pendingApprovalAuthority: resource.pendingApprovalAuthority,
-    phaseId: resource.phase?.phaseId,
-    meta: resource.meta || {
-      graphData: {
-        color: resource.meta?.graphData?.color || '#cccccc'
-      }
+    if (!resourceId) {
+      console.error('Resource ID missing.');
+      return;
     }
-  };
 
-  this.updateResourceStatus(payload, modal);
-}
+    // Find config dynamically by matching title
+    const config = Object.values(this.confirmationMessages).find(c => c.title === title);
+    const status = config?.nextStatus || 'Active';
+
+    const payload = {
+      resourceId,
+      entityType: 'project',
+      entityRefId: this.projectId,
+      employeeId: data.employee?.id,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      allocatedHours: data.allocatedHours,
+      overtimeEligibile: data.overtimeEligibile,
+      billable: data.billable,
+      weekendWorkAllowed: data.weekendWorkAllowed,
+      status,
+      reason,
+      allocatedBy: this.empinfo.employeeId,
+      projectRoleId: data?.projectRoleId,
+      projectDepartmentId: data?.projectDepartmentId,
+      pendingApprovalAuthority: data?.pendingApprovalAuthority?.id,
+      phaseId: data.phase?.phaseId,
+      meta: data.meta || { graphData: { color: data.meta?.graphData?.color || '' } }
+    };
+
+    this.updateResourceStatus(payload, modal, config?.successMessage);
+  }
+
+
+  submitExtend(modal: any) {
+    if (this.extendForm.invalid) {
+      this.extendForm.markAllAsTouched();
+      return;
+    }
+
+    const { newStartDate, newEndDate, extendReason } = this.extendForm.value;
+    const resource = this.modalData?.data;
+
+    if (!resource?.resourceId) {
+      console.error('Resource ID missing for extension');
+      return;
+    }
+
+    const payload = {
+      entityType: "project",
+      entityRefId: this.projectId,
+      employeeId: resource.employee?.id,
+      startDate: newStartDate,
+      endDate: newEndDate,
+      allocatedHours: resource.allocatedHours,
+      overtimeEligibile: resource.overtimeEligibile,
+      billable: resource.billable,
+      weekendWorkAllowed: resource.weekendWorkAllowed,
+      status: "Extended",
+      reason: extendReason,
+      allocatedBy: resource.allocatedBy,
+      projectRoleId: resource.projectRoleId,
+      projectDepartmentId: resource.projectDepartmentId,
+      pendingApprovalAuthority: resource.pendingApprovalAuthority,
+      phaseId: resource.phase?.phaseId,
+      meta: resource.meta || {
+        graphData: {
+          color: resource.meta?.graphData?.color || ''
+        }
+      }
+    };
+
+    this.updateResourceStatus(payload, modal);
+  }
 
 
   ngOnDestroy() {

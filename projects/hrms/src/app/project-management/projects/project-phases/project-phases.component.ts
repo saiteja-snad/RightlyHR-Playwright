@@ -46,6 +46,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   projectsData: Project[] = [];
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
+  projectMinEndDate!: string;
   reasonForm !: FormGroup
   extendForm !: FormGroup
   modalData: { title?: string; phase?: IPhases } = {};
@@ -275,62 +276,85 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     //   }
     // });
 
-  const formValue = this.updatePhaseForm.value;
+    const formValue = this.updatePhaseForm.value;
+    const currentPhase = this.phaseData.find(p => p.phaseId === this.phaseId);
+    const currentStatus = currentPhase?.status?.toLowerCase();
 
-  this.updatePhaseStatus({
-    phaseId: this.phaseId,
-    status: 'in progress',
-    startDate: formValue.startDate,
-    endDate: formValue.endDate,
-    phaseName: formValue.phaseName,
-    timesheetApprovalAuthorityId: formValue.approvalidAuthority,
-    meta: { graphData: { color: formValue.updatecolor } }
-  });
+    let updatedStatus = 'in progress';
+    if (currentStatus === 'yet to start') {
+      updatedStatus = 'yet to start';
+    }
+
+    this.updatePhaseStatus({
+      phaseId: this.phaseId,
+      status: updatedStatus,
+      startDate: formValue.startDate,
+      endDate: formValue.endDate,
+      phaseName: formValue.phaseName,
+      timesheetApprovalAuthorityId: formValue.approvalidAuthority,
+      meta: { graphData: { color: formValue.updatecolor } }
+    });
   }
 
   updatePhaseStatus(options: {
-  phaseId: number,
-  status: string,
-  reason?: string,
-  startDate?: string,
-  endDate?: string,
-  phaseName?: string,
-  meta?: any,
-  timesheetApprovalAuthorityId?:any,
-}, modal?: any) {
-  this.loading = true;
+    phaseId: number,
+    status: string,
+    reason?: string,
+    startDate?: string,
+    endDate?: string,
+    phaseName?: string,
+    meta?: any,
+    timesheetApprovalAuthorityId?: any,
+    actionType?: string;
+  }, modal?: any) {
+    this.loading = true;
 
-  const payload: any = {
-    projectId: this.projectId,
-    phaseId: options?.phaseId,
-    phaseName: options?.phaseName || this.modalData?.phase?.phaseName,
-    status: options?.status,
-    timesheetApprovalAuthorityId: options?.timesheetApprovalAuthorityId,
-    updatedBy: parseInt(this.empinfo.employeeId)
-  };
+    const payload: any = {
+      projectId: this.projectId,
+      phaseId: options?.phaseId,
+      phaseName: options?.phaseName || this.modalData?.phase?.phaseName,
+      status: options?.status,
+      timesheetApprovalAuthorityId: options?.timesheetApprovalAuthorityId,
+      updatedBy: parseInt(this.empinfo.employeeId)
+    };
 
-  if (options.reason) payload.reason = options.reason;
-  if (options.startDate) payload.startDate = options.startDate;
-  if (options.endDate) payload.endDate = options.endDate;
-  if (options.meta) payload.meta = options.meta;
+    if (options.reason) payload.reason = options.reason;
+    if (options.startDate) payload.startDate = options.startDate;
+    if (options.endDate) payload.endDate = options.endDate;
+    if (options.meta) payload.meta = options.meta;
 
-  this.http.putData(`ProjectPhases/update/${options.phaseId}`, payload).subscribe({
-    next: (res) => {
-      if (modal) modal.close();
-      this.close();
-      this.loading = false;
-      this.updatePhaseForm?.reset();
-      this.reasonForm?.reset();
-      this.extendForm?.reset();
-      this.conformationPopup.openSuccessModal('Phase / Milestone updated successfully');
-      this.getPhaseData();
-    },
-    error: (err) => {
-      this.loading = false;
-      this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
-    }
-  });
-}
+    this.http.putData(`ProjectPhases/update/${options.phaseId}`, payload).subscribe({
+      next: (res) => {
+        if (modal) modal.close();
+        this.close();
+        this.loading = false;
+        this.updatePhaseForm?.reset();
+        this.reasonForm?.reset();
+        this.extendForm?.reset();
+
+        const statusMsgMap: Record<string, string> = {
+        'in progress': options.actionType === 'resume'
+          ? 'Phase resumed successfully'
+          : 'Phase started successfully',
+        'hold': 'Phase is kept on hold',
+        'extended': 'Phase extended successfully',
+        'completed': 'Phase completed successfully',
+        'closed': 'Phase closed successfully'
+      };
+
+        // Normalize status (to lower case, remove spaces if any)
+        const normalizedStatus = options.status?.toLowerCase().trim();
+        const successMsg = statusMsgMap[normalizedStatus] || 'Phase updated successfully';
+
+        this.conformationPopup.openSuccessModal(successMsg);
+        this.getPhaseData();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
+      }
+    });
+  }
 
 
   getProjects(projectId: string) {
@@ -434,19 +458,18 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     'yet to start': ['Start', 'Update'],
     'in progress': ['Hold', 'Mark as Completed', 'Extend', 'Update'],
     'extended': ['Hold', 'Mark as Completed', 'Extend', 'Update'],
-    'hold': ['Resume Phase', 'Mark as Completed'],
+    'hold': ['Resume', 'Mark as Completed'],
     'completed': ['Close Phase', 'Extend'],
     'closed': []
   };
 
-
   statusMap: Record<string, string> = {
-    'Are you sure you want to start?': 'in progress',
-    'Are you sure you want to put on hold?': 'hold',
-    'Are you sure you want to mark as completed?': 'completed',
-    'Are you sure you want to resume?': 'in progress',
-    'Are you sure you want to close?': 'closed',
-    'Are you sure you want to extend?': 'extended'
+    'Are you sure you want to start the phase?': 'in progress',
+    'Are you sure you want to keep this phase on hold?': 'hold',
+    'Are you sure you want to mark this phase as completed?': 'completed',
+    'Are you sure you want to resume this phase?': 'in progress',
+    'Are you sure you want to close this phase?': 'closed',
+    'Are you sure you want to extend this phase?': 'extended'
   };
 
 
@@ -465,16 +488,16 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
         this.handleUpdateAction(phase);
         break;
       case 'Hold':
-        this.openReasonModal('Are you sure you want to put on hold?', phase);
+        this.openReasonModal('Are you sure you want to keep this phase on hold?', phase);
         break;
       case 'Mark as Completed':
-        this.openReasonModal('Are you sure you want to mark as completed?', phase);
+        this.openReasonModal('Are you sure you want to mark this phase as completed?', phase);
         break;
-      case 'Resume Phase':
-        this.openReasonModal('Are you sure you want to resume?', phase);
+      case 'Resume':
+        this.openReasonModal('Are you sure you want to resume this phase?', phase);
         break;
       case 'Close Phase':
-        this.openReasonModal('Are you sure you want to close?', phase);
+        this.openReasonModal('Are you sure you want to close this phase?', phase);
         break;
       case 'Extend':
         this.openExtendModal(phase);
@@ -489,7 +512,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       'Close Phase' : 'bi-x-circle',
       'Mark as Completed' : 'bi-check-circle',
       'Extend' : 'bi-calendar-plus',
-      'Resume Phase' : 'bi-arrow-repeat',
+      'Resume' : 'bi-arrow-repeat',
       'Reactivate' : 'bi-arrow-clockwise',
       'Update' : 'bi bi-pencil'
     }[action] || 'bi-question-circle';
@@ -510,12 +533,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     this.modalData = { phase };
     this.extendForm.reset();
     this.phaseId = phase.phaseId;
+
     const today = new Date().toISOString().split('T')[0];
     const phaseStart = phase.startDate?.substring(0, 10);
+    const phaseEnd = phase.endDate?.substring(0, 10);
 
     this.extendForm.patchValue({
       newStartDate: phaseStart,
-      newEndDate: phase.endDate?.substring(0, 10),
+      newEndDate: phaseEnd,
       extendReason: ''
     });
 
@@ -526,13 +551,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       this.extendForm.get('newStartDate')?.enable();
     }
 
-    // Set min/max ranges
-    // this.projectMinStartDate = phaseStart;
-    // this.projectMaxEndDate = phase.endDate?.substring(0, 10);
+    // ✅ Set min date for extension as the current phase end date
+    this.projectMinStartDate = phaseStart;
+    this.projectMinEndDate = phaseEnd;
 
     this.startndEndDateValid = true;
     this.modalService.open(this.extendModal, { centered: true, size: 'md', backdrop: 'static' });
   }
+
 
   get newStartDate() { return this.extendForm.get('newStartDate')?.value; }
   get newEndDate() { return this.extendForm.get('newEndDate')?.value; }
@@ -558,15 +584,17 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
 
     const reason = this.reasonForm.value.reason;
-    const status = this.statusMap[this.modalData?.title ?? '']; // map popup title to status
+    const title = this.modalData?.title ?? '';
+    const status = this.statusMap[title];
     const phaseId = this.modalData?.phase?.phaseId;
 
     if (!phaseId) {
       console.error('Phase ID is missing. Cannot update phase.');
       return;
     }
-
-    this.updatePhaseStatus({ phaseId, status, reason }, modal);
+    const actionType = title.includes('resume') ? 'resume' : 'default';
+    
+    this.updatePhaseStatus({ phaseId, status, reason, actionType }, modal);
   }
 
   submitExtend(modal: any) {
@@ -608,6 +636,20 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
     this.updatePhaseStatus(payload, modal);
   }
+
+  formatStatus(status: any): any {
+  if (!status) return '-';
+
+  const normalized = status.toLowerCase().trim();
+
+  // Only customize "yet to start"
+  if (normalized === 'yet to start') {
+    return 'Yet to Start';
+  }
+
+  // For all other statuses, use default Titlecase behavior
+  return normalized.replace(/\b\w/g, (char : any) => char.toUpperCase());
+}
 
 
   ngOnDestroy(): void {

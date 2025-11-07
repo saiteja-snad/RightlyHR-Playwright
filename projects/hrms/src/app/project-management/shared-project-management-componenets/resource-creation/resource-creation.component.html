@@ -113,7 +113,7 @@
 
         
 
-                      <!-- Authority Name -->
+                <!-- Authority Name -->
                 <div class="col-md-6 mb-3">
                     <div class="d-flex gap-2">
                         <label for="resourceName" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
@@ -254,7 +254,19 @@
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary"
                     (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="addResourceForm.invalid">Add</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="addResourceForm.invalid || spinnerLoader">
+            
+                    <ng-container *ngIf="spinnerLoader; else addText">
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>Loading...</span>
+                        </div>
+                    </ng-container>
+            
+                    <ng-template #addText>
+                        <span>Add</span>
+                    </ng-template>
+                </button>
             </div>
         </form>
     </div>

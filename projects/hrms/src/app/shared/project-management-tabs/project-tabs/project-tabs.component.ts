@@ -16,7 +16,7 @@ export class ProjectTabsComponent {
   columnsPerRow = 3;
   navTabs = [
     { label: 'Project Info', link: '/project-management/projects/details/information', permission: { feature: 'Project Details Tab', action: 'view' } },
-    { label: 'Phases/Milestones', link: '/project-management/projects/details/phases', permission: { feature: 'Project Phases Tab', action: 'view' } },
+    { label: 'Phases / Milestones', link: '/project-management/projects/details/phases', permission: { feature: 'Project Phases Tab', action: 'view' } },
     { label: 'Contact Info', link: '/project-management/projects/details/contact-info', permission: { feature: 'Contact Info Tab', action: 'view' } },
     { label: 'Documents', link: '/project-management/projects/details/documents', permission: { feature: 'Documents Tab', action: 'view' } },
     { label: 'Resources', link: '/project-management/projects/details/resources', permission: { feature: 'Resources Tab', action: 'view' } },

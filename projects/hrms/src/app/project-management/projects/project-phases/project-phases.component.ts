@@ -87,7 +87,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       kickoffDate: [null, Validators.required],
       phaseDescription: [null, this.formValidation.maxCharactersValidator(501)],
       allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
-      approvalidAuthority: [{ value: null, disabled: true }]
+      approvalidAuthority: [{ value: null, disabled: true }],
+      updatecolor: [''],
     });
     this.updatePhaseForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -217,7 +218,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       kickoffDate: phase.kickoffDate?.substring(0, 10),
       effectiveDate: phase.effectiveDate?.substring(0, 10),
       approvalidAuthority: phase.pendingApprovalAuthority?.id ?? null,
-      phaseDescription: phase.description
+      phaseDescription: phase.description,
+      updatecolor: phase.meta?.graphData?.color
     });
 
     // Load resources THEN open modal
@@ -233,45 +235,99 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       this.updatePhaseForm.markAllAsTouched();
       return;
     }
-    this.loading = true
+    // this.loading = true
 
-    const formValue = this.updatePhaseForm.value;
-    // Map form values to API payload
-    const payload = {
-      projectId: this.projectId,
-      phaseName: formValue.phaseName,
-      description: formValue.phaseDescription,
-      allocatedHours: formValue.allocatedHours,
-      startDate: formValue.startDate,
-      endDate: formValue.endDate,
-      effectiveDate: formValue.effectiveDate,
-      kickoffDate: formValue.kickoffDate,
-      timesheetApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
-      createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
-      status: 'active',
-      updatedBy: parseInt(this.empinfo.employeeId),
-      // meta: {
-      // graphData: {
-      //   color: formValue.color
-      //   } 
-      // }
-    };
-    this.loading = true;
-    this.http.putData(`ProjectPhases/update/${this.phaseId}`, payload).subscribe({
-      next: (res) => {
-        this.close();
-        this.loading = false;
-        this.updatePhaseForm.reset();
-        this.conformationPopup.openSuccessModal('Phase / Milestone created successfully');
-        this.getPhaseData();
-      },
-      error: (err) => {
-        console.error('Error creating project:', err);
-        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to create project');
-        this.loading = false;
-      }
-    });
+    // const formValue = this.updatePhaseForm.value;
+    // // Map form values to API payload
+    // const payload = {
+    //   projectId: this.projectId,
+    //   phaseName: formValue.phaseName,
+    //   description: formValue.phaseDescription,
+    //   allocatedHours: formValue.allocatedHours,
+    //   startDate: formValue.startDate,
+    //   endDate: formValue.endDate,
+    //   effectiveDate: formValue.effectiveDate,
+    //   kickoffDate: formValue.kickoffDate,
+    //   timesheetApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
+    //   createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
+    //   status: 'active',
+    //   updatedBy: parseInt(this.empinfo.employeeId),
+    //   meta: {
+    //   graphData: {
+    //     color: formValue.updatecolor
+    //     } 
+    //   }
+    // };
+    // this.loading = true;
+    // this.http.putData(`ProjectPhases/update/${this.phaseId}`, payload).subscribe({
+    //   next: (res) => {
+    //     this.close();
+    //     this.loading = false;
+    //     this.updatePhaseForm.reset();
+    //     this.conformationPopup.openSuccessModal('Phase / Milestone created successfully');
+    //     this.getPhaseData();
+    //   },
+    //   error: (err) => {
+    //     console.error('Error creating project:', err);
+    //     this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to create project');
+    //     this.loading = false;
+    //   }
+    // });
+
+  const formValue = this.updatePhaseForm.value;
+
+  this.updatePhaseStatus({
+    phaseId: this.phaseId,
+    status: 'yet to start',
+    startDate: formValue.startDate,
+    endDate: formValue.endDate,
+    phaseName: formValue.phaseName,
+    meta: { graphData: { color: formValue.updatecolor } }
+  });
   }
+
+  updatePhaseStatus(options: {
+  phaseId: number,
+  status: string,
+  reason?: string,
+  startDate?: string,
+  endDate?: string,
+  phaseName?: string,
+  meta?: any
+}, modal?: any) {
+  this.loading = true;
+
+  const payload: any = {
+    projectId: this.projectId,
+    phaseId: options.phaseId,
+    phaseName: options.phaseName || this.modalData?.phase?.phaseName,
+    status: options.status,
+    updatedBy: parseInt(this.empinfo.employeeId)
+  };
+
+  if (options.reason) payload.reason = options.reason;
+  if (options.startDate) payload.startDate = options.startDate;
+  if (options.endDate) payload.endDate = options.endDate;
+  if (options.meta) payload.meta = options.meta;
+
+  this.http.putData(`ProjectPhases/update/${options.phaseId}`, payload).subscribe({
+    next: (res) => {
+      if (modal) modal.close();
+      this.close();
+      this.loading = false;
+      this.updatePhaseForm?.reset();
+      this.reasonForm?.reset();
+      this.extendForm?.reset();
+      this.conformationPopup.openSuccessModal('Phase / Milestone updated successfully');
+      this.getPhaseData();
+    },
+    error: (err) => {
+      this.loading = false;
+      this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
+    }
+  });
+}
+
 
   getProjects(projectId: string) {
     this.loading = true
@@ -371,23 +427,24 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   }
 
   statusActionsMap: Record<string, string[]> = {
-    planned: ['Active', 'Cancel', 'Hold', 'Extend'],
-    active: ['Hold', 'Close', 'Cancel', 'Extend', 'Update'],
-    hold: ['Resume', 'Cancel'],
-    cancelled: [],   // nothing allowed
-    closed: [],      // nothing allowed
-    extended: ['Close', 'Hold', 'Cancel'] // only if you want this state
+    'yet to start': ['Start', 'Update'],
+    'in progress': ['Hold', 'Mark as Completed', 'Extend'],
+    'extended': ['Hold', 'Mark as Completed', 'Extend'],
+    'hold': ['Resume Phase', 'Mark as Completed'],
+    'completed': ['Close Phase', 'Extend'],
+    'closed': []
   };
 
 
   statusMap: Record<string, string> = {
-    'Are you sure you want to activate?': 'active',
+    'Are you sure you want to start?': 'in progress',
     'Are you sure you want to put on hold?': 'hold',
-    'Are you sure you want to cancel?': 'cancelled',
+    'Are you sure you want to mark as completed?': 'completed',
+    'Are you sure you want to resume?': 'in progress',
     'Are you sure you want to close?': 'closed',
-    'Are you sure you want to resume?': 'active',
-    'Are you sure you want to extend?': 'extended',   // extend keeps active unless moved to "extended"
+    'Are you sure you want to extend?': 'extended'
   };
+
 
   getActionsByStatus(status: string): string[] {
     if (!status) return [];
@@ -397,31 +454,41 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   handleAction(action: string, phase: IPhases) {
     switch (action) {
+      case 'Start':
+        this.openReasonModal('Are you sure you want to start?', phase);
+        break;
       case 'Update':
         this.handleUpdateAction(phase);
-        break;
-      case 'Active':
-        this.openReasonModal('Are you sure you want to activate?', phase);
         break;
       case 'Hold':
         this.openReasonModal('Are you sure you want to put on hold?', phase);
         break;
-      case 'Cancel':
-        this.openReasonModal('Are you sure you want to cancel?', phase);
+      case 'Mark as Completed':
+        this.openReasonModal('Are you sure you want to mark as completed?', phase);
         break;
-      case 'Close':
+      case 'Resume Phase':
+        this.openReasonModal('Are you sure you want to resume?', phase);
+        break;
+      case 'Close Phase':
         this.openReasonModal('Are you sure you want to close?', phase);
         break;
       case 'Extend':
         this.openExtendModal(phase);
         break;
-      case 'Resume':
-        this.openReasonModal('Are you sure you want to resume?', phase);
-        break;
-      case 'Reactivate':
-        this.openReasonModal('Are you sure you want to extend?', phase);
-        break;
     }
+  }
+
+  getActionIcon(action: string) {
+    return {
+      'Start' : 'bi-play-circle',
+      'Hold' : 'bi-pause-circle',
+      'Close Phase' : 'bi-x-circle',
+      'Mark as Completed' : 'bi-check-circle',
+      'Extend' : 'bi-calendar-plus',
+      'Resume Phase' : 'bi-arrow-repeat',
+      'Reactivate' : 'bi-arrow-clockwise',
+      'Update' : 'bi bi-pencil'
+    }[action] || 'bi-question-circle';
   }
 
   openReasonModal(title: string, phase: IPhases) {
@@ -475,92 +542,115 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
   }
 
+  // submitReason(modal: any) {
+  //   if (this.reasonForm.invalid) {
+  //     this.reasonForm.markAllAsTouched();
+  //     return;
+  //   }
+
+  //   this.loading = true;
+
+  //   const reason = this.reasonForm.value.reason;
+  //   const phase = this.modalData?.phase;
+  //   const status = this.statusMap[this.modalData?.title ?? '']; // map popup title to status
+
+  //   const payload = {
+  //     projectId: this.projectId,
+  //     phaseId: phase?.phaseId,
+  //     phaseName: phase?.phaseName,
+  //     status: status,
+  //     reason: reason,
+  //     updatedBy: parseInt(this.empinfo.employeeId)
+  //   };
+
+  //   this.http.putData(`ProjectPhases/update/${phase?.phaseId}`, payload).subscribe({
+  //     next: (res) => {
+  //       modal.close();
+  //       this.loading = false;
+  //       this.reasonForm.reset();
+  //       this.conformationPopup.openSuccessModal(`Phase ${status} successfully`);
+  //       this.getPhaseData();
+  //     },
+  //     error: (err) => {
+  //       this.loading = false;
+  //       this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
+  //     }
+  //   });
+  // }
+
   submitReason(modal: any) {
-    if (this.reasonForm.invalid) {
-      this.reasonForm.markAllAsTouched();
-      return;
-    }
-
-    this.loading = true;
-
-    const reason = this.reasonForm.value.reason;
-    const phase = this.modalData?.phase;
-    const status = this.statusMap[this.modalData?.title ?? '']; // ✅ map popup title to status
-
-    const payload = {
-      projectId: this.projectId,
-      phaseId: phase?.phaseId,
-      phaseName: phase?.phaseName,
-      status: status,
-      reason: reason,
-      updatedBy: parseInt(this.empinfo.employeeId)
-    };
-
-    this.http.putData(`ProjectPhases/update/${phase?.phaseId}`, payload).subscribe({
-      next: (res) => {
-        modal.close();
-        this.loading = false;
-        this.reasonForm.reset();
-        this.conformationPopup.openSuccessModal(`Phase ${status} successfully`);
-        this.getPhaseData();
-      },
-      error: (err) => {
-        this.loading = false;
-        this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
-      }
-    });
+  if (this.reasonForm.invalid) {
+    this.reasonForm.markAllAsTouched();
+    return;
   }
 
+  const reason = this.reasonForm.value.reason;
+  const status = this.statusMap[this.modalData?.title ?? '']; // map popup title to status
+  const phaseId = this.modalData?.phase?.phaseId;
+
+  if (!phaseId) {
+    console.error('Phase ID is missing. Cannot update phase.');
+    return;
+  }
+
+  this.updatePhaseStatus({ phaseId, status, reason }, modal);
+}
+
+
+  // submitExtend(modal: any) {
+  //   if (this.extendForm.invalid) {
+  //     this.extendForm.markAllAsTouched();
+  //     return;
+  //   }
+
+  //   this.loading = true;
+  //   const formValue = this.extendForm.value;
+
+  //   const payload = {
+  //     projectId: this.projectId,
+  //     phaseName: this.modalData?.phase?.phaseName,
+  //     status: 'extended',
+  //     startDate: this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : this.modalData?.phase?.startDate,
+  //     endDate: formValue.newEndDate,
+  //     reason: formValue.extendReason,
+  //     updatedBy: parseInt(this.empinfo.employeeId),
+  //   };
+
+  //   this.http.putData(`ProjectPhases/update/${this.phaseId}`, payload).subscribe({
+  //     next: (res) => {
+  //       modal.close();
+  //       this.loading = false;
+  //       this.extendForm.reset();
+  //       this.conformationPopup.openSuccessModal('Phase extended successfully');
+  //       this.getPhaseData();
+  //     },
+  //     error: (err) => {
+  //       this.loading = false;
+  //       this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to extend phase');
+  //     }
+  //   });
+  // }
 
   submitExtend(modal: any) {
-    if (this.extendForm.invalid) {
-      this.extendForm.markAllAsTouched();
-      return;
-    }
-
-    this.loading = true;
-    const formValue = this.extendForm.value;
-
-    const payload = {
-      projectId: this.projectId,
-      phaseName: this.modalData?.phase?.phaseName,
-      status: 'extended',
-      startDate: this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : this.modalData?.phase?.startDate,
-      endDate: formValue.newEndDate,
-      reason: formValue.extendReason,
-      updatedBy: parseInt(this.empinfo.employeeId),
-    };
-
-    this.http.putData(`ProjectPhases/update/${this.phaseId}`, payload).subscribe({
-      next: (res) => {
-        modal.close();
-        this.loading = false;
-        this.extendForm.reset();
-        this.conformationPopup.openSuccessModal('Phase extended successfully');
-        this.getPhaseData();
-      },
-      error: (err) => {
-        this.loading = false;
-        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to extend phase');
-      }
-    });
+  if (this.extendForm.invalid) {
+    this.extendForm.markAllAsTouched();
+    return;
   }
 
+  const formValue = this.extendForm.value;
+  const phase = this.modalData?.phase;
 
+  const startDate = this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : phase?.startDate;
+  const endDate = formValue.newEndDate;
 
-  getActionIcon(action: string) {
-    return {
-      Activate: 'bi-play-circle',
-      Hold: 'bi-pause-circle',
-      Cancel: 'bi-x-circle',
-      Close: 'bi-check-circle',
-      Extend: 'bi-calendar-plus',
-      Resume: 'bi-arrow-repeat',
-      Reactivate: 'bi-arrow-clockwise',
-      Update: 'bi bi-pencil'
-    }[action] || 'bi-question-circle';
-  }
-
+  this.updatePhaseStatus({
+    phaseId: this.phaseId,
+    status: 'extended',
+    startDate,
+    endDate,
+    reason: formValue.extendReason
+  }, modal);
+}
 
 
   ngOnDestroy(): void {

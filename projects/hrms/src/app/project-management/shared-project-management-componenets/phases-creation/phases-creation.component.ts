@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,6 +36,8 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   projectsDataDrown: Project[] = [];
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
+  confirmationMessage: string = '';
+  @ViewChild('dateconfirmatonpopup') dateconfirmatonpopup!: any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
@@ -55,7 +57,8 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       kickoffDate: [null, Validators.required],
       phaseDescription: [null, this.formValidation.maxCharactersValidator(501)],
       allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
-      approvalidAuthority: [{ value: null, disabled: true }]
+      approvalidAuthority: [{ value: null, disabled: true }],
+      color: [''],
     });
     this.addPhaseForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -209,15 +212,46 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
     });
   }
 
-  savePhase() { 
-        if (this.addPhaseForm.invalid) {
+  savePhase() {
+    if (this.addPhaseForm.invalid) {
       this.addPhaseForm.markAllAsTouched();
       return;
     }
-    this.loading = true
-    
+
     const formValue = this.addPhaseForm.value;
-    // Map form values to API payload
+    const today = new Date();
+    const startDate = new Date(formValue.startDate);
+
+    // If start date is in the past, show confirmation popup
+    if (startDate < today) {
+      this.confirmationMessage = 'The start date is in the past. Do you want to change it to today?';
+      this.modalService.open(this.dateconfirmatonpopup, { centered: true });
+    } else {
+      this.createPhase(formValue, 'yet to start'); // future date => yet to start
+    }
+  }
+
+  confirmPopupNo(model: any) {
+    const formValue = this.addPhaseForm.value;
+    // Keep the original start date, status = in progress since start date is past
+    this.createPhase(formValue, 'in progress');
+    model.dismiss();
+  }
+
+  // Triggered when user clicks "Yes" in the confirmation popup
+  confirmPopupYes(model: any) {
+    const formValue = this.addPhaseForm.value;
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Update start date to today
+    formValue.startDate = todayStr;
+    this.createPhase(formValue, 'in progress');
+    model.dismiss();
+  }
+
+  // Actual API call logic extracted to a separate method
+  createPhase(formValue: any, status: string) {
+    this.loading = true;
     const payload = {
       projectId: this.projectId,
       phaseName: formValue.phaseName,
@@ -227,17 +261,17 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       endDate: formValue.endDate,
       effectiveDate: formValue.effectiveDate,
       kickoffDate: formValue.kickoffDate,
-      timesheetApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
-      createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
-      status: 'active',
+      timesheetApprovalAuthorityId: formValue.approvalidAuthority,
+      createdBy: parseInt(this.empinfo.employeeId),
       updatedBy: parseInt(this.empinfo.employeeId),
-      // meta: {
-      // graphData: {
-      //   color: formValue.color
-      //   } 
-      // }
+      status: status,
+      meta: {
+        graphData: {
+          color: formValue.color
+        }
+      }
     };
-    this.loading = true;
+
     this.http.postdata('ProjectPhases/create', payload).subscribe({
       next: (res) => {
         this.close();
@@ -253,6 +287,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 
   ngOnDestroy(): void {
   this.destroy$.next(true);

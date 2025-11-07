@@ -52,13 +52,13 @@ export class ProjectRoleComponent {
     this.AddForm = this.fb.group({
       Addprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       department: ['', Validators.required],
-      color: ['#FFFFFF'],
+      color: [''],
     });
 
     this.updateForm = this.fb.group({
       Updateprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       Updatedepartment: [{value: '', disabled: true}, Validators.required],
-      UpdateColor: ['#FFFFFF'],
+      UpdateColor: [''],
     });
     this.DepartmentList();
     this.getJobrole();
@@ -76,7 +76,7 @@ export class ProjectRoleComponent {
             entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
             entityType: item.entityType || 'department',    // Entity type
             isActive: item.isActive,
-            color: item.meta?.graphData?.color ?? '#FFFFFF'
+            color: item.meta?.graphData?.color ?? ''
           }));
           this.sortDesignations();
         } else {
@@ -237,7 +237,6 @@ export class ProjectRoleComponent {
   }
   resetForm() {
     this.AddForm.reset();
-    this.AddForm.patchValue({ color: '#FFFFFF' });
     this.isEditMode = false;
     this.selectedId = null;
   }

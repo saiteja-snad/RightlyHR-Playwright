@@ -117,7 +117,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       allowweekendWork: [false],
       // approvalidAuthority: [{value:null,disabled:true}],
       department:[null, Validators.required],
-      color: ['#FFFFFF'],
+      color: [''],
     });
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();

@@ -46,11 +46,11 @@ export class DepartmentComponent {
   ngOnInit(): void {
     this.DepartmentForm = this.fb.group({
       Department: ['',[ Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],],
-      color : ['#FFFFFF']
+      color : ['']
     });
     this.updateForm = this.fb.group({
       Department: ['', [ Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],],
-      updatecolor : ['#FFFFFF']
+      updatecolor : ['']
     });
 
     this.getDepartment();
@@ -89,7 +89,6 @@ export class DepartmentComponent {
         );
         modal.close();
         this.resetForm();
-        this.DepartmentForm.patchValue({ color: '#FFFFFF' });
       },
       error: (error: any) => {
         const errorMessage = error.error?.Message;
@@ -140,7 +139,7 @@ export class DepartmentComponent {
     this.DepartmentForm.reset();
     this.updateForm.patchValue({ 
       Department: departmentlist.departmentName,
-      updatecolor: departmentlist.meta?.graphData?.color || '#FFFFFF'
+      updatecolor: departmentlist.meta?.graphData?.color || ''
     });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
@@ -177,7 +176,6 @@ export class DepartmentComponent {
         this.conformationPopup.openSuccessModal(
           'Department deleted successfully'
         );
-        this.DepartmentForm.patchValue({ color: '#FFFFFF' });
       },
       error: (err: any) => {
         const errorMessage = err.error?.Message;
@@ -207,7 +205,6 @@ export class DepartmentComponent {
   closed(modal: any) {
     modal.close();
     this.DepartmentForm.reset();
-    this.DepartmentForm.patchValue({ color: '#FFFFFF' });
   }
 
   ngOnDestroy(): void {

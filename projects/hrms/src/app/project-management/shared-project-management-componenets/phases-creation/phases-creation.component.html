@@ -13,7 +13,7 @@
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="phaseName" minlength="2"
                         maxlength="101" placeholder="Please enter phase / milestone name"
-                        (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+                        (input)="formValidation.validateInput(addPhaseForm.get('phaseName'))">
                     <div class="error-msg" *ngIf="addPhaseForm.get('phaseName')?.touched">
                         <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
                         <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
@@ -130,6 +130,12 @@
                     </div>
                 </div>
 
+                <!--Color Picker-->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="color" class="form-label custom-label mb-2"> Color </label>
+                    <input type="color" id="color" class="form-control custom-color" formControlName="color" />
+                </div>
+                
                 <!-- Project Description -->
                 <div class="col-md-6 mb-3">
                     <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone Description</label>
@@ -174,4 +180,17 @@
             <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
         </div>
     </div>
+</ng-template>
+
+<ng-template #dateconfirmatonpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{ confirmationMessage }}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="confirmPopupNo(model)" class="custom-btn btn-secondary" >{{'No'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmPopupYes(model)">{{'Yes'}}</button>
+    </div>
+  </div>
 </ng-template>

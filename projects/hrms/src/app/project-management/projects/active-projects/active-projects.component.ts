@@ -326,7 +326,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatedBy: parseInt(this.empinfo.employeeId),
       meta: {
       graphData: {
-        color: formValue.updatecolor
+        color: formValue?.updatecolor
       }
       }
     };

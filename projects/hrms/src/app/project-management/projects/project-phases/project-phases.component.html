@@ -236,6 +236,12 @@
                     </div>
                 </div>
 
+                <!--Color Picker-->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label custom-label">{{'Color' | translate}}</label>
+                    <input type="color" class="form-control custom-color" formControlName="updatecolor" />
+                </div>
+
                 <!-- Project Description -->
                 <div class="col-md-6 mb-3">
                     <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone Description</label>
@@ -329,7 +335,7 @@
         <div class="result-popup-content" ngbAutofocus>
             <div>
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">Extend Phase End Date</p>
+                <p class="confirmation-text">Are you sure you want to extend phase?</p>
             </div>
 
             <!-- Start Date -->
@@ -355,7 +361,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label custom-label mb-2">Reason For Extend<span class="error-msg">*</span></label>
+                <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" maxlength="250" placeholder="Please enter extend reason"
                     formControlName="extendReason" (keydown)="formValidation.restrictInitialSpace($event)">
         </textarea>

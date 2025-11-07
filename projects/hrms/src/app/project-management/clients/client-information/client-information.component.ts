@@ -68,7 +68,7 @@ export class ClientInformationComponent {
     const attachmentValidators = this.clientAttachment ? [] : [Validators.required];
     this.clientForm = this.fb.group({
       clientName: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
-      taxId: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(3), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
+      taxId: [{ value: null, disabled: true }, [this.formValidation.minCharactersValidator(3), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
       website: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(5), this.formValidation.maxCharactersValidator(51), Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/), this.formValidation.noEmojiValidator()]],
       industryType: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
       clientAddress: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(5), this.formValidation.maxCharactersValidator(250), this.formValidation.noEmojiValidator()]],

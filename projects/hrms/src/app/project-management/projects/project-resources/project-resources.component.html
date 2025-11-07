@@ -45,7 +45,7 @@
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                    <!-- <ul class="dropdown-menu custom-dropdown-menu">
                                         @if(rbac.allowedToAccess('Resources Tab.update')){
                                         <li>
                                             <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)">
@@ -60,6 +60,13 @@
                                             </a>
                                         </li>
                                         }
+                                    </ul> -->
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li *ngFor="let action of getActionsByStatus(data.status)">
+                                            <a class="dropdown-item" (click)="handleAction(action, data)">
+                                                <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action }}
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>
@@ -231,7 +238,7 @@
                     <!--Color Picker-->
                     <div class="col-md-6 mb-3">
                         <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
-                        <input type="color" id="color" class="form-control custom-input" formControlName="color" />
+                        <input type="color" id="color" class="form-control custom-color" formControlName="color" />
                     </div>
 
                     <!-- Switches -->
@@ -292,4 +299,112 @@
             <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
         </div>
     </div>
+</ng-template>
+
+<!-- ===== REASON MODAL ===== -->
+<ng-template #reasonModal let-modal>
+    <form [formGroup]="reasonForm" (ngSubmit)="submitReason(modal)">
+        <div class="result-popup-content" ngbAutofocus>
+            <div>
+                <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
+                <p class="confirmation-text">{{ modalData?.title }}</p>
+            </div>
+
+            <div class="mb-3 mt-3">
+                <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
+                <textarea class="form-control custom-input" formControlName="reason" maxlength="250"
+                    placeholder="Please enter reason" (keydown)="formValidation.restrictInitialSpace($event)">
+                </textarea>
+
+                <div class="textarea-count-text">{{ reasonForm.get('reason')?.value?.length || 0 }} / 250</div>
+
+                <div class="error-msg" *ngIf="reasonForm.get('reason')?.touched && reasonForm.get('reason')?.invalid">
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['required']">
+                        Reason is required
+                    </ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                    </ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['pattern']">
+                        Reason should not start with a space.
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                    {{ 'No' | translate }}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="reasonForm.invalid">
+                    {{ 'Yes' | translate }}</button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+
+<!-- ===== EXTEND MODAL ===== -->
+<ng-template #extendModal let-modal>
+    <form [formGroup]="extendForm" (ngSubmit)="submitExtend(modal)">
+        <div class="result-popup-content" ngbAutofocus>
+            <div>
+                <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
+                <p class="confirmation-text">Are you sure you want to extend phase?</p>
+            </div>
+
+            <!-- Start Date -->
+            <div class="mb-3 mt-3">
+                <label for="newStartDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
+                <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input"
+                    [min]="projectMinStartDate" [max]="newEndDate" [readonly]="extendForm.get('newStartDate')?.disabled" />
+                <div class="error-msg" *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
+                    Start Date is required
+                </div>
+                <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
+            </div>
+
+            <!-- End Date -->
+            <div class="mb-3 mt-3">
+                <label for="newEndDate" class="form-label custom-label mb-2">End Date <span class="text-danger">*</span></label>
+                <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
+                    [min]="extendForm.get('newStartDate')?.value" [max]="projectMaxEndDate" />
+                <div class="error-msg" *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
+                    End Date is required
+                </div>
+                <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label custom-label mb-2">Reason For Extend<span class="error-msg">*</span></label>
+                <textarea class="form-control custom-input" maxlength="250" placeholder="Please enter extend reason"
+                    formControlName="extendReason" (keydown)="formValidation.restrictInitialSpace($event)">
+        </textarea>
+
+                <div class="textarea-count-text">{{ extendForm.get('extendReason')?.value?.length || 0 }} / 250</div>
+
+                <div class="error-msg"
+                    *ngIf="extendForm.get('extendReason')?.touched && extendForm.get('extendReason')?.invalid">
+
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['required']">
+                        Reason is required
+                    </ng-container>
+
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                    </ng-container>
+
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['pattern']">
+                        Reason should not start with a space.
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                    {{ 'No' | translate }}</button>
+
+                <button type="submit" class="custom-btn btn-primary" [disabled]="extendForm.invalid">
+                    {{ 'Yes' | translate }}</button>
+            </div>
+        </div>
+    </form>
 </ng-template>

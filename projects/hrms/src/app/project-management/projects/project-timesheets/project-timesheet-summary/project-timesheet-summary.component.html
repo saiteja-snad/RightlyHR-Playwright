@@ -75,7 +75,8 @@
                     <!-- center circle -->
                     <div class="needle-base"></div>
                     <!-- percentage label -->
-                    <div class="gauge-label d-flex">{{ completionRate.toFixed(2) }}% <div class="over-due-value">+ {{ this.overrunValue }}%</div></div>
+                    <div class="gauge-label d-flex">{{ completionRate.toFixed(2) }}% <div class="over-due-value" *ngIf="overrunValue >= 1">
+                        + {{ this.overrunValue }}%</div></div>
                 </div>
             </div>
         </div>

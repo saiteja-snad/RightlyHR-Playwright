@@ -102,7 +102,7 @@ export class AddressesComponent {
   getAddressesFieldsConfigList() {
     const params = {
       displayName: 'Personal',
-      moduleName: 'Addresses'
+      moduleName: 'Address'
     }
     this.http.getDataIncludeParams(`EmployeeInfoFieldConfig/getEmployeeInfoApprovals`, params).subscribe({
       next: (data: any) => {

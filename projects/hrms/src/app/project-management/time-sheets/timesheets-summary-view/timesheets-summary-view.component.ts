@@ -25,7 +25,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
-import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-timesheets-summary-view',
@@ -92,6 +91,7 @@ export class TimesheetsSummaryViewComponent {
   tableLoader = false;
   allocatedVsActualLoader = false;
   projectwisehour = false;
+
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute) { }
 
@@ -149,7 +149,8 @@ export class TimesheetsSummaryViewComponent {
       this.getEmployeeId(this.employeeId);
     }
   }
- //graphs no data found conditions
+
+  //graphs no data found conditions
   get hasprojectWiseHoursData(): boolean {
     return !!(
       this.projectTypeGraphData?.datasets?.length &&
@@ -157,7 +158,7 @@ export class TimesheetsSummaryViewComponent {
     );
   }
 
-   get hasallocatedvsactualData(): boolean {
+  get hasallocatedvsactualData(): boolean {
     return !!(
       this.estimatedVsActualGraphData?.datasets?.length &&
       this.estimatedVsActualGraphData.datasets[0]?.data?.length
@@ -412,7 +413,7 @@ export class TimesheetsSummaryViewComponent {
         }
       }
     };
-      this.allocatedVsActualLoader = false;
+    this.allocatedVsActualLoader = false;
   }
 
   navigatetoteam() {

@@ -51,17 +51,15 @@
                         </td>
                         <td>
                             <input type="text" class="form-control custom-input"
-                                (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="51"
+                                (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="51" minlength="2"
                                 formControlName="contactRole" placeholder="Please enter role">
                             <div class="error-msg" *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
                                 <div *ngIf="contact.get('contactRole')?.errors?.['required']">
                                     {{ 'Role is required' | translate }}
                                 </div>
-                                <div *ngIf="contact.get('contactRole')?.errors?.['minlength']">
-                                    {{ 'Role must be between 3-50 characters' | translate }}
-                                </div>
-                                <div *ngIf="contact.get('contactRole')?.errors?.['maxlength']">
-                                    {{ 'Role must be between 3-50 characters' | translate }}
+                                <div
+                                    *ngIf="contact.get('contactRole')?.errors?.['minlength'] || contact.get('contactRole')?.errors?.['maxlength']">
+                                    {{ 'Role must be between 2-50 characters' | translate }}
                                 </div>
                             </div>
                         </td>

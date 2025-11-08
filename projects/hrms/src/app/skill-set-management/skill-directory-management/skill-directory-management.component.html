@@ -59,7 +59,7 @@
           <div>
             <div class="summary-title mb-1">{{ card.title }}</div>
             <div class="summary-value">
-              <a class="view-link" (click)="openEnd2(contentResourceList, card)">{{ card.value }}</a>
+             <a class="view-link" (click)="openEnd2(contentResourceList, card)">{{ card.value }}</a>
             </div>
           </div>
         </div>
@@ -266,7 +266,7 @@
   <div class="resource-list-offcanvas">
     <!-- Header -->
     <div class="custom-offcanvas-header p-2">
-      <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b>
+      <div class="custom-offcanvas-title text-capitalize"><b>{{ selectedSkillName }}</b>
         <span *ngIf="employeeList?.length" class="ms-2">({{ employeeList.length }})</span>
       </div>
       <div>

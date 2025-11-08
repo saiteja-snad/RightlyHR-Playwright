@@ -16,7 +16,7 @@
         @if (technicalSkills.length || softSkills.length) {
         <!-- ===== TECHNICAL SKILLS ===== -->
         <div class="skills-group" *ngIf="technicalSkills.length">
-            <div class="skill-section-title mb-3">Technical Skills</div>
+            <div class="skill-section-title mb-3"><img src="/icons/technical-skills-icon.png" alt="Skills-icon" class="skill-icon me-1"> Technical Skills</div>
             <!-- Expert -->
             <div *ngIf="getSkillsByLevel('Expert', technicalSkills).length" class="mb-4">
                 <label class="custom-label chip expert mb-2">Expert</label>
@@ -78,7 +78,7 @@
 
         <!-- ===== SOFT SKILLS ===== -->
         <div class="skills-group mt-2" *ngIf="softSkills.length">
-            <div class="skill-section-title mb-3">Soft Skills</div>
+            <div class="skill-section-title mb-3"><img src="/icons/soft-skills-icon.png" alt="Skills-icon" class="skill-icon me-1">  Soft Skills</div>
 
             <!-- Expert -->
             <div *ngIf="getSkillsByLevel('Expert', softSkills).length" class="mb-4">

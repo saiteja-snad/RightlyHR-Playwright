@@ -14,12 +14,12 @@
             <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
-                    optionValue="value" placeholder="Select Proficiency" [showToggleAll]="true" [filter]="true"
-                    selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" resetFilterOnHide="true"
-                    class="form-select custom-select" (onChange)="onCheckemployeeProficiency($event.value)"
-                    (onToggleAll)="onToggleAll($event)">
+                    optionValue="value" placeholder="Select Proficiency" [filter]="false" [showToggleAll]="false"
+                    selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
+                    (onChange)="onCheckemployeeProficiency($event.value)">
                 </p-multiselect>
             </div>
+
 
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
@@ -48,7 +48,8 @@
                     <div>
                         <div class="summary-title mb-1">{{ card.title }}</div>
                         <div class="summary-value">
-                            <a class="view-link" (click)="openEnd2(contentResourceList, card)">{{ card.value }}</a>
+                            <u class="view-link"><a (click)="openEnd2(contentResourceList, card)">{{ card.value
+                                    }}</a></u>
                         </div>
                     </div>
                 </div>
@@ -133,7 +134,8 @@
                                                         <span class="count">({{ skill.proficiencyCounts[key] }})</span>
                                                     </div>
                                                 </p-chip>
-                                                @if (!skill.proficiencyCounts || getProficiencyKeys(skill.proficiencyCounts).length === 0) {
+                                                @if (!skill.proficiencyCounts ||
+                                                getProficiencyKeys(skill.proficiencyCounts).length === 0) {
                                                 <span>-</span>
                                                 }
                                             </div>
@@ -216,8 +218,9 @@
 
 <ng-template #contentResourceList let-offcanvas>
     <div class="custom-offcanvas-header p-2">
-        <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b>
-            <span *ngIf="employeeList?.length" class="ms-2">({{employeeList.length }})</span>
+        <div class="custom-offcanvas-title text-capitalize">
+             <b>{{ selectedSkillName }}</b>
+            <span *ngIf="employeeList?.length" class="ms-2">({{ employeeList.length }})</span>
         </div>
         <div>
             <a (click)="close(offcanvas)">
@@ -228,33 +231,39 @@
 
     <div class="custom-offcanvas-body p-3">
         <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
+
         <!-- Search -->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i>
             </span>
             <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
-                [(ngModel)]="searchQuery"  />
+                [(ngModel)]="searchQuery" (input)="onSearch()" />
         </div>
 
+        <!-- Employee Cards -->
         <div *ngFor="let emp of employeeList" class="profile-content mb-2">
             <div>
                 <ng-container *ngIf="emp.profileImage; else showProfileIcon">
-                    <img [src]="emp.profileImage" alt="Profile Image" class="profile-image">
+                    <img [src]="emp.profileImage" alt="Profile Image" class="profile-image" />
                 </ng-container>
                 <ng-template #showProfileIcon>
                     <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
                 </ng-template>
             </div>
+
             <div class="profile-info w-100">
-                <div class="name">{{ emp.employeeName }}-({{emp.fusionEmployeeId }})</div>
+                <div class="name">
+                    {{ emp.employeeName }} - ({{ emp.fusionEmployeeId }})
+                </div>
                 <div class="d-flex justify-content-between flex-wrap w-100">
-                    <div class="designation">{{ emp.jobRole || ' ' }} - {{emp.departmentName || ''}}
-                        <!-- <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span> -->
+                    <div class="designation">
+                        {{ emp.jobRole || '' }} - {{ emp.departmentName || '' }}
                     </div>
                 </div>
             </div>
         </div>
+
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
             No employees found for this skill.
         </div>

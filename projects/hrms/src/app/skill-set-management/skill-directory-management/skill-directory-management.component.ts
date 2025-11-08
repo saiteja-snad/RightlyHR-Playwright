@@ -86,6 +86,7 @@ export class SkillDirectoryManagementComponent {
   employeeList: any[] = [];
   filteredEmployees: any[] = [];
   employeeSummary: any = {};
+  selectedSkillKey: string = ''
 
   constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
     private offcanvasService: NgbOffcanvas, private openmodalservice: OpenModalService, private router: Router) { }
@@ -111,7 +112,7 @@ export class SkillDirectoryManagementComponent {
       { label: 'Skills' },
       { label: 'Projects' },
     ];
-    this.getEmployeeDirectorySummary()
+    this.getEmployeedirectoryCount()
   }
 
   updateModuleInfo() {
@@ -141,13 +142,14 @@ export class SkillDirectoryManagementComponent {
     this.getEmployeeSkills();
   }
   private searchTimer: any;
-  
+
   onSearch1(): void {
-  clearTimeout(this.searchTimer);
-  this.searchTimer = setTimeout(() => {
-    this.getEmployeeDirectorySummary();
-  }, 400); 
-}
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      this.getEmployeeDirectorySummary();
+    }, 400);
+  }
+
   onSkillSelectionChange(): void {
     this.getEmployeeSkills();
   }
@@ -233,13 +235,14 @@ export class SkillDirectoryManagementComponent {
     this.offcanvasService.open(content, {
       position: 'end',
       scroll: true,
-      backdrop: true,
+      backdrop: 'static',
       panelClass: 'employee-offcanvas'
     });
   }
 
   close(modal: any) {
     modal.close();
+    this.searchQuery = ''
   }
 
   getSkillsByLevel(level: string, skills: any[]) {
@@ -384,116 +387,134 @@ export class SkillDirectoryManagementComponent {
         },
       });
   }
- getEmployeeDirectorySummary(): void {
-  const params: any = {};
+  getEmployeeDirectorySummary(callback?: () => void): void {
+    const params: any = {};
+    if (this.searchQuery?.trim()) {
+      params.searchQuery = this.searchQuery.trim();
+    }
+    this.isloading = true;
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params).subscribe({
+      next: (res: any) => {
+        this.isloading = false;
 
-  //  Send search text to backend
-  if (this.searchQuery?.trim()) {
-    params.searchQuery = this.searchQuery.trim();
+        if (res?.success && res.data) {
+          const summary = res.data;
+
+          // Helper to add proper image URLs
+          const addProfileImage = (list: any[] = []) =>
+            list.map(emp => ({
+              ...emp,
+              profileImage: this.getImageUrl(emp.profileImage)
+            }));
+          // Store employee summary with categorized lists
+          this.employeeSummary = {
+            allEmployeesList: addProfileImage(summary.allEmployeesList || []),
+            skilledEmployeesList: addProfileImage(summary.skilledEmployeesList || []),
+            unSkilledEmployeesList: addProfileImage(summary.unSkilledEmployeesList || []),
+            totalEmployees: summary.totalEmployees ?? 0,
+            skilledEmployees: summary.skilledEmployees ?? 0,
+            unSkilledEmployees: summary.unSkilledEmployees ?? 0
+          };
+          // Assign the proper list based on selected key
+          switch (this.selectedSkillKey) {
+            case 'totalEmployees':
+              this.employeeList = this.employeeSummary.allEmployeesList;
+              break;
+            case 'skilledEmployees':
+              this.employeeList = this.employeeSummary.skilledEmployeesList;
+              break;
+            case 'unSkilledEmployees':
+              this.employeeList = this.employeeSummary.unSkilledEmployeesList;
+              break;
+            default:
+              this.employeeList = this.employeeSummary.allEmployeesList;
+          }
+        } else {
+          this.resetEmployeeSummaryData();
+        }
+        if (callback) callback();
+      },
+      error: (err) => {
+        this.isloading = false;
+        console.error('Error fetching employee directory summary:', err);
+        this.resetEmployeeSummaryData();
+        if (callback) callback();
+      }
+    });
   }
-
-  this.isloading = true;
-
-  this.subscription = this.http
-    .getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params)
-    .subscribe({
+  getEmployeedirectoryCount(): void {
+    this.isloading = true;
+    this.subscription = this.http.getData('EmployeeSkills/getEmployeeDirectorySummaryCount').subscribe({
       next: (res: any) => {
         this.isloading = false;
 
         if (res?.data) {
-          this.employeeSummary = res.data;
-
-          this.allEmployees = (this.employeeSummary.allEmployeesList ?? []).map((emp: any) => ({
-            ...emp,
-            profileImage: this.getImageUrl(emp.profileImage),
-          }));
-
+          const summary = res.data;
           this.summaryCards = [
             {
-              title: 'Total Resources',
               key: 'totalEmployees',
-              value: this.employeeSummary.totalEmployees ?? 0,
+              title: 'Total Resources',
+              value: summary.totalEmployees ?? 0,
               icons: './icons/Total Employee Count.png',
             },
             {
-              title: 'Updated Resources',
               key: 'skilledEmployees',
-              value: this.employeeSummary.skilledEmployees ?? 0,
+              title: 'Updated Resources',
+              value: summary.skilledEmployees ?? 0,
               icons: './icons/Available Employees Count.png',
             },
             {
-              title: 'Resources Not yet Updated',
               key: 'unSkilledEmployees',
-              value: this.employeeSummary.unSkilledEmployees ?? 0,
+              title: 'Resources Not yet Updated',
+              value: summary.unSkilledEmployees ?? 0,
               icons: './icons/Not Updated.png',
-            },
+            }
           ];
-        } else {
-          this.employeeSummary = {};
-          this.allEmployees = [];
-          this.summaryCards = [];
         }
       },
-      error: (reason) => {
+      error: (err) => {
         this.isloading = false;
-        console.error('Error fetching employee directory summary:', reason);
-      },
+        console.error('Error fetching employee directory summary count:', err);
+      }
     });
-}
+  }
 
 
+
+  resetEmployeeSummaryData(): void {
+    this.employeeSummary = {};
+    this.allEmployees = [];
+    this.summaryCards = [];
+  }
 
 
   private getImageUrl(imagePath: string): string | null {
     if (!imagePath) return null;
-
     const lowerPath = imagePath.toLowerCase();
-
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-
-
     if (lowerPath.startsWith('profilepics/')) {
       return `${environment.viewUrl.replace(/\/$/, '')}/${imagePath}`;
     }
-
     // Fallback for other paths
     return `${environment.ApiUrl.replace(/\/$/, '')}/EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
 
-
   openEnd2(content: TemplateRef<any>, card: any): void {
-    this.isloading = true;
     this.selectedSkillName = card.title;
+    this.selectedSkillKey = card.key;
+    this.isloading = true;
 
-    let list: any[] = [];
-
-    switch (card.key) {
-      case 'totalEmployees':
-        list = this.employeeSummary.allEmployeesList || [];
-        break;
-      case 'skilledEmployees':
-        list = this.employeeSummary.skilledEmployeesList || [];
-        break;
-      case 'unSkilledEmployees':
-        list = this.employeeSummary.unSkilledEmployeesList || [];
-        break;
-      default:
-        list = [];
-    }
-
-
-    this.employeeList = list.map(emp => ({
-      ...emp,
-      profileImage: emp.profileImage ? this.getImageUrl(emp.profileImage) : null
-    }));
-
-    this.isloading = false;
-    this.offcanvasService.open(content, { position: 'end' });
+    this.getEmployeeDirectorySummary(() => {
+      this.isloading = false;
+      this.offcanvasService.open(content, {
+        position: 'end',
+        backdrop: 'static', 
+        keyboard: false 
+      });
+    });
   }
-
-
 
 
   clearAllFilters(): void {

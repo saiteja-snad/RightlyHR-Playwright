@@ -195,8 +195,9 @@
                     <p-skeleton width="100%" height="100%" borderRadius="12px" />
                 </div>
                 }
-                @if (!allocatedVsActualLoader) {
+                
                 <div class="dashed-line my-3"></div>
+
                 <div class="summary-header d-flex gap-2 pb-3">
                     <div>Allocated vs Actual Hours</div>
                     <div>
@@ -207,6 +208,7 @@
                     </div>
                 </div>
                 
+                @if (!allocatedVsActualLoader) {
                 <div class="time-sheet-graph-card p-3 py-4 ">
                     <div class="bar-chart">
                         <ng-container *ngIf="hasallocatedvsactualData; else noData">

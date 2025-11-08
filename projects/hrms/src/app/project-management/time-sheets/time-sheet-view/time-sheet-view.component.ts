@@ -74,6 +74,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
+   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
+  errormodaldata: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService) { }
 
@@ -1469,6 +1471,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);
+         this.errormodaldata = err.error.message;
+        // this.modalService.open(this.errormodal,{ centered: true });
+          const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
       },
     });
   }

@@ -57,7 +57,7 @@ export class SkillDirectoryManagementComponent {
     { label: 25, value: 25 }
   ];
   searchQuery: string = '';
-  resourceSearchQuery: string = ''; 
+  resourceSearchQuery: string = '';
   totalCount!: number;
   monthEndDate!: Date;
   selectedStatus: string = 'All Status';
@@ -244,7 +244,7 @@ export class SkillDirectoryManagementComponent {
   close(modal: any) {
     modal.close();
     this.searchQuery = ''
-    this.resourceSearchQuery =''
+    this.resourceSearchQuery = ''
   }
 
   getSkillsByLevel(level: string, skills: any[]) {
@@ -279,7 +279,7 @@ export class SkillDirectoryManagementComponent {
       error: (reason) => console.error('Error downloading image:', reason),
     });
   }
-  
+
 
   getEmployeeSkills(): void {
     const params: any = {
@@ -402,13 +402,18 @@ export class SkillDirectoryManagementComponent {
 
         if (res?.success && res.data) {
           const summary = res.data;
-
           // Helper to add proper image URLs
-          const addProfileImage = (list: any[] = []) =>
-            list.map(emp => ({
-              ...emp,
-              profileImage: this.getImageUrl(emp.profileImage)
-            }));
+          const addProfileImage = (list: any[] = []) => {
+            return list.map(emp => {
+              const profilePath = emp.profileImage || emp.profileUrl || '';
+              return {
+                ...emp,
+                profileImage: 'images/alternate.png', // default placeholder
+                originalProfileUrl: profilePath
+              };
+            });
+          };
+
           // Store employee summary with categorized lists
           this.employeeSummary = {
             allEmployeesList: addProfileImage(summary.allEmployeesList || []),
@@ -418,6 +423,18 @@ export class SkillDirectoryManagementComponent {
             skilledEmployees: summary.skilledEmployees ?? 0,
             unSkilledEmployees: summary.unSkilledEmployees ?? 0
           };
+          // Step 2: After assigning employeeSummary
+          ['allEmployeesList', 'skilledEmployeesList', 'unSkilledEmployeesList'].forEach(listKey => {
+            const list = this.employeeSummary[listKey];
+            if (Array.isArray(list)) {
+              list.forEach(emp => {
+                if (emp.originalProfileUrl) {
+                  this.downloadAndSetProfileImage(emp, listKey);
+                }
+              });
+            }
+          });
+
           // Assign the proper list based on selected key
           switch (this.selectedSkillKey) {
             case 'totalEmployees':
@@ -445,6 +462,20 @@ export class SkillDirectoryManagementComponent {
       }
     });
   }
+  downloadAndSetProfileImage(emp: any, listKey: string): void {
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', emp.originalProfileUrl).subscribe({
+      next: (res: any) => {
+        const blob = new Blob([res['body']], { type: 'image/png' });
+        const objectURL = URL.createObjectURL(blob);
+        emp.profileImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      error: () => {
+        emp.profileImage = 'images/alternate.png';
+        console.warn(`Failed to download profile image for ${emp.employeeId || 'unknown'}`);
+      }
+    });
+  }
+
   getEmployeedirectoryCount(): void {
     this.isloading = true;
     this.subscription = this.http.getData('EmployeeSkills/getEmployeeDirectorySummaryCount').subscribe({
@@ -482,8 +513,6 @@ export class SkillDirectoryManagementComponent {
     });
   }
 
-
-
   resetEmployeeSummaryData(): void {
     this.employeeSummary = {};
     this.allEmployees = [];
@@ -513,8 +542,8 @@ export class SkillDirectoryManagementComponent {
       this.isloading = false;
       this.offcanvasService.open(content, {
         position: 'end',
-        backdrop: 'static', 
-        keyboard: false 
+        backdrop: 'static',
+        keyboard: false
       });
     });
   }
@@ -523,7 +552,7 @@ export class SkillDirectoryManagementComponent {
   clearAllFilters(): void {
     this.selectedStatus = 'All Status';
     this.selectedSkills = [];
-    this.resourceSearchQuery=''
+    this.resourceSearchQuery = ''
     this.searchQuery = '';
     this.displayLabel = '';
     this.date = [];

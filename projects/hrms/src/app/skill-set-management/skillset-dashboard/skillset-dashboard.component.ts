@@ -19,6 +19,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { SkillSetMainTabsComponent } from "../../shared/skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
+import { DomSanitizer } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-skillset-dashboard',
   imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent,
@@ -85,7 +87,7 @@ export class SkillsetDashboardComponent {
   departmentWiseContentInfo = 'Depicts the distribution of skills across various departments, offering insights into departmental expertise and specialization areas. This helps in understanding which teams possess key technical or functional capabilities and identifying potential skill gaps.';
   skillOverviewContentInfo = 'Provides a detailed breakdown of each skill, the number of employees associated with it, and their respective proficiency levels. This data-driven summary facilitates competency tracking, supports resource allocation, and assists in informed decision-making for project or training assignments.';
 
-  constructor(private http: HttpService, public formValidation: FormValidationService,
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
     private offcanvasService: NgbOffcanvas, private router: Router) { }
 
   ngOnInit() {
@@ -211,42 +213,43 @@ export class SkillsetDashboardComponent {
         this.isloading = false;
         if (res?.success && res.data) {
           const summary = res.data;
+
+          // Step 1: initialize all lists with default placeholder
           const addProfileImage = (list: any[] = []) =>
-            list.map(emp => ({ ...emp, profileImage: this.getImageUrl(emp.profileImage) }));
+            list.map(emp => ({
+              ...emp,
+              profileImage: 'images/alternate.png',
+              originalProfileUrl: emp.profileImage || emp.profileUrl || ''
+            }));
+
           this.employeeSummary = {
             allEmployeesList: addProfileImage(summary.allEmployeesList || []),
             allocatedEmployeesList: addProfileImage(summary.allocatedEmployeesList || []),
             availableEmployeesList: addProfileImage(summary.availableEmployeesList || []),
-            nextMonthAvailableEmployeesList: addProfileImage(summary.nextMonthAvailableEmployeesList || []),
+            nextMonthAvailableEmployeesList: addProfileImage(summary.nextMonthAvailableEmployeesList || [])
           };
+
+          // Step 2: load actual images asynchronously
+          Object.values(this.employeeSummary).forEach((list: any) => {
+            if (Array.isArray(list)) {
+              list.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+            }
+          });
+
+          // Step 3: assign list by key
           switch (this.selectedSkillKey) {
-            case 'total':
-              this.employeeList = this.employeeSummary.allEmployeesList;
-              break;
-            case 'committed':
-              this.employeeList = this.employeeSummary.allocatedEmployeesList;
-              break;
-            case 'available':
-              this.employeeList = this.employeeSummary.availableEmployeesList;
-              break;
-            case 'upcoming':
-              this.employeeList = this.employeeSummary.nextMonthAvailableEmployeesList;
-              break;
-            default:
-              this.employeeList = this.employeeSummary.allEmployeesList;
+            case 'total': this.employeeList = this.employeeSummary.allEmployeesList; break;
+            case 'committed': this.employeeList = this.employeeSummary.allocatedEmployeesList; break;
+            case 'available': this.employeeList = this.employeeSummary.availableEmployeesList; break;
+            case 'upcoming': this.employeeList = this.employeeSummary.nextMonthAvailableEmployeesList; break;
+            default: this.employeeList = this.employeeSummary.allEmployeesList;
           }
         } else {
           this.resetSummaryData();
         }
         if (callback) callback();
-      },
-      error: (err) => {
-        this.isloading = false;
-        console.error('Error fetching resource summary:', err);
-        this.resetSummaryData();
-        if (callback) callback();
       }
-    });
+    })
   }
 
   resetSummaryData(): void {
@@ -360,7 +363,6 @@ export class SkillsetDashboardComponent {
                 backgroundColor: colors,
                 borderColor: '#fff',
                 borderWidth: 3,
-                hoverOffset: 10
               }
             ]
           };
@@ -379,9 +381,6 @@ export class SkillsetDashboardComponent {
                   }
                 }
               }
-            },
-            elements: {
-              arc: { borderWidth: 3, borderColor: '#fff' }
             },
             responsive: true,
             maintainAspectRatio: false
@@ -563,8 +562,13 @@ export class SkillsetDashboardComponent {
         if (res?.success && Array.isArray(res.data)) {
           this.employeeList = res.data.map((emp: any) => ({
             ...emp,
-            profileImage: this.getImageUrl(emp.profileImage)
+            profileImage: 'images/alternate.png',
+            originalProfileUrl: emp.profileImage || emp.profileUrl || ''
           }));
+
+          // download actual images after list ready
+          this.employeeList.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+
           this.noDataFound = this.employeeList.length === 0;
         }
         else {
@@ -592,6 +596,23 @@ export class SkillsetDashboardComponent {
       return `${environment.viewUrl}${imagePath}`;
     }
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
+  }
+
+  downloadAndSetProfileImage(emp: any): void {
+    if (!emp || !emp.originalProfileUrl) return;
+
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', emp.originalProfileUrl).subscribe({
+      next: (res: any) => {
+        const blob = new Blob([res['body']], { type: 'image/png' });
+        const objectURL = URL.createObjectURL(blob);
+        emp.profileImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      error: () => {
+        // fallback if image not found
+        emp.profileImage = 'images/alternate.png';
+        console.warn(`Failed to download profile image for ${emp.employeeId || 'unknown'}`);
+      }
+    });
   }
 
   getMultiskills() {

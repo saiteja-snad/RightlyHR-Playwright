@@ -84,7 +84,7 @@ export const permissionsData = [
   //Manage Expense tab 
   { fields: 'Expenes Configuartion', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Allowed Days', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Expense Threshold Validation', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Threshold Validation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Expense Configuration', View: false, Update: false, Create: false, Delete: false },
 
   //Manage DST tab 
@@ -240,6 +240,9 @@ export const permissionsData = [
   { fields: 'Skill Set Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
 
+
+  { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },
+
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH/On Duty Module', View: false, Update: false, Create: false, Delete: false },
@@ -387,7 +390,7 @@ export const permissionsData = [
   { fields: 'For You (Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Regularization)', View: false, Update: false, Create: false, Delete: false },
 
-   //Pending Approval Extra Hours Tabs Section
+  //Pending Approval Extra Hours Tabs Section
   { fields: 'For You (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
 
@@ -516,7 +519,7 @@ export const permissionsData = [
   { fields: 'Regularization Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-// Timesheet Reports Section
+  // Timesheet Reports Section
   { fields: 'My Timesheet Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Timesheet Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Timesheet Report - Export', View: false, Update: false, Create: false, Delete: false },
@@ -906,7 +909,10 @@ export const permissionsData = [
   { fields: 'Contact Info Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Resources Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Phases Tab', View: false, Update: false, Create: false, Delete: false },
+
   //Documents
   { fields: 'NDA Document', View: false, Update: false, Create: false, Delete: false },
   { fields: 'MSA Document', View: false, Update: false, Create: false, Delete: false },
@@ -918,6 +924,7 @@ export const permissionsData = [
   { fields: 'Client Documents', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },
@@ -942,7 +949,7 @@ export const permissionsData = [
   { fields: 'On Behalf Of WFH Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
 
-   //Settings Time Off flexible wfh allocation Tabs Section
+  //Settings Time Off flexible wfh allocation Tabs Section
   { fields: 'Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Active Allocations Tab', View: false, Update: false, Create: false, Delete: false },
 
@@ -955,7 +962,7 @@ export const permissionsData = [
   { fields: 'On Behalf Of RemoteLogin All Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of RemoteLogin Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of RemoteLogin Button', View: false, Update: false, Create: false, Delete: false },
-   //Cards Management Tabs Section
+  //Cards Management Tabs Section
   { fields: 'Cards Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Available', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Expired', View: false, Update: false, Create: false, Delete: false },

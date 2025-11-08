@@ -33,7 +33,7 @@ export class PendingApprovalsComponent implements OnInit {
   resourcesList: any[] = [];
   projectsData: any[] = [];
   empinfo: any;
-  projectId: any[] = [];
+  phaseIds: any[] = [];
   employeeid: any;
   selectedResourceIds: any[] = [];
   isSubmitEnabled = false;
@@ -77,11 +77,11 @@ export class PendingApprovalsComponent implements OnInit {
   }
 
 
-  /** Create form and keep Project & Resource disabled initially */
+  /** Create form and keep Phase & Resource disabled initially */
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null],
-      projectId: [''],
+      phaseId: [''],
       resourceId: ['']
     });
   }
@@ -92,7 +92,7 @@ export class PendingApprovalsComponent implements OnInit {
     // Check if any field has value
     return (
       (formValue?.dateRange && formValue?.dateRange?.length > 0) ||
-      formValue?.projectId !== null && formValue?.projectId !== undefined ||
+      formValue?.phaseId !== null && formValue?.phaseId !== undefined ||
       (formValue?.resourceId && formValue?.resourceId?.length > 0)
     );
   }
@@ -101,7 +101,7 @@ export class PendingApprovalsComponent implements OnInit {
     const formValue = this.datepickerForm?.value;
     return (
       (formValue?.dateRange && formValue?.dateRange?.length > 0) || // date selected
-      formValue?.projectId !== null && formValue?.projectId !== undefined || // project selected (including 0)
+      formValue?.phaseId !== null && formValue?.phaseId !== undefined || // phase selected (including 0)
       (formValue?.resourceId && formValue?.resourceId?.length > 0) // at least one resource selected
     );
   }
@@ -111,7 +111,7 @@ export class PendingApprovalsComponent implements OnInit {
     this.selectedResourceIds = selectedResourceIds;
     this.getAllActiveProjects();
   }
-  /** Get all projects for the current employee */
+  /** Get all phases for the current employee */
   getAllActiveProjects() {
     let url = `Project/authorities/${this.empinfo.employeeId}/projects`;
 
@@ -127,28 +127,28 @@ export class PendingApprovalsComponent implements OnInit {
           const projects = res?.data || [];
           this.projectsData = projects.map((p: any) => ({
             ...p,
-            displayName: `${p.clientName } - ${p.projectName }`
+            displayName: `${p.clientName } - ${p.projectName } - ${p.phaseName }`
           }));
 
           this.projectsData.unshift({
-            projectId: 0,
+            phaseId: 0,
             displayName: 'No Client - No Project'
           });
 
           // ✅ FIX: Prevent null values from appearing in dropdown
-          let selectedProjects = this.datepickerForm.get('projectId')?.value;
+          let selectedPhases = this.datepickerForm.get('phaseId')?.value;
 
-          if (Array.isArray(selectedProjects)) {
+          if (Array.isArray(selectedPhases)) {
             // Remove nulls
-            selectedProjects = selectedProjects.filter((x: any) => x !== null);
+            selectedPhases = selectedPhases.filter((x: any) => x !== null);
 
-            // Keep only valid projectIds
-            selectedProjects = selectedProjects.filter((id: number) =>
-              this.projectsData.some(p => p.projectId === id)
+            // Keep only valid phaseIds
+            selectedPhases = selectedPhases.filter((id: number) =>
+              this.projectsData.some(p => p.phaseId === id)
             );
 
             // ✅ Set cleaned value back
-            this.datepickerForm.get('projectId')?.setValue(selectedProjects);
+            this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
           }
         },
         error: () => this.projectsData = []
@@ -156,10 +156,10 @@ export class PendingApprovalsComponent implements OnInit {
   }
 
 
-  /** When project selected */
+  /** When phase selected */
   onProjectChange(event: any) {
-    const selectedProjectId = event?.value ?? [];
-    this.projectId = selectedProjectId;
+    const selectedPhaseIds = event?.value ?? [];
+    this.phaseIds = selectedPhaseIds;
     this.getResourceDetailsByManagerId();
   }
 
@@ -167,9 +167,9 @@ export class PendingApprovalsComponent implements OnInit {
     const EmployeeId = this.empinfo?.employeeId;
     let url = `Timesheet/authority/${EmployeeId}/employees`;
 
-    if (this.projectId?.length > 0) {
-      const projectIds = this.projectId.join(',');
-      url += `?projectIds=${projectIds}`;
+    if (this.phaseIds?.length > 0) {
+      const phaseIds = this.phaseIds.join(',');
+      url += `?phaseIds=${phaseIds}`;
     }
 
     this.subscription = this.http.getData(url).subscribe({
@@ -221,21 +221,21 @@ export class PendingApprovalsComponent implements OnInit {
     });
   }
 
-
+  
 
   /** On form submit */
   onSubmit() {
     console.log('Form submitted with values:', this.datepickerForm.value);
     const formValue = this.datepickerForm.value;
     const dateRange = formValue.dateRange;
-    const projectIds = formValue.projectId || [];
+    const phaseIds = formValue.phaseId || [];
     const resourceIds = formValue.resourceId || [];
     
-    const projectId = projectIds.length > 0 ? projectIds.join(',') : null;
+    const phaseId = phaseIds.length > 0 ? phaseIds.join(',') : null;
     const resourceId = resourceIds.length > 0 ? resourceIds.join(',') : null;
     
     const request: any = {
-      projectId,
+      phaseId,
       resourceId,
     };
     console.log(request);
@@ -247,13 +247,16 @@ export class PendingApprovalsComponent implements OnInit {
         endDate: dayjs(dateRange[1]).format('YYYY-MM-DDTHH:mm:ss'),
       };
     }
-    this.http.setEmployeeIdTimesheet(this.employeeid, projectId, request);
+    // Pass the request data to the timesheet component
+    this.http.setEmployeeIdTimesheet(this.employeeid, phaseId || 0, request);
   }
+    
+    
 
   /** Reset dependent fields */
   resetDependentFields() {
-    this.datepickerForm.get('projectId')?.reset();
-    this.datepickerForm.get('projectId')?.disable();
+    this.datepickerForm.get('phaseId')?.reset();
+    this.datepickerForm.get('phaseId')?.disable();
     this.datepickerForm.get('resourceId')?.reset();
     this.datepickerForm.get('resourceId')?.disable();
     this.projectsData = [];
@@ -268,15 +271,17 @@ export class PendingApprovalsComponent implements OnInit {
 
     this.datepickerForm.reset({
       dateRange: null,
-      projectId: null,
-      resourceId: []
+      phaseId: '',
+      resourceId: ''
     });
+    this.phaseIds = [];
+    this.selectedResourceIds = [];
     this.employeeData = [];
-    this.projectId = [];
+    // this.projectId = [];
     this.employeeid = null;
     this.selectedResourceIds = [];
     this.isSubmitEnabled = true;
-    this.http.setEmployeeIdTimesheet(null, 0, 0);
+    this.http.setEmployeeIdTimesheet(null, 0, null);
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
   }

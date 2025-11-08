@@ -40,15 +40,15 @@
 
                 <!-- Tax Id -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Tax ID<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Tax ID</label>
                     <input type="text" class="form-control custom-input" formControlName="taxId" [maxlength]="50"
                         (keydown)="formValidation.restrictInitialSpace($event)" [minlength]="3"
                         placeholder="Please enter tax id">
-                    <div class="error-msg" *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
+                    <!-- <div class="error-msg" *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
                         <div *ngIf="clientForm.get('taxId')?.errors?.['required']">
                             {{ 'Tax ID is required' | translate }}
                         </div>
-                    </div>
+                    </div> -->
                     <div *ngIf="clientForm.get('taxId')?.errors?.['maxCharacters'] || 
                         clientForm.get('taxId')?.errors?.['minCharacters']" class="error-msg">
                         {{ 'Tax ID must be between 3-50 characters' | translate}}
@@ -91,6 +91,12 @@
                     <div *ngIf="displayClientAttachment" class="custom-file-name text-wrap">
                         {{ displayClientAttachment?.name || displayClientAttachment }}</div>
                     <!-- <div><img [src]="logoimg" alt="Logo" class="logo-img"></div> -->
+                </div>
+
+                <!--Color-->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label">{{'Color' | translate}}</label>
+                    <input type="color" class="form-control custom-color" formControlName="color"/>
                 </div>
 
                 <!-- Client Address -->

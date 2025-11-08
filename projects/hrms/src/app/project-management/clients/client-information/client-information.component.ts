@@ -68,14 +68,15 @@ export class ClientInformationComponent {
     const attachmentValidators = this.clientAttachment ? [] : [Validators.required];
     this.clientForm = this.fb.group({
       clientName: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
-      taxId: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(3), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
+      taxId: [{ value: null, disabled: true }, [this.formValidation.minCharactersValidator(3), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
       website: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(5), this.formValidation.maxCharactersValidator(51), Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/), this.formValidation.noEmojiValidator()]],
       industryType: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
       clientAddress: [{ value: null, disabled: true }, [Validators.required, this.formValidation.minCharactersValidator(5), this.formValidation.maxCharactersValidator(250), this.formValidation.noEmojiValidator()]],
       overtimeEligibility: [{ value: null, disabled: true }],
       billable: [{ value: null, disabled: true }],
       allowWeekendWork: [{ value: null, disabled: true }],
-      logo: [{ value: '', disabled: true }, attachmentValidators]
+      logo: [{ value: '', disabled: true }, attachmentValidators],
+      color: [{value: '', disabled:true}]
     });
     // Clean emojis dynamically as user types or pastes
     // Object.keys(this.clientForm.controls).forEach(controlName => {
@@ -116,7 +117,8 @@ export class ClientInformationComponent {
       clientAddress: client.address,
       overtimeEligibility: client.overtimeEligibile,
       billable: client.billable,
-      allowWeekendWork: client.weekendWorkAllowed
+      allowWeekendWork: client.weekendWorkAllowed,
+      color : client?.meta?.graphData?.color
     });
     this.clientAttachment = client.logoPath
     this.displayClientAttachment = client.logoPath ? client.logoPath.split('/').pop() : null;
@@ -273,7 +275,12 @@ export class ClientInformationComponent {
       billable: formValue.billable,
       weekendWorkAllowed: formValue.allowWeekendWork,
       createdBy: this.empinfo.employeeId,
-      updatedBy: this.empinfo.employeeId
+      updatedBy: this.empinfo.employeeId,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+      }
     };
   }
 }

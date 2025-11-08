@@ -1,0 +1,196 @@
+<div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+        <div>
+            <p class="popup-heading mb-0">{{'Add Phase / Milestone' | translate}}</p>
+        </div>
+    </div>
+    <div class="custom-main-popup-content">
+        <form [formGroup]="addPhaseForm" autocomplete="off" (ngSubmit)="savePhase()">
+            <div class="row">
+                <!-- Project Name -->
+                <div class="col-md-6 mb-3">
+                    <label for="phaseName" class="form-label custom-label mb-2">Phase / Milestone Name<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="phaseName" minlength="2"
+                        maxlength="101" placeholder="Please enter phase / milestone name"
+                        (input)="formValidation.validateInput(addPhaseForm.get('phaseName'))">
+                    <div class="error-msg" *ngIf="addPhaseForm.get('phaseName')?.touched">
+                        <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
+                        <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
+                        addPhaseForm.get('phaseName')?.errors?.['minCharacters']">
+                            {{ 'Project Name must be between 2-100 characters' | translate }}
+                        </div>
+                    </div>
+                </div>
+
+                <!--Allocated hours-->
+                <div class="col-md-6 mb-3">
+                    <label for="projectType" class="form-label custom-label mb-2">Allocated Hours<span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="projectType" formControlName="allocatedHours"
+                        class="form-control custom-input" maxlength="5"
+                        (keydown)="formValidation.restrictAlphabets($event)"
+                        placeholder="Please enter allocated hours" />
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('allocatedHours')?.touched && addPhaseForm.get('allocatedHours')?.invalid">
+                        Allocated Hours is required</div>
+                    <!-- Error Messages -->
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('allocatedHours')?.touched && addPhaseForm.get('allocatedHours')?.errors?.['positiveInteger']">
+                        Allocated Hours must be a valid number</div>
+                </div>
+
+                <!-- Start Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="startDate" class="form-label custom-label mb-2">Start Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
+                        class="form-control custom-input" [min]="projectMinStartDate" [max]="projectMaxEndDate"/>
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('startDate')?.touched && addPhaseForm.get('startDate')?.invalid">
+                        Start Date is required
+                    </div>
+                    <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
+                </div>
+
+                <!-- End Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="endDate" class="form-label custom-label mb-2">End Date <span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="endDate" formControlName="endDate" onkeypress="return false"
+                        [min]="minEffectiveDate" [max]="projectMaxEndDate" class="form-control custom-input" />
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('endDate')?.touched && addPhaseForm.get('endDate')?.invalid">
+                        End Date is required
+                    </div>
+                    <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
+                </div>
+
+                <!-- Kickoff Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="kickoffDate" class="form-label custom-label mb-2">Kickoff Date <span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="kickoffDate" formControlName="kickoffDate" onkeypress="return false"
+                        [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
+                    <div class="error-msg">
+                        <div
+                            *ngIf="addPhaseForm.get('kickoffDate')?.touched && addPhaseForm.get('kickoffDate')?.invalid">
+                            Kickoff Date is required</div>
+                        <div *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
+                        <div *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective Date
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Effective Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date <span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="effectiveDate" formControlName="effectiveDate" onkeypress="return false"
+                        [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
+                    <div class="error-msg">
+                        <div
+                            *ngIf="addPhaseForm.get('effectiveDate')?.touched && addPhaseForm.get('effectiveDate')?.invalid">
+                            Effective Date is required
+                        </div>
+                        <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date
+                        </div>
+                        <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date
+                        </div>
+                    </div>
+                </div>
+
+                <!--Timesheet Approval Authority-->
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex gap-2">
+                        <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority'
+                            | translate}}
+                        </label>
+                        <div>
+
+                            <div>
+                                <a type="button" [ngbPopover]="description">
+                                    <app-info-icon />
+                                </a>
+                            </div>
+                            <ng-template #description>
+                                <p class="mb-0">{{ 'This field will be enabled after allocating resources to this phase'}}</p>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityList" formControlName="approvalidAuthority" [filter]="true"
+                            [resetFilterOnHide]="true" filterBy="name" optionLabel="name" optionValue="value"
+                            placeholder="Please select timesheet approval authority"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('approvalidAuthority')?.invalid && addPhaseForm.get('approvalidAuthority')?.touched">
+                        Timesheet Approval Authority is required
+                    </div>
+                </div>
+
+                <!--Color Picker-->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="color" class="form-label custom-label mb-2"> Color </label>
+                    <input type="color" id="color" class="form-control custom-color" formControlName="color" />
+                </div>
+                
+                <!-- Project Description -->
+                <div class="col-md-6 mb-3">
+                    <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone Description</label>
+                    <textarea id="phaseDescription"
+                        (input)="formValidation.validateInput(addPhaseForm.get('phaseDescription'))" maxlength="500"
+                        formControlName="phaseDescription" class="form-control custom-input"
+                        placeholder="Please enter phase / milestone description"></textarea>
+                    <div class="textarea-count-text">{{ addPhaseForm.get("phaseDescription")?.value?.length || 0}}/500
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationpopup)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid || loading">
+                        @if (loading) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Add'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--confirmation Popup-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #dateconfirmatonpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{ confirmationMessage }}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary" >{{'No'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmPopupNo(model)">{{'Yes'}}</button>
+    </div>
+  </div>
+</ng-template>

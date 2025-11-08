@@ -56,9 +56,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
   resourcesData = [] as IResource[];
-   departmentlist = [] as any;
-
-  inactiveClientStatus: any
+  departmentlist = [] as any;
+  inactiveClientStatus: any;
+  
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
@@ -179,16 +179,17 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateclientName: [null, Validators.required],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
-      updateeffectiveDate: [null, Validators.required],
-      updatekickoffDate: [null, Validators.required],
+      // updateeffectiveDate: [null, Validators.required],
+      // updatekickoffDate: [null, Validators.required],
       updateprojectType: [null, Validators.required],
       updatedepartment: [[], Validators.required],
       updateprojectDescription: [null],
       updateovertimeEligible: [false],
       updatebillable: [false],
       updateallowweekendWork: [false],
-      updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
-      approvalidAuthority: [{value:null,disabled:true}]
+      // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
+      // approvalidAuthority: [{value:null,disabled:true}],
+      updatecolor : ['']
     });
      this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -267,7 +268,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   openUpdateModal(modal: any, project: Project) {
     // this.getAuthorityList();
-    this.getResourceData(project.projectId,project);
+    // this.getResourceData(project.projectId,project);
      const selectedDepartmentIds = project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
     this.updateprojectform.patchValue({
@@ -275,16 +276,16 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateclientName: project.client?.clientId,  // ensure p-select has clientId
       updatestartDate: this.formatDateToLocal(project.startDate),
       updateendDate: this.formatDateToLocal(project.endDate),
-      updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
-      updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
+      // updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
+      // updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
       updateprojectType: project.projectType, // ensure p-select has id
       updateprojectDescription: project.description,
       updateovertimeEligible: project.isOvertimeEligibile,
       updatebillable: project.isBillable,
-      updateallocatedHours: project.allocatedHours,
+      // updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds, 
-
+      updatecolor : project?.meta?.graphData?.color
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
@@ -322,7 +323,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       status: 'Active',
       pendingApprovalAuthorityId: formValue.approvalidAuthority,
       departmentIds: departmentIds,
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue?.updatecolor
+      }
+      }
     };
     this.loading = true;
     this.http.putData(`Project/${this.selectedProjectId}`, payload).subscribe({

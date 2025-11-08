@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -17,15 +17,19 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { IPhases } from '../../../Interfaces/project-management/phases.model';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { color } from 'html2canvas/dist/types/css/types/color';
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule,NgbPopover, DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
 })
 
 export class ClientResourcesComponent {
   resourcesData = [] as IResource[];
+  resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   employeeDetails: IEmployeeDetails[] = [];
@@ -46,6 +50,10 @@ export class ClientResourcesComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   inactiveClientStatus: any;
   projectRoleDropdown: any[] = [];
+  resoucesDropDownData = [] as any[];
+  phaseDropdown: any[] = [];
+  phaseData = [] as IPhases[];
+  selectedPhaseId : any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute, 
     private conformationPopup: OpenModalService) { }
@@ -94,14 +102,21 @@ export class ClientResourcesComponent {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      resourceRole: [null, Validators.required]
+      color: ['#FFFFFF'],
+      resourceRole: [null, Validators.required],
+      resourcePhase: [null,Validators.required],
+      resourceAuthority : [{value:null,disabled:true}]
     });
   }
 
   getResourceData(id: any) {
     this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
       next: (data: any) => {
-        this.resourcesData = data.data;
+        if (data?.data?.length > 0) {
+          this.resourcesData = data.data;
+        } else {
+          this.resourcesData = [];
+        }
         this.loading = false;
       },
       error: (reason: any) => {
@@ -109,6 +124,49 @@ export class ClientResourcesComponent {
       }
     });
   }
+
+getResourceDataByPhaseId(projectId: number, phaseId: number, pendingApprovalId?: number) {
+  const params = {
+    status: 'Active',
+    entityType: 'project',
+    entityRefId: projectId,
+    phaseId: phaseId
+  };
+
+  this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+    next: (data: any) => {
+      if (data?.data?.length > 0) {
+          this.resourcesDataByPhase = data.data;
+          this.resoucesDropDownData = this.resourcesDataByPhase
+        .filter(r => r.employee)
+        .map(r => ({
+          label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+          value: r.employee.id
+        }));
+
+      if (this.resoucesDropDownData?.length > 0 || pendingApprovalId) {
+        this.updateResourceForm.get('resourceAuthority')?.enable();
+        this.updateResourceForm.get('resourceAuthority')?.setValidators([Validators.required]);
+        this.updateResourceForm.patchValue({
+          resourceAuthority: this.resoucesDropDownData.find(
+            (res: any) => res.value === pendingApprovalId
+          )?.value || null
+        });
+      
+        } 
+      } else {
+          this.resourcesDataByPhase= [];
+        this.updateResourceForm.get('resourceAuthority')?.disable();
+      }
+    
+    },
+    error: (reason: any) => {
+      console.error(reason);
+      this.updateResourceForm.get('resourceAuthority')?.disable();
+    }
+  });
+}
+
   projectStartDate!: Date;
   projectEndDate!: Date;
   getclientProjects(clientId: any) {
@@ -117,8 +175,7 @@ export class ClientResourcesComponent {
         this.projectsDataDrown = res?.data ?? []; // Extract "data" array
              const project = this.projectsData[0];
             if (project) {
-          this.projectStartDate = new Date(project.startDate);
-          this.projectEndDate = new Date(project.endDate);
+         
           // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
           // this.updateResourceForm.updateValueAndValidity();
         }
@@ -129,6 +186,26 @@ export class ClientResourcesComponent {
       },
     });
   }
+
+onPhaseChange(selectedValue: any) {
+  if (selectedValue) {
+    const phase = selectedValue.value;
+    this.selectedPhaseId = phase.value ?? null;
+    this.projectStartDate = new Date(phase.startDate) ?? null;
+    this.projectEndDate = new Date(phase.endDate) ?? null;
+
+    // this.projectStartDate = new Date(project.startDate);
+    // this.projectEndDate = new Date(project.endDate);
+    // Reset approval authority
+    this.updateResourceForm.patchValue({ resourceAuthority: null });
+    this.updateResourceForm.get('resourceAuthority')?.disable();
+    
+
+    this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId);
+  }
+}
+
+  
 
   getJobrole(departmentIds?: number[],roleId?:number) {
     if(!departmentIds) return ;
@@ -160,21 +237,80 @@ export class ClientResourcesComponent {
         // this.loader = false;
       },
     });
-}
+  }
 
-  selectproject(projectId: any) {
-    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.projectId = res?.data[0]?.projectId,
-          this.updateResourceForm.patchValue({
-            projectType: res?.data[0]?.projectType,
-          })
+  getPhaseData(projectId:number,phaseId?:number,pendingApprovalId?:number) {
+    console.log(projectId);
+    const params = {
+    projectId: projectId
+    };
+    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        this.phaseData = data.data;
+        this.phaseDropdown = this.phaseData.map(p => ({
+        label: p?.phaseName,
+        value: p?.phaseId,
+        projectId:p?.project?.projectId,
+        clientId:p?.project?.clientId,
+        startDate: p?.startDate,
+        endDate: p?.endDate,
+      }));
+
+      if(phaseId){
+        const selectedPhase = this.phaseDropdown.find(
+          (p: any) => p.value === phaseId
+        );
+        this.updateResourceForm.patchValue({
+          resourcePhase: selectedPhase ? selectedPhase : null
+        });
+        this.projectStartDate = new Date(selectedPhase.startDate) ?? null;
+        this.projectEndDate = new Date(selectedPhase.endDate) ?? null;
+
+        this.getResourceDataByPhaseId(this.projectId,phaseId,pendingApprovalId);
+      }
+
+      
       },
-      error: (err) => {
-        console.error('Error fetching projects data:', err);
-      },
+      error: (reason: any) => {
+      }
     });
   }
+
+selectProject(projectId: any) {
+  this.http.getData(`Project?projectId=${projectId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        const project = res?.data[0];
+        if (project) {
+          this.projectId = project.projectId;
+
+          // Reset dependent dropdowns
+          this.phaseDropdown = [];
+          this.updateResourceForm.patchValue({
+            resourcePhase: null,
+            resourceAuthority: null
+          });
+
+          this.updateResourceForm.get('resourcePhase')?.reset();
+          this.updateResourceForm.get('resourceAuthority')?.reset();
+          this.updateResourceForm.get('resourceAuthority')?.disable();
+
+          // Set project type or other info
+          this.updateResourceForm.patchValue({
+            projectType: project.projectType,
+          });
+
+          // Fetch phases for selected project
+          this.getPhaseData(this.projectId);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching project data:', err);
+      }
+    });
+}
+
 selectedRoleId: number = 0;
 selectedEntityRefId: number = 0;
 
@@ -191,6 +327,7 @@ selectedEntityRefId: number = 0;
     this.getJobrole(departmentIds, data?.projectRoleId);
     this.ResourceId = data?.resourceId;
     this.projectId = data?.project?.projectId;
+    this.getPhaseData(this.projectId, data?.phase?.phaseId, data?.pendingApprovalAuthority?.id);
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
@@ -209,7 +346,10 @@ selectedEntityRefId: number = 0;
       // allocatedFrequencyType: data?.allocatedFrequencyType,
       billable: data.billable,
       allowweekendWork: data.weekendWorkAllowed,
-      // resourceRole: selectedRole ? selectedRole.value : null
+      color: data?.meta?.graphData?.color || '#FFFFFF',
+      // resourceRole: selectedRole ? selectedRole.value : null,
+      // resourcePhase: [null,Validators.required],
+      // resourceAuthority : [null]
     });
   }
 
@@ -244,7 +384,7 @@ selectedEntityRefId: number = 0;
 
   onClickEmployee(event: any) {
     const employeeId = event.value; // just the ID
-    this.selectedEmployee = this.employeeDetails.find(employeeId);
+    this.selectedEmployee = this.employeeDetails?.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
       resourcePhone: this.selectedEmployee
@@ -301,12 +441,20 @@ selectedEntityRefId: number = 0;
       allocatedBy: this.empinfo.employeeId,
       projectRoleId: projectRoleId,
       projectDepartmentId: projectDepartmentId,
+      phaseId : formValue?.resourcePhase?.value,
+      pendingApprovalAuthority : formValue.resourceAuthority,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+      }
     };
     this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({
       next: (res) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Resource updated successfully');
         this.getResourceData(this.clientID);
+        this.close(false);
       },
       error: (err) => {
         console.error('Error occured:', err);
@@ -348,7 +496,22 @@ selectedEntityRefId: number = 0;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  close() {
+  close(closePopup?:boolean) {
+    if(closePopup){
     this.modalService.dismissAll();
+
+    }
+    this.updateResourceForm.reset();
+
+    this.updateResourceForm.get('resourceAuthority')?.reset();
+    this.updateResourceForm.get('resourceAuthority')?.setValidators(null);
+    this.updateResourceForm.get('resourceAuthority')?.disable();
+    this.resoucesDropDownData = [];
+    this.resourcesDataByPhase = [];
+    this.phaseDropdown = [];
+    this.updateResourceForm.patchValue({
+       color: ['#FFFFFF']
+    });
+    this.phaseData = [];
   }
 }

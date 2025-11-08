@@ -37,5 +37,16 @@ export interface IResource {
     },
     createdAt: any,
     updatedAt: any
-    role: any
+    role: any,
+    phase : {
+        phaseId : number;
+        phaseName : string;
+    };
+    pendingApprovalAuthority : {
+        id : number;
+        fusionEmployeeId : string;
+        name : string;
+        workMail : string;
+    },
+    reason : string;
 }

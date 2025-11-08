@@ -21,13 +21,13 @@
 
                 <!-- Tax Id -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Tax ID<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Tax ID</label>
                     <input type="text" class="form-control custom-input" formControlName="taxId" [minlength]="3"
                         placeholder="Please enter tax id" (keydown)="formValidation.restrictInitialSpace($event)" maxlength="51">
                     <div class="error-msg">
-                        <div *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
+                        <!-- <div *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
                             <div *ngIf="clientForm.get('taxId')?.errors?.['required']">{{ 'Tax ID is required' | translate }}</div>
-                        </div>
+                        </div> -->
                         <div *ngIf="(clientForm.get('taxId')?.errors?.['maxCharacters']||clientForm.get('taxId')?.errors?.['maxlength']) 
                         || (clientForm.get('taxId')?.errors?.['minCharacters']||clientForm.get('taxId')?.errors?.['minlength'])">
                             {{ 'Tax ID must be between 3-50 characters' | translate}}</div>
@@ -70,7 +70,13 @@
                             {{ 'Client Logo is required' | translate }}</div>
                     </div>
                 </div>
-
+               
+                <!--Color Picker-->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label">{{'Color' | translate}}</label>
+                    <input type="color" class="form-control custom-color" formControlName="color"/>
+                </div>
+                
                 <!-- Client Address -->
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Client Company Address<span class="text-danger">*</span></label>

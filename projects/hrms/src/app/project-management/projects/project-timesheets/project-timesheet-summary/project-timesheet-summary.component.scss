@@ -1,0 +1,261 @@
+.time-sheet-summary-container {
+    width: 100%;
+    overflow-x: hidden;
+    height: calc(100dvh - 12rem) !important;
+    overflow-y: auto;
+}
+
+.time-sheet-graph-card {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    border: 1.52px solid #FFFFFF;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    display: flex;
+    flex-direction: column;
+
+    .legend-circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .legend-label {
+        font-size: var(--fontsize10);
+        color: #323130;
+    }
+}
+
+.summary-header {
+    font-weight: 600;
+    font-size: var(--fontsize14);
+    color: #222222;
+
+    .popover-body {
+        padding: 0.5rem !important;
+        border-radius: 0.5rem;
+        border: 2px solid #FFF !important;
+        box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-weight: 400;
+        font-size: var(--fontsize12);
+        letter-spacing: 0%;
+        color: #424242;
+    }
+
+    .popover {
+        --bs-popover-max-width: 25rem !important;
+        --bs-popover-border-color: var(--module-info-bg) !important;
+        background: var(--module-info-bg) !important;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+        border-bottom-color: #FFFFFF !important;
+    }
+}
+
+.project-summary-table {
+    height: 18rem !important;
+
+    th,
+    td {
+        padding: 0.75rem !important;
+        font-size: var(--fontsize12) !important;
+    }
+
+    th {
+        color: #3B3B3B !important;
+        font-weight: 600 !important;
+    }
+
+    .project-name {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .logged-hrs {
+        color: #000000;
+        font-weight: 500 !important;
+    }
+}
+
+.rolewise-chart-grid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    canvas {
+        height: 210px !important;
+    }
+
+    .legend-circle {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+
+    .legend-name {
+        color: #323130;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .hrs-display {
+        font-weight: 400;
+        font-size: 0.75rem;
+        color: #747474;
+
+        .actual {
+            color: #000000 !important;
+        }
+    }
+}
+
+.bar-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        height: 290px !important;
+    }
+}
+
+.gauge-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 18rem;
+
+    canvas {
+        height: 18rem !important;
+    }
+
+    .needle {
+        position: absolute;
+        bottom: 25%;
+        left: 50%;
+        width: 3px;
+        height: 103px;
+        background: #333;
+        transform-origin: bottom center;
+        transition: transform 1s ease-in-out;
+    }
+
+    .needle-base {
+        position: absolute;
+        bottom: 22%;
+        left: 50%;
+        width: 1rem;
+        height: 1rem;
+        background: #333;
+        border-radius: 50%;
+        transform: translateX(-50%);
+    }
+
+    .gauge-label {
+        position: absolute;
+        bottom: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: var(--fontsize16);
+        font-weight: 600;
+    }
+
+    .guage-background {
+        width: 251px;
+        height: 128px;
+        position: absolute;
+        bottom: 25%;
+        background: url(/images/speedo-meter.png) center / 110% 114% no-repeat, linear-gradient(180deg, #84BD32 0%, #FFFFFF 100%);
+        border-top-left-radius: 10rem;
+        border-top-right-radius: 10rem;
+    }
+
+    .guage-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .over-due-value {
+        position: absolute;
+        top: -0.325rem;
+        left: 6rem;
+        width: max-content;
+        min-width: 5rem;
+        text-align: center;
+        font-size: 14px;
+        background: #FF5656;
+        padding: 0.25rem 1rem;
+        border-radius: 0.25rem;
+        color: #FFF;
+    }
+}
+
+.burndown-chart {
+    canvas {
+        height: 380px !important;
+    }
+}
+
+.progress-wrapper {
+    position: relative;
+    width: 120px;
+    height: 8px;
+    background-color: #f3f4f6;
+    border-radius: 10px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.logged-hours {
+    font-size: 13px;
+    color: #374151;
+    vertical-align: middle;
+}
+
+.no-data-image {
+    width: 156px !important;
+    height: 130px !important;
+}
+
+.graph-no-data-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 30vh;
+}
+
+.chart-card-skeleton {
+    width: 100%;
+    height: 100%;
+    min-height: 30vh;
+    margin: 0 auto;
+    background: transparent;
+
+    .p-skeleton {
+        background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+    }
+}

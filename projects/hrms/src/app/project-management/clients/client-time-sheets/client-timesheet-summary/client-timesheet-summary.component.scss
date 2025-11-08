@@ -1,0 +1,264 @@
+.time-sheet-summary-container {
+    width: 100%;
+    overflow-x: hidden;
+    height: calc(100dvh - 12rem) !important;
+    overflow-y: auto;
+}
+
+.time-sheet-graph-card {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    border: 2px solid #FFFFFF;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .legend-circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .legend-label {
+        font-size: var(--fontsize10);
+        color: #323130;
+    }
+}
+
+.summary-header {
+    align-items: center;
+    font-weight: 600;
+    font-size: var(--fontsize14);
+    color: #222222;
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .popover-body {
+        padding: 0.5rem !important;
+        border-radius: 0.5rem;
+        border: 2px solid #FFF !important;
+        box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-weight: 400;
+        font-size: var(--fontsize12);
+        letter-spacing: 0%;
+        color: #424242;
+    }
+
+    .popover {
+        --bs-popover-max-width: 25rem !important;
+        --bs-popover-border-color: var(--module-info-bg) !important;
+        background: var(--module-info-bg) !important;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+        border-bottom-color: #FFFFFF !important;
+    }
+}
+
+.custom-p-select-content {
+    min-width: 9rem !important;
+
+    .p-select {
+        font-size: 9px !important;
+    }
+
+    .p-inputtext:focus {
+        font-size: 9px !important;
+    }
+}
+
+.project-summary-table {
+    height: 18rem !important;
+    border: 1.68px solid #FFFFFF !important;
+
+    th, td {
+        padding: 0.625rem !important;
+    }
+
+    td {
+        font-size: 11px !important;
+    }
+
+    th {
+        font-size: var(--fontsize12) !important;
+        font-weight: 500 !important;
+        color: #3B3B3B !important;
+    }
+
+     .project-name {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .logged-hrs {
+        color: #000000 !important;
+        font-weight: 600;
+    }
+}
+
+.circular-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        width: 240px !important;
+        height: 240px !important;
+    }
+}
+
+.bar-chart {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        width: 100% !important;
+        height: 290px !important;
+    }
+}
+
+.burndown-chart {
+    canvas {
+        height: 380px !important;
+    }
+}
+
+.project-resource-graph {
+    canvas {
+        height: 302px !important;
+    }
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+    text-transform: capitalize;
+}
+
+/* Status-specific colors */
+.on-track {
+    background-color: #e6f8ed;
+    color: #1a8f4b;
+}
+
+.delayed {
+    background-color: #fdeaea;
+    color: #d93025;
+}
+
+.progress {
+    background-color: #fff4e5;
+    color: #e67e22;
+}
+
+.not-started {
+    background-color: #f1f1f1;
+    color: #555;
+}
+
+.inactive {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.rolewise-chart-grid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    canvas {
+        height: 210px !important;
+    }
+
+    .legend-circle {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+
+    .legend-name {
+        color: #323130;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .hrs-display {
+        font-weight: 400;
+        font-size: 0.75rem;
+        color: #747474;
+
+        .actual {
+            color: #000000 !important;
+        }
+    }
+}
+
+.custom-icon {
+    .p-icon {
+        width: 10px !important;
+    }
+}
+
+.no-data-image {
+    width: 156px !important;
+    height: 130px !important;
+}
+
+.graph-no-data-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 30vh;
+}
+
+.chart-card-skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 30vh;
+  margin: 0 auto;
+  background: transparent;
+
+  .p-skeleton {
+    background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+  }
+}

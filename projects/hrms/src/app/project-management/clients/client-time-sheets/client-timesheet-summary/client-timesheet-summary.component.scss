@@ -35,8 +35,16 @@
     font-size: var(--fontsize14);
     color: #222222;
 
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
     .popover-body {
-        padding: 0.325rem !important;
+        border-radius: 0.5rem;
+        padding: 0.5rem !important;
+        border: 2px solid #FFF;
     }
 
     .module-icon {
@@ -46,7 +54,20 @@
     }
 
     .module-info-text {
-        font-size: var(--fontsize10);
+        font-weight: 400;
+        font-size: var(--fontsize12);
+        letter-spacing: 0%;
+        color: #424242;
+    }
+
+    .popover {
+        --bs-popover-max-width: 25rem !important;
+        --bs-popover-border-color: var(--module-info-bg) !important;
+        background: var(--module-info-bg) !important;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+        border-bottom-color: #FFFFFF !important;
     }
 }
 

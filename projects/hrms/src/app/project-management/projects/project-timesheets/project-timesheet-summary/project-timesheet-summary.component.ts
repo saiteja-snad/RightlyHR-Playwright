@@ -471,7 +471,7 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(`ProjectManagementGraph/project/completion-rate/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          const percent = 120;
+          const percent = Number(res?.data?.completionPercent) || 0;
           // Cap gauge at 100%
           this.completionRate = percent > 100 ? 100 : percent;
           // Separate extra value (overrun)

@@ -344,9 +344,7 @@ export class ProjectTimesheetSummaryComponent {
           this.billablevsNonBillableHoursLoader = false;
         }
       });
-      this.billablevsNonBillableHoursLoader = true;
     });
-    this.billablevsNonBillableHoursLoader = false;
   }
 
   // Project Burndown Chart (Line)

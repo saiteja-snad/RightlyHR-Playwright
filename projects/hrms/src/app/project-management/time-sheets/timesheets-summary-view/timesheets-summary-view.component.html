@@ -166,30 +166,29 @@
 
                 @if (!projectwisehour) {
                 <div class="time-sheet-graph-card p-3 py-4">
-                    <div class="rolewise-chart-grid justify-content-between gap-3">
-                        <div class="bar-chart">
-                            <ng-container *ngIf="hasprojectWiseHoursData; else noData">
+                    <ng-container *ngIf="hasprojectWiseHoursData; else noData">
+                        <div class="rolewise-chart-grid justify-content-between gap-3">
+                            <div class="bar-chart">
                                 <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
-                            </ng-container>
-                        </div>
-                
-                        <div class="legends-view custom-legend-width">      
-                            <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
-                                <div class="col-md-7">
-                                    <div class="d-flex align-items-center gap-1">
-                                        <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
-                                        <div class="legend-name">{{ item.label }}</div>
-                                    </div>
-                                </div>
-                                <div class="hrs-display text-nowrap col-md-5">{{item.hours}} h</div>
-                            </div>             
-                        </div>
-                        <ng-template #noData>
-                            <div class="graph-no-data-content">
-                                <app-no-data-found />
                             </div>
-                        </ng-template>
-                    </div>
+                            <div class="legends-view custom-legend-width">
+                                <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
+                                    <div class="col-md-7">
+                                        <div class="d-flex align-items-center gap-1">
+                                            <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                            <div class="legend-name">{{ item.label }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="hrs-display text-nowrap col-md-5">{{item.hours}} h</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #noData>
+                        <div class="graph-no-data-content">
+                            <app-no-data-found />
+                        </div>
+                    </ng-template>
                 </div>
                 }@else {
                 <div class="chart-card-skeleton">

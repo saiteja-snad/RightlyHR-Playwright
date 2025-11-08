@@ -93,7 +93,7 @@
                 <td>{{ emp.employee?.name || '-' }}</td>
                 <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
                 <td>
-                  <div class="d-flex flex-wrap gap-2">
+                  <div class="d-flex flex-wrap gap-2 custom-table-chips">
                     <p-chip *ngFor="let skill of getActiveSkills(emp)">
                       <div class="custom-chip-content">
                         <span class="skill-name me-1">{{ skill.skillName }}</span>

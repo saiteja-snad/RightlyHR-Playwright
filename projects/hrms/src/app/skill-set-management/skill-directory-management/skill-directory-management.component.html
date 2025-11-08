@@ -9,7 +9,6 @@
       </div>
     </div>
 
-
     <div class="d-flex align-items-center gap-3">
       <!-- Status Filter -->
       <button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
@@ -64,6 +63,7 @@
           </div>
         </div>
       </div>
+
       <div class="w-100">
         <!-- Search -->
         <div class="input-group custom-search mb-3">
@@ -157,29 +157,32 @@
     </div>
 
     <div class="employee-offcanvas-body">
-      <div class="profile-content text-center">
-        <!-- Profile Image -->
-        <ng-container *ngIf="imageUrl; else defaultIcon">
-          <img [src]="imageUrl" alt="Profile Image" class="profile-image mb-2" />
-        </ng-container>
-
-        <ng-template #defaultIcon>
-          <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'"></app-profile-icon>
-        </ng-template>
-
-        <!-- Name and ID -->
-        <p class="name mt-2 mb-1">{{ selectedEmployee?.employee?.name }} ({{
-          selectedEmployee?.employee?.snadEmployeeId}})
-        </p>
-
-        <!-- Designation -->
-        <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
-
-        <!-- Status -->
-        <div class="status-badge">• {{ employeeStatusDisplay }}</div>
+      <div class="profile-content gap-3">
+        <div>
+          <!-- Profile Image -->
+          <ng-container *ngIf="imageUrl; else defaultIcon">
+            <img [src]="imageUrl" alt="Profile Image" class="profile-image mb-2" />
+          </ng-container>
+      
+          <ng-template #defaultIcon>
+            <app-profile-icon [iconWidth]="'58'" [iconHeight]="'58'"></app-profile-icon>
+          </ng-template>
+        </div>
+        <div>
+          <!-- Name and ID -->
+          <p class="name mt-2 mb-1">{{ selectedEmployee?.employee?.name }} ({{
+            selectedEmployee?.employee?.snadEmployeeId}})
+          </p>
+      
+          <!-- Designation -->
+          <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
+      
+          <!-- Status -->
+          <div class="status-badge">• {{ employeeStatusDisplay }}</div>
+        </div>
       </div>
 
-      <div class="dashed-border my-3"></div>
+      <div class="popup-header-border my-3"></div>
 
       <!-- Tabs -->
       <div class="custom-skill-set-tabs">
@@ -211,6 +214,9 @@
                 </ng-container>
               </div>
               }
+
+              <div class="popup-header-border my-3"></div>
+              
               <!-- Soft Skills -->
               @if (selectedEmployee?.softSkills?.length) {
               <div class="skills-group" *ngIf="selectedEmployee?.softSkills?.length">

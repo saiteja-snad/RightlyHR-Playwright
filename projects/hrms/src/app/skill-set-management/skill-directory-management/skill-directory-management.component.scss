@@ -37,13 +37,15 @@
   /* Profile Section */
   .profile-content {
     display: flex;
-    flex-direction: column;
     align-items: center;
     color: var(--primary-color);
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #FFFFFF -326.7%, #ECF0F4 100%);
 
     .profile-image {
-      width: 4.25rem;
-      height: 4.25rem;
+      width: 3.625rem;
+      height: 3.625rem;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #fff;
@@ -64,7 +66,7 @@
 
     .status-badge {
       display: inline-block;
-      background: #ECF1F5;
+      background: #FFF;
       border-radius: 2rem;
       font-size: var(--fontsize12);
       padding: 0.35rem 1rem;
@@ -358,8 +360,16 @@
   }
 }
 
- .view-link {
-    font-weight: 700;
-    text-decoration: underline;
-    color: var(--primary-color);
-  }
+.view-link {
+  font-weight: 700;
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.popup-header-border {
+  border-bottom: 1.5px solid transparent;
+  border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
+      #94B1DE 50.67%, var(--white-color) 108.91%);
+  border-image-slice: 1;
+  vertical-align: middle;
+}

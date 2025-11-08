@@ -605,7 +605,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     'On Hold': {
       title: 'Are you sure you want to put this resource on hold?',
       nextStatus: 'On Hold',
-      successMessage: 'Resource put on hold successfully'
+      successMessage: 'Resource status changed to On Hold successfully.'
     },
     'Resume': {
       title: 'Are you sure you want to resume this resource?',

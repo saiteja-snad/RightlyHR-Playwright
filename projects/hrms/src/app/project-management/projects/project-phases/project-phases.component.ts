@@ -242,8 +242,12 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     const currentStatus = currentPhase?.status?.toLowerCase();
 
     let updatedStatus = 'in progress';
+    let actionType = '';
     if (currentStatus === 'yet to start') {
       updatedStatus = 'yet to start';
+    } else if (currentStatus === 'extended') {
+      updatedStatus = 'extended';
+      actionType = 'update';
     }
 
     this.updatePhaseStatus({
@@ -254,7 +258,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       endDate: formValue?.endDate,
       phaseName: formValue?.phaseName,
       timesheetApprovalAuthorityId: formValue?.approvalidAuthority,
-      meta: { graphData: { color: formValue?.updatecolor } }
+      meta: { graphData: { color: formValue?.updatecolor } },
+      actionType
     });
   }
 
@@ -301,7 +306,9 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
           ? 'Phase resumed successfully'
           : 'Phase started successfully',
         'hold': 'Phase is kept on hold',
-        'extended': 'Phase extended successfully',
+        'extended': options.actionType === 'update'
+          ? 'Phase updated successfully'
+          : 'Phase extended successfully',
         'completed': 'Phase completed successfully',
         'closed': 'Phase closed successfully'
       };

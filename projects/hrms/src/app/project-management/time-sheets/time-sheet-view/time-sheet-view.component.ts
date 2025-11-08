@@ -130,8 +130,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const projectId = day?.projectId;
     const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
     const matchedResource = this.resourcesArrayList?.find(
-      (r: any) => r?.project?.projectId === projectId
-    );
+      (r: any) => r?.project?.projectId === projectId &&
+        r.client?.clientId === day?.clientId &&
+        r?.phase?.phaseId === (day?.phaseId ? day.phaseId : null
+    ));
+     
     const resourcestartdate = matchedResource?.startDate ? new Date(matchedResource.startDate) : null;
     const resourceenddate = matchedResource?.endDate ? new Date(matchedResource.endDate) : null;
     // const resourceenddate = matchedResource?.endDate
@@ -809,7 +812,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // Determine billable status
     const selectedResource = this.resourcesArrayList.find(
       (res: any) => res.project?.projectId === formValue.projectId &&
-        res.client?.clientId === formValue.clientId
+        res.client?.clientId === formValue.clientId &&
+        res.phase?.phaseId === formValue.phaseId
     );
     const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
     const payload = {
@@ -1215,7 +1219,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.dayForm = dayForm; // keep reference
       const selectedResource = this.resourcesArrayList.find(
         (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
-          res.client?.clientId === this.dayForm.get('clientId')?.value
+          res.client?.clientId === this.dayForm.get('clientId')?.value && res.phase?.phaseId === this.dayForm.get('phaseId')?.value
       );
       if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected) {
         this.dayForm.disable();
@@ -1233,7 +1237,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         })
       }
       const shiftData = this.resourcesArrayList.find(
-        (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value
+        (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value 
       );
       if ((this.selectedShiftDetails == undefined || this.selectedShiftDetails == null) &&
         this.dayForm.get('projectId')?.value != null) {

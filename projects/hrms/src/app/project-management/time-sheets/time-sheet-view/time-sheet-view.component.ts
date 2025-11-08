@@ -833,7 +833,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: isBillable
+      isBillable: isBillable,
+       moduleId: 30,
     };
 
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -1376,7 +1377,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: formValue.isBillable || false
+      isBillable: formValue.isBillable || false,
+       moduleId: 30,
     };
 
     // POST request

@@ -524,3 +524,14 @@
         </div>
     </div>
 </ng-template>
+
+<!-- error modal -->
+
+<ng-template #errormodal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{errormodaldata}}</p>
+        </div>
+    </div>
+</ng-template>

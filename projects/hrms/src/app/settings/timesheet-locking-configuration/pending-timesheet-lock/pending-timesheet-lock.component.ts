@@ -328,7 +328,11 @@ TimesheetLockForm!: FormGroup;
         error: (error: any) => {
           this.spinnerLoader = false;
           this.errormodaldata = error.error.message || 'Failed to add Timesheet lock';
-        this.modalService.open(this.errormodal,{ centered: true});
+         const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
         },
         complete: () => {
           this.spinnerLoader = false;
@@ -441,8 +445,12 @@ patchTimesheetlock() {
           error: (error: any) => {
             this.modalService.dismissAll();
             this.spinnerLoader = false;
-           this.errormodaldata = error.error.message || 'Failed to update Timesheet lock';
-        this.modalService.open(this.errormodal,{ centered: true });
+           this.errormodaldata = error.error.message || 'Failed to update Timesheet lock';          
+        const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
           },
           complete: () => {
             this.spinnerLoader = false;
@@ -479,7 +487,11 @@ patchTimesheetlock() {
       error: (error: any) => {
         this.spinnerLoader = false;
             this.errormodaldata = error.error.message || 'Failed to publish Timesheet lock';
-        this.modalService.open(this.errormodal,{ centered: true});
+         const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
       },
       complete: () => {
         this.spinnerLoader = false;
@@ -515,7 +527,11 @@ patchTimesheetlock() {
         error: (error: any) => {
           this.spinnerLoader = false;
             this.errormodaldata = error.error.message ||  'Failed to delete Timesheet lock' ;
-        this.modalService.open(this.errormodal,{ centered: true});
+        const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
         },
         complete: () => {
           this.spinnerLoader = false;

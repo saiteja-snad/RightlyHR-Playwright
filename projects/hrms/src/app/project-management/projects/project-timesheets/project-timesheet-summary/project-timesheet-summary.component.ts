@@ -116,12 +116,12 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
           this.resourceSummaryLoader = false;
+          this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
         },
         error: (err) => {
-          console.error('Error fetching clients:', err);
           this.resourceSummaryLoader = false;
+          console.error('Error fetching clients:', err);
         }
       });
     });
@@ -176,9 +176,9 @@ export class ProjectTimesheetSummaryComponent {
           };
         },
         error: (err) => {
+          this.roleWiseHoursLoader = false;
           console.error('Error fetching Role-wise hours:', err);
           this.roleWiseHoursData = [];
-          this.roleWiseHoursLoader = false;
         },
       });
     });
@@ -204,6 +204,7 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
+          this.estimatedvsActualHoursLoader = false;
           if (res?.success && res?.data?.data?.length) {
             const chartData = res.data.data;
             const labels = chartData.map((item: any) => item.name);
@@ -258,11 +259,10 @@ export class ProjectTimesheetSummaryComponent {
           } else {
             this.estimatedVsActualData = [];
           }
-          this.estimatedvsActualHoursLoader = false;
         },
         error: (err) => {
-          console.error('Error fetching estimated vs actual chart:', err);
           this.estimatedvsActualHoursLoader = false;
+          console.error('Error fetching estimated vs actual chart:', err);
         }
       });
     });
@@ -288,6 +288,7 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
+          this.billablevsNonBillableHoursLoader = false;
           // Correct extraction based on your actual structure
           const apiData = res?.data?.data || res?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
@@ -337,11 +338,10 @@ export class ProjectTimesheetSummaryComponent {
               },
             },
           };
-          this.billablevsNonBillableHoursLoader = false;
         },
         error: (err) => {
-          console.error('Error fetching billable chart:', err);
           this.billablevsNonBillableHoursLoader = false;
+          console.error('Error fetching billable chart:', err);
         }
       });
     });
@@ -367,6 +367,7 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
+          this.projectBurndownLoader = false;
           interface LineData {
             date: string;
             remainingHours: number;
@@ -451,12 +452,11 @@ export class ProjectTimesheetSummaryComponent {
             },
             maintainAspectRatio: false,
           };
-          this.projectBurndownLoader = false;
         },
         error: (err) => {
+          this.projectBurndownLoader = false;
           console.error('Error fetching burndown chart:', err);
           this.burndownData = [];
-          this.projectBurndownLoader = false;
         },
       });
     });

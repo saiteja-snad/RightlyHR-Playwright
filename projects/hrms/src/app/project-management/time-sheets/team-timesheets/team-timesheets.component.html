@@ -45,7 +45,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" optionValue="id"
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
                                 name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
                                 [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
                                 [autoDisplayFirst]="false" required>

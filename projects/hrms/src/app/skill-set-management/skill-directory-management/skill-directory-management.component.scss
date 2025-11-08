@@ -373,3 +373,20 @@
   border-image-slice: 1;
   vertical-align: middle;
 }
+
+.custom-chip-content {
+  .skill-level {
+
+    &.beginner {
+      color: #f8af13; // orange
+    }
+
+    &.intermediate {
+      color: #9a00f3; // purple
+    }
+
+    &.expert {
+      color: #00a912; // green
+    }
+  }
+}

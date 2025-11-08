@@ -145,8 +145,8 @@ export class SkillsetDashboardComponent {
     this.offcanvasService.open(content, {
       position: 'end',
       backdrop: 'static',
-      keyboard: false     
-    }); 
+      keyboard: false
+    });
     this.getViewSkillDetails(skillName);
   }
   openEnd2(content: TemplateRef<any>, card: any): void {
@@ -163,26 +163,26 @@ export class SkillsetDashboardComponent {
       });
     });
   }
-  
-onCheckemployeeProficiency(selectedValues: string[]) {
-  // If 'All Proficiencies' is selected along with others, remove it
-  if (selectedValues.includes('All Proficiencies') && selectedValues.length > 1) {
-    selectedValues = selectedValues.filter(v => v !== 'All Proficiencies');
+
+  onCheckemployeeProficiency(selectedValues: string[]) {
+    // If 'All Proficiencies' is selected along with others, remove it
+    if (selectedValues.includes('All Proficiencies') && selectedValues.length > 1) {
+      selectedValues = selectedValues.filter(v => v !== 'All Proficiencies');
+    }
+
+    // If nothing is selected, default to 'All Proficiencies'
+    if (!selectedValues || selectedValues.length === 0) {
+      selectedValues = ['All Proficiencies'];
+    }
+
+    this.selectedStatus = selectedValues;
+
+    // Call your graph/table update methods
+    this.skilllevelGraph();
+    this.skillByDepartmentGraph();
+    this.getSkillSetTableData();
+    this.topSkillsGraph();
   }
-
-  // If nothing is selected, default to 'All Proficiencies'
-  if (!selectedValues || selectedValues.length === 0) {
-    selectedValues = ['All Proficiencies'];
-  }
-
-  this.selectedStatus = selectedValues;
-
-  // Call your graph/table update methods
-  this.skilllevelGraph();
-  this.skillByDepartmentGraph();
-  this.getSkillSetTableData();
-  this.topSkillsGraph();
-}
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -350,8 +350,7 @@ onCheckemployeeProficiency(selectedValues: string[]) {
           const validDepartments = res.data.filter((d: any) => d.departmentName?.trim());
           const counts = validDepartments.map((d: any) => d.uniqueSkillCount);
           const labels = validDepartments.map((d: any) => d.departmentName);
-          const staticColors = ['#25BBFF', '#1D79E6', '#FF6E06', '#EA267A', '#0F358A', '#22D235'];
-          const colors = staticColors.slice(0, validDepartments.length);
+          const colors = validDepartments.map((d: any) => d.colorCode);
           this.totalDepartmentSkillCount = counts.reduce((a: number, b: number) => a + b, 0);
           this.skillByDepartmentData = {
             labels,
@@ -390,8 +389,7 @@ onCheckemployeeProficiency(selectedValues: string[]) {
           this.deptCounts = validDepartments.map((d: any, index: number) => ({
             label: d.departmentName,
             count: d.uniqueSkillCount,
-            color: colors[index],
-            percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
+            color: d.colorCode, percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
           }));
         } else {
           this.skillByDepartmentData = { labels: [], datasets: [] };

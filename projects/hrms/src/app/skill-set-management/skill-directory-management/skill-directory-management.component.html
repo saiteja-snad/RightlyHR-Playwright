@@ -58,7 +58,7 @@
           <div>
             <div class="summary-title mb-1">{{ card.title }}</div>
             <div class="summary-value">
-             <a class="view-link" (click)="openEnd2(contentResourceList, card)">{{ card.value }}</a>
+              <a class="view-link" (click)="openEnd2(contentResourceList, card)">{{ card.value }}</a>
             </div>
           </div>
         </div>
@@ -94,10 +94,12 @@
                 <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
                 <td>
                   <div class="d-flex flex-wrap gap-2">
-                    <p-chip *ngFor="let skill of getActiveSkills(emp) ">
+                    <p-chip *ngFor="let skill of getActiveSkills(emp)">
                       <div class="custom-chip-content">
                         <span class="skill-name me-1">{{ skill.skillName }}</span>
-                        <span class="skill-level">({{ skill.proficiencyLevel }})</span>
+                        <span class="skill-level" [ngClass]="skill.proficiencyLevel?.toLowerCase()">
+                          ({{ skill.proficiencyLevel }})
+                        </span>
                       </div>
                     </p-chip>
                     @if (getActiveSkills(emp).length === 0) {
@@ -163,7 +165,7 @@
           <ng-container *ngIf="imageUrl; else defaultIcon">
             <img [src]="imageUrl" alt="Profile Image" class="profile-image mb-2" />
           </ng-container>
-      
+
           <ng-template #defaultIcon>
             <app-profile-icon [iconWidth]="'58'" [iconHeight]="'58'"></app-profile-icon>
           </ng-template>
@@ -173,10 +175,11 @@
           <p class="name mt-2 mb-1">{{ selectedEmployee?.employee?.name }} ({{
             selectedEmployee?.employee?.snadEmployeeId}})
           </p>
-      
+
           <!-- Designation -->
-          <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }} - {{ selectedEmployee?.departmentDetails?.departmentName }}</p>
-      
+          <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }} - {{
+            selectedEmployee?.departmentDetails?.departmentName }}</p>
+
           <!-- Status -->
           <div class="status-badge">• {{ employeeStatusDisplay }}</div>
         </div>
@@ -216,7 +219,7 @@
               }
 
               <div class="popup-header-border my-3"></div>
-              
+
               <!-- Soft Skills -->
               @if (selectedEmployee?.softSkills?.length) {
               <div class="skills-group" *ngIf="selectedEmployee?.softSkills?.length">
@@ -249,7 +252,8 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="project-card mb-3">
                 <p class="project-name mb-1">{{ proj.projectName }}</p>
                 <p class="project-role mb-1">{{ proj.projectDesignation }}</p>
-                <p class="project-dates m-0">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</p>
+                <p class="project-dates m-0">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd
+                  MMM yyyy' }}</p>
               </div>
               } @else {
               <app-no-data-found />

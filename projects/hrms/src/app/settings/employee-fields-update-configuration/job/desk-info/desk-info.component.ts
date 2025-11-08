@@ -74,7 +74,7 @@ export class DeskInfoComponent {
     this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
       next: (data: any) => {
         if (data.data.length > 0) {
-          this.fieldOptions = data.data
+          this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);          
         } else {
           console.log('No data found.');
         }

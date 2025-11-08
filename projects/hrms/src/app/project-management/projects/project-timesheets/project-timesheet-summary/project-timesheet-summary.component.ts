@@ -64,6 +64,7 @@ export class ProjectTimesheetSummaryComponent {
   estimatedvsActualHoursLoader = false;
   billablevsNonBillableHoursLoader = false;
   projectBurndownLoader = false;
+  overrunValue: any;
 
   constructor(private router: Router, public formValidation: FormValidationsService, private http: HttpService, private route: ActivatedRoute) { }
 
@@ -470,8 +471,11 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(`ProjectManagementGraph/project/completion-rate/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          const percent = Number(res?.data?.completionPercent) || 0;
-          this.completionRate = percent;
+          const percent = 120;
+          // Cap gauge at 100%
+          this.completionRate = percent > 100 ? 100 : percent;
+          // Separate extra value (overrun)
+          this.overrunValue = percent > 100 ? percent - 100 : 0;
           // Create 10 colored segments for smoother gradient effect
           const dataValues = new Array(6).fill(6);
           const colors = [

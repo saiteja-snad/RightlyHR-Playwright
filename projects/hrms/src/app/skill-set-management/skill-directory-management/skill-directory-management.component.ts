@@ -493,13 +493,13 @@ export class SkillDirectoryManagementComponent {
             },
             {
               key: 'skilledEmployees',
-              title: 'Updated Resources',
+              title: 'Resources with Updated Skills',
               value: summary.skilledEmployees ?? 0,
               icons: './icons/Available Employees Count.png',
             },
             {
               key: 'unSkilledEmployees',
-              title: 'Resources Not yet Updated',
+              title: 'Resources Pending Skill Updates',
               value: summary.unSkilledEmployees ?? 0,
               icons: './icons/Not Updated.png',
             }

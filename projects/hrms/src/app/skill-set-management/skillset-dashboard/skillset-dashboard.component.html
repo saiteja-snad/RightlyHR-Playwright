@@ -240,7 +240,7 @@
             </div>
         </div>
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
-            No employees found for this skill.
+             <app-no-data-found />
         </div>
     </div>
 </ng-template>
@@ -295,7 +295,7 @@
         </div>
 
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
-            No employees found for this skill.
+             <app-no-data-found />
         </div>
     </div>
 </ng-template>

@@ -252,8 +252,7 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="project-card mb-3">
                 <p class="project-name mb-1">{{ proj.projectName }}</p>
                 <p class="project-role mb-1">{{ proj.projectDesignation }}</p>
-                <p class="project-dates m-0">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd
-                  MMM yyyy' }}</p>
+                <p class="project-dates m-0">{{ proj.startDate | date: 'MMM dd, yyyy' }} - {{ proj.endDate | date: 'MMM dd, yyyy' }}</p>
               </div>
               } @else {
               <app-no-data-found />
@@ -321,7 +320,7 @@
 
       <!-- No Data -->
       <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
-        No employees found.
+         <app-no-data-found />
       </div>
     </div>
   </div>

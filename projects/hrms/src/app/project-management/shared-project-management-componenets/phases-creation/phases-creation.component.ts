@@ -224,7 +224,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
 
     // If start date is in the past, show confirmation popup
     if (startDate < today) {
-      this.confirmationMessage = 'The start date is in the past. Do you want to change it to today?';
+      this.confirmationMessage = 'The start date is in the past. Do you want to continue?';
       this.modalService.open(this.dateconfirmatonpopup, { centered: true });
     } else {
       this.createPhase(formValue, 'yet to start'); // future date => yet to start

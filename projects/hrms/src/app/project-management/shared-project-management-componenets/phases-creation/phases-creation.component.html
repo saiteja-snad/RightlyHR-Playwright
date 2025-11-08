@@ -189,8 +189,8 @@
       <p class="confirmation-text">{{ confirmationMessage }}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" (click)="confirmPopupNo(model)" class="custom-btn btn-secondary" >{{'No'}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="confirmPopupYes(model)">{{'Yes'}}</button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary" >{{'No'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmPopupNo(model)">{{'Yes'}}</button>
     </div>
   </div>
 </ng-template>

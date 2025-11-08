@@ -237,45 +237,6 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       this.updatePhaseForm.markAllAsTouched();
       return;
     }
-    // this.loading = true
-
-    // const formValue = this.updatePhaseForm.value;
-    // // Map form values to API payload
-    // const payload = {
-    //   projectId: this.projectId,
-    //   phaseName: formValue.phaseName,
-    //   description: formValue.phaseDescription,
-    //   allocatedHours: formValue.allocatedHours,
-    //   startDate: formValue.startDate,
-    //   endDate: formValue.endDate,
-    //   effectiveDate: formValue.effectiveDate,
-    //   kickoffDate: formValue.kickoffDate,
-    //   timesheetApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
-    //   createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
-    //   status: 'active',
-    //   updatedBy: parseInt(this.empinfo.employeeId),
-    //   meta: {
-    //   graphData: {
-    //     color: formValue.updatecolor
-    //     } 
-    //   }
-    // };
-    // this.loading = true;
-    // this.http.putData(`ProjectPhases/update/${this.phaseId}`, payload).subscribe({
-    //   next: (res) => {
-    //     this.close();
-    //     this.loading = false;
-    //     this.updatePhaseForm.reset();
-    //     this.conformationPopup.openSuccessModal('Phase / Milestone created successfully');
-    //     this.getPhaseData();
-    //   },
-    //   error: (err) => {
-    //     console.error('Error creating project:', err);
-    //     this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to create project');
-    //     this.loading = false;
-    //   }
-    // });
-
     const formValue = this.updatePhaseForm.value;
     const currentPhase = this.phaseData.find(p => p.phaseId === this.phaseId);
     const currentStatus = currentPhase?.status?.toLowerCase();
@@ -288,11 +249,12 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     this.updatePhaseStatus({
       phaseId: this.phaseId,
       status: updatedStatus,
-      startDate: formValue.startDate,
-      endDate: formValue.endDate,
-      phaseName: formValue.phaseName,
-      timesheetApprovalAuthorityId: formValue.approvalidAuthority,
-      meta: { graphData: { color: formValue.updatecolor } }
+      allocatedHours: formValue?.allocatedHours,
+      startDate: formValue?.startDate,
+      endDate: formValue?.endDate,
+      phaseName: formValue?.phaseName,
+      timesheetApprovalAuthorityId: formValue?.approvalidAuthority,
+      meta: { graphData: { color: formValue?.updatecolor } }
     });
   }
 
@@ -305,6 +267,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     phaseName?: string,
     meta?: any,
     timesheetApprovalAuthorityId?: any,
+    allocatedHours?: any,
     actionType?: string;
   }, modal?: any) {
     this.loading = true;
@@ -315,6 +278,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       phaseName: options?.phaseName || this.modalData?.phase?.phaseName,
       status: options?.status,
       timesheetApprovalAuthorityId: options?.timesheetApprovalAuthorityId,
+      allocatedHours: options?.allocatedHours,
       updatedBy: parseInt(this.empinfo.employeeId)
     };
 

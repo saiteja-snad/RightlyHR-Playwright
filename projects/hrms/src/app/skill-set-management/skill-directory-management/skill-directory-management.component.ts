@@ -279,6 +279,7 @@ export class SkillDirectoryManagementComponent {
       error: (reason) => console.error('Error downloading image:', reason),
     });
   }
+  
 
   getEmployeeSkills(): void {
     const params: any = {

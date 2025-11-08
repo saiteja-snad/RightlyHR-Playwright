@@ -212,7 +212,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
+            <input type="search" class="form-control custom-search-input" placeholder="Search"
                 [(ngModel)]="searchQuery" (input)="searchSubject.next(selectedSkillName)" />
         </div>
 
@@ -228,7 +228,7 @@
             <div class="profile-info w-100">
                 <div class="name">{{ emp.employeeName }}</div>
                 <div class="d-flex justify-content-between flex-wrap w-100">
-                    <div class="designation">{{ emp.jobRole || ' ' }}
+                    <div class="designation">{{ emp.jobRole || ' ' }} -  {{ emp.departmentName }}
                         <!-- <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span> -->
                     </div>
                     <!-- <div [ngClass]="getStatusClass(emp.projectStatus)">{{ emp.projectStatus || '-' }}</div> -->
@@ -267,7 +267,7 @@
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
+            <input type="search" class="form-control custom-search-input" placeholder="Search"
                 [(ngModel)]="searchQuery" (input)="onSearch()" />
         </div>
 

@@ -283,7 +283,7 @@ export class TimesheetsSummaryViewComponent {
         }
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
-          entries: item.entries ?? []
+          entries: Array.isArray(item.entries) ? item.entries : (item.entries ? [item.entries] : [])
         }));
       },
       error: (err) => {

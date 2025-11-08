@@ -5,7 +5,7 @@ export interface TimesheetSummaryResponse {
   resource: Resource;
   startDate: string;   // ISO string
   endDate: string;     // ISO string
-  dailyData: DailyData[];
+  dailyData: DailyData[] ;
   monthlySummary: MonthlySummary;
   utilizationSummary: UtilizationSummary;
   resourceName?: string;
@@ -35,6 +35,15 @@ export interface DailyData {
   entries: TimesheetEntry[]; // one or more entries
   dailySummary: DailySummary;
   monthlySummary: MonthlySummary;
+  resourceName?: string;
+}
+
+export interface DailyDataV2 {
+  fusionEmployeeId?: any;
+  date: string;              // "2025-10-06"
+  entries?: TimesheetEntry; // single entry
+  dailySummary: DailySummary;
+  monthlySummary?: MonthlySummary;
   resourceName?: string;
 }
 

@@ -7,7 +7,7 @@ import { Subject } from 'rxjs/internal/Subject';
 import { TimesheetEntry } from '../../../Interfaces/timoff-model';
 import { IResourceDetail } from '../../../timesheetmodel';
 import { BehaviorSubject, Subscription, takeUntil } from 'rxjs';
-import { DailyData, MonthlySummaryItem, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
+import {  DailyDataV2, MonthlySummaryItem, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 import dayjs from 'dayjs';
 import { ChartModule } from 'primeng/chart';
@@ -40,7 +40,7 @@ export class ResourceViewSummaryComponent {
   subscription!: Subscription;
   ranges: any;
   totalhrs: any;
-  attendanceSummaryData: DailyData[] = [];
+  attendanceSummaryData: DailyDataV2[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedEntries: TimesheetEntry[] = [];
   timesheetSummaryChartData: any;
@@ -176,11 +176,8 @@ export class ResourceViewSummaryComponent {
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
-        const data: TimesheetSummaryResponse = res?.data;
-        this.attendanceSummaryData = (data?.dailyData ?? []).map(item => ({
-          ...item,
-          entries: item.entries ?? []
-        }));
+        const data: any = res?.data;
+        this.attendanceSummaryData = (data?.dailyData ?? []) as DailyDataV2[];
         this.collectionSize = res.data.pagination.totalCount;
         // this.totalhrs = data?.totalLoggedHHMM;
         const tsSummary = res?.data?.statusSummary;

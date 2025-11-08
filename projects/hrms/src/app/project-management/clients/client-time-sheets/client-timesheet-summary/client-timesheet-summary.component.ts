@@ -646,6 +646,7 @@ export class ClientTimesheetSummaryComponent {
         }
       });
     });
+    this.BillablevsNonBillableHoursLoader = false;
   }
 
   // Project Burndown Chart (Line)

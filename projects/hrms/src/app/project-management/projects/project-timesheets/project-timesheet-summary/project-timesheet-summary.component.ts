@@ -147,6 +147,7 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
+          this.roleWiseHoursLoader = false;
           const apiData = res?.data?.data || [];
           this.roleWiseData = res?.data?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
@@ -173,7 +174,6 @@ export class ProjectTimesheetSummaryComponent {
             cutout: '60%',
             plugins: { legend: { display: false } },
           };
-          this.roleWiseHoursLoader = false;
         },
         error: (err) => {
           console.error('Error fetching Role-wise hours:', err);

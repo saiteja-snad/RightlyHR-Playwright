@@ -248,6 +248,9 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     } else if (currentStatus === 'extended') {
       updatedStatus = 'extended';
       actionType = 'update';
+    } else if (currentStatus === 'in progress') {
+      updatedStatus = 'in progress';
+      actionType = 'update'; // Added this so it’s treated as an update
     }
 
     this.updatePhaseStatus({
@@ -302,16 +305,21 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
         this.extendForm?.reset();
 
         const statusMsgMap: Record<string, string> = {
-        'in progress': options.actionType === 'resume'
-          ? 'Phase resumed successfully'
-          : 'Phase started successfully',
-        'hold': 'Phase is kept on hold',
-        'extended': options.actionType === 'update'
-          ? 'Phase updated successfully'
-          : 'Phase extended successfully',
-        'completed': 'Phase completed successfully',
-        'closed': 'Phase closed successfully'
-      };
+          'in progress':
+            options.actionType === 'update'
+              ? 'Phase updated successfully'
+              : options.actionType === 'resume'
+                ? 'Phase resumed successfully'
+                : 'Phase started successfully',
+          'hold': 'Phase is kept on hold',
+          'extended':
+            options.actionType === 'update'
+              ? 'Phase updated successfully'
+              : 'Phase extended successfully',
+          'completed': 'Phase completed successfully',
+          'closed': 'Phase closed successfully'
+        };
+
 
         // Normalize status (to lower case, remove spaces if any)
         const normalizedStatus = options.status?.toLowerCase().trim();

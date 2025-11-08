@@ -190,7 +190,7 @@ export class TimesheetsSummaryViewComponent {
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
       next: (res: any) => {
         if (res?.success) {
-          this.resourcesList = res.data.filter((emp: IResourceDetail) => emp.id !== EmployeeId).map((emp: IResourceDetail) => ({
+          this.resourcesList = res.data.filter((emp: IResourceDetail) => emp.id !== EmployeeId && emp.isReportee === true).map((emp: IResourceDetail) => ({
             ...emp,
             fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
             key: 'team'
@@ -308,7 +308,6 @@ export class TimesheetsSummaryViewComponent {
 
   // Project Type (Pie)
   projectTypeChart() {
-    this.projectwisehour =true;
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
     // Extract labels
     const labels = this.projectTypeData.map((item: any) => item.projectName);
@@ -347,12 +346,10 @@ export class TimesheetsSummaryViewComponent {
         legend: {display: false },
       },
     };
-    this.projectwisehour = false;
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-      this.allocatedVsActualLoader = true;
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
@@ -413,7 +410,6 @@ export class TimesheetsSummaryViewComponent {
         }
       }
     };
-    this.allocatedVsActualLoader = false;
   }
 
   navigatetoteam() {

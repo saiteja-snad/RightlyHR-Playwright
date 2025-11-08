@@ -56,7 +56,7 @@
                                 <p class="mb-0">{{ data.reason }}</p>
                             </ng-template>
                         </td>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                            @if((rbac.allowedToAccess('Resources Tab.update'))
                             && inactiveStatus !== 'inactive'){
                             <td class="text-center" *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
                                 <div class="dropdown">

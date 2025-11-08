@@ -242,8 +242,15 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     const currentStatus = currentPhase?.status?.toLowerCase();
 
     let updatedStatus = 'in progress';
+    let actionType = '';
     if (currentStatus === 'yet to start') {
       updatedStatus = 'yet to start';
+    } else if (currentStatus === 'extended') {
+      updatedStatus = 'extended';
+      actionType = 'update';
+    } else if (currentStatus === 'in progress') {
+      updatedStatus = 'in progress';
+      actionType = 'update'; // Added this so it’s treated as an update
     }
 
     this.updatePhaseStatus({
@@ -254,7 +261,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       endDate: formValue?.endDate,
       phaseName: formValue?.phaseName,
       timesheetApprovalAuthorityId: formValue?.approvalidAuthority,
-      meta: { graphData: { color: formValue?.updatecolor } }
+      meta: { graphData: { color: formValue?.updatecolor } },
+      actionType
     });
   }
 
@@ -297,14 +305,21 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
         this.extendForm?.reset();
 
         const statusMsgMap: Record<string, string> = {
-        'in progress': options.actionType === 'resume'
-          ? 'Phase resumed successfully'
-          : 'Phase started successfully',
-        'hold': 'Phase is kept on hold',
-        'extended': 'Phase extended successfully',
-        'completed': 'Phase completed successfully',
-        'closed': 'Phase closed successfully'
-      };
+          'in progress':
+            options.actionType === 'update'
+              ? 'Phase updated successfully'
+              : options.actionType === 'resume'
+                ? 'Phase resumed successfully'
+                : 'Phase started successfully',
+          'hold': 'Phase is kept on hold',
+          'extended':
+            options.actionType === 'update'
+              ? 'Phase updated successfully'
+              : 'Phase extended successfully',
+          'completed': 'Phase completed successfully',
+          'closed': 'Phase closed successfully'
+        };
+
 
         // Normalize status (to lower case, remove spaces if any)
         const normalizedStatus = options.status?.toLowerCase().trim();

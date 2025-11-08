@@ -124,7 +124,7 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
       '/project-management/clients/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
       '/project-management/clients/details/timesheet/phases': MODULE_INFOS.Resource_Summary,
-      '/project-management/projects/details/phases': MODULE_INFOS.Resource_Summary,
+      '/project-management/projects/details/phases': MODULE_INFOS.PROJECT_PHASE_MODULE_INFO,
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }

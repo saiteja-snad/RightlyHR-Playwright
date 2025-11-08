@@ -66,7 +66,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.disable();
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
       console.log(data)
-      this.empyployeedata.dob = null
+      // this.empyployeedata.dob = null
       this.changeingdob = data
     });
 
@@ -239,7 +239,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           isFieldRequired: field.isRequired,
         };
       })
-      .filter((field: any) => field.oldValue !== field.newValue);
+      .filter((field: any) => (field.oldValue.trim() !== field.newValue.trim()) && (field.oldValue !== null || field.oldValue !== undefined) !== field.newValue);
 
     return {
       employeeId: this.empinfo.employeeId,
@@ -259,7 +259,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       'MiddleName': this.empyployeedata.middleName,
       'LastName': this.empyployeedata.lastName,
       'Gender': this.empyployeedata.gender,
-      'DOB': this.empyployeedata.dob,
+      'DOB': this.dateofbirth,
       'BloodGroup': this.empyployeedata.bloodGroup,
       'MaritalStatus': this.empyployeedata.maritalStatus,
       'marriedDate': this.empyployeedata.marriedDate

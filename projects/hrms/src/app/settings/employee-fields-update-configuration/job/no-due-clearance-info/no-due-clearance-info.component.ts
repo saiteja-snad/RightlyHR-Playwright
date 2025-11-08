@@ -24,19 +24,13 @@ import { IRoles } from '../../../roles-permissions/permissions/permission.model'
 })
 export class NoDueClearanceInfoComponent {
   subscription!: Subscription;
-  gradedetails = [] as any;
   loader = false;
-  JobroleDetails = [] as any;
   isEditMode = false;
-  selectedId: number | null = null;
   selectedFieldConfig: any = null;
   selectedDeleteConfigItem: any = null;
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
-  AddForm!: FormGroup;
-  updateForm!: FormGroup;
   fieldConfigForm!: FormGroup;
-
   // Static data for the popup fields
   fieldOptions = [] as any;
   noDueClearanceFieldsConfigList = [] as any;
@@ -59,16 +53,6 @@ export class NoDueClearanceInfoComponent {
 
   }
   ngOnInit(): void {
-    this.AddForm = this.fb.group({
-      Addjobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
-      gradeId: ['', Validators.required],
-    });
-
-    this.updateForm = this.fb.group({
-      Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
-      updategradeId: ['', Validators.required],
-    });
-
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
       approvalRequired: [false],

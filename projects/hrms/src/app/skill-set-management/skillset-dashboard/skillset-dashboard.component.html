@@ -19,8 +19,6 @@
                     (onChange)="onCheckemployeeProficiency($event.value)">
                 </p-multiselect>
             </div>
-
-
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Select Skills"
@@ -29,7 +27,6 @@
                     class="form-select custom-select" (onChange)="onSkillSelectionChange()">
                 </p-multiselect>
             </div>
-
         </div>
     </div>
 
@@ -48,8 +45,8 @@
                     <div>
                         <div class="summary-title mb-1">{{ card.title }}</div>
                         <div class="summary-value">
-                            <u class="view-link"><a (click)="openEnd2(contentResourceList, card)">{{ card.value
-                                    }}</a></u>
+                            <u class="view-link"><a (click)="openEnd2(contentResourceList, card)">{{
+                                    card.value}}</a></u>
                         </div>
                     </div>
                 </div>
@@ -115,7 +112,7 @@
                             <table class="w-100">
                                 <thead>
                                     <tr>
-                                        <th>Skill Name</th>
+                                        <th>Skill</th>
                                         <th>Resources Count</th>
                                         <th>Proficiency</th>
                                     </tr>
@@ -219,7 +216,7 @@
 <ng-template #contentResourceList let-offcanvas>
     <div class="custom-offcanvas-header p-2">
         <div class="custom-offcanvas-title text-capitalize">
-             <b>{{ selectedSkillName }}</b>
+            <b>{{ selectedSkillName }}</b>
             <span *ngIf="employeeList?.length" class="ms-2">({{ employeeList.length }})</span>
         </div>
         <div>

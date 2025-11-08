@@ -29,13 +29,10 @@ export const MY_INFO_JOB_ROUTES = [
   { permission: 'My Info Contract Details.view', route: '/myinfo/job/contactor-info' },
 ];
 
-
 export const MY_INFO_DOCUMENTS_ROUTES = [
   { permission: 'My Info Documents Tab.view', route: '/myinfo/documents' },
   { permission: 'My Info Documents Tab.create', route: '/myinfo/documents' }
-
 ];
-
 
 export const MY_INFO_TEAM_MEMBERS = [
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' }
@@ -44,7 +41,6 @@ export const MY_INFO_TEAM_MEMBERS = [
 export const MY_INFO_ONBOARD_REQUEST = [
   { permission: 'My Info Onboard Request Tab.view', route: '/myinfo/onboarding-request' }
 ];
-
 
 export const SETTINGS_EMPLOYEE_FIELDS_TABS = [
   { route: '/settings/employee-fields/personal', permission: 'Personal Tab.view' },
@@ -59,7 +55,6 @@ export const SETTINGS_EMPLOYEE_FIELDS_TABS = [
   { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' },
   { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' },
   { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
-
 ]
 
 type SettingsRolesTab = {
@@ -68,13 +63,10 @@ type SettingsRolesTab = {
 };
 
 export const SETTINGS_ROLES_TABS: SettingsRolesTab[] = [
-
   { route: '/settings/roles-permissions/roles' },
   { route: '/settings/roles-permissions/permissions' },
   { route: '/settings/roles-permissions/role-assignee' },
-
 ]
-
 
 export const SETTINGS_TIMEOFF_TABS = [
   { route: '/settings/timeoff-configurations/leave-categoery', permission: 'Leave Category Tab.view' },
@@ -84,15 +76,14 @@ export const SETTINGS_TIMEOFF_TABS = [
   { route: '/settings/timeoff-configurations/load-entitlements', permission: 'Load Entitlements Tab.view' }
 ];
 
-
 export const SETTINGS_ASSEST_CONFIGURATION_TABS = [
   { route: '/settings/assets-configuration/vendor-detiles', permission: 'Vendor Details.view' },
   { route: '/settings/assets-configuration/asset-catagory', permission: 'Asset Catagory.view' },
   { route: '/settings/assets-configuration/asset-subcatagory', permission: 'Asset Sub Catagory.view' }
 ];
+
 // Attendance Locking
 export const SETTINGS_AttendanceLock_TABS = [
-
   { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
   { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
 ];
@@ -127,12 +118,10 @@ export const FLEXIBLE_WFH_ALLOCATION_TABS = [
 ]
 
 export const TIME_OFF_SUB_TABS = [
-
   { route: '/time-off/leaves/waiting-for-approval', permission: 'Waiting For Approval (Time Off).view' },
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },
   { route: '/time-off/leaves/processed', permission: 'Processed (Time Off).view' },
   { route: '/time-off/leaves/rejected', permission: 'Rejected (Time Off).view', },
-
 ]
 
 export const REMOTE_LOGIN_SUB_TABS = [
@@ -184,7 +173,6 @@ export const STANDARD_REPORTS_TABS = [
   { route: '/reports/standard-reports/family-data', permission: 'Family Members Data.view' },
 ]
 
-
 export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/leave-report', permission: 'Leave Report.view' },
   { route: '/reports/attendence-reports/leave-summary-report', permission: 'Leave Summary Report.view' },
@@ -220,7 +208,6 @@ export const ASSEST_ALLOCATION_TABS = [
   { route: '/assets-management/inactive-assets', permission: 'Asset Management - Inactive.view' },
 ];
 
-
 export const DESK_ALLOCATION_TABS = [
   // {  route: '/desk/management/all-desks', permission:  'Desk Allocation - All.view' } ,
   { route: '/desk/management/available-desks', permission: 'Desk Allocation - Available.view' },
@@ -237,7 +224,6 @@ export const EXPENSE_TABS = [
   { route: '/claimsandexpenses/expenses/processed', permission: 'Processed Tab.view' },
   { route: '/claimsandexpenses/expenses/rejected', permission: 'Rejected Tab.view' }
 ]
-
 
 export const IT_SUPPORT_TEAM_TICKETS_TABS = [
   { route: '/it-support/team-tickets/all-tickets', permission: 'All Tickets Tab.view' },
@@ -347,8 +333,6 @@ export const SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS = [
   { route: '/settings/timeoff-configurations/leave-categoery/pendingleavecategory', permission: 'Leave Category Pending Tab.view' },
   { route: '/settings/timeoff-configurations/leave-categoery/publishedleavecategory', permission: 'Leave Category Published Tab.view' }
 ]
-
-
 
 export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/comp-off', permission: 'Comp Off Entitlement Tab.view' },
@@ -486,9 +470,11 @@ export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' },
   { permission: 'Employee My Skills.view', route: '/personalinfo/personal/my-skills' },
 ];
+
 export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
 ];
+
 export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Pre-Onboarding Details.view', route: '/personalinfo/job/pre-onboarding-details' },
   { permission: 'Employee Info Onboarding Details.view', route: '/personalinfo/job/onboarding-details' },
@@ -625,8 +611,6 @@ export const ON_BEHALF_OF = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin', permission: 'On Behalf Of RemoteLogin.view' },
 ]
 
-
-
 export const ON_BEHALF_OF_TABS = [
   { route: '/on-behalf-of/on-behalf-of/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of).view' },
   { route: '/on-behalf-of/on-behalf-of/approved', permission: 'Approved (On Behalf Of).view' },
@@ -641,6 +625,7 @@ export const ON_BEHALF_OF_WFH_TABS = [
   { route: '/on-behalf-of/on-behalf-of-wfh/rejected', permission: 'Rejected (On Behalf Of WFH).view', },
   { route: '/on-behalf-of/on-behalf-of-wfh/cancelled', permission: 'Cancelled (On Behalf Of WFH).view', },
 ]
+
 export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of RemoteLogin).view' },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/approved', permission: 'Approved (On Behalf Of RemoteLogin).view' },
@@ -648,6 +633,12 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/rejected', permission: 'Rejected (On Behalf Of RemoteLogin).view', },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
 ]
+
+export const SKILL_MANAGEMENT_TABS = [
+  { route: '/skill-management/dashboard', permission: 'Skills Dashboard.view' },
+  { route: '/skill-management/directory', permission: 'Skills Directory.view' },
+]
+
 export const CARDS_SUB_TABS = [
   { route: '/card-management/details', permission: 'Cards Available.view' },
   { route: '/card-management/expiry', permission: 'Cards Expired.view' },

@@ -1,7 +1,10 @@
+
 <div class="custom-main-component-container">
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">My Skills</span></div>
-        @if(canAccess('create','myskills')){
+        <p class="component-sub-header m-0">My Skills</p>
+
+        @if (canAccess('create', 'myskills')) {
         <div class="custom-add-btn" (click)="openModal(addnewskill)">
             <i class="bi bi-plus plus-icon me-1"></i>Add New Skill
         </div>
@@ -11,33 +14,123 @@
     <div class="skill-container">
         @if (!spinnerLoaderforallrecoders) {
         @if (technicalSkills.length || softSkills.length) {
-        <div class="card custom-background-card p-4 mb-3" *ngIf="technicalSkills.length">
-            <div class="custom-label chip">
-                <label class="custom-label mb-3">Technical Skills</label>
-                <div class="d-flex flex-wrap gap-2">
-                    <div *ngFor="let skill of technicalSkills" class="custom-chip-card">
-                        <div class="me-2">{{ skill.skillName }} <span class="skill-proficiency">({{
-                                skill.proficiencyLevel }})</span></div>
-                        @if(canAccess('delete','myskills')){
-                        <div><img class="custom-delete-img" src="/icons/cross-chip.png"
-                                (click)="openDeletePopup(deletepopup, skill, $event)"></div>
-                        }
+        <!-- ===== TECHNICAL SKILLS ===== -->
+        <div class="skills-group" *ngIf="technicalSkills.length">
+            <div class="skill-section-title mb-3">Technical Skills</div>
+            <!-- Expert -->
+            <div *ngIf="getSkillsByLevel('Expert', technicalSkills).length" class="mb-4">
+                <label class="custom-label chip expert mb-2">Expert</label>
+                <div class="skill-set-display-card">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div *ngFor="let skill of getSkillsByLevel('Expert', technicalSkills)" class="custom-chip-card">
+                            <div class="me-2">{{ skill.skillName }}</div>
+                            @if (canAccess('delete', 'myskills')) {
+                            <div>
+                                <img class="custom-delete-img" src="/icons/cross-chip.png"
+                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intermediate -->
+            <div *ngIf="getSkillsByLevel('Intermediate', technicalSkills).length" class="mb-4">
+                <label class="custom-label chip intermediate mb-2">Intermediate</label>
+                <div class="skill-set-display-card">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div *ngFor="let skill of getSkillsByLevel('Intermediate', technicalSkills)"
+                            class="custom-chip-card">
+                            <div class="me-2">{{ skill.skillName }}</div>
+                            @if (canAccess('delete', 'myskills')) {
+                            <div>
+                                <img class="custom-delete-img" src="/icons/cross-chip.png"
+                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beginner -->
+            <div *ngIf="getSkillsByLevel('Beginner', technicalSkills).length" class="mb-4">
+                <label class="custom-label chip beginner mb-2">Beginner</label>
+                <div class="skill-set-display-card">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div *ngFor="let skill of getSkillsByLevel('Beginner', technicalSkills)"
+                            class="custom-chip-card">
+                            <div class="me-2">{{ skill.skillName }}</div>
+                            @if (canAccess('delete', 'myskills')) {
+                            <div>
+                                <img class="custom-delete-img" src="/icons/cross-chip.png"
+                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                            </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Soft Skills -->
-        <div class="card custom-background-card p-4" *ngIf="softSkills.length">
-            <div class="custom-label chip">
-                <label class="custom-label mb-3">Soft Skills</label>
-                <div class="d-flex flex-wrap gap-2">
-                    <div *ngFor="let skill of softSkills" class="custom-chip-card">
-                        <div>{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span>
+
+        <div class="dashed-border my-3"></div>
+
+        <!-- ===== SOFT SKILLS ===== -->
+        <div class="skills-group mt-2" *ngIf="softSkills.length">
+            <div class="skill-section-title mb-3">Soft Skills</div>
+
+            <!-- Expert -->
+            <div *ngIf="getSkillsByLevel('Expert', softSkills).length" class="mb-4">
+                <label class="custom-label chip expert mb-2">Expert</label>
+                <div class="skill-set-display-card">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div *ngFor="let skill of getSkillsByLevel('Expert', softSkills)" class="custom-chip-card">
+                            <div class="me-2">{{ skill.skillName }}</div>
+                            @if (canAccess('delete', 'myskills')) {
+                            <div>
+                                <img class="custom-delete-img" src="/icons/cross-chip.png"
+                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                            </div>
+                            }
                         </div>
-                        @if(canAccess('delete','myskills')){
-                        <div><img class="custom-delete-img" src="/icons/cross-chip.png"
-                                (click)="openDeletePopup(deletepopup, skill, $event)"></div>
-                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intermediate -->
+            <div *ngIf="getSkillsByLevel('Intermediate', softSkills).length" class="mb-4">
+                <label class="custom-label chip intermediate mb-2">Intermediate</label>
+                <div class="skill-set-display-card">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div *ngFor="let skill of getSkillsByLevel('Intermediate', softSkills)"
+                            class="custom-chip-card">
+                            <div class="me-2">{{ skill.skillName }}</div>
+                            @if (canAccess('delete', 'myskills')) {
+                            <div>
+                                <img class="custom-delete-img" src="/icons/cross-chip.png"
+                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beginner -->
+            <div *ngIf="getSkillsByLevel('Beginner', softSkills).length" class="mb-4">
+                <label class="custom-label chip beginner mb-2">Beginner</label>
+                <div class="skill-set-display-card">
+                    <div class="d-flex flex-wrap gap-2">
+                        <div *ngFor="let skill of getSkillsByLevel('Beginner', softSkills)" class="custom-chip-card">
+                            <div class="me-2">{{ skill.skillName }}</div>
+                            @if (canAccess('delete', 'myskills')) {
+                            <div>
+                                <img class="custom-delete-img" src="/icons/cross-chip.png"
+                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                            </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,12 +160,10 @@
                     <label for="skillcategory" class="form-label custom-label mb-2">{{'Skill Category'}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select class="custom-select w-100" [options]="categoryList" optionLabel="value"
-                            optionValue="value" [filter]="true" [showClear]="false" formControlName="skillcategory"
-                            placeholder="{{'Please select skill category'}}">
-                        </p-select>
-                        <div *ngIf="AddForm.get('skillcategory')?.touched && AddForm.get('skillcategory')?.invalid"
-                            class="error-msg">
+                        <p-select class="custom-select w-100" [options]="categoryList" optionLabel="value" optionValue="value"
+                            [filter]="true" [showClear]="false" formControlName="skillcategory"
+                            placeholder="{{'Please select skill category'}}"></p-select>
+                        <div *ngIf="AddForm.get('skillcategory')?.touched && AddForm.get('skillcategory')?.invalid" class="error-msg">
                             <div *ngIf="AddForm.get('skillcategory')?.errors?.['required']">{{'Skill category is required'}}</div>
                         </div>
                     </div>
@@ -88,52 +179,43 @@
                                 class="badge bg-primary custom-badge d-flex align-items-center gap-2">
                                 <div>{{ skill }}</div>
                                 <div>
-                                    <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                        (click)="removeSkill(skill)">
+                                    <img class="custom-delete-img" src="/icons/cross-chip.png" (click)="removeSkill(skill)">
                                 </div>
                             </div>
                         </div>
                         <!-- Input field for new skills -->
-                        <input #skillInput type="text" class="border-0 flex-grow-1 inside-input" maxlength="41" (keydown)="formValidation.restrictInitialSpace($event)" 
+                        <input #skillInput type="text" class="border-0 flex-grow-1 inside-input" maxlength="41"
+                            (keydown)="formValidation.restrictInitialSpace($event)"
                             [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Please enter one or multiple skills'"
                             (blur)="onSkillBlur()" (keydown.enter)="addSkill($event)" />
                     </div>
                     <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">
-                            At least one skill is required.
-                        </div>
-                        <div *ngIf="AddForm.get('skills')?.errors?.['maxCharacters']">
-                            Invalid Skill
-                        </div>
-                    </div>
-                    </div>
-
-
-                    <!-- Proficiency Level Field -->
-                    <div class="mb-3">
-                        <label for="proficiencylevel" class="form-label custom-label mb-2">{{'Proficiency Level'}}
-                            <span class="error-msg">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select class="custom-select w-100" [options]="proficiencyoptions" optionLabel="label"
-                                optionValue="value" [filter]="true" [showClear]="false"
-                                formControlName="proficiencylevel" placeholder="{{'Please select proficiency level'}}">
-                            </p-select>
-                            <div *ngIf="AddForm.get('proficiencylevel')?.touched && AddForm.get('proficiencylevel')?.invalid"
-                                class="error-msg">
-                                <div *ngIf="AddForm.get('proficiencylevel')?.errors?.['required']">{{'Proficiency Level is required'}}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="custom-modal-footer">
-                        <button type="button" class="custom-btn btn-secondary"
-                            (click)="closepopup(confirmationCancel)">Cancel</button>
-                        <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)"
-                            [disabled]="AddForm.invalid">{{ 'Add' }}</button>
+                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">At least one skill is required.</div>
+                        <div *ngIf="AddForm.get('skills')?.errors?.['maxCharacters']">Invalid Skill</div>
                     </div>
                 </div>
+
+                <!-- Proficiency Level Field -->
+                <div class="mb-3">
+                    <label for="proficiencylevel" class="form-label custom-label mb-2">{{'Proficiency Level'}}
+                        <span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select class="custom-select w-100" [options]="proficiencyoptions" optionLabel="label" optionValue="value"
+                            [filter]="true" [showClear]="false" formControlName="proficiencylevel"
+                            placeholder="{{'Please select proficiency level'}}"></p-select>
+                        <div *ngIf="AddForm.get('proficiencylevel')?.touched && AddForm.get('proficiencylevel')?.invalid" class="error-msg">
+                            <div *ngIf="AddForm.get('proficiencylevel')?.errors?.['required']">{{'Proficiency Level is required'}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationCancel)">Cancel</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">{{ 'Add' }}</button>
+                </div>
             </div>
+        </div>
     </form>
 </ng-template>
 

@@ -282,4 +282,7 @@ export class MySkillsComponent {
       skillsControl.updateValueAndValidity(); // recheck validation
     }
   }
+    getSkillsByLevel(level: string, skills: any[]) {
+    return skills.filter(skill => skill.proficiencyLevel === level);
+  }
 }

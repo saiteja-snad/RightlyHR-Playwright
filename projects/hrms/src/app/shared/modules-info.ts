@@ -192,7 +192,7 @@ export const MODULE_INFOS = {
     PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO: "The Family Members section enables employees to add and manage information about their family members, including Name, Relationship, Date of Birth, and Dependent status. Users can add new entries and perform actions such as edit or delete existing records.",
     PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO: "The Bank Info section allows employees to add and manage their bank accounts by providing Bank Name, Account Holder's Name, Account Number, IFSC Code, and uploading proof documents. Users can designate a primary bank account and perform actions like edit or delete records.",
     PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO: "The Visa Details section enables employees to add and manage visa information including Visa Type, Issue Date, Expiry Date, Issued Country, and Status. Users can add new visa records and perform actions such as edit or delete existing entries.",
-    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skills section allows employees to add their technical and soft skills, showcasing their areas of expertise. This helps the organization easily identify and map employee competencies for project or role allocation.",
 
 
     //My info Job Module info 
@@ -254,4 +254,6 @@ export const MODULE_INFOS = {
     Resource_Summary:"The Resource Summary widget displays the list of resources assigned to the project along with their roles, total hours utilized, and utilization percentage. It helps track team effort and workload distribution within the project. " ,
     PROJECT_PHASE_MODULE_INFO: "The Phases / Milestones module allows users to create and manage different project phases or milestones with key details such as start date, end date, allocated hours, and status. It provides a structured view to track project progress, update statuses, and ensure effective phase-level planning and monitoring.",
 
+    SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Dashboard provides a comprehensive overview of employee skills and proficiency levels across the organization. It displays key insights such as total employee count, committed and available employees, skill proficiency distribution, top skills, and department-wise skill breakdown. The dashboard helps management identify skill strengths, resource availability, and training needs efficiently.",
+    SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
 }

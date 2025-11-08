@@ -11,12 +11,12 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { IJob } from '../../../Interfaces/letters-model';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-import {Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
@@ -42,12 +42,19 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   buttons = false
   dateofbirth: any
   changeingdob: any;
-  currentdata=new Date()
+  currentdata = new Date()
   loading: boolean = false;
-  constructor(private modalService: NgbModal, private fb: FormBuilder,
+  fieldOptions = [] as any;
+
+  constructor(private modalService: NgbModal,
+    private fb: FormBuilder,
     public formValidation: FormValidationService,
-   
-    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public permission: AccessForEmployeeinfoService, private router: Router,) { }
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    public rbac: RbacService,
+    public permission: AccessForEmployeeinfoService,
+    private router: Router,
+  ) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -55,6 +62,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getGender();
     this.getMaritaldetails();
     this.getTitle();
+    this.getBasicInfoFields();
     this.basicInfoForm.disable();
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
       console.log(data)
@@ -62,6 +70,23 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.changeingdob = data
     });
 
+  }
+
+  getBasicInfoFields() {
+    const params = 'Personal';
+    const param = 'Basic Info';
+    this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.fieldOptions = data.data
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
   }
 
   canAccessfield(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -81,9 +106,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-      employeeId: [ {value:null,disable:true}, Validators.required],
-      fusionEmpId:[null],
-      salutation: [   null, Validators.required],
+      employeeId: [{ value: null, disable: true }, Validators.required],
+      fusionEmpId: [null],
+      salutation: [null, Validators.required],
       firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
@@ -93,7 +118,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       maritalStatus: [null, Validators.required],
       marriageDate: [null],
     });
- 
+
   }
 
   validateAge(control: AbstractControl): { [key: string]: boolean } | null {
@@ -120,7 +145,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     console.log("CALL")
     const gender = this.basicInfoForm.get('gender')?.value
     console.log(gender);
-    
+
     const title = this.basicInfoForm.get('salutation')?.value?.titlename;
     console.log(title)
 
@@ -199,47 +224,88 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     });
   }
 
+  constructModulesPayload(formValue: any): any {
+    const fields = this.fieldOptions
+      .map((field: any) => {
+        const oldValue = this.getOldValue(field.actualFieldName);
+        const newValue = this.getNewValue(field.actualFieldName, formValue);
+        return {
+          fieldName: field.fieldName,
+          displayName: field.tabName,
+          actualFieldName: field.actualFieldName,
+          oldValue: oldValue,
+          newValue: newValue,
+          referenceCategory: "",
+          isFieldRequired: field.isRequired,
+        };
+      })
+      .filter((field: any) => field.oldValue !== field.newValue);
+
+    return {
+      employeeId: this.empinfo.employeeId,
+      createdBy: this.empinfo.employeeId,
+      modules: [{
+        displayName: "Personal",
+        moduleName: "Basic Info",
+        fields: fields
+      }]
+    };
+  }
+
+  private getOldValue(actualFieldName: string): string {
+    const mapping: any = {
+      'Title': this.empyployeedata.title,
+      'FirstName': this.empyployeedata.firstName,
+      'MiddleName': this.empyployeedata.middleName,
+      'LastName': this.empyployeedata.lastName,
+      'Gender': this.empyployeedata.gender,
+      'DOB': this.empyployeedata.dob,
+      'BloodGroup': this.empyployeedata.bloodGroup,
+      'MaritalStatus': this.empyployeedata.maritalStatus,
+      'marriedDate': this.empyployeedata.marriedDate
+    };
+    return mapping[actualFieldName] || '';
+  }
+
+  private getNewValue(actualFieldName: string, formValue: any): string {
+    const mapping: any = {
+      'Title': formValue.salutation?.titlename,
+      'FirstName': formValue.firstName,
+      'MiddleName': formValue.middleName,
+      'LastName': formValue.lastName,
+      'Gender': formValue.gender,
+      'DOB': formValue.dob,
+      'BloodGroup': formValue.bloodGroup?.name,
+      'MaritalStatus': formValue.maritalStatus?.maritalstatus1,
+      'marriedDate': formValue.marriageDate
+    };
+    return mapping[actualFieldName] || '';
+  }
+
   updateBasicInfo(): void {
     const formValue = this.basicInfoForm.value;
-    console.log(formValue);
-    const updatePayload = {
-      ...this.empyployeedata,
-      employeeId: this.empinfo.employeeId,
-      fusionEmpId: formValue.fusionEmpId || this.empyployeedata.fusionEmpId,
-      title: formValue.salutation.titlename,
-      firstName: formValue.firstName,
-      middleName: formValue.middleName,
-      lastName: formValue.lastName,
-      gender: formValue.gender,
-      dob: formValue.dob,
-      bloodGroup: formValue.bloodGroup?.name,
-      maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      marriedDate: formValue.marriageDate,
-    };
+    const modulesPayload = this.constructModulesPayload(formValue);
+    this.subscription = this.http.putData(`EmployeeInfoFieldUpdate/updateEmployeeInfo`, modulesPayload).subscribe({
+      next: (data: any) => {
+        if (data.statusCode === 200) {
+          // Success case
+          this.conformationPopup.openSuccessModal('Basic information updated successfully');
+          this.getEmployeeId();
+          this.http.setBasicDetails();
+          this.basicInfoForm.disable();
+          console.log('Data updated successfully:', data);
+          this.buttons = !this.buttons;
+        } else if (data.statusCode === 409) {
 
-    this.subscription = this.http
-      .postdata(`Employeedata/UPDATER`, updatePayload)
-      .subscribe({
-        next: (data: any) => {
-          if (data.statusCode === 200) {
-            // Success case
-            this.conformationPopup.openSuccessModal('Basic information updated successfully');
-            this.getEmployeeId();
-            this.http.setBasicDetails();
-            this.basicInfoForm.disable();
-            console.log('Data updated successfully:', data);
-            this.buttons = !this.buttons;
-          } else if (data.statusCode === 409) {
-
-            console.log('Conflict:', data.message);
-            this.conformationPopup.openErrorModal(data.message);
-            this.patchForm(this.empyployeedata);
-          }
-        },
-        error: (reason: any) => {
-          this.conformationPopup.openErrorModal(reason.error.message || 'Basic info update failed')
-        },
-      });
+          console.log('Conflict:', data.message);
+          this.conformationPopup.openErrorModal(data.message);
+          this.patchForm(this.empyployeedata);
+        }
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal(reason.error.message || 'Basic info update failed')
+      },
+    });
   }
 
   getGender() {
@@ -286,23 +352,23 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
 
-  
+
 
   showButtons(): void {
     this.buttons = !this.buttons;
     const fullPath = this.router.url;
-    
+
     if (this.buttons) {
       this.basicInfoForm.enable();
-      
+
       // Always disable employeeId field
       this.basicInfoForm.get('employeeId')?.disable();
-      
+
       // Handle different route cases
       if (fullPath.startsWith('/myinfo')) {
         this.basicInfoForm.get('fusionEmpId')?.disable();
       }
-      
+
       // Personal info route specific logic for fusionEmpId
       if (fullPath.startsWith('/personalinfo/personal')) {
         if (!this.rbac.allowedToAccess('Employee Info Basic Information.view')) {

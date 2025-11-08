@@ -186,7 +186,7 @@
                         <!-- Input field for new skills -->
                         <input #skillInput type="text" class="border-0 flex-grow-1 inside-input" maxlength="41"
                             (keydown)="formValidation.restrictInitialSpace($event)"
-                            [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Please enter one or multiple skills'"
+                            [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Please type a skill and press enter to add'"
                             (blur)="onSkillBlur()" (keydown.enter)="addSkill($event)" />
                     </div>
                     <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg">

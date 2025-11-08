@@ -175,7 +175,7 @@
           </p>
       
           <!-- Designation -->
-          <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
+          <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }} - {{ selectedEmployee?.departmentDetails?.departmentName }}</p>
       
           <!-- Status -->
           <div class="status-badge">• {{ employeeStatusDisplay }}</div>
@@ -293,7 +293,7 @@
           <i class="bi bi-search"></i>
         </span>
         <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
-          [(ngModel)]="searchQuery" (input)="onSearch1()" />
+          [(ngModel)]="resourceSearchQuery" (input)="onSearch1()" />
       </div>
 
       <!-- Employee List -->

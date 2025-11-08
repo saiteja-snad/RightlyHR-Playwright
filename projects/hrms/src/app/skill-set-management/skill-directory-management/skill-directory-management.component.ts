@@ -57,6 +57,7 @@ export class SkillDirectoryManagementComponent {
     { label: 25, value: 25 }
   ];
   searchQuery: string = '';
+  resourceSearchQuery: string = ''; 
   totalCount!: number;
   monthEndDate!: Date;
   selectedStatus: string = 'All Status';
@@ -389,8 +390,8 @@ export class SkillDirectoryManagementComponent {
   }
   getEmployeeDirectorySummary(callback?: () => void): void {
     const params: any = {};
-    if (this.searchQuery?.trim()) {
-      params.searchQuery = this.searchQuery.trim();
+    if (this.resourceSearchQuery?.trim()) {
+      params.searchQuery = this.resourceSearchQuery.trim();
     }
     this.isloading = true;
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params).subscribe({
@@ -520,6 +521,7 @@ export class SkillDirectoryManagementComponent {
   clearAllFilters(): void {
     this.selectedStatus = 'All Status';
     this.selectedSkills = [];
+    this.resourceSearchQuery=''
     this.searchQuery = '';
     this.displayLabel = '';
     this.date = [];

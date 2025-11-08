@@ -79,6 +79,11 @@ export class SkillsetDashboardComponent {
   allocatedEmployeesList: any[] = [];
   availableEmployeesList: any[] = [];
   selectedSkillKey: string = '';
+  // contentInfo
+  topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
+  skillProficiencyContentInfo = 'Presents a consolidated view of employee skill levels—categorized as Beginner, Intermediate, and Expert. This chart enables HR and leadership teams to evaluate overall workforce competency and pinpoint areas requiring skill enhancement or upskilling.';
+  departmentWiseContentInfo = 'Depicts the distribution of skills across various departments, offering insights into departmental expertise and specialization areas. This helps in understanding which teams possess key technical or functional capabilities and identifying potential skill gaps.';
+  skillOverviewContentInfo = 'Provides a detailed breakdown of each skill, the number of employees associated with it, and their respective proficiency levels. This data-driven summary facilitates competency tracking, supports resource allocation, and assists in informed decision-making for project or training assignments.';
 
   constructor(private http: HttpService, public formValidation: FormValidationService,
     private offcanvasService: NgbOffcanvas, private router: Router) { }
@@ -345,7 +350,8 @@ onCheckemployeeProficiency(selectedValues: string[]) {
           const validDepartments = res.data.filter((d: any) => d.departmentName?.trim());
           const counts = validDepartments.map((d: any) => d.uniqueSkillCount);
           const labels = validDepartments.map((d: any) => d.departmentName);
-          const colors = validDepartments.map((d: any) => d.colorCode);
+          const staticColors = ['#25BBFF', '#1D79E6', '#FF6E06', '#EA267A', '#0F358A', '#22D235'];
+          const colors = staticColors.slice(0, validDepartments.length);
           this.totalDepartmentSkillCount = counts.reduce((a: number, b: number) => a + b, 0);
           this.skillByDepartmentData = {
             labels,
@@ -381,10 +387,10 @@ onCheckemployeeProficiency(selectedValues: string[]) {
             responsive: true,
             maintainAspectRatio: false
           };
-          this.deptCounts = validDepartments.map((d: any) => ({
+          this.deptCounts = validDepartments.map((d: any, index: number) => ({
             label: d.departmentName,
             count: d.uniqueSkillCount,
-            color: d.colorCode,
+            color: colors[index],
             percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
           }));
         } else {
@@ -425,7 +431,9 @@ onCheckemployeeProficiency(selectedValues: string[]) {
             return [name];
           });
           const counts = top5.map(s => s.employeeCount);
-          const colors = top5.map(s => s.colorCode || '#42A5F5');
+          const staticColors = ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'];
+          const colors = staticColors.slice(0, top5.length);
+
           this.topSkillsData = {
             labels: labels as any,
             datasets: [

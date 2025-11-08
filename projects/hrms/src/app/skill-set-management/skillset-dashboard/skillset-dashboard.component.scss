@@ -42,6 +42,33 @@
   border: 1px solid #FFFFFF;
   border-radius: 0.5rem;
   background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+
+  .popover-body {
+    padding: 0.5rem !important;
+  }
+
+  .module-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+  }
+
+  .module-info-text {
+    font-weight: 400;
+    font-size: var(--fontsize12);
+    letter-spacing: 0%;
+    color: #424242;
+  }
+
+  .popover {
+    --bs-popover-max-width: 25rem !important;
+    --bs-popover-border-color: var(--module-info-bg) !important;
+    background: var(--module-info-bg) !important;
+  }
+
+  .bs-popover-bottom>.popover-arrow::after {
+    border-bottom-color: #FFFFFF !important;
+  }
 }
 
 .graph-header {
@@ -295,4 +322,3 @@
     }
   }
 }
-

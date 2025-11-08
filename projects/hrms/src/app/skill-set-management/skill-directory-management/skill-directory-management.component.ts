@@ -499,7 +499,7 @@ export class SkillDirectoryManagementComponent {
             },
             {
               key: 'unSkilledEmployees',
-              title: 'Resources Pending Skill Updates',
+              title: 'Resources with Pending Skill Updates',
               value: summary.unSkilledEmployees ?? 0,
               icons: './icons/Not Updated.png',
             }

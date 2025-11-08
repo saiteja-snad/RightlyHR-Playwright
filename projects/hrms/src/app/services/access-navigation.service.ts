@@ -840,6 +840,18 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/skill-management':
+        if (this.rbac.allowedToAccess('Skill Set Management.view')) {
+          for (const item of SKILL_MANAGEMENT_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+    
     }
     return route;
   }
@@ -1907,25 +1919,13 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/skill-management/dashboard':
+      case '/skill-management':
         if (this.rbac.allowedToAccess('Skill Set Management.view')) {
           for (const item of SKILL_MANAGEMENT_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
-        }
-        break;
-
-        case '/skill-management/dashboard':
-        if (this.rbac.allowedToAccess('Skills Dashboard.view')) {
-          return (route = '/skill-management/dashboard');
-        }
-        break;
-
-        case '/skill-management/directory':
-        if (this.rbac.allowedToAccess('Skills Directory.view')) {
-          return (route = '/skill-management/directory');
         }
         break;
     }

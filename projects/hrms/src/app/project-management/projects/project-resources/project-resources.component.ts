@@ -251,7 +251,6 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
-
     const params: any = {
       entityType: 'project',
       entityRefId: projectId
@@ -320,12 +319,18 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     const selectedPhase = this.phaseDropdown.find(
       (r: any) => r.value === data?.phase?.phaseId
     );
+
+    if (selectedPhase) {
+    this.selectedPhaseId = selectedPhase.value;
+    this.getResourceData(this.projectId, this.selectedPhaseId, true);
+    }
+
     const authorityFromResource = this.resoucesDropDownData.find(
       (r: any) => r.value === data?.pendingApprovalAuthority?.id
     );
     let authorityValueToPatch = authorityFromResource?.value ?? null;
 
-    // ✅ 2️⃣ If not found, fallback to phase-level pending authority
+    // If not found, fallback to phase-level pending authority
     if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
       authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
     }
@@ -475,6 +480,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.getResourceData(this.projectId);
     },
     error: (err) => {
+      this.loader = false;
       console.error('Error occurred:', err);
       this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update resource');
     }

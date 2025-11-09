@@ -31,10 +31,10 @@
                     <tr *ngFor="let data of phaseData">
                          <td>{{ data?.project?.projectName || '-' }}</td>
                         <td>{{ data?.phaseName || '-' }}</td>
-                        <td>{{ data?.startDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data?.endDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data?.kickoffDate | date:'dd-MMM-yyyy' }}</td>
-                        <td>{{ data?.effectiveDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data?.startDate | dateformat }}</td>
+                        <td>{{ data?.endDate | dateformat }}</td>
+                        <td>{{ data?.kickoffDate | dateformat }}</td>
+                        <td>{{ data?.effectiveDate | dateformat }}</td>
                         <td>{{ data?.allocatedHours || '-' }}</td>
                         <!-- <td>{{ data?.pendingApprovalAuthority?.name  || '-'}}</td> -->
                         <td class="text-center">

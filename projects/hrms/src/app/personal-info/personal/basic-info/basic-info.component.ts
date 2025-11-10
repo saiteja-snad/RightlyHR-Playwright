@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
@@ -13,10 +14,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, Tooltip],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
@@ -247,7 +249,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   constructModulesPayload(formValue: any): any {
-    debugger
     const fields = this.fieldOptions
       .map((field: any) => {
         const oldValue = this.getOldValue(field.actualFieldName);
@@ -314,6 +315,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           // Success case
           this.conformationPopup.openSuccessModal('Basic information updated successfully');
           this.getEmployeeId();
+          this.getFieldsApprovalStatus();
           this.http.setBasicDetails();
           this.basicInfoForm.disable();
           console.log('Data updated successfully:', data);
@@ -377,6 +379,19 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
 
 
+  isFieldPendingApproval(fieldName: string): boolean {
+    return this.getFieldsApprovalStatusList.some(item => 
+      item.fieldName === fieldName && item.approvalStatus === 'Pending'
+    );
+  }
+
+  getPendingApprovalMessage(fieldName: string): string {
+    const pendingField = this.getFieldsApprovalStatusList.find(item => 
+      item.fieldName === fieldName && item.approvalStatus === 'Pending'
+    );
+    return pendingField?.message || 'This field change request is awaiting approval.';
+  }
+
   showButtons(): void {
     this.buttons = !this.buttons;
     const fullPath = this.router.url;
@@ -386,6 +401,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
       // Always disable employeeId field
       this.basicInfoForm.get('employeeId')?.disable();
+
+      // Disable fields that are pending approval
+      this.disablePendingApprovalFields();
 
       // Handle different route cases
       if (fullPath.startsWith('/myinfo')) {
@@ -407,6 +425,29 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.basicInfoForm.reset();
       this.getEmployeeId();
     }
+  }
+
+  private disablePendingApprovalFields(): void {
+    const fieldMapping: { [key: string]: string } = {
+      'Salutation': 'salutation',
+      'First Name': 'firstName',
+      'Middle Name': 'middleName',
+      'Last Name': 'lastName',
+      'Gender': 'gender',
+      'Date of Birth': 'dob',
+      'Blood Group': 'bloodGroup',
+      'Marital Status': 'maritalStatus',
+      'Married Date': 'marriageDate'
+    };
+
+    this.getFieldsApprovalStatusList.forEach(item => {
+      if (item.approvalStatus === 'Pending') {
+        const formControlName = fieldMapping[item.fieldName];
+        if (formControlName) {
+          this.basicInfoForm.get(formControlName)?.disable();
+        }
+      }
+    });
   }
 
   ngOnDestroy() {

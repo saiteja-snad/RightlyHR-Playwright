@@ -131,7 +131,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
   // Department wise Contribution
   roleWiseHoursGraph(startDate?: string, endDate?: string) {
     this.roleWiseHoursLoader = true;
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+    this.route.queryParams.subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
         this.roleWiseHoursData = [];

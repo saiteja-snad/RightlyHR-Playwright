@@ -4,8 +4,8 @@
             @if (!projectsummaryLoader) {
             <div class="time-sheet-graph-card">
                 <form [formGroup]="datepickerForm">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="summary-header d-flex gap-2 mb-2">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <div class="summary-header flex-wrap text-nowrap gap-2 mb-2">
                             <div>Project Summary</div>
                             <div>
                                 <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
@@ -94,7 +94,7 @@
         <div class="col-xxl-4 col-xl-6 mb-3">
             @if (!DepartmentwiseContributionLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Department wise Contribution</div>
                         <div>
@@ -175,7 +175,7 @@
         <div class="col-xxl-8 col-xl-6 mb-3">
             @if (!EstimatedActualHoursLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Estimated vs Actual Hours</div>
                         <div>
@@ -211,7 +211,7 @@
         <div class="col-xxl-6 col-xl-6 mb-3">
             @if (!BillablevsNonBillableHoursLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Billable vs Non-Billable Hours</div>
                         <div>
@@ -247,7 +247,7 @@
         <div class="col-xxl-6 col-xl-6 mb-3">
             @if (!ProjectwiseResourceCountLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Project Burndown Chart</div>
                         <div>

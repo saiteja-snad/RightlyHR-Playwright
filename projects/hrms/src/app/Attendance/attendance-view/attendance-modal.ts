@@ -12,6 +12,7 @@ export interface IAttendance {
     biometricLogs: [],
     permissions: [],
     regularizations: [],
+    logExtraHours: [],
     displayStatus:any,
     isRegularizationApplicable: boolean,
     isLeaveApplicable: boolean,

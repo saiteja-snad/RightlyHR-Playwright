@@ -60,6 +60,7 @@ export class CardDetailsComponent implements OnInit, OnDestroy {
   cardTypeList = [
     { label: 'Credit', value: 'Credit' },
     { label: 'Debit', value: 'Debit' },
+    { label: 'Pre-Paid', value: 'Pre-Paid' },
   ];
   cardId!: number;
   destroy$: Subject<boolean> = new Subject<boolean>();

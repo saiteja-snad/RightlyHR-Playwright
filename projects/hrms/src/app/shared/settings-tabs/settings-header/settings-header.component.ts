@@ -119,7 +119,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Load Entitlements';
     }
-
+   else if(url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')){
+    this.moduleName='Time Off';
+    this.componentName='Flexible WFH Allocation';
+   }
     // Assets Configuration
     else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
       this.moduleName = 'Assets Configuration';
@@ -204,6 +207,10 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/attendance-configuration/published')) {
       this.moduleName = 'Attendance Configuration';
       this.componentName = 'Published';
+    }
+     else if (url.startsWith('/settings/project-management-config/project-role')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Project Role';
     }
   }
 

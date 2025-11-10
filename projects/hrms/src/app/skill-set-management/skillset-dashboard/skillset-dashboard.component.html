@@ -1,0 +1,301 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">Skill Set<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{componentname | translate}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
+
+            <div class="custom-p-multiSelect-content">
+                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
+                    placeholder="Select Proficiency" [filter]="false" [showToggleAll]="false"
+                    selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
+                    (onChange)="onCheckemployeeProficiency($event.value)">
+                </p-multiselect>
+            </div>
+            <!-- Skills Multi select -->
+            <div class="custom-p-multiSelect-content">
+                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Select Skills"
+                    optionLabel="label" optionValue="value" [maxSelectedLabels]="3" selectedItemsLabel="{3} items selected"
+                    [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                    (onChange)="onSkillSelectionChange()">
+                </p-multiselect>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-skill-set-main-tabs />
+        </div>
+
+        <div class="w-100 right-content">
+            <!--Summary cards-->
+            <div class="cards-grid-container mb-3">
+                <div *ngFor="let card of summaryCards" class="summary-card">
+                    <div>
+                        <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
+                    </div>
+                    <div>
+                        <div class="summary-title mb-1">{{ card.title }}</div>
+                        <div class="summary-value">
+                            <u class="view-link"><a (click)="openEnd2(contentResourceList, card)">{{ card.value }}</a></u>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Charts content-->
+            <div class="row">
+                <!-- Top Skiils Chart -->
+                <div class="col-xl-7 col-lg-6 mb-3">
+                    <div class="graph-card">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="graph-header">Top 5 Trending skills</div>
+                        
+                            <div>
+                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="topTrendingContent" class="module-icon">
+                                <ng-template #topTrendingContent>
+                                    <div class="module-info-text">{{topTrendingContentInfo}}</div>
+                                </ng-template>
+                            </div>
+                        </div>
+                        
+                        <div class="bar-chart">
+                            <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData" [options]="topSkillsOptions" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Proficiency chart -->
+                <div class="col-xl-5 col-lg-6 mb-3">
+                    <div class="graph-card">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="graph-header">Skill Proficiency</div>
+                        
+                            <div>
+                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="skillProficiencyContent" class="module-icon">
+                                <ng-template #skillProficiencyContent>
+                                    <div class="module-info-text">{{skillProficiencyContentInfo}}</div>
+                                </ng-template>
+                            </div>
+                        </div>
+
+                        <div class="skill-chart-horizontal">
+                            <p-chart type="pie" [data]="skillLevelData" [options]="skillLevelOptions" />
+
+                            <div class="d-flex gap-3 flex-wrap pt-3">
+                                <div *ngFor="let item of skillProficiencyCounts" class="legend-item">
+                                    <span class="legend-dot" [ngStyle]="{ backgroundColor: item.color }"></span>
+                                    <span class="legend-label me-1">{{ item.label }}:</span>
+                                    <span class="legend-value">{{ item.count | number:'2.0' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- skill By Department Chart -->
+                <div class="col-xl-5 col-lg-6 mb-3">
+                    <div class="graph-card">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="graph-header">Department Wise Skills</div>
+                            <div>
+                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="departmentWiseContent" class="module-icon">
+                                <ng-template #departmentWiseContent>
+                                    <div class="module-info-text">{{departmentWiseContentInfo}}</div>
+                                </ng-template>
+                            </div>
+                        </div>
+
+                        <div class="skill-chart-horizontal">
+                            <p-chart type="doughnut" [data]="skillByDepartmentData" [options]="skillByDepartmentOptions" />
+                            <div class="d-flex gap-3 flex-wrap pt-3">
+                                <div *ngFor="let dept of deptCounts" class="legend-item">
+                                    <span class="legend-dot" [ngStyle]="{ backgroundColor: dept.color }"></span>
+                                    <span class="legend-label me-1">{{ dept.label }}:</span>
+                                    <span class="legend-value">{{ dept.count | number:'2.0' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- skill Overview table -->
+                <div class="col-xl-7 col-lg-6 mb-3">
+                    <div class="graph-card">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="graph-header">Skill Overview</div>
+                            <div>
+                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="skillOverviewContent" class="module-icon">
+                                <ng-template #skillOverviewContent>
+                                    <div class="module-info-text">{{skillOverviewContentInfo}}</div>
+                                </ng-template>
+                            </div>
+                        </div>
+
+                        <!--table content-->
+                        <div class="custom-table-content skill-overview-table">
+                            @if (!noDataFound) {
+                            <table class="w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Skill</th>
+                                        <th>Resources Count</th>
+                                        <th>Proficiency</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (skill of skillSummaryList; track skill.skillName) {
+                                    <tr>
+                                        <td class="text-capitalize">{{ skill?.skillName }}</td>
+                                        <td><a class="view-link" (click)="openEnd(content, skill.skillName)">{{
+                                                skill?.skillCount }}</a></td>
+                                        <td>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                                <p-chip *ngFor="let key of getProficiencyKeys(skill.proficiencyCounts)">
+                                                    <div class="custom-chip-content">
+                                                        <span class="skill-name me-1">{{ key }}</span>
+                                                        <span class="count">({{ skill.proficiencyCounts[key] }})</span>
+                                                    </div>
+                                                </p-chip>
+                                                @if (!skill.proficiencyCounts ||
+                                                getProficiencyKeys(skill.proficiencyCounts).length === 0) {
+                                                <span>-</span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            } @else {
+                            <div>
+                                <app-no-data-found />
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Module Information-->
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>
+
+<!-- view Details Content  -->
+<ng-template #content let-offcanvas>
+    <div class="custom-offcanvas-header p-2">
+        <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b>
+            <span *ngIf="employeeList?.length" class="ms-2">({{employeeList.length }})</span>
+        </div>
+        <div>
+            <a (click)="close(offcanvas)">
+                <img src="icons/close.png" alt="Close Icon" class="close-icon">
+            </a>
+        </div>
+    </div>
+
+    <div class="custom-offcanvas-body p-3">
+        <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
+        <!-- Search -->
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search"
+                [(ngModel)]="searchQuery" (input)="searchSubject.next(selectedSkillName)" />
+        </div>
+
+        <div *ngFor="let emp of employeeList" class="profile-content mb-2">
+            <div>
+                <ng-container *ngIf="emp.profileImage; else showProfileIcon">
+                    <img [src]="emp.profileImage" alt="Profile Image" class="profile-image">
+                </ng-container>
+                <ng-template #showProfileIcon>
+                    <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
+                </ng-template>
+            </div>
+            <div class="profile-info w-100">
+                <div class="name">{{ emp.employeeName }}</div>
+                <div class="d-flex justify-content-between flex-wrap w-100">
+                    <div class="designation">{{ emp.jobRole || ' ' }} -  {{ emp.departmentName }}
+                        <!-- <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span> -->
+                    </div>
+                    <!-- <div [ngClass]="getStatusClass(emp.projectStatus)">{{ emp.projectStatus || '-' }}</div> -->
+                    <div class="designation-chip" [ngClass]="{'beginner-text': emp.proficiencyLevel === 'Beginner', 'intermediate-text': 
+                        emp.proficiencyLevel === 'Intermediate','expert-text': emp.proficiencyLevel === 'Expert' }">
+                        {{ emp.proficiencyLevel }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
+             <app-no-data-found />
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #contentResourceList let-offcanvas>
+    <div class="custom-offcanvas-header p-2">
+        <div class="custom-offcanvas-title text-capitalize">
+            <b>{{ selectedSkillName }}</b>
+            <span *ngIf="employeeList?.length" class="ms-2">({{ employeeList.length }})</span>
+        </div>
+        <div>
+            <a (click)="close(offcanvas)">
+                <img src="icons/close.png" alt="Close Icon" class="close-icon">
+            </a>
+        </div>
+    </div>
+
+    <div class="custom-offcanvas-body p-3">
+        <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
+
+        <!-- Search -->
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search"
+                [(ngModel)]="searchQuery" (input)="onSearch()" />
+        </div>
+
+        <!-- Employee Cards -->
+        <div *ngFor="let emp of employeeList" class="profile-content mb-2">
+            <div>
+                <ng-container *ngIf="emp.profileImage; else showProfileIcon">
+                    <img [src]="emp.profileImage" alt="Profile Image" class="profile-image" />
+                </ng-container>
+                <ng-template #showProfileIcon>
+                    <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
+                </ng-template>
+            </div>
+
+            <div class="profile-info w-100">
+                <div class="name">
+                    {{ emp.employeeName }} - ({{ emp.fusionEmployeeId }})
+                </div>
+                <div class="d-flex justify-content-between flex-wrap w-100">
+                    <div class="designation">
+                        {{ emp.jobRole || '' }} - {{ emp.departmentName || '' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
+             <app-no-data-found />
+        </div>
+    </div>
+</ng-template>

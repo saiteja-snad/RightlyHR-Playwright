@@ -4,117 +4,101 @@
       <app-project-management-module-info />
     </div>
 
+    @if(rbac.allowedToAccess('Project Phases Tab.create') && inactiveStatus !== 'inactive'){
+    <div *ngIf="isActive('project-management/projects/details/phases')" (click)="openPhaseModal()">
+      <button type="button" class="custom-btn btn-primary">
+        {{ "Add Phase / Milestone" }}
+      </button>
+    </div>
+    } 
+
     @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !==
     'inactive'){
     <div *ngIf="isActive('/project-management/projects/details/contact-info')">
-      <button
-        type="button"
-        class="custom-btn btn-primary"
-        (click)="openModal(addContactmodal)"
-      >
+      <button type="button" class="custom-btn btn-primary" (click)="openModal(addContactmodal)">
         {{ "Add Contacts" }}
       </button>
     </div>
     }
 
-    <div
-      class="d-flex gap-3 align-items-center"
-      *ngIf="isActive('project-management/projects/details/documents')"
-    >
+    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('project-management/projects/details/documents')">
       <div>
-        <a class="primary-link" (click)="navigationtoinactivedocuments()"
-          ><u>Archived Documents</u></a
-        >
+        <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
       </div>
-      @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !==
-      'inactive'){
+      @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'inactive'){
       <div>
-        <button
-          type="button"
-          class="custom-btn btn-primary"
-          (click)="openDocumentModal()"
-        >
+        <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">
           {{ "Add Document" }}
         </button>
       </div>
       }
     </div>
 
-    <div
-      *ngIf="isActive('/project-management/projects/details/inactivedocuments')"
-    >
+    <div *ngIf="isActive('/project-management/projects/details/inactivedocuments')">
       <div>
-        <a class="primary-link" (click)="navigationtoactivedocuments()"
-          ><u>Documents</u></a
-        >
+        <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Documents</u></a>
       </div>
     </div>
 
-    @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !==
-    'inactive'){
-    <div
-      *ngIf="isActive('project-management/projects/details/resources')"
-      (click)="openResourceModal()"
-    >
+    @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'inactive'){
+    <div *ngIf="isActive('project-management/projects/details/resources')" (click)="openResourceModal()">
       <button type="button" class="custom-btn btn-primary">
         {{ "Add Resources" }}
       </button>
     </div>
-    } @if(isActive('/project-management/projects/details/timesheet')){
-    <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+    }
+    @if(isActive('/project-management/projects/details/timesheet/resource-summary') ){
+    <form [formGroup]="datepickerFormData" (ngSubmit)="onSubmit()">
       <div class="d-flex gap-3 align-items-center">
-        @if(isFilterApplied()) {
-        <button type="button" class="clear-all-btn" (click)="resetForm()">
-          {{ "Clear All" | translate }}
-        </button>
-        }
+        <!-- @if(isFilterApplied()) {
+        <button type="button" class="clear-all-btn" (click)="resetForm()">{{ "Clear All" | translate }}</button>
+        } -->
 
         <div class="custom-date-range-picker">
-          <p-datepicker
-            formControlName="dateRange"
-            [placeholder]="'Please select date rang'"
-            selectionMode="range"
-            [showIcon]="true"
-            [readonlyInput]="true"
-          >
+          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date rang'" selectionMode="range"
+            [showIcon]="true" [readonlyInput]="true">
           </p-datepicker>
         </div>
-        <div>
-          <input
-            type="text"
-            class="form-control custom-input"
-            placeholder="Project Name"
-            formControlName="projectName"
-          />
-        </div>
+
+        <!-- <div>
+          <input type="text" class="form-control custom-input" placeholder="Project Name" formControlName="projectName" />
+        </div> -->
 
         <div class="custom-p-select-content">
-          <p-select
-            [options]="resourcesData"
-            [filter]="true"
-            formControlName="resourceId"
-            [resetFilterOnHide]="true"
-            filterBy="name"
-            optionLabel="name"
-            optionValue="id"
-            placeholder="Please select resource name"
-            class="form-select custom-select"
-          >
+          <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
+            filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
+            [showClear]="true" class="form-select custom-select">
           </p-select>
         </div>
 
         <div>
-          <button
-            class="custom-btn btn-primary"
-            type="submit"
-            [disabled]="!isFormCompletelyValid()"
-          >
-            Apply
-          </button>
+          <button class="custom-btn btn-primary" type="submit">Apply</button>
         </div>
       </div>
     </form>
     }
+
+    @if(isActive('/project-management/projects/details/timesheet/summary') ){
+    <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
+      <div class="d-flex gap-3 align-items-center">
+        <!-- @if(isFilterApplied()) {
+        <button type="button" class="clear-all-btn" (click)="resetForm()">{{ "Clear All" | translate }}</button>
+        } -->
+
+        <div class="custom-date-range-picker">
+          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date rang'" selectionMode="range"
+            [showIcon]="true" [readonlyInput]="true">
+          </p-datepicker>
+        </div>
+
+        <div>
+          <button class="custom-btn btn-primary" type="submit">Apply</button>
+        </div>
+      </div>
+    </form>
+    }
+
+
   </div>
 
   <div class="mb-3">
@@ -128,4 +112,8 @@
 
 <ng-template #addContactmodal let-modal>
   <app-project-contact-info-creation />
+</ng-template>
+
+<ng-template #addPhaseModal let-modal>
+  <app-phases-creation/>
 </ng-template>

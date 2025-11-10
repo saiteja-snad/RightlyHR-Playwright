@@ -1,0 +1,327 @@
+.component-left-tabs-container {
+  height: calc(100dvh - 8.5rem) !important;
+}
+
+.cards-grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+
+  .summary-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #DCE3E9;
+    border-radius: 0.625rem;
+    background-color: #FFF;
+    gap: 1rem;
+    box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+    .icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    .summary-title {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .summary-value {
+      font-size: var(--fontsize18);
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
+}
+
+.graph-card {
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+  border: 1px solid #FFFFFF;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+
+  .popover-body {
+    padding: 0.5rem !important;
+    border-radius: 0.5rem;
+    border: 2px solid #FFF !important;
+    box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
+  }
+
+  .module-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+  }
+
+  .module-info-text {
+    font-weight: 400;
+    font-size: var(--fontsize12);
+    letter-spacing: 0%;
+    color: #424242;
+  }
+
+  .popover {
+    --bs-popover-max-width: 25rem !important;
+    --bs-popover-border-color: var(--module-info-bg) !important;
+    background: var(--module-info-bg) !important;
+  }
+
+  .bs-popover-bottom>.popover-arrow::after {
+    border-bottom-color: #FFFFFF !important;
+  }
+}
+
+.graph-header {
+  font-weight: 500;
+  font-size: var(--fontsize14) !important;
+  color: var(--primary-color);
+}
+
+.skill-chart-horizontal {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  min-height: 20rem;
+
+  canvas {
+    width: 240px !important;
+  }
+}
+
+/* Legend Items */
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.2rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-label {
+  color: #848484;
+  font-weight: 400;
+  font-size: var(--fontsize10);
+  text-transform: capitalize;
+}
+
+.legend-value {
+  font-weight: 700;
+  font-size: var(--fontsize12);
+  color: #000;
+}
+
+// offcanvas stylings
+.custom-offcanvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.custom-offcanvas-title {
+  font-weight: 500;
+  font-size: var(--fontsize15);
+  color: var(--primary-color);
+}
+
+.custom-offcanvas-body {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 90dvh;
+}
+
+.profile-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #FFFFFF;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+  border: 1px solid #DCE3E9;
+  box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+  .profile-image {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0px 0px 10px #0b3a8333;
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: var(--fontsize14);
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--primary-color);
+  }
+
+  .designation {
+    color: #6b7280;
+    font-size: var(--fontsize12);
+  }
+}
+
+/* --- Skill Level Colors --- */
+.skill-level {
+  font-weight: 400;
+  font-size: var(--fontsize14);
+  text-transform: capitalize;
+}
+
+.skill-level.text-purple {
+  color: #6f42c1;
+}
+
+.skill-level.text-success {
+  color: #16a34a;
+}
+
+.skill-level.text-warning {
+  color: #f59e0b;
+}
+
+/* --- Proficiency Text Colors --- */
+.designation-chip {
+  font-size: var(--fontsize10);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #000;
+  font-weight: 500;
+  border-radius: 0.325rem;
+}
+
+.beginner-text {
+  color: #F8AF13 !important;
+  border: 1px solid #F8AF13;
+}
+
+.intermediate-text {
+  color: #9A00F3 !important;
+  border: 1px solid #9A00F3;
+}
+
+.expert-text {
+  color: #00A912 !important;
+  border: 1px solid #00A912;
+}
+
+.custom-p-multiSelect-content {
+  min-width: 200px !important;
+  max-width: 300px !important;
+}
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.clear-all-btn:focus {
+  outline: none;
+}
+
+.bar-chart {
+  canvas {
+    height: 320px !important;
+  }
+}
+
+.close-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-left: 10rem;
+}
+
+.status-badge {
+  text-transform: capitalize;
+}
+
+.status-available {
+  color: #00A912;
+  font-size: var(--fontsize12);
+}
+
+.status-committed {
+  color: #E0A101;
+  font-size: var(--fontsize12);
+}
+
+.right-content {
+  height: calc(100dvh - 8.5rem) !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+//  Table chips styles 
+.skill-overview-table {
+  height: 320px !important;
+  border: 1px solid #CCDAEC;
+  border-radius: 0.25rem !important;
+
+  th,
+  td {
+    padding: 0.75rem !important;
+    font-size: var(--fontsize12) !important;
+    text-align: center !important;
+  }
+
+  th {
+    font-weight: 600 !important;
+    text-transform: capitalize;
+    color: #3B3B3B;
+  }
+
+  td {
+    font-weight: 400;
+    color: #747474 !important;
+  }
+
+  th:first-child,
+  th:first-child {
+    border-top-left-radius: 0.25rem !important;
+  }
+
+  th:last-child {
+    border-top-left-radius: 0.25rem !important;
+  }
+
+  .view-link {
+    font-weight: 700;
+    text-decoration: underline;
+    color: var(--primary-color);
+  }
+
+  .p-chip {
+    border: 1px solid #D1D9E2 !important;
+    background: #F8FBFF !important;
+    font-weight: 400;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: var(--fontsize10) !important;
+
+    .skill-name {
+      color: var(--primary-color) !important;
+    }
+
+    .count {
+      color: #73809D;
+    }
+  }
+}

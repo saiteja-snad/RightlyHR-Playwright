@@ -12,26 +12,30 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import dayjs, { Dayjs } from 'dayjs';
 import { HttpService } from '../../services/http.service';
+import { IResourceDetail } from '../../timesheetmodel';
 @Component({
   selector: 'app-pending-approvals',
   imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent,
     NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
-   encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class PendingApprovalsComponent implements OnInit {
   moduleinfo = '';
-  projectsData: any[] = [];
+
   employeeData: any[] = [];
   dataload = false;
   subscription!: Subscription;
   datepickerForm!: FormGroup;
   destroy$ = new Subject<boolean>();
+  resourcesList: any[] = [];
+  projectsData: any[] = [];
   empinfo: any;
-  projectId = 0;
+  phaseIds: any[] = [];
   employeeid: any;
+  selectedResourceIds: any[] = [];
   isSubmitEnabled = false;
   isDistinct = true;
   today: Date = new Date();
@@ -39,12 +43,14 @@ export class PendingApprovalsComponent implements OnInit {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getAllActiveProjects();
+
     this.createDatepickerForm();
     this.updateModuleInfo();
     this.setupNavigationReset();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getResourceDetailsByManagerId();
+    this.getAllActiveProjects();
 
     this.datepickerForm.valueChanges.subscribe(() => {
       this.isSubmitEnabled = this.isAnyFieldSelected();
@@ -69,94 +75,140 @@ export class PendingApprovalsComponent implements OnInit {
   navigate() {
     this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
- isFilterApplied(): boolean {
-    const formValue = this.datepickerForm.value;
-    // Check if any field has value
-    return (
-      (formValue.dateRange && formValue.dateRange.length > 0) ||
-      formValue.projectId !== null && formValue.projectId !== undefined  ||
-      (formValue.resourceId && formValue.resourceId.length > 0)
-    );
-  }
-  /** Create form and keep Project & Resource disabled initially */
+
+
+  /** Create form and keep Phase & Resource disabled initially */
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null],
-      projectId: [null],
-      resourceId: [{ value: [], disabled: true },]
+      phaseId: [''],
+      resourceId: ['']
     });
   }
 
 
-isAnyFieldSelected(): boolean {
-  const formValue = this.datepickerForm.value;
-  return (
-    (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
-    formValue.projectId !== null && formValue.projectId !== undefined || // project selected (including 0)
-    (formValue.resourceId && formValue.resourceId.length > 0) // at least one resource selected
-  );
-}
-  /** Get all projects for the current employee */
+  isFilterApplied(): boolean {
+    const formValue = this.datepickerForm?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) ||
+      formValue?.phaseId !== null && formValue?.phaseId !== undefined ||
+      (formValue?.resourceId && formValue?.resourceId?.length > 0)
+    );
+  }
 
+  isAnyFieldSelected(): boolean {
+    const formValue = this.datepickerForm?.value;
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) || // date selected
+      formValue?.phaseId !== null && formValue?.phaseId !== undefined || // phase selected (including 0)
+      (formValue?.resourceId && formValue?.resourceId?.length > 0) // at least one resource selected
+    );
+  }
+
+  onresourceChange(event: any) {
+    const selectedResourceIds = event?.value ?? [];
+    this.selectedResourceIds = selectedResourceIds;
+    this.getAllActiveProjects();
+  }
+  /** Get all phases for the current employee */
   getAllActiveProjects() {
-    this.http
-      .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
+    let url = `Project/authorities/${this.empinfo.employeeId}/projects`;
+
+    if (this.selectedResourceIds?.length > 0) {
+      const resourceIds = this.selectedResourceIds.join(',');
+      url += `?resourceIds=${resourceIds}`;
+    }
+
+    this.http.getData(url)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           const projects = res?.data || [];
-
           this.projectsData = projects.map((p: any) => ({
             ...p,
-            displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
+            displayName: `${p.clientName } - ${p.projectName } - ${p.phaseName }`
           }));
 
           this.projectsData.unshift({
-            projectId: 0,
+            phaseId: 0,
             displayName: 'No Client - No Project'
           });
-        },
-        error: (err) => {
-          console.error('Error fetching projects:', err);
 
-          this.projectsData = [
-            {
-              projectId: 0,
-              displayName: 'No Client - No Project'
-            }
-          ];
+          // ✅ FIX: Prevent null values from appearing in dropdown
+          let selectedPhases = this.datepickerForm.get('phaseId')?.value;
+
+          if (Array.isArray(selectedPhases)) {
+            // Remove nulls
+            selectedPhases = selectedPhases.filter((x: any) => x !== null);
+
+            // Keep only valid phaseIds
+            selectedPhases = selectedPhases.filter((id: number) =>
+              this.projectsData.some(p => p.phaseId === id)
+            );
+
+            // ✅ Set cleaned value back
+            this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
+          }
         },
+        error: () => this.projectsData = []
       });
   }
 
-  /** When project selected */
+
+  /** When phase selected */
   onProjectChange(event: any) {
-    console.log('Project change event:', event);
-    const selectedProjectId = event?.value ?? 0;
-   
-    // Resetemployee data
-    this.employeeData = [];
-    this.datepickerForm.get('resourceId')?.setValue([]);
-     this.datepickerForm.get('resourceId')?.enable()
-    this.projectId = selectedProjectId;
-    if (selectedProjectId && selectedProjectId !== 0) {
+    const selectedPhaseIds = event?.value ?? [];
+    this.phaseIds = selectedPhaseIds;
+    this.getResourceDetailsByManagerId();
+  }
 
-      this.getAllActiveEmployees();
-    } else {
+  getResourceDetailsByManagerId() {
+    const EmployeeId = this.empinfo?.employeeId;
+    let url = `Timesheet/authority/${EmployeeId}/employees`;
 
-      this.getTeamManagersDetails();
-
-      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
-      setTimeout(() => {
-        if (this.getEmployeeInfo?.length) {
-          this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
-            id: emp.employeeId,
-            name: emp.fullName
-          }));
-          this.datepickerForm.get('resourceId')?.enable();
-        }
-      }, 300);
+    if (this.phaseIds?.length > 0) {
+      const phaseIds = this.phaseIds.join(',');
+      url += `?phaseIds=${phaseIds}`;
     }
+
+    this.subscription = this.http.getData(url).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          this.resourcesList = res.data.map((emp: IResourceDetail) => ({
+            ...emp,
+            fullName: emp?.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp?.name
+          }));
+
+          // ✅ Check if selected resource is still valid and remove nulls
+          let selectedResources = this.datepickerForm.get('resourceId')?.value || [];
+          
+          if (Array.isArray(selectedResources)) {
+            // Remove nulls
+            selectedResources = selectedResources.filter((x: any) => x !== null);
+            
+            // Keep only valid resource IDs
+            selectedResources = selectedResources.filter((id: number) =>
+              this.resourcesList.some(r => r.id === id)
+            );
+            
+            // Set cleaned value back
+            this.datepickerForm.get('resourceId')?.setValue(selectedResources);
+            // Update component property to match form
+            this.selectedResourceIds = selectedResources;
+          }
+        } else {
+          this.resourcesList = [];
+          this.datepickerForm.get('resourceId')?.setValue([]);
+          this.selectedResourceIds = [];
+        }
+      },
+      error: () => {
+        this.resourcesList = [];
+        this.datepickerForm.get('resourceId')?.setValue([]);
+        this.selectedResourceIds = [];
+      }
+    });
   }
 
 
@@ -169,62 +221,25 @@ isAnyFieldSelected(): boolean {
     });
   }
 
-  /** Get all active employees for selected project */
-  getAllActiveEmployees() {
-    this.http
-      .getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
-          // if (this.employeeData.length > 0) {
-          this.datepickerForm.get('resourceId')?.enable();
-          // }
-        },
-        error: (err) => {
-          console.error('Error fetching employees:', err);
-          this.employeeData = [];
-        }
-      });
-  }
-
-  getEmployeeInfo = [] as any;
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.length) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
-              employeeId: employee.employeeId,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
-            }));
-          } else {
-            this.getEmployeeInfo = [];
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching team manager details:', err);
-          this.getEmployeeInfo = [];
-        }
-      });
-  }
-
-
-
+  
 
   /** On form submit */
   onSubmit() {
-    const dateRange = this.datepickerForm.value.dateRange;
-    const projectId = this.datepickerForm.value.projectId ;
-    const resourceIds = this.datepickerForm.value.resourceId || [];
-    // Build request dynamically
+    console.log('Form submitted with values:', this.datepickerForm.value);
+    const formValue = this.datepickerForm.value;
+    const dateRange = formValue.dateRange;
+    const phaseIds = formValue.phaseId || [];
+    const resourceIds = formValue.resourceId || [];
+    
+    const phaseId = phaseIds.length > 0 ? phaseIds.join(',') : null;
+    const resourceId = resourceIds.length > 0 ? resourceIds.join(',') : null;
+    
     const request: any = {
-      projectId,
-      resourceId: resourceIds.length > 0 ? resourceIds : null,
+      phaseId,
+      resourceId,
     };
+    console.log(request);
+
     // Add dateRange only if selected
     if (dateRange && dateRange.length === 2) {
       request.dateRange = {
@@ -232,13 +247,16 @@ isAnyFieldSelected(): boolean {
         endDate: dayjs(dateRange[1]).format('YYYY-MM-DDTHH:mm:ss'),
       };
     }
-    this.http.setEmployeeIdTimesheet(this.employeeid, projectId, request);
+    // Pass the request data to the timesheet component
+    this.http.setEmployeeIdTimesheet(this.employeeid, phaseId || 0, request);
   }
+    
+    
 
   /** Reset dependent fields */
   resetDependentFields() {
-    this.datepickerForm.get('projectId')?.reset();
-    this.datepickerForm.get('projectId')?.disable();
+    this.datepickerForm.get('phaseId')?.reset();
+    this.datepickerForm.get('phaseId')?.disable();
     this.datepickerForm.get('resourceId')?.reset();
     this.datepickerForm.get('resourceId')?.disable();
     this.projectsData = [];
@@ -248,19 +266,24 @@ isAnyFieldSelected(): boolean {
 
   /** Clear everything */
   resetForm() {
-   
+
     this.datepickerForm.reset();
-    this.datepickerForm.get('resourceId')?.disable();
+
     this.datepickerForm.reset({
       dateRange: null,
-      projectId: null,
-      resourceId: []
+      phaseId: '',
+      resourceId: ''
     });
+    this.phaseIds = [];
+    this.selectedResourceIds = [];
     this.employeeData = [];
-    this.projectId = 0;
+    // this.projectId = [];
     this.employeeid = null;
+    this.selectedResourceIds = [];
     this.isSubmitEnabled = true;
-    this.http.setEmployeeIdTimesheet(null, 0, 0);
+    this.http.setEmployeeIdTimesheet(null, 0, null);
+    this.getResourceDetailsByManagerId();
+    this.getAllActiveProjects();
   }
 
   ngOnDestroy(): void {

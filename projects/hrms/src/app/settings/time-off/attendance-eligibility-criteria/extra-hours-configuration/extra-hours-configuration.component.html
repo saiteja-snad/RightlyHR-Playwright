@@ -1,0 +1,85 @@
+<div class="custom-main-component-container">
+    <ng-container *ngIf="!dataLoad; else loaderTemplate">
+        <div class="custom-table-content w-50">
+            <ng-container *ngIf="EAVData.length > 0; else noDataTemplate">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th *ngIf="rbac.allowedToAccess('Extra Hours Configuration Tab.update')">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let permi of EAVData; let i = index">
+                            <td class="table-text">{{ permi.attribute }}</td>
+                            <td class="table-text">
+                                <!-- Display Mode -->
+                                <ng-container *ngIf="editingIndex !== i">
+                                    {{ permi.value }}
+                                </ng-container>
+
+                                <!-- Edit Mode -->
+                                <ng-container *ngIf="editingIndex === i">
+                                    <input class="form-control custom-input" type="text"
+                                        placeholder="Please enter value" [(ngModel)]="temporaryValue"
+                                        (keypress)="validateInput($event, temporaryValue || '', permi.attribute)"
+                                        [maxlength]="5" (paste)="blockPaste($event)" (copy)="blockPaste($event)"
+                                        (cut)="blockPaste($event)" (drop)="blockPaste($event)" />
+                                </ng-container>
+                            </td>
+
+                            <!-- Action Buttons -->
+                            <td *ngIf="rbac.allowedToAccess('Extra Hours Configuration Tab.update')">
+                                <!-- Default View -->
+                                <ng-container *ngIf="editingIndex !== i; else editingMode">
+                                    <div class="dropdown">
+                                        <a data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </a>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            <li>
+                                                <button class="dropdown-item"
+                                                    (click)="startEdit(i, permi.id, permi.value, permi.entity)">
+                                                    <i class="bi bi-pencil me-2"></i>Update
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </ng-container>
+
+                                <!-- Edit Mode Actions -->
+                                <ng-template #editingMode>
+                                    <div class="d-flex gap-2">
+                                        <button class="custom-btn btn-primary" type="button"
+                                            (click)="submitValue(i, temporaryValue)"
+                                            [disabled]="!temporaryValue || temporaryValue.toString().trim() === ''">
+                                            Update
+                                        </button>
+                                        <button class="custom-btn btn-secondary" type="button" (click)="cancelEdit()">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </ng-container>
+        </div>
+    </ng-container>
+</div>
+
+<!-- No Data Template -->
+<ng-template #noDataTemplate>
+    <div class="text-center my-3">
+        <app-no-data-found></app-no-data-found>
+    </div>
+</ng-template>
+
+<!-- Loader Template -->
+<ng-template #loaderTemplate>
+    <div class="custom-compoent-data-loader">
+        <app-data-loader-content></app-data-loader-content>
+    </div>
+</ng-template>

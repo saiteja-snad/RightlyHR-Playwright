@@ -6,7 +6,8 @@
             </div>
             <div class="component-header">Pending Approvals</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
@@ -20,7 +21,8 @@
             </div>
             <div class="component-header">Assessment Form</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
@@ -34,27 +36,34 @@
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 }
                 <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-                        [showIcon]="true" [readonlyInput]="true"[maxDate]="today">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
+                        selectionMode="range" [showIcon]="true" [readonlyInput]="true" [maxDate]="today">
                     </p-datepicker>
                 </div>
 
-                <div class="custom-p-select-content">
-                    <p-select [options]="projectsData" optionLabel="displayName" optionValue="projectId" [filter]="true"
+                <div class="custom-p-multiSelect-content">
+                    <!-- <p-select [options]="projectsData" optionLabel="displayName" optionValue="projectId" [filter]="true"
                         [resetFilterOnHide]="true" filterBy="displayName" formControlName="projectId"
                         placeholder="Please select project" class="form-select custom-select"
                         (onChange)="onProjectChange($event)">
-                    </p-select>
+                    </p-select> -->
+                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
+                        defaultLabel="Please select project/phase" class="form-select custom-select"
+                        (onChange)="onProjectChange($event)">
+                    </p-multiSelect>
+
                 </div>
 
                 <!-- Resource MultiSelect Dropdown -->
                 <div class="custom-p-multiSelect-content">
-                    <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-                        defaultLabel="Please select resource" formControlName="resourceId"
-                        class="form-select custom-select "></p-multiSelect>
+                    <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
+                        defaultLabel="Please select resource"[resetFilterOnHide]="true" formControlName="resourceId"
+                        class="form-select custom-select "  (onChange)="onresourceChange($event)"></p-multiSelect>
                 </div>
                 <div>
-                    <button class="custom-btn btn-primary" type="submit"   [disabled]="!isAnyFieldSelected()">{{'Apply' | translate}}</button>
+                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' |
+                        translate}}</button>
                 </div>
             </div>
         </form>

@@ -1,0 +1,187 @@
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-end gap-3">
+    <div class="d-flex gap-2 align-items-center">
+      <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+      <form autocomplete="off" [formGroup]="yearSelectionForm">
+        <div class="custom-p-select-content">
+          <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
+            class="form-select custom-select" (onChange)="onYearChange()">
+          </p-select>
+        </div>
+      </form>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+      <div class="custom-p-select-content">
+        <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+          optionValue="value" showClear="true" placeholder="Select employee name/Id"
+          (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
+      </div>
+    </div>
+  </div>
+
+            
+<!--Input search-->
+<div class="input-group custom-search mb-3 mt-2">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="getAllwfhallocations()"
+        class="form-control custom-search-input" placeholder="Search with employee name" aria-label="Username"
+        aria-describedby="basic-addon1">
+</div>
+<div class="custom-table-content">
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>{{'Employee Name'|translate}}</th>
+                <th>{{'Effective From'|translate}}</th>
+                <th>{{'Effective To'|translate}}</th>
+                <th>{{'Days'|translate}}</th>
+                <th>{{'Allocated By'|translate}}</th>
+                <th>{{'Allocated On'|translate}}</th>
+                <th>{{'Status'|translate}}</th>
+                <th></th>
+                <!-- <th>Last Updated By</th>
+                <th>Last Updated On</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            @if (getAllocationDetails$ | async; as getAllocationDetails) {
+            @if (!isloading && getAllocationDetails.length > 0) {
+            @for (item of getAllocationDetails; track item) {
+            <tr>
+                <td>{{ item?.employeeId?.name || '-' }}</td>
+                <td>{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
+                <td>{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
+                <td>{{ item?.allowedDays || '-' }}</td>
+                <td>{{ item?.createdBy?.name || '-' }}</td>
+                <td>{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
+                <td>{{ item?.status ? item?.status:'-'  }}</td>
+                 <td ><div class="dropdown" *ngIf="item.isLatest">
+              <a type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Inactive'">
+                <li (click)="onClick(item,Activeconfirmationpopup)">
+                  <a class="dropdown-item">Active</a>
+                </li>
+              </ul>
+              <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
+                <li (click)="onClick(item,confirmationpopup)">
+                  <a class="dropdown-item">Inactive</a>
+                </li>
+              </ul>
+            </div></td>
+            </tr>
+            }
+            } @else {
+            <tr><app-no-data-found /></tr>
+            }
+            } @else {
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+            }
+        </tbody>
+    </table>
+</div>
+<!--Pagination-->
+@if (getAllocationDetails$ | async; as getAllocationDetails) {
+@if (!isloading && getAllocationDetails.length > 0) {
+<div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+            </select>
+            <span class="pagination-label text-nowrap">
+                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                (+first + + rows) }} of {{ collectionSize }}
+            </span>
+        </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+</div>
+}}
+</div>
+<!-- View comments Modal -->
+<ng-template #historyPopup let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'History Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+     <div class="custom-main-popup-content">
+      <div class="custom-table-content custom-height">
+        <table class="w-100">
+          <thead>
+            <tr>
+             <th class="text-nowrap">{{'Employee Name' | translate}}</th>
+              <th class="text-nowrap">{{'Effective Date' | translate}}</th>
+              <th class="text-nowrap">{{'Days' | translate}}</th>
+              <th class="text-nowrap">{{'Allocated By' |translate}}</th>
+              <th class="text-nowrap">{{'Allocated On' |translate}}</th>
+            </tr>
+          </thead>
+          <tbody>
+              @if(wfh_history.length>0){
+            <tr *ngFor="let item of wfh_history">
+              <td>{{ item?.employeeId?.name || '-' }}</td>
+                <td>{{ item?.effectiveDate ? (item?.effectiveDate | dateformat) : '-' }}</td>
+                <td>{{ item?.allowedDays || '-' }}</td>
+                <td>{{ item?.createdBy?.name || '-' }}</td>
+                <td>{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
+            </tr>
+            }
+            
+            @else {
+            <tr>
+              <app-no-data-found />
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to inactive ?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="InactiveWFHAllocation(); model.close()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #Activeconfirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to active?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="activeWFHAllocation(); model.close()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>

@@ -36,6 +36,7 @@
                                     <th>{{ 'Resource Name' | translate }}</th>
                                     <th>{{ 'Client Name' | translate }}</th>
                                     <th>{{ 'Project Name' | translate }}</th>
+                                    <th>{{ 'Phase/Milestone' | translate }}</th>
                                     <th>{{ 'Total Hours' | translate }}</th>
                                     <th class="text-center">{{ 'Description' | translate }}</th>
                                     @if(showhideaction){
@@ -51,6 +52,7 @@
                                     <td>{{ entry.employeeName || '-' }}</td>
                                     <td>{{ entry.clientName || '-' }}</td>
                                     <td>{{ entry.projectName || '-' }}</td>
+                                    <td>{{ entry.phaseName || '-' }}</td>
                                     <td>{{ entry.totalHours || '-' }}</td>
                                     <td class="text-center">
                                         <ng-container *ngIf="entry?.description; else noEntries">

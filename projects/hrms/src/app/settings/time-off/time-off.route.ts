@@ -28,11 +28,19 @@ export default [
             { path: 'attendance-regularization-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/attendance-regularization-eligibility-criteria/attendance-regularization-eligibility-criteria.component').then((m) => m.AttendanceRegularizationEligibilityCriteriaComponent)},
             { path: 'remote-login-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/remote-login-eligibility-criteria/remote-login-eligibility-criteria.component').then((m) => m.RemoteLoginEligibilityCriteriaComponent)},
             { path: 'late-login-alert-configuration', loadComponent: () => import('./attendance-eligibility-criteria/late-login-alert-configuration/late-login-alert-configuration.component').then((m) => m.LateLoginAlertConfigurationComponent)},
-        
+            { path: 'extra-hours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/extra-hours-configuration/extra-hours-configuration.component').then((m) => m.ExtraHoursConfigurationComponent)},
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },
     { path: 'updateleavecategory', loadComponent: () => import('./leave-categoery/update-leavecategory/update-leavecategory.component').then((m) => m.UpdateLeavecategoryComponent) },
     { path: 'cloneleavecategory', loadComponent: () => import('./leave-categoery/clone-leavecategory/clone-leavecategory.component').then((m) => m.CloneLeavecategoryComponent) },
     { path: 'viewleavecategory', loadComponent: () => import('./leave-categoery/view-leavecategory/view-leavecategory.component').then((m) => m.ViewLeavecategoryComponent) },
+    {
+        path: 'flexible-wfh-allocation', children: [
+            { path: '', redirectTo: 'wfh-allocation', pathMatch: 'full' },
+            { path: 'wfh-allocation', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation/wfh-allocation.component').then((m) => m.WfhAllocationComponent) },
+            { path: 'wfh-allocation-view', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent) },
+        
+        ]
+    },
 ] as Route[];

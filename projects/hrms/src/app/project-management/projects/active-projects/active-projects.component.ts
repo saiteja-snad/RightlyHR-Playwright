@@ -21,9 +21,10 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
+  imports: [NoDataFoundComponent,MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
     ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe,NgbPopover, InfoIconComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
@@ -55,8 +56,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
   resourcesData = [] as IResource[];
-
-  inactiveClientStatus: any
+  departmentlist = [] as any;
+  inactiveClientStatus: any;
+  
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
@@ -67,6 +69,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.getClientsData();
     this.getprojecttypesData();
     this.getProjectsBasedOnRoute();
+        this.DepartmentList();
     // this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -78,7 +81,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.validateUpdateDateRange();
     });
   }
-
+ DepartmentList() {
+    this.subscription = this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.departmentlist = data;
+      },
+    });
+  }
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -99,6 +109,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  getDepartmentNames(project: Project): string {
+  if (!project.departments || project.departments.length === 0) {
+    return '-';
+  }
+  return project.departments.map(d => d.departmentName).join(', ');
+}
 
   getAuthorityList() {
     this.http.getData(`ProjectManagementAuthority?status=active&entity=Project`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -162,15 +179,17 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateclientName: [null, Validators.required],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
-      updateeffectiveDate: [null, Validators.required],
-      updatekickoffDate: [null, Validators.required],
+      // updateeffectiveDate: [null, Validators.required],
+      // updatekickoffDate: [null, Validators.required],
       updateprojectType: [null, Validators.required],
+      updatedepartment: [[], Validators.required],
       updateprojectDescription: [null],
       updateovertimeEligible: [false],
       updatebillable: [false],
       updateallowweekendWork: [false],
-      updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
-      approvalidAuthority: [{value:null,disabled:true}]
+      // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
+      // approvalidAuthority: [{value:null,disabled:true}],
+      updatecolor : ['']
     });
      this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -249,21 +268,24 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   openUpdateModal(modal: any, project: Project) {
     // this.getAuthorityList();
-    this.getResourceData(project.projectId,project);
+    // this.getResourceData(project.projectId,project);
+     const selectedDepartmentIds = project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
       updateclientName: project.client?.clientId,  // ensure p-select has clientId
       updatestartDate: this.formatDateToLocal(project.startDate),
       updateendDate: this.formatDateToLocal(project.endDate),
-      updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
-      updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
+      // updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
+      // updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
       updateprojectType: project.projectType, // ensure p-select has id
       updateprojectDescription: project.description,
       updateovertimeEligible: project.isOvertimeEligibile,
       updatebillable: project.isBillable,
-      updateallocatedHours: project.allocatedHours,
-      updateallowweekendWork: project.isWeekendWorkAllowed
+      // updateallocatedHours: project.allocatedHours,
+      updateallowweekendWork: project.isWeekendWorkAllowed,
+      updatedepartment: selectedDepartmentIds, 
+      updatecolor : project?.meta?.graphData?.color
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
@@ -278,8 +300,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.updateprojectform.markAllAsTouched();
       return;
     }
+    
     this.spinnerLoader = true
     const formValue = this.updateprojectform.value;
+     const departmentIds = Array.isArray(formValue.updatedepartment)
+    ? formValue.updatedepartment.join(',')
+    : formValue.updatedepartment;
     const payload = {
       projectId: this.selectedProjectId,
       clientId: formValue.updateclientName,
@@ -296,7 +322,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       kickoffDate: formValue.updatekickoffDate,
       status: 'Active',
       pendingApprovalAuthorityId: formValue.approvalidAuthority,
-      updatedBy: parseInt(this.empinfo.employeeId)
+      departmentIds: departmentIds,
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue?.updatecolor
+      }
+      }
     };
     this.loading = true;
     this.http.putData(`Project/${this.selectedProjectId}`, payload).subscribe({
@@ -314,7 +346,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           }
         }
         this.conformationPopup.openSuccessModal('Project updated successfully');
-        this.close();
+        // this.close();
       },
       error: (err) => {
         this.loading = false;

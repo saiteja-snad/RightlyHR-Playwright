@@ -25,7 +25,9 @@ export const MODULE_INFOS = {
     SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO: "Assign personalized leave days by selecting year, location, sub-location, shift, category, and employee. This module allows tailoring leave entitlements at the individual employee level for greater flexibility and control.",
     SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO: "Configure company-wide criteria for Comp Off, Work From Home, and Permissions including entitlement rules and eligibility. Define global policies and regularization types with time-based values like expiry, past/future days, and minimum hour thresholds for full or half-day adjustments.",
     SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO: "This module allows viewing and managing leave entitlements for employees based on filters like Employee ID, DOJ, Location, and Shift. It displays detailed leave categories with corresponding policy and entitled leaves for each individual.",
-
+    SETTINGS_TIMESHEET_REPORT_MODULE_INFO: "The Timesheet Report provides a comprehensive view of employee work logs, approvals, and utilization. It consolidates individual and team-level data to help managers, HR, and finance teams track productivity, project efforts, and pending actions. Each tab offers focused insights, ensuring accurate reporting and efficient decision-making.",
+    SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO: "The Flexible WFH Allocation module enables Admins or HR to assign work-from-home entitlements to employees by configuring specific allocation criteria. Once entitle, the entitled WFHs are automatically reflected in the WFH module, allowing employees to utilize them as per policy.",
+    
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO: "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
     SETTINGS_ASSET_CONFIGURATION_VENDOR_DETAILS: "Manage and track vendor information for all your assets in one place. Easily view contact details, status, and addresses for seamless vendor coordination.",
@@ -95,17 +97,32 @@ export const MODULE_INFOS = {
     ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO: "Lists all short-duration permissions taken by employees (e.g., late arrivals, early exits), including timing, reason, and manager approval status.",
     ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO: "Monitor attendance regularization requests submitted by employees and their approval status.Shows requests for attendance regularization submitted by employees for missed or incorrect entries. Includes dates, corrections made, and approval status.",
 
+    ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO: "The Remote Login Report enables HR to generate and review detailed records of employees who have applied for remote login. It provides complete visibility of application dates and durations for accurate tracking purposes.",
+
+    ATTENDANCE_EXTRA_HOURS_MODULE_INFO:"This section allows employees to submit requests for extra hours worked beyond their regular shift. Employees can provide the required details for the additional time spent. Once submitted, the request is sent to the approver for review and necessary action.",
+
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO: "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 
     //Reports Module Standard Reports Module Info
     POLICY_REPORTS_MODULE_INFO: "Get a comprehensive overview of policy development across departments. Easily filter and track which policies were assigned to whom and when.",
     POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO: "Monitor employee compliance by tracking who acknowledged which policies and when. Useful for audits, policy rollout tracking, and ensuring accountability across teams.",
+    
+    //Timesheet Reports Module Info
+    MY_TIMESHEET_REPORTS_MODULE_INFO: "Displays individual employee timesheet entries, including daily logged hours, project details, and status. This view helps employees and managers track personal work contributions and submission history.",
+    ATTENDANCE_TIMESHEET_SUMMARY_MONTHLY_REPORTS_MODULE_INFO: "Provides a consolidated monthly summary of all timesheet entries across employees and projects. Ideal for HR and management to review total efforts and identify trends or discrepancies at a glance.",
+    TEAM_TIMESHEET_REPORTS_MODULE_INFO: "Gives managers a team-wise overview of submitted timesheets, logged hours, and approval status. This helps in efficiently monitoring team productivity and identifying any missing or delayed submissions.",
+    PENDING_APPROVAL_REPORTS_MODULE_INFO: "Lists all timesheets that are awaiting approval. This enables quick follow-up and ensures timely processing for payroll, billing, and compliance.",
+    PROJECT_EFFORT_REPORTS_MODULE_INFO: "Summarizes the total hours logged against each project, helping project managers and stakeholders track resource allocation and project effort distribution effectively.",
+    UTILIZATION_REPORTS_MODULE_INFO: "Shows the utilization percentage of each resource, comparing logged hours against available working hours. This helps identify underutilized or overburdened employees.",
+    RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO: "Provides a snapshot of each employee’s availability status, scheduled leaves, and working capacity. Useful for planning resource allocation and workload balancing.",
+    ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO: "Compares attendance records with timesheet entries to ensure consistency and detect any mismatches. This supports accurate payroll processing and compliance.",
     //Calendar Module Info 
     CALENDAR_MODULE_INFO: "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 
     //Policies Module Info
     POLICIES_MODULE_INFO: "The Policies page lists all organizational policies for the selected year, including policy name, description, and downloadable attachments. Users can view specific policy documents like leave policies, holiday policies, and workplace conduct guidelines for easy reference.",
+    EXPENSE_REPORTS_MODULE_INFO : "The Expense Report module provides a comprehensive overview of all employee expense claims within a selected date range. It allows users to filter reports by employee, manager, or status to easily track and review expenses.",
 
     //Time off Module Info
     TIME_OFF_LEAVES_MODULE_INFO: "The Leave  section displays the total leaves and categorizes them into statuses like Waiting for Approval, Approved, Processed, Rejected, and Cancelled.Employees can apply for different leave types and track approvals and balances.",
@@ -175,7 +192,7 @@ export const MODULE_INFOS = {
     PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO: "The Family Members section enables employees to add and manage information about their family members, including Name, Relationship, Date of Birth, and Dependent status. Users can add new entries and perform actions such as edit or delete existing records.",
     PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO: "The Bank Info section allows employees to add and manage their bank accounts by providing Bank Name, Account Holder's Name, Account Number, IFSC Code, and uploading proof documents. Users can designate a primary bank account and perform actions like edit or delete records.",
     PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO: "The Visa Details section enables employees to add and manage visa information including Visa Type, Issue Date, Expiry Date, Issued Country, and Status. Users can add new visa records and perform actions such as edit or delete existing entries.",
-    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skills section allows employees to add their technical and soft skills, showcasing their areas of expertise. This helps the organization easily identify and map employee competencies for project or role allocation.",
 
 
     //My info Job Module info 
@@ -226,4 +243,17 @@ export const MODULE_INFOS = {
     //Cards Management Module Info
     CARDS_MANAGEMENT_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
     CARDS_HISTORY_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
+    My_Timesheet_MODULE_INFO:"The My Time Sheets module allows employees to record and submit their daily working hours against assigned projects. It provides complete visibility of logged hours, task details, and submission dates, ensuring accurate time tracking and streamlined approval management",
+    Team_Timesheet_MODULE_INFO:"The Team Time Sheet module enables managers or supervisors to view the timesheet records of their entire team. It displays the logged hours of each team member for the selected period, providing a clear overview of daily and monthly working hours. This helps in monitoring productivity and ensuring accurate time reporting across the team.", 
+    My_Timesheet_Summary_view:"The My Summary module provides a consolidated overview of all timesheet records submitted for approval. Employees can easily track the status of their submissions, including approved, rejected, and pending records. The module also displays a project-wise summary along with allocated hours and actual hours logged for better time management and performance tracking. ",
+    Team_Timesheet_Summary_view:"The Team Member Summary module provides a detailed overview of an individual employee’s timesheet records. It displays a monthly summary showing the total number of submitted entries along with their approval statuses — approved, rejected, or waiting for approval. Additionally, the page presents a project-wise summary with allocated and actual hours logged, helping managers assess performance and workload distribution effectively. ",
+    CLIENT_Summary_view:"The Client Summary page provides a graphical overview of all projects under a client. It displays key metrics such as total hours, project status, resource count, department-wise contribution, and estimated vs actual hours, helping in tracking client-wise performance and progress briefly. ",
+    CLIENT_Detalied_view:"The Client Detailed View page displays project-wise timesheet details for all resources assigned under a client. It shows each resource’s role, start date, days spent, and total logged hours, providing a clear breakdown of project progress and individual contributions.",
+    PROJECT_Detalied_view:"The Detailed View page displays a list of all resources assigned to the project along with their logged hours. It provides a detailed breakdown of timesheet entries, helping managers track individual contributions and overall project effort.",
+    PROJECT_Time_sheet_SUMMARY_VIEW:"The Project Summary page provides an overview of project utilization and progress. It displays total hours utilized by each resource, along with graphical insights such as project completion rate, role-wise hours, and estimated vs actual hours, Billable vs Non-Billable Hours, Project Burndown Chart. ",
+    Resource_Summary:"The Resource Summary widget displays the list of resources assigned to the project along with their roles, total hours utilized, and utilization percentage. It helps track team effort and workload distribution within the project. " ,
+    PROJECT_PHASE_MODULE_INFO: "The Phases / Milestones module allows users to create and manage different project phases or milestones with key details such as start date, end date, allocated hours, and status. It provides a structured view to track project progress, update statuses, and ensure effective phase-level planning and monitoring.",
+
+    SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Dashboard provides a comprehensive overview of employee skills and proficiency levels across the organization. It displays key insights such as total employee count, committed and available employees, skill proficiency distribution, top skills, and department-wise skill breakdown. The dashboard helps management identify skill strengths, resource availability, and training needs efficiently.",
+    SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
 }

@@ -44,15 +44,17 @@
       <div class="custom-table-content">
         <table class="w-100">
           <thead>
-              <th>Client Name</th>
+            <th>Client Name</th>
             <th>Project Name</th>
-            <th>Start Date</th>
+            <!-- <th>Start Date</th>
             <th>End Date</th>
             <th>Effective Date</th>
-            <th>Kickoff Date</th>
+            <th>Kickoff Date</th> -->
             <th>Project Type</th>
+            <th>Verticals</th>
             <th>Status</th>
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus !=='inactive' ){
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) 
+            && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
           </thead>
@@ -60,16 +62,14 @@
             <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
               <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
                 <tr *ngFor="let project of filteredProjects; let i = index">
-                    <td>{{ project.client.clientName }}</td>
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName
-                      }}</a>
-                  </td>
-                
-                  <td>{{ project.startDate | dateformat }}</td>
+                  <td>{{ project.client.clientName }}</td>
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
+                  <!-- <td>{{ project.startDate | dateformat }}</td>
                   <td>{{ project.endDate | dateformat }}</td>
                   <td>{{ project.effectiveDate | dateformat }}</td>
-                  <td>{{ project.kickoffDate | dateformat }}</td>
+                  <td>{{ project.kickoffDate | dateformat }}</td> -->
                   <td>{{ project.projectType }}</td>
+                  <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td> 
                   <td>{{ project.status }}</td>
                   @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
@@ -173,14 +173,21 @@
             updateprojectform.get('updateprojectType')?.invalid">Project Type is required</div>
           </div>
 
-          <!-- Project Description -->
-          <div class="col-md-6 mb-3">
-            <label for="updateprojectDescription" class="form-label custom-label mb-2">Project Description</label>
-            <textarea id="updateprojectDescription" formControlName="updateprojectDescription" maxlength="500"
-              class="form-control custom-input" placeholder="Please enter project description"></textarea>
-            <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length ||
-              0}}/500</div>
+             <!-- Department Name Field -->
+         <div class="col-md-6 mb-3">
+          <label for="department" class="form-label custom-label mb-2">
+            {{ 'Department' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+              defaultLabel="Please select department name" formControlName="updatedepartment"
+              class="form-select custom-select"></p-multiSelect>
+        </div>
+          <div *ngIf="updateprojectform.get('department')?.touched && updateprojectform.get('department')?.invalid" class="error-msg">
+            <div *ngIf="updateprojectform.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
+            </div>
           </div>
+        </div>
 
           <!-- Start Date -->
           <div class="col-md-6 mb-3">
@@ -209,7 +216,7 @@
           </div>
 
           <!-- Kickoff Date -->
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updatekickoffDate" class="form-label custom-label mb-2">Kickoff Date<span
                 class="text-danger">*</span></label>
             <input type="date" id="updatekickoffDate" formControlName="updatekickoffDate" [min]="minEffectiveDate"
@@ -219,10 +226,10 @@
             <div class="error-msg" *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
             <div class="error-msg" *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective
               Date</div>
-          </div>
+          </div> -->
 
           <!-- Effective Date -->
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updateeffectiveDate" class="form-label custom-label mb-2">Effective Date<span
                 class="text-danger">*</span></label>
             <input type="date" id="updateeffectiveDate" formControlName="updateeffectiveDate" [min]="minEffectiveDate"
@@ -233,9 +240,9 @@
               Date</div>
             <div class="error-msg" *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff
               Date</div>
-          </div>
+          </div> -->
 
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updateallocatedHours" class="form-label custom-label mb-2">Allocated Hours<span
                 class="text-danger">*</span></label>
             <input type="text" id="updateallocatedHours" formControlName="updateallocatedHours" [maxlength]="5"
@@ -244,9 +251,9 @@
               *ngIf="updateprojectform.get('updateallocatedHours')?.touched && updateprojectform.get('updateallocatedHours')?.invalid">
               Allocated Hours is required
             </div>
-          </div>
+          </div> -->
 
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <div class="d-flex gap-2">
               <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' |
                 translate}}
@@ -278,7 +285,23 @@
             </div>
           </div>
           
+          </div> -->
+
+           <!-- Project Description -->
+          <div class="col-md-6 mb-3">
+            <label for="updateprojectDescription" class="form-label custom-label mb-2">Project Description</label>
+            <textarea id="updateprojectDescription" formControlName="updateprojectDescription" maxlength="500"
+              class="form-control custom-input" placeholder="Please enter project description"></textarea>
+            <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length ||
+              0}}/500</div>
           </div>
+
+          <!--Color Picker-->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label">{{'Color' | translate}}</label>
+            <input type="color" class="form-control custom-color" formControlName="updatecolor" />
+          </div>
+           
           
           
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationsService } from '../../../../services/form-validations.service';
@@ -8,14 +8,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
-import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 import { IEAV } from '../../models/project-type.modal';
-import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-project-type',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsUpdateIconComponent, SettingsDeleteIconComponent, SettingsLoaderComponent, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent],
   templateUrl: './project-type.component.html',
   styleUrl: './project-type.component.scss'
 })
@@ -27,6 +24,9 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
   projectTypes: IEAV[] = [];
   loading = false;
   selectedEAV!: IEAV;
+  @ViewChild('addpopup') addpopup: any;
+  @ViewChild('updatepopup') updatepopup: any;
+  @ViewChild('deletepopup') deletepopup: any;
 
   constructor(
     private fb: FormBuilder,
@@ -43,10 +43,12 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
 
   initialiseForm() {
     this.addForm = this.fb.group({
-      projectType: [null, [Validators.required, this.formValidations.minCharactersValidator(2),this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      projectType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]],
+      color: [''],
     });
     this.updateForm = this.fb.group({
-      projectType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      projectType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]],
+      updatecolor: [''],
     });
   }
 
@@ -55,7 +57,10 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('entityAttributeValues?entity=Project&attribute=Project Type').subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.projectTypes = data;
+        this.projectTypes = data.map((item: any) => ({
+          ...item,
+          meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
+        }));
       },
       error: (error: any) => {
         this.loading = false;
@@ -66,40 +71,31 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
     });
   }
 
-  onAddSubmit(form: FormGroup) {
-    if (form.valid) {
+  onAddSubmit(modal: any) {
+    if (this.addForm.valid) {
       const payload = {
         entity: 'Project',
         attribute: 'Project Type',
-        value: form.value.projectType,
-        meta: ''
+        value: this.addForm.value.projectType,
+        meta: JSON.stringify({
+          graphData: {
+            color: this.addForm.value.color
+          }
+        })
       };
       this.subscription = this.http.postdata('entityAttributeValues', payload).subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Project Type added successfully');
+          modal.close();
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Project Type');
         },
         complete: () => {
           this.getEAV();
-          form.reset();
         }
       });
     }
-  }
-
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
-  }
-
-  openupdate(project: IEAV, content: any): void {
-    this.addForm.reset();
-    this.selectedEAV = project;
-    this.updateForm?.patchValue({
-      projectType: this.selectedEAV.value
-    });
-    this.openModal(content);
   }
 
   close(): void {
@@ -107,11 +103,41 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
     this.updateForm.reset();
   }
 
+  closed(modal: any) {
+    modal.close();
+    this.addForm.reset();
+  }
+
+  openupdateDialog(project: any) {
+    // this.selectedId = jobrole.id;
+    this.selectedEAV = project;
+    let color = "";
+    if (project.meta) {
+      const metaObj = typeof project.meta === 'string' ? JSON.parse(project.meta) : project.meta;
+      color = metaObj?.graphData?.color ?? color;
+    }
+    this.updateForm.patchValue({
+      projectType: project.value,
+      updatecolor: color
+    });
+    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+
+  opendeleted(project: any) {
+    this.selectedEAV = project;
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
   updateProjectType(form: FormGroup): void {
     if (form.valid && this.selectedEAV) {
       const payload = {
         id: this.selectedEAV.id,
         value: form.value.projectType,
+        meta: JSON.stringify({
+          graphData: {
+            color: form.value.updatecolor
+          }
+        })
       };
       this.subscription = this.http.postdata('entityAttributeValues/update', payload).subscribe({
         next: (data: any) => {
@@ -130,21 +156,15 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
     }
   }
 
-  opendelete(project: IEAV, content: any): void {
-    this.addForm.reset();
-    this.selectedEAV = project;
-    this.openModal(content);
-  }
-
   deleteProjectType(): void {
     if (this.selectedEAV) {
-      this.subscription = this.http.deleteData(`entityAttributeValues/${this.selectedEAV.id}`).subscribe({  
+      this.subscription = this.http.deleteData(`entityAttributeValues/${this.selectedEAV.id}`).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Project Type deleted successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Project Type');  
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Project Type');
         },
         complete: () => {
           this.getEAV();
@@ -152,6 +172,13 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  openDialog() {
+    this.modalService.open(this.addpopup, {
+      backdrop: 'static',
+      centered: true
+    });
   }
 
   ngOnDestroy(): void {

@@ -11,9 +11,10 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-projcet-creation',
-  imports: [ReactiveFormsModule, Select, TranslateModule, CommonModule, NgbPopover, InfoIconComponent],
+  imports: [ReactiveFormsModule, Select, TranslateModule, MultiSelectModule,CommonModule, NgbPopover, InfoIconComponent],
   templateUrl: './projcet-creation.component.html',
   styleUrl: './projcet-creation.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -38,7 +39,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
   kickoffBeforeEffectiveValid: boolean = true; // kickoff <= effective
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
-
+ departmentlist = [] as any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute) { }
@@ -48,6 +49,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     this.createProjectForm();
     this.getclientbaedonRoute();
     this.getprojecttypesData();
+    this.DepartmentList();
     // this.getAuthorityList();
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -59,7 +61,14 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       this.validateDateRange();
     });
   }
-
+ DepartmentList() {
+    this.subscription = this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.departmentlist = data;
+      },
+    });
+  }
   getclientbaedonRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -98,15 +107,17 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       clientName: [{ value: null, disabled: true }, Validators.required],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
-      effectiveDate: [null, Validators.required],
-      kickoffDate: [null, Validators.required],
+      // effectiveDate: [null, Validators.required],
+      // kickoffDate: [null, Validators.required],
       projectType: [null, Validators.required],
       projectDescription: [null, this.formValidation.maxCharactersValidator(501)],
-      allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
+      // allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      approvalidAuthority: [{value:null,disabled:true}]
+      // approvalidAuthority: [{value:null,disabled:true}],
+      department:[null, Validators.required],
+      color: [''],
     });
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -170,25 +181,35 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       return;
     }
     this.loading = true
+    
     const formValue = this.addprojectform.value;
+     const departmentIds = Array.isArray(formValue.department)
+    ? formValue.department.join(',')
+    : formValue.department;
     // Map form values to API payload
     const payload = {
       clientId: formValue.clientName ?? parseInt(this.clientID),
       projectName: formValue.projectName,
       description: formValue.projectDescription,
       projectType: formValue.projectType?.value,
-      allocatedHours: formValue.allocatedHours,
+      // allocatedHours: formValue.allocatedHours,
       isOvertimeEligibile: formValue.overtimeEligible,
       isBillable: formValue.billable,
       isWeekendWorkAllowed: formValue.allowweekendWork,
       startDate: formValue.startDate,
       endDate: formValue.endDate,
-      effectiveDate: formValue.effectiveDate,
-      kickoffDate: formValue.kickoffDate,
-      pendingApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
+      // effectiveDate: formValue.effectiveDate,
+      // kickoffDate: formValue.kickoffDate,
+      // pendingApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
       createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
-      status: 'Active',           // or get from form
-      updatedBy: parseInt(this.empinfo.employeeId)
+      status: 'Active',  
+      departmentIds: departmentIds,         // or get from form
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue.color
+        }
+      }
     };
     this.loading = true;
     this.http.postdata('Project', payload).subscribe({

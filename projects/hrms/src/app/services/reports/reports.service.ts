@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../http.service';
 import { HttpParams } from '@angular/common/http';
-import { IAbsentReportRequest, IAttendanceDetails, ICompoffDetails, IInactiveReportRequest, ILeavesummery, IPermissionReportRequest, IStandardReportRequest, IWfhReportRequest, IYearlyReportRequest} from '../../Interfaces/reports.model';
+import { IAbsentReportRequest, IAttendanceDetails, ICompoffDetails, IInactiveReportRequest, ILeavesummery, IPermissionReportRequest, IStandardReportRequest, IWfhReportRequest, IYearlyReportRequest } from '../../Interfaces/reports.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportsService {
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService) { }
 
   getStandardReports(request: IStandardReportRequest) {
     let params = new HttpParams();
@@ -87,6 +87,19 @@ export class ReportsService {
 
   getWfhReports(request: IWfhReportRequest) {
     let params = new HttpParams();
+
+    if (request.employeeId) { params = params.set('EmployeeId', request.employeeId); }
+    if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
+    // if (request.TeamManagerSnadId) {params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId); }
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
+    }
+
+    return this.http.get('Reports/WfhReports', { params });
+  }
+ getRemoteReports(request: IWfhReportRequest) {
+    let params = new HttpParams();
   
     if (request.employeeId) { params = params.set('EmployeeId', request.employeeId);}
     if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
@@ -96,13 +109,12 @@ export class ReportsService {
       params = params.set('EndDate', request.EndDate);
     }
   
-    return this.http.get('Reports/WfhReports', { params });
+    return this.http.get('Reports/RemoteLoginReports', { params });
   }
-
 
   getInactiveReports(request: IInactiveReportRequest) {
     let params = new HttpParams();
-  
+
     if (request.employeeId) {
       params = params.set('EmployeeId', request.employeeId);
     }
@@ -110,12 +122,12 @@ export class ReportsService {
     if (request.teamManagerID) {
       params = params.set('teamManagerID', request.teamManagerID);
     }
-  
-    if(request.LeaveName) {
+
+    if (request.LeaveName) {
       params = params.set('LeaveName', request.LeaveName);
     }
 
-   if(request.Year) {
+    if (request.Year) {
       params = params.set('Year', request.Year);
     }
     return this.http.get('Reports/Inactive_Employee_Reports', { params });
@@ -124,40 +136,40 @@ export class ReportsService {
 
   getAbsentReports(request: IAbsentReportRequest) {
     let params = new HttpParams();
-  
+
     // Check and append each property from the request to the HttpParams
     if (request.FusionEmpId) {
       params = params.set('FusionEmpId', request.FusionEmpId.toString());
     }
-  
+
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
-  
+
     if (request.Worked_Date) {
       params = params.set('Worked_Date', request.Worked_Date);
     }
-  
+
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);
     }
-  
+
     if (request.Worked_Month !== undefined) {
       params = params.set('Worked_Month', request.Worked_Month.toString());
     }
-  
+
     return this.http.get('Reports/AbsentReports', { params });
   }
-  
+
   getYearlyReports(request: IYearlyReportRequest) {
     let params = new HttpParams();
-    
+
     if (request.employeeId) params = params.set('EmployeeId', request.employeeId);
     if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
     if (request.EntitlementYear) params = params.set('EntitlementYear', request.EntitlementYear);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
-  
+
     return this.http.get('Reports/YearSummaryReports', { params });
   }
 
@@ -182,17 +194,18 @@ export class ReportsService {
   }
   //attendance report
   getAttendanceReports(request: IAttendanceDetails) {
-    
+
     let params = new HttpParams();
     // if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
     if (request.employeeId) params = params.set('EmployeeId', request.employeeId);
-    if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
+    if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
-    if (request.StartDate && request.EndDate) {params = params.set('StartDate', request.StartDate);
-    params = params.set('EndDate', request.EndDate);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
     }
-  
+
     if (request.Worked_Month !== undefined) {
       params = params.set('Worked_Month', request.Worked_Month.toString());
     }
@@ -202,26 +215,26 @@ export class ReportsService {
 
   getLeaveSummaryReport(request: ILeavesummery) {
     let params = new HttpParams();
-    
+
     if (request.EmployeeId) params = params.set('EmployeeId', request.EmployeeId);
     if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
     // if (request.TeamManagerFusionEmpId) params = params.set('teamManagerID', request.TeamManagerFusionEmpId);
     if (request.LeaveName) params = params.set('LeaveType', request.LeaveName);
     return this.http.get('Reports/LeaveSummaryReports', { params });
   }
-  
+
   //comp off
   getcompOffReports(request: ICompoffDetails) {
     let params = new HttpParams();
-  
+
     if (request.employeeId) {
       params = params.set('EmployeeId', request.employeeId.toString());
     }
-  
+
     if (request.teamManagerID) {
       params = params.set('teamManagerID', request.teamManagerID);
     }
-  
+
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);
@@ -236,8 +249,9 @@ export class ReportsService {
     if (request.employeeId) params = params.set('employeeId', request.employeeId);
     // if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
-    if (request.StartDate && request.EndDate) { params = params.set('StartDate', request.StartDate);
-       params = params.set('EndDate', request.EndDate);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
     }
 
     return this.http.get('Reports/PermissionReports', { params });
@@ -256,6 +270,19 @@ export class ReportsService {
 
     return this.http.get('Reports/AttendanceRegularizationReports', { params });
   }
-  
-  
+
+  getExpenseReports(request: any) {
+    let params = new HttpParams();
+
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
+    if (request.fusionEmpId) params = params.set('fusionEmpId', request.fusionEmpId);
+    if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
+    if (request.teamId) params = params.set('teamId', request.teamId);
+    if (request.expenseItemStatus) params = params.set('expenseItemStatus', request.expenseItemStatus);
+    if (request.startDate) params = params.set('StartDate', request.startDate);
+    if (request.endDate) params = params.set('EndDate', request.endDate);
+
+    return this.http.get('Reports/ExpensesReports', { params });
+  }
+
 }

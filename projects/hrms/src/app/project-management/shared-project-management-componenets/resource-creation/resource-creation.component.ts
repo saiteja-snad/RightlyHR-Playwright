@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -12,9 +12,12 @@ import { Project } from '../../../Interfaces/projects.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { IPhases } from '../../../Interfaces/project-management/phases.model';
+import { IResource } from '../../../Interfaces/project-management/resources.model';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-resource-creation',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SelectModule],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbPopover, SelectModule, InfoIconComponent],
   templateUrl: './resource-creation.component.html',
   styleUrl: './resource-creation.component.scss'
 })
@@ -31,6 +34,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     { label: 'Per week', value: 'Per week' },
     { label: 'Per project', value: 'Per project' }
   ];
+    departmentlist = [] as any;
   projectId: any;
   empinfo: any = {};
   projectsDataDrown: Project[] = [];
@@ -40,7 +44,14 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   ProjectstartndEndDateValid: any;
   projectStartDate: any;
   projectEndDate: any;
-
+  loader: boolean | undefined;
+  departmentIds: number[] = [];
+  phaseData = [] as IPhases[];
+  phaseDropdown: any[] = [];
+  selectedPhaseId : any;
+  resourcesData = [] as IResource[];
+  resoucesDropDownData = [] as any[];
+  selectedAuthorityId : any;
   constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationService,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService) { }
 
@@ -49,12 +60,96 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     this.getAllActiveEmployees();
     this.createResourceForm();
     this.getdatabaedonRoute();
+
+    this.DepartmentList();
     this.addResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
     });
     this.addResourceForm.get('allocatedFrequencyType')?.valueChanges.subscribe(() => {
       this.addResourceForm.get('resourceAllocationhrs')?.updateValueAndValidity();
     });
+  }
+ DepartmentList() {
+    this.subscription = this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.departmentlist = data;
+      },
+    });
+  }
+  projectRoles: any[] = [];
+
+projectRoleDropdown: any[] = [];
+
+getJobrole() {
+  this.loader = true;
+  const departmentParam = this.departmentIds?.join(',') || '';
+
+  this.subscription = this.http
+    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
+    .subscribe({
+      next: (response: any) => {
+        this.loader = false;
+        if (response && response.success && Array.isArray(response.data)) {
+          this.projectRoleDropdown = response.data.map((item: any) => ({
+            label: `${item.roleName}`,
+            value: {
+              roleId: item.id,
+              entityReferenceId: item.entity?.entityReferenceId || 0
+            }
+          }));
+        } else {
+          this.projectRoleDropdown = [];
+        }
+      },
+      error: () => {
+        this.loader = false;
+      },
+    });
+}
+
+selectedRoleId: number = 0;
+selectedEntityRefId: number = 0;
+
+onRoleChange(selectedValue: any) {
+  if (selectedValue) {
+    this.selectedRoleId = selectedValue.roleId;
+    this.selectedEntityRefId = selectedValue.entityReferenceId;
+  }
+}
+
+onPhaseChange(selectedValue: any) {
+  if (selectedValue?.value) {
+    const phase = selectedValue.value;
+    console.log(phase);
+    
+    this.selectedPhaseId = phase.value ?? null;
+    this.projectStartDate = phase.startDate ?? null;
+    this.projectEndDate = phase.endDate ?? null;
+
+    // Update validators safely
+    this.addResourceForm.get('startDate')?.updateValueAndValidity();
+    this.addResourceForm.get('endDate')?.updateValueAndValidity();
+    console.log(this.projectStartDate,this.projectEndDate);
+    
+    // Reset approval authority safely
+    const resourceAuthorityControl = this.addResourceForm.get('resourceAuthority');
+    if (resourceAuthorityControl) {
+      resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
+      resourceAuthorityControl.disable();
+    }
+
+    if (this.projectId != null && this.selectedPhaseId != null) {
+      this.getResourceData(this.projectId, this.selectedPhaseId);
+    }
+  }
+}
+
+
+  onAuthorityChange(selectedValue: any){
+    if(selectedValue){
+      this.selectedAuthorityId = selectedValue.value.value;
+    }
   }
 
   getdatabaedonRoute(): void {
@@ -64,7 +159,9 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
         const projectId = params['id'];
         if (projectId) {
           this.getProjects(projectId);
-          this.projectId = parseInt(projectId)
+          this.projectId = parseInt(projectId);
+           this.getPhaseData();
+          
         }
       });
     } else if (fullPath.startsWith('/project-management/clients')) {
@@ -87,7 +184,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       resourceRole: [null, [Validators.required, Validators.maxLength(50),
       Validators.minLength(2),
       ]],
-      resourcePhone: [null, Validators.required],
+      resourcePhone: [null],
       designation: [null, Validators.required],
       projectName: [{ value: null, disabled: true }, Validators.required],
       projectType: [null, Validators.required],
@@ -97,7 +194,10 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       // allocatedFrequencyType: [null, Validators.required],
       overtimeEligible: [false],
       billable: [false],
-      allowweekendWork: [false]
+      allowweekendWork: [false],
+      color: [''],
+      resourcePhase : [null, Validators.required],
+      resourceAuthority : [{value: null, disabled: true}]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -105,6 +205,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = res?.data ?? [];
+         this.departmentIds = this.projectsDataDrown[0]?.departments?.map((d: any) => d.departmentId) || [];
         this.addResourceForm.patchValue({
           projectName: this.projectsDataDrown[0]?.projectId,
           projectType: this.projectsDataDrown[0]?.projectType,
@@ -112,10 +213,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
           billable: this.projectsDataDrown[0]?.isBillable,
           allowweekendWork: this.projectsDataDrown[0]?.isWeekendWorkAllowed
         })
-        this.projectStartDate = this.projectsDataDrown[0]?.startDate;
-        this.projectEndDate = this.projectsDataDrown[0]?.endDate;
-        this.addResourceForm.get('startDate')?.updateValueAndValidity();
-        this.addResourceForm.get('startDate')?.updateValueAndValidity();
+        this.getJobrole();
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -145,6 +243,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         const project = res?.data[0];
         if (project) {
+        this.departmentIds = project?.departments?.map((d: any) => d.departmentId) || [];
           this.projectId = project.projectId;
           this.addResourceForm.patchValue({
             projectType: project.projectType,
@@ -152,6 +251,22 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
             billable: project.isBillable,
             allowweekendWork: project.isWeekendWorkAllowed
           });
+
+                    // Reset dependent dropdowns
+          this.phaseDropdown = [];
+          this.resoucesDropDownData = [];
+          this.addResourceForm.patchValue({
+            resourcePhase: null,
+            resourceAuthority: null
+          });
+
+          this.addResourceForm.get('resourcePhase')?.reset();
+          this.addResourceForm.get('resourceAuthority')?.reset();
+          this.addResourceForm.get('resourceAuthority')?.disable();
+
+          this.getJobrole();
+          this.getPhaseData();
+
         }
       },
       error: (err) => {
@@ -188,11 +303,54 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  
+  getResourceData(projectId: number,phaseId:number) {
+
+    const params = {
+      status: 'Active',
+      entityType: 'project',
+      entityRefId: projectId,
+      phaseId:phaseId
+    };
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .subscribe({
+        next: (data: any) => {
+          if (data?.data?.length > 0) {
+            this.resourcesData = data.data;
+            this.resoucesDropDownData = this.resourcesData
+              .filter((r) => r.employee)
+              .map((r) => ({
+                label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+                value: r.employee.id,
+              }));
+
+            if (this.resoucesDropDownData?.length > 0) {
+              this.addResourceForm.get('resourceAuthority')?.enable();
+              this.addResourceForm
+                .get('resourceAuthority')
+                ?.setValidators([Validators.required]);
+            }
+          } else {
+            this.resoucesDropDownData = [];
+            this.addResourceForm.get('resourceAuthority')?.disable();
+          }
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
+  }
+
   onClickEmployee(event: any) {
     this.selectedEmployee = event.value;
     this.addResourceForm.patchValue({
       resourceEmail: this.selectedEmployee.workEmail,
-      resourcePhone: this.selectedEmployee.mobilePhoneCountryCode + " " + this.selectedEmployee.contactnumber,
+      resourcePhone: this.selectedEmployee
+  ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
+  : '-',
+
     });
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
@@ -222,20 +380,34 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     }
     this.spinnerLoader = true;
     const formValue = this.addResourceForm.value;
+    // Convert startDate to a Date object for comparison
+    const startDate = new Date(formValue.startDate);
+    const today = new Date();
+    // Determine status based on start date
+    const status = startDate > today ? 'Assigned' : 'Active';
     const payload = {
       entityType: "project",
       entityRefId: this.projectId,
       employeeId: this.selectedEmployee.employeeId,
       startDate: formValue.startDate,
       endDate: formValue.endDate,
+       projectRoleId: formValue.resourceRole.value.roleId,
+    projectDepartmentId: formValue.resourceRole.value.entityReferenceId,
       allocatedHours: formValue.resourceAllocationhrs,
       allocatedFrequencyType: formValue.allocatedFrequencyType?.value || null,
       overtimeEligibile: formValue.overtimeEligible,
       billable: formValue.billable,
       weekendWorkAllowed: formValue.allowweekendWork,
-      status: "Active",
-      role: formValue.resourceRole,
+      status: status,
+      // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
+      phaseId : this.selectedPhaseId,
+      pendingApprovalAuthority : formValue?.resourceAuthority?.value,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+      }
     };
     this.http.postdata(`ProjectResource`, payload).subscribe({
       next: (res) => {
@@ -334,6 +506,34 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   close() {
     this.modalService.dismissAll();
     this.addResourceForm.reset();
+  }
+
+  getPhaseData() {
+    const params = {
+    projectId: this.projectId
+    };
+    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        this.phaseData = (data?.data || []).filter(
+        (p: any) =>
+          p?.status?.toLowerCase() === 'in progress' ||
+          p?.status?.toLowerCase() === 'extended'
+      );
+        this.phaseDropdown = this.phaseData?.map(p => ({
+        label: p?.phaseName,
+        value: p?.phaseId,
+        projectId:p?.project?.projectId,
+        clientId:p?.project?.clientId,
+        startDate: p?.startDate,
+        endDate: p?.endDate,
+        pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
+      }));
+        this.spinnerLoader = false;
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+      }
+    });
   }
   
   ngOnDestroy() {

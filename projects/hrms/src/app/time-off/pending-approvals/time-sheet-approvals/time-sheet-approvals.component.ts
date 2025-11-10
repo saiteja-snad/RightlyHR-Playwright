@@ -58,7 +58,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedMap: { [key: number]: any[] } = {};
   //projectsData:any[]=[];
   //employeeData:any[]=[];
-  projectId!: number;
+  phaseId!: number;
   dataload = false;
   //employeeflag:any;
   employeeresource: any;
@@ -88,9 +88,9 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.http.selectedEmployeeIdTimesheet$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
-        if (data) {
+        if (data && data.request) {
           this.employeeresource = data.request.resourceId;
-          this.projectId = data.request.projectId;
+          this.phaseId = data.request.phaseId;
 
           if (data.request && data.request.dateRange) {
             this.startdate = data.request.dateRange.startDate;
@@ -162,8 +162,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
-    if (this.projectId !== undefined && this.projectId !== null) {
-      url += `&projectId=${this.projectId}`;
+    if (this.phaseId !== undefined && this.phaseId !== null) {
+      url += `&phaseId=${this.phaseId}`;
     }
     if (this.startdate && this.enddate) url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
     this.http.getData(url).subscribe({
@@ -203,11 +203,11 @@ export class TimeSheetApprovalsComponent implements OnInit {
       },
       error: (err) => {
          this.collectionSize = 0;
-        if (this.employeeresource != null && this.projectId != 0) {
+        if (this.employeeresource != null && this.phaseId != 0) {
           // this.conformationPopup.openErrorModal(err.error.message);
           this.collectionSize = 0;
         }
-        if (this.employeeresource == null && this.projectId != 0) {
+        if (this.employeeresource == null && this.phaseId != 0) {
           this.collectionSize = 0;
         }
         if (this.enddate == "Invalid Date") {
@@ -507,6 +507,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.subscription?.unsubscribe();
-    this.http.setEmployeeIdTimesheet({}, 0, 0);
+    this.http.setEmployeeIdTimesheet({}, 0, null);
   }
 }

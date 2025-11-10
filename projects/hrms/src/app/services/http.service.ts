@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -51,7 +51,7 @@ export class HttpService {
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<boolean>(false);
-  cardsregisterSignal=signal<boolean>(false);
+  cardsregisterSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -59,14 +59,24 @@ export class HttpService {
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
+
   eventAddedSource = new Subject<void>();
   eventAdded$ = this.eventAddedSource.asObservable();
   // Function to notify that an event has been added
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
-//setting cards count
- private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
+
+  //state mangement
+private clickingonresourceSource = new BehaviorSubject<boolean>(false);
+clickingonresource$ = this.clickingonresourceSource.asObservable();
+
+notifyresource() {
+  this.clickingonresourceSource.next(true);
+}
+
+  //setting cards count
+  private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
   counts$ = this.CardcountsSource.asObservable();
   updateCount(counts: { [key: string]: number }) {
     this.CardcountsSource.next(counts);
@@ -119,8 +129,8 @@ export class HttpService {
   // Observable for components to subscribe to
   selectedEmployeeIdTimesheet$ = this.selectedEmployeeIdTimesheet.asObservable();
   // Method to update the employeeId
-  setEmployeeIdTimesheet(id: any, projectId: number, request: any): void {
-    this.selectedEmployeeIdTimesheet.next({ id, projectId, request });
+  setEmployeeIdTimesheet(id: any, phaseId: number, request: any): void {
+    this.selectedEmployeeIdTimesheet.next({ id, phaseId, request });
   }
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
@@ -524,8 +534,8 @@ export class HttpService {
   deleteData(url: string) {
     return this.http.delete(`${this.ApiUrl}${url}`);
   }
-//get card details
- getcardDetails(
+  //get card details
+  getcardDetails(
     url: string,
     pagenum: number,
     pagesize: number,
@@ -537,7 +547,7 @@ export class HttpService {
       .set('pageSize', pagesize.toString());
     if (searchparam) params = params.set('search', searchparam);
     if (status) params = params.set('status', status);
-    
+
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
   getDataWithQueryParams(url: string, queryParams: any) {
@@ -565,6 +575,13 @@ export class HttpService {
     // Make the GET request and return the file as a Blob
     return this.http.get(apiurl, {
       responseType: 'blob', // Set response type to 'blob' to handle file download
+    });
+  }
+  downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
+    const apiurl = `${this.ApiUrl}${url}`;
+    return this.http.get(apiurl, {
+      responseType: 'blob',
+      observe: 'response'  // 👈 allows access to headers
     });
   }
 
@@ -703,7 +720,7 @@ export class HttpService {
   getFilterWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
-  
+
   getFilterOnBehalfWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
@@ -714,6 +731,10 @@ export class HttpService {
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
+  }
+
+  getFilterExtraHoursDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/loggedextrahours/${employeeId}?year=${params}`);
   }
 
   getFilterPermissionDataByID(employeeId: number, params?: any) {
@@ -775,4 +796,33 @@ export class HttpService {
   DeleteData(url: string, body?: any) {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
+  // DATE RANGE
+ private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+
+  // Set date range 
+  setDateRange(startDate: string | null, endDate: string | null) {
+    this.dateRangeSubject.next({ startDate, endDate });
+  }
+
+  // Get as observable (for subscription)
+  getDateRangeObservable() {
+    return this.dateRangeSubject.asObservable();
+  }
+
+  //  Get current value (synchronous)
+  getCurrentDateRange() {
+    return this.dateRangeSubject.getValue();
+  }
+
+  //  Example API call
+  getDatEdATA(url: string) {
+    return this.http.get(url);
+  }
+
+  phaseadded = new Subject<void>();
+  phaseDetailesadded$ = this.phaseadded.asObservable();
+  setnewPhaseDetails() {
+    this.phaseadded.next();
+  }
+
 }

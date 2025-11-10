@@ -61,48 +61,70 @@
         </div>
         }
 
-        @if(isActive('/project-management/clients/details/timesheet')){
+        @if(isActive('/project-management/clients/details/timesheet/resource-summary')){
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
             <div class="d-flex gap-3 align-items-center">
-
-                  @if(isFilterApplied()) {
+                <!-- 
+                @if(isFilterApplied()) {
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
-                }
+                } -->
                 <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-                        [showIcon]="true" [readonlyInput]="true">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
+                        selectionMode="range" [showIcon]="true" [readonlyInput]="true">
                     </p-datepicker>
                 </div>
 
-                <div class="custom-p-select-content">
-                    <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                        placeholder="Please select project" class="form-select custom-select"
-                        (onChange)="onProjectChange($event)">
-                    </p-select>
-                </div>
+                <!-- <div class="custom-p-select-content">
+                                <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
+                                    [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
+                                    placeholder="Please select project" class="form-select custom-select"
+                                    (onChange)="onProjectChange($event)">
+                                </p-select>
+                            </div> -->
 
                 <div class="custom-p-select-content">
                     <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId"
-                        [resetFilterOnHide]="true" filterBy="name" optionLabel="name" optionValue="id"
-                        placeholder="Please select resource name" class="form-select custom-select">
+                        [resetFilterOnHide]="true" filterBy="name" [showClear]="true" optionLabel="name"
+                        optionValue="id" placeholder="Please select resource name" class="form-select custom-select">
                     </p-select>
                 </div>
 
                 <div>
-                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isFormCompletelyValid()">Apply</button>
+                    <button class="custom-btn btn-primary" type="submit"
+                        [disabled]="!isFormCompletelyValid()">Apply</button>
+                </div>
+            </div>
+        </form>
+        }
+
+          @if(isActive('/project-management/clients/details/timesheet/summary')){
+        <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
+            <div class="d-flex gap-3 align-items-center">
+                <!-- 
+                @if(isFilterApplied()) {
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                } -->
+                <div class="custom-date-range-picker">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
+                        selectionMode="range" [showIcon]="true" [readonlyInput]="true">
+                    </p-datepicker>
+                </div>
+
+     
+                <div>
+                    <button class="custom-btn btn-primary" type="submit">Apply</button>
                 </div>
             </div>
         </form>
         }
     </div>
 
-    <div class="main-content d-flex w-100 gap-3">
+    <div class="main-content d-flex w-100 gap-3 w-100">
         <div class="component-left-tabs-container">
             <app-client-tabs />
         </div>
 
-        <div class=" w-100">
+        <div class="client-view-section">
             <router-outlet />
         </div>
     </div>
@@ -135,9 +157,10 @@
                         <label for="documentType" class="form-label custom-label mb-2">Document Type
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
-                                optionLabel="value" optionValue="value" formControlName="documentType"
-                                placeholder="Please select document type" class="form-select custom-select"></p-select>
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
+                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
+                                formControlName="documentType" placeholder="Please select document type"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
@@ -180,8 +203,10 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid">Add</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="addDocumentForm.invalid">Add</button>
                 </div>
             </form>
         </div>

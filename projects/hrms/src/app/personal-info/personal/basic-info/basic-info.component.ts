@@ -80,7 +80,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
       next: (data: any) => {
         if (data.data.length > 0) {
-          this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);
+          this.fieldOptions = data.data
         } else {
           console.log('No data found.');
         }
@@ -247,6 +247,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   constructModulesPayload(formValue: any): any {
+    debugger
     const fields = this.fieldOptions
       .map((field: any) => {
         const oldValue = this.getOldValue(field.actualFieldName);
@@ -261,7 +262,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           isFieldRequired: field.isRequired,
         };
       })
-      .filter((field: any) => (field.oldValue.trim() !== field.newValue.trim()) && (field.oldValue !== null || field.oldValue !== undefined) !== field.newValue);
+      .filter((field: any) => (field.oldValue.trim() !== field.newValue.trim()));
 
     return {
       employeeId: this.empinfo.employeeId,
@@ -284,7 +285,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       'DOB': this.dateofbirth,
       'BloodGroup': this.empyployeedata.bloodGroup,
       'MaritalStatus': this.empyployeedata.maritalStatus,
-      'marriedDate': this.empyployeedata.marriedDate
+      'marriedDate': this.formatDateToLocal(this.empyployeedata.marriedDate) || null,
     };
     return mapping[actualFieldName] || '';
   }

@@ -30,7 +30,7 @@ export class ProjectTimesheetDetailedComponent {
   }
 
   getResourceDetails(): void {
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+    this.route.queryParams.subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
       if (!projectid) {
         this.projectEmployeeDetails = [];

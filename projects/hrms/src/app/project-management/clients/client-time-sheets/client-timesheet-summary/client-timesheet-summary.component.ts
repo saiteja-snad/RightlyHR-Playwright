@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
@@ -13,14 +13,14 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, 
+  imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule,
     ChartModule, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
-export class ClientTimesheetSummaryComponent {
+export class ClientTimesheetSummaryComponent implements OnInit,OnDestroy {
   statusOptions = [
     { label: 'Not Started', value: 'Not Started' },
     { label: 'On Track', value: 'On Track' },
@@ -85,10 +85,15 @@ export class ClientTimesheetSummaryComponent {
 
   ngOnInit() {
     this.createClientForm();
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
+    this.route.queryParams.subscribe(params => {
       const clientID = params['id'];
-      this.getClientById(clientID);
+      if (clientID) {
+        this.getClientById(clientID);
+      }
     });
+
+
+
     this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
       if (request && request.dateRange) {
         // Call API with date filter (if BehaviorSubject has data)
@@ -641,7 +646,7 @@ export class ClientTimesheetSummaryComponent {
         },
         error: (err) => {
           this.BillablevsNonBillableHoursLoader = false;
-          console.error('Error fetching billable/non-billable chart data:', err); 
+          console.error('Error fetching billable/non-billable chart data:', err);
         }
       });
     });
@@ -798,5 +803,12 @@ export class ClientTimesheetSummaryComponent {
     if (!datasets?.length) return false;
     const data = datasets[0]?.data;
     return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

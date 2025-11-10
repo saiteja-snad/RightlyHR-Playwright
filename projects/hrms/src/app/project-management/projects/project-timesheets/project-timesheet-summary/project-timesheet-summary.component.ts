@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
@@ -18,7 +18,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ProjectTimesheetSummaryComponent {
+export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
   // Project Resource Data variable
   projectResourceSummaryData: any;
   // Department wise Contribution variables
@@ -99,7 +99,7 @@ export class ProjectTimesheetSummaryComponent {
   projectResourceSummary(startDate?: string, endDate?: string): void {
     this.resourceSummaryLoader = true;
     const fullPath = this.router.url;
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+    this.route.queryParams.subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
       if (!projectid) {
         this.projectResourceSummaryData = [];
@@ -122,6 +122,7 @@ export class ProjectTimesheetSummaryComponent {
         error: (err) => {
           this.resourceSummaryLoader = false;
           console.error('Error fetching clients:', err);
+            this.projectResourceSummaryData = [];
         }
       });
     });
@@ -545,5 +546,11 @@ export class ProjectTimesheetSummaryComponent {
     if (!datasets?.length) return false;
     const data = datasets[0]?.data;
     return Array.isArray(data) && data.some(value => value > 0);
+  }
+
+    ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+
   }
 }

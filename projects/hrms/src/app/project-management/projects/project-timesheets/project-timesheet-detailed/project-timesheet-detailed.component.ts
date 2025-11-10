@@ -6,9 +6,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-project-timesheet-detailed',
-  imports: [CommonModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './project-timesheet-detailed.component.html',
   styleUrl: './project-timesheet-detailed.component.scss'
 })
@@ -18,7 +19,7 @@ export class ProjectTimesheetDetailedComponent {
   projectId: any;
   clientId: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+ loading = false
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -30,6 +31,7 @@ export class ProjectTimesheetDetailedComponent {
   }
 
   getResourceDetails(): void {
+    this.loading = true
     this.route.queryParams.subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
       if (!projectid) {
@@ -40,7 +42,7 @@ export class ProjectTimesheetDetailedComponent {
       let url = `ProjectResource/getClientProjectResourceSummary?projectId=${projectid}`;
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          console.log(res);
+        this.loading = false
           const projectData = res?.data?.[0]?.project;
           const clientData = res?.data?.[0]?.client;
           this.projectId = projectData?.projectId || null;
@@ -49,6 +51,7 @@ export class ProjectTimesheetDetailedComponent {
           this.projectEmployeeDetails = projectData?.resources || [];
         },
         error: (err) => {
+          this.loading = false
           console.error('Error fetching clients:', err);
         }
       });

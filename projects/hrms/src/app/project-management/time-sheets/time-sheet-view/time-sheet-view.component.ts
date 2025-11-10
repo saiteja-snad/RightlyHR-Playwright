@@ -852,7 +852,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           }, 3000);
           this.errorOccurred = true;
          dayForm.reset();
-        this.conformationPopup.openErrorModal(err.error.message);
+       // this.conformationPopup.openErrorModal(err.error.message);
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });
@@ -1534,7 +1534,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
-        this.conformationPopup.openSuccessModal(err.error.message);
+       // this.conformationPopup.openSuccessModal(err.error.message);
          this.errormodaldata = err.error.message;
         // this.modalService.open(this.errormodal,{ centered: true });
           const modalRef = this.modalService.open(this.errormodal, { centered: true });

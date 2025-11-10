@@ -38,6 +38,9 @@ export const permissionsData = [
   // Attendance Locking
   { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Published Tab', View: false, Update: false, Create: false, Delete: false },
+    // Timesheet Locking
+  { fields: 'Timesheet Locking Pending Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Locking Published Tab', View: false, Update: false, Create: false, Delete: false },
   //Job Tab
   { fields: 'Job Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },

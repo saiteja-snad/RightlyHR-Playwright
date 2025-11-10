@@ -567,6 +567,7 @@ export const CLIENTS_ROUTES = [
   },
 ];
 
+
 export const PROJECTS_ROUTES = [
   {
     route: '/project-management/projects/active',
@@ -599,8 +600,17 @@ export const PROJECTS_ROUTES = [
   {
     route: '/project-management/projects/details/inactivedocuments',
     permission: 'Documents Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/phases',
+    permission: 'Documents Tab.view'
   }
 ];
+
+export const TIME_SHEETS_TABS = [
+  { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
+  { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+]
 
 export const ON_BEHALF_OF = [
   { route: '/on-behalf-of/on-behalf-of-wfh', permission: 'On Behalf Of WFH.view' },

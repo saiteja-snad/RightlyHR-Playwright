@@ -31,7 +31,7 @@ export class ClientTabsComponent {
       permission: { feature: 'Client Resources', action: 'view' }
     },
     {
-      label: 'Timesheets', link: '/project-management/clients/details/timesheet', icon: 'main-menu-icons/project-management-timesheet.png',
+      label: 'Timesheets', link: '/project-management/clients/details/timesheet/summary', icon: 'main-menu-icons/project-management-timesheet.png',
       permission: { feature: 'Client Timesheets', action: 'view' }
     },
     {
@@ -70,8 +70,13 @@ export class ClientTabsComponent {
         currentUrl.includes('/project-management/clients/details/inactiveprojects');
     }
 
+      if (link === '/project-management/clients/details/timesheet/summary') {
+      return currentUrl.includes('/project-management/clients/details/timesheet/detailed') ||
+        currentUrl.includes('/project-management/clients/details/timesheet/summary') ||
+        currentUrl.includes('/project-management/clients/details/timesheet/resource-summary'); 
+    }
+
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }
-
 }

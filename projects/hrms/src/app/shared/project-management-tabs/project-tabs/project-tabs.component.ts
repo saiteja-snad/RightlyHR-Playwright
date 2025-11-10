@@ -14,18 +14,19 @@ import { CommonModule } from '@angular/common';
 export class ProjectTabsComponent {
   filteredTabs: any[] = [];
   columnsPerRow = 3;
-  navTabs: any[] = [];
+  navTabs = [
+    { label: 'Project Info', link: '/project-management/projects/details/information', permission: { feature: 'Project Details Tab', action: 'view' } },
+    { label: 'Phases / Milestones', link: '/project-management/projects/details/phases', permission: { feature: 'Project Phases Tab', action: 'view' } },
+    { label: 'Contact Info', link: '/project-management/projects/details/contact-info', permission: { feature: 'Contact Info Tab', action: 'view' } },
+    { label: 'Documents', link: '/project-management/projects/details/documents', permission: { feature: 'Documents Tab', action: 'view' } },
+    { label: 'Resources', link: '/project-management/projects/details/resources', permission: { feature: 'Resources Tab', action: 'view' } },
+    { label: 'Timesheets', link: '/project-management/projects/details/timesheet/summary', permission: { feature: 'Project Timesheets Tab', action: 'view' } }
+  ];
 
   constructor(private rbac: RbacService, private router: Router) { }
 
   ngOnInit(): void {
-    this.navTabs = [
-      { label: 'Project Info', link: '/project-management/projects/details/information', permission: { feature: 'Project Details Tab', action: 'view' } },
-      { label: 'Contact Info', link: '/project-management/projects/details/contact-info', permission: { feature: 'Contact Info Tab', action: 'view' } },
-      { label: 'Documents', link: '/project-management/projects/details/documents', permission: { feature: 'Documents Tab', action: 'view' } },
-      { label: 'Resources', link: '/project-management/projects/details/resources', permission: { feature: 'Resources Tab', action: 'view' } },
-      { label: 'Timesheets', link: '/project-management/projects/details/timesheet', permission: { feature: 'Project Timesheets Tab', action: 'view' } }
-    ];
+
     this.filterTabsByRbac();
   }
 
@@ -44,12 +45,14 @@ export class ProjectTabsComponent {
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }
 
+
   isDocumentTabActive(link: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
     // For Documents tab, check both documents and inactivedocuments routes
-    if (link === '/project-management/projects/details/documents') {
-      return currentUrl.includes('/project-management/projects/details/documents') || 
-      currentUrl.includes('/project-management/projects/details/inactivedocuments');
+    if (link === '/project-management/projects/details/timesheet/summary') {
+      return currentUrl.includes('/project-management/projects/details/timesheet/detailed') ||
+        currentUrl.includes('/project-management/projects/details/timesheet/summary')
+        || currentUrl.includes('/project-management/projects/details/timesheet/resource-summary');  
     }
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');

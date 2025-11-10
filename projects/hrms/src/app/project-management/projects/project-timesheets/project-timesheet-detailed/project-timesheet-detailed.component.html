@@ -1,0 +1,31 @@
+<div class="custom-component-right-content">
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Role</th>
+                    <th>Start Date</th>
+                    <th>Days Spent</th>
+                    <th>Logged Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                     @if(projectEmployeeDetails.length > 0){
+                <tr *ngFor="let project of projectEmployeeDetails; let i = index">
+                    <td>
+                        <a class="project-name cursor" (click)="navigateView(project.employee.id)">{{ project.employee?.name }}
+                        </a>
+                    </td>
+                    <td>{{ project.roleName }}</td>
+                    <td>{{ project.startDate | dateformat }}</td>
+                    <td>{{ project.daysSpent || '-' }} Days</td>
+                    <td>{{ project.loggedHours || '0' }} Hrs</td>
+                </tr>
+            }@else {
+                  <app-no-data-found/>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

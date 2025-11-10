@@ -107,16 +107,17 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       clientName: [{ value: null, disabled: true }, Validators.required],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
-      effectiveDate: [null, Validators.required],
-      kickoffDate: [null, Validators.required],
+      // effectiveDate: [null, Validators.required],
+      // kickoffDate: [null, Validators.required],
       projectType: [null, Validators.required],
       projectDescription: [null, this.formValidation.maxCharactersValidator(501)],
-      allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
+      // allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      approvalidAuthority: [{value:null,disabled:true}],
-      department:[null, Validators.required]
+      // approvalidAuthority: [{value:null,disabled:true}],
+      department:[null, Validators.required],
+      color: [''],
     });
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -191,19 +192,24 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       projectName: formValue.projectName,
       description: formValue.projectDescription,
       projectType: formValue.projectType?.value,
-      allocatedHours: formValue.allocatedHours,
+      // allocatedHours: formValue.allocatedHours,
       isOvertimeEligibile: formValue.overtimeEligible,
       isBillable: formValue.billable,
       isWeekendWorkAllowed: formValue.allowweekendWork,
       startDate: formValue.startDate,
       endDate: formValue.endDate,
-      effectiveDate: formValue.effectiveDate,
-      kickoffDate: formValue.kickoffDate,
-      pendingApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
+      // effectiveDate: formValue.effectiveDate,
+      // kickoffDate: formValue.kickoffDate,
+      // pendingApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
       createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
       status: 'Active',  
       departmentIds: departmentIds,         // or get from form
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue.color
+        }
+      }
     };
     this.loading = true;
     this.http.postdata('Project', payload).subscribe({

@@ -5,6 +5,7 @@ export interface SummaryCard {
   subtext?: string;
   subtextClass?: string;
    icons?: string; 
+     key: string;
 }
 
 // Skill Summary Totals
@@ -84,5 +85,6 @@ export interface EmployeeSkill {
   imageUrl?: string;
   projectStatus:string;
   jobRole?:string;
+  
 }
 

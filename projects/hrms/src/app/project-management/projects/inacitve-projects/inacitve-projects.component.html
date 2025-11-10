@@ -33,10 +33,10 @@
                     <thead>
                         <th>Client Name</th>
                         <th>Project Name</th>
-                        <th>Start Date</th>
+                        <!-- <th>Start Date</th>
                         <th>End Date</th>
                         <th>Effective Date</th>
-                        <th>Kickoff Date</th>
+                        <th>Kickoff Date</th> -->
                         <th>Project Type</th>
                         <th>Verticals</th>
                         <th>Status</th>
@@ -55,10 +55,10 @@
                                             project.projectName }}</a>
                                     </td>
                               
-                                    <td>{{ project.startDate | dateformat }}</td>
+                                    <!-- <td>{{ project.startDate | dateformat }}</td>
                                     <td>{{ project.endDate | dateformat }}</td>
                                     <td>{{ project.effectiveDate | dateformat }}</td>
-                                    <td>{{ project.kickoffDate | dateformat }}</td>
+                                    <td>{{ project.kickoffDate | dateformat }}</td> -->
                                     <td>{{ project.projectType }}</td>
                                     <td class="text-wrap department-list-view">{{ getDepartmentNames(project)  }}</td> 
                                     <td>{{ project.status }}</td>

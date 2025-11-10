@@ -35,11 +35,12 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.clientForm = this.fb.group({
       clientName: ['', [Validators.required, Validators.minLength(2), this.formValidations.maxCharactersValidator(51)]],
-      taxId: ['', [Validators.required, Validators.minLength(3), this.formValidations.maxCharactersValidator(51)]],
+      taxId: ['', [Validators.minLength(3), this.formValidations.maxCharactersValidator(51)]],
       website: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50), Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/)]],
       industryType: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       logo: [null, Validators.required],
       clientAddress: ['', [Validators.required, this.formValidations.minCharactersValidator(5), this.formValidations.maxCharactersValidator(250)]],
+      color: [''],
       overtimeEligibility: [false],
       billable: [false],
       allowWeekendWork: [false]
@@ -133,7 +134,12 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
       billable: formValue.billable,
       weekendWorkAllowed: formValue.allowWeekendWork,
       createdBy: this.empinfo.employeeId,
-      updatedBy: this.empinfo.employeeId
+      updatedBy: this.empinfo.employeeId,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+    }
     };
   }
 

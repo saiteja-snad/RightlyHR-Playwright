@@ -11,19 +11,21 @@ import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.comp
 import { debounceTime, filter, Subject, Subscription } from 'rxjs';
 import { ChartData, DepartmentCount, SkillProficiencyCount, SummaryCard, SkillSummary, EmployeeSkill, TopSkill } from '../../Interfaces/skill-dashboard.model';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
-import { environment } from '../../../environments/environment.dev';
+import { environment } from '../../../environments/environment';
 import { Chip } from 'primeng/chip';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { Select } from 'primeng/select';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { SkillSetMainTabsComponent } from "../../shared/skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
+import { DomSanitizer } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-skillset-dashboard',
   imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent,
-    NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, Select, NgbPopoverModule,
-    ModuleInformationComponent, TranslateModule],
+    NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, NgbPopoverModule, ModuleInformationComponent,
+    TranslateModule, SkillSetMainTabsComponent],
   templateUrl: './skillset-dashboard.component.html',
   styleUrl: './skillset-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -55,7 +57,7 @@ export class SkillsetDashboardComponent {
   employeeList: EmployeeSkill[] = [];
   totalSkillCount: number = 0;
   totalDepartmentSkillCount: number = 0;
-  searchQuery : string = '';
+  searchQuery: string = '';
   selectedStatus: string[] = ['All Proficiencies'];
   selectedSkills: string[] = ['All Skills'];
   MySkills: any[] = [];
@@ -73,14 +75,24 @@ export class SkillsetDashboardComponent {
   ];
   spinnerLoaderforallrecoders = false;
   loader!: boolean;
+  allEmployeesList: any[] = [];
+  nextMonthAvailableEmployeesList: any[] = [];
+  employeeSummary: any = {};
+  allocatedEmployeesList: any[] = [];
+  availableEmployeesList: any[] = [];
+  selectedSkillKey: string = '';
+  // contentInfo
+  topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
+  skillProficiencyContentInfo = 'Presents a consolidated view of employee skill levels—categorized as Beginner, Intermediate, and Expert. This chart enables HR and leadership teams to evaluate overall workforce competency and pinpoint areas requiring skill enhancement or upskilling.';
+  departmentWiseContentInfo = 'Depicts the distribution of skills across various departments, offering insights into departmental expertise and specialization areas. This helps in understanding which teams possess key technical or functional capabilities and identifying potential skill gaps.';
+  skillOverviewContentInfo = 'Provides a detailed breakdown of each skill, the number of employees associated with it, and their respective proficiency levels. This data-driven summary facilitates competency tracking, supports resource allocation, and assists in informed decision-making for project or training assignments.';
 
-  constructor(private http: HttpService, public formValidation: FormValidationService,
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
     private offcanvasService: NgbOffcanvas, private router: Router) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.onCheckemployeeProficiency(this.selectedStatus);
-
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.topSkillsGraph();
@@ -90,14 +102,16 @@ export class SkillsetDashboardComponent {
     this.initiateUpdateModuleInfo();
     this.getMultiskills();
     this.selectedStatus = ['All Proficiencies'];
-    this.searchSubject.pipe(
-    debounceTime(250) // waits 400ms after typing stops
-     ).subscribe((skillName) => {
-    this.getViewSkillDetails(skillName);
+    this.searchSubject.pipe(debounceTime(250)).subscribe((skillName) => {
+      this.getViewSkillDetails(skillName);
     });
   }
-
-
+  isOptionDisabled(option: any): boolean {
+    return (
+      this.selectedStatus.includes('All Proficiencies') &&
+      option.value !== 'All Proficiencies'
+    );
+  }
   updateModuleInfo() {
     const url = this.router.url;
     this.ComponentnameDisplay();
@@ -113,7 +127,7 @@ export class SkillsetDashboardComponent {
       this.updateModuleInfo();
     });
   }
-  
+
   getStatusClass(status: string): string {
     if (!status) return '';
     const normalized = status.toLowerCase();
@@ -130,18 +144,47 @@ export class SkillsetDashboardComponent {
 
   openEnd(content: TemplateRef<any>, skillName: string): void {
     this.selectedSkillName = skillName;
-    this.offcanvasService.open(content, { position: 'end' });
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false
+    });
     this.getViewSkillDetails(skillName);
   }
+  openEnd2(content: TemplateRef<any>, card: any): void {
+    this.selectedSkillName = card.title;
+    this.selectedSkillKey = card.key; // frontend only
+    this.isloading = true;
 
-  onCheckemployeeProficiency(statusValue: any) {
-    this.selectedStatus = !statusValue || statusValue === 'All Proficiencies' ? 'All Proficiencies' : statusValue;
-    this.skilllevelGraph();
-    this.skillByDepartmentGraph()
-    this.getSkillSetTableData()
-    this.topSkillsGraph()
+    this.getResourcesSummary(() => {
+      this.isloading = false;
+      this.offcanvasService.open(content, {
+        position: 'end',
+        backdrop: 'static',
+        keyboard: false
+      });
+    });
   }
 
+  onCheckemployeeProficiency(selectedValues: string[]) {
+    // If 'All Proficiencies' is selected along with others, remove it
+    if (selectedValues.includes('All Proficiencies') && selectedValues.length > 1) {
+      selectedValues = selectedValues.filter(v => v !== 'All Proficiencies');
+    }
+
+    // If nothing is selected, default to 'All Proficiencies'
+    if (!selectedValues || selectedValues.length === 0) {
+      selectedValues = ['All Proficiencies'];
+    }
+
+    this.selectedStatus = selectedValues;
+
+    // Call your graph/table update methods
+    this.skilllevelGraph();
+    this.skillByDepartmentGraph();
+    this.getSkillSetTableData();
+    this.topSkillsGraph();
+  }
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -149,27 +192,94 @@ export class SkillsetDashboardComponent {
 
   close(modal: any) {
     modal.close();
+    this.searchQuery = '';
+  }
+  private searchTimer: any;
+  onSearch(): void {
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      this.getResourcesSummary();
+    }, 400);
+  }
+
+  getResourcesSummary(callback?: () => void): void {
+    const params: any = {};
+    if (this.searchQuery?.trim()) {
+      params.searchQuery = this.searchQuery.trim();
+    }
+    this.isloading = true;
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSummary', params).subscribe({
+      next: (res: any) => {
+        this.isloading = false;
+        if (res?.success && res.data) {
+          const summary = res.data;
+
+          // Step 1: initialize all lists with default placeholder
+          const addProfileImage = (list: any[] = []) =>
+            list.map(emp => ({
+              ...emp,
+              profileImage: 'images/alternate.png',
+              originalProfileUrl: emp.profileImage || emp.profileUrl || ''
+            }));
+
+          this.employeeSummary = {
+            allEmployeesList: addProfileImage(summary.allEmployeesList || []),
+            allocatedEmployeesList: addProfileImage(summary.allocatedEmployeesList || []),
+            availableEmployeesList: addProfileImage(summary.availableEmployeesList || []),
+            nextMonthAvailableEmployeesList: addProfileImage(summary.nextMonthAvailableEmployeesList || [])
+          };
+
+          // Step 2: load actual images asynchronously
+          Object.values(this.employeeSummary).forEach((list: any) => {
+            if (Array.isArray(list)) {
+              list.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+            }
+          });
+
+          // Step 3: assign list by key
+          switch (this.selectedSkillKey) {
+            case 'total': this.employeeList = this.employeeSummary.allEmployeesList; break;
+            case 'committed': this.employeeList = this.employeeSummary.allocatedEmployeesList; break;
+            case 'available': this.employeeList = this.employeeSummary.availableEmployeesList; break;
+            case 'upcoming': this.employeeList = this.employeeSummary.nextMonthAvailableEmployeesList; break;
+            default: this.employeeList = this.employeeSummary.allEmployeesList;
+          }
+        } else {
+          this.resetSummaryData();
+        }
+        if (callback) callback();
+      }
+    })
+  }
+
+  resetSummaryData(): void {
+    this.employeeSummary = null;
+    this.allEmployeesList = [];
+    this.allocatedEmployeesList = [];
+    this.availableEmployeesList = [];
+    this.nextMonthAvailableEmployeesList = [];
+    this.employeeList = [];
   }
 
   getSkillSummary() {
     this.isloading = true;
-    this.subscription = this.http.getData(`EmployeeSkills/getEmployeeSummary`).subscribe({
+    this.subscription = this.http.getData('EmployeeSkills/getEmployeeSummaryCount').subscribe({
       next: (res: any) => {
         this.isloading = false;
         if (res?.data) {
           const summary = res.data;
           this.summaryCards = [
-            { title: 'Total Resources', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
-            { title: 'Committed Resources', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
-            { title: 'Available Resources', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
-            { title: 'Upcoming Available Resources', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
+            { key: 'total', title: 'Total Resources', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
+            { key: 'committed', title: 'Committed Resources', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
+            { key: 'available', title: 'Available Resources', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
+            { key: 'upcoming', title: 'Resources Releasing Within 30 Days', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
           ];
         }
       },
-      error: (reason) => {
+      error: (err) => {
         this.isloading = false;
-        console.error('Error fetching employee data:', reason);
-      },
+        console.error('Error fetching summary counts:', err);
+      }
     });
   }
 
@@ -179,7 +289,7 @@ export class SkillsetDashboardComponent {
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    if (this.selectedSkills?.length > 0&& !this.selectedSkills.includes('All Skills')) {
+    if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills')) {
       params.skills = this.selectedSkills.join(',');
     }
     this.http.getDataIncludeParams('EmployeeSkills/getSkillSummary', params).subscribe({
@@ -216,7 +326,6 @@ export class SkillsetDashboardComponent {
             responsive: true,
             maintainAspectRatio: false,
           };
-
           this.skillProficiencyCounts = [
             { label: 'Expert', count: expertCount, color: colors[0] },
             { label: 'Intermediate', count: intermediateCount, color: colors[1] },
@@ -237,7 +346,6 @@ export class SkillsetDashboardComponent {
     if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills')) {
       params.skills = this.selectedSkills.join(',');
     }
-
     this.http.getDataIncludeParams('EmployeeSkills/getDepartmentSkillSummary', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
@@ -255,7 +363,6 @@ export class SkillsetDashboardComponent {
                 backgroundColor: colors,
                 borderColor: '#fff',
                 borderWidth: 3,
-                hoverOffset: 10
               }
             ]
           };
@@ -275,17 +382,13 @@ export class SkillsetDashboardComponent {
                 }
               }
             },
-            elements: {
-              arc: { borderWidth: 3, borderColor: '#fff' }
-            },
             responsive: true,
             maintainAspectRatio: false
           };
-          this.deptCounts = validDepartments.map((d: any) => ({
+          this.deptCounts = validDepartments.map((d: any, index: number) => ({
             label: d.departmentName,
             count: d.uniqueSkillCount,
-            color: d.colorCode,
-            percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
+            color: d.colorCode, percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
           }));
         } else {
           this.skillByDepartmentData = { labels: [], datasets: [] };
@@ -300,7 +403,6 @@ export class SkillsetDashboardComponent {
       }
     });
   }
-
 
   topSkillsGraph(): void {
     this.isloading = true;
@@ -326,12 +428,14 @@ export class SkillsetDashboardComponent {
             return [name];
           });
           const counts = top5.map(s => s.employeeCount);
-          const colors = top5.map(s => s.colorCode || '#42A5F5');
+          const staticColors = ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'];
+          const colors = staticColors.slice(0, top5.length);
+
           this.topSkillsData = {
-            labels: labels as any, 
+            labels: labels as any,
             datasets: [
               {
-                label: 'Employee Count',
+                label: 'Resources Count',
                 data: counts,
                 backgroundColor: colors,
                 barThickness: 20,
@@ -361,10 +465,20 @@ export class SkillsetDashboardComponent {
               x: {
                 beginAtZero: true,
                 grid: { display: false },
-                ticks: { color: '#6B7280', font: { size: 12 } },
+                ticks: {
+                  color: '#6B7280',
+                  font: { size: 12 },
+                  // This ensures only integer values are shown
+                  callback: function (value: any) {
+                    if (Number.isInteger(value)) {
+                      return value;
+                    }
+                    return '';
+                  },
+                },
                 title: {
                   display: true,
-                  text: 'Employee Count',
+                  text: 'Resources Count',
                   color: '#6B7280',
                   font: { size: 13 },
                 },
@@ -375,7 +489,7 @@ export class SkillsetDashboardComponent {
                   color: '#111827',
                   font: { size: 13, weight: '500' },
                   lineHeight: 3,
-                  autoSkip: false, 
+                  autoSkip: false,
                 },
                 title: {
                   display: true,
@@ -398,20 +512,18 @@ export class SkillsetDashboardComponent {
     });
   }
 
-
   getSkillSetTableData(): void {
     this.isloading = true;
     const params: any = {};
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills' )) {
+    if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills')) {
       params.skills = this.selectedSkills.join(',');
     }
     this.http.getDataIncludeParams('EmployeeSkills/getSkillSummaryCountAsync', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
-
         if (res?.success && Array.isArray(res.data) && res.data.length) {
           this.skillSummaryList = res.data as SkillSummary[];
           this.noDataFound = false;
@@ -447,15 +559,18 @@ export class SkillsetDashboardComponent {
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeesBySkill', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
-
         if (res?.success && Array.isArray(res.data)) {
           this.employeeList = res.data.map((emp: any) => ({
             ...emp,
-            profileImage: this.getImageUrl(emp.profileImage)
+            profileImage: 'images/alternate.png',
+            originalProfileUrl: emp.profileImage || emp.profileUrl || ''
           }));
+
+          // download actual images after list ready
+          this.employeeList.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+
           this.noDataFound = this.employeeList.length === 0;
-          console.log(this.employeeList);
-        } 
+        }
         else {
           this.employeeList = [];
           this.noDataFound = true;
@@ -483,6 +598,22 @@ export class SkillsetDashboardComponent {
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
 
+  downloadAndSetProfileImage(emp: any): void {
+    if (!emp || !emp.originalProfileUrl) return;
+
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', emp.originalProfileUrl).subscribe({
+      next: (res: any) => {
+        const blob = new Blob([res['body']], { type: 'image/png' });
+        const objectURL = URL.createObjectURL(blob);
+        emp.profileImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      error: () => {
+        // fallback if image not found
+        emp.profileImage = 'images/alternate.png';
+        console.warn(`Failed to download profile image for ${emp.employeeId || 'unknown'}`);
+      }
+    });
+  }
 
   getMultiskills() {
     this.loader = true;
@@ -490,7 +621,7 @@ export class SkillsetDashboardComponent {
       next: (response: any) => {
         if (response?.success && Array.isArray(response.data)) {
           this.multiSkillOptions = [
-            { label: 'All Skills', value: 'All Skills' }, 
+            { label: 'All Skills', value: 'All Skills' },
             ...response.data.map((skill: any) => ({
               label: skill.skillName,
               value: skill.skillName,
@@ -508,22 +639,20 @@ export class SkillsetDashboardComponent {
     });
   }
 
-
   clearAllFilters(): void {
     this.selectedStatus = ['All Proficiencies'];
     this.selectedSkills = ['All Skills'];
     this.skilllevelGraph();
-    this.skillByDepartmentGraph()
-    this.getSkillSetTableData()
-    this.topSkillsGraph()
+    this.skillByDepartmentGraph();
+    this.getSkillSetTableData();
+    this.topSkillsGraph();
+    this.searchQuery = ''
   }
 
   onSkillSelectionChange(): void {
- 
-    this.skilllevelGraph()
-    this.skillByDepartmentGraph()
-    this.getSkillSetTableData()
-    this.topSkillsGraph()
+    this.skilllevelGraph();
+    this.skillByDepartmentGraph();
+    this.getSkillSetTableData();
+    this.topSkillsGraph();
   }
-
 }

@@ -28,7 +28,12 @@ export interface Project {
   client: Client;
   pendingApprovalAuthority: Authority;
   createdBy: Authority;
-   departments?: Department[]; 
+  departments?: Department[];
+  meta: {
+    graphData: {
+      color: string;
+    }
+  }
 }
 
 export interface Client {

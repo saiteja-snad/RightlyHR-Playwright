@@ -65,6 +65,7 @@ import {
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
+  TIME_SHEETS_TABS,
   ON_BEHALF_OF_REMOTELOGIN_TABS,
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
@@ -330,7 +331,7 @@ export class AccessNavigationService {
             }
           }
         }
-        
+
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
           return (route = '/reports/monthly-attendance-reports');
         }
@@ -443,7 +444,6 @@ export class AccessNavigationService {
           }
         }
 
-       
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -752,7 +752,8 @@ export class AccessNavigationService {
           }
         }
         break;
-        case '/card-management':
+
+      case '/card-management':
         if (this.rbac.allowedToAccess('Cards Management.view')) {
           for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -761,7 +762,8 @@ export class AccessNavigationService {
           }
         }
         break;
-      case '/project-management/clients/active':
+
+      case '/project-management/clients':
         if (this.rbac.allowedToAccess('Clients.view')) {
           for (const item of CLIENTS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -771,7 +773,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/project-management/clients/active':
+      case '/project-management/projects':
         if (this.rbac.allowedToAccess('Projects.view')) {
           for (const item of PROJECTS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -781,9 +783,14 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/project-management/time-sheet':
+      case '/project-management/timesheet/mytimesheet':
+
         if (this.rbac.allowedToAccess('Time Sheet.view')) {
-          return (route = '/project-management/time-sheet');
+          for (const item of TIME_SHEETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 
@@ -819,8 +826,6 @@ export class AccessNavigationService {
         //   return (route = '/personalinfo/team-members');
         // }
 
-
-
         if (
           this.rbac.allowedToAccess('Employee Info Onboard Request Tab.view')
         ) {
@@ -837,6 +842,16 @@ export class AccessNavigationService {
       case '/admin/active-new-user':
         if (this.rbac.allowedToAccess('Invite New User.view')) {
           for (const item of INVITE_NEW_USER_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/skill-management':
+        if (this.rbac.allowedToAccess('Skill Set Management.view')) {
+          for (const item of SKILL_MANAGEMENT_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1089,6 +1104,41 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/project-management/clients':
+        if (this.rbac.allowedToAccess('Clients.view')) {
+          for (const item of CLIENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/project-management/projects':
+        if (this.rbac.allowedToAccess('Projects.view')) {
+          for (const item of PROJECTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/project-management/timesheet/mytimesheet':
+
+        if (this.rbac.allowedToAccess('Time Sheet.view')) {
+          for (const item of TIME_SHEETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+
+
+
+
       case '/time-off/pending-approvals/separation-request':
         if (this.rbac.allowedToAccess('Separation Request Tab.view')) {
           for (const item of SEPARATION_REQUEST_SUB_TABS) {
@@ -1217,9 +1267,9 @@ export class AccessNavigationService {
             '/settings/timeoff-configurations/flexible-leave-allocation');
         }
         break;
-         case '/settings/timeoff-configurations/flexible-wfh-allocation':
+      case '/settings/timeoff-configurations/flexible-wfh-allocation':
         if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
-         for (const item of FLEXIBLE_WFH_ALLOCATION_TABS) {
+          for (const item of FLEXIBLE_WFH_ALLOCATION_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1439,8 +1489,8 @@ export class AccessNavigationService {
             }
           }
         }
-      break;
-    
+        break;
+
       case '/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {
           for (const item of ON_BEHALF_OF) {
@@ -1760,7 +1810,7 @@ export class AccessNavigationService {
             }
           }
         }
-      break;
+        break;
 
       case '/time-off/pending-approvals/separation-request':
         if (this.rbac.allowedToAccess('Separation Request Tab.view')) {
@@ -1900,25 +1950,13 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/skill-management/dashboard':
+      case '/skill-management':
         if (this.rbac.allowedToAccess('Skill Set Management.view')) {
           for (const item of SKILL_MANAGEMENT_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
-        }
-        break;
-
-        case '/skill-management/dashboard':
-        if (this.rbac.allowedToAccess('Skills Dashboard.view')) {
-          return (route = '/skill-management/dashboard');
-        }
-        break;
-
-        case '/skill-management/directory':
-        if (this.rbac.allowedToAccess('Skills Directory.view')) {
-          return (route = '/skill-management/directory');
         }
         break;
     }

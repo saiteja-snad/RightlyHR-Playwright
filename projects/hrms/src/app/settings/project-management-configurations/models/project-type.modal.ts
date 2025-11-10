@@ -3,5 +3,9 @@ export interface IEAV {
   entity: string
   attribute: string
   value: string
-  meta: string
+  meta: {
+    graphData : {
+      color : string;
+    }
+  }
 }

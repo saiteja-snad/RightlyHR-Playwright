@@ -47,7 +47,8 @@ export class ProjectDetailesComponent implements OnInit, OnDestroy {
       overtimeEligible: [{ value: false, disabled: true }],
       billable: [{ value: false, disabled: true }],
       allowweekendWork: [{ value: false, disabled: true }],
-      approvalidAuthority: [{ value: null, disabled: true }]
+      approvalidAuthority: [{ value: null, disabled: true }],
+      color : [{value: '', disabled: true}],
     });
   }
 
@@ -73,7 +74,8 @@ export class ProjectDetailesComponent implements OnInit, OnDestroy {
           approvalidAuthority: approvalidAuthority,
           overtimeEligible: this.projectsData[0]?.isOvertimeEligibile,
           allowweekendWork: this.projectsData[0]?.isWeekendWorkAllowed,
-          billable: this.projectsData[0].isBillable,
+          billable: this.projectsData[0]?.isBillable,
+          color : this.projectsData[0]?.meta?.graphData?.color
         });
         const clientid = this.projectsData[0]?.client?.clientId;
         this.http.updateClientId(clientid);

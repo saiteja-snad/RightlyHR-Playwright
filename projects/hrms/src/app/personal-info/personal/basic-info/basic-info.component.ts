@@ -45,6 +45,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   currentdata = new Date()
   loading: boolean = false;
   fieldOptions = [] as any;
+  getFieldsApprovalStatusList: any[] = [];
 
   constructor(private modalService: NgbModal,
     private fb: FormBuilder,
@@ -64,6 +65,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getTitle();
     this.getBasicInfoFields();
     this.basicInfoForm.disable();
+    this.getFieldsApprovalStatus();
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
       console.log(data)
       // this.empyployeedata.dob = null
@@ -79,6 +81,26 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data.data.length > 0) {
           this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
+  }
+
+  getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Basic Info',
+      employeeId: parseInt(this.empinfo.employeeId)
+    }
+    this.http.getDataIncludeParams(`EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`, params).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.getFieldsApprovalStatusList = data.data
         } else {
           console.log('No data found.');
         }

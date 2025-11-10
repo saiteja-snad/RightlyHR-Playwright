@@ -75,6 +75,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
    @ViewChild('errormodal') errormodal!: TemplateRef<any>;
+   errorOccurred = false; 
   errormodaldata: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService) { }
@@ -833,7 +834,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: isBillable
+      isBillable: isBillable,
+       moduleId: 30,
     };
 
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -844,7 +846,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Auto-save failed', err);
-        this.conformationPopup.openErrorModal(err.error.message);
+       // this.conformationPopup.openErrorModal(err.error.message);
+         this.errormodaldata = err.error.message;
+          const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
+          this.errorOccurred = true;
+         dayForm.reset();
+
       },
     });
   }
@@ -1376,7 +1387,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: formValue.isBillable || false
+      isBillable: formValue.isBillable || false,
+       moduleId: 30
     };
 
     // POST request

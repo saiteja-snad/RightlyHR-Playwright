@@ -1388,7 +1388,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
       isBillable: formValue.isBillable || false,
-       moduleId: 30
+       moduleId: 30,
     };
 
     // POST request

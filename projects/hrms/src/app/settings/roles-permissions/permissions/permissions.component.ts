@@ -2076,18 +2076,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
     isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      // Enable 'View' only if a role is selected
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Create' || action === 'Delete') {
-      return !this.roleToFilter?.id;
-    }
-    return false;
+  // Disable Create/Delete for 'Timesheet Locking Published Tab'
+  if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
+    return true;
   }
+
+  // Existing logic: disable all if role is not selected
+  return !this.roleToFilter?.id;
+}
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

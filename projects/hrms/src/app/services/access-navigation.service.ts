@@ -1214,6 +1214,16 @@ export class AccessNavigationService {
           }
         }
         break;
+         case '/settings/timesheet-locking-configuration/pending-for-submission':
+        if (this.rbac.allowedToAccess('Timesheet Locking Pending Tab.view')) {
+          return (route = '/settings/timesheet-locking-configuration/pending-for-submission');
+        }
+        break;
+      case '/settings/timesheet-locking-configuration/published':
+        if (this.rbac.allowedToAccess('Timesheet Locking Published Tab.view')) {
+          return (route = '/settings/timesheet-locking-configuration/published');
+        }
+        break;
         // assets
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {

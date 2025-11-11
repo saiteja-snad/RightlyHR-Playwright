@@ -132,112 +132,238 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 lockMessage: string | null = null;
 lockextendMessage:string | null = null;
-checkTimesheetLock(apiResponse: any) {
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth(); // 0 = January
-  const currentYear = currentDate.getFullYear();
+// checkTimesheetLock(apiResponse: any) {
+//   const currentDate = new Date();
+//   const currentMonth = currentDate.getMonth(); // 0 = January
+//   const currentYear = currentDate.getFullYear();
 
-  // Filter items fully within the current month
+//   // Filter items fully within the current month
+//   const currentMonthItems = apiResponse.filter((item: any) => {
+//     const start = new Date(item.startDate);
+//     const end = new Date(item.endDate);
+//     return (
+//       start.getMonth() === currentMonth &&
+//       start.getFullYear() === currentYear &&
+//       end.getMonth() === currentMonth &&
+//       end.getFullYear() === currentYear
+//     );
+//   });
+
+//   if (currentMonthItems.length > 0) {
+//     const today = new Date();
+//     const messages: string[] = [];
+
+//     currentMonthItems.forEach((item: any) => {
+//       const start = new Date(item.startDate);
+//       const end = new Date(item.endDate);
+//       const effective = new Date(item.effectiveDate);
+
+//       const startStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+//       const endStr = end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+//       const effStr = effective.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+//       // Scenario 1 → effective date today or in future
+//       if (effective >= today) {
+//         messages.push(
+//           `Timesheet for the period <b>${startStr} – ${endStr}</b> will be locked on <b>${effStr}</b>. 
+//           Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+//         );
+//       }
+//       // Scenario 2 → effective date in past
+//       else {
+//         messages.push(
+//           `Timesheet submissions are locked for <b>${startStr} – ${endStr}</b>. 
+//           Please contact HR/Admin for assistance.`
+//         );
+//       }
+//     });
+
+//     this.errormodaldata = messages.join('<br><br>');
+//     console.log(this.errormodaldata);
+//   } else {
+//     this.errormodaldata = '';
+//     console.log("No locked records for the current month.");
+//   }
+// }
+checkTimesheetLock(apiResponse: any) {
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  if (!apiResponse || apiResponse.length === 0) {
+    this.errormodaldata = '';
+    console.log("No lock data available.");
+    return;
+  }
+
+  // Filter locks that overlap the current month
   const currentMonthItems = apiResponse.filter((item: any) => {
     const start = new Date(item.startDate);
     const end = new Date(item.endDate);
     return (
-      start.getMonth() === currentMonth &&
-      start.getFullYear() === currentYear &&
-      end.getMonth() === currentMonth &&
-      end.getFullYear() === currentYear
+      (start.getMonth() === currentMonth && start.getFullYear() === currentYear) ||
+      (end.getMonth() === currentMonth && end.getFullYear() === currentYear) ||
+      (start < new Date(currentYear, currentMonth + 1, 0) && end > new Date(currentYear, currentMonth, 1))
     );
   });
 
-  if (currentMonthItems.length > 0) {
-    const today = new Date();
-    const messages: string[] = [];
-
-    currentMonthItems.forEach((item: any) => {
-      const start = new Date(item.startDate);
-      const end = new Date(item.endDate);
-      const effective = new Date(item.effectiveDate);
-
-      const startStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-      const endStr = end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-      const effStr = effective.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
-      // Scenario 1 → effective date today or in future
-      if (effective >= today) {
-        messages.push(
-          `Timesheet for the period <b>${startStr} – ${endStr}</b> will be locked on <b>${effStr}</b>. 
-          Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
-        );
-      }
-      // Scenario 2 → effective date in past
-      else {
-        messages.push(
-          `Timesheet submissions are locked for <b>${startStr} – ${endStr}</b>. 
-          Please contact HR/Admin for assistance.`
-        );
-      }
-    });
-
-    this.errormodaldata = messages.join('<br><br>');
-    console.log(this.errormodaldata);
-  } else {
+  if (currentMonthItems.length === 0) {
     this.errormodaldata = '';
     console.log("No locked records for the current month.");
+    return;
   }
+
+  // Sort locks by start date to maintain order
+  currentMonthItems.sort(
+    (a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+  );
+
+  const messages: string[] = [];
+
+  currentMonthItems.forEach((item: any) => {
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    const effective = new Date(item.effectiveDate);
+
+    // ✅ Format: "Nov 01, 2025"
+    const startStr = start.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const endStr = end.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const effStr = effective.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+    // Scenario 1: Effective date today or future → Upcoming lock
+    if (effective >= today) {
+      messages.push(
+        `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. 
+        Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+      );
+    }
+    // Scenario 2: Effective date already passed → Locked
+    else {
+      messages.push(
+        `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. 
+        Please contact HR/Admin for assistance.`
+      );
+    }
+  });
+
+  // ✅ Combine all messages
+  this.errormodaldata = messages.join('<br><br>');
+  console.log(this.errormodaldata);
 }
+
+
+// checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
+//   const lockedItems = this.TimesheetLockData || [];
+//   const messages: string[] = [];
+//   const today = new Date();
+
+//   // Get all months between selectedStart and selectedEnd
+//   const months: { year: number; month: number }[] = [];
+//   let temp = new Date(selectedStart);
+
+//   while (temp <= selectedEnd) {
+//     months.push({ year: temp.getFullYear(), month: temp.getMonth() });
+//     temp = new Date(temp.getFullYear(), temp.getMonth() + 1, 1);
+//   }
+
+//   // Iterate through each month and check for locks
+//   months.forEach(({ year, month }) => {
+//     const monthStart = new Date(year, month, 1);
+//     const monthEnd = new Date(year, month + 1, 0);
+
+//     const currentMonthLocks = lockedItems.filter((lock: any) => {
+//       const lockStart = new Date(lock.startDate);
+//       const lockEnd = new Date(lock.endDate);
+//       return lockEnd >= monthStart && lockStart <= monthEnd;
+//     });
+
+//     currentMonthLocks.forEach((item: any) => {
+//       const start = new Date(item.startDate);
+//       const end = new Date(item.endDate);
+//       const effective = new Date(item.effectiveDate);
+
+//       const startStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+//       const endStr = end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+//       const effStr = effective.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+//       if (effective >= today) {
+//         // Scenario 1: Effective date today or future
+//         messages.push(
+//           `Timesheet for the period <b>${startStr} – ${endStr}</b> will be locked on <b>${effStr}</b>. 
+//           Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+//         );
+//       } else {
+//         // Scenario 2: Effective date past
+//         messages.push(
+//           `Timesheet submission is locked for <b>${startStr} – ${endStr}</b>. 
+//           Please contact HR/Admin for assistance.`
+//         );
+//       }
+//     });
+//   });
+
+//   // Merge all month messages if any
+//   this.errormodaldata = messages.length > 0 ? messages.join('<br><br>') : '';
+// }
 checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
   const lockedItems = this.TimesheetLockData || [];
   const messages: string[] = [];
   const today = new Date();
 
-  // Get all months between selectedStart and selectedEnd
-  const months: { year: number; month: number }[] = [];
-  let temp = new Date(selectedStart);
+  // Sort by startDate for consistency
+  const sortedLocks = lockedItems.sort(
+    (a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+  );
 
-  while (temp <= selectedEnd) {
-    months.push({ year: temp.getFullYear(), month: temp.getMonth() });
-    temp = new Date(temp.getFullYear(), temp.getMonth() + 1, 1);
-  }
+  // Loop through each lock range
+  sortedLocks.forEach((item: any) => {
+    const lockStart = new Date(item.startDate);
+    const lockEnd = new Date(item.endDate);
+    const effective = new Date(item.effectiveDate);
 
-  // Iterate through each month and check for locks
-  months.forEach(({ year, month }) => {
-    const monthStart = new Date(year, month, 1);
-    const monthEnd = new Date(year, month + 1, 0);
+    // Check if selected range overlaps with the locked period
+    const overlaps =
+      (selectedStart <= lockEnd && selectedEnd >= lockStart) ||
+      (selectedStart >= lockStart && selectedStart <= lockEnd);
 
-    const currentMonthLocks = lockedItems.filter((lock: any) => {
-      const lockStart = new Date(lock.startDate);
-      const lockEnd = new Date(lock.endDate);
-      return lockEnd >= monthStart && lockStart <= monthEnd;
-    });
-
-    currentMonthLocks.forEach((item: any) => {
-      const start = new Date(item.startDate);
-      const end = new Date(item.endDate);
-      const effective = new Date(item.effectiveDate);
-
-      const startStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-      const endStr = end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-      const effStr = effective.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    if (overlaps) {
+      // ✅ Format: "Nov 01, 2025"
+      const startStr = lockStart.toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+      });
+      const endStr = lockEnd.toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+      });
+      const effStr = effective.toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+      });
 
       if (effective >= today) {
-        // Scenario 1: Effective date today or future
+        // Scenario 1 → Effective date today or future
         messages.push(
-          `Timesheet for the period <b>${startStr} – ${endStr}</b> will be locked on <b>${effStr}</b>. 
+          `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. 
           Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
         );
       } else {
-        // Scenario 2: Effective date past
+        // Scenario 2 → Effective date already passed
         messages.push(
-          `Timesheet submission is locked for <b>${startStr} – ${endStr}</b>. 
+          `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. 
           Please contact HR/Admin for assistance.`
         );
       }
-    });
+    }
   });
 
-  // Merge all month messages if any
+  // ✅ Set final message or clear
   this.errormodaldata = messages.length > 0 ? messages.join('<br><br>') : '';
 }
+
   createDayEntry(day?: any, entryDate?: any, isProjectSelected: boolean = false): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;

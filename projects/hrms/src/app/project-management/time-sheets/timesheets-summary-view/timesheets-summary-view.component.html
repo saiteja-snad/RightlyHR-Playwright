@@ -28,9 +28,10 @@
 
         <div class="d-flex align-items-center gap-3">
             <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
-              @if(isFilterApplied()) {
-                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
-                }
+            @if(isFilterApplied()) {
+            <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+            }
+            
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="custom-date-range-picker">
@@ -189,6 +190,7 @@
                             </div>
                         </div>
                     </ng-container>
+
                     <ng-template #noData>
                         <div class="graph-no-data-content">
                             <app-no-data-found />
@@ -220,6 +222,7 @@
                             <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                         </ng-container>
                     </div>
+
                     <ng-template #noActualData>
                         <div class="graph-no-data-content"><app-no-data-found /></div>
                     </ng-template>
@@ -266,26 +269,18 @@
                                 <td>{{ entry?.phaseName || '-' }}</td>
                                 <td>{{ entry.loggedHours }} hrs</td>
                                 <td class="text-center">
-                                        <div>
-                                            <span>
-                                            <div *ngIf="entry.summary; else noRequestedComments" type="button"
-                                                [ngbPopover]="requestedComments">
-                                                <app-info-icon />
-                                            </div>
-                                            <ng-template #requestedComments>
-                                                <div>
-                                                <p class="mb-0">{{ entry.summary }}</p>
-                                                </div>
-                                            </ng-template>
-                                            <ng-template #noRequestedComments>
-                                                <span>-</span>
-                                            </ng-template>
-                                            </span>
-                                        </div>
+                                    <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">
+                                        <app-info-icon />
+                                    </div>
+                                    <ng-template #requestedComments>
+                                        <p class="mb-0">{{ entry.summary }}</p>
+                                    </ng-template>
+                                    <ng-template #noRequestedComments><span>-</span></ng-template>
                                 </td>
-                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
-                                 'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">{{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status
-                                         }}</td>
+                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected', 
+                                    'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
+                                    {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

@@ -77,8 +77,8 @@
             </div>
             
             @if (!allocatedVsActualLoader) {
-            <div class="time-sheet-graph-card p-4 graph-no-data-content">
-                <div class="rolewise-chart-grid gap-4">
+            <div class="time-sheet-graph-card p-3">
+                <div class="rolewise-chart-grid gap-3">
                     <ng-container *ngIf="hasallocatedvsactualData; else noData">
                         <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                         <div class="legends-view">
@@ -93,7 +93,7 @@
                             </div>
                         </div>
                     </ng-container>
-                    <ng-template #noData><app-no-data-found /></ng-template>
+                    <ng-template #noData><div class="graph-no-data-content"><app-no-data-found /></div></ng-template>
                 </div>
             </div>
             }@else {
@@ -115,19 +115,28 @@
                 </div>
             </div>
 
-            <div class="time-sheet-graph-card">
-                <div class="stacked-progress-container py-4">
-                    <!-- overlay color bar -->
-                    <div class="stacked-progress-overlay mb-3" [style.background]="totalPercent === 0 ? '#E5E7EB' : 
-                    'linear-gradient(to right, ' + approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + 
-                    submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + 
-                    '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'"></div>
-                    <div class="progress-labels">
-                        <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }} h</div>
-                        <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }} h</div>
-                        <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }} h</div>
+            <div class="time-sheet-graph-card p-3">
+                <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
+                    <div class="stacked-progress-container">
+                        <!-- overlay color bar -->
+                        <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
+                                        + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                                        + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                                        + rejectedColor + ' 100%)'"></div>
+            
+                        <div class="progress-labels">
+                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }}
+                                    Hrs</span></div>
+                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }}
+                                    Hrs</span></div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }}
+                                    Hrs</span></div>
+                        </div>
                     </div>
-                </div>
+                </ng-container>
+                <ng-template #noData>
+                    <div class="graph-no-data-content"><app-no-data-found /></div>
+                </ng-template>
             </div>
         
             <div class="dashed-line my-3"></div>
@@ -144,8 +153,8 @@
             </div>
             
             @if (!billableVsNonbillableLoader) {
-            <div class="time-sheet-graph-card p-4 graph-no-data-content">
-                <div class="rolewise-chart-grid gap-4">
+            <div class="time-sheet-graph-card p-3">
+                <div class="rolewise-chart-grid gap-3">
                     <ng-container *ngIf="hasroleWiseHoursData; else noData">
                         <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />
                         <div class="legends-view">
@@ -160,7 +169,7 @@
                             </div>
                         </div>
                     </ng-container>
-                    <ng-template #noData><app-no-data-found /></ng-template>
+                    <ng-template #noData><div class="graph-no-data-content"><app-no-data-found /></div></ng-template>
                 </div>
             </div>
             }@else {

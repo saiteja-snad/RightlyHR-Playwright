@@ -1,0 +1,26 @@
+<div class="custom-main-component-container">
+    <!--header-->
+    <div class="component-header-content pt-2">
+        <app-settings-header />
+    </div>
+
+    <!--Content-->
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        @if (shouldShowSection() && router.url !== '/settings/employee-fields/no-due-clearnce' ) {
+        <!--sub tabs Content-->
+        <div class="custom-component-left-content">
+            <!--IT Support tabs-->
+            <div *ngIf="isActive('/settings/it-configuration')">
+                <app-settings-it-configuration-tabs />
+            </div>
+        </div>
+        <div class="custom-setting-right-content">
+            <router-outlet />
+        </div>
+        } @else {
+        <div class="w-100">
+            <router-outlet />
+        </div>
+        }
+    </div>
+</div>

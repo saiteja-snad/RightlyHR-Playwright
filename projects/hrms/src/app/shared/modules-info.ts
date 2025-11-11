@@ -27,7 +27,7 @@ export const MODULE_INFOS = {
     SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO: "This module allows viewing and managing leave entitlements for employees based on filters like Employee ID, DOJ, Location, and Shift. It displays detailed leave categories with corresponding policy and entitled leaves for each individual.",
     SETTINGS_TIMESHEET_REPORT_MODULE_INFO: "The Timesheet Report provides a comprehensive view of employee work logs, approvals, and utilization. It consolidates individual and team-level data to help managers, HR, and finance teams track productivity, project efforts, and pending actions. Each tab offers focused insights, ensuring accurate reporting and efficient decision-making.",
     SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO: "The Flexible WFH Allocation module enables Admins or HR to assign work-from-home entitlements to employees by configuring specific allocation criteria. Once entitle, the entitled WFHs are automatically reflected in the WFH module, allowing employees to utilize them as per policy.",
-    
+
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO: "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
     SETTINGS_ASSET_CONFIGURATION_VENDOR_DETAILS: "Manage and track vendor information for all your assets in one place. Easily view contact details, status, and addresses for seamless vendor coordination.",
@@ -43,12 +43,14 @@ export const MODULE_INFOS = {
 
     //attendance Configuration Module Info
 
-   // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",  
+   // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
    // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     //Expenses Module Info
     EXPENSES_MODULE_INFO: "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
     //attendance Configuration Module Info
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+
+    SETTINGS_IT_CONFIGURATION_MODULE_INFO: "Efficiently manage all IT support settings from one place. Configure categories, subcategories, and priority levels, and define escalation rules to streamline ticket handling. Ensure all configurations reflect instantly in the Support Ticket module for seamless issue reporting and resolution.",
     //Pms Module Info
     PMS_REVIEW_CYCLE_LIST_MODULE_INFO: "This module enables creation and tracking of employee review cycles with department, team, and location-level mapping. Users can create review cycles and link them to specific business units in order to track their status, such as Created or Initiated.",
     PMS_REVIEW_CYCLE_EMPLOYEE_LIST_MODULE_INFO: "This module provides a detailed listing of employees mapped to specific review cycles, with filters for department, location, and promotion status. It displays key information like review templates, current status, and final ratings to support performance evaluation tracking.",
@@ -60,7 +62,7 @@ export const MODULE_INFOS = {
     PMS_CONFIGURATION_INCREMENT_PERCENTAGE_MODULE_INFO: "This screen enables configuration of increment percentages based on employee ratings within a selected review cycle. Admins can define rating scales, set percentage slabs for specific salary ranges, and associate them with departments, teams, and locations.",
     PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO: "This section allows administrators to configure assessors for a selected review cycle by mapping them to departments, teams, and locations. Each assessor can be assigned a deadline date, rating responsibility, and the ability to add comments for evaluations.",
 
-    //Desk Allocation Module Info 
+    //Desk Allocation Module Info
     DESK_ALLOCATION_MODULE_INFO: "The Desk Allocation page enables efficient workspace management by displaying desk statuses and allowing actions like reallocation, inactivation, maintenance scheduling, and viewing details. Users can filter by location, desk ID, type, shift, employee, and approver for precise control.",
 
     //Asset Allocation Module Info
@@ -107,7 +109,7 @@ export const MODULE_INFOS = {
     //Reports Module Standard Reports Module Info
     POLICY_REPORTS_MODULE_INFO: "Get a comprehensive overview of policy development across departments. Easily filter and track which policies were assigned to whom and when.",
     POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO: "Monitor employee compliance by tracking who acknowledged which policies and when. Useful for audits, policy rollout tracking, and ensuring accountability across teams.",
-    
+
     //Timesheet Reports Module Info
     MY_TIMESHEET_REPORTS_MODULE_INFO: "Displays individual employee timesheet entries, including daily logged hours, project details, and status. This view helps employees and managers track personal work contributions and submission history.",
     ATTENDANCE_TIMESHEET_SUMMARY_MONTHLY_REPORTS_MODULE_INFO: "Provides a consolidated monthly summary of all timesheet entries across employees and projects. Ideal for HR and management to review total efforts and identify trends or discrepancies at a glance.",
@@ -117,7 +119,7 @@ export const MODULE_INFOS = {
     UTILIZATION_REPORTS_MODULE_INFO: "Shows the utilization percentage of each resource, comparing logged hours against available working hours. This helps identify underutilized or overburdened employees.",
     RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO: "Provides a snapshot of each employee’s availability status, scheduled leaves, and working capacity. Useful for planning resource allocation and workload balancing.",
     ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO: "Compares attendance records with timesheet entries to ensure consistency and detect any mismatches. This supports accurate payroll processing and compliance.",
-    //Calendar Module Info 
+    //Calendar Module Info
     CALENDAR_MODULE_INFO: "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 
     //Policies Module Info
@@ -146,7 +148,7 @@ export const MODULE_INFOS = {
     //Events Module Info
     EVENTS_MODULE_INFO: "The Events section displays all upcoming and past events, allowing users to view and manage event details. New events can be created under Custom Events with date, title, description, and attachments for effective communication.",
 
-    //Letters Module Info 
+    //Letters Module Info
     OFFER_LETTER_MODULE_INFO: "Generate and issue offer letters to selected candidates through the system. HR can configure templates, fill in role-specific details like compensation and joining date, and share them digitally. Candidates can view or download the offer for their reference.",
     APPOINTMENT_LETTER_MODULE_INFO: "Issue appointment letters upon successful joining of an employee. These letters confirm employment terms such as designation, reporting manager, and location. The system allows generation using pre-defined templates and employee details.",
     TRAINEE_OFFER_LETTER_MODULE_INFO: "Send trainee-specific offer letters to shortlisted candidates. The letter outlines training duration, stipend (if applicable), and terms. Templates can be customized and shared digitally for acknowledgment.",
@@ -179,10 +181,10 @@ export const MODULE_INFOS = {
     CURRENT_OPENINGS_MODULE_INFO: "The Current Openings section allows HR to post jobs and manage job listings categorized as Active or Inactive. It also tracks applicant statuses through stages like Applied, Interview Process, Rejected, On Hold, Request for Onboarding, Onboarded, and Archive, with search functionality for applicants.",
     ALL_EMPLOYEES_MODULE_INFO: "The All Employees tab displays a unified list of all employees across statuses—Prospective, Active, Trainee, Inactive, and Probation. It helps HR view and manage every employee record in one place, regardless of their current stage.",
 
-    //Attendance Module Info 
+    //Attendance Module Info
     getAttendanceModuleInfo: (month: string, year: number) => `The Attendance section displays a day-wise record for the selected month (${month}, ${year}), showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.`,
 
-    //My info Personal Module info 
+    //My info Personal Module info
     PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO: "The Basic Info section captures essential employee details such as Employee ID, Salutation, First Name, Middle Name, Last Name, Gender, Date of Birth, Blood Group, and Marital Status. This section allows users to update these fields and save or cancel changes as needed.",
     PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO: "The Address Details section captures the employee’s Current and Permanent addresses, including Address Lines, City, State, Country, and Zip/Postal Code. Users can enter or update these details and choose to mark the Permanent Address as the same as the Current Address for convenience.",
     PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO: "The Contact Info section captures the employee’s Work Number, Phone Number, Work Email, and Personal Email, including country code selection for phone numbers. Users can update and save these details to ensure accurate communication information.",
@@ -195,7 +197,7 @@ export const MODULE_INFOS = {
     PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skills section allows employees to add their technical and soft skills, showcasing their areas of expertise. This helps the organization easily identify and map employee competencies for project or role allocation.",
 
 
-    //My info Job Module info 
+    //My info Job Module info
     JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO: "The Pre Onboarding Info section captures key milestones like offer, appointment, and trainee offer dates, along with the sender's name and current status. It helps track the progression of onboarding documents.",
     JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO: "The Onboarding Info section includes the employee's joining date, probation timeline, statutory components (PF, ESIC, PT), and background check status. It also captures prior experience, remote login eligibility, and work location to ensure a complete onboarding record.",
     JOB_MODULE_JOB_DETAILS_MODULE_INFO: "The Job Info section displays the employee's job history with fields like effective date, job role, grade, department, reporting structure, and work location. It allows adding new records to track role changes and organizational alignment over time.",
@@ -210,11 +212,12 @@ export const MODULE_INFOS = {
     JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO: "The Offboarding Info section captures key information regarding an employee's exit, including the reason for leaving, eligibility for rehire, relieving type, and last working day. This ensures a structured and compliant offboarding process.",
     JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO: "The Trainee Onboard Verification section displays trainee onboarding details, including the request date, training start and end dates, extended dates if applicable, and current status. It also allows tracking of training feedback for evaluation and onboarding decisions.",
     JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
+    JOB_MODULE_PROJECTS_INFO: "The Project Info section displays the list of projects associated with the employee, including project type, total phases, and hours spent. It allows viewing all assigned projects on a single page, helping track employee involvement, phase progress, and overall performance across multiple projects efficiently.",
 
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
 
-    //Team Members Module Info 
+    //Team Members Module Info
     TEAM_MEMBERS_MODULE_INFO: "Clicking on the Team Members tab will display the list of team members, with a button at the top to change the TM or RM. You can update the Reporting Manager (RM) or Team Manager (TM) for individual employees or apply changes in bulk for a group.",
     Bloodbank_MODULE_INFO: "Easily access a list of employees' blood group details for emergencies. Quickly search, filter, and contact donors when needed—right within the system.",
     Contact_DIRTECROTY_INFO: "Quickly access department-wise contact details of employees. Stay connected with the right people across teams using verified email IDs and phone numbers.",
@@ -244,7 +247,7 @@ export const MODULE_INFOS = {
     CARDS_MANAGEMENT_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
     CARDS_HISTORY_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
     My_Timesheet_MODULE_INFO:"The My Time Sheets module allows employees to record and submit their daily working hours against assigned projects. It provides complete visibility of logged hours, task details, and submission dates, ensuring accurate time tracking and streamlined approval management",
-    Team_Timesheet_MODULE_INFO:"The Team Time Sheet module enables managers or supervisors to view the timesheet records of their entire team. It displays the logged hours of each team member for the selected period, providing a clear overview of daily and monthly working hours. This helps in monitoring productivity and ensuring accurate time reporting across the team.", 
+    Team_Timesheet_MODULE_INFO:"The Team Time Sheet module enables managers or supervisors to view the timesheet records of their entire team. It displays the logged hours of each team member for the selected period, providing a clear overview of daily and monthly working hours. This helps in monitoring productivity and ensuring accurate time reporting across the team.",
     My_Timesheet_Summary_view:"The My Summary module provides a consolidated overview of all timesheet records submitted for approval. Employees can easily track the status of their submissions, including approved, rejected, and pending records. The module also displays a project-wise summary along with allocated hours and actual hours logged for better time management and performance tracking. ",
     Team_Timesheet_Summary_view:"The Team Member Summary module provides a detailed overview of an individual employee’s timesheet records. It displays a monthly summary showing the total number of submitted entries along with their approval statuses — approved, rejected, or waiting for approval. Additionally, the page presents a project-wise summary with allocated and actual hours logged, helping managers assess performance and workload distribution effectively. ",
     CLIENT_Summary_view:"The Client Summary page provides a graphical overview of all projects under a client. It displays key metrics such as total hours, project status, resource count, department-wise contribution, and estimated vs actual hours, helping in tracking client-wise performance and progress briefly. ",

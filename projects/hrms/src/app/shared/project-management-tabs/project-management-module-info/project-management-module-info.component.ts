@@ -20,6 +20,7 @@ export class ProjectManagementModuleInfoComponent {
   componentname: string = '';
   employename: any;
   clientID: any;
+    clientName: any;
   clients: any = {};
   subscription!: Subscription;
   lastUrl: string = ''
@@ -70,6 +71,7 @@ export class ProjectManagementModuleInfoComponent {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.clients = res?.data || {};
+        this.clientName = this.clients.clientName;
       },
       error: (err) => {
         this.clients = {};

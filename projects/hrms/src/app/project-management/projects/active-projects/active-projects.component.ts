@@ -59,18 +59,26 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
   departmentlist = [] as any;
   inactiveClientStatus: any;
-
+  selectedDepartmentIds: any;
+  
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+      this.http.selectedDepartmentIds$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((deptIds) => {
+      this.selectedDepartmentIds = deptIds || [];
+  this.getProjectsBasedOnRoute();
+
+    });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
-    this.getProjectsBasedOnRoute();
-    this.DepartmentList();
+    // this.getProjectsBasedOnRoute();
+        this.DepartmentList();
     // this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -91,6 +99,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
+onDepartmentChangelist(event: any) {
+  const selectedIds = event.value; // This gives an array when multiple departments selected
+  if (Array.isArray(selectedIds)) {
+    this.http.setDepartmentIds(selectedIds);
+  } else {
+    this.http.setDepartmentIds([selectedIds]);
+  }
+}
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -211,7 +227,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   getAllActiveProjects() {
     this.loading = true;
-    this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
+     let url = 'Project?status=Active';
+  if (this.selectedDepartmentIds) {
+    url += `&departmentIds=${this.selectedDepartmentIds}`;
+  }
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
       },
@@ -228,7 +249,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true
-    this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+     let url = `Project?clientId=${clientID}&status=Active`;
+     if (this.selectedDepartmentIds) {
+    url += `&departmentIds=${this.selectedDepartmentIds}`;
+  }
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false
         this.projectsData = res?.data ?? [];

@@ -833,5 +833,11 @@ export class HttpService {
   setnewPhaseDetails() {
     this.phaseadded.next();
   }
+// store department id
+private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
+  selectedDepartmentIds$ = this.departmentIdsSource.asObservable();
 
+  setDepartmentIds(ids: number[]) {
+    this.departmentIdsSource.next(ids);
+  }
 }

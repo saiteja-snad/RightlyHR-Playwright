@@ -405,52 +405,66 @@ onPhaseChange(event: any) {
 
   openModal(content: any, size: any, data: any) {
     this.selectedResource = data;
+    this.ResourceId = data?.resourceId;
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     
-    const selectedRole = this.projectRoleDropdown.find(
-      (r: any) => r.value.roleId === data.projectRoleId
-    );
-    const selectedPhase = this.phaseDropdown.find(
-      (r: any) => r.value === data?.phase?.phaseId
-    );
-
-    if (selectedPhase) {
-      this.selectedPhaseId = selectedPhase.value;
-      this.projectId = selectedPhase.projectId;
-      this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
+    this.projectId = data?.project?.projectId;
+    const selectedProject = this.projectsDataDrown.find(p => p.projectId === this.projectId);
+    if (selectedProject) {
+      this.departmentIds = selectedProject?.departments?.map((d: any) => d.departmentId) || [];
+      this.projectStartDate = this.formatDateToLocal(selectedProject.startDate);
+      this.projectEndDate = this.formatDateToLocal(selectedProject.endDate);
     }
 
-    const authorityFromResource = this.resoucesDropDownData.find(
-      (r: any) => r.value === data?.pendingApprovalAuthority?.id
-    );
-    let authorityValueToPatch = authorityFromResource?.value ?? null;
+    this.getJobrole();
+    this.getPhaseDataByProject(this.projectId);
 
-    if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
-      authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
-    }
+    setTimeout(() => {
+      const selectedRole = this.projectRoleDropdown.find(
+        (r: any) => r.value.roleId === data.projectRoleId
+      );
+      const selectedPhase = this.phaseDropdown.find(
+        (r: any) => r.value === data?.phase?.phaseId
+      );
 
-    this.ResourceId = data?.resourceId;
-    this.updateResourceForm.patchValue({
-      resourceName: data?.employee?.id,
-      resourceEmail: data?.employee?.workMail,
-      overtimeEligible: data.overtimeEligibile,
-      resourcePhone:
-        data?.employee
-          ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
-          : '-',
-      designation: data?.employee?.designation,
-      resourceAllocationhrs: data.allocatedHours || null,
-      projectName: data?.project?.projectId,
-      projectType: data?.project?.projectType,
-      startDate: this.formatDateToLocal(data?.startDate),
-      endDate: this.formatDateToLocal(data?.endDate),
-      billable: data.billable,
-      allowweekendWork: data.weekendWorkAllowed,
-      resourceRole: selectedRole ? selectedRole.value : null,
-      color: data?.meta?.graphData?.color,
-      resourcePhase: selectedPhase ? selectedPhase.value : null,
-      resourceAuthority: authorityValueToPatch
-    });
+      if (selectedPhase) {
+        this.selectedPhaseId = selectedPhase.value;
+        this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
+      }
+
+      setTimeout(() => {
+        const authorityFromResource = this.resoucesDropDownData.find(
+          (r: any) => r.value === data?.pendingApprovalAuthority?.id
+        );
+        let authorityValueToPatch = authorityFromResource?.value ?? null;
+
+        if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
+          authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
+        }
+
+        this.updateResourceForm.patchValue({
+          resourceName: data?.employee?.id,
+          resourceEmail: data?.employee?.workMail,
+          overtimeEligible: data.overtimeEligibile,
+          resourcePhone:
+            data?.employee
+              ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+              : '-',
+          designation: data?.employee?.designation,
+          resourceAllocationhrs: data.allocatedHours || null,
+          projectName: data?.project?.projectId,
+          projectType: data?.project?.projectType,
+          startDate: this.formatDateToLocal(data?.startDate),
+          endDate: this.formatDateToLocal(data?.endDate),
+          billable: data.billable,
+          allowweekendWork: data.weekendWorkAllowed,
+          resourceRole: selectedRole ? selectedRole.value : null,
+          color: data?.meta?.graphData?.color,
+          resourcePhase: selectedPhase ? selectedPhase.value : null,
+          resourceAuthority: authorityValueToPatch
+        });
+      }, 100);
+    }, 100);
   }
 
   updateResources() {
@@ -460,17 +474,17 @@ onPhaseChange(event: any) {
     }
 
     this.loader = true;
-    const formValue = this.updateResourceForm.value;
+    const formValue = this.updateResourceForm.getRawValue();
 
-    const projectRoleId = formValue.resourceRole.roleId;
-    const projectDepartmentId = formValue.resourceRole.entityReferenceId;
+    const projectRoleId = formValue.resourceRole?.roleId;
+    const projectDepartmentId = formValue.resourceRole?.entityReferenceId;
 
     const currentStatus = this.selectedResource?.status?.toLowerCase();
     const finalStatus = currentStatus === 'assigned' ? 'Assigned' : 'Active';
 
     const payload = {
-      entityType: 'Client',
-      entityRefId: this.clientID,
+      entityType: 'project',
+      entityRefId: this.projectId,
       employeeId: formValue.resourceName,
       startDate: formValue.startDate,
       endDate: formValue.endDate,
@@ -482,8 +496,8 @@ onPhaseChange(event: any) {
       allocatedBy: this.empinfo.employeeId,
       projectRoleId,
       projectDepartmentId,
-      pendingApprovalAuthority: formValue.resourceAuthority,
-      phaseId: formValue.resourcePhase,
+      pendingApprovalAuthority: formValue.resourceAuthority || null,
+      phaseId: typeof formValue.resourcePhase === 'number' ? formValue.resourcePhase : null,
       projectId: formValue.projectName,
       meta: {
         graphData: {

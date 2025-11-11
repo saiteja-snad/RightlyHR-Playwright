@@ -16,10 +16,13 @@ import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.mo
 import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent],
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent,NgbPopoverModule,InfoIconComponent],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })
@@ -47,8 +50,8 @@ export class TeamTimesheetsComponent {
     { label: 25, value: 25 }
   ];
   resourcesList: IResourceDetail[] = [];
-
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router) { }
+  selectedEntries: TimesheetEntry[] = [];
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,private modalService: NgbModal) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -99,7 +102,11 @@ resetForm() {
     });
       // return [startOfMonth, endOfMonth];
   }
-
+  openModal(entries: any, content?: any) {
+    console.log(entries)
+    this.selectedEntries = entries;
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({

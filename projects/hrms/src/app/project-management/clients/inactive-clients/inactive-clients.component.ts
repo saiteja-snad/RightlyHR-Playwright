@@ -100,6 +100,7 @@ export class InactiveClientsComponent implements OnInit {
         this.conformationPopup.openSuccessModal('Client marked as Active successfully');
         modal.close();
         this.getClientsData();
+        this.http.setnewcountDetailsfornewclient();
       },
       error: (err) => {
         console.error('Error updating project status:', err);

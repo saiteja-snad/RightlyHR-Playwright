@@ -12,17 +12,17 @@ import { HttpService } from '../../../services/http.service';
   styleUrl: './client-side-tabs.component.scss'
 })
 export class ClientSideTabsComponent {
-   statusCounts:any = {};
-    destroy$: Subject<boolean> = new Subject<boolean>();
+  statusCounts: any = {};
+  destroy$: Subject<boolean> = new Subject<boolean>();
   filteredTabs: any[] = [];
   navTabs: any[] = [
 
     {
-      label: 'Active Clients', link: '/project-management/clients/active', icon: '/my-info-icons/contact-icon.png',statusKey: 'active',
+      label: 'Active Clients', link: '/project-management/clients/active', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
       permission: { feature: 'Client Projects', action: 'view' }
     },
     {
-      label: 'Inactive Clients', link: '/project-management/clients/inactive', icon: 'main-menu-icons/project-management-project.png',statusKey: 'inactive',
+      label: 'Inactive Clients', link: '/project-management/clients/inactive', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
       permission: { feature: 'Client Projects', action: 'view' },
     },
     // {
@@ -37,6 +37,9 @@ export class ClientSideTabsComponent {
   ngOnInit(): void {
     this.getcountData();
     this.filterTabsByRbac();
+    this.http.clientcountfuntion$.subscribe(() => {
+      this.getcountData();
+    });
   }
 
   filterTabsByRbac(): void {
@@ -48,20 +51,20 @@ export class ClientSideTabsComponent {
     });
   }
 
-  
-    getcountData(): void {
-      this.http.getData(`StatusCount?moduleName=Client`).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          this.statusCounts = {};
-          res.data.forEach((item: any) => {
-            this.statusCounts[item.status.toLowerCase()] = item.count || 0;
-          })
-        },
-        error: (err) => {
-  
-        }
-      });
-    }
+
+  getcountData(): void {
+    this.http.getData(`StatusCount?moduleName=Client`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.statusCounts = {};
+        res.data.forEach((item: any) => {
+          this.statusCounts[item.status.toLowerCase()] = item.count || 0;
+        })
+      },
+      error: (err) => {
+
+      }
+    });
+  }
 
 
 }

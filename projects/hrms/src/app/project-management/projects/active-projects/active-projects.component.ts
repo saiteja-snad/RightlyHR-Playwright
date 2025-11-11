@@ -347,6 +347,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           }
         }
         this.conformationPopup.openSuccessModal('Project updated successfully');
+        this.http.setnewcountDetailsfornewprojectcount()
         // this.close();
       },
       error: (err) => {
@@ -384,6 +385,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+        this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Inactive successfully');
         modal.close();
         const fullPath = this.router.url;
@@ -413,6 +415,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+        this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as hold successfully');
         modal.close();
         const fullPath = this.router.url;

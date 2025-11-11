@@ -106,6 +106,7 @@ export class HoldClientsComponent {
         this.conformationPopup.openSuccessModal('Client marked as Active successfully');
         modal.close();
         this.getClientsData();
+        this.http.setnewcountDetailsfornewclient();
       },
       error: (err) => {
         console.error('Error updating project status:', err);
@@ -129,6 +130,7 @@ export class HoldClientsComponent {
         this.conformationPopup.openSuccessModal('Client marked as Inactive successfully');
         modal.close();
         this.getClientsData();
+        this.http.setnewcountDetailsfornewclient();
       },
       error: (err) => {
         console.error('Error updating project status:', err);

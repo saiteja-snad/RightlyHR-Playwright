@@ -106,6 +106,7 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.conformationPopup.openSuccessModal('Client marked as Inactive successfully');
         modal.close();
+        this.http.setnewcountDetailsfornewclient();
         this.getClientsData();
       },
       error: (err) => {
@@ -129,6 +130,7 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.conformationPopup.openSuccessModal('Client marked as Hold successfully');
         modal.close();
+        this.http.setnewcountDetailsfornewclient();
         this.getClientsData();
       },
       error: (err) => {

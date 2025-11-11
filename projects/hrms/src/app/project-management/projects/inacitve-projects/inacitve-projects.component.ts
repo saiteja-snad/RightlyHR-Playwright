@@ -122,6 +122,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+        this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Active successfully');
         modal.close();   // close modal only after success
         const fullPath = this.router.url;

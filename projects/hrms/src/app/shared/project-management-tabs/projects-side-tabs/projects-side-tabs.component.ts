@@ -37,6 +37,9 @@ export class ProjectsSideTabsComponent {
   ngOnInit(): void {
     this.getcountData();
     this.filterTabsByRbac();
+    this.http.projectcountfuntion$.subscribe(() => {
+      this.getcountData();
+    });
   }
 
   filterTabsByRbac(): void {

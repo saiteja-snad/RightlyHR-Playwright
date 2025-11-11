@@ -154,6 +154,24 @@
                         </p-accordion-panel>
                     </li>
                     }
+                    @if(rbac.allowedToAccess('Employee Fields Module.view')){
+                    <li class="accordian-list-item"  (click)="navigateToAccessedRoute('/settings/it-configuration')">
+                        <p-accordion-panel value="7">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/main-menu-icons/It-Configuration-Icon.png" alt="Icon" class="list-icon">
+                                        <div class="list-label-name">IT Configuration</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingItConfigurationModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                            <p-accordion-content>
+                                <app-settings-it-configuration-tabs />
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    </li>
+                    }
                 </p-accordion>
             </ul>
         </div>

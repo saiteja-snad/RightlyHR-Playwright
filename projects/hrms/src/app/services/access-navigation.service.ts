@@ -70,6 +70,7 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -199,7 +200,6 @@ export class AccessNavigationService {
             }
           }
         }
-
         // if (this.rbac.allowedToAccess('Roles Module.view')) {
         for (const item of SETTINGS_ROLES_TABS) {
           if ('permission' in item && item.permission) {
@@ -851,7 +851,7 @@ export class AccessNavigationService {
         }
         break;
 
-    
+
     }
     return route;
   }
@@ -976,6 +976,19 @@ export class AccessNavigationService {
             if (this.rbac.allowedToAccess('NoDue Clearance Tab.view')) {
               return (route = '/settings/employee-fields/no-due-clearnce');
             }
+          }
+        }
+        break;
+
+
+
+        case '/settings/it-configuration':
+        if (this.rbac.allowedToAccess('IT Support Configuration.view')) {
+          for (const item of SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+
           }
         }
         break;

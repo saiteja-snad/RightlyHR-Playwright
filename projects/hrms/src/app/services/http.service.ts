@@ -129,6 +129,12 @@ export class HttpService {
     this.projectcount.next();
   }
 
+  projectphasecount = new Subject<void>();
+  projectcountfuntionphases$ = this.projectphasecount.asObservable();
+  setnewcountfornewprojectphasecount() {
+    this.projectphasecount.next();
+  }
+
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
@@ -833,8 +839,8 @@ export class HttpService {
   setnewPhaseDetails() {
     this.phaseadded.next();
   }
-// store department id
-private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
+  // store department id
+  private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
   selectedDepartmentIds$ = this.departmentIdsSource.asObservable();
 
   setDepartmentIds(ids: number[]) {

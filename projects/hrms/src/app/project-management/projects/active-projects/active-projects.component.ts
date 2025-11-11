@@ -28,7 +28,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe, NgbPopover, InfoIconComponent, ProjectsSideTabsComponent, ProjectsSideTabsForClientsComponent],
+    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })

@@ -26,11 +26,12 @@ import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { Skeleton } from "primeng/skeleton";
+import { TimesheetsResourceTabsComponent } from "../timesheets-resource-tabs/timesheets-resource-tabs.component";
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
     NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent,
-    ModuleInformationComponent, Skeleton],
+    ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None

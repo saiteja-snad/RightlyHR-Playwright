@@ -81,13 +81,19 @@
             </form>
         </div>
     </div>
-
+    
     <div class="d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
             <app-timesheets-tabs />
         </div>
-
-        <div class="d-flex custom-view-right-content gap-3">
+          <div class="custom-view-right-content ">
+             @if(isShowtimesheetforteamRoute()){
+             <app-timesheets-resource-tabs/>
+             }
+            
+          
+        <div class="d-flex gap-3 mb-3">
+            
             <div class="custom-table-content w-100">
                 @if (!loading) {
                 <table class="w-100">
@@ -230,6 +236,7 @@
                 </div>
                 }
             </div>
+        </div>
         </div>
     </div>
 </div>

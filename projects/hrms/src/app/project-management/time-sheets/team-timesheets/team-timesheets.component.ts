@@ -203,6 +203,6 @@ resetForm() {
   }
 
   navigateView(employeeId: any) {
-    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
   }
 }

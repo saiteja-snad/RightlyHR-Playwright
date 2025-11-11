@@ -1,4 +1,4 @@
-<div>
+<div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name">Project Management<span class="ms-1">
@@ -27,8 +27,11 @@
         </div>  -->
 
         <div class="d-flex align-items-center gap-3">
-            <div class="total-hrs">{{"Total Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
-
+            <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+            @if(isFilterApplied()) {
+            <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+            }
+            
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="custom-date-range-picker">
@@ -85,7 +88,7 @@
             <app-timesheets-tabs />
         </div>
 
-        <div class="d-flex w-100 gap-3">
+        <div class="d-flex custom-view-right-content gap-3">
             <div class="custom-table-content w-100">
                 @if (!loading) {
                 <table class="w-100">
@@ -134,22 +137,25 @@
                     </div>
                 </div>
 
-                <div class="time-sheet-graph-card p-3 py-4">
-                    <div class="stacked-progress-container">
-                        <!-- overlay color bar -->
-                        <div class="stacked-progress-overlay mb-3"
-                            [style.background]="(approvedPercent + submittedPercent + rejectedPercent) === 0 ? '#E5E7EB' : 
-                            'linear-gradient(to right, ' + approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + 
-                            submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
-                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                <div class="time-sheet-graph-card p-3">
+                    <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
+                        <div class="stacked-progress-container">
+                            <!-- overlay color bar -->
+                            <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
+                            + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                            + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                            + rejectedColor + ' 100%)'"></div>
+                            
+                            <div class="progress-labels">
+                                <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
+                                <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
+                                <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
+                            </div>
                         </div>
-
-                        <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
-                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }}Hrs</div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
-                        </div>
-                    </div>
+                    </ng-container>
+                    <ng-template #noData>
+                        <div class="graph-no-data-content"><app-no-data-found /></div>
+                    </ng-template>
                 </div>
 
                 <div class="dashed-line my-3"></div>
@@ -165,7 +171,7 @@
                 </div>
 
                 @if (!projectwisehour) {
-                <div class="time-sheet-graph-card p-3 py-4">
+                <div class="time-sheet-graph-card p-3">
                     <ng-container *ngIf="hasprojectWiseHoursData; else noData">
                         <div class="rolewise-chart-grid justify-content-between gap-3">
                             <div class="bar-chart">
@@ -173,17 +179,18 @@
                             </div>
                             <div class="legends-view custom-legend-width">
                                 <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
-                                    <div class="col-md-7">
+                                    <div class="col-md-8">
                                         <div class="d-flex align-items-center gap-1">
                                             <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
                                             <div class="legend-name">{{ item.label }}</div>
                                         </div>
                                     </div>
-                                    <div class="hrs-display text-nowrap col-md-5">{{item.hours}} h</div>
+                                    <div class="hrs-display text-nowrap col-md-4">{{item.hours}} HRs</div>
                                 </div>
                             </div>
                         </div>
                     </ng-container>
+
                     <ng-template #noData>
                         <div class="graph-no-data-content">
                             <app-no-data-found />
@@ -209,13 +216,14 @@
                 </div>
                 
                 @if (!allocatedVsActualLoader) {
-                <div class="time-sheet-graph-card p-3 py-4 ">
+                <div class="time-sheet-graph-card p-3">
                     <div class="bar-chart">
-                        <ng-container *ngIf="hasallocatedvsactualData; else noData">
+                        <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
                             <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                         </ng-container>
                     </div>
-                    <ng-template #noData>
+
+                    <ng-template #noActualData>
                         <div class="graph-no-data-content"><app-no-data-found /></div>
                     </ng-template>
                 </div>
@@ -261,26 +269,18 @@
                                 <td>{{ entry?.phaseName || '-' }}</td>
                                 <td>{{ entry.loggedHours }} hrs</td>
                                 <td class="text-center">
-                                        <div>
-                                            <span>
-                                            <div *ngIf="entry.summary; else noRequestedComments" type="button"
-                                                [ngbPopover]="requestedComments">
-                                                <app-info-icon />
-                                            </div>
-                                            <ng-template #requestedComments>
-                                                <div>
-                                                <p class="mb-0">{{ entry.summary }}</p>
-                                                </div>
-                                            </ng-template>
-                                            <ng-template #noRequestedComments>
-                                                <span>-</span>
-                                            </ng-template>
-                                            </span>
-                                        </div>
+                                    <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">
+                                        <app-info-icon />
+                                    </div>
+                                    <ng-template #requestedComments>
+                                        <p class="mb-0">{{ entry.summary }}</p>
+                                    </ng-template>
+                                    <ng-template #noRequestedComments><span>-</span></ng-template>
                                 </td>
-                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
-                                 'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">{{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status
-                                         }}</td>
+                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected', 
+                                    'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
+                                    {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

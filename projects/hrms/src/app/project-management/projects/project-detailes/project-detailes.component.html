@@ -74,10 +74,17 @@
                             class="form-control custom-input" placeholder="Enter timesheet approval authority" />
                     </div> -->
 
-                    <!--Color Picker-->
+                    <!-- Project Code -->
                     <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="color" class="form-label custom-label mb-2"> Color </label>
-                        <input type="color" id = "color" class="form-control custom-color" formControlName="color"/>
+                        <label for="code" class="form-label custom-label mb-2">Project Code</label>
+                        <input type="text" class="form-control custom-input" formControlName="code"
+                            id="code" autocomplete="off" placeholder="Please enter project code">
+                    </div>
+
+                    <!-- Project Color -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="color" class="form-label custom-label mb-2">Project Color</label>
+                        <input type="color" id="color" class="form-control custom-color" formControlName="color"/>
                     </div>
 
                     <div class="col-md-12 mb-3">

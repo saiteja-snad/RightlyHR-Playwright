@@ -167,9 +167,19 @@
           <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
         </div>
 
-        <!--Color Picker-->
+        <!-- Project Code -->
         <div class="col-md-6 mb-3">
-          <label class="form-label custom-label">{{'Color' | translate}}</label>
+          <label for="code" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="code" maxlength="20"
+            placeholder="Please enter project code">
+          <div class="error-msg" *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.invalid">
+            Project Code is required
+          </div>
+        </div>
+
+        <!-- Project Color -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
           <input type="color" class="form-control custom-color" formControlName="color" />
         </div>
           

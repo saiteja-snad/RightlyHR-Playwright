@@ -122,6 +122,9 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerFormData.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
+    this.datepickerFormDataforsummary?.patchValue({
+       dateRange: [startOfMonth, endOfMonth]
+    })
   }
 
   // Create a single contact form group
@@ -185,6 +188,15 @@ export class ProjectViewComponent implements OnInit {
     return (
       (formValue.dateRange && formValue.dateRange.length > 0) ||
       (formValue.resourceId && formValue.resourceId.length > 0)
+    );
+  }
+
+  isFilterAppliedforsummary(): boolean {
+    const formValue = this.datepickerFormDataforsummary?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) 
+    
     );
   }
 

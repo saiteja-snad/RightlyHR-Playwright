@@ -591,8 +591,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
   statusActionsMap: Record<string, string[]> = {
     'assigned': ['Active', 'Release', 'Update'],
-    'active': ['Update', 'On Hold', 'Release'],
-    'on hold': ['Resume', 'Release Resource']
+    'active': ['Update', 'Release'],
+    // 'on hold': ['Resume', 'Release Resource']
   };
 
   // Titles for confirmation popups
@@ -602,16 +602,16 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       nextStatus: 'Active',
       successMessage: 'Resource activated successfully'
     },
-    'On Hold': {
-      title: 'Are you sure you want to put this resource on hold?',
-      nextStatus: 'On Hold',
-      successMessage: 'Resource status changed to On Hold successfully.'
-    },
-    'Resume': {
-      title: 'Are you sure you want to resume this resource?',
-      nextStatus: 'Active',
-      successMessage: 'Resource resumed successfully'
-    },
+    // 'On Hold': {
+    //   title: 'Are you sure you want to put this resource on hold?',
+    //   nextStatus: 'On Hold',
+    //   successMessage: 'Resource status changed to On Hold successfully.'
+    // },
+    // 'Resume': {
+    //   title: 'Are you sure you want to resume this resource?',
+    //   nextStatus: 'Active',
+    //   successMessage: 'Resource resumed successfully'
+    // },
     'Release': {
       title: 'Are you sure you want to release this resource?',
       nextStatus: 'Released',
@@ -636,8 +636,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       'Release': 'bi-x-circle',
       'Release Resource': 'bi-x-circle',
       'Update': 'bi-pencil',
-      'On Hold': 'bi-pause-circle',
-      'Resume': 'bi-arrow-repeat'
+      // 'On Hold': 'bi-pause-circle',
+      // 'Resume': 'bi-arrow-repeat'
     }[action] || 'bi-question-circle';
   }
 

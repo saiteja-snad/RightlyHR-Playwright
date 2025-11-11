@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +7,7 @@ import { Subject } from 'rxjs/internal/Subject';
 import { TimesheetEntry } from '../../../Interfaces/timoff-model';
 import { IResourceDetail } from '../../../timesheetmodel';
 import { BehaviorSubject, Subscription, takeUntil } from 'rxjs';
-import {  DailyDataV2, MonthlySummaryItem, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
+import { DailyDataV2, MonthlySummaryItem } from '../../../Interfaces/timesheetsummary';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 import dayjs from 'dayjs';
 import { ChartModule } from 'primeng/chart';
@@ -21,7 +21,6 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
-
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
@@ -31,7 +30,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ResourceViewSummaryComponent {
+export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
   empdata = {} as any;
   resourceDataids = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
@@ -116,13 +115,16 @@ export class ResourceViewSummaryComponent {
           ...this.resourceDataids, // keep clientId & projectId from localStorage
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
           dateRange: request.dateRange
+          
         };
+         this.getProjectSummary();
       } else {
         this.getProjectSummary();
       }
-      this.getProjectSummary();
+      
     });
-    this.getProjectSummary();
+
+    //this.getProjectSummary();
     // this.setDefaultmounth();
   }
 

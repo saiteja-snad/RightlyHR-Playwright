@@ -102,12 +102,26 @@
                                     <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton" data-bs-toggle="dropdown"
                                         data-bs-auto-close="outside" aria-expanded="false" [class.disabled]="employeeSelected || hasAnyDuration(project)"
                                         (click)="onDropdownClick($event)">
-                                        <u>{{project.value.isNoClientProject ? 'No Client - No Project' : 
-                                        (project.value.selectedProject?.clientName && project.value.selectedProject?.projectName ? 
-                                        (project.value.selectedProject?.phaseName ? project.value.selectedProject.clientName + ' - ' + 
-                                        project.value.selectedProject.projectName + ' - ' + project.value.selectedProject.phaseName : 
-                                        project.value.selectedProject.clientName + ' - ' + project.value.selectedProject.projectName) : 
-                                        'Select Project or Client')}}</u>
+                                        <ng-container *ngIf="project.value.isNoClientProject; else hasProject">
+                                            <u>No Client - No Project</u>
+                                        </ng-container>
+                                        <ng-template #hasProject>
+                                            <ng-container
+                                                *ngIf="project.value.selectedProject?.clientName && project.value.selectedProject?.projectName; else selectProject">
+                                                <div class="mb-2">
+                                                    <u>{{ project.value.selectedProject?.projectName }}</u>
+                                                </div>
+                                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                                    <div class="timesheet-chip">
+                                                        {{ project.value.selectedProject?.clientName }}
+                                                    </div>
+                                                    <div *ngIf="project.value.selectedProject?.phaseName" class="timesheet-chip">
+                                                        {{ project.value.selectedProject?.phaseName }}
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                            <ng-template #selectProject><u>Select Project or Client</u></ng-template>
+                                        </ng-template>
                                     </div>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li>

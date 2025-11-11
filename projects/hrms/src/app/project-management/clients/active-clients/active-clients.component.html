@@ -82,6 +82,12 @@
                                                             <i class="bi bi-check-circle me-2"></i> Inactive
                                                         </a>
                                                     </li>
+
+                                                       <li (click)="openModalstatus(statuschangeshold, client)">
+                                                        <a class="dropdown-item">
+                                                            <i class="bi bi-pause-circle me-2"></i> Hold
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -111,6 +117,20 @@
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
             <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #statuschangeshold let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this client?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>

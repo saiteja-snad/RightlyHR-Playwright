@@ -22,7 +22,7 @@ export class ClientSideTabsComponent {
       permission: { feature: 'Client Projects', action: 'view' },
     },
     {
-      label: 'Hold', link: '/project-management/clients/details/resources', icon: 'main-menu-icons/project-management-resources.png',
+      label: 'Hold', link: '/project-management/clients/hold', icon: 'main-menu-icons/project-management-resources.png',
       permission: { feature: 'Client Resources', action: 'view' }
     },
 

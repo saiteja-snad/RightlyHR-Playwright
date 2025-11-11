@@ -92,6 +92,7 @@ export class ActiveClientsComponent implements OnInit {
     this.selectedClient = { ...client }; // store client detail
   }
 
+
   confirmStatusChange(modal: any) {
     if (!this.selectedClient) return;
     const updatedClient = {
@@ -103,6 +104,29 @@ export class ActiveClientsComponent implements OnInit {
     this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
       next: (res) => {
         this.conformationPopup.openSuccessModal('Client marked as Inactive successfully');
+        modal.close();
+        this.getClientsData();
+      },
+      error: (err) => {
+        console.error('Error updating project status:', err);
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
+      }
+    });
+  }
+
+
+  
+  confirmStatusChangetohold(modal: any) {
+    if (!this.selectedClient) return;
+    const updatedClient = {
+      ...this.selectedClient,
+      status: 'hold',
+      createdBy: parseInt(this.empinfo.employeeId),
+      updatedBy: parseInt(this.empinfo.employeeId)
+    };
+    this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
+      next: (res) => {
+        this.conformationPopup.openSuccessModal('Client marked as Hold successfully');
         modal.close();
         this.getClientsData();
       },

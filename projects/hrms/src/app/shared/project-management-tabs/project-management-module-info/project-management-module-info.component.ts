@@ -131,7 +131,7 @@ export class ProjectManagementModuleInfoComponent {
 
   ComponentnameDisplay() {
     const currentUrl = this.router.url.split('?')[0];
-    if (currentUrl === '/project-management/clients/active' || currentUrl === '/project-management/clients/inactive') {
+    if (currentUrl === '/project-management/clients/active' || currentUrl === '/project-management/clients/inactive' || currentUrl==='/project-management/clients/hold') {
       this.componentname = 'Clients';
     }
     else if (currentUrl === '/project-management/clients/add/info') {

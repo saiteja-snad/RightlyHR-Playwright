@@ -33,6 +33,7 @@ import { TeamTimesheetsComponent } from './time-sheets/team-timesheets/team-time
 import { TimesheetsSummaryViewComponent } from './time-sheets/timesheets-summary-view/timesheets-summary-view.component';
 import { ResourceViewSummaryComponent } from './shared-project-management-componenets/resource-view-summary/resource-view-summary.component';
 import { ProjectPhasesComponent } from './projects/project-phases/project-phases.component';
+import { HoldClientsComponent } from './clients/hold-clients/hold-clients.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -42,6 +43,7 @@ export default [
             { path: '', redirectTo: 'active', pathMatch: 'full' },
             { path: 'active', component: ActiveClientsComponent },
             { path: 'inactive', component: InactiveClientsComponent },
+             { path: 'hold', component: HoldClientsComponent },
             {
                 path: 'details', component: ClientViewComponent,
                 children: [

@@ -4,7 +4,7 @@
             <app-project-management-module-info />
         </div>
 
-   
+
     </div>
 
     <div class="d-flex w-100 gap-3">
@@ -24,80 +24,75 @@
                     aria-describedby="basic-addon1">
             </div>
 
-            <ng-container *ngIf="loading; else maincontent">
-                <ng-template #loadingSpinner>
-                    <div>
-                        <app-data-loader-content />
-                    </div>
-                </ng-template>
-                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-            </ng-container>
-
-            <ng-template #maincontent>
-                <div class="custom-table-content w-100">
-                    <table class="w-100">
-                        <thead>
-                            <th>Logo</th>
-                            <th>Client Name</th>
-                            <th>Contact name</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            @if(rbac.allowedToAccess('Client Information.delete')){
-                            <th class="text-center">{{"Action" | translate}}</th>
-                            }
-                        </thead>
-                        <tbody>
-                            <ng-container *ngIf="(clients | activeclients : searchValue) as filteredClients">
-                                <ng-container *ngIf="filteredClients.length > 0; else noDataTemplate">
-                                    <tr *ngFor="let client of filteredClients; let i = index">
-                                        <td>
-                                            <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
-                                        </td>
-                                        <td>
-                                            <a class="project-name cursor" (click)="navigateView(client.clientId)">
-                                                {{ client.clientName }}
+            <div class="custom-table-content w-100">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <th>Logo</th>
+                        <th>Client Name</th>
+                        <th>Contact name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        @if(rbac.allowedToAccess('Client Information.delete')){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(clients | activeclients : searchValue) as filteredClients">
+                            <ng-container *ngIf="filteredClients.length > 0; else noDataTemplate">
+                                <tr *ngFor="let client of filteredClients; let i = index">
+                                    <td>
+                                        <img [src]="getImageUrl(client.logoPath)" alt="Logo" class="client-image" />
+                                    </td>
+                                    <td>
+                                        <a class="project-name cursor" (click)="navigateView(client.clientId)">
+                                            {{ client.clientName }}
+                                        </a>
+                                    </td>
+                                    <td>{{client?.contact?.name || '-'}}</td>
+                                    <td>{{client?.contact?.email || '-'}}</td>
+                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
+                                        '-'}}</td>
+                                    <td>{{client?.contact?.role || '-'}}</td>
+                                    <td>{{ client.status }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
                                             </a>
-                                        </td>
-                                        <td>{{client?.contact?.name || '-'}}</td>
-                                        <td>{{client?.contact?.email || '-'}}</td>
-                                        <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber ||
-                                            '-'}}</td>
-                                        <td>{{client?.contact?.role || '-'}}</td>
-                                        <td>{{ client.status }}</td>
-                                        <td class="text-center">
-                                            <div class="dropdown">
-                                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </a>
-                                                <ul class="dropdown-menu custom-dropdown-menu">
-                                                    <li (click)="openModalstatus(statuschanges, client)">
-                                                        <a class="dropdown-item">
-                                                            <i class="bi bi-check-circle me-2"></i> Active
-                                                        </a>
-                                                    </li>
+                                            <ul class="dropdown-menu custom-dropdown-menu">
+                                                <li (click)="openModalstatus(statuschanges, client)">
+                                                    <a class="dropdown-item">
+                                                        <i class="bi bi-check-circle me-2"></i> Active
+                                                    </a>
+                                                </li>
 
-                                                       <li (click)="openModalstatus(statuschangesInactive, client)">
-                                                        <a class="dropdown-item">
-                                                            <i class="bi bi-check-circle me-2"></i> Inactive
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </ng-container>
-                            </ng-container>
-                            <ng-template #noDataTemplate>
-                                <tr>
-                                    <app-no-data-found />
+                                                <li (click)="openModalstatus(statuschangesInactive, client)">
+                                                    <a class="dropdown-item">
+                                                        <i class="bi bi-check-circle me-2"></i> Inactive
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </ng-template>
-                        </tbody>
-                    </table>
-                </div>
-            </ng-template>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+
         </div>
     </div>
 
@@ -125,7 +120,8 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetoInactive(modal)">{{'Yes'}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="confirmStatusChangetoInactive(modal)">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>

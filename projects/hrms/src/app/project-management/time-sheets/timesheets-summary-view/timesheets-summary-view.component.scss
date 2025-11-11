@@ -104,6 +104,7 @@
     font-size: 11px;
     font-weight: 500;
     flex-wrap: wrap;
+    gap: 1rem;
 
     .label {
         background: #FFF;
@@ -133,7 +134,6 @@
     color: rgba(133, 137, 145, 1);
     font-weight: 500;
     font-size: var(--fontsize14);
-    cursor: pointer;
 }
 
 .total-duration {

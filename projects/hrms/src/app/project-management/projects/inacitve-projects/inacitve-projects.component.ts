@@ -16,10 +16,11 @@ import { FormsModule } from '@angular/forms';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
+import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component";
 @Component({
   selector: 'app-inacitve-projects',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe, ProjectsSideTabsComponent],
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe, ProjectsSideTabsComponent, ProjectsSideTabsForClientsComponent],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
 })

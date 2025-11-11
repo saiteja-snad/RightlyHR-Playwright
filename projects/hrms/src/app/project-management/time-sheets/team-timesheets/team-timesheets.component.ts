@@ -90,22 +90,98 @@ export class TeamTimesheetsComponent {
               fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
               key: 'team'
             }));
+          // Add "All Employees" option at the beginning
+          const allEmployeesOption = {
+            id: null,
+            name: 'All Employees',
+            fullName: 'All Employees',
+            key: 'team'
+          };
+
+          this.resourcesList = [
+            allEmployeesOption,
+            ...res.data
+              .filter((emp: IResourceDetail) => emp.id !== EmployeeId && emp.isReportee == true)
+              .map((emp: IResourceDetail) => ({
+                ...emp,
+                fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
+                key: 'team'
+              }))
+          ];
+
+          // Set default selection to "All Employees"
+          this.datepickerForm.patchValue({
+            resourceId: null
+          });
         }
       },
       error: (err: any) => console.error(err)
     });
   }
+  
+  // getAllEmployeeDetails() {
+  //   const EmployeeId = this.empdata?.employeeId;
+  //   const satus = ['Active', 'Trainee Active', 'Active Contract'];
+  //   this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+  //     next: (res: any) => {
+  //       this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
+  //         label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+  //         value: employee.employeeId
+  //       }));
+  //     },
+  //   });
+  // }
+
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
-    const satus = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
-      next: (res: any) => {
-        this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
-      },
-    });
+    const statuses = ['Active', 'Trainee Active', 'Active Contract'];
+
+    this.subscription = this.http
+      .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
+      .subscribe({
+        next: (res: any) => {
+          if (Array.isArray(res)) {
+            // ✅ Add "All Employees" option first
+            const allEmployeesOption = {
+              value: null,
+              label: 'All Employees',
+              key: 'all'
+            };
+
+            // ✅ Filter out logged-in user and map employee details
+            const employeeList = res
+              .filter((emp: any) => emp.employeeId !== EmployeeId)
+              .map((emp: any) => ({
+                value: emp.employeeId,
+                label: emp.fusionEmpId
+                  ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
+                  : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+                key: 'all'
+              }));
+
+            // ✅ Merge lists (All Employees first)
+            this.activeEmplist = [allEmployeesOption, ...employeeList];
+
+            // ✅ Default selection — "All Employees"
+            this.datepickerForm.patchValue({
+              resourceId: null
+            });
+          } else {
+            // fallback
+            this.activeEmplist = [{ label: 'All Employees', value: null, key: 'all' }];
+            this.datepickerForm.patchValue({
+              resourceId: null
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching employees:', err);
+          this.activeEmplist = [{ label: 'All Employees', value: null, key: 'all' }];
+          this.datepickerForm.patchValue({
+            resourceId: null
+          });
+        }
+      });
   }
 
   onCheckemployee(employeed: any) {
@@ -113,7 +189,7 @@ export class TeamTimesheetsComponent {
       this.page = 1;
       this.datepickerForm.get('resourceId')?.setValue(null);
       console.log(employeed);
-      
+
       this.getteamsummary();
     }
   }
@@ -129,11 +205,50 @@ export class TeamTimesheetsComponent {
     this.getteamsummary();
   }
 
+  // getteamsummary() {
+  //   const formValue = this.datepickerForm.value;
+  //   const [startDate, endDate] = formValue.dateRange || [];
+
+  //   const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
+  //   const start = startDate
+  //     ? dayjs(startDate).format('YYYY-MM-DD')
+  //     : dayjs().startOf('month').format('YYYY-MM-DD');
+
+  //   const end = endDate
+  //     ? dayjs(endDate).format('YYYY-MM-DD')
+  //     : dayjs().endOf('month').format('YYYY-MM-DD');
+
+  //   const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+  //   this.loading = true
+  //   this.subscription = this.http.getData(url).subscribe({
+  //     next: (res: any) => {
+  //       this.loading = false
+  //       if (res?.success) {
+
+  //         this.teamSummaryData = res.data;
+  //         this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
+  //         console.log(this.totalhrs);
+
+  //         this.collectionSize = res.pagination.totalRecords;
+
+  //         // ✅ Extract dates for header dynamically (use first record)
+  //         if (this.teamSummaryData.length > 0) {
+  //           this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
+  //             dayjs(d.date).format('ddd<br>MMM D')
+  //           );
+  //         }
+  //       }
+  //     },
+  //     error: (err) => {
+  //       this.loading = false
+  //     }
+  //   });
+  // }
+
   getteamsummary() {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
 
-    const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
     const start = startDate
       ? dayjs(startDate).format('YYYY-MM-DD')
       : dayjs().startOf('month').format('YYYY-MM-DD');
@@ -142,20 +257,34 @@ export class TeamTimesheetsComponent {
       ? dayjs(endDate).format('YYYY-MM-DD')
       : dayjs().endOf('month').format('YYYY-MM-DD');
 
-    const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
-    this.loading = true
+    let url = `Timesheet/teamsummary?startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+
+    const hasMyTeam = this.rbac.allowedToAccess('My Team (Timesheet).view');
+    const hasAllEmployees = this.rbac.allowedToAccess('All Employees (Timesheet).view');
+
+    // ✅ Case 1: Only "My Team (Timesheet).view" — include resourceId
+    if (hasMyTeam && !hasAllEmployees) {
+      url += `&resourceId=${this.empdata?.employeeId}`;
+
+      // Include selected subordinate if chosen
+      if (formValue.resourceId) {
+        url += `&employeeId=${formValue.resourceId}`;
+      }
+    }
+    // ✅ Case 2: "All Employees" or both claims — only send employeeId if present
+    else if (formValue.resourceId) {
+      url += `&employeeId=${formValue.resourceId}`;
+    }
+
+    this.loading = true;
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
-        this.loading = false
+        this.loading = false;
         if (res?.success) {
-
           this.teamSummaryData = res.data;
           this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
-          console.log(this.totalhrs);
-
           this.collectionSize = res.pagination.totalRecords;
 
-          // ✅ Extract dates for header dynamically (use first record)
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
               dayjs(d.date).format('ddd<br>MMM D')
@@ -163,12 +292,11 @@ export class TeamTimesheetsComponent {
           }
         }
       },
-      error: (err) => {
-        this.loading = false
+      error: () => {
+        this.loading = false;
       }
     });
   }
-
 
 
 

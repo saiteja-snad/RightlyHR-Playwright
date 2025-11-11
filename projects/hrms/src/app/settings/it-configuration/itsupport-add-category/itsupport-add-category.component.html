@@ -8,21 +8,16 @@
                     formControlName="categoryName" aria-label="categoryName" aria-describedby="categoryName"
                     (keydown)="formValidations.restrictInitialSpace($event)" maxlength="101">
                 <span class="input-group-text" id="categoryName">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="categoryForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="categoryForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="categoryForm.get('categoryName')?.touched && categoryForm.get('categoryName')?.invalid" class="error-msg">
-                <div *ngIf="categoryForm.get('categoryName')?.errors?.['required']">
-                    {{ 'Category Name is required' | translate }}
-                </div>
+                <div *ngIf="categoryForm.get('categoryName')?.errors?.['required']">{{ 'Category Name is required' | translate }}</div>
             </div>
             <div *ngIf="categoryForm.get('categoryName')?.errors?.['maxCharacters']" class="error-msg">
-                {{ 'Please limit your input to 100 characters' | translate }}
-            </div>
+                {{ 'Please limit your input to 100 characters' | translate }}</div>
             <div *ngIf="categoryForm.get('categoryName')?.errors?.['pattern']" class="error-msg">
-                {{ 'Field cannot start with a space' | translate }}
-            </div>
+                {{ 'Field cannot start with a space' | translate }}</div>
         </div>
     </form>
 
@@ -38,7 +33,6 @@
             <tbody>
                 @if(categoryDetails.length>0){
                 @for (job of categoryDetails; track $index) {
-                
                 <tr>
                     <td class="w-75">{{ job.value}}</td>
                     <td class="w-25">
@@ -51,15 +45,13 @@
                             </div>
                             <!--Delete-->
                             <!-- <div>
-                                                                    <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Job Type.delete')">
-                                                                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
-                                                                    </a>
-                                                                </div> -->
+                                <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Job Type.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
+                            </div> -->
                         </div>
                     </td>
                 </tr>
-                
-                
                 }
                 }
                 @else {
@@ -88,16 +80,13 @@
             </div>
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Category Name'|translate}}
-                        <span class="error-msg">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                        {{'Category Name'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="categoryName"
-                        placeholder="Please enter job type"
-                        (keydown)="formValidations.restrictInitialSpace($event)" maxlength="101">
-                    <div *ngIf="updateForm.get('categoryName')?.touched && updateForm.get('categoryName')?.invalid"
-                        class="error-msg">
-                        <div *ngIf="updateForm.get('categoryName')?.errors?.['required']">
-                            {{ 'Category Name is required' | translate }}
-                        </div>
+                        placeholder="Please enter job type" (keydown)="formValidations.restrictInitialSpace($event)"
+                        maxlength="101">
+                    <div *ngIf="updateForm.get('categoryName')?.touched && updateForm.get('categoryName')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('categoryName')?.errors?.['required']">{{ 'Category Name is required' | translate }}</div>
                     </div>
                     <div *ngIf="updateForm.get('categoryName')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
@@ -107,8 +96,7 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
                     <button type="button" class="custom-btn btn-primary" (click)="updatecategoryName(modal)"
                         [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
@@ -125,8 +113,7 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary"
-                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

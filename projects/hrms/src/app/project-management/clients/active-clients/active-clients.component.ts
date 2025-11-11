@@ -33,7 +33,8 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscription!: Subscription;
-  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService,
+
+  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService, 
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
@@ -81,17 +82,13 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
 
   navigateView(clientId: number) {
     localStorage.setItem('clientProjectId', clientId.toString());
-    this.router.navigate(
-      ['project-management/clients/details'],
-      { queryParams: { id: clientId } } // using query params
-    );
+    this.router.navigate(['project-management/clients/details'], { queryParams: { id: clientId } });
   }
 
   openModalstatus(modal: any, client: any) {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
     this.selectedClient = { ...client }; // store client detail
   }
-
 
   confirmStatusChange(modal: any) {
     if (!this.selectedClient) return;
@@ -101,8 +98,7 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
       createdBy: parseInt(this.empinfo.employeeId),
       updatedBy: parseInt(this.empinfo.employeeId)
     };
-    
-  this.subscription= this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
+    this.subscription = this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
       next: (res) => {
         this.conformationPopup.openSuccessModal('Client marked as Inactive successfully');
         modal.close();
@@ -115,8 +111,6 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-
 
   confirmStatusChangetohold(modal: any) {
     if (!this.selectedClient) return;
@@ -140,7 +134,6 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
     });
   }
 
-
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
@@ -148,5 +141,4 @@ export class ActiveClientsComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe()
     }
   }
-
 }

@@ -44,7 +44,7 @@ export default [
             { path: '', redirectTo: 'active', pathMatch: 'full' },
             { path: 'active', component: ActiveClientsComponent },
             { path: 'inactive', component: InactiveClientsComponent },
-             { path: 'hold', component: HoldClientsComponent },
+            { path: 'hold', component: HoldClientsComponent },
             {
                 path: 'details', component: ClientViewComponent,
                 children: [
@@ -53,6 +53,7 @@ export default [
                     { path: 'contact-info', component: ClientContactInformationComponent },
                     { path: 'projects', component: ActiveProjectsComponent },
                     { path: 'inactiveprojects', component: InacitveProjectsComponent },
+                    { path: 'hold', component: HoldProjectsComponent },
                     { path: 'resources', component: ClientResourcesComponent },
                     {
                         path: 'timesheet', component: ClientTimeSheetsComponent,
@@ -60,7 +61,7 @@ export default [
                             { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
                             { path: 'summary', component: ClientTimesheetSummaryComponent },
                             { path: 'detailed', component: ClientTimesheetDetailedComponent },
-                              { path: 'resource-summary', component: ResourceViewSummaryComponent },
+                            { path: 'resource-summary', component: ResourceViewSummaryComponent },
                         ],
                     },
                     { path: 'documents', component: ClientDocumentsComponent },
@@ -86,7 +87,7 @@ export default [
             { path: '', redirectTo: 'active', pathMatch: 'full' },
             { path: 'active', component: ActiveProjectsComponent },
             { path: 'inactive', component: InacitveProjectsComponent },
-              { path: 'hold', component: HoldProjectsComponent },
+            { path: 'hold', component: HoldProjectsComponent },
             {
                 path: 'details', component: ProjectViewComponent,
                 children: [
@@ -105,7 +106,7 @@ export default [
                     },
                     { path: 'documents', component: ProjectDocumentsComponent },
                     { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
-                    { path: 'phases', component: ProjectPhasesComponent}
+                    { path: 'phases', component: ProjectPhasesComponent }
                 ],
             }
         ],

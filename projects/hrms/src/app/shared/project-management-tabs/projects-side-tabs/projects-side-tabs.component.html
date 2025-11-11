@@ -1,4 +1,4 @@
-<div class="custom-sub-tabs-container">
+<div class="custom-sub-tabs-container" >
     <ul class="nav flex-column">
         <li class="nav-item" *ngFor="let tab of filteredTabs">
             <div class="nav-link" [routerLink]="[tab.link]"  routerLinkActive="active-nav-link">
@@ -12,3 +12,16 @@
         </li>
     </ul>
 </div>
+
+
+<!-- <div class="component-nav-tabs-container card " >
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of filteredTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="[tab.link]" [queryParamsHandling]="'preserve'" class="nav-link" >{{ tab.label }}</a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
+</div> -->

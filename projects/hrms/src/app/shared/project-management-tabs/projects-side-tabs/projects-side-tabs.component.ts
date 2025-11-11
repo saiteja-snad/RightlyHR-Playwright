@@ -4,10 +4,11 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-projects-side-tabs',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule,TabsModule],
   templateUrl: './projects-side-tabs.component.html',
   styleUrl: './projects-side-tabs.component.scss'
 })
@@ -18,15 +19,15 @@ export class ProjectsSideTabsComponent {
   navTabs: any[] = [
 
     {
-      label: 'Active Projects', link: '/project-management/projects/active', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
+      label: 'Active', link: '/project-management/projects/active', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
     {
-      label: 'Inactive Projects', link: '/project-management/projects/inactive', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
+      label: 'Inactive', link: '/project-management/projects/inactive', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
       permission: { feature: 'Project Details Tab', action: 'view' },
     },
     {
-      label: 'Hold Projects', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
+      label: 'Hold ', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
 
@@ -65,4 +66,7 @@ export class ProjectsSideTabsComponent {
     });
   }
 
+ isActive(route: string): boolean {
+    return this.router.url.includes(route);
+  }
 }

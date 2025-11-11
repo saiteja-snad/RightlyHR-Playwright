@@ -60,25 +60,25 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   departmentlist = [] as any;
   inactiveClientStatus: any;
   selectedDepartmentIds: any;
-  
+
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-      this.http.selectedDepartmentIds$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((deptIds) => {
-      this.selectedDepartmentIds = deptIds || [];
-  this.getProjectsBasedOnRoute();
+    this.http.selectedDepartmentIds$.pipe(takeUntil(this.destroy$))
+      .subscribe((deptIds) => {
+        this.selectedDepartmentIds = deptIds || [];
+        this.getProjectsBasedOnRoute();
 
-    });
+      });
+      
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
     // this.getProjectsBasedOnRoute();
-        this.DepartmentList();
+    this.DepartmentList();
     // this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -90,7 +90,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.validateUpdateDateRange();
     });
   }
-  
+
   DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
@@ -99,14 +99,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
-onDepartmentChangelist(event: any) {
-  const selectedIds = event.value; // This gives an array when multiple departments selected
-  if (Array.isArray(selectedIds)) {
-    this.http.setDepartmentIds(selectedIds);
-  } else {
-    this.http.setDepartmentIds([selectedIds]);
+  onDepartmentChangelist(event: any) {
+    const selectedIds = event.value; // This gives an array when multiple departments selected
+    if (Array.isArray(selectedIds)) {
+      this.http.setDepartmentIds(selectedIds);
+    } else {
+      this.http.setDepartmentIds([selectedIds]);
+    }
   }
-}
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -227,10 +227,10 @@ onDepartmentChangelist(event: any) {
 
   getAllActiveProjects() {
     this.loading = true;
-     let url = 'Project?status=Active';
-  if (this.selectedDepartmentIds) {
-    url += `&departmentIds=${this.selectedDepartmentIds}`;
-  }
+    let url = 'Project?status=Active';
+    if (this.selectedDepartmentIds) {
+      url += `&departmentIds=${this.selectedDepartmentIds}`;
+    }
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -249,10 +249,10 @@ onDepartmentChangelist(event: any) {
 
   getprojectbyid(clientID: any): void {
     this.loading = true
-     let url = `Project?clientId=${clientID}&status=Active`;
-     if (this.selectedDepartmentIds) {
-    url += `&departmentIds=${this.selectedDepartmentIds}`;
-  }
+    let url = `Project?clientId=${clientID}&status=Active`;
+    if (this.selectedDepartmentIds) {
+      url += `&departmentIds=${this.selectedDepartmentIds}`;
+    }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false
@@ -516,8 +516,8 @@ onDepartmentChangelist(event: any) {
   }
 
   get isFormInvalid(): boolean {
-    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid || 
-    !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
+    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid ||
+      !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
   }
 
   closepopup(content: any) {
@@ -530,7 +530,7 @@ onDepartmentChangelist(event: any) {
     this.updateprojectform.get('approvalidAuthority')?.reset();
     this.updateprojectform.get('approvalidAuthority')?.setValidators(null);
     this.updateprojectform.get('approvalidAuthority')?.disable();
-    this.modalService.dismissAll();
+    // this.modalService.dismissAll();
   }
 
   get minEffectiveDate(): string | null {

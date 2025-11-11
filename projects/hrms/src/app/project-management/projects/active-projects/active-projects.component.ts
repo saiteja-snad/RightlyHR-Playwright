@@ -75,11 +75,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         this.getProjectsBasedOnRoute();
 
       });
-      
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
-    // this.getProjectsBasedOnRoute();
+    this.getProjectsBasedOnRoute();
     this.DepartmentList();
     // this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
@@ -194,6 +193,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform = this.fb.group({
       updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
       updateclientName: [null, Validators.required],
+      updatecode: [null, [Validators.required, this.formValidation.maxCharactersValidator(20)]],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],
@@ -295,6 +295,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
       updateclientName: project.client?.clientId,  // ensure p-select has clientId
+      updatecode: project?.meta?.graphData?.code,
       updatestartDate: this.formatDateToLocal(project.startDate),
       updateendDate: this.formatDateToLocal(project.endDate),
       // updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
@@ -342,7 +343,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatedBy: parseInt(this.empinfo.employeeId),
       meta: {
         graphData: {
-          color: formValue?.updatecolor
+          color: formValue?.updatecolor,
+          code: formValue?.updatecode
         }
       }
     };

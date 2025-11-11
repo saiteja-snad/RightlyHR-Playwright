@@ -470,7 +470,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expense Threshold Validation',
     'Global Expense Configuration'
   ]
-  
+
   settingsAttendanceLockingTab = [
     'Pending Attendance Locking',
     'Published Attendance Locking'
@@ -486,7 +486,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
-  flexibleWFHTabsFields=[
+  flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
@@ -573,7 +573,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
   ];
-   cardsModuleFields = [
+  cardsModuleFields = [
     'Cards Allocated',
     'Cards Available',
     'Cards Expired',
@@ -762,6 +762,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'WFH (On Behalf Of Approvals)',
     'Comp Off (On Behalf Of Approvals)',
     'Permission (On Behalf Of Approvals)',
+    'Expenses (On Behalf Of Approvals)',
     'My Team On Behalf Of Approvals',
     'On Behalf Of Approvals All Employees',
   ];
@@ -840,7 +841,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(WFH)',
     'Attendance Team Manager List(WFH)',
     'My Team Report(WFH)',
-     'Attendance All Employees List(RemoteLogin)',
+    'Attendance All Employees List(RemoteLogin)',
     'Attendance Team Manager List(RemoteLogin)',
     'My Team Report(RemoteLogin)',
     'Attendance All Employees List(Permission)',
@@ -882,7 +883,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // 'Attendance vs Timesheet Report - Export',
   ];
 
-    expenseReportsEmployeeTeamTabsFields = [
+  expenseReportsEmployeeTeamTabsFields = [
     'Expense Report - Generate',
     'Expense Report All Employees List',
     'Expense Report Manager List',
@@ -1223,9 +1224,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   selectAllLettersTabs = [
     'NDA Document', 'MSA Document'
   ]
-  selectAllOnBehalfOf = [
-    'On Behalf Of', 'On Behalf Of WFH', 'On Behalf Of RemoteLogin'
-  ]
+
   selectAllOnBehalfOfWFH = [
     'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
     , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team', 'Request On Behalf Of WFH Button'
@@ -1234,6 +1233,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
     , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team', 'Request On Behalf Of RemoteLogin Button'
   ]
+
+  selectAllOnBehalfOf = [
+    'On Behalf Of', 'On Behalf Of WFH', 'On Behalf Of RemoteLogin', 'On Behalf Of Expenses'
+
+  ]
+
+  selectAllOnBehalfOfExpenses = [
+    'Waiting For Approval (On Behalf Of Expenses)', 'Approved (On Behalf Of Expenses)', 'Processed (On Behalf Of Expenses)', 'Rejected (On Behalf Of Expenses)'
+    , 'Cancelled (On Behalf Of Expenses)', 'On Behalf Of Expenses All Employees', 'On Behalf Of Expenses Team', 'Request On Behalf Of Expenses Button'
+  ]
+
   SkillSetManagementModule = ['Skills Dashboard', 'Skills Directory'];
 
   // Generic toggle function for checkboxes
@@ -1644,7 +1654,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
- iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -2043,6 +2053,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   isOnBehalfOfRemoteLoginTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+  isOnBehalfOfExpensesTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }

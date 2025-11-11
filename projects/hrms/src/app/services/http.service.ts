@@ -68,12 +68,12 @@ export class HttpService {
   }
 
   //state mangement
-private clickingonresourceSource = new BehaviorSubject<boolean>(false);
-clickingonresource$ = this.clickingonresourceSource.asObservable();
+  private clickingonresourceSource = new BehaviorSubject<boolean>(false);
+  clickingonresource$ = this.clickingonresourceSource.asObservable();
 
-notifyresource() {
-  this.clickingonresourceSource.next(true);
-}
+  notifyresource() {
+    this.clickingonresourceSource.next(true);
+  }
 
   //setting cards count
   private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
@@ -115,7 +115,11 @@ notifyresource() {
   setnewcountDetails() {
     this.expensescount.next();
   }
-
+  expensescountOnBehalfof = new Subject<void>();
+  expensesprocesscountOnBehalfof$ = this.expensescountOnBehalfof.asObservable();
+  setnewcountDetailsforonBehalfof() {
+    this.expensescountOnBehalfof.next();
+  }
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
   separationDetailesadded$ = this.separationDetailes.asObservable();
@@ -170,10 +174,19 @@ notifyresource() {
   // OnBehalfOf WFH
   onBehlafOfWFHSignal = signal<boolean>(false);
   onBehlafOfRemoteLoginSignal = signal<boolean>(false);
+  onBehlafOfExpensesSignal = signal<boolean>(false);
+
 
   onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
   onBehalfOfRemoteLoginSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfExpensesSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfSelectedEmpDetails$ = new BehaviorSubject<any>(null);
 
+  setOnBehalfOfExpensesSelectedEmp(emp: any): void {
+    this.onBehalfOfExpensesSelectedEmp$.next(emp);
+    this.onBehlafOfExpensesSignal.set(true);
+    console.log('Selected On Behalf Of Expenses Employee:', emp);
+  }
 
 
 
@@ -209,6 +222,15 @@ notifyresource() {
   // Method to update the employeeId
   setEmployeeIdCompOff(id: any): void {
     this.selectedEmployeeIdCompOff.next(id);
+  }
+
+  private selectedEmployeeIdExpensesforonbehalf = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdExpensesforonbehalf$ = this.selectedEmployeeIdExpensesforonbehalf.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdExpensesforonbehalf(id: any): void {
+    this.selectedEmployeeIdExpensesforonbehalf.next(id);
+    console.log('Selected Employee Expenses ID:', id);
   }
 
   // function for employeid wfh
@@ -792,7 +814,7 @@ notifyresource() {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
   // DATE RANGE
- private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+  private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
 
   // Set date range 
   setDateRange(startDate: string | null, endDate: string | null) {

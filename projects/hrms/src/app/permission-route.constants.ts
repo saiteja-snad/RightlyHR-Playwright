@@ -634,6 +634,14 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
 ]
 
+export const ON_BEHALF_OF_EXPENSES_TABS = [
+  { route: '/on-behalf-of/on-behalf-of-expenses/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of Expenses).view' },
+  { route: '/on-behalf-of/on-behalf-of-expenses/approved', permission: 'Approved (On Behalf Of Expenses).view' },
+  { route: '/on-behalf-of/on-behalf-of-expenses/processed', permission: 'Processed (On Behalf Of Expenses).view' },
+  { route: '/on-behalf-of/on-behalf-of-expenses/rejected', permission: 'Rejected (On Behalf Of Expenses).view', },
+  { route: '/on-behalf-of/on-behalf-of-expenses/cancelled', permission: 'Cancelled (On Behalf Of Expenses).view', },
+]
+
 export const SKILL_MANAGEMENT_TABS = [
   { route: '/skill-management/dashboard', permission: 'Skills Dashboard.view' },
   { route: '/skill-management/directory', permission: 'Skills Directory.view' },

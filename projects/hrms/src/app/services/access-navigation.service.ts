@@ -70,6 +70,7 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  ON_BEHALF_OF_EXPENSES_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -661,6 +662,15 @@ export class AccessNavigationService {
           }
         }
         break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
 
       case '/it-support':
         if (this.rbac.allowedToAccess('My Tickets Tab.view')) {
@@ -851,7 +861,7 @@ export class AccessNavigationService {
         }
         break;
 
-    
+
     }
     return route;
   }
@@ -1493,6 +1503,15 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

@@ -425,6 +425,7 @@ export const permissionsData = [
   { fields: 'Comp Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expenses (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
 
@@ -924,7 +925,7 @@ export const permissionsData = [
   { fields: 'Client Documents', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },
@@ -962,6 +963,19 @@ export const permissionsData = [
   { fields: 'On Behalf Of RemoteLogin All Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of RemoteLogin Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of RemoteLogin Button', View: false, Update: false, Create: false, Delete: false },
+
+
+  //On-Behalf of Expenses
+  { fields: 'On Behalf Of Expenses', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Waiting For Approval (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of Expenses All Employees', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of Expenses Team', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request On Behalf Of Expenses Button', View: false, Update: false, Create: false, Delete: false },
+
+
   //Cards Management Tabs Section
   { fields: 'Cards Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Available', View: false, Update: false, Create: false, Delete: false },

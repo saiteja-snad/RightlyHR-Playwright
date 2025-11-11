@@ -14,10 +14,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormsModule } from '@angular/forms';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
 @Component({
   selector: 'app-inacitve-projects',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule, 
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe],
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe, ProjectsSideTabsComponent],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
 })
@@ -116,6 +118,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+        this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Active successfully');
         modal.close();   // close modal only after success
         const fullPath = this.router.url;

@@ -20,6 +20,7 @@ export class ProjectManagementModuleInfoComponent {
   componentname: string = '';
   employename: any;
   clientID: any;
+    clientName: any;
   clients: any = {};
   subscription!: Subscription;
   lastUrl: string = ''
@@ -70,6 +71,7 @@ export class ProjectManagementModuleInfoComponent {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.clients = res?.data || {};
+        this.clientName = this.clients.clientName;
       },
       error: (err) => {
         this.clients = {};
@@ -118,7 +120,7 @@ export class ProjectManagementModuleInfoComponent {
 
   ComponentnameDisplay() {
     const currentUrl = this.router.url.split('?')[0];
-    if (currentUrl === '/project-management/clients/active' || currentUrl === '/project-management/clients/inactive') {
+    if (currentUrl === '/project-management/clients/active' || currentUrl === '/project-management/clients/inactive' || currentUrl==='/project-management/clients/hold') {
       this.componentname = 'Clients';
     }
     else if (currentUrl === '/project-management/clients/add/info') {
@@ -142,7 +144,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/contact-info') {
       this.componentname = 'Contact Information';
     }
-    else if (currentUrl === '/project-management/clients/details/projects' || currentUrl === '/project-management/clients/details/inactiveprojects') {
+    else if (currentUrl === '/project-management/clients/details/projects' || currentUrl === '/project-management/clients/details/inactiveprojects'  ) {
       this.componentname = 'Projects';
     }
     else if (currentUrl === '/project-management/clients/details/resources') {
@@ -154,7 +156,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/documents') {
       this.componentname = 'Documents';
     }
-    else if (currentUrl === '/project-management/projects/active' || currentUrl === '/project-management/projects/inactive') {
+    else if (currentUrl === '/project-management/projects/active' || currentUrl === '/project-management/projects/inactive'  ||  currentUrl === '/project-management/clients/hold' ) {
       this.componentname = 'Projects';
     }
     else if (currentUrl === '/project-management/projects/details/information') {

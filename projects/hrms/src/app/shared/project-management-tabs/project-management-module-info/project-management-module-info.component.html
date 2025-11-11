@@ -6,6 +6,11 @@
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
+     @if(isShowClientRoute()){
+    <div class="commpoment-name">{{this.clientName}}
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+    </div>
+    }
     @if(isShowProjectRoute() && clients.clientName ){
     <div class="commpoment-name">{{clients.clientName}}
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>

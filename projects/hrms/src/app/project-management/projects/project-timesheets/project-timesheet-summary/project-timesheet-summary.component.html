@@ -1,9 +1,9 @@
 <div class="custom-main-component-container time-sheet-summary-container">
     <div class="row">
-        <div class="col-lg-7 mb-3">
+        <div class="col-xxl-7 col-xl-6 mb-3">
             @if (!resourceSummaryLoader) {
             <div class="time-sheet-graph-card">
-                <div class="summary-header d-flex gap-2 mb-2">
+                <div class="summary-header d-flex flex-nowrap gap-2 mb-2">
                     <div>Resource Summary</div>
                     <div>
                         <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
@@ -53,7 +53,7 @@
             }
         </div>
 
-        <div class="col-lg-5 mb-3">
+        <div class="col-xxl-5 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project Completion Rate</div>
@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <div class="col-lg-5 mb-3">
+        <div class="col-xxl-5 col-xl-6 mb-3">
             @if (!roleWiseHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
@@ -125,10 +125,10 @@
             }
         </div>
 
-        <div class="col-lg-7 mb-3">
+        <div class="col-xxl-7 col-xl-6 mb-3">
             @if (!estimatedvsActualHoursLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Estimated vs Actual Hours</div>
                         <div>
@@ -162,10 +162,10 @@
             }
         </div>
 
-        <div class="col-lg-6 mb-3">
+        <div class="col-xxl-6 col-xl-6 mb-3">
             @if (!billablevsNonBillableHoursLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Billable vs Non-Billable Hours</div>
                         <div>
@@ -197,10 +197,10 @@
             }
         </div>
 
-        <div class="col-lg-6 mb-3">
+        <div class="col-xxl-6 col-xl-6 mb-3">
             @if (!projectBurndownLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Project Burndown Chart</div>
                         <div>

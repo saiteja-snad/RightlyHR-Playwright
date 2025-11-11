@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
-import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -17,10 +17,7 @@ import { ProjcetCreationComponent } from '../../shared-project-management-compon
 import { RbacService } from '../../../services/rbac.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
-import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { IResource } from '../../../Interfaces/project-management/resources.model';
-import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
 @Component({
@@ -82,14 +79,15 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.validateUpdateDateRange();
     });
   }
+  
   DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
-        // console.log(data);
         this.departmentlist = data;
       },
     });
   }
+
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -213,8 +211,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
-
-
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -234,8 +230,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         this.loading = false
         this.projectsData = res?.data ?? [];
         this.inactiveClientStatus = res?.data?.[0]?.client?.status.toLowerCase();
-        console.log(this.inactiveClientStatus);
-
       },
       error: (err) => {
         this.loading = false
@@ -355,7 +349,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false;
         console.error('Error updating project:', err);
         this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update project');
-
       }
     });
   }
@@ -436,10 +429,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
   navigateView(projectId: number) {
-    this.router.navigate(
-      ['project-management/projects/details'],
-      { queryParams: { id: projectId } } // using query params
-    );
+    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
   }
 
   isActive(route: string): boolean {
@@ -477,7 +467,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         const kickoff = new Date(kickoffDate);
         //  Kickoff must be within Start and End
         this.kickoffDateValid = kickoff >= start && kickoff <= end;
-
         if (effectiveDate) {
           const effective = new Date(effectiveDate);
           //  Kickoff must be <= Effective
@@ -489,7 +478,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         const effective = new Date(effectiveDate);
         //  Effective must be within Start and End
         this.effectiveDateValidRange = effective >= start && effective <= end;
-
         if (kickoffDate) {
           const kickoff = new Date(kickoffDate);
           //  Effective must be >= Kickoff
@@ -500,9 +488,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   get isFormInvalid(): boolean {
-    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid ||
-      !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
+    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid || 
+    !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
   }
+
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

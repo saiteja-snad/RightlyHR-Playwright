@@ -391,24 +391,25 @@ export class TimesheetsSummaryViewComponent {
     // Chart options
     this.estimatedVsActualGraphOptions = {
       responsive: true,
+      barThickness: 30,
       plugins: {
-        legend: { display:false, },
+        legend: {
+          display: false,
+        },
       },
       scales: {
         x: {
           stacked: false,
-          grid: { display: false },
-          title: { display: false }
+          grid: { display: false, },
+          ticks: { color: '#141414', font: { size: 11 } },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Hours'
-          }
-        }
-      }
+          title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
+          ticks: { color: '#72777B', font: { size: 11 } },
+        },
+      },
     };
   }
 

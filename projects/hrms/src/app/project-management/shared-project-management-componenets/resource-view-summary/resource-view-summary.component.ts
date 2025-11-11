@@ -7,7 +7,7 @@ import { Subject } from 'rxjs/internal/Subject';
 import { TimesheetEntry } from '../../../Interfaces/timoff-model';
 import { IResourceDetail } from '../../../timesheetmodel';
 import { BehaviorSubject, Subscription, takeUntil } from 'rxjs';
-import {  DailyDataV2, MonthlySummaryItem, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
+import { DailyDataV2, MonthlySummaryItem } from '../../../Interfaces/timesheetsummary';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 import dayjs from 'dayjs';
 import { ChartModule } from 'primeng/chart';
@@ -21,7 +21,6 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
-
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,

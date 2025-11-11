@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { IResourceDetail } from '../../../timesheetmodel';
 import { RbacService } from '../../../services/rbac.service';
 import { HttpService } from '../../../services/http.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
@@ -14,16 +13,17 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import dayjs from 'dayjs';
 import { PaginatorModule } from 'primeng/paginator';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-
 @Component({
   selector: 'app-team-timesheets',
-  imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule, CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })
+
 export class TeamTimesheetsComponent {
   empdata = {} as any;
   loading = false;
@@ -48,7 +48,8 @@ export class TeamTimesheetsComponent {
   ];
   resourcesList: IResourceDetail[] = [];
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router) { }
+
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
@@ -56,8 +57,6 @@ export class TeamTimesheetsComponent {
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.getteamsummary(); // always call once
-
-
   }
 
   createDatepickerForm() {
@@ -82,9 +81,9 @@ export class TeamTimesheetsComponent {
       next: (res: any) => {
         if (res?.success) {
           this.resourcesList = res.data
-            // ✅ Remove employee by ID
+            // Remove employee by ID
             .filter((emp: IResourceDetail) => emp.id !== EmployeeId && emp.isReportee == true)
-            // ✅ Add fullName for dropdown
+            // Add fullName for dropdown
             .map((emp: IResourceDetail) => ({
               ...emp,
               fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
@@ -95,6 +94,7 @@ export class TeamTimesheetsComponent {
       error: (err: any) => console.error(err)
     });
   }
+
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
     const satus = ['Active', 'Trainee Active', 'Active Contract'];
@@ -112,8 +112,6 @@ export class TeamTimesheetsComponent {
     if (employeed === null) {
       this.page = 1;
       this.datepickerForm.get('resourceId')?.setValue(null);
-      console.log(employeed);
-      
       this.getteamsummary();
     }
   }
@@ -123,8 +121,7 @@ export class TeamTimesheetsComponent {
     if (this.datepickerForm.invalid) {
       return;
     }
-
-    // ✅ Trigger your existing API call
+    // Trigger your existing API call
     this.page = 1; // Reset to first page on new filter apply
     this.getteamsummary();
   }
@@ -132,30 +129,19 @@ export class TeamTimesheetsComponent {
   getteamsummary() {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
-
     const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
-    const start = startDate
-      ? dayjs(startDate).format('YYYY-MM-DD')
-      : dayjs().startOf('month').format('YYYY-MM-DD');
-
-    const end = endDate
-      ? dayjs(endDate).format('YYYY-MM-DD')
-      : dayjs().endOf('month').format('YYYY-MM-DD');
-
+    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     this.loading = true
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
-        this.loading = false
+        this.loading = false;
         if (res?.success) {
-
           this.teamSummaryData = res.data;
           this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
-          console.log(this.totalhrs);
-
           this.collectionSize = res.pagination.totalRecords;
-
-          // ✅ Extract dates for header dynamically (use first record)
+          // Extract dates for header dynamically (use first record)
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
               dayjs(d.date).format('ddd<br>MMM D')
@@ -164,17 +150,10 @@ export class TeamTimesheetsComponent {
         }
       },
       error: (err) => {
-        this.loading = false
+        this.loading = false;
       }
     });
   }
-
-
-
-
-
-
-
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
@@ -191,12 +170,7 @@ export class TeamTimesheetsComponent {
     this.getteamsummary();
   }
 
-
   navigateView(employeeId: any) {
-    this.router.navigate(
-      ['project-management/timesheet/summary'],
-      { queryParams: { id: employeeId } }
-    );
-
+    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
   }
 }

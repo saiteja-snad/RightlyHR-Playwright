@@ -27,6 +27,7 @@ export class ProjectManagementModuleInfoComponent {
   routeToInfoMap!: { [key: string]: string };
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourceDataids = {} as any;
+
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -34,43 +35,30 @@ export class ProjectManagementModuleInfoComponent {
     this.initiateUpdateModuleInfo();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     const clientProjectId = localStorage.getItem('clientProjectId');
-
-
     if (clientProjectId) {
       this.getClientsData(clientProjectId);
       this.clientID = clientProjectId;
     }
-    this.http.request$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(request => {
-        const currentUrl = this.router.url.split('?')[0];
-
-        // ✅ Always read localStorage first (default)
-        this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
-
-        // ✅ Determine employeeId
-        const employeeId = request?.resourceId || this.resourceDataids?.employeeId;
-
-        // ✅ If both dateRange and resourceId are in request$, use request's data
-        if (request && request.dateRange && request.resourceId) {
-          this.resourceDataids = {
-            ...this.resourceDataids, // keep existing keys like clientId, projectId
-            employeeId: request.resourceId
-          };
-        }
-
-        // ✅ If we are on the correct route and have an employeeId, load employee name
-        if (
-          (currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
-            currentUrl === '/project-management/clients/details/timesheet/resource-summary') &&
-          employeeId
-        ) {
-          this.getEmployeeId(employeeId, currentUrl);
-        }
-      });
+    this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
+      const currentUrl = this.router.url.split('?')[0];
+      // Always read localStorage first (default)
+      this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+      // Determine employeeId
+      const employeeId = request?.resourceId || this.resourceDataids?.employeeId;
+      // If both dateRange and resourceId are in request$, use request's data
+      if (request && request.dateRange && request.resourceId) {
+        this.resourceDataids = {
+          ...this.resourceDataids, // keep existing keys like clientId, projectId
+          employeeId: request.resourceId
+        };
+      }
+      // If we are on the correct route and have an employeeId, load employee name
+      if ((currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
+          currentUrl === '/project-management/clients/details/timesheet/resource-summary') && employeeId) {
+        this.getEmployeeId(employeeId, currentUrl);
+      }
+    });
   }
-
-
 
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
@@ -89,7 +77,6 @@ export class ProjectManagementModuleInfoComponent {
       }
     });
   }
-
 
   updateModuleInfo() {
     const urlWithoutQuery = this.router.url.split('?')[0];
@@ -188,7 +175,6 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/mytimesheet') {
       this.componentname = 'My Timesheets';
     }
-
     else if (currentUrl === '/project-management/timesheet/teamtimesheet') {
       this.componentname = 'Team Timesheets';
     }
@@ -201,28 +187,23 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/phases' || currentUrl === '/project-management/projects/details/phases') {
       this.componentname = 'Phases / Milestones';
     }
-
-    else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' || '/project-management/projects/details/timesheet/resource-summary') {
+    else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' ||
+      '/project-management/projects/details/timesheet/resource-summary') {
       this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
       const employeeId = this.resourceDataids?.employeeId;
-
       if (employeeId) {
         this.getEmployeeId(employeeId, currentUrl);
       }
     }
   }
 
-
   getEmployeeId(employeeId: any, currentUrl: string) {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employename = data;
         const fullName = `${this.employename.firstName || ''} ${this.employename.middleName || ''} ${this.employename.lastName || ''}`.trim();
-
-        if (
-          currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
-          currentUrl === '/project-management/clients/details/timesheet/resource-summary'
-        ) {
+        if (currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
+          currentUrl === '/project-management/clients/details/timesheet/resource-summary') {
           this.componentname = fullName || 'Employee';
         }
       },
@@ -260,18 +241,21 @@ export class ProjectManagementModuleInfoComponent {
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
+
   isShowtimesheetforresourceclient(): boolean {
     const showPaths = [
       '/project-management/clients/details/timesheet/resource-summary',
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
+
   isShowtimesheetforresourceproject() {
     const showPaths = [
       '/project-management/projects/details/timesheet/resource-summary',
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
+
   isHideInfo(): boolean {
     const hidePaths = [
       '/project-management/clients/add'
@@ -296,14 +280,11 @@ export class ProjectManagementModuleInfoComponent {
     const clientProjectId = localStorage.getItem('clientProjectId');
     this.router.navigate(['project-management/clients/details/timesheet/detailed'], { queryParams: { id: clientProjectId } });
     localStorage.removeItem('clientProjectId');
-
   }
 
   navigatetodetaliedtoproject() {
     this.router.navigate(['/project-management/projects/details/timesheet/detailed'], { queryParams: { id: this.resourceDataids?.projectId } });
-
   }
-
 
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');

@@ -62,19 +62,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
-    this.router.navigate(
-      ['project-management/projects/details'],
-      { queryParams: { id: projectId } } // using query params
-    );
+    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } } );
   }
-
 
   getDepartmentNames(project: Project): string {
-  if (!project.departments || project.departments.length === 0) {
-    return '-';
+    if (!project.departments || project.departments.length === 0) {
+      return '-';
+    }
+    return project.departments.map(d => d.departmentName).join(', ');
   }
-  return project.departments.map(d => d.departmentName).join(', ');
-}
 
   getAllInactiveProjects() {
     this.loading = true;

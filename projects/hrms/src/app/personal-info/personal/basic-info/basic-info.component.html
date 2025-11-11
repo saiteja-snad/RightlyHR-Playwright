@@ -126,7 +126,7 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="dob" class="form-label custom-label mb-2 d-flex align-items-center gap-2">
-            Date Of Birth<span class="text-danger">*</span> <i class="bi bi-info-circle-fill"
+            Date Of Birth<span class="text-danger">*</span> <i *ngIf="isFieldPendingApproval('Date of Birth')" class="bi bi-info-circle-fill"
                [pTooltip]="getPendingApprovalMessage('Date of Birth')" tooltipPosition="top"></i>            
           </label>
          

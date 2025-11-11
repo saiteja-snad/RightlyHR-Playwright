@@ -61,6 +61,7 @@ export class PreOnboardingInfoComponent {
       selectedRole: ['']
     });
     this.getPreOnboardingInfoFields();
+    this.setupFormSubscriptions();
     this.getAllEmployeeDetails();
     this.getAllRoles();
     this.getPreOnboardingInfoFieldsConfigList();
@@ -239,9 +240,72 @@ export class PreOnboardingInfoComponent {
     });
   }
 
+  // Setup form subscriptions for reactive changes
+  setupFormSubscriptions() {
+    // Watch for approval required changes
+    this.fieldConfigForm.get('approvalRequired')?.valueChanges.subscribe(value => {
+      if (!value) {
+        // Reset approval-related fields when approval is disabled
+        this.fieldConfigForm.patchValue({
+          approvalType: '',
+          selectedEmployee: '',
+          selectedRole: ''
+        });
+        this.clearApprovalValidators();
+      } else {
+        this.setApprovalValidators();
+      }
+    });
+
+    // Watch for approval type changes
+    this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {
+      // Reset employee/role selections when type changes
+      this.fieldConfigForm.patchValue({
+        selectedEmployee: '',
+        selectedRole: ''
+      });
+      this.updateApprovalValidators(value);
+    });
+  }
+
+  // Set validators for approval fields
+  setApprovalValidators() {
+    this.fieldConfigForm.get('approvalType')?.setValidators([Validators.required]);
+    this.fieldConfigForm.get('approvalType')?.updateValueAndValidity();
+  }
+
+  // Clear validators for approval fields
+  clearApprovalValidators() {
+    this.fieldConfigForm.get('approvalType')?.clearValidators();
+    this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
+    this.fieldConfigForm.get('selectedRole')?.clearValidators();
+    this.fieldConfigForm.get('approvalType')?.updateValueAndValidity();
+    this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
+    this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
+  }
+
+  // Update validators based on approval type
+  updateApprovalValidators(approvalType: string) {
+    // Clear existing validators
+    this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
+    this.fieldConfigForm.get('selectedRole')?.clearValidators();
+
+    // Set validators based on approval type
+    if (approvalType === 'EMP') {
+      this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
+    } else if (approvalType === 'ROLE') {
+      this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+    }
+
+    this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
+    this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
+  }
+
+  // Reset field config form
   resetFieldConfigForm() {
     this.fieldConfigForm.reset();
     this.fieldConfigForm.get('fieldNames')?.enable();
+    this.clearApprovalValidators();
     this.isEditMode = false;
     this.selectedFieldConfig = null;
   }

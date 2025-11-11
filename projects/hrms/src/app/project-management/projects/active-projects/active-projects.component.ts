@@ -23,10 +23,11 @@ import { ProjectsSideTabsComponent } from "../../../shared/project-management-ta
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component";
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe, NgbPopover, InfoIconComponent, ProjectsSideTabsComponent],
+    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe, NgbPopover, InfoIconComponent, ProjectsSideTabsComponent, ProjectsSideTabsForClientsComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })

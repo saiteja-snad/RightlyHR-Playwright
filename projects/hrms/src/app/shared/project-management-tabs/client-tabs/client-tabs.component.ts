@@ -67,7 +67,8 @@ export class ClientTabsComponent {
     // For Projects tab, check both projects and inactiveprojects routes
     if (link === '/project-management/clients/details/projects') {
       return currentUrl.includes('/project-management/clients/details/projects') ||
-        currentUrl.includes('/project-management/clients/details/inactiveprojects');
+        currentUrl.includes('/project-management/clients/details/inactiveprojects') ||
+                currentUrl.includes('/project-management/clients/details/hold');;
     }
 
       if (link === '/project-management/clients/details/timesheet/summary') {

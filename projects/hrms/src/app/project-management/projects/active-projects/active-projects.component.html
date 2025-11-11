@@ -29,6 +29,9 @@
     </div>
 
     <div class="main-content w-100">
+      <div *ngIf="isActive('/project-management/clients')" class="mb-3">
+         <app-projects-side-tabs-for-clients />
+      </div>
       <!--Input search-->
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">

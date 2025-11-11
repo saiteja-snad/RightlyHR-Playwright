@@ -53,8 +53,7 @@
               <th>Project Type</th>
               <th>Department</th>
               <th>Status</th>
-              @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-              Tab.delete'))
+              @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
               && inactiveClientStatus !=='inactive' ){
               <th class="text-center">{{"Action" | translate}}</th>
               }

@@ -19,9 +19,10 @@ import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,NgbPopover, DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule,ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
 })
@@ -145,7 +146,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   }
 
   getResourceData(id: any) {
-    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
+    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
           this.resourcesData = data.data;

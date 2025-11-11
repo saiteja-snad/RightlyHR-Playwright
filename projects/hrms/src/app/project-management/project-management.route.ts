@@ -38,6 +38,7 @@ import { HoldProjectsComponent } from './projects/hold-projects/hold-projects.co
 import { PhasesHoldComponent } from './projects/phases-hold/phases-hold.component';
 import { InactivePhasesProjectComponent } from './projects/inactive-phases-project/inactive-phases-project.component';
 import { ProjectInactiveResourcesComponent } from './projects/project-inactive-resources/project-inactive-resources.component';
+import { ClientResourceInactiveComponent } from './clients/client-resource-inactive/client-resource-inactive.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -58,6 +59,7 @@ export default [
                     { path: 'inactiveprojects', component: InacitveProjectsComponent },
                     { path: 'hold', component: HoldProjectsComponent },
                     { path: 'resources', component: ClientResourcesComponent },
+                       { path: 'inactive-resources', component: ClientResourceInactiveComponent },
                     {
                         path: 'timesheet', component: ClientTimeSheetsComponent,
                         children: [

@@ -65,7 +65,7 @@ export class ProjectResourceTabComponent {
 getcountData(projectId: any): void {
   const statuses = 'assigned,Release,active';
 
-  this.http.getData(`StatusCount?moduleName=Phase&entityId=${projectId}&statuses=${statuses}`)
+  this.http.getData(`StatusCount?moduleName=Resource&entityId=${projectId}&statuses=${statuses}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res: any) => {

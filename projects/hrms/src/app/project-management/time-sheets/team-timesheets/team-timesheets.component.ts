@@ -60,6 +60,30 @@ export class TeamTimesheetsComponent {
 
   }
 
+
+  isFilterApplied(): boolean {
+    const formValue = this.datepickerForm?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0)
+    );
+  }
+resetForm() {
+  // Reset other form fields
+  this.datepickerForm.reset({
+    resourceId: null,
+    dateRange: null
+  });
+
+  // Now manually set the default month range
+  // const defaultRange = this.setDefaultmounth();
+   const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth]
+    });
+     this.getteamsummary();
+}
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
@@ -74,6 +98,7 @@ export class TeamTimesheetsComponent {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
+      // return [startOfMonth, endOfMonth];
   }
 
   getResourceDetailsByManagerId() {

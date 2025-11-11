@@ -5,8 +5,10 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <div class="total-hrs">{{"Total Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
-
+            <div class="total-hrs">{{"Total Logged Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+                @if(isFilterApplied()) {
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                }
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
                     <div>
@@ -107,7 +109,7 @@
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-weakend"></div>
-                        <div class="status-text">Weekend</div>
+                        <div class="status-text">Wo</div>
                     </div>
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-holiday "></div>

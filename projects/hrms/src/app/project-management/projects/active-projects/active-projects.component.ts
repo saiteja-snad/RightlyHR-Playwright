@@ -22,10 +22,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent,MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe,NgbPopover, InfoIconComponent],
+  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
+    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe, NgbPopover, InfoIconComponent, ProjectsSideTabsComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })
@@ -58,7 +59,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
   departmentlist = [] as any;
   inactiveClientStatus: any;
-  
+
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
@@ -69,7 +70,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.getClientsData();
     this.getprojecttypesData();
     this.getProjectsBasedOnRoute();
-        this.DepartmentList();
+    this.DepartmentList();
     // this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -81,7 +82,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.validateUpdateDateRange();
     });
   }
- DepartmentList() {
+  DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
         // console.log(data);
@@ -111,11 +112,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   getDepartmentNames(project: Project): string {
-  if (!project.departments || project.departments.length === 0) {
-    return '-';
+    if (!project.departments || project.departments.length === 0) {
+      return '-';
+    }
+    return project.departments.map(d => d.departmentName).join(', ');
   }
-  return project.departments.map(d => d.departmentName).join(', ');
-}
 
   getAuthorityList() {
     this.http.getData(`ProjectManagementAuthority?status=active&entity=Project`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -135,37 +136,37 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
 
-  getResourceData(id: any,project: Project) {
+  getResourceData(id: any, project: Project) {
     const projectId = id;
     const params = {
       status: 'Active',
       entityType: 'project',
       entityRefId: projectId,
-      isDistinct:true
+      isDistinct: true
     };
     this.http.getDataIncludeParams('ProjectResource', params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.resourcesData = res.data;
         this.loading = false;
-        if(this.resourcesData?.length > 0){
+        if (this.resourcesData?.length > 0) {
           this.authorityList = (res?.data || []).map((item: IResource) => ({
-          value: item.employee?.id ?? 0,
-          name: `${item.employee?.fusionEmployeeId ?? ''} - ${item.employee?.name ?? ''}`.trim(),
-          email: item.employee?.workMail ?? '',
-          recordId: item.resourceId ?? 0
-        }));
+            value: item.employee?.id ?? 0,
+            name: `${item.employee?.fusionEmployeeId ?? ''} - ${item.employee?.name ?? ''}`.trim(),
+            email: item.employee?.workMail ?? '',
+            recordId: item.resourceId ?? 0
+          }));
 
-        if(this.authorityList?.length > 0){
-          this.updateprojectform.get('approvalidAuthority')?.enable();
-          this.updateprojectform.get('approvalidAuthority')?.setValidators([Validators.required]);
-          this.updateprojectform.patchValue({
-            approvalidAuthority: project.pendingApprovalAuthority?.id ?? null
-          });
-        }
-        }else{
+          if (this.authorityList?.length > 0) {
+            this.updateprojectform.get('approvalidAuthority')?.enable();
+            this.updateprojectform.get('approvalidAuthority')?.setValidators([Validators.required]);
+            this.updateprojectform.patchValue({
+              approvalidAuthority: project.pendingApprovalAuthority?.id ?? null
+            });
+          }
+        } else {
           this.authorityList = [];
         }
-        
+
       },
       error: (reason: any) => {
         this.loading = false;
@@ -189,9 +190,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateallowweekendWork: [false],
       // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
       // approvalidAuthority: [{value:null,disabled:true}],
-      updatecolor : ['']
+      updatecolor: ['']
     });
-     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
+    this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
       this.validateUpdateDateRange();
     });
@@ -269,7 +270,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   openUpdateModal(modal: any, project: Project) {
     // this.getAuthorityList();
     // this.getResourceData(project.projectId,project);
-     const selectedDepartmentIds = project.departments?.map((d: any) => d.departmentId) || [];
+    const selectedDepartmentIds = project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
@@ -284,14 +285,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatebillable: project.isBillable,
       // updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
-      updatedepartment: selectedDepartmentIds, 
-      updatecolor : project?.meta?.graphData?.color
+      updatedepartment: selectedDepartmentIds,
+      updatecolor: project?.meta?.graphData?.color
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
     // Open modal
     console.log(this.updateprojectform);
-    
+
     this.modalService.open(modal, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
@@ -300,12 +301,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.updateprojectform.markAllAsTouched();
       return;
     }
-    
+
     this.spinnerLoader = true
     const formValue = this.updateprojectform.value;
-     const departmentIds = Array.isArray(formValue.updatedepartment)
-    ? formValue.updatedepartment.join(',')
-    : formValue.updatedepartment;
+    const departmentIds = Array.isArray(formValue.updatedepartment)
+      ? formValue.updatedepartment.join(',')
+      : formValue.updatedepartment;
     const payload = {
       projectId: this.selectedProjectId,
       clientId: formValue.updateclientName,
@@ -325,9 +326,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       departmentIds: departmentIds,
       updatedBy: parseInt(this.empinfo.employeeId),
       meta: {
-      graphData: {
-        color: formValue?.updatecolor
-      }
+        graphData: {
+          color: formValue?.updatecolor
+        }
       }
     };
     this.loading = true;
@@ -403,6 +404,34 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
+  confirmStatusChangetohold(modal: any) {
+    if (!this.selectedProject) return;
+    const updatedProject = {
+      ...this.selectedProject,
+      status: 'hold',
+      updatedBy: parseInt(this.empinfo.employeeId)
+    };
+    this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
+      next: (res) => {
+        this.conformationPopup.openSuccessModal('Project marked as hold successfully');
+        modal.close();
+        const fullPath = this.router.url;
+        if (fullPath.startsWith('/project-management/projects')) {
+          this.getAllActiveProjects();
+        } else if (fullPath.startsWith('/project-management/clients')) {
+          const clientID = this.route.snapshot.queryParams['id'];
+          if (clientID) {
+            this.getprojectbyid(parseInt(clientID));
+          }
+        }
+        this.close();
+      },
+      error: (err) => {
+        console.error('Error updating project status:', err);
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
+      }
+    });
+  }
   navigateView(projectId: number) {
     this.router.navigate(
       ['project-management/projects/details'],

@@ -4,6 +4,9 @@
             <div class="nav-link" [routerLink]="[tab.link]"  routerLinkActive="active-nav-link">
                 <img [src]="tab.icon" alt="Icon" class="icon mb-2">
                 <div class="d-flex">{{ tab.label }}</div>
+                <div class="count">
+                     ( {{ statusCounts[tab.statusKey] }})
+                  </div>
             </div>
             <div class="tabs-border-bottom"></div>
         </li>

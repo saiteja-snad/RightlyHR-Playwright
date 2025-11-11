@@ -155,7 +155,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/contact-info') {
       this.componentname = 'Contact Information';
     }
-    else if (currentUrl === '/project-management/clients/details/projects' || currentUrl === '/project-management/clients/details/inactiveprojects') {
+    else if (currentUrl === '/project-management/clients/details/projects' || currentUrl === '/project-management/clients/details/inactiveprojects'  ) {
       this.componentname = 'Projects';
     }
     else if (currentUrl === '/project-management/clients/details/resources') {
@@ -167,7 +167,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/documents') {
       this.componentname = 'Documents';
     }
-    else if (currentUrl === '/project-management/projects/active' || currentUrl === '/project-management/projects/inactive') {
+    else if (currentUrl === '/project-management/projects/active' || currentUrl === '/project-management/projects/inactive'  ||  currentUrl === '/project-management/clients/hold' ) {
       this.componentname = 'Projects';
     }
     else if (currentUrl === '/project-management/projects/details/information') {

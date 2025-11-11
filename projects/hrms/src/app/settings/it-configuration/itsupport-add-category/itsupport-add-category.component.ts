@@ -4,12 +4,12 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { FormValidationsService } from '../../../../services/form-validations.service';
-import { HttpService } from '../../../../services/http.service';
-import { OpenModalService } from '../../../../services/open-modal.service';
-import { RbacService } from '../../../../services/rbac.service';
-import { SettingsLoaderComponent } from '../../../../shared/settings-loader/settings-loader.component';
-import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
+import { HttpService } from '../../../services/http.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
+import { SettingsLoaderComponent } from '../../../shared/settings-loader/settings-loader.component';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
@@ -30,9 +30,9 @@ export class ItsupportAddCategoryComponent {
   subscription!: Subscription;
   loader = false;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -60,11 +60,11 @@ export class ItsupportAddCategoryComponent {
       },
       error: (error: any) => {
         this.loader = false;
-        
+
       }
     });
   }
- 
+
   //ADD
   addcategoryName() {
     const request: any = {
@@ -92,7 +92,7 @@ export class ItsupportAddCategoryComponent {
           id:this.selectedId,
           value: this.updateForm.value.categoryName.trim(),
         };
-  
+
         this.subscription = this.http.postdata('entityAttributeValues/update', request).subscribe({
           next: () => {
             this.getcategoryName();
@@ -126,13 +126,13 @@ export class ItsupportAddCategoryComponent {
     }
     onDelete(modal: any) {
       if (!this.selectedDeleteDep) return;
-  
+
       const deleteRequest: any = {
         categoryName1: this.selectedDeleteDep.categoryName1,
         isdeleted: "void",
         sno: this.selectedDeleteDep.sno
       };
-  
+
       this.http.postdata('categoryName/UPDATER', deleteRequest).subscribe({
         next: () => {
           this.getcategoryName();
@@ -145,12 +145,12 @@ export class ItsupportAddCategoryComponent {
         }
       });
     }
-  
+
     closeDelete(modal: any) {
       modal.dismiss();
       this.selectedDeleteDep = null;
     }
-  
+
   resetForm() {
     this.categoryForm.reset();
     this.isEditMode = false;

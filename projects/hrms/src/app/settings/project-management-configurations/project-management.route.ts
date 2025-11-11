@@ -25,5 +25,8 @@ export default [
     },
     {
         path: 'project-role', loadComponent: () => import('./project-management/project-role/project-role.component').then(m => m.ProjectRoleComponent), canActivate: [PermissionsGuard], data: { permission: 'Project Role.view' },
+    },
+     {
+        path: 'task', loadComponent: () => import('./project-management/task/task.component').then(m => m.TaskComponent), canActivate: [PermissionsGuard], data: { permission: 'Task.view' },
     }
 ]

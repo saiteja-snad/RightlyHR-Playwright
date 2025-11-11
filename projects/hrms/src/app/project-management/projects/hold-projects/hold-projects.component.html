@@ -11,6 +11,10 @@
         </div>
 
         <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+            <div *ngIf="isActive('/project-management/clients')" class="mb-3">
+                <app-projects-side-tabs-for-clients />
+            </div>
+
             <!--Input search-->
             <div class="input-group custom-search mb-3">
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -31,7 +35,7 @@
             </ng-container>
 
             <ng-template #maincontent>
-                <div class="custom-table-content">
+                <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
                     <table class="w-100">
                         <thead>
                             <th>Client Name</th>

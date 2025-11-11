@@ -615,6 +615,7 @@ onPhaseChange(event: any) {
   }
 
   openReasonModal(title: string, data: any) {
+    this.projectId = data?.project?.projectId;
     this.modalData = { title, data };
     this.reasonForm.reset();
     this.modalService.open(this.reasonModal, { centered: true, backdrop: 'static' });
@@ -666,8 +667,8 @@ onPhaseChange(event: any) {
 
     const payload = {
       resourceId,
-      entityType: 'Client',
-      entityRefId: this.clientID,
+      entityType: 'project',
+      entityRefId: this.projectId,
       employeeId: data.employee?.id,
       startDate: data.startDate,
       endDate: data.endDate,

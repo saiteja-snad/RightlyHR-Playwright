@@ -256,7 +256,7 @@ export class ProjectInactiveResourcesComponent {
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
-      status:'Release'
+      status:'Released'
     };
 
     if (phaseId) {

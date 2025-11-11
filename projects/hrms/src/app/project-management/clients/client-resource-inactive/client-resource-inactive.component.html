@@ -29,9 +29,9 @@
                     <th>Allocated Hours</th>
                     <th>Timesheet Approval Authority</th>
                     <th>Status</th>
-                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
+                    <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
-                    }
+                    } -->
                 </thead>
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
@@ -66,7 +66,7 @@
                                     <p class="mb-0">{{ data.reason }}</p>
                                 </ng-template>
                             </td>
-                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
+                            <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
                             this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center"
                                 *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
@@ -87,7 +87,7 @@
                             <ng-template #noActions>
                                 <td class="text-center text-muted">-</td>
                             </ng-template>
-                            }
+                            } -->
                         </tr>
                     </ng-container>
                     <ng-template #noDataTemplate>

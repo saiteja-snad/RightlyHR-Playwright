@@ -58,12 +58,12 @@ export class ProjectResourceTabComponent {
 
   statusGroups: any = {
     active: ['assigned', 'active',],
-    inactive: ['Release', ],
+    inactive: ['Released', ],
    
   };
 
 getcountData(projectId: any): void {
-  const statuses = 'assigned,Release,active';
+  const statuses = 'assigned,Released,active';
 
   this.http.getData(`StatusCount?moduleName=Resource&entityId=${projectId}&statuses=${statuses}`)
     .pipe(takeUntil(this.destroy$))

@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
-import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -20,13 +20,12 @@ import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe, NgbPopover, InfoIconComponent, ProjectsSideTabsComponent],
+  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent,
+    TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent,
+    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })
@@ -60,25 +59,22 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   departmentlist = [] as any;
   inactiveClientStatus: any;
   selectedDepartmentIds: any;
-  
+
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-      this.http.selectedDepartmentIds$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((deptIds) => {
+    this.http.selectedDepartmentIds$.pipe(takeUntil(this.destroy$)).subscribe((deptIds) => {
       this.selectedDepartmentIds = deptIds || [];
-  this.getProjectsBasedOnRoute();
-
+      this.getProjectsBasedOnRoute();
     });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
     // this.getProjectsBasedOnRoute();
-        this.DepartmentList();
+    this.DepartmentList();
     // this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -90,7 +86,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.validateUpdateDateRange();
     });
   }
-  
+
   DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
@@ -99,14 +95,15 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
-onDepartmentChangelist(event: any) {
-  const selectedIds = event.value; // This gives an array when multiple departments selected
-  if (Array.isArray(selectedIds)) {
-    this.http.setDepartmentIds(selectedIds);
-  } else {
-    this.http.setDepartmentIds([selectedIds]);
+  onDepartmentChangelist(event: any) {
+    const selectedIds = event.value; // This gives an array when multiple departments selected
+    if (Array.isArray(selectedIds)) {
+      this.http.setDepartmentIds(selectedIds);
+    } else {
+      this.http.setDepartmentIds([selectedIds]);
+    }
   }
-}
+
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -152,7 +149,6 @@ onDepartmentChangelist(event: any) {
     });
   }
 
-
   getResourceData(id: any, project: Project) {
     const projectId = id;
     const params = {
@@ -172,7 +168,6 @@ onDepartmentChangelist(event: any) {
             email: item.employee?.workMail ?? '',
             recordId: item.resourceId ?? 0
           }));
-
           if (this.authorityList?.length > 0) {
             this.updateprojectform.get('approvalidAuthority')?.enable();
             this.updateprojectform.get('approvalidAuthority')?.setValidators([Validators.required]);
@@ -183,7 +178,6 @@ onDepartmentChangelist(event: any) {
         } else {
           this.authorityList = [];
         }
-
       },
       error: (reason: any) => {
         this.loading = false;
@@ -227,11 +221,10 @@ onDepartmentChangelist(event: any) {
 
   getAllActiveProjects() {
     this.loading = true;
-     let url = 'Project?status=Active';
-  if (this.selectedDepartmentIds) {
-    url += `&departmentIds=${this.selectedDepartmentIds}`;
-  }
-
+    let url = 'Project?status=Active';
+    if (this.selectedDepartmentIds) {
+      url += `&departmentIds=${this.selectedDepartmentIds}`;
+    }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
@@ -249,10 +242,10 @@ onDepartmentChangelist(event: any) {
 
   getprojectbyid(clientID: any): void {
     this.loading = true
-     let url = `Project?clientId=${clientID}&status=Active`;
-     if (this.selectedDepartmentIds) {
-    url += `&departmentIds=${this.selectedDepartmentIds}`;
-  }
+    let url = `Project?clientId=${clientID}&status=Active`;
+    if (this.selectedDepartmentIds) {
+      url += `&departmentIds=${this.selectedDepartmentIds}`;
+    }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false
@@ -312,9 +305,6 @@ onDepartmentChangelist(event: any) {
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
-    // Open modal
-    console.log(this.updateprojectform);
-
     this.modalService.open(modal, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
@@ -323,12 +313,10 @@ onDepartmentChangelist(event: any) {
       this.updateprojectform.markAllAsTouched();
       return;
     }
-
-    this.spinnerLoader = true
+    this.spinnerLoader = true;
     const formValue = this.updateprojectform.value;
     const departmentIds = Array.isArray(formValue.updatedepartment)
-      ? formValue.updatedepartment.join(',')
-      : formValue.updatedepartment;
+      ? formValue.updatedepartment.join(',') : formValue.updatedepartment;
     const payload = {
       projectId: this.selectedProjectId,
       clientId: formValue.updateclientName,
@@ -370,7 +358,6 @@ onDepartmentChangelist(event: any) {
         }
         this.conformationPopup.openSuccessModal('Project updated successfully');
         this.http.setnewcountDetailsfornewprojectcount()
-        // this.close();
       },
       error: (err) => {
         this.loading = false;
@@ -456,6 +443,7 @@ onDepartmentChangelist(event: any) {
       }
     });
   }
+
   navigateView(projectId: number) {
     this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
   }
@@ -501,7 +489,7 @@ onDepartmentChangelist(event: any) {
           this.kickoffBeforeEffectiveValid = kickoff <= effective;
         }
       }
-
+      
       if (effectiveDate) {
         const effective = new Date(effectiveDate);
         //  Effective must be within Start and End
@@ -516,8 +504,8 @@ onDepartmentChangelist(event: any) {
   }
 
   get isFormInvalid(): boolean {
-    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid || 
-    !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
+    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid ||
+      !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
   }
 
   closepopup(content: any) {

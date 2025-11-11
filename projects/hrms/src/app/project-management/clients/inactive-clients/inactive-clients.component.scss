@@ -1,11 +1,19 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem) !important;
+}
+
+.client-main-content {
+    width: calc(100% - 8.5rem);
+}
+
+.custom-table-content {
+    height: calc(100dvh - 11.75rem) !important;
+}
+
 .primary-link {
     font-size: var(--fontsize13);
     font-weight: 600;
     color: var(--primary-color) !important;
-}
-
-.custom-table-content {
-    height: calc(100dvh - 12rem) !important;
 }
 
 .project-name {
@@ -21,17 +29,4 @@
     width: 3.5rem !important;
     height: 2rem !important;
     object-fit: contain;
-}
-
-
-
-.component-left-tabs-container{
-    width: 7.5rem;
-    min-width: 7.5rem;
-    padding: 0.75rem;
-    height: calc(100dvh - 9rem);
-    border-radius: 0.5rem;
-    overflow-y: auto;
-    background-color: var(--white-color);
-    border: 1px solid #CCDAEC;
 }

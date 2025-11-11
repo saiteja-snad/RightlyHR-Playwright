@@ -156,8 +156,14 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/documents') {
       this.componentname = 'Documents';
     }
-    else if (currentUrl === '/project-management/projects/active' || currentUrl === '/project-management/projects/inactive'  ||  currentUrl === '/project-management/clients/hold' ) {
-      this.componentname = 'Projects';
+    else if (currentUrl === '/project-management/projects/active'  ) {
+      this.componentname = 'Active Projects';
+    }
+       else if (currentUrl=== '/project-management/projects/inactive'   ) {
+      this.componentname = 'Inactive Projects';
+    }
+       else if (currentUrl ===  '/project-management/clients/hold' ) {
+      this.componentname = 'Hold Projects';
     }
     else if (currentUrl === '/project-management/projects/details/information') {
       this.componentname = 'Project Information';

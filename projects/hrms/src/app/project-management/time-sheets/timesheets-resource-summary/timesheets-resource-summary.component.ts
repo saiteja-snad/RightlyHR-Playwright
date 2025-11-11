@@ -516,12 +516,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         },
       });
   }
-  get hasburndownData(): boolean {
-    const datasets = this.burndownData?.datasets;
-    if (!datasets?.length) return false;
-    const data = datasets[0]?.data;
-    return Array.isArray(data) && data.some((value) => value > 0);
-  }
+
   // Project Burndown Chart (Line)
   burnDownChart(employeeId?: any) {
     this.ProjectBurndownChartLoader = true;
@@ -759,6 +754,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         },
       });
   }
+ 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)
@@ -856,5 +852,11 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       default:
         return '';
     }
+  }
+     get hasburndownData(): boolean {
+    const datasets = this.burndownData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some((value) => value > 0);
   }
 }

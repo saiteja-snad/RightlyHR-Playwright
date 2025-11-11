@@ -841,6 +841,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Auto-save failed', err);
         this.conformationPopup.openErrorModal(err.error.message);
+           this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });

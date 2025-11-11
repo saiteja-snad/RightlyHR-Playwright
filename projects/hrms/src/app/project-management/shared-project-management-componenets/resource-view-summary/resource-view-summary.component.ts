@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -31,7 +31,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ResourceViewSummaryComponent {
+export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
   empdata = {} as any;
   resourceDataids = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
@@ -116,13 +116,16 @@ export class ResourceViewSummaryComponent {
           ...this.resourceDataids, // keep clientId & projectId from localStorage
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
           dateRange: request.dateRange
+          
         };
+         this.getProjectSummary();
       } else {
         this.getProjectSummary();
       }
-      this.getProjectSummary();
+      
     });
-    this.getProjectSummary();
+
+    //this.getProjectSummary();
     // this.setDefaultmounth();
   }
 

@@ -32,6 +32,7 @@ export interface Project {
   meta: {
     graphData: {
       color: string;
+      code : string;
     }
   }
 }

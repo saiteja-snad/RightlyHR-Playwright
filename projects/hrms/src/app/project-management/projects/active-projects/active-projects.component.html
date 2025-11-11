@@ -11,7 +11,7 @@
     </div>
     }
   </div>
-  
+
   <div class="d-flex w-100 gap-3">
     <div class="component-left-tabs-container" *ngIf="isActive('/project-management/projects/active')">
       <app-projects-side-tabs />
@@ -31,7 +31,6 @@
           placeholder="Search by client name / project name / project type" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
-
       <ng-container *ngIf="loading; else maincontent">
         <ng-template #loadingSpinner>
           <div>
@@ -40,13 +39,13 @@
         </ng-template>
         <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
       </ng-container>
-
       <ng-template #maincontent>
         <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
           <table class="w-100">
             <thead>
               <th>Client Name</th>
               <th>Project Name</th>
+              <th>Project Code</th>
               <!-- <th>Start Date</th>
               <th>End Date</th>
               <th>Effective Date</th>
@@ -54,7 +53,8 @@
               <th>Project Type</th>
               <th>Verticals</th>
               <th>Status</th>
-              @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
+              @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
+              Tab.delete'))
               && inactiveClientStatus !=='inactive' ){
               <th class="text-center">{{"Action" | translate}}</th>
               }
@@ -65,6 +65,7 @@
                   <tr *ngFor="let project of filteredProjects; let i = index">
                     <td>{{ project.client.clientName }}</td>
                     <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
+                    <td>{{ project?.meta?.graphData?.code || '-' }}</td>
                     <!-- <td>{{ project.startDate | dateformat }}</td>
                     <td>{{ project.endDate | dateformat }}</td>
                     <td>{{ project.effectiveDate | dateformat }}</td>
@@ -72,7 +73,8 @@
                     <td>{{ project.projectType }}</td>
                     <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                     <td>{{ project.status }}</td>
-                    @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
+                    @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
+                    Tab.delete'))
                     && inactiveClientStatus !=='inactive' ){
                     <td class="text-center">
                       <div class="dropdown">
@@ -290,9 +292,21 @@
             <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length || 0}}/500</div>
           </div>
 
-          <!--Color Picker-->
+          <!-- Project Code -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label">{{'Color' | translate}}</label>
+            <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" formControlName="updatecode" maxlength="20"
+              placeholder="Please enter project code">
+            <div class="error-msg"
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.invalid">
+              Project Code is required
+            </div>
+          </div>
+
+          <!-- Project Color -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
             <input type="color" class="form-control custom-color" formControlName="updatecolor" />
           </div>
 
@@ -363,14 +377,14 @@
 </ng-template>
 
 <ng-template #statuschangeshold let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <app-confirmation-icon />
-            <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this client?'}}</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this client?'}}</p>
     </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+    </div>
+  </div>
 </ng-template>

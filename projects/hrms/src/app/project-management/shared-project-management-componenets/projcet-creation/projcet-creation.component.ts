@@ -105,6 +105,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     this.addprojectform = this.fb.group({
       projectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(101)]],
       clientName: [{ value: null, disabled: true }, Validators.required],
+      code: [null, [Validators.required, this.formValidation.maxCharactersValidator(20)]],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
       // effectiveDate: [null, Validators.required],
@@ -207,7 +208,8 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       updatedBy: parseInt(this.empinfo.employeeId),
       meta: {
       graphData: {
-        color: formValue.color
+        color: formValue.color,
+        code: formValue.code
         }
       }
     };

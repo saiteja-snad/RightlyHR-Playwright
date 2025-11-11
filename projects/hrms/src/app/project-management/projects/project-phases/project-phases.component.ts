@@ -18,11 +18,12 @@ import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 import { Project } from '../../../Interfaces/projects.model';
+import { ProjectsSideTabsforPhasesComponent } from "../../../shared/project-management-tabs/projects-side-tabsfor-phases/projects-side-tabsfor-phases.component";
 
 @Component({
   selector: 'app-project-phases',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent],
+    Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectsSideTabsforPhasesComponent],
   templateUrl: './project-phases.component.html',
   styleUrl: './project-phases.component.scss'
 })
@@ -53,11 +54,11 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
-  @ViewChild('updateResourcemodal') updateResourcemodal !:any;
-  @ViewChild('startconfirmationpopup') startconfirmationpopup !:any;
+  @ViewChild('updateResourcemodal') updateResourcemodal !: any;
+  @ViewChild('startconfirmationpopup') startconfirmationpopup !: any;
 
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
-    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
+    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
     public formValidation: FormValidationsService,) {
 
   }
@@ -71,7 +72,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
         this.projectId = parseInt(projectId);
         // this.getProjects(this.projectId)
         this.getPhaseData();
-         this.getProjects(this.projectId);
+        this.getProjects(this.projectId);
       }
     });
     this.http.phaseDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -80,7 +81,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     this.ExtendDateForm();
   }
 
- updateProjectForm() {
+  updateProjectForm() {
     this.updatePhaseForm = this.fb.group({
       phaseName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(101)]],
       startDate: [null, Validators.required],
@@ -127,7 +128,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   getPhaseData() {
     const params = {
-    projectId: this.projectId
+      projectId: this.projectId,
+      status: 'yet to start,in progress,extended'
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
@@ -302,6 +304,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.updatePhaseForm?.reset();
         this.reasonForm?.reset();
+        this.http.setnewcountfornewprojectphasecount()
         this.extendForm?.reset();
 
         const statusMsgMap: Record<string, string> = {
@@ -327,6 +330,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
         this.conformationPopup.openSuccessModal(successMsg);
         this.getPhaseData();
+           this.http.setnewcountfornewprojectphasecount()
       },
       error: (err) => {
         this.loading = false;
@@ -486,14 +490,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   getActionIcon(action: string) {
     return {
-      'Start' : 'bi-play-circle',
-      'Hold' : 'bi-pause-circle',
-      'Close Phase' : 'bi-x-circle',
-      'Mark as Completed' : 'bi-check-circle',
-      'Extend' : 'bi-calendar-plus',
-      'Resume' : 'bi-arrow-repeat',
-      'Reactivate' : 'bi-arrow-clockwise',
-      'Update' : 'bi bi-pencil'
+      'Start': 'bi-play-circle',
+      'Hold': 'bi-pause-circle',
+      'Close Phase': 'bi-x-circle',
+      'Mark as Completed': 'bi-check-circle',
+      'Extend': 'bi-calendar-plus',
+      'Resume': 'bi-arrow-repeat',
+      'Reactivate': 'bi-arrow-clockwise',
+      'Update': 'bi bi-pencil'
     }[action] || 'bi-question-circle';
   }
 
@@ -572,7 +576,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       return;
     }
     const actionType = title.includes('resume') ? 'resume' : 'default';
-    
+
     this.updatePhaseStatus({ phaseId, status, reason, actionType }, modal);
   }
 
@@ -617,18 +621,18 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
   }
 
   formatStatus(status: any): any {
-  if (!status) return '-';
+    if (!status) return '-';
 
-  const normalized = status.toLowerCase().trim();
+    const normalized = status.toLowerCase().trim();
 
-  // Only customize "yet to start"
-  if (normalized === 'yet to start') {
-    return 'Yet to Start';
+    // Only customize "yet to start"
+    if (normalized === 'yet to start') {
+      return 'Yet to Start';
+    }
+
+    // For all other statuses, use default Titlecase behavior
+    return normalized.replace(/\b\w/g, (char: any) => char.toUpperCase());
   }
-
-  // For all other statuses, use default Titlecase behavior
-  return normalized.replace(/\b\w/g, (char : any) => char.toUpperCase());
-}
 
 
   ngOnDestroy(): void {

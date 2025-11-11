@@ -15,10 +15,11 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { InactiveclientPipe } from "../../../Pipes/inactiveclient.pipe";
+import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 @Component({
   selector: 'app-inactive-clients',
   imports: [CommonModule, ProjectManagementModuleInfoComponent, FormsModule, NoDataFoundComponent,
-    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe],
+    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe, ClientSideTabsComponent],
   templateUrl: './inactive-clients.component.html',
   styleUrl: './inactive-clients.component.scss'
 })

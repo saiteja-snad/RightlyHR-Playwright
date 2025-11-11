@@ -16,10 +16,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
 import { FormsModule } from '@angular/forms';
+import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule,FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, 
-    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe],
+  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent,
+    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
 })

@@ -122,6 +122,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
+    this.datepickerFormDataforsummary?.patchValue({
+       dateRange: [startOfMonth, endOfMonth]
+    })
   }
 
   getClientsData(clientID: any): void {
@@ -243,7 +246,14 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
-
+  isFilterAppliedforsummary(): boolean {
+    const formValue = this.datepickerFormDataforsummary?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) 
+    
+    );
+  }
   opencontactModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }

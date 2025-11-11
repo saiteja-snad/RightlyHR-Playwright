@@ -380,13 +380,12 @@
                         </div> -->
                     </div>
                 </div>
-                 <div class="d-flex justify-content-between align-items-center p-3">
-                <div *ngIf="errormodaldata" class="custom-error-card">
-                     <img src="/main-menu-icons/typcn_warning-outline.png"alt="Clock" class="clock-icon">
-                     <!-- projects\hrms\public\main-menu-icons\typcn_warning-outline.png -->
-                    <span [innerHTML]="errormodaldata"></span>
+                 <div class="d-flex flex-column p-3">
+                <div *ngFor="let lock of lockMessages" class="custom-error-card mb-2">
+                    <img src="/main-menu-icons/typcn_warning-outline.png" alt="Warning" class="clock-icon">
+                    <span [innerHTML]="lock.text"></span>
                 </div>
-            </div>      
+            </div>
             </form>
             }
             @else {

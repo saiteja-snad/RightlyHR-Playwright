@@ -18,11 +18,12 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
+import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component";
 
 @Component({
   selector: 'app-hold-projects',
   imports: [ProjectManagementModuleInfoComponent, DataLoaderContentComponent, CommonModule, FormsModule, NoDataFoundComponent,
-    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ProjectsSideTabsComponent, ActiveprojectsPipe],
+    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ProjectsSideTabsComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent],
   templateUrl: './hold-projects.component.html',
   styleUrl: './hold-projects.component.scss'
 })
@@ -124,6 +125,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+          this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Active successfully');
         modal.close();   // close modal only after success
         const fullPath = this.router.url;
@@ -153,6 +155,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+          this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Inactive successfully');
         modal.close();   // close modal only after success
         const fullPath = this.router.url;

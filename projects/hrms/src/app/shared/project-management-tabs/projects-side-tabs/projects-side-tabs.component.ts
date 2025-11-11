@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { TabsModule } from 'primeng/tabs';
+
 @Component({
   selector: 'app-projects-side-tabs',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule,TabsModule],
   templateUrl: './projects-side-tabs.component.html',
   styleUrl: './projects-side-tabs.component.scss'
 })
@@ -25,13 +27,13 @@ export class ProjectsSideTabsComponent {
       permission: { feature: 'Project Details Tab', action: 'view' },
     },
     {
-      label: 'On Hold', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
+      label: 'On Hold ', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
 
   ];
 
-  constructor(public rbac: RbacService, private http: HttpService) { }
+  constructor(public rbac: RbacService, private http: HttpService,private router: Router) { }
 
   ngOnInit(): void {
     this.getcountData();
@@ -60,5 +62,9 @@ export class ProjectsSideTabsComponent {
       },
       error: (err) => { }
     });
+  }
+
+ isActive(route: string): boolean {
+    return this.router.url.includes(route);
   }
 }

@@ -302,12 +302,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       'BloodGroup': formValue.bloodGroup?.name,
       'MaritalStatus': formValue.maritalStatus?.maritalstatus1,
       'marriedDate': formValue.marriageDate
-    };
+    };    
     return mapping[actualFieldName] || '';
   }
 
   updateBasicInfo(): void {
-    const formValue = this.basicInfoForm.value;
+    const formValue = this.basicInfoForm.getRawValue();
     const modulesPayload = this.constructModulesPayload(formValue);
     this.subscription = this.http.putData(`EmployeeInfoFieldUpdate/updateEmployeeInfo`, modulesPayload).subscribe({
       next: (data: any) => {

@@ -25,10 +25,10 @@ export class ClientSideTabsComponent {
       label: 'Inactive Clients', link: '/project-management/clients/inactive', icon: 'main-menu-icons/project-management-project.png',statusKey: 'inactive',
       permission: { feature: 'Client Projects', action: 'view' },
     },
-    {
-      label: 'Hold Clients', link: '/project-management/clients/hold', icon: 'main-menu-icons/project-management-resources.png',statusKey: 'hold',
-      permission: { feature: 'Client Resources', action: 'view' }
-    },
+    // {
+    //   label: 'Hold Clients', link: '/project-management/clients/hold', icon: 'main-menu-icons/project-management-resources.png',statusKey: 'hold',
+    //   permission: { feature: 'Client Resources', action: 'view' }
+    // },
 
   ];
 

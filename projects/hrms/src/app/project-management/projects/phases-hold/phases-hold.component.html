@@ -24,7 +24,7 @@
                             <th>Kickoff Date</th>
                             <th>Effective Date</th>
                             <th>Allocated Hours</th>
-                            <!-- <th>Timesheet Approval Authority</th> -->
+                            <th>Timesheet Approval Authority</th>
                             <th class="text-center">Phase / Milestone Description</th>
                             <th>Status</th>
                             @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project PhasesTab.delete'))
@@ -42,7 +42,7 @@
                                     <td>{{ data?.kickoffDate | dateformat }}</td>
                                     <td>{{ data?.effectiveDate | dateformat }}</td>
                                     <td>{{ data?.allocatedHours || '-' }}</td>
-                                    <!-- <td>{{ data?.pendingApprovalAuthority?.name  || '-'}}</td> -->
+                                    <td>{{ data?.pendingApprovalAuthority?.name  || '-'}}</td>
                                     <td class="text-center">
                                         <div>
                                             <div *ngIf="data?.description; else noReason" type="button"

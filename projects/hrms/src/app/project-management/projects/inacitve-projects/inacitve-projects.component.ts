@@ -14,11 +14,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormsModule } from '@angular/forms';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-inacitve-projects',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe],
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule, 
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
 })
@@ -61,19 +60,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
-    this.router.navigate(
-      ['project-management/projects/details'],
-      { queryParams: { id: projectId } } // using query params
-    );
+    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } } );
   }
-
 
   getDepartmentNames(project: Project): string {
-  if (!project.departments || project.departments.length === 0) {
-    return '-';
+    if (!project.departments || project.departments.length === 0) {
+      return '-';
+    }
+    return project.departments.map(d => d.departmentName).join(', ');
   }
-  return project.departments.map(d => d.departmentName).join(', ');
-}
 
   getAllInactiveProjects() {
     this.loading = true;

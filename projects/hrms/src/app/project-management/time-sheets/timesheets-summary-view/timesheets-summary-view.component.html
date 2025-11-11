@@ -134,22 +134,25 @@
                     </div>
                 </div>
 
-                <div class="time-sheet-graph-card p-3 py-4">
-                    <div class="stacked-progress-container">
-                        <!-- overlay color bar -->
-                        <div class="stacked-progress-overlay mb-3"
-                            [style.background]="(approvedPercent + submittedPercent + rejectedPercent) === 0 ? '#E5E7EB' : 
-                            'linear-gradient(to right, ' + approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + 
-                            submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
-                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                <div class="time-sheet-graph-card p-3">
+                    <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
+                        <div class="stacked-progress-container">
+                            <!-- overlay color bar -->
+                            <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
+                            + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                            + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                            + rejectedColor + ' 100%)'"></div>
+                            
+                            <div class="progress-labels">
+                                <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
+                                <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
+                                <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
+                            </div>
                         </div>
-
-                        <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
-                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
-                        </div>
-                    </div>
+                    </ng-container>
+                    <ng-template #noData>
+                        <div class="graph-no-data-content"><app-no-data-found /></div>
+                    </ng-template>
                 </div>
 
                 <div class="dashed-line my-3"></div>
@@ -209,13 +212,13 @@
                 </div>
                 
                 @if (!allocatedVsActualLoader) {
-                <div class="time-sheet-graph-card p-3 py-4 ">
+                <div class="time-sheet-graph-card p-3">
                     <div class="bar-chart">
-                        <ng-container *ngIf="hasallocatedvsactualData; else noData">
+                        <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
                             <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                         </ng-container>
                     </div>
-                    <ng-template #noData>
+                    <ng-template #noActualData>
                         <div class="graph-no-data-content"><app-no-data-found /></div>
                     </ng-template>
                 </div>

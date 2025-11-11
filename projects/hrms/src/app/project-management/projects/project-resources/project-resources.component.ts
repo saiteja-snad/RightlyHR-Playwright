@@ -19,10 +19,11 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,NgbPopover],
+    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
@@ -253,7 +254,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
     const params: any = {
       entityType: 'project',
-      entityRefId: projectId
+      entityRefId: projectId,
+      status:'active,assigned'
     };
 
     if (phaseId) {

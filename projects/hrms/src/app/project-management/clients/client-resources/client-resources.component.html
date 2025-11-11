@@ -9,10 +9,14 @@
     </ng-container>
 
     <ng-template #maincontent>
+
+        <div class="mb-3">
+            <app-client-resource-tab/>
+        </div>
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-
+                    <th>Phase/Milestone</th>
                     <th>Employee ID</th>
                     <th>Name</th>
                     <th>Designation</th>
@@ -20,9 +24,11 @@
                     <th>Email</th>
                     <th>Phone Number</th>
                     <th>Project Assigned</th>
-                    <th>Phase/Milestone</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Allocated Hours</th>
+                    <th>Timesheet Approval Authority</th>
+                    <th>Status</th>
                     @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
@@ -30,6 +36,7 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
+                            <td>{{ data?.phase?.phaseName || '-'}}</td>
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
@@ -37,34 +44,49 @@
                             <td>{{ data?.employee?.workMail || '-' }}</td>
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{ data?.project?.projectName || '-' }}</td>
-                            <td>{{ data?.phase?.phaseName || '-' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                            <td>{{ data?.allocatedHours || '-' }}</td>
+                            <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
+                            <td>
+                                <div>
+                                    <span>{{ (data?.status | titlecase) || '-' }}</span>
+
+                                    <ng-container
+                                        *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                                        <span type="button" [ngbPopover]="statusReasonPopover">
+                                            <app-info-icon />
+                                        </span>
+                                    </ng-container>
+
+                                    <ng-template #noStatusReason></ng-template>
+                                </div>
+
+                                <ng-template #statusReasonPopover>
+                                    <p class="mb-0">{{ data.reason }}</p>
+                                </ng-template>
+                            </td>
                             @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
                             this.inactiveClientStatus !== 'inactive'){
-                            <td class="text-center">
+                            <td class="text-center"
+                                *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Client Resources.update')){
-                                        <li>
-                                            <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)">
-                                                <i class="bi bi-pencil me-2"></i>Update
+                                        <li *ngFor="let action of getActionsByStatus(data.status)">
+                                            <a class="dropdown-item" (click)="handleAction(action, data)">
+                                                <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action
+                                                }}
                                             </a>
                                         </li>
-                                        }
-                                        @if(rbac.allowedToAccess('Client Resources.delete')){
-                                        <li (click)="openModal(deleteconformation,'m',data)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                        }
                                     </ul>
                                 </div>
                             </td>
+                            <ng-template #noActions>
+                                <td class="text-center text-muted">-</td>
+                            </ng-template>
                             }
                         </tr>
                     </ng-container>
@@ -171,7 +193,7 @@
                         <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="phaseDropdown" optionLabel="label" [filter]="true" [resetFilterOnHide]="true"
+                            <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
                                 filterBy="label" formControlName="resourcePhase" placeholder="Please select phase / milestone"
                                 class="form-select custom-select" (onChange)="onPhaseChange($event)">
                             </p-select>
@@ -235,12 +257,14 @@
                     <div class="col-md-6 mb-3">
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
                             <span class="text-danger">*</span></label>
-                        <input type="date" id="startDate" formControlName="startDate" class="form-control custom-input"
-                            onkeypress="return false"
+                        <input type="date" id="startDate" formControlName="startDate"
                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
+                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
+                            (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
+                            class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
                         updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
+                        <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
 
                     <!-- End Date -->
@@ -248,7 +272,8 @@
                         <label for="endDate" class="form-label custom-label mb-2">End Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
-                            onkeypress="return false" />
+                            [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg"
                             *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
                             End Date is required
@@ -270,7 +295,7 @@
                         <!--Color Picker-->
                 <div class="col-md-6 mb-3">
                     <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
-                    <input type="color" id="color" class="form-control custom-input" formControlName="color" />
+                    <input type="color" id="color" class="form-control custom-color" formControlName="color" />
                 </div>
 
                     <!-- Switches -->
@@ -304,7 +329,20 @@
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateResourceForm.invalid">Update</button>
+                        [disabled]="updateResourceForm.invalid || loader">
+
+                        <ng-container *ngIf="loader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>Loading...</span>
+                            </div>
+                        </ng-container>
+
+                        <ng-template #addText>
+                            <span>Update</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>
@@ -336,7 +374,120 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="close(true);">{{'Yes'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close(true);model.dismiss()">{{'Yes'}}</button>
         </div>
     </div>
+</ng-template>
+
+<!-- ===== REASON MODAL ===== -->
+<ng-template #reasonModal let-modal>
+    <form [formGroup]="reasonForm" (ngSubmit)="submitReason(modal)">
+        <div class="result-popup-content" ngbAutofocus>
+            <div>
+                <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
+                <p class="confirmation-text">{{ modalData?.title }}</p>
+            </div>
+
+            <div class="mb-3 mt-3">
+                <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
+                <textarea class="form-control custom-input" formControlName="reason" maxlength="250"
+                    placeholder="Please enter reason" (keydown)="formValidation.restrictInitialSpace($event)">
+                </textarea>
+
+                <div class="textarea-count-text">{{ reasonForm.get('reason')?.value?.length || 0 }} / 250</div>
+
+                <div class="error-msg" *ngIf="reasonForm.get('reason')?.touched && reasonForm.get('reason')?.invalid">
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['required']">
+                        Reason is required
+                    </ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                    </ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['pattern']">
+                        Reason should not start with a space.
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                    {{ 'No' | translate }}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="reasonForm.invalid">
+                    {{ 'Yes' | translate }}</button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+
+<!-- ===== EXTEND MODAL ===== -->
+<ng-template #extendModal let-modal>
+    <form [formGroup]="extendForm" (ngSubmit)="submitExtend(modal)">
+        <div class="result-popup-content" ngbAutofocus>
+            <div>
+                <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
+                <p class="confirmation-text">Are you sure you want to extend phase?</p>
+            </div>
+
+            <!-- Start Date -->
+            <div class="mb-3 mt-3">
+                <label for="newStartDate" class="form-label custom-label mb-2">Start Date<span
+                        class="text-danger">*</span></label>
+                <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input"
+                    [min]="projectMinStartDate" [max]="newEndDate"
+                    [readonly]="extendForm.get('newStartDate')?.disabled" />
+                <div class="error-msg"
+                    *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
+                    Start Date is required
+                </div>
+                <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
+            </div>
+
+            <!-- End Date -->
+            <div class="mb-3 mt-3">
+                <label for="newEndDate" class="form-label custom-label mb-2">End Date <span
+                        class="text-danger">*</span></label>
+                <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
+                    [min]="extendForm.get('newStartDate')?.value" [max]="projectMaxEndDate" />
+                <div class="error-msg"
+                    *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
+                    End Date is required
+                </div>
+                <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label custom-label mb-2">Reason For Extend<span class="error-msg">*</span></label>
+                <textarea class="form-control custom-input" maxlength="250" placeholder="Please enter extend reason"
+                    formControlName="extendReason" (keydown)="formValidation.restrictInitialSpace($event)">
+        </textarea>
+
+                <div class="textarea-count-text">{{ extendForm.get('extendReason')?.value?.length || 0 }} / 250</div>
+
+                <div class="error-msg"
+                    *ngIf="extendForm.get('extendReason')?.touched && extendForm.get('extendReason')?.invalid">
+
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['required']">
+                        Reason is required
+                    </ng-container>
+
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                    </ng-container>
+
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['pattern']">
+                        Reason should not start with a space.
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                    {{ 'No' | translate }}</button>
+
+                <button type="submit" class="custom-btn btn-primary" [disabled]="extendForm.invalid">
+                    {{ 'Yes' | translate }}</button>
+            </div>
+        </div>
+    </form>
 </ng-template>

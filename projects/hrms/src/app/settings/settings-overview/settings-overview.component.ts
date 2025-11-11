@@ -7,16 +7,16 @@ import { SettingsTimeOffTabsComponent } from "../../shared/settings-tabs/setting
 import { SettingsAssetsConfigurationsTabsComponent } from "../../shared/settings-tabs/settings-assets-configurations-tabs/settings-assets-configurations-tabs.component";
 import { SettingDynamicFormsTabsComponent } from "../../shared/settings-tabs/setting-dynamic-forms-tabs/setting-dynamic-forms-tabs.component";
 import { SettingsItConfigurationTabsComponent } from '../../shared/settings-tabs/settings-it-configuration-tabs/settings-it-configuration-tabs.component';
-
 import { RbacService } from '../../services/rbac.service';
 import { PmsSettingsTabsComponent } from "../../shared/pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { AccordionModule } from 'primeng/accordion';
 import { Router } from '@angular/router';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+
 @Component({
   selector: 'app-settings-overview',
-  imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
-    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent,SettingsItConfigurationTabsComponent , PmsSettingsTabsComponent, AccordionModule],
+  imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent, SettingsTimeOffTabsComponent, 
+    SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent,SettingsItConfigurationTabsComponent , PmsSettingsTabsComponent, AccordionModule],
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',
   encapsulation: ViewEncapsulation.None,

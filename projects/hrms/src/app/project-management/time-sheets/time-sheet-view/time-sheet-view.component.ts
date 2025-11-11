@@ -92,7 +92,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({projects: this.fb.array([])});
     this.getResourceDetailsByManagerId();
-    this.getResourceData()
+    this.getResourceData();
+    this.getTimesheetLocks();
     this.getJobDetails()
     this.getTeamManagersDetails();
     this.getAllEmployeeDetails();
@@ -109,7 +110,134 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const m = Math.floor((seconds % 3600) / 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
+ TimesheetLockData:any;
+  getTimesheetLocks() {
+    const categoryIds = '30';
+    const params: any = {};
+    if (categoryIds) {
+      params.categoryId = categoryIds;
+    }
+    const queryString = `?categoryIds=${encodeURIComponent(params.categoryId)}`;
+    this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.TimesheetLockData = response.items;
+          this.checkTimesheetLock(this.TimesheetLockData);
+        },
+        error: (err: any) => {
+        },
+        complete: () => {
+        }
+      });
+  }
+lockMessage: string | null = null;
+lockextendMessage:string | null = null;
+checkTimesheetLock(apiResponse: any) {
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth(); // 0 = January
+  const currentYear = currentDate.getFullYear();
 
+  // Filter items fully within the current month
+  const currentMonthItems = apiResponse.filter((item: any) => {
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    return (
+      start.getMonth() === currentMonth &&
+      start.getFullYear() === currentYear &&
+      end.getMonth() === currentMonth &&
+      end.getFullYear() === currentYear
+    );
+  });
+
+  if (currentMonthItems.length > 0) {
+    const today = new Date();
+    const messages: string[] = [];
+
+    currentMonthItems.forEach((item: any) => {
+      const start = new Date(item.startDate);
+      const end = new Date(item.endDate);
+      const effective = new Date(item.effectiveDate);
+
+      const startStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const endStr = end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const effStr = effective.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      // Scenario 1 → effective date today or in future
+      if (effective >= today) {
+        messages.push(
+          `Timesheet for the period <b>${startStr} – ${endStr}</b> will be locked on <b>${effStr}</b>. 
+          Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+        );
+      }
+      // Scenario 2 → effective date in past
+      else {
+        messages.push(
+          `Timesheet submissions are locked for <b>${startStr} – ${endStr}</b>. 
+          Please contact HR/Admin for assistance.`
+        );
+      }
+    });
+
+    this.errormodaldata = messages.join('<br><br>');
+    console.log(this.errormodaldata);
+  } else {
+    this.errormodaldata = '';
+    console.log("No locked records for the current month.");
+  }
+}
+checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
+  const lockedItems = this.TimesheetLockData || [];
+  const messages: string[] = [];
+  const today = new Date();
+
+  // Get all months between selectedStart and selectedEnd
+  const months: { year: number; month: number }[] = [];
+  let temp = new Date(selectedStart);
+
+  while (temp <= selectedEnd) {
+    months.push({ year: temp.getFullYear(), month: temp.getMonth() });
+    temp = new Date(temp.getFullYear(), temp.getMonth() + 1, 1);
+  }
+
+  // Iterate through each month and check for locks
+  months.forEach(({ year, month }) => {
+    const monthStart = new Date(year, month, 1);
+    const monthEnd = new Date(year, month + 1, 0);
+
+    const currentMonthLocks = lockedItems.filter((lock: any) => {
+      const lockStart = new Date(lock.startDate);
+      const lockEnd = new Date(lock.endDate);
+      return lockEnd >= monthStart && lockStart <= monthEnd;
+    });
+
+    currentMonthLocks.forEach((item: any) => {
+      const start = new Date(item.startDate);
+      const end = new Date(item.endDate);
+      const effective = new Date(item.effectiveDate);
+
+      const startStr = start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const endStr = end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const effStr = effective.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      if (effective >= today) {
+        // Scenario 1: Effective date today or future
+        messages.push(
+          `Timesheet for the period <b>${startStr} – ${endStr}</b> will be locked on <b>${effStr}</b>. 
+          Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+        );
+      } else {
+        // Scenario 2: Effective date past
+        messages.push(
+          `Timesheet submission is locked for <b>${startStr} – ${endStr}</b>. 
+          Please contact HR/Admin for assistance.`
+        );
+      }
+    });
+  });
+
+  // Merge all month messages if any
+  this.errormodaldata = messages.length > 0 ? messages.join('<br><br>') : '';
+}
   createDayEntry(day?: any, entryDate?: any, isProjectSelected: boolean = false): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
@@ -231,6 +359,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.date = [this.start, this.end];
     // Update the week range visually / in state
     this.setWeekRange(monday, sunday);
+    this.checkTimesheetLockByMonth(monday.toDate(), sunday.toDate()); // 🔹 check locks by mont
     // Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
     this.loadTimeSheetByResource(formattedStart);
@@ -480,6 +609,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakstartdate = this.start;
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
+      this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -495,6 +625,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakstartdate = this.start;
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
+      this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate()); 
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }

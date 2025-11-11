@@ -278,3 +278,18 @@
     cursor: not-allowed;
     pointer-events: auto;
 }
+.custom-error-card {
+    background-color: #FFEBEA;
+    border: 1px solid #ffcecc;
+    color: #FF4A40;
+    border-radius: 8px;
+    padding: 6px 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    line-height: 1.5;
+}
+.clock-icon{
+    width: 1.7rem;
+    margin: 2px;
+ }

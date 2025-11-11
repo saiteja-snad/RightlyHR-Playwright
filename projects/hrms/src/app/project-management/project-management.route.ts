@@ -35,6 +35,8 @@ import { ResourceViewSummaryComponent } from './shared-project-management-compon
 import { ProjectPhasesComponent } from './projects/project-phases/project-phases.component';
 import { HoldClientsComponent } from './clients/hold-clients/hold-clients.component';
 import { HoldProjectsComponent } from './projects/hold-projects/hold-projects.component';
+import { PhasesHoldComponent } from './projects/phases-hold/phases-hold.component';
+import { InactivePhasesProjectComponent } from './projects/inactive-phases-project/inactive-phases-project.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -106,7 +108,9 @@ export default [
                     },
                     { path: 'documents', component: ProjectDocumentsComponent },
                     { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
-                    { path: 'phases', component: ProjectPhasesComponent }
+                    { path: 'phases', component: ProjectPhasesComponent },
+                    { path: 'inactive-phases', component: InactivePhasesProjectComponent },
+                    { path: 'hold-phases', component:PhasesHoldComponent  }
                 ],
             }
         ],

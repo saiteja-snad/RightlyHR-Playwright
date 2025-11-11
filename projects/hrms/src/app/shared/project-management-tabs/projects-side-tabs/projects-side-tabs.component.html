@@ -5,7 +5,7 @@
                 <img [src]="tab.icon" alt="Icon" class="icon mb-2">
                 <div class="d-flex">{{ tab.label }}</div>
                 <div class="count">
-                    ( {{ statusCounts[tab.statusKey] }})
+                    ({{ statusCounts[tab.statusKey] ?? 0 }})
                 </div>
             </div>
             <div class="tabs-border-bottom"></div>

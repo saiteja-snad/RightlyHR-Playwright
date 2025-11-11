@@ -1,3 +1,15 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem);
+}
+
+.main-content {
+    width: calc(100% - 8.5rem) !important;
+}
+
+.project-main-active-content {
+    width: calc(100% - 8.5rem) !important;
+}
+
 .primary-link {
     font-size: var(--fontsize13);
     font-weight: 600;
@@ -22,17 +34,5 @@
 }
 
 .custom-color {
-  width: 60px !important;
-}
-
-.component-left-tabs-container{
-    width: 7.5rem;
-    min-width: 7.5rem;
-    padding: 0.75rem;
-    height: calc(100dvh - 9rem);
-    border-radius: 0.5rem;
-    overflow-y: auto;
-    background-color: var(--white-color);
-    border: 1px solid #CCDAEC;
     width: 60px !important;
 }

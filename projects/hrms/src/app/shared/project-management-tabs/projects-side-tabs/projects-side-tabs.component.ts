@@ -12,12 +12,12 @@ import { TabsModule } from 'primeng/tabs';
   templateUrl: './projects-side-tabs.component.html',
   styleUrl: './projects-side-tabs.component.scss'
 })
+
 export class ProjectsSideTabsComponent {
   filteredTabs: any[] = [];
-  statusCounts:any = {};
+  statusCounts: any = {};
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
-
     {
       label: 'Active', link: '/project-management/projects/active', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
       permission: { feature: 'Project Details Tab', action: 'view' }
@@ -27,13 +27,13 @@ export class ProjectsSideTabsComponent {
       permission: { feature: 'Project Details Tab', action: 'view' },
     },
     {
-      label: 'Hold ', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
+      label: 'On Hold ', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
 
   ];
 
-  constructor(public rbac: RbacService, private router: Router, private http: HttpService) { }
+  constructor(public rbac: RbacService, private http: HttpService,private router: Router) { }
 
   ngOnInit(): void {
     this.getcountData();
@@ -57,12 +57,10 @@ export class ProjectsSideTabsComponent {
       next: (res: any) => {
         this.statusCounts = {};
         res.data.forEach((item: any) => {
-          this.statusCounts[item.status.toLowerCase()] = item.count ||0;
+          this.statusCounts[item.status.toLowerCase()] = item.count || 0;
         })
       },
-      error: (err) => {
-
-      }
+      error: (err) => { }
     });
   }
 

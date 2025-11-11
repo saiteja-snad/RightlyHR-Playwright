@@ -20,10 +20,11 @@ import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component";
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
@@ -153,7 +154,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
-
   getResourceData(id: any, project: Project) {
     const projectId = id;
     const params = {
@@ -173,7 +173,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
             email: item.employee?.workMail ?? '',
             recordId: item.resourceId ?? 0
           }));
-
           if (this.authorityList?.length > 0) {
             this.updateprojectform.get('approvalidAuthority')?.enable();
             this.updateprojectform.get('approvalidAuthority')?.setValidators([Validators.required]);
@@ -184,7 +183,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         } else {
           this.authorityList = [];
         }
-
       },
       error: (reason: any) => {
         this.loading = false;
@@ -232,7 +230,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
@@ -313,9 +310,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
-    // Open modal
-    console.log(this.updateprojectform);
-
     this.modalService.open(modal, { size: 'lg', centered: true, backdrop: 'static' });
   }
 
@@ -324,12 +318,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.updateprojectform.markAllAsTouched();
       return;
     }
-
-    this.spinnerLoader = true
+    this.spinnerLoader = true;
     const formValue = this.updateprojectform.value;
     const departmentIds = Array.isArray(formValue.updatedepartment)
-      ? formValue.updatedepartment.join(',')
-      : formValue.updatedepartment;
+      ? formValue.updatedepartment.join(',') : formValue.updatedepartment;
     const payload = {
       projectId: this.selectedProjectId,
       clientId: formValue.updateclientName,
@@ -371,7 +363,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         }
         this.conformationPopup.openSuccessModal('Project updated successfully');
         this.http.setnewcountDetailsfornewprojectcount()
-        // this.close();
       },
       error: (err) => {
         this.loading = false;
@@ -457,6 +448,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   navigateView(projectId: number) {
     this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
   }
@@ -502,7 +494,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           this.kickoffBeforeEffectiveValid = kickoff <= effective;
         }
       }
-
+      
       if (effectiveDate) {
         const effective = new Date(effectiveDate);
         //  Effective must be within Start and End

@@ -68,12 +68,12 @@ export class HttpService {
   }
 
   //state mangement
-private clickingonresourceSource = new BehaviorSubject<boolean>(false);
-clickingonresource$ = this.clickingonresourceSource.asObservable();
+  private clickingonresourceSource = new BehaviorSubject<boolean>(false);
+  clickingonresource$ = this.clickingonresourceSource.asObservable();
 
-notifyresource() {
-  this.clickingonresourceSource.next(true);
-}
+  notifyresource() {
+    this.clickingonresourceSource.next(true);
+  }
 
   //setting cards count
   private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
@@ -115,6 +115,20 @@ notifyresource() {
   setnewcountDetails() {
     this.expensescount.next();
   }
+
+
+  clientcount = new Subject<void>();
+  clientcountfuntion$ = this.clientcount.asObservable();
+  setnewcountDetailsfornewclient() {
+    this.clientcount.next();
+  }
+
+  projectcount = new Subject<void>();
+  projectcountfuntion$ = this.projectcount.asObservable();
+  setnewcountDetailsfornewprojectcount() {
+    this.projectcount.next();
+  }
+
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
@@ -792,7 +806,7 @@ notifyresource() {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
   // DATE RANGE
- private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+  private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
 
   // Set date range 
   setDateRange(startDate: string | null, endDate: string | null) {
@@ -819,5 +833,11 @@ notifyresource() {
   setnewPhaseDetails() {
     this.phaseadded.next();
   }
+// store department id
+private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
+  selectedDepartmentIds$ = this.departmentIdsSource.asObservable();
 
+  setDepartmentIds(ids: number[]) {
+    this.departmentIdsSource.next(ids);
+  }
 }

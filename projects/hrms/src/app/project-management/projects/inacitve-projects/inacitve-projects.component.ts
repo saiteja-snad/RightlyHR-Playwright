@@ -15,10 +15,11 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 import { FormsModule } from '@angular/forms';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
 @Component({
   selector: 'app-inacitve-projects',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe],
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe, ProjectsSideTabsComponent],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
 })
@@ -61,19 +62,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
-    this.router.navigate(
-      ['project-management/projects/details'],
-      { queryParams: { id: projectId } } // using query params
-    );
+    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } } );
   }
-
 
   getDepartmentNames(project: Project): string {
-  if (!project.departments || project.departments.length === 0) {
-    return '-';
+    if (!project.departments || project.departments.length === 0) {
+      return '-';
+    }
+    return project.departments.map(d => d.departmentName).join(', ');
   }
-  return project.departments.map(d => d.departmentName).join(', ');
-}
 
   getAllInactiveProjects() {
     this.loading = true;
@@ -121,6 +118,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
       next: (res) => {
+        this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Active successfully');
         modal.close();   // close modal only after success
         const fullPath = this.router.url;

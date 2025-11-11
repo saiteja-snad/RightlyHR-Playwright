@@ -162,7 +162,7 @@ export class ProjectManagementModuleInfoComponent {
        else if (currentUrl=== '/project-management/projects/inactive'   ) {
       this.componentname = 'Inactive Projects';
     }
-       else if (currentUrl ===  '/project-management/clients/hold' ) {
+       else if (currentUrl ===  '/project-management/projects/hold' ) {
       this.componentname = 'Hold Projects';
     }
     else if (currentUrl === '/project-management/projects/details/information') {

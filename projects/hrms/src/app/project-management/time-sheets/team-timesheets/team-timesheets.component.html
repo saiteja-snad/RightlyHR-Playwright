@@ -16,7 +16,7 @@
                         </div>
                     </div>
 
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view') ) {
+                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view') ) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
@@ -27,8 +27,18 @@
                                 placeholder="please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
-                    }
-                    @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
+                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" >
+                            </p-select>
+                        </div>
+                    </div>
+                    } -->
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
@@ -48,10 +58,12 @@
                             <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
                                 name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
                                 [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" required>
+                                [autoDisplayFirst]="false">
                             </p-select>
                         </div>
                     </div>
+                    }@else {
+                        
                     }
 
                     <div>

@@ -27,8 +27,7 @@
                             <th>Timesheet Approval Authority</th>
                             <th class="text-center">Phase / Milestone Description</th>
                             <th>Status</th>
-                            @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project
-                            PhasesTab.delete'))
+                            @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project PhasesTab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <th class="text-center">{{"Action" | translate}}</th>
                             }
@@ -61,17 +60,14 @@
                                     <td>
                                         <div>
                                             <span>{{ formatStatus(data?.status) || '-' }}</span>
-
                                             <ng-container
                                                 *ngIf="data.reason && data.status?.toLowerCase() !== 'in progress'; else noStatusReason">
                                                 <span type="button" [ngbPopover]="statusReasonPopover">
                                                     <app-info-icon />
                                                 </span>
                                             </ng-container>
-
                                             <ng-template #noStatusReason></ng-template>
                                         </div>
-
                                         <ng-template #statusReasonPopover>
                                             <p class="mb-0">{{ data.reason }}</p>
                                         </ng-template>
@@ -88,8 +84,7 @@
                                             <ul class="dropdown-menu custom-dropdown-menu">
                                                 <li *ngFor="let action of getActionsByStatus(data.status)">
                                                     <a class="dropdown-item" (click)="handleAction(action, data)">
-                                                        <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{
-                                                        action }}
+                                                        <i class="bi me-2" [ngClass]="getActionIcon(action)"></i>{{ action }}
                                                     </a>
                                                 </li>
                                             </ul>
@@ -126,16 +121,15 @@
                 <div class="row">
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">
-                        <label for="phaseName" class="form-label custom-label mb-2">Phase / Milestone Name<span
-                                class="text-danger">*</span></label>
+                        <label for="phaseName" class="form-label custom-label mb-2">Phase / Milestone Name
+                            <span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="phaseName" minlength="2"
                             maxlength="101" placeholder="Please enter phase / milestone name"
                             (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                         <div class="error-msg" *ngIf="updatePhaseForm.get('phaseName')?.touched">
-                            <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['required']">Project Name is required
-                            </div>
+                            <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
                             <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
-                        updatePhaseForm.get('phaseName')?.errors?.['minCharacters']">
+                            updatePhaseForm.get('phaseName')?.errors?.['minCharacters']">
                                 {{ 'Project Name must be between 2-100 characters' | translate }}
                             </div>
                         </div>
@@ -143,14 +137,11 @@
 
                     <!--Allocated hours-->
                     <div class="col-md-6 mb-3">
-                        <label for="projectType" class="form-label custom-label mb-2">Allocated Hours<span
-                                class="text-danger">*</span></label>
-                        <input type="text" id="projectType" formControlName="allocatedHours"
-                            class="form-control custom-input" maxlength="5"
-                            (keydown)="formValidation.restrictAlphabets($event)"
-                            placeholder="Please enter allocated hours" />
-                        <div class="error-msg"
-                            *ngIf="updatePhaseForm.get('allocatedHours')?.touched && updatePhaseForm.get('allocatedHours')?.invalid">
+                        <label for="projectType" class="form-label custom-label mb-2">Allocated Hours
+                            <span class="text-danger">*</span></label>
+                        <input type="text" id="projectType" formControlName="allocatedHours" class="form-control custom-input" maxlength="5"
+                            (keydown)="formValidation.restrictAlphabets($event)" placeholder="Please enter allocated hours" />
+                        <div class="error-msg" *ngIf="updatePhaseForm.get('allocatedHours')?.touched && updatePhaseForm.get('allocatedHours')?.invalid">
                             Allocated Hours is required</div>
                         <!-- Error Messages -->
                         <div class="error-msg"
@@ -160,8 +151,7 @@
 
                     <!-- Start Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="startDate" class="form-label custom-label mb-2">Start Date<span
-                                class="text-danger">*</span></label>
+                        <label for="startDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
                         <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
                             class="form-control custom-input" [min]="projectMinStartDate" />
                         <div class="error-msg"
@@ -173,12 +163,10 @@
 
                     <!-- End Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="endDate" class="form-label custom-label mb-2">End Date <span
-                                class="text-danger">*</span></label>
+                        <label for="endDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
                         <input type="date" id="endDate" formControlName="endDate" onkeypress="return false"
                             [min]="minEffectiveDate" [max]="projectMaxEndDate" class="form-control custom-input" />
-                        <div class="error-msg"
-                            *ngIf="updatePhaseForm.get('endDate')?.touched && updatePhaseForm.get('endDate')?.invalid">
+                        <div class="error-msg" *ngIf="updatePhaseForm.get('endDate')?.touched && updatePhaseForm.get('endDate')?.invalid">
                             End Date is required
                         </div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
@@ -186,56 +174,42 @@
 
                     <!-- Kickoff Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="kickoffDate" class="form-label custom-label mb-2">Kickoff Date <span
-                                class="text-danger">*</span></label>
+                        <label for="kickoffDate" class="form-label custom-label mb-2">Kickoff Date<span class="text-danger">*</span></label>
                         <input type="date" id="kickoffDate" formControlName="kickoffDate" onkeypress="return false"
                             [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
                         <div class="error-msg">
-                            <div
-                                *ngIf="updatePhaseForm.get('kickoffDate')?.touched && updatePhaseForm.get('kickoffDate')?.invalid">
+                            <div *ngIf="updatePhaseForm.get('kickoffDate')?.touched && updatePhaseForm.get('kickoffDate')?.invalid">
                                 Kickoff Date is required</div>
                             <div *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
-                            <div *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective
-                                Date
-                            </div>
+                            <div *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective Date</div>
                         </div>
                     </div>
 
                     <!-- Effective Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date <span
-                                class="text-danger">*</span></label>
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span class="text-danger">*</span></label>
                         <input type="date" id="effectiveDate" formControlName="effectiveDate" onkeypress="return false"
                             [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
                         <div class="error-msg">
-                            <div
-                                *ngIf="updatePhaseForm.get('effectiveDate')?.touched && updatePhaseForm.get('effectiveDate')?.invalid">
-                                Effective Date is required
-                            </div>
-                            <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date
-                            </div>
-                            <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date
-                            </div>
+                            <div *ngIf="updatePhaseForm.get('effectiveDate')?.touched && updatePhaseForm.get('effectiveDate')?.invalid">
+                                Effective Date is required</div>
+                            <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date</div>
+                            <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date</div>
                         </div>
                     </div>
 
                     <!--Timesheet Approval Authority-->
                     <div class="col-md-6 mb-3">
                         <div class="d-flex gap-2">
-                            <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval
-                                Authority'| translate}}
+                            <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority'| translate}}
                                 <span *ngIf="isAuthorityRequired" class="text-danger">*</span>
                             </label>
                             <div *ngIf="authorityList.length === 0">
-
                                 <div>
-                                    <a type="button" [ngbPopover]="description">
-                                        <app-info-icon />
-                                    </a>
+                                    <a type="button" [ngbPopover]="description"><app-info-icon /></a>
                                 </div>
                                 <ng-template #description>
-                                    <p class="mb-0">{{ 'This field will be enabled after allocating resources to this
-                                        phase'}}</p>
+                                    <p class="mb-0">{{ 'This field will be enabled after allocating resources to this phase'}}</p>
                                 </ng-template>
                             </div>
                         </div>
@@ -259,21 +233,16 @@
 
                     <!-- Project Description -->
                     <div class="col-md-6 mb-3">
-                        <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone
-                            Description</label>
-                        <textarea id="phaseDescription"
-                            (input)="formValidation.validateInput(updatePhaseForm.get('phaseDescription'))"
+                        <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone Description</label>
+                        <textarea id="phaseDescription" (input)="formValidation.validateInput(updatePhaseForm.get('phaseDescription'))"
                             maxlength="500" formControlName="phaseDescription" class="form-control custom-input"
                             placeholder="Please enter phase / milestone description"></textarea>
-                        <div class="textarea-count-text">{{ updatePhaseForm.get("phaseDescription")?.value?.length ||
-                            0}}/500
-                        </div>
+                        <div class="textarea-count-text">{{ updatePhaseForm.get("phaseDescription")?.value?.length || 0}}/500</div>
                     </div>
 
                     <!-- Form Buttons -->
                     <div class="custom-modal-footer">
-                        <button type="button" class="custom-btn btn-secondary"
-                            (click)="closepopup(confirmationpopup)">Cancel</button>
+                        <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">Cancel</button>
                         <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid || loading">
                             @if (loading) {
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -283,9 +252,6 @@
                             }
                         </button>
                     </div>
-                </div>
-                <div class="custom-modal-footer">
-
                 </div>
             </form>
         </div>
@@ -309,21 +275,14 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="confirmation icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">
-                {{ 'Are you sure you want to start the phase?' | translate }}
-            </p>
+            <p class="confirmation-text">{{ 'Are you sure you want to start the phase?' | translate }}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-                {{ 'No' }}
-            </button>
-            <button type="button" class="custom-btn btn-primary" (click)="confirmStart(model)">
-                {{ 'Yes' }}
-            </button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{ 'No' }}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmStart(model)">{{ 'Yes' }}</button>
         </div>
     </div>
 </ng-template>
-
 
 <!-- ===== REASON MODAL ===== -->
 <ng-template #reasonModal let-modal>
@@ -333,38 +292,25 @@
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{ modalData?.title }}</p>
             </div>
-
             <div class="mb-3 mt-3">
                 <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" formControlName="reason" maxlength="250"
                     placeholder="Please enter reason" (keydown)="formValidation.restrictInitialSpace($event)">
                 </textarea>
-
                 <div class="textarea-count-text">{{ reasonForm.get('reason')?.value?.length || 0 }} / 250</div>
-
                 <div class="error-msg" *ngIf="reasonForm.get('reason')?.touched && reasonForm.get('reason')?.invalid">
-                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['required']">
-                        Reason is required
-                    </ng-container>
-                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['maxlength']">
-                        Maximum 250 characters allowed
-                    </ng-container>
-                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['pattern']">
-                        Reason should not start with a space.
-                    </ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['required']">Reason is required</ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['maxlength']">Maximum 250 characters allowed</ng-container>
+                    <ng-container *ngIf="reasonForm.get('reason')?.errors?.['pattern']">Reason should not start with a space.</ng-container>
                 </div>
             </div>
-
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-                    {{ 'No' | translate }}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="reasonForm.invalid">
-                    {{ 'Yes' | translate }}</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="reasonForm.invalid">{{ 'Yes' | translate }}</button>
             </div>
         </div>
     </form>
 </ng-template>
-
 
 <!-- ===== EXTEND MODAL ===== -->
 <ng-template #extendModal let-modal>
@@ -374,65 +320,39 @@
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">Are you sure you want to extend this phase?</p>
             </div>
-
             <!-- Start Date -->
             <div class="mb-3 mt-3">
-                <label for="newStartDate" class="form-label custom-label mb-2">Start Date<span
-                        class="text-danger">*</span></label>
-                <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input"
-                    [min]="projectMinStartDate" [max]="newEndDate"
-                    [readonly]="extendForm.get('newStartDate')?.disabled" />
-                <div class="error-msg"
-                    *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
-                    Start Date is required
-                </div>
+                <label for="newStartDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
+                <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input" 
+                [min]="projectMinStartDate" [max]="newEndDate" [readonly]="extendForm.get('newStartDate')?.disabled" />
+                <div class="error-msg" *ngIf="extendForm.get('newStartDate')?.touched && extendForm.get('newStartDate')?.invalid">
+                    Start Date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
             </div>
 
             <!-- End Date -->
             <div class="mb-3 mt-3">
-                <label for="newEndDate" class="form-label custom-label mb-2">End Date <span
-                        class="text-danger">*</span></label>
+                <label for="newEndDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
                 <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
                     [min]="projectMinEndDate" [max]="projectMaxEndDate" />
-                <div class="error-msg"
-                    *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
-                    End Date is required
-                </div>
+                <div class="error-msg" *ngIf="extendForm.get('newEndDate')?.touched && extendForm.get('newEndDate')?.invalid">
+                    End Date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
             </div>
-
             <div class="mb-3">
                 <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" maxlength="250" placeholder="Please enter extend reason"
-                    formControlName="extendReason" (keydown)="formValidation.restrictInitialSpace($event)">
-        </textarea>
-
+                formControlName="extendReason" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
                 <div class="textarea-count-text">{{ extendForm.get('extendReason')?.value?.length || 0 }} / 250</div>
-
-                <div class="error-msg"
-                    *ngIf="extendForm.get('extendReason')?.touched && extendForm.get('extendReason')?.invalid">
-
-                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['required']">
-                        Reason is required
-                    </ng-container>
-
-                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['maxlength']">
-                        Maximum 250 characters allowed
-                    </ng-container>
-
-                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['pattern']">
-                        Reason should not start with a space.
-                    </ng-container>
+                <div class="error-msg" *ngIf="extendForm.get('extendReason')?.touched && extendForm.get('extendReason')?.invalid">
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['required']">Reason is required</ng-container>
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['maxlength']">Maximum 250 characters allowed</ng-container>
+                    <ng-container *ngIf="extendForm.get('extendReason')?.errors?.['pattern']">Reason should not start with a space.</ng-container>
                 </div>
             </div>
-
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-                    {{ 'No' | translate }}</button>
-
-                <button type="submit" class="custom-btn btn-primary" [disabled]="extendForm.invalid">
-                    {{ 'Yes' | translate }}</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'No' | translate }}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="extendForm.invalid">{{ 'Yes' | translate }}</button>
             </div>
         </div>
     </form>

@@ -71,7 +71,7 @@
                 <table class="w-100">
                     <thead>
                         <th>Employee Name</th>
-                        <th *ngFor="let date of dateHeaders" [innerHTML]="date" class="text-center"></th>
+                        <th *ngFor="let date of dateHeaders" [innerHTML]="date" class="text-center th-date"></th>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
@@ -90,7 +90,7 @@
                                     <!-- Non-clickable for status -->
                                     <span *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
                                     day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
-                                        {{ day.dailySummary.status }}</span>
+                                        <b>{{ day.dailySummary.status }}</b></span>
                                 </td>
                             </tr>
                         </ng-container>
@@ -182,7 +182,7 @@
                                 <td>{{ entry.clientName }}</td>
                                 <td>{{ entry.projectName }}</td>
                                 <td>{{ entry?.phaseName || '-' }}</td>
-                                <td>{{ entry.loggedHours }} hrs</td>
+                                <td>{{ entry.loggedHours }} Hrs</td>
                                 <td class="text-center">
                                     <div>
                                         <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">

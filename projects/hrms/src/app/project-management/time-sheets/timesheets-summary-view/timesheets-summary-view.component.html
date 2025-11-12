@@ -27,7 +27,7 @@
         </div>  -->
 
         <div class="d-flex align-items-center gap-3">
-            <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+            <div class="total-hrs">{{"Total Logged Hours"}}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
             @if(isFilterApplied()) {
             <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
             }
@@ -47,7 +47,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
                                     formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" [showClear]="true"
-                                    [resetFilterOnHide]="true" placeholder="please select employee"
+                                    [resetFilterOnHide]="true" placeholder="Please select employee"
                                     class="form-select custom-select"></p-select>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
                                     formControlName="resourceId" [showClear]="true" [resetFilterOnHide]="true"
-                                    placeholder="please select employee" class="form-select custom-select"></p-select>
+                                    placeholder="Please select employee" class="form-select custom-select"></p-select>
                             </div>
                         </div>
                         }
@@ -68,7 +68,7 @@
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                    placeholder="please select employee" formControlName="resourceId" [filter]="true" [showClear]="true"
+                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true" [showClear]="true"
                                     [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
@@ -186,7 +186,7 @@
                                             <div class="legend-name">{{ item.label }}</div>
                                         </div>
                                     </div>
-                                    <div class="hrs-display text-nowrap col-md-4">{{item.hours}} HRs</div>
+                                    <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>
                                 </div>
                             </div>
                         </div>

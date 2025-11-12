@@ -340,7 +340,7 @@ export class TimesheetsSummaryViewComponent {
   }
 
   openModal(entries: TimesheetEntry[], content?: any) {
-    this.selectedEntries = entries;
+    this.selectedEntries = entries?.filter(ele=>ele?.status!=='Not Entered');
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 

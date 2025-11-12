@@ -137,6 +137,31 @@
     <div class="custom-main-popup-content">
       <form [formGroup]="updateprojectform" autocomplete="off" (ngSubmit)="saveUpdatedProject()">
         <div class="row">
+          <!-- Client Name -->
+          <div class="col-md-6 mb-3">
+            <label for="updateclientName" class="form-label custom-label mb-2">Client Name<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="clients" [filter]="true" [resetFilterOnHide]="true" filterBy="clientName"
+                optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
+                placeholder="Please select client name" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched && 
+            updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
+          </div>
+
+          <!-- Project Code -->
+          <div class="col-md-6 mb-3">
+            <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" formControlName="updatecode" maxlength="20"
+              placeholder="Please enter project code">
+            <div class="error-msg"
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.invalid">
+              Project Code is required
+            </div>
+          </div>
+
           <!-- Project Name -->
           <div class="col-md-6 mb-3">
             <label for="updateprojectName" class="form-label custom-label mb-2">Project Name
@@ -153,19 +178,6 @@
                 {{ 'Project Name must be between 2-100 characters' | translate }}
               </div>
             </div>
-          </div>
-
-          <!-- Client Name -->
-          <div class="col-md-6 mb-3">
-            <label for="updateclientName" class="form-label custom-label mb-2">Client Name<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="clients" [filter]="true" [resetFilterOnHide]="true" filterBy="clientName"
-                optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
-                placeholder="Please select client name" class="form-select custom-select"></p-select>
-            </div>
-            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched && 
-            updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
           </div>
 
           <!-- Project Type -->
@@ -296,31 +308,19 @@
           </div>
           </div> -->
 
-          <!-- Project Description -->
+          <!-- Project Color -->
           <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
+            <input type="color" class="form-control custom-color" formControlName="updatecolor" />
+          </div>
+
+          <!-- Project Description -->
+          <div class="col-md-12 mb-3">
             <label for="updateprojectDescription" class="form-label custom-label mb-2">Project Description</label>
             <textarea id="updateprojectDescription" formControlName="updateprojectDescription" maxlength="500"
               class="form-control custom-input" placeholder="Please enter project description"></textarea>
             <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length ||
               0}}/500</div>
-          </div>
-
-          <!-- Project Code -->
-          <div class="col-md-6 mb-3">
-            <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
-                class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="updatecode" maxlength="20"
-              placeholder="Please enter project code">
-            <div class="error-msg"
-              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.invalid">
-              Project Code is required
-            </div>
-          </div>
-
-          <!-- Project Color -->
-          <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
-            <input type="color" class="form-control custom-color" formControlName="updatecolor" />
           </div>
 
           <!-- Switches -->

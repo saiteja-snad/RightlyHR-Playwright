@@ -175,7 +175,10 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/clients/details/documents') {
-      this.componentname = 'Documents';
+      this.componentname = 'Active Documents';
+    }
+    else if (currentUrl === '/project-management/clients/details/inactivedocuments') {
+      this.componentname = 'Archived Documents';
     }
     else if (currentUrl === '/project-management/projects/active') {
       this.componentname = 'Active Projects';
@@ -202,7 +205,10 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/projects/details/documents') {
-      this.componentname = 'Documents';
+      this.componentname = 'Active Documents';
+    }
+    else if (currentUrl === '/project-management/projects/details/inactivedocuments') {
+      this.componentname = 'Archived Documents';
     }
     else if (currentUrl === '/project-management/timesheet/mytimesheet') {
       this.componentname = 'My Timesheets';

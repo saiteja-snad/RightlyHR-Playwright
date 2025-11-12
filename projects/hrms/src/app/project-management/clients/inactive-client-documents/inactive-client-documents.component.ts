@@ -13,9 +13,10 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { ClientDocumentsTabsComponent } from "../../../shared/project-management-tabs/client-documents-tabs/client-documents-tabs.component";
 @Component({
   selector: 'app-inactive-client-documents',
-  imports: [DataLoaderContentComponent, NoDataFoundComponent, DownloadIconComponent, TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent],
+  imports: [DataLoaderContentComponent, NoDataFoundComponent, DownloadIconComponent, TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent, ClientDocumentsTabsComponent],
   templateUrl: './inactive-client-documents.component.html',
   styleUrl: './inactive-client-documents.component.scss'
 })
@@ -122,6 +123,7 @@ export class InactiveClientDocumentsComponent {
       next: (res) => {
         this.getDocumentDetails(clientID);
         this.modalService.dismissAll();
+          this.http.setnewcountfornewdocumentscount();
         this.conformationPopup.openSuccessModal('Document restored successfully');
       },
       error: (err) => {

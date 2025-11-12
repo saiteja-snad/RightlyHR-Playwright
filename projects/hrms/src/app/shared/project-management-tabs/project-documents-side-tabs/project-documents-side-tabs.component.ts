@@ -4,26 +4,28 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-project-documents-side-tabs',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './project-documents-side-tabs.component.html',
   styleUrl: './project-documents-side-tabs.component.scss'
 })
 export class ProjectDocumentsSideTabsComponent {
 filteredTabs: any[] = [];
+  loading = false
   statusCounts: any = {};
   projectId: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
-      label: 'Active', link: '/project-management/projects/details/resources', icon: 'project-mangement-icons/activeresource.png', statusKey: 'active',
-      permission: { feature: 'Resources Tab', action: 'view' }
+      label: 'Active', link: '/project-management/projects/details/documents', icon: 'project-mangement-icons/documentation.png', statusKey: 'active',
+      permission: { feature: 'Documents Tab', action: 'view' }
     },
     {
-      label: 'Inactive', link: '/project-management/projects/details/inactive-resources', icon: 'project-mangement-icons/Inactiveresource.png', statusKey: 'inactive',
-      permission: { feature: 'Resources Tab', action: 'view' },
+      label: 'Archived ', link: '/project-management/projects/details/inactivedocuments', icon: 'project-mangement-icons/folder.png', statusKey: 'inactive',
+      permission: { feature: 'Documents Tab', action: 'view' },
     },
    
 
@@ -42,7 +44,7 @@ filteredTabs: any[] = [];
 
       }
     });
-    this.http.projectcountresource$.subscribe(() => {
+    this.http.projectcountdocuments$.subscribe(() => {
       this.getcountData(this.projectId);
     });
   }
@@ -57,18 +59,20 @@ filteredTabs: any[] = [];
   }
 
   statusGroups: any = {
-    active: ['assigned', 'active',],
-    inactive: ['released' ],
+    active: [ 'active',],
+    inactive: ['inactive' ],
    
   };
 
 getcountData(projectId: any): void {
-  const statuses = 'assigned,released,active';
+  this.loading=true 
+  const statuses = 'inactive,active';
 
-  this.http.getData(`StatusCount?moduleName=Resource&entityId=${projectId}&statuses=${statuses}`)
+  this.http.getData(`StatusCount?moduleName=projectdocuments&entityId=${projectId}&statuses=${statuses}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res: any) => {
+        this.loading=false
         this.statusCounts = {};
         const rawCounts: any = {};
 
@@ -88,6 +92,7 @@ getcountData(projectId: any): void {
         });
       },
       error: (err) => {
+        this.loading=false
         console.error('Error fetching phase status count', err);
       }
     });

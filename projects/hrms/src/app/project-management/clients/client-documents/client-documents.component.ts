@@ -15,10 +15,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { IEAV } from '../../../settings/project-management-configurations/models/project-type.modal';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+import { ClientDocumentsTabsComponent } from "../../../shared/project-management-tabs/client-documents-tabs/client-documents-tabs.component";
 @Component({
   selector: 'app-client-documents',
   imports: [Select, TranslateModule, CommonModule, ReactiveFormsModule, DateformatPipe, DataLoaderContentComponent,
-    NoDataFoundComponent, DownloadIconComponent],
+    NoDataFoundComponent, DownloadIconComponent, ClientDocumentsTabsComponent],
   templateUrl: './client-documents.component.html',
   styleUrl: './client-documents.component.scss'
 })
@@ -325,6 +326,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.getDocumentDetails(clientID);
         this.modalService.dismissAll();
+        this.http.setnewcountfornewdocumentscount()
         this.conformationPopup.openSuccessModal('Document archived successfully');
       },
       error: (err) => {

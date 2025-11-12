@@ -5,14 +5,13 @@
   font-weight: bold;
 }
 
-/* Highlighted Hours column */
 .spent-hours {
-  font-weight: 700;
+  font-weight: 600;
   color: #000;
-  font-size: 18px;
 }
 
-/* Total Row in popup */
+
+
 .total-row {
   background-color: #f8f9fa;
 
@@ -43,3 +42,51 @@
     border-top-right-radius: 0.325rem;
   }
 }
+
+.total-logged-hours{
+  font-weight: bold;
+}
+
+
+table td:first-child,
+table th:first-child {
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-table-content{
+  height: 70dvh !important;
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.status-closed {
+  color: #9AA2A7;
+}
+
+.status-extended {
+  color: #0056E6;
+}
+
+.status-yet-to-start {
+  color: #08B1FA;
+}
+
+.status-hold {
+  color: #EA362C;
+}
+
+.status-completed {
+  color: #00D520;
+}
+
+.status-in-progress{
+  color: #FF9500 ;
+}
+

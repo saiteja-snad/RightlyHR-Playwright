@@ -202,9 +202,9 @@
                 defaultLabel="Please select department name" formControlName="updatedepartment"
                 class="form-select custom-select"></p-multiSelect>
             </div>
-            <div *ngIf="updateprojectform.get('department')?.touched && updateprojectform.get('department')?.invalid"
+            <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
               class="error-msg">
-              <div *ngIf="updateprojectform.get('department')?.errors?.['required']">{{'Department name is
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is
                 required'|translate}}
               </div>
             </div>

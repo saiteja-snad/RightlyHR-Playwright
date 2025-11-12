@@ -199,7 +199,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       // updateeffectiveDate: [null, Validators.required],
       // updatekickoffDate: [null, Validators.required],
       updateprojectType: [null, Validators.required],
-      updatedepartment: [[], Validators.required],
+      updatedepartment: [[], [Validators.required]],
       updateprojectDescription: [null],
       updateovertimeEligible: [false],
       updatebillable: [false],

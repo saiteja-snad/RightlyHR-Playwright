@@ -140,7 +140,7 @@ export class ContactInfoComponent {
     if (this.fieldConfigForm.valid) {
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : formValue.selectedRole;
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : formValue.selectedRole || '';
 
       if (this.isEditMode) {
         // Update operation

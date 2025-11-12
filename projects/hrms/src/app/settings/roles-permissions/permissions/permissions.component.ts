@@ -283,6 +283,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Leave Allocation Tab',
       'Flexible Leave Allocation Tab',
       'Flexible WFH Allocation Tab',
+      'Flexible Work Hours Allocation Tab',
       'Load Entitlements Tab',
       'Attendance Eligibility Criteria Tab',
       'Comp Off Entitlement Tab',
@@ -489,6 +490,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   flexibleWFHTabsFields=[
     'Active Allocations Tab',
     'Allocation History Tab'
+  ]
+  flexibleWorkHoursTabsFields=[
+    'Work Hours Allocation History Tab',
+    'Work Hours Allocations Tab'
   ]
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',

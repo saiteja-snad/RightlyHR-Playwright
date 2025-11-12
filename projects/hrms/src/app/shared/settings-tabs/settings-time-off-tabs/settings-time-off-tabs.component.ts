@@ -57,6 +57,13 @@ export class SettingsTimeOffTabsComponent {
       permission: { feature: 'Flexible WFH Allocation Tab', action: 'view' },
       icon:'/settings-icon/flexible-leave-allocation-icon.png',
       subjectText:MODULE_INFOS.SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO,
+    },
+    {
+      label: 'Flexible Work Hours Allocation',
+      link: '/settings/timeoff-configurations/flexible-workhours-allocation',
+      permission: { feature: 'Flexible Work Hours Allocation Tab', action: 'view' },
+      icon:'/settings-icon/flexible-leave-allocation-icon.png',
+      subjectText:MODULE_INFOS.SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO,
     }
   ];
 

@@ -116,7 +116,10 @@ export const FLEXIBLE_WFH_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation', permission: 'Active Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view', permission: 'Allocation History Tab.view' },
 ]
-
+export const FLEXIBLE_WORKHOURS_ALLOCATION_TABS = [
+  { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation', permission: 'Work Hours Allocations Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view', permission: 'Work Hours Allocation History Tab.view' },
+]
 export const TIME_OFF_SUB_TABS = [
   { route: '/time-off/leaves/waiting-for-approval', permission: 'Waiting For Approval (Time Off).view' },
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },

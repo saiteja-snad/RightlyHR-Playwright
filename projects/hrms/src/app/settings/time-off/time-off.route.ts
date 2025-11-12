@@ -43,4 +43,12 @@ export default [
         
         ]
     },
+    {
+        path: 'flexible-workhours-allocation', children: [
+            { path: '', redirectTo: 'workhours-allocation', pathMatch: 'full' },
+            { path: 'workhours-allocation', loadComponent: () => import('./flexible-hours-allocation/hours-allocation/hours-allocation.component').then((m) => m.HoursAllocationComponent) },
+            { path: 'workhours-allocation-view', loadComponent: () => import('./flexible-hours-allocation/hours-allocation-view/hours-allocation-view.component').then((m) => m.HoursAllocationViewComponent) },
+        
+        ]
+    },
 ] as Route[];

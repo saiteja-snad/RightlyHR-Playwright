@@ -980,4 +980,8 @@ export const permissionsData = [
   { fields: 'Expenses All Employees List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses Team Manager List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Report - Export', View: false, Update: false, Create: false, Delete: false },
+  //flexible work hours Section
+  { fields: 'Flexible Work Hours Allocation Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Work Hours Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Work Hours Allocations Tab', View: false, Update: false, Create: false, Delete: false },
 ];

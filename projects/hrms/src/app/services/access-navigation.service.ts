@@ -62,6 +62,7 @@ import {
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
   FLEXIBLE_WFH_ALLOCATION_TABS,
+  FLEXIBLE_WORKHOURS_ALLOCATION_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
@@ -1245,7 +1246,15 @@ export class AccessNavigationService {
           }
         }
         break;
-
+        case '/settings/timeoff-configurations/flexible-workhours-allocation':
+        if (this.rbac.allowedToAccess('Flexible Work Hours Allocation Tab.view')) {
+          for (const item of FLEXIBLE_WORKHOURS_ALLOCATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/settings/timeoff-configurations/load-entitlements':
         if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
           return (route = '/settings/timeoff-configurations/load-entitlements');

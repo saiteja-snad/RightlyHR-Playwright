@@ -198,6 +198,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
     }
+    else if(url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')){
+    this.moduleName='Time Off';
+    this.componentName='Flexible Work Hours Allocation';
+   }
   }
 
   navigateToSettings() {

@@ -130,7 +130,7 @@ export class InactivePhasesProjectComponent {
   getPhaseData() {
     const params = {
       projectId: this.projectId,
-      status: 'completed,close'
+      status: 'completed,closed'
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {

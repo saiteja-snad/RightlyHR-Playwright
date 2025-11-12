@@ -64,13 +64,13 @@ export class ProjectsSideTabsforPhasesComponent {
 
   statusGroups: any = {
     active: ['yet to start', 'in progress', 'extended'],
-    inactive: ['completed', 'close'],
+    inactive: ['completed', 'closed'],
     hold: ['hold']
   };
 
 getcountData(projectId: any): void {
   this.loading=true
-  const statuses = 'yet to start,in progress,extended,hold,completed,close';
+  const statuses = 'yet to start,in progress,extended,hold,completed,closed';
   this.http.getData(`StatusCount?moduleName=Phase&entityId=${projectId}&statuses=${statuses}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({

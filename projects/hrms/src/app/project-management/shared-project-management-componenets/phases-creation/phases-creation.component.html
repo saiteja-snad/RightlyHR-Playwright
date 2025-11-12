@@ -131,13 +131,13 @@
                 </div>
 
                 <!--Color Picker-->
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6  mb-3">
                     <label for="color" class="form-label custom-label mb-2"> Color </label>
                     <input type="color" id="color" class="form-control custom-color" formControlName="color" />
                 </div>
                 
                 <!-- Project Description -->
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                     <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone Description</label>
                     <textarea id="phaseDescription"
                         (input)="formValidation.validateInput(addPhaseForm.get('phaseDescription'))" maxlength="500"

@@ -47,6 +47,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   loader: boolean | undefined;
   departmentIds: number[] = [];
   phaseData = [] as IPhases[];
+  resourceAuthorityid:any
   phaseDropdown: any[] = [];
   selectedPhaseId : any;
   resourcesData = [] as IResource[];
@@ -120,8 +121,9 @@ onRoleChange(selectedValue: any) {
 
 onPhaseChange(selectedValue: any) {
   if (selectedValue?.value) {
-    const phase = selectedValue.value;
-    console.log(phase);
+    const phase = selectedValue?.value;
+    this.resourceAuthorityid=selectedValue?.value?.pendingApprovalAuthority;
+    console.log( this.resourceAuthorityid);
     
     this.selectedPhaseId = phase.value ?? null;
     this.projectStartDate = phase.startDate ?? null;
@@ -134,6 +136,8 @@ onPhaseChange(selectedValue: any) {
     
     // Reset approval authority safely
     const resourceAuthorityControl = this.addResourceForm.get('resourceAuthority');
+    console.log(resourceAuthorityControl);
+    
     if (resourceAuthorityControl) {
       resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
       resourceAuthorityControl.disable();
@@ -148,7 +152,7 @@ onPhaseChange(selectedValue: any) {
 
   onAuthorityChange(selectedValue: any){
     if(selectedValue){
-      this.selectedAuthorityId = selectedValue.value.value;
+      this.selectedAuthorityId = selectedValue?.value?.value;
     }
   }
 
@@ -402,13 +406,15 @@ onPhaseChange(selectedValue: any) {
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
       phaseId : this.selectedPhaseId,
-      pendingApprovalAuthority : formValue?.resourceAuthority?.value,
+      pendingApprovalAuthority : this.addResourceForm.get('resourceAuthority')?.value || this.resourceAuthorityid,
       meta: {
       graphData: {
         color: formValue.color
       }
       }
     };
+    console.log(payload);
+    
     this.http.postdata(`ProjectResource`, payload).subscribe({
       next: (res) => {
         this.modalService.dismissAll();

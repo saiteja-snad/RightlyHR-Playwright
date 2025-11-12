@@ -89,6 +89,7 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/active': MODULE_INFOS.PROJECT_Info,
       '/project-management/projects/inactive': MODULE_INFOS.PROJECT_Info_Inactive,
       '/project-management/projects/hold': MODULE_INFOS.PROJECT_INFO_On_Hold,
+      '/project-management/clients/details/hold': MODULE_INFOS.PROJECT_INFO_On_Hold,
       '/project-management/time-sheet': MODULE_INFOS.TIME_SHEET_INFO,
       '/project-management/clients/details': MODULE_INFOS.CLIENT_INFORMATION_INFO,
       '/project-management/clients/details/info': MODULE_INFOS.CLIENT_INFORMATION_INFO,
@@ -229,7 +230,7 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Inactive Phases / Milestones';
     }
     else if (currentUrl === '/project-management/projects/details/hold-phases') {
-      this.componentname = ' Hold Phases / Milestones';
+      this.componentname = ' On Hold Phases / Milestones';
     }
 
 

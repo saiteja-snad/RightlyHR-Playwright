@@ -11,10 +11,12 @@ import { PmsSettingsTabsComponent } from "../../shared/pms-module-tabs/pms-setti
 import { AccordionModule } from 'primeng/accordion';
 import { Router } from '@angular/router';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { SettingsLockingSystemTabsComponent } from "../../shared/settings-tabs/settings-locking-system-tabs/settings-locking-system-tabs.component";
+import { SettingsTimesheetLockingTabsComponent } from "../../shared/settings-tabs/settings-timesheet-locking-tabs/settings-timesheet-locking-tabs.component";
 @Component({
   selector: 'app-settings-overview',
   imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
-    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent, AccordionModule],
+    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent, AccordionModule, SettingsLockingSystemTabsComponent, SettingsTimesheetLockingTabsComponent],
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -28,6 +30,7 @@ export class SettingsOverviewComponent {
   settingsPMSConfigurations = MODULE_INFOS.PMS_CONFIGURATION_MODULE_INFO;
   settingDynamicFormsModule = MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO;
   settingAttendanceConfigurationModule = MODULE_INFOS.SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO;
+  settingLockingsystemnModule = MODULE_INFOS.SETTINGS_LOCKINGSYSTEM_MODULE_INFO;
   
   constructor(
     public rbac: RbacService,

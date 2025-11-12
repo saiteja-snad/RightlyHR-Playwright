@@ -87,6 +87,12 @@ export const SETTINGS_AttendanceLock_TABS = [
   { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
   { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
 ];
+// Timesheet Locking Tabs
+export const SETTINGS_TIMESHEET_LOCKING_TABS = [
+  
+  { route: '/settings/timesheet-locking-configuration/pending-for-submission', permission: 'Timesheet Locking Pending Tab.view' },
+  { route: '/settings/timesheet-locking-configuration/published', permission: 'Timesheet Locking Published Tab.view' }
+];
 
 export const SETTINGS_DYNAMIC_FORMS_TABS = [
   { route: '/settings/dynamic-forms/active-forms', permission: 'Active Forms.view' },

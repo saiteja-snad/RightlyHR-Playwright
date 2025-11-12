@@ -77,7 +77,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
-
+   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
+   errorOccurred = false; 
+  errormodaldata: any;
+    lockMessages: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
@@ -90,7 +93,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({projects: this.fb.array([])});
     this.getResourceDetailsByManagerId();
-    this.getResourceData()
+    this.getResourceData();
+    this.getTimesheetLocks();
     this.getJobDetails()
     this.getTeamManagersDetails();
     this.getAllEmployeeDetails();
@@ -107,7 +111,159 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const m = Math.floor((seconds % 3600) / 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
+  TimesheetLockData: any;
+  getTimesheetLocks() {
+    const categoryIds = '30';
+    const params: any = {};
+    if (categoryIds) {
+      params.categoryId = categoryIds;
+    }
+    const queryString = `?categoryIds=${encodeURIComponent(params.categoryId)}`;
+    this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.TimesheetLockData = response.items;
+          this.checkTimesheetLock(this.TimesheetLockData);
+        },
+        error: (err: any) => {
+        },
+        complete: () => {
+        }
+      });
+  }
+  lockMessage: string | null = null;
+  lockextendMessage:string | null = null;
 
+ checkTimesheetLock(apiResponse: any, selectedStart?: Date, selectedEnd?: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Default to the component's current week if not provided; otherwise fall back to current month range
+  if (!selectedStart || !selectedEnd) {
+    if (this.start && this.end) {
+      selectedStart = new Date(this.start);
+      selectedEnd = new Date(this.end);
+    } else {
+      selectedStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      selectedEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    }
+  }
+
+  // Normalize incoming dates
+  selectedStart.setHours(0, 0, 0, 0);
+  selectedEnd.setHours(0, 0, 0, 0);
+
+  this.lockMessages = [];
+
+  if (!apiResponse || apiResponse.length === 0) return;
+
+  // Filter only records where end >= selectedStart (period not fully past)
+  const relevantRecords = apiResponse.filter((item: any) => {
+    const end = new Date(item.endDate);
+    end.setHours(0, 0, 0, 0);
+    return end >= selectedStart!;
+  });
+
+  // Sort by start date
+  relevantRecords.sort((a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+  relevantRecords.forEach((item: any) => {
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    const effective = new Date(item.effectiveDate);
+
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    effective.setHours(0, 0, 0, 0);
+
+    // Only show if overlaps selected week
+    if (selectedEnd! < start || selectedStart! > end) return;
+
+    const startStr = start.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const endStr = end.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const effStr = effective.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+    if (effective > today) {
+      // Future effective date
+      this.lockMessages.push({
+        type: 'upcoming',
+        text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+      });
+    } else if (effective < today) {
+      // Past effective date
+      this.lockMessages.push({
+        type: 'locked',
+        text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. Please contact HR/Admin for assistance.`
+      });
+    } else if (effective.getTime() === today.getTime()) {
+      // Effective today
+      this.lockMessages.push({
+        type: 'locked-today',
+        text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. Please contact HR/Admin for assistance.`
+      });
+    }
+  });
+
+  console.log(this.lockMessages);
+}
+  checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
+    const lockedItems = this.TimesheetLockData || [];
+    this.lockMessages = []; //  reset array each time
+    const today = new Date();
+
+    // Sort locks for consistent order
+    const sortedLocks = lockedItems.sort(
+      (a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
+
+    sortedLocks.forEach((item: any) => {
+      const lockStart = new Date(item.startDate);
+      const lockEnd = new Date(item.endDate);
+      const effective = new Date(item.effectiveDate);
+
+      // check overlap between selected date range and locked range
+      const overlaps =
+        (selectedStart <= lockEnd && selectedEnd >= lockStart) ||
+        (selectedStart >= lockStart && selectedStart <= lockEnd);
+
+      if (overlaps) {
+        const startStr = lockStart.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        });
+        const endStr = lockEnd.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        });
+        const effStr = effective.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        });
+
+        if (effective >= today) {
+          //  Future or current effective date
+          this.lockMessages.push({
+            type: 'upcoming',
+            text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. 
+                 Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+          });
+        } else {
+          // Past effective date (already locked)
+          this.lockMessages.push({
+            type: 'locked',
+            text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. 
+                 Please contact HR/Admin for assistance.`
+          });
+        }
+      }
+    });
+
+    // Optional: If you still want combined HTML message string for modal usage
+    this.errormodaldata = this.lockMessages.length > 0 ? this.lockMessages.map((m: { text: any; }) => m.text).join('<br><br>') : '';
+  }
   createDayEntry(day?: any, entryDate?: any, isProjectSelected: boolean = false): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
@@ -229,6 +385,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.date = [this.start, this.end];
     // Update the week range visually / in state
     this.setWeekRange(monday, sunday);
+    this.checkTimesheetLockByMonth(monday.toDate(), sunday.toDate()); // 🔹 check locks by mont
     // Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
     this.loadTimeSheetByResource(formattedStart);
@@ -478,6 +635,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakstartdate = this.start;
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
+      this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -493,6 +651,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakstartdate = this.start;
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
+      this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate()); 
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -830,7 +989,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: isBillable
+      isBillable: isBillable,
+       moduleId: 30,
     };
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
@@ -840,7 +1000,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Auto-save failed', err);
-        this.conformationPopup.openErrorModal(err.error.message);
+       // this.conformationPopup.openErrorModal(err.error.message);
+         this.errormodaldata = err.error.message;
+          const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
+          this.errorOccurred = true;
+         dayForm.reset();
+       // this.conformationPopup.openErrorModal(err.error.message);
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });
@@ -1415,7 +1584,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: formValue.isBillable || false
+      isBillable: formValue.isBillable || false,
+       moduleId: 30,
     };
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -1494,6 +1664,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: formValue.timesheetId || this.timesheetdata.timesheetId,
       weekStart: this.formattedweakendStart,
       employeeId: this.employeeId,
+      moduleId: 30,
       entries,
     };
   }
@@ -1520,7 +1691,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
-        this.conformationPopup.openSuccessModal(err.error.message);
+       // this.conformationPopup.openSuccessModal(err.error.message);
+         this.errormodaldata = err.error.message;
+        // this.modalService.open(this.errormodal,{ centered: true });
+          const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
       },
     });
   }

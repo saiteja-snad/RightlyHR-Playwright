@@ -48,7 +48,14 @@ export const MODULE_INFOS = {
     //Expenses Module Info
     EXPENSES_MODULE_INFO: "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
     //attendance Configuration Module Info
+   
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+    SETTINGS_LOCKINGSYSTEM_MODULE_INFO: "The Locking System module manages data access by defining restricted periods during which modifications are not allowed. Once a period is locked, users are prevented from adding or updating information within that timeframe.",
+    // locking system
+    SETTINGS_ATTENDANCE_CONFIGURATION_MODULEE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+    SETTINGS_TIMESHEETLOCKING_MODULE_INFO: "The Timesheet locking module enables Admin/HR to lock employee timesheets for a specific period, preventing any further edits or submissions once locked. It ensures data accuracy and compliance with payroll and reporting deadlines.",
+    SETTINGS_TIMESHEET_LOCKING_TABS: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+    
     //Pms Module Info
     PMS_REVIEW_CYCLE_LIST_MODULE_INFO: "This module enables creation and tracking of employee review cycles with department, team, and location-level mapping. Users can create review cycles and link them to specific business units in order to track their status, such as Created or Initiated.",
     PMS_REVIEW_CYCLE_EMPLOYEE_LIST_MODULE_INFO: "This module provides a detailed listing of employees mapped to specific review cycles, with filters for department, location, and promotion status. It displays key information like review templates, current status, and final ratings to support performance evaluation tracking.",

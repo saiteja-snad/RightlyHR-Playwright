@@ -331,7 +331,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Certification Details',
       'Employee Info Compensation Details',
       'Draft Tab',
-      "Letter Acknowledgment Configuration"
+      "Letter Acknowledgment Configuration",
+      "Timesheet Locking Configuration Module"
     ];
     return (
       enabledTabs.includes(field) &&
@@ -395,6 +396,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Settings Timeoff Module',
     'Assets Management Configuration Module',
     'Dynamic Forms Module',
+    "Timesheet Locking Configuration Module"
   ];
   employeeFields = [
     'Personal Tab',
@@ -516,6 +518,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   AttendanceTypeFields = [
     'Attendance Pending Tab',
     'Attendance Published Tab'
+  ];
+   Lockingsystemtabs = [
+    'Attendance Configuration Module',
+    'Timesheet Configuration Module'
+  ];
+    TymesheetTypeFields = [
+    'Timesheet Locking Pending Tab',
+    'Timesheet Locking Published Tab'
   ];
   sidebarTabsFields = [
     'Dashboard',
@@ -2051,6 +2061,30 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+  
+  isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+    isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  // Disable Create/Delete for 'Timesheet Locking Published Tab'
+  if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
+    return true;
+  }
+
+  // Existing logic: disable all if role is not selected
+  return !this.roleToFilter?.id;
+}
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

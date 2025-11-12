@@ -1,21 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
-            <app-project-resource-tab/>
+            <app-project-resource-tab />
         </div>
-    
-    <div class="w-100">
-        <ng-container *ngIf="loading; else maincontent">
-            <ng-template #loadingSpinner>
-                <div>
-                    <app-data-loader-content />
-                </div>
-            </ng-template>
-            <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-        </ng-container>
 
-        <ng-template #maincontent>
+        <div class="w-100">
+
             <div class="custom-table-content">
+                @if (!loading) {
                 <table class="w-100">
                     <thead>
                         <th>Phase/Milestone</th>
@@ -115,9 +107,13 @@
                         </ng-template>
                     </tbody>
                 </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
             </div>
-        </ng-template>
-    </div>
+
+        </div>
     </div>
 </div>
 

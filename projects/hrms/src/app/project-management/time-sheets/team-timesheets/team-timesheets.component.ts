@@ -178,7 +178,7 @@ export class TeamTimesheetsComponent {
           // Extract dates for header dynamically (use first record)
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
-              dayjs(d.date).format('ddd<br>MMM D')
+              dayjs(d.date).format('D MMM<br>ddd')
             );
           }
         }

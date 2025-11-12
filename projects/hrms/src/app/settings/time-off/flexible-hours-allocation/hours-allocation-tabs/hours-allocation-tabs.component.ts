@@ -18,14 +18,14 @@ export class HoursAllocationTabsComponent {
       label: 'Work Hours Allocations',
       icon: '/settings-icon/active-allocation.png',
       route:
-        '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation',
+        '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation',
       permission: { feature: 'Work Hours Allocations Tab', action: 'view' },
     },
     {
       label: 'Allocation History',
       icon: '/settings-icon/allocation-history.png',
       route:
-        '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view',
+        '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view',
       permission: { feature: 'Work Hours Allocation History Tab', action: 'view' },
     },
   ];

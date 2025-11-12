@@ -10,14 +10,14 @@
         </div>
       </form>
     </div>
-    <div class="d-flex align-items-center gap-2">
+    <!-- <div class="d-flex align-items-center gap-2">
       <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
       <div class="custom-p-select-content">
         <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
           optionValue="value" showClear="true" placeholder="Select employee name/Id"
           (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
       </div>
-    </div>
+    </div> -->
   </div>
 
             
@@ -32,10 +32,11 @@
     <table class="w-100">
         <thead>
             <tr>
-                <th>{{'Employee Name'|translate}}</th>
+                <th>{{'Employee/Role Name'|translate}}</th>
                 <th>{{'Effective From'|translate}}</th>
                 <th>{{'Effective To'|translate}}</th>
-                <th>{{'Days'|translate}}</th>
+                <th>{{'Half Day Min Hrs'|translate}}</th>
+                <th>{{'Full Day Min Hr'|translate}}s</th>
                 <th>{{'Allocated By'|translate}}</th>
                 <th>{{'Allocated On'|translate}}</th>
                 <th>{{'Status'|translate}}</th>
@@ -49,10 +50,11 @@
             @if (!isloading && getAllocationDetails.length > 0) {
             @for (item of getAllocationDetails; track item) {
             <tr>
-                <td>{{ item?.employeeId?.name || '-' }}</td>
+                <td>{{ item?.entityValue?.name || '-' }}</td>
                 <td>{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
                 <td>{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
-                <td>{{ item?.allowedDays || '-' }}</td>
+                <td>{{ item?.halfDayMinHrs || '-' }}</td>
+                <td>{{ item?.fullDayMinHrs || '-' }}</td>
                 <td>{{ item?.createdBy?.name || '-' }}</td>
                 <td>{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
                 <td>{{ item?.status ? item?.status:'-'  }}</td>

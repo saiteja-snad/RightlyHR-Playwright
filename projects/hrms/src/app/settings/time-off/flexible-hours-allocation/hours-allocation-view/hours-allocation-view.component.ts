@@ -83,10 +83,6 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
     this.getAllEmployeeDetails();
     this.getAllhoursallocations();
   }
-    openHistoryPopup(content: any, Details: IHoursAllocationViewModel): void {
-    this.getWfhallocationHistory(Details.employeeId.id);
-    this.modalService.open(content, { centered: true,size:'xl', backdrop: 'static', keyboard: false });
-  }
   // On year change
    onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
@@ -124,6 +120,7 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
   }
   // get all wfh allocations
   getAllhoursallocations(): void {
+    console.log('dsjfsdmf')
     this.isloading = true;
     if (
       !this.searchValue ||
@@ -133,7 +130,7 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
     ) {
       this.searchValue = null;
     }
-    let url = `FlexibleWfhAllocation/getAll?pageNumber=${this.pageNumber}&pageSize=${this.pageSize}`;
+    let url = `FlexibleWorkhoursAllocation/GetAll?pageNumber=${this.pageNumber}&pageSize=${this.pageSize}`;
 
     if (this.selectedYear) {
       url +=`&year=${this.selectedYear}`;};
@@ -200,13 +197,13 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
       status: 'Inactive',
     };
     this.http
-      .putData(`FlexibleWfhAllocation/update/${this.selectedId}`, payload)
+      .putData(`FlexibleWorkhoursAllocation/update/${this.selectedId}`, payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          
+          this.modal.openSuccessModal(`${res.data.entityValue.name} Work hours allocation has been inactivated.`);
           this.getAllhoursallocations();
-          this.modal.openSuccessModal(`${res.data.employeeId.name} Hours allocation has been inactivated.`);
-
         },
         error: (err: any) => {
           this.modalService.dismissAll();
@@ -225,12 +222,13 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
       status: 'Active',
     };
     this.http
-      .putData(`FlexibleWfhAllocation/update/${this.selectedId}`, payload)
+      .putData(`FlexibleWorkhoursAllocation/update/${this.selectedId}`, payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          
+          this.modal.openSuccessModal(`${res.data.entityValue.name} Work hours allocation has been activated`);
           this.getAllhoursallocations();
-          this.modal.openSuccessModal(`${res.data.employeeId.name} WFH allocation has been activated`);
         },
         error: (err: any) => {
           this.modalService.dismissAll();

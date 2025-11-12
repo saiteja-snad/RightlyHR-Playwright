@@ -83,35 +83,54 @@
                     </div>
                 </div>
 
-                <!-- Category Name -->
+                <!-- Type Name -->
                 <div class="col-md-4">
                     <label for="categoryName" class="form-label custom-label mb-2">
-                        {{ "Category Name" | translate }}<span class="text-danger">*</span>
+                        {{ "Type" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name"
-                            [showClear]="false" formControlName="categoryName" class="form-select custom-select" resetFilterOnHide="true"
-                            placeholder="Please select category name" (onChange)="getAllEmployees()">
+                        <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" optionValue="value"
+                            [showClear]="false" formControlName="type" class="form-select custom-select" resetFilterOnHide="true"
+                            placeholder="Please select type" (onChange)="getAllEmployees()">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
                             <ng-template let-location #item>{{ location.name }}</ng-template>
                         </p-select>
                     </div>
-                    <div *ngIf="hoursAllocationForm.get('categoryName')?.touched && hoursAllocationForm.get('categoryName')?.invalid"
+                    <div *ngIf="hoursAllocationForm.get('type')?.touched && hoursAllocationForm.get('type')?.invalid"
                         class="error-msg">
-                        <div *ngIf="hoursAllocationForm.get('categoryName')?.errors?.['required']">Please select category
-                            name</div>
+                        <div *ngIf="hoursAllocationForm.get('type')?.errors?.['required']">Please select type</div>
                     </div>
                 </div>
 
                 <!-- Employee Name -->
-                <div class="col-md-4">
+                 @if(hoursAllocationForm.get('type')?.value==='Role'){
+                  <div class="col-md-4" >
+                    <label for="roleName" class="form-label custom-label mb-2">
+                        {{ "Role Name" | translate }}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="roles" optionLabel="name" [filter]="true"
+                            filterBy="name" [showClear]="false" class="form-select custom-select"
+                            formControlName="roleId" placeholder="Select Role(s)" resetFilterOnHide="true"
+                            (onChange)="onSelectedEmployee($event.value, hoursAllocationForm)">
+                        </p-multiSelect>
+                    </div>
+                    <div *ngIf="hoursAllocationForm.get('roleId')?.touched && hoursAllocationForm.get('roleId')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="hoursAllocationForm.get('roleId')?.errors?.['required']">Please select at least one role
+                        </div>
+                    </div>
+                </div>
+                 }
+                 @if(hoursAllocationForm.get('type')?.value==='Employee'){
+                 <div class="col-md-4" >
                     <label for="employeeName" class="form-label custom-label mb-2">
                         {{ "Employee Name" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" [showClear]="false" class="form-select custom-select"
-                            formControlName="employeeName" placeholder="Select Employee(s)" resetFilterOnHide="true"
+                            formControlName="employeeId" placeholder="Select Employee(s)" resetFilterOnHide="true"
                             (onChange)="onSelectedEmployee($event.value, hoursAllocationForm)">
                             <ng-template let-selectedOption #selectedItem>
                                 {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{
@@ -121,12 +140,14 @@
                                 }}</ng-template>
                         </p-multiSelect>
                     </div>
-                    <div *ngIf="hoursAllocationForm.get('employeeName')?.touched && hoursAllocationForm.get('employeeName')?.invalid"
+                    <div *ngIf="hoursAllocationForm.get('employeeId')?.touched && hoursAllocationForm.get('employeeId')?.invalid"
                         class="error-msg">
-                        <div *ngIf="hoursAllocationForm.get('employeeName')?.errors?.['required']">Please select at least one employee
+                        <div *ngIf="hoursAllocationForm.get('employeeId')?.errors?.['required']">Please select at least one employee
                         </div>
                     </div>
                 </div>
+                 }
+                
             </div>
         </div>
 
@@ -134,10 +155,11 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee Name</th>
+                        <th>Employee/Role Name</th>
                         <th>Effective From</th>
                         <th>Effective To</th>
-                        <th>Days</th>
+                        <th>Half Day Min Hrs</th>
+                        <th>Full Day Min Hrs</th>
                         <th>Allocated By</th>
                         <th>Allocated On</th>
                         <!-- <th>Last Updated By</th>
@@ -174,10 +196,20 @@
                             </div>
                         </td>
                         <td>
-                            <input type="number" formControlName="days" class="form-control custom-input mt-2"
-                                placeholder="Enter number of days" min="0" max="365" (keypress)="validateInput($event)" />
-                            <div *ngIf="emp.get('days')?.touched && (emp.get('days')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
-                                <div *ngIf="emp.get('days')?.errors?.['required']">Please enter a valid number of days</div>
+                            <input type="number" formControlName="halfminhours" class="form-control custom-input mt-2"
+                                placeholder="Enter half day min hrs" min="0" max="24" />
+                            <div *ngIf="emp.get('halfminhours')?.touched && (emp.get('halfminhours')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
+                                <div *ngIf="emp.get('halfminhours')?.errors?.['required']">Please enter a valid number of hours</div>
+                                <div *ngIf="emp.errors?.['invalidDaysRange']" class="error-msg">
+                                    Days cannot exceed date range
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="number" formControlName="fullminhours" class="form-control custom-input mt-2"
+                                placeholder="Enter full day min hrs" min="0" max="24" />
+                            <div *ngIf="emp.get('fullminhours')?.touched && (emp.get('fullminhours')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
+                                <div *ngIf="emp.get('fullminhours')?.errors?.['required']">Please enter a valid number of hours</div>
                                 <div *ngIf="emp.errors?.['invalidDaysRange']" class="error-msg">
                                     Days cannot exceed date range
                                 </div>

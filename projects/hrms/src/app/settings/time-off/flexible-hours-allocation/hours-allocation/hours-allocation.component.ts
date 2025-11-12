@@ -14,6 +14,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { ILocation, ISubLocation, IShiftHeader, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
+import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 
 @Component({
   selector: 'app-hours-allocation',
@@ -35,7 +36,7 @@ export class HoursAllocationComponent {
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
-  categoryDetails = [{ name: 'WFH', value: 'WFH' }];
+  categoryDetails = [{ name: 'Role', value: 'Role' },{ name: 'Employee', value: 'Employee' }];
   employeeDetails = [] as IEmployees[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   isloading = false;
@@ -44,6 +45,7 @@ export class HoursAllocationComponent {
   selectedYear: number | null = null;
   minYearDate!: string;
   maxYearDate!: string;
+  roles: IRoles[] = [];
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -60,6 +62,7 @@ export class HoursAllocationComponent {
     this.inititializeForm();
     this.getAllLocations();
     this.handleFormValueChanges();
+    this.getAllroles();
   }
 
   inititializeForm() {
@@ -68,12 +71,24 @@ export class HoursAllocationComponent {
       location: [{ value: '', disabled: true }, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-      categoryName: [{ value: '', disabled: true }, Validators.required],
-      employeeName: [{ value: '', disabled: true }, Validators.required],
+      type: [{ value: '', disabled: true }, Validators.required],
+      employeeId: [{ value: '', disabled: true }, Validators.required],
+      roleId:[{ value: '', disabled: true }, Validators.required],
       employees: this.fb.array([]) as FormArray,
     });
   }
-
+  getAllroles(): void {
+    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.roles = data as IRoles[];
+        console.log(this.roles)
+        
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    })
+  }
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
     let yearsList: number[] = [];
@@ -104,7 +119,7 @@ export class HoursAllocationComponent {
   //method to enable the category name
   categoryenable() {
     if (this.hoursAllocationForm.get('shift')?.value) {
-      this.hoursAllocationForm.get('categoryName')?.enable();
+      this.hoursAllocationForm.get('type')?.enable();
     }
   }
 
@@ -155,6 +170,7 @@ export class HoursAllocationComponent {
   }
 
   getAllEmployees() {
+    if(this.hoursAllocationForm?.get('type')?.value==='Employee'){
     const payload = {
       locationId: this.hoursAllocationForm.get('location')?.value?.id,
       subLocationId: this.hoursAllocationForm.get('subLocation')?.value?.id,
@@ -171,14 +187,19 @@ export class HoursAllocationComponent {
               employee.middleName ? employee.middleName + ' ' : ''
             }${employee.lastName}`,
           }));
-          this.hoursAllocationForm.get('employeeName')?.enable();
+          this.hoursAllocationForm.get('employeeId')?.enable();
         },
         error: (err) => {
           console.error('Error fetching employees:', err);
-          this.hoursAllocationForm.get('employeeName')?.reset();
-          this.hoursAllocationForm.get('employeeName')?.disable();
+          this.hoursAllocationForm.get('employeeId')?.reset();
+          this.hoursAllocationForm.get('employeeId')?.disable();
         },
       });
+      
+    }
+    else{
+      this.hoursAllocationForm.get('roleId')?.enable();
+    }
   }
 
   get employeeFormArray(): FormArray {
@@ -198,9 +219,10 @@ export class HoursAllocationComponent {
       employeeArray?.push(
         this.fb.group(
           {
-            employeeId: [selectedEmp?.employeeId],
+            employeeId: [selectedEmp?.employeeId ? selectedEmp?.employeeId :selectedEmp?.id],
             fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
-            days: ['', [Validators.required]],
+            halfminhours: ['', [Validators.required]],
+            fullminhours: ['', [Validators.required]],
             effectivedate: [
              { value: '', disabled: !this.hoursAllocationForm.get('year')?.value },
               [Validators.required, this.validateEffectiveDate?.bind(this)],
@@ -294,7 +316,7 @@ validateEffectiveDate(control: any) {
     );
     //Update the multiSelect FormControl so the checkbox deselects
     this.hoursAllocationForm
-      .get('employeeName')
+      .get('employeeId')
       ?.setValue(this.selectedEmployees);
   }
 
@@ -335,8 +357,8 @@ validateEffectiveDate(control: any) {
         resetAndDisable([
           'subLocation',
           'shift',
-          'categoryName',
-          'employeeName',
+          'type',
+          'employeeId',
         ]);
       });
 
@@ -347,8 +369,8 @@ validateEffectiveDate(control: any) {
         resetAndDisable([
           'subLocation',
           'shift',
-          'categoryName',
-          'employeeName',
+          'type',
+          'employeeId',
         ]);
       });
 
@@ -356,19 +378,19 @@ validateEffectiveDate(control: any) {
       .get('subLocation')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetAndDisable(['shift', 'categoryName', 'employeeName']);
+        resetAndDisable(['shift', 'type', 'employeeId']);
       });
 
     form
-      .get('categoryName')
+      .get('type')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetOnly(['employeeName', 'employees']);
+        resetOnly(['employeeId', 'employees']);
         (this.hoursAllocationForm.get('employees') as FormArray).clear();
       });
 
     form
-      .get('employeeName')
+      .get('employeeId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         resetOnly(['days']);
@@ -383,9 +405,12 @@ validateEffectiveDate(control: any) {
     const formData = form.value;
     // Build payload array from employees FormArray
     const employees = formData.employees || [];
+    debugger
     const payload = employees.map((emp: any) => ({
-      employeeId: emp.employeeId,
-      allowedDays: Number(emp.days) || 0,
+      entityType:this.hoursAllocationForm.get('type')?.value,
+      entityValue: emp.employeeId?emp.employeeId?.toString():null,
+      halfDayMinHrs: Number(emp.halfminhours) || 0,
+      fullDayMinHrs: Number(emp.fullminhours) || 0,
       effectiveFromDate: emp.effectivedate
         ? moment(emp.effectivedate).format('YYYY-MM-DD')
         : null,
@@ -393,8 +418,6 @@ validateEffectiveDate(control: any) {
         ? moment(emp.effectiveto).format('YYYY-MM-DD')
         : null,
       createdBy: loggedInUserId.employeeId,
-      frequency: 'Monthly',
-      flexibleAllocation: true,
       updatedBy: loggedInUserId.employeeId,
       status: 'Active',
     }));
@@ -403,7 +426,7 @@ validateEffectiveDate(control: any) {
       return;
     }
     this.http
-      .postdata('FlexibleWfhAllocation/create', payload)
+      .postdata('FlexibleWorkhoursAllocation/create', payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -414,9 +437,9 @@ validateEffectiveDate(control: any) {
           this.hoursAllocationForm.get('location')?.disable();
           this.hoursAllocationForm.get('subLocation')?.disable();
           this.hoursAllocationForm.get('shiftName')?.disable();
-          this.hoursAllocationForm.get('categoryName')?.disable();
+          this.hoursAllocationForm.get('type')?.disable();
           this.hoursAllocationForm.get('shift')?.disable();
-          this.modal.openSuccessModal('Flexible WFH allocated successfully');
+          this.modal.openSuccessModal('Flexible Work Hours allocated successfully');
         },
         error: (err: any) => {
           this.isloading = false;
@@ -424,7 +447,7 @@ validateEffectiveDate(control: any) {
           this.modal.openErrorModal(
             err.error.message
               ? err.error.message
-              : 'Failed to allocate WFH. Please try again later'
+              : 'Failed to allocate Work Hours. Please try again later'
           );
         },
         complete: () => {
@@ -440,7 +463,7 @@ validateEffectiveDate(control: any) {
     this.hoursAllocationForm.get('subLocation')?.disable();
     this.hoursAllocationForm.get('location')?.disable();
     this.hoursAllocationForm.get('shiftName')?.disable();
-    this.hoursAllocationForm.get('categoryName')?.disable();
+    this.hoursAllocationForm.get('type')?.disable();
     this.hoursAllocationForm.get('shift')?.disable();
   }
   //to open the confirmation popup

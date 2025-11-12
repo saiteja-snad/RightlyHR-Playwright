@@ -1,6 +1,6 @@
 export interface IHoursAllocationViewModel {
 id: number,
-employeeId: IEmployeeResponse, 
+entityValue: IEmployeeResponse, 
 flexibleAllocation: boolean, 
 allowedDays: 10,
 createdAt: any
@@ -8,7 +8,10 @@ createdBy: IEmployeeResponse
 effectiveFromDate: string,
 effectiveToDate: string,
 isLatest?: boolean,
-status?: string
+status?: string,
+entityType?:string,
+halfDayMinHrs?:string,
+fullDayMinHrs?:string
 }
 export interface IEmployeeResponse{
     id: number, 

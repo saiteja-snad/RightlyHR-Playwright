@@ -446,7 +446,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
           };
           // Example usage
           // const chartData = response.data.data;
-          const labels = chartData.map((item: any) => item.name);
+          const labels = chartData.map((item: any) => item.projectColor.graphData.code?item.projectColor.graphData.code:item.name);
           const billable = chartData.map((item: any) =>
             convertToHours(item.billableHours)
           );

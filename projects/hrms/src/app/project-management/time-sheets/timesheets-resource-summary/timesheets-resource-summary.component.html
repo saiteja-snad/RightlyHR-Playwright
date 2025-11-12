@@ -134,6 +134,7 @@
                             <table class="w-100">
                                 <thead>
                                     <th>{{'Project Name'|translate}}</th>
+                                    <th>{{'Department'|translate}}</th>
                                     <th>{{'Phase'|translate}}</th>
                                     <th>{{'Role'|translate}}</th>
                                     <th>{{'Total Hours'|translate}}</th>
@@ -141,11 +142,12 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let item of projectSummeryData">
-                                        <td class="project-name">{{item.projectName}}</td>
-                                        <td class="project-name">{{item.phaseName}}</td>
-                                        <td class="project-name">{{item.role}}</td>
+                                        <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
+                                        <td class="project-name">{{item.department?item.department:'-'}}</td>
+                                        <td class="project-name">{{item.phaseName?item.phaseName:'-'}}</td>
+                                        <td class="project-name">{{item.role?item.role:'-'}}</td>
                                         <td><span
-                                                class="logged-hrs">{{item.loggedHours}}</span>/{{item.allocatedHours}}hrs
+                                                class="logged-hrs">{{item.loggedHours?item.loggedHours:'-'}}</span>/{{item.allocatedHours?item.allocatedHours:''}}hrs
                                         </td>
                                         <td class="text-center">
                                             <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{

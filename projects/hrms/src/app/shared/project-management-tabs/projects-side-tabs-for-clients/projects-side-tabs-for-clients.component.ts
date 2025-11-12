@@ -27,7 +27,7 @@ export class ProjectsSideTabsForClientsComponent {
       permission: { feature: 'Project Details Tab', action: 'view' },
     },
     {
-      label: 'Hold ', link: '/project-management/clients/details/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
+      label: 'On Hold ', link: '/project-management/clients/details/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
   ];

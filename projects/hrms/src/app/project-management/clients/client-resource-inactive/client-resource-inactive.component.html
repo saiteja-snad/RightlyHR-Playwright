@@ -4,63 +4,64 @@
     <div class="mb-3">
         <app-client-resource-tab />
     </div>
-
-    <div class="custom-table-content">
-        @if (!loading) {
-        <table class="w-100">
-            <thead>
-                <th>Phase/Milestone</th>
-                <th>Employee ID</th>
-                <th>Name</th>
-                <th>Designation</th>
-                <th>Role</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Project Assigned</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Allocated Hours</th>
-                <th>Timesheet Approval Authority</th>
-                <th>Status</th>
-                <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
+    
+    <div class="resource-right-content">
+        <div class="custom-table-content">
+            @if (!loading) {
+            <table class="w-100">
+                <thead>
+                    <th>Phase/Milestone</th>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Project Assigned</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Allocated Hours</th>
+                    <th>Timesheet Approval Authority</th>
+                    <th>Status</th>
+                    <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     } -->
-            </thead>
-            <tbody>
-                <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
-                    <tr *ngFor="let data of resourcesData">
-                        <td>{{ data?.phase?.phaseName || '-'}}</td>
-                        <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
-                        <td>{{ data?.employee?.name || '-' }}</td>
-                        <td>{{ data?.employee?.designation || '-' }}</td>
-                        <td>{{ data?.role || '-' }}</td>
-                        <td>{{ data?.employee?.workMail || '-' }}</td>
-                        <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber
-                            ||'' }}</td>
-                        <td>{{ data?.project?.projectName || '-' }}</td>
-                        <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
-                        <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                        <td>{{ data?.allocatedHours || '-' }}</td>
-                        <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
-                        <td>
-                            <div>
-                                <span>{{ (data?.status | titlecase) || '-' }}</span>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
+                        <tr *ngFor="let data of resourcesData">
+                            <td>{{ data?.phase?.phaseName || '-'}}</td>
+                            <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
+                            <td>{{ data?.employee?.name || '-' }}</td>
+                            <td>{{ data?.employee?.designation || '-' }}</td>
+                            <td>{{ data?.role || '-' }}</td>
+                            <td>{{ data?.employee?.workMail || '-' }}</td>
+                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber
+                                ||'' }}</td>
+                            <td>{{ data?.project?.projectName || '-' }}</td>
+                            <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
+                            <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                            <td>{{ data?.allocatedHours || '-' }}</td>
+                            <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
+                            <td>
+                                <div>
+                                    <span>{{ (data?.status | titlecase) || '-' }}</span>
 
-                                <ng-container
-                                    *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
-                                    <span type="button" [ngbPopover]="statusReasonPopover">
-                                        <app-info-icon />
-                                    </span>
-                                </ng-container>
+                                    <ng-container
+                                        *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                                        <span type="button" [ngbPopover]="statusReasonPopover">
+                                            <app-info-icon />
+                                        </span>
+                                    </ng-container>
 
-                                <ng-template #noStatusReason></ng-template>
-                            </div>
+                                    <ng-template #noStatusReason></ng-template>
+                                </div>
 
-                            <ng-template #statusReasonPopover>
-                                <p class="mb-0">{{ data.reason }}</p>
-                            </ng-template>
-                        </td>
-                        <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
+                                <ng-template #statusReasonPopover>
+                                    <p class="mb-0">{{ data.reason }}</p>
+                                </ng-template>
+                            </td>
+                            <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
                             this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center"
                                 *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
@@ -82,22 +83,22 @@
                                 <td class="text-center text-muted">-</td>
                             </ng-template>
                             } -->
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-        }
-        @else {
-        <app-data-loader-content />
-        }
+                        </tr>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
 
+        </div>
     </div>
-
 </div>
 
 <!--Update Popup-->

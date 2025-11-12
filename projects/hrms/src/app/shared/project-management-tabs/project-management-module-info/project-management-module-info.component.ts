@@ -96,11 +96,13 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/clients/details/projects': MODULE_INFOS.CLIENT_Projects_INFO,
       '/project-management/clients/details/inactiveprojects': MODULE_INFOS.CLIENT_Projects_INFO,
       '/project-management/clients/details/resources': MODULE_INFOS.CLIENT_Resource_INFO,
+      '/project-management/clients/details/inactive-resources': MODULE_INFOS.CLIENT_Resource_Inactive,
       '/project-management/projects/details/information': MODULE_INFOS.Project_Details_INFO,
       '/project-management/projects/details/contact-info': MODULE_INFOS.Contacts_Related_to_Projects,
       '/project-management/projects/details/documents': MODULE_INFOS.Documents_Project,
       '/project-management/clients/details/documents': MODULE_INFOS.CLIENT_Documents_INFO,
       '/project-management/projects/details/resources': MODULE_INFOS.Resources_Project,
+      '/project-management/projects/details/inactive-resources': MODULE_INFOS.Inactive_Resources,
       '/project-management/projects/details/timesheet/summary': MODULE_INFOS.PROJECT_Time_sheet_SUMMARY_VIEW,
       '/project-management/projects/details/timesheet/detailed': MODULE_INFOS.PROJECT_Detalied_view,
       '/project-management/projects/details/inactivedocuments': MODULE_INFOS.Inactive_Documents_Project,
@@ -158,12 +160,16 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/inactiveprojects') {
       this.componentname = 'Inactive Projects';
     }
-       else if (currentUrl === '/project-management/clients/details/hold') {
+    else if (currentUrl === '/project-management/clients/details/hold') {
       this.componentname = 'On Hold Projects';
     }
 
     else if (currentUrl === '/project-management/clients/details/resources') {
-      this.componentname = 'Resources';
+      this.componentname = 'Active Resources';
+    }
+
+    else if (currentUrl === '/project-management/clients/details/inactive-resources') {
+      this.componentname = 'Inactive Resources';
     }
     else if (currentUrl === '/project-management/clients/details/timesheet/summary' || currentUrl === '/project-management/clients/details/timesheet/detailed') {
       this.componentname = 'Timesheets';
@@ -187,7 +193,10 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Contact Information';
     }
     else if (currentUrl === '/project-management/projects/details/resources') {
-      this.componentname = 'Resources';
+      this.componentname = 'Active Resources';
+    }
+    else if (currentUrl === '/project-management/projects/details/inactive-resources') {
+      this.componentname = 'Inactive Resources';
     }
     else if (currentUrl === '/project-management/projects/details/timesheet/summary' || currentUrl === '/project-management/projects/details/timesheet/detailed') {
       this.componentname = 'Timesheets';

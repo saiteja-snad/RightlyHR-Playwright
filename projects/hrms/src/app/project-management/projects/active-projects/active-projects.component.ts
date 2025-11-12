@@ -390,6 +390,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
     this.selectedProject = { ...project }; // store project details
   }
+  
+  closeall(){
+    this.modalService.dismissAll()
+  }
 
   confirmStatusChange(modal: any) {
     if (!this.selectedProject) return;

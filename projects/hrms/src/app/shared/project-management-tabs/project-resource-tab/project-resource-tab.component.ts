@@ -18,11 +18,11 @@ export class ProjectResourceTabComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
-      label: 'Active', link: '/project-management/projects/details/resources', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
+      label: 'Active', link: '/project-management/projects/details/resources', icon: 'project-mangement-icons/activeresource.png', statusKey: 'active',
       permission: { feature: 'Resources Tab', action: 'view' }
     },
     {
-      label: 'Inactive', link: '/project-management/projects/details/inactive-resources', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
+      label: 'Inactive', link: '/project-management/projects/details/inactive-resources', icon: 'project-mangement-icons/Inactiveresource.png', statusKey: 'inactive',
       permission: { feature: 'Resources Tab', action: 'view' },
     },
    

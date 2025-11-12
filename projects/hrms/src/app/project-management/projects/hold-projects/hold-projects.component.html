@@ -10,7 +10,8 @@
             <app-projects-side-tabs />
         </div>
 
-        <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+        <div class="main-content"
+            [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
             <div *ngIf="isActive('/project-management/clients')" class="mb-3">
                 <app-projects-side-tabs-for-clients />
             </div>
@@ -20,7 +21,8 @@
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                <input type="search" #search="ngModel" [(ngModel)]="searchValue"
+                    class="form-control custom-search-input"
                     placeholder="Search by client name / project name / project type" aria-label="Search"
                     aria-describedby="basic-addon1">
             </div>
@@ -35,7 +37,8 @@
             </ng-container>
 
             <ng-template #maincontent>
-                <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
+                <div class="custom-table-content"
+                    [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
                     <table class="w-100">
                         <thead>
                             <th>Client Name</th>
@@ -46,7 +49,7 @@
                             <th>Effective Date</th>
                             <th>Kickoff Date</th> -->
                             <th>Project Type</th>
-                          <th>Department</th>
+                            <th>Department</th>
                             <th>Status</th>
                             @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
                             inactiveClientStatus!=='inactive'){
@@ -59,7 +62,8 @@
                                     <tr *ngFor="let project of filteredProjects; let i = index">
                                         <td>{{ project.client.clientName }}</td>
                                         <td>
-                                            <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
+                                            <a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                                                project.projectName }}</a>
                                         </td>
                                         <td>{{ project?.meta?.graphData?.code || '-' }}</td>
                                         <!-- <td>{{ project.startDate | dateformat }}</td>
@@ -67,7 +71,8 @@
                                         <td>{{ project.effectiveDate | dateformat }}</td>
                                         <td>{{ project.kickoffDate | dateformat }}</td> -->
                                         <td>{{ project.projectType }}</td>
-                                        <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
+                                        <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}
+                                        </td>
                                         <td class="text-capitalize">{{ project.status }}</td>
                                         @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
                                         inactiveClientStatus!=='inactive'){
@@ -80,6 +85,11 @@
                                                     <li (click)="openModalstatus(statuschanges,project)">
                                                         <a class="dropdown-item">
                                                             <i class="bi bi-check-circle me-2"></i>Active
+                                                        </a>
+                                                    </li>
+                                                    <li (click)="openModalstatus(statuschangeshold,project)">
+                                                        <a class="dropdown-item">
+                                                            <i class="bi bi-slash-circle  me-2"></i>Inactive
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -110,8 +120,24 @@
             <p class="confirmation-text pt-3">{{'Are you sure you want to Active this project?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
+                translate}}</button>
         </div>
     </div>
+</ng-template>
+
+
+<ng-template #statuschangeshold let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Inactive this project?'}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+    </div>
+  </div>
 </ng-template>

@@ -18,15 +18,15 @@ export class ProjectsSideTabsComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
-      label: 'Active', link: '/project-management/projects/active', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
+      label: 'Active', link: '/project-management/projects/active', icon: 'project-mangement-icons/activeprojects.png', statusKey: 'active',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
     {
-      label: 'Inactive', link: '/project-management/projects/inactive', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
+      label: 'Inactive', link: '/project-management/projects/inactive', icon: 'project-mangement-icons/Inactiveprojects.png', statusKey: 'inactive',
       permission: { feature: 'Project Details Tab', action: 'view' },
     },
     {
-      label: 'On Hold ', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
+      label: 'On Hold ', link: '/project-management/projects/hold', icon: 'project-mangement-icons/holdprojects.png', statusKey: 'hold',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
   ];

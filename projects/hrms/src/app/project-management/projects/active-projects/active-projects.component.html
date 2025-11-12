@@ -390,7 +390,7 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close();closeall()">{{'Yes'}}</button>
     </div>
   </div>
 </ng-template>
@@ -399,7 +399,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <app-confirmation-icon />
-      <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this client?'}}</p>
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this project?'}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>

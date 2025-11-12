@@ -8,13 +8,14 @@
             @if (!loading) {
             <table class="w-100">
                 <thead>
-                    <th>Phase/Milestone</th>
+       
                     <th>Employee ID</th>
                     <th>Name</th>
                     <th>Designation</th>
                     <th>Role</th>
                     <th>Email</th>
                     <th>Phone Number</th>
+                                 <th>Phase / Milestone</th>
                     <th>Project Assigned</th>
                     <th>Start Date</th>
                     <th>End Date</th>
@@ -29,13 +30,14 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
-                            <td>{{ data?.phase?.phaseName || '-'}}</td>
+                        
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
+                                <td>{{ data?.phase?.phaseName || '-'}}</td>
                             <td>{{ data?.project?.projectName || '-' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>

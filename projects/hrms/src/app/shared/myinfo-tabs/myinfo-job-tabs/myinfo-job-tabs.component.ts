@@ -44,11 +44,13 @@ filterTabs(): void {
     { label: 'No Due Clearance Info', link: '/myinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'My Info No Due Clearance Details', action: 'view' } },
     { label: 'Contract Info', link: '/myinfo/job/contactor-info', icon: '/my-info-icons/contractor.png', permission: { feature: 'My Info Contract Details', action: 'view' } },
     { label: 'Cards', link: '/myinfo/job/cards', icon: '/cards-icons/Allocated.png', permission: { feature: 'My Info Card Details', action: 'view' } },
-    
+    { label: 'Project Info', link: '/myinfo/job/project-info', icon: '/my-info-icons/project.png', permission: { feature: 'My Info Project Details', action: 'view' } },
+
+
     // { label: 'Offboarding Info', link: '/myinfo/job/employmentType', icon: '/images/offboarding.png', permission: { feature: 'My Info Offboarding Details', action: 'view' } },
 
   ];
-  
+
   this.navTabs = allTabs;
 }
 

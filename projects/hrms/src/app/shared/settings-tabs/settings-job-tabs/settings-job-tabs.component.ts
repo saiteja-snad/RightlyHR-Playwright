@@ -18,7 +18,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Job Type', route: '/settings/employee-fields/job/jobtype', permission: { feature: 'Job Type', action: 'view' } },
     { label: 'Probation Status', route: '/settings/employee-fields/job/probationstatus', permission: { feature: 'Probation Status', action: 'view' } },
     { label: 'Background Check Status', route: '/settings/employee-fields/job/backgroundcheck', permission: { feature: 'Background check Status', action: 'view' } },
-    { label: 'Notice Period', route: '/settings/employee-fields/job/notice', permission: { feature: 'Notice Period', action: 'view' } },    
+    { label: 'Notice Period', route: '/settings/employee-fields/job/notice', permission: { feature: 'Notice Period', action: 'view' } },
     { label: 'Frequency', route: '/settings/employee-fields/job/frequency', permission: { feature: 'Frequency', action: 'view' } },
     { label: 'Pay Type', route: '/settings/employee-fields/job/paytype', permission: { feature: 'Paytype', action: 'view' } },
     { label: 'Overtime Eligibility', route: '/settings/employee-fields/job/overtime', permission: { feature: 'Overtime Eligibility', action: 'view' } },
@@ -40,9 +40,6 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Probation Frequency', route: '/settings/employee-fields/job/probation-frequency', permission: { feature: 'Signature Authority', action: 'view' }},
     { label: 'Roles and Responsibilities', route: '/settings/employee-fields/job/roles-and-responsibilities', permission: { feature: 'Signature Authority', action: 'view' }},
     {label: 'Letter Acknowledgement',route: '/settings/employee-fields/job/letter-acknowledgement',permission: { feature: 'Letter Acknowledgment Configuration', action: 'view' }},
-    {label: 'IT Support Category',route: '/settings/employee-fields/job/itsupport-category',permission: { feature: 'IT Support Category', action: 'view' }},
-    {label: 'IT Support Sub Category',route: '/settings/employee-fields/job/itsupport-sub-category',permission: { feature: 'IT Support Sub-Category', action: 'view' }},
-
   ];
 
   constructor(

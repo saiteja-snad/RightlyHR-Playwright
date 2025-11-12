@@ -54,6 +54,19 @@ export class ProjectTabsComponent {
         currentUrl.includes('/project-management/projects/details/timesheet/summary')
         || currentUrl.includes('/project-management/projects/details/timesheet/resource-summary');  
     }
+    if(link === '/project-management/projects/details/phases'){
+       return currentUrl.includes('/project-management/projects/details/inactive-phases') ||
+        currentUrl.includes('/project-management/projects/details/hold-phases') ||
+         currentUrl.includes('/project-management/projects/details/phases')
+        
+    }
+       if(link === '/project-management/projects/details/resources'){
+       return currentUrl.includes('/project-management/projects/details/resources') ||
+        currentUrl.includes('/project-management/projects/details/inactive-resources') 
+     
+        
+    }
+
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }

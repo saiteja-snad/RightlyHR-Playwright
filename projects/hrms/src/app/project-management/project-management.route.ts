@@ -35,6 +35,10 @@ import { ResourceViewSummaryComponent } from './shared-project-management-compon
 import { ProjectPhasesComponent } from './projects/project-phases/project-phases.component';
 import { HoldClientsComponent } from './clients/hold-clients/hold-clients.component';
 import { HoldProjectsComponent } from './projects/hold-projects/hold-projects.component';
+import { PhasesHoldComponent } from './projects/phases-hold/phases-hold.component';
+import { InactivePhasesProjectComponent } from './projects/inactive-phases-project/inactive-phases-project.component';
+import { ProjectInactiveResourcesComponent } from './projects/project-inactive-resources/project-inactive-resources.component';
+import { ClientResourceInactiveComponent } from './clients/client-resource-inactive/client-resource-inactive.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -55,6 +59,7 @@ export default [
                     { path: 'inactiveprojects', component: InacitveProjectsComponent },
                     { path: 'hold', component: HoldProjectsComponent },
                     { path: 'resources', component: ClientResourcesComponent },
+                       { path: 'inactive-resources', component: ClientResourceInactiveComponent },
                     {
                         path: 'timesheet', component: ClientTimeSheetsComponent,
                         children: [
@@ -95,6 +100,7 @@ export default [
                     { path: 'information', component: ProjectDetailesComponent },
                     { path: 'contact-info', component: ProjectContactsComponent },
                     { path: 'resources', component: ProjectResourcesComponent },
+                    { path: 'inactive-resources', component: ProjectInactiveResourcesComponent },
                     {
                         path: 'timesheet', component: ProjectTimesheetsComponent,
                         children: [
@@ -106,7 +112,9 @@ export default [
                     },
                     { path: 'documents', component: ProjectDocumentsComponent },
                     { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
-                    { path: 'phases', component: ProjectPhasesComponent }
+                    { path: 'phases', component: ProjectPhasesComponent },
+                    { path: 'inactive-phases', component: InactivePhasesProjectComponent },
+                    { path: 'hold-phases', component:PhasesHoldComponent  }
                 ],
             }
         ],

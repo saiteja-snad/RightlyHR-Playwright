@@ -3,11 +3,19 @@
 }
 
 .main-content {
-    width: calc(100% - 8.5rem) !important;
+    width: 100% !important;
 }
 
 .project-main-active-content {
     width: calc(100% - 8.5rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 12rem) !important;
+}
+
+.project-client-table {
+    height: calc(100dvh - 15.25rem) !important;
 }
 
 .primary-link {
@@ -23,10 +31,6 @@
     text-decoration: none;
     color: var(--primary-color);
     text-decoration: underline;
-}
-
-.custom-table-content {
-    height: calc(100dvh - 12rem) !important;
 }
 
 .department-list-view {

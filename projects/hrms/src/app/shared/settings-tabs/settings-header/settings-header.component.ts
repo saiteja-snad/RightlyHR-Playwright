@@ -164,7 +164,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Client Document Type';
     }
-  
+
     else if (url.startsWith('/settings/project-management-config/project-document-type')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Document Type';
@@ -197,6 +197,18 @@ export class SettingsHeaderComponent implements OnInit {
      else if (url.startsWith('/settings/project-management-config/project-role')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
+    }
+     else if (url.startsWith('/settings/project-management-config/task')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Task';
+    }
+      else if (url.startsWith('/settings/it-configuration/itsupport-category')) {
+      this.moduleName = 'IT Configuration';
+      this.componentName = 'IT Support Category';
+    }
+    else if (url.startsWith('/settings/it-configuration/itsupport-sub-category')) {
+      this.moduleName = 'IT Configuration';
+      this.componentName = 'IT Support Sub Category';
     }
   }
 

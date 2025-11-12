@@ -5,10 +5,9 @@ import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { TabsModule } from 'primeng/tabs';
-
 @Component({
   selector: 'app-projects-side-tabs',
-  imports: [RouterModule, CommonModule,TabsModule],
+  imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './projects-side-tabs.component.html',
   styleUrl: './projects-side-tabs.component.scss'
 })
@@ -30,10 +29,9 @@ export class ProjectsSideTabsComponent {
       label: 'On Hold ', link: '/project-management/projects/hold', icon: 'main-menu-icons/project-management-resources.png', statusKey: 'hold',
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
-
   ];
 
-  constructor(public rbac: RbacService, private http: HttpService,private router: Router) { }
+  constructor(public rbac: RbacService, private http: HttpService, private router: Router) { }
 
   ngOnInit(): void {
     this.getcountData();
@@ -64,7 +62,7 @@ export class ProjectsSideTabsComponent {
     });
   }
 
- isActive(route: string): boolean {
+  isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
 }

@@ -42,7 +42,7 @@ export class ProjectResourceTabComponent {
 
       }
     });
-    this.http.projectcountfuntionphases$.subscribe(() => {
+    this.http.projectcountresource$.subscribe(() => {
       this.getcountData(this.projectId);
     });
   }

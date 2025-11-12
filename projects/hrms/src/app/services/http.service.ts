@@ -135,6 +135,13 @@ export class HttpService {
     this.projectphasecount.next();
   }
 
+  projectresourcecount = new Subject<void>();
+  projectcountresource$ = this.projectresourcecount.asObservable();
+  setnewcountfornewresourcecount() {
+    this.projectresourcecount.next();
+  }
+
+  
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();

@@ -480,6 +480,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.modalService.dismissAll();
       this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
       this.getResourceData(this.projectId);
+      this.http.setnewcountfornewresourcecount()
     },
     error: (err) => {
       this.loader = false;

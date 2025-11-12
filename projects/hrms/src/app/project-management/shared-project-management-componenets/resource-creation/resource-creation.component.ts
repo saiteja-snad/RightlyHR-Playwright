@@ -414,6 +414,7 @@ onPhaseChange(selectedValue: any) {
         this.modalService.dismissAll();
         this.addResourceForm.reset();
         this.http.setnewresourceDetails();
+        this.http.setnewcountfornewresourcecount();
         this.spinnerLoader = false;
         this.conformationPopup.openSuccessModal('Resource added successfully');
       },

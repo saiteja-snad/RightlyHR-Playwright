@@ -40,7 +40,7 @@ export class ClientResourceTabComponent {
       }
     });
     this.filterTabsByRbac();
-    this.http.projectcountfuntion$.subscribe(() => {
+    this.http.projectcountresource$.subscribe(() => {
       this.getcountData(this.projectId);
     });
   }

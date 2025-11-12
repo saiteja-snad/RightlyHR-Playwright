@@ -390,6 +390,7 @@
 <ng-template #reasonModal let-modal>
     <form [formGroup]="reasonForm" (ngSubmit)="submitReason(modal)">
         <div class="result-popup-content" ngbAutofocus>
+            
             <div>
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{ modalData?.title }}</p>

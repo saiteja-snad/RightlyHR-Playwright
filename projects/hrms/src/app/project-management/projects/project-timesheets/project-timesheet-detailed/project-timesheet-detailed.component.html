@@ -1,5 +1,6 @@
 <div class="custom-component-right-content">
     <div class="custom-table-content">
+        @if (!loading) {
         <table class="w-100">
             <thead>
                 <tr>
@@ -11,21 +12,26 @@
                 </tr>
             </thead>
             <tbody>
-                     @if(projectEmployeeDetails.length > 0){
+                @if(projectEmployeeDetails?.length > 0){
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
                     <td>
-                        <a class="project-name cursor" (click)="navigateView(project.employee.id)">{{ project.employee?.name }}
+                        <a class="project-name cursor" (click)="navigateView(project.employee.id)">{{
+                            project?.employee?.name }}
                         </a>
                     </td>
-                    <td>{{ project.roleName }}</td>
-                    <td>{{ project.startDate | dateformat }}</td>
-                    <td>{{ project.daysSpent || '-' }} Days</td>
-                    <td>{{ project.loggedHours || '0' }} Hrs</td>
+                    <td>{{ project?.roleName }}</td>
+                    <td>{{ project?.startDate | dateformat }}</td>
+                    <td>{{ project?.daysSpent || '-' }} Days</td>
+                    <td>{{ project?.loggedHours || '0' }} Hrs</td>
                 </tr>
-            }@else {
-                  <app-no-data-found/>
-            }
+                }@else {
+                <app-no-data-found />
+                }
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>

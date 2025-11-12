@@ -127,17 +127,15 @@
     }
 }
 
-.component-left-tabs-container{
+.component-left-tabs-container {
     height: calc(100dvh - 8rem);
 }
 
 .custom-table-content {
-    height: calc(100dvh - 15.5rem);
+    height: calc(100dvh - 15.25rem);
     min-height: 45vh;
 }
 
-@media only screen and (max-width: 1500px) {
-    .component-right-content {
-        width: calc(100% - 8.625rem) !important;
-    }
+.component-right-content {
+    width: calc(100% - 8.5rem) !important;
 }

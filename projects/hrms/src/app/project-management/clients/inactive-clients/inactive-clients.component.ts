@@ -15,10 +15,11 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { InactiveclientPipe } from "../../../Pipes/inactiveclient.pipe";
+import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 @Component({
   selector: 'app-inactive-clients',
   imports: [CommonModule, ProjectManagementModuleInfoComponent, FormsModule, NoDataFoundComponent,
-    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe],
+    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe, ClientSideTabsComponent],
   templateUrl: './inactive-clients.component.html',
   styleUrl: './inactive-clients.component.scss'
 })
@@ -82,6 +83,10 @@ export class InactiveClientsComponent implements OnInit {
     this.selectedClient = { ...client }; // store client details
   }
 
+    isActive(route: string): boolean {
+    return this.router.url.includes(route);
+  }
+
   confirmStatusChange(modal: any) {
     if (!this.selectedClient) return;
     const updatedClient = {
@@ -95,6 +100,7 @@ export class InactiveClientsComponent implements OnInit {
         this.conformationPopup.openSuccessModal('Client marked as Active successfully');
         modal.close();
         this.getClientsData();
+        this.http.setnewcountDetailsfornewclient();
       },
       error: (err) => {
         console.error('Error updating project status:', err);

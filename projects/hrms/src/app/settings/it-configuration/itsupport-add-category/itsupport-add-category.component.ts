@@ -10,16 +10,15 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SettingsLoaderComponent } from '../../../shared/settings-loader/settings-loader.component';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-
-
 @Component({
   selector: 'app-itsupport-add-category',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, NoDataFoundComponent],
   templateUrl: './itsupport-add-category.component.html',
   styleUrl: './itsupport-add-category.component.scss'
 })
+
 export class ItsupportAddCategoryComponent {
- @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   categoryForm!: FormGroup;
   updateForm!: FormGroup;
@@ -29,16 +28,10 @@ export class ItsupportAddCategoryComponent {
   selectedDeleteDep: any = null;
   subscription!: Subscription;
   loader = false;
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService,
-    public rbac: RbacService,
-  ) {
 
-  }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
+    private conformationPopup: OpenModalService, public formValidations: FormValidationsService, public rbac: RbacService) { }
+
   ngOnInit(): void {
     this.categoryForm = this.fb.group({
       categoryName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
@@ -46,21 +39,19 @@ export class ItsupportAddCategoryComponent {
     this.updateForm = this.fb.group({
       categoryName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
-
     this.getcategoryName();
   }
-//get category
+
+  //get category
   getcategoryName() {
     this.loader = true;
     this.subscription = this.http.getData('entityAttributeValues/getv1?entity=ItSupport&attribute=Category').subscribe({
       next: (data: any) => {
         this.loader = false;
-        console.log(data);
         this.categoryDetails = data;
       },
       error: (error: any) => {
         this.loader = false;
-
       }
     });
   }
@@ -72,7 +63,6 @@ export class ItsupportAddCategoryComponent {
       attribute: 'Category',
       value: this.categoryForm.value.categoryName.trim(),
     };
-
     this.subscription = this.http.postdata('entityAttributeValues', request).subscribe({
       next: () => {
         this.getcategoryName();
@@ -85,59 +75,20 @@ export class ItsupportAddCategoryComponent {
       }
     });
   }
+
   // UPDATE
-    updatecategoryName(modal: any) {
-      if (this.updateForm.valid && this.selectedId) {
-        const request: any = {
-          id:this.selectedId,
-          value: this.updateForm.value.categoryName.trim(),
-        };
-
-        this.subscription = this.http.postdata('entityAttributeValues/update', request).subscribe({
-          next: () => {
-            this.getcategoryName();
-            modal.close();
-            this.updateForm.reset();
-            this.conformationPopup.openSuccessModal('Category updated successfully');
-          },
-          error: (err: any) => {
-            const errorMessage = err.error?.Message;
-            this.conformationPopup.openErrorModal(errorMessage);
-          }
-        });
-      }
-    }
-    close(modal: any) {
-      modal.dismiss();
-      this.updateForm.reset();
-    }
-    openupdate(categoryNamelist: any) {
-      console.log(categoryNamelist);
-      this.selectedId = categoryNamelist.id;
-      this.categoryForm.reset();
-      this.updateForm.patchValue({ categoryName: categoryNamelist.value });
-      this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
-    }
-    // DELETE
-    opendelete(categoryNamelist: any) {
-      this.categoryForm.reset();
-      this.selectedDeleteDep = categoryNamelist;
-      this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
-    }
-    onDelete(modal: any) {
-      if (!this.selectedDeleteDep) return;
-
-      const deleteRequest: any = {
-        categoryName1: this.selectedDeleteDep.categoryName1,
-        isdeleted: "void",
-        sno: this.selectedDeleteDep.sno
+  updatecategoryName(modal: any) {
+    if (this.updateForm.valid && this.selectedId) {
+      const request: any = {
+        id: this.selectedId,
+        value: this.updateForm.value.categoryName.trim(),
       };
-
-      this.http.postdata('categoryName/UPDATER', deleteRequest).subscribe({
+      this.subscription = this.http.postdata('entityAttributeValues/update', request).subscribe({
         next: () => {
           this.getcategoryName();
           modal.close();
-          this.conformationPopup.openSuccessModal('Job type deleted successfully');
+          this.updateForm.reset();
+          this.conformationPopup.openSuccessModal('Category updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -145,11 +96,51 @@ export class ItsupportAddCategoryComponent {
         }
       });
     }
+  }
 
-    closeDelete(modal: any) {
-      modal.dismiss();
-      this.selectedDeleteDep = null;
-    }
+  close(modal: any) {
+    modal.dismiss();
+    this.updateForm.reset();
+  }
+
+  openupdate(categoryNamelist: any) {
+    this.selectedId = categoryNamelist.id;
+    this.categoryForm.reset();
+    this.updateForm.patchValue({ categoryName: categoryNamelist.value });
+    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+
+  // DELETE
+  opendelete(categoryNamelist: any) {
+    this.categoryForm.reset();
+    this.selectedDeleteDep = categoryNamelist;
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  onDelete(modal: any) {
+    if (!this.selectedDeleteDep) return;
+    const deleteRequest: any = {
+      categoryName1: this.selectedDeleteDep.categoryName1,
+      isdeleted: "void",
+      sno: this.selectedDeleteDep.sno
+    };
+    this.http.postdata('categoryName/UPDATER', deleteRequest).subscribe({
+      next: () => {
+        this.getcategoryName();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Job type deleted successfully');
+      },
+      error: (err: any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+    this.selectedDeleteDep = null;
+  }
 
   resetForm() {
     this.categoryForm.reset();

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -16,21 +16,23 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
 import { FormsModule } from '@angular/forms';
+import { ClientSideTabsComponent } from "../../../shared/project-management-tabs/client-side-tabs/client-side-tabs.component";
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule,FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, 
-    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe],
+  imports: [CommonModule, FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent,
+    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe, ClientSideTabsComponent],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
 })
 
-export class ActiveClientsComponent implements OnInit {
+export class ActiveClientsComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   clients: Client[] = [];
   searchValue: any;
   empinfo: any = {};
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  subscription!: Subscription;
 
   constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService, 
     public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
@@ -80,10 +82,7 @@ export class ActiveClientsComponent implements OnInit {
 
   navigateView(clientId: number) {
     localStorage.setItem('clientProjectId', clientId.toString());
-    this.router.navigate(
-      ['project-management/clients/details'],
-      { queryParams: { id: clientId } } // using query params
-    );
+    this.router.navigate(['project-management/clients/details'], { queryParams: { id: clientId } });
   }
 
   openModalstatus(modal: any, client: any) {
@@ -99,10 +98,11 @@ export class ActiveClientsComponent implements OnInit {
       createdBy: parseInt(this.empinfo.employeeId),
       updatedBy: parseInt(this.empinfo.employeeId)
     };
-    this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
+    this.subscription = this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
       next: (res) => {
         this.conformationPopup.openSuccessModal('Client marked as Inactive successfully');
         modal.close();
+        this.http.setnewcountDetailsfornewclient();
         this.getClientsData();
       },
       error: (err) => {
@@ -110,5 +110,35 @@ export class ActiveClientsComponent implements OnInit {
         this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
       }
     });
+  }
+
+  confirmStatusChangetohold(modal: any) {
+    if (!this.selectedClient) return;
+    const updatedClient = {
+      ...this.selectedClient,
+      status: 'hold',
+      createdBy: parseInt(this.empinfo.employeeId),
+      updatedBy: parseInt(this.empinfo.employeeId)
+    };
+    this.http.putData(`Client/${this.selectedClient.clientId}`, updatedClient).subscribe({
+      next: (res) => {
+        this.conformationPopup.openSuccessModal('Client marked as Hold successfully');
+        modal.close();
+        this.http.setnewcountDetailsfornewclient();
+        this.getClientsData();
+      },
+      error: (err) => {
+        console.error('Error updating project status:', err);
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

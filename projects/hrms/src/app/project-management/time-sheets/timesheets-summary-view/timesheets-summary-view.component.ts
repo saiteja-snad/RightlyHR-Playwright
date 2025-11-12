@@ -120,6 +120,43 @@ export class TimesheetsSummaryViewComponent {
       resourceId: [null]
     });
   }
+    isFilterApplied(): boolean {
+      const formValue = this.datepickerForm?.value;
+      // Check if any field has value
+      return (
+        (formValue?.dateRange && formValue?.dateRange?.length > 0)
+      );
+    }
+  resetForm() {
+    // Reset other form fields
+    this.datepickerForm.reset({
+      resourceId: null,
+      dateRange: null
+    });
+
+    // Now manually set the default month range
+    // const defaultRange = this.setDefaultmounth();
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth]
+    });
+    this.updateModuleInfo()
+    this.createDatepickerForm();
+    this.route.queryParams.subscribe(params => {
+      const resoureID = params['id'];
+      if (resoureID) {
+        this.employeeId = parseInt(resoureID)
+        this.getProjectSummary(resoureID);
+        this.getEmployeeId(resoureID);
+      }
+    });
+         this.setDefaultmounth();
+    this.getAllEmployeeDetails();
+    this.getResourceDetailsByManagerId();
+    this.projectTypeChart();
+    this.estimatedActualChart();
+  }
 
   setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
@@ -391,24 +428,25 @@ export class TimesheetsSummaryViewComponent {
     // Chart options
     this.estimatedVsActualGraphOptions = {
       responsive: true,
+      barThickness: 30,
       plugins: {
-        legend: { display:false, },
+        legend: {
+          display: false,
+        },
       },
       scales: {
         x: {
           stacked: false,
-          grid: { display: false },
-          title: { display: false }
+          grid: { display: false, },
+          ticks: { color: '#141414', font: { size: 11 } },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Hours'
-          }
-        }
-      }
+          title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
+          ticks: { color: '#72777B', font: { size: 11 } },
+        },
+      },
     };
   }
 

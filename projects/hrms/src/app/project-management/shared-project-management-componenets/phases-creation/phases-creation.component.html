@@ -15,10 +15,10 @@
                         maxlength="101" placeholder="Please enter phase / milestone name"
                         (input)="formValidation.validateInput(addPhaseForm.get('phaseName'))">
                     <div class="error-msg" *ngIf="addPhaseForm.get('phaseName')?.touched">
-                        <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
+                        <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['required']">Phase / Milestone Name is required</div>
                         <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
                         addPhaseForm.get('phaseName')?.errors?.['minCharacters']">
-                            {{ 'Project Name must be between 2-100 characters' | translate }}
+                            {{ 'Phase / Milestone Name must be between 2-100 characters' | translate }}
                         </div>
                     </div>
                 </div>
@@ -131,13 +131,13 @@
                 </div>
 
                 <!--Color Picker-->
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6  mb-3">
                     <label for="color" class="form-label custom-label mb-2"> Color </label>
                     <input type="color" id="color" class="form-control custom-color" formControlName="color" />
                 </div>
                 
                 <!-- Project Description -->
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                     <label for="phaseDescription" class="form-label custom-label mb-2">Phase / Milestone Description</label>
                     <textarea id="phaseDescription"
                         (input)="formValidation.validateInput(addPhaseForm.get('phaseDescription'))" maxlength="500"

@@ -17,10 +17,11 @@ import { Select } from 'primeng/select';
 import { IEAV } from '../../../settings/project-management-configurations/models/project-type.modal';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { ProjectDocumentsSideTabsComponent } from "../../../shared/project-management-tabs/project-documents-side-tabs/project-documents-side-tabs.component";
 @Component({
   selector: 'app-project-documents',
   imports: [TranslateModule, CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent,
-    ConfirmationIconComponent, Select, DownloadIconComponent],
+    ConfirmationIconComponent, Select, DownloadIconComponent, ProjectDocumentsSideTabsComponent],
   templateUrl: './project-documents.component.html',
   styleUrl: './project-documents.component.scss'
 })
@@ -325,6 +326,7 @@ export class ProjectDocumentsComponent implements OnInit {
       next: (res) => {
         this.getDocumentDetails(projectId);
         this.modalService.dismissAll();
+          this.http.setnewcountfornewdocumentscount()
         this.conformationPopup.openSuccessModal('Document archived successfully');
       },
       error: (err) => {

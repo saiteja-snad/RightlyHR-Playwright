@@ -141,7 +141,13 @@ export class HttpService {
     this.projectresourcecount.next();
   }
 
-  
+
+  projectdocumentscount = new Subject<void>();
+  projectcountdocuments$ = this.projectdocumentscount.asObservable();
+  setnewcountfornewdocumentscount() {
+    this.projectdocumentscount.next();
+  }
+
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();

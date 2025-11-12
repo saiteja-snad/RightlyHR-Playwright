@@ -1,4 +1,4 @@
-<div class="custom-main-component-container ">
+<div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name">Project Management<span class="ms-1">
@@ -86,199 +86,189 @@
             </form>
         </div>
     </div>
-</div>
-<div class="d-flex w-100 gap-3">
-    <div class="component-left-tabs-container mb-3">
-        <app-timesheets-tabs />
-    </div>
-    <div class="custom-view-right-content ">
-        <app-timesheets-resource-tabs />
 
-        <div class="time-sheet-summary-container">
-            <div class="row">
-                <div class="col-xxl-6 col-xl-6 mb-3">
-                    @if (!projectsummaryLoader) {
-                    <div class="time-sheet-graph-card">
-                        <form [formGroup]="datepickerForm">
-                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                                <div class="summary-header d-inline-flex gap-2 mb-2">
-                                    <div>Resource Summary</div>
+    <div class="d-flex w-100 gap-3">
+        <div class="component-left-tabs-container mb-3">
+            <app-timesheets-tabs />
+        </div>
+
+        <div class="custom-view-right-content">
+            <div class="mb-3 w-100">
+                <app-timesheets-resource-tabs />
+            </div>
+
+            <div class="time-sheet-summary-container">
+                <div class="row">
+                    <div class="col-xxl-6 col-xl-6 mb-3">
+                        @if (!projectsummaryLoader) {
+                        <div class="time-sheet-graph-card">
+                            <form [formGroup]="datepickerForm">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                                    <div class="summary-header d-inline-flex gap-2">
+                                        <div>Resource Summary</div>
+                                        <div>
+                                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                                            <ng-template #resourceSummaryContent>
+                                                <div class="module-info-text">{{projectsummaryinfo}}</div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="custom-table-content project-summary-table">
+                                @if( projectSummeryData.length > 0){
+                                <table class="w-100">
+                                    <thead>
+                                        <th>{{'Project Name'|translate}}</th>
+                                        <th>{{'Department'|translate}}</th>
+                                        <th>{{'Phase'|translate}}</th>
+                                        <th>{{'Role'|translate}}</th>
+                                        <th>{{'Total Hours'|translate}}</th>
+                                        <th class="text-center">{{'Status'|translate}}</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of projectSummeryData">
+                                            <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
+                                            <td class="project-name">{{item.department?item.department:'-'}}</td>
+                                            <td class="project-name">{{item.phaseName?item.phaseName:'-'}}</td>
+                                            <td class="project-name">{{item.role?item.role:'-'}}</td>
+                                            <td><span class="logged-hrs">{{item.loggedHours?item.loggedHours:'-'}}</span>
+                                                /{{item.allocatedHours?item.allocatedHours:''}}hrs
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{item.status}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                } @else {
+                                <tr>
+                                    <app-no-data-found />
+                                </tr>
+                                }
+                            </div>
+                        </div>
+                        }@else {
+                        <div class="chart-card-skeleton">
+                            <p-skeleton width="100%" height="100%" borderRadius="12px" />
+                        </div>
+                        }
+                    </div>
+
+                    <div class="col-xxl-6 col-xl-6 mb-3">
+                        @if (!BillablevsNonBillableHoursLoader) {
+                        <div class="time-sheet-graph-card">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
+                                <div class="summary-header d-flex gap-2">
+                                    <div>Billable vs Non-Billable Hours</div>
                                     <div>
-                                        <img src="\icons\moduelicon.png" alt="Icon"
-                                            [ngbPopover]="resourceSummaryContent" class="module-icon">
-                                        <ng-template #resourceSummaryContent>
-                                            <div class="module-info-text">{{projectsummaryinfo}}</div>
+                                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon">
+                                        <ng-template #billablevsNonBillableHoursdata>
+                                            <div class="module-info-text">{{BillablevsNonBillableHoursInfo}}</div>
                                         </ng-template>
                                     </div>
                                 </div>
 
-                                <!-- <div class="d-flex gap-2 align-items-center">
-                            <div class="custom-p-select-content custom-icon">
-                                <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
-                                    [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                                    [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
-                                    class="form-select custom-select" (onChange)="onProjectChange($event)" />
-                            </div>
-        
-                            <div class="custom-p-select-content custom-icon">
-                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                                    formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
-                                    class="form-select custom-select" (onChange)="onStatusChange($event)" />
-                            </div>
-                        </div> -->
-                            </div>
-                        </form>
-
-                        <div class="custom-table-content project-summary-table">
-                            @if( projectSummeryData.length > 0){
-                            <table class="w-100">
-                                <thead>
-                                    <th>{{'Project Name'|translate}}</th>
-                                    <th>{{'Department'|translate}}</th>
-                                    <th>{{'Phase'|translate}}</th>
-                                    <th>{{'Role'|translate}}</th>
-                                    <th>{{'Total Hours'|translate}}</th>
-                                    <th class="text-center">{{'Status'|translate}}</th>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let item of projectSummeryData">
-                                        <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
-                                        <td class="project-name">{{item.department?item.department:'-'}}</td>
-                                        <td class="project-name">{{item.phaseName?item.phaseName:'-'}}</td>
-                                        <td class="project-name">{{item.role?item.role:'-'}}</td>
-                                        <td><span
-                                                class="logged-hrs">{{item.loggedHours?item.loggedHours:'-'}}</span>/{{item.allocatedHours?item.allocatedHours:''}}hrs
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{
-                                                item.status }}</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            } @else {
-                            <tr>
-                                <app-no-data-found />
-                            </tr>
-                            }
-                        </div>
-                    </div>
-                    }@else {
-                    <div class="chart-card-skeleton">
-                        <p-skeleton width="100%" height="100%" borderRadius="12px" />
-                    </div>
-                    }
-                </div>
-
-                <div class="col-xxl-6 col-xl-6 mb-3">
-                    @if (!BillablevsNonBillableHoursLoader) {
-                    <div class="time-sheet-graph-card">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
-                            <div class="summary-header d-flex gap-2 mb-2">
-                                <div>Billable vs Non-Billable Hours</div>
-                                <div>
-                                    <img src="\icons\moduelicon.png" alt="Icon"
-                                        [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon">
-                                    <ng-template #billablevsNonBillableHoursdata>
-                                        <div class="module-info-text">{{BillablevsNonBillableHoursInfo}}</div>
-                                    </ng-template>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
+                                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                                        <span class="legend-label">{{ item.label }}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
-                                    <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                                    <span class="legend-label">{{ item.label }}</span>
-                                </div>
+                            <div class="burndown-chart graph-no-data-content">
+                                <ng-container *ngIf="hasbillableData; else noData">
+                                    <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+                                </ng-container>
+                                <ng-template #noData><app-no-data-found /></ng-template>
                             </div>
                         </div>
-
-                        <div class="burndown-chart graph-no-data-content">
-                            <ng-container *ngIf="hasbillableData; else noData">
-                                <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
-                            </ng-container>
-                            <ng-template #noData><app-no-data-found /></ng-template>
+                        }@else {
+                        <div class="chart-card-skeleton">
+                            <p-skeleton width="100%" height="100%" borderRadius="12px" />
                         </div>
+                        }
                     </div>
-                    }@else {
-                    <div class="chart-card-skeleton">
-                        <p-skeleton width="100%" height="100%" borderRadius="12px" />
-                    </div>
-                    }
-                </div>
-                <div class="col-xxl-6 col-xl-6 mb-3">
-                    @if (!allocatedVsActualLoader) {
-                    <div class="time-sheet-graph-card p-3">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
-                         <div class="summary-header d-flex gap-2 pb-3">
-                            <div>Allocated vs Actual Hours</div>
-                            <div>
-                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
-                                    class="module-icon">
-                                <ng-template #resourceSummaryContent>
-                                    <div class="module-info-text">{{AllocatedActualhours}}</div>
+
+                    <div class="col-xxl-6 col-xl-6 mb-3">
+                        @if (!allocatedVsActualLoader) {
+                        <div class="time-sheet-graph-card p-3">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
+                                <div class="summary-header d-flex gap-2 pb-3">
+                                    <div>Allocated vs Actual Hours</div>
+                                    <div>
+                                        <img src="\icons\moduelicon.png" alt="Icon"
+                                            [ngbPopover]="resourceSummaryContent" class="module-icon">
+                                        <ng-template #resourceSummaryContent>
+                                            <div class="module-info-text">{{AllocatedActualhours}}</div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                                <div class="bar-chart">
+                                    <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
+                                        <p-chart type="bar" [data]="estimatedVsActualGraphData"
+                                            [options]="estimatedVsActualGraphOptions" />
+                                    </ng-container>
+                                </div>
+                                <ng-template #noActualData>
+                                    <div class="graph-no-data-content"><app-no-data-found /></div>
                                 </ng-template>
                             </div>
+
                         </div>
-                        <div class="bar-chart">
-                            <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
-                                <p-chart type="bar" [data]="estimatedVsActualGraphData"
-                                    [options]="estimatedVsActualGraphOptions" />
-                            </ng-container>
+                        }@else {
+                        <div class="chart-card-skeleton">
+                            <p-skeleton width="100%" height="100%" borderRadius="12px" />
                         </div>
-                        <ng-template #noActualData>
-                            <div class="graph-no-data-content"><app-no-data-found /></div>
-                        </ng-template>
-                        </div>
-                       
+                        }
                     </div>
-                    }@else {
-                    <div class="chart-card-skeleton">
-                        <p-skeleton width="100%" height="100%" borderRadius="12px" />
-                    </div>
-                    }
-                </div>
-                <div class="col-xxl-6 col-xl-6 mb-3">
-                    @if (!ProjectwiseResourceCountLoader) {
-                    <div class="time-sheet-graph-card">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
-                            <div class="summary-header d-flex gap-2 mb-2">
-                                <div>Project Burndown Chart</div>
-                                <div>
-                                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectBurndownChartdata"
-                                        class="module-icon">
-                                    <ng-template #projectBurndownChartdata>
-                                        <div class="module-info-text">{{ProjectBurndownChartInfo}}</div>
-                                    </ng-template>
+
+                    <div class="col-xxl-6 col-xl-6 mb-3">
+                        @if (!ProjectwiseResourceCountLoader) {
+                        <div class="time-sheet-graph-card">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
+                                <div class="summary-header d-flex gap-2 mb-2">
+                                    <div>Project Burndown Chart</div>
+                                    <div>
+                                        <img src="\icons\moduelicon.png" alt="Icon"
+                                            [ngbPopover]="projectBurndownChartdata" class="module-icon">
+                                        <ng-template #projectBurndownChartdata>
+                                            <div class="module-info-text">{{ProjectBurndownChartInfo}}</div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-1"
+                                        *ngFor="let item of projectNames; let i = index">
+                                        <span class="legend-circle"
+                                            [ngStyle]="{ 'background-color': getColor(i) }"></span>
+                                        <span class="legend-label">{{ item }}</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="d-flex align-items-center gap-1"
-                                    *ngFor="let item of projectNames; let i = index">
-                                    <span class="legend-circle" [ngStyle]="{ 'background-color': getColor(i) }"></span>
-                                    <span class="legend-label">{{ item }}</span>
-                                </div>
+                            <div class="burndown-chart graph-no-data-content">
+                                <ng-container *ngIf="hasburndownData; else noData">
+                                    <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+                                </ng-container>
+                                <ng-template #noData><app-no-data-found /></ng-template>
                             </div>
                         </div>
-
-                        <div class="burndown-chart graph-no-data-content">
-                            <ng-container *ngIf="hasburndownData; else noData">
-                                <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
-                            </ng-container>
-                            <ng-template #noData><app-no-data-found /></ng-template>
+                        }@else {
+                        <div class="chart-card-skeleton">
+                            <p-skeleton width="100%" height="100%" borderRadius="12px" />
                         </div>
+                        }
                     </div>
-                    }@else {
-                    <div class="chart-card-skeleton">
-                        <p-skeleton width="100%" height="100%" borderRadius="12px" />
-                    </div>
-                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
 </ng-template>

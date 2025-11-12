@@ -23,8 +23,7 @@
                     <th>Allocated Hours</th>
                     <th>Timesheet Approval Authority</th>
                     <th>Status</th>
-                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client
-                    Resources.delete'))&& this.inactiveClientStatus !== 'inactive'){
+                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete'))&& this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>

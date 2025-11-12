@@ -5,18 +5,25 @@
         <div class="card custom-background-card p-4">
             <form [formGroup]="addprojectform">
                 <div class="row">
-                    <!--Project Name-->
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="currentAddressLine1" class="form-label custom-label mb-2">Project Name</label>
-                        <input type="text" class="form-control custom-input" formControlName="projectName"
-                            id="currentAddressLine1" autocomplete="off" placeholder="Please enter project name">
-                    </div>
-
                     <!--Client Name-->
                     <div class="col-md-6 col-lg-4 mb-3">
                         <label for="currentAddressLine2" class="form-label custom-label mb-2">Client Name</label>
                         <input type="text" class="form-control custom-input" id="currentAddressLine2" autocomplete="off"
                             formControlName="clientName" placeholder="Please enter client name">
+                    </div>
+
+                    <!-- Project Code -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="code" class="form-label custom-label mb-2">Project Code</label>
+                        <input type="text" class="form-control custom-input" formControlName="code"
+                            id="code" autocomplete="off" placeholder="Please enter project code">
+                    </div>
+
+                    <!--Project Name-->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">Project Name</label>
+                        <input type="text" class="form-control custom-input" formControlName="projectName"
+                            id="currentAddressLine1" autocomplete="off" placeholder="Please enter project name">
                     </div>
 
                     <!-- Project Type -->
@@ -61,11 +68,11 @@
                             formControlName="statuts" autocomplete="off" placeholder="Please enter status">
                     </div>
 
-                    <!-- <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="col-md-6 col-lg-4 mb-3">
                         <label for="projectType" class="form-label custom-label mb-2">Allocated Hours</label>
-                        <input type="number" id="projectType" formControlName="allocatedHours"
+                        <input type="text" id="projectType" formControlName="allocatedHours"
                             class="form-control custom-input" placeholder="Enter allocated hours" />
-                    </div> -->
+                    </div>
 
                     <!-- <div class="col-md-6 col-lg-4 mb-3">
                         <label for="approvalidAuthority" class="form-label custom-label mb-2">Timesheet Approval Authority
@@ -73,13 +80,6 @@
                         <input type="text" id="approvalidAuthority" formControlName="approvalidAuthority"
                             class="form-control custom-input" placeholder="Enter timesheet approval authority" />
                     </div> -->
-
-                    <!-- Project Code -->
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <label for="code" class="form-label custom-label mb-2">Project Code</label>
-                        <input type="text" class="form-control custom-input" formControlName="code"
-                            id="code" autocomplete="off" placeholder="Please enter project code">
-                    </div>
 
                     <!-- Project Color -->
                     <div class="col-md-6 col-lg-4 mb-3">

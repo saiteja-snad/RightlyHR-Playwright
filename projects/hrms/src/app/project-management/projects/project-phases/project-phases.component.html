@@ -345,7 +345,15 @@
                     <p class="confirmation-text">{{ modalData?.title }}</p>
                 </div>
 
-                <div class="mb-3 mt-3">
+                <div class="mb-3 mt-3" *ngIf="shouldShowEffectiveDate()">
+                    <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
+                    <input type="date" id="statusEffectiveDate" formControlName="statusEffectiveDate" class="form-control custom-input" />
+                    <div class="error-msg" *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
+                        Effective Date is required
+                    </div>
+                </div>
+
+                <div class="mb-3" [ngClass]="{'mt-3': !shouldShowEffectiveDate()}">
                     <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" formControlName="reason" maxlength="250"
                         placeholder="Please enter reason" (keydown)="formValidation.restrictInitialSpace($event)">

@@ -167,7 +167,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
@@ -706,6 +707,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
 
     const reason = this.reasonForm.value.reason;
+    const statusEffectiveDate = this.reasonForm.value.statusEffectiveDate;
     const title = this.modalData?.title ?? '';
     const data = this.modalData?.data;
     const resourceId = data?.resourceId;
@@ -719,7 +721,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     const config = Object.values(this.confirmationMessages).find(c => c.title === title);
     const status = config?.nextStatus || 'Active';
 
-    const payload = {
+    const payload: any = {
       resourceId,
       entityType: 'project',
       entityRefId: this.projectId,
@@ -739,6 +741,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       phaseId: data.phase?.phaseId,
       meta: data.meta || { graphData: { color: data.meta?.graphData?.color || '' } }
     };
+
+    if (status === 'Released' && statusEffectiveDate) {
+      payload.statusEffectiveDate = new Date(statusEffectiveDate).toISOString();
+    }
 
     this.updateResourceStatus(payload, modal, config?.successMessage);
   }

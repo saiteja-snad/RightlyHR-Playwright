@@ -107,7 +107,8 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
@@ -281,6 +282,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     description?: any,
     allocatedHours?: any,
     actionType?: string;
+    statusEffectiveDate?: string;
   }, modal?: any) {
     this.loading = true;
 
@@ -299,6 +301,9 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     if (options.startDate) payload.startDate = options.startDate;
     if (options.endDate) payload.endDate = options.endDate;
     if (options.meta) payload.meta = options.meta;
+    if (options.statusEffectiveDate && (options.status === 'hold' || options.status === 'completed' || options.status === 'closed')) {
+      payload.statusEffectiveDate = new Date(options.statusEffectiveDate).toISOString();
+    }
 
     this.http.putData(`ProjectPhases/update/${options.phaseId}`, payload).subscribe({
       next: (res) => {
@@ -563,6 +568,11 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
   }
 
+  shouldShowEffectiveDate(): boolean {
+    const title = this.modalData?.title?.toLowerCase() || '';
+    return title.includes('hold') || title.includes('completed') || title.includes('close');
+  }
+
   submitReason(modal: any) {
     if (this.reasonForm.invalid) {
       this.reasonForm.markAllAsTouched();
@@ -570,6 +580,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
 
     const reason = this.reasonForm.value.reason;
+    const statusEffectiveDate = this.reasonForm.value.statusEffectiveDate;
     const title = this.modalData?.title ?? '';
     const status = this.statusMap[title];
     const phaseId = this.modalData?.phase?.phaseId;
@@ -580,7 +591,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     }
     const actionType = title.includes('resume') ? 'resume' : 'default';
 
-    this.updatePhaseStatus({ phaseId, status, reason, actionType }, modal);
+    this.updatePhaseStatus({ phaseId, status, reason, statusEffectiveDate, actionType }, modal);
   }
 
   submitExtend(modal: any) {

@@ -27,8 +27,8 @@
                             <th>Timesheet Approval Authority</th>
                             <th class="text-center">Phase / Milestone Description</th>
                             <th>Status</th>
-                            @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project
-                            PhasesTab.delete'))
+                            <th>Status Effective Date</th>
+                            @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project PhasesTab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <th class="text-center">{{"Action" | translate}}</th>
                             }
@@ -76,6 +76,7 @@
                                             <p class="mb-0">{{ data.reason }}</p>
                                         </ng-template>
                                     </td>
+                                    <td>{{ data?.statusEffectiveDate ? (data.statusEffectiveDate | dateformat) : '-' }}</td>
 
                                     @if((rbac.allowedToAccess('Project Phases Tab.update'))
                                     && inactiveStatus !== 'inactive'){

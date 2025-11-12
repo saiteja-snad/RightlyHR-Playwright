@@ -8,6 +8,29 @@
   <div class="custom-main-popup-content">
     <form [formGroup]="addprojectform" autocomplete="off" (ngSubmit)="saveProject()">
       <div class="row">
+        <!-- Client Name -->
+        <div class="col-md-6 mb-3">
+          <label for="clientName" class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="clients" optionLabel="clientName" [filter]="true" [resetFilterOnHide]="true"
+              filterBy="clientName" optionValue="clientId" formControlName="clientName" placeholder="Please select client name"
+              class="form-select custom-select"></p-select>
+          </div>
+          <div class="error-msg" *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
+            Client Name is required
+          </div>
+        </div>
+
+        <!-- Project Code -->
+        <div class="col-md-6 mb-3">
+          <label for="code" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="code" maxlength="20"
+            placeholder="Please enter project code">
+          <div class="error-msg" *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.invalid">
+            Project Code is required
+          </div>
+        </div>
+
         <!-- Project Name -->
         <div class="col-md-6 mb-3">
           <label for="projectName" class="form-label custom-label mb-2">Project Name<span class="text-danger">*</span></label>
@@ -20,19 +43,6 @@
               addprojectform.get('projectName')?.errors?.['minCharacters']">
               {{ 'Project Name must be between 2-100 characters' | translate }}
             </div>
-          </div>
-        </div>
-
-        <!-- Client Name -->
-        <div class="col-md-6 mb-3">
-          <label for="clientName" class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
-          <div class="custom-p-select-content">
-            <p-select [options]="clients" optionLabel="clientName" [filter]="true" [resetFilterOnHide]="true"
-              filterBy="clientName" optionValue="clientId" formControlName="clientName" placeholder="Please select client name"
-              class="form-select custom-select"></p-select>
-          </div>
-          <div class="error-msg" *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
-            Client Name is required
           </div>
         </div>
 
@@ -158,31 +168,20 @@
           </div>
         </div> -->
 
-         <!-- Project Description -->
+        <!-- Project Color -->
         <div class="col-md-6 mb-3">
+          <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
+          <input type="color" class="form-control custom-color" formControlName="color" />
+        </div>
+
+        <!-- Project Description -->
+        <div class="col-md-12 mb-3">
           <label for="projectDescription" class="form-label custom-label mb-2">Project Description</label>
           <textarea id="projectDescription" (input)="formValidation.validateInput(addprojectform.get('projectDescription'))"
             maxlength="500" formControlName="projectDescription" class="form-control custom-input"
             placeholder="Please enter project description"></textarea>
           <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
         </div>
-
-        <!-- Project Code -->
-        <div class="col-md-6 mb-3">
-          <label for="code" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" formControlName="code" maxlength="20"
-            placeholder="Please enter project code">
-          <div class="error-msg" *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.invalid">
-            Project Code is required
-          </div>
-        </div>
-
-        <!-- Project Color -->
-        <div class="col-md-6 mb-3">
-          <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
-          <input type="color" class="form-control custom-color" formControlName="color" />
-        </div>
-          
 
         <!-- Switches -->
         <div class="col-md-12 mb-3">

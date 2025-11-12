@@ -15,10 +15,10 @@
                         maxlength="101" placeholder="Please enter phase / milestone name"
                         (input)="formValidation.validateInput(addPhaseForm.get('phaseName'))">
                     <div class="error-msg" *ngIf="addPhaseForm.get('phaseName')?.touched">
-                        <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
+                        <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['required']">Phase / Milestone Name is required</div>
                         <div *ngIf="addPhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
                         addPhaseForm.get('phaseName')?.errors?.['minCharacters']">
-                            {{ 'Project Name must be between 2-100 characters' | translate }}
+                            {{ 'Phase / Milestone Name must be between 2-100 characters' | translate }}
                         </div>
                     </div>
                 </div>

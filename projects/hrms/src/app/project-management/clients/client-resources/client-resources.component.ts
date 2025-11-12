@@ -520,6 +520,7 @@ onPhaseChange(event: any) {
       next: (res) => {
         this.loader = false;
         this.modalService.dismissAll();
+        this.http.setnewcountfornewresourcecount()
         this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
         this.getResourceData(this.clientID);
       },

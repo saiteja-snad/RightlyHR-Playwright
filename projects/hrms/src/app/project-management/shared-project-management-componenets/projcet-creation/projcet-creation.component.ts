@@ -221,6 +221,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
         this.addprojectform.reset();
         this.conformationPopup.openSuccessModal('Project created successfully');
         this.http.setnewprojectDetails();
+        this.http.setnewcountDetailsfornewprojectcount()
       },
       error: (err) => {
         console.error('Error creating project:', err);

@@ -61,8 +61,7 @@
                                     <p class="mb-0">{{ data.reason }}</p>
                                 </ng-template>
                             </td>
-                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client
-                            Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
+                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center" *ngIf="data.status.toLowerCase() !== 'released'; else noActions">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">

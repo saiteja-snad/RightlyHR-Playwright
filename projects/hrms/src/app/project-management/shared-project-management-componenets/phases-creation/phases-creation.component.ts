@@ -279,6 +279,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
         this.addPhaseForm.reset();
         this.conformationPopup.openSuccessModal('Phase / Milestone created successfully');
         this.http.setnewPhaseDetails();
+        this.http.setnewcountfornewprojectphasecount()
       },
       error: (err) => {
         console.error('Error creating project:', err);

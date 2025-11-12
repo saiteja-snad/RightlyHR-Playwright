@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- Type Name -->
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                     <label for="categoryName" class="form-label custom-label mb-2">
                         {{ "Type" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -100,10 +100,10 @@
                         class="error-msg">
                         <div *ngIf="hoursAllocationForm.get('type')?.errors?.['required']">Please select type</div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Employee Name -->
-                 @if(hoursAllocationForm.get('type')?.value==='Role'){
+                 <!-- @if(hoursAllocationForm.get('type')?.value==='Role'){
                   <div class="col-md-4" >
                     <label for="roleName" class="form-label custom-label mb-2">
                         {{ "Role Name" | translate }}<span class="text-danger">*</span>
@@ -121,8 +121,8 @@
                         </div>
                     </div>
                 </div>
-                 }
-                 @if(hoursAllocationForm.get('type')?.value==='Employee'){
+                 } -->
+                 <!-- @if(hoursAllocationForm.get('type')?.value==='Employee'){ -->
                  <div class="col-md-4" >
                     <label for="employeeName" class="form-label custom-label mb-2">
                         {{ "Employee Name" | translate }}<span class="text-danger">*</span>
@@ -146,7 +146,7 @@
                         </div>
                     </div>
                 </div>
-                 }
+                 <!-- } -->
                 
             </div>
         </div>

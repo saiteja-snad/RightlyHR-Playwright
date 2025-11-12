@@ -1,6 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -13,30 +22,41 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { ILocation, ISubLocation, IShiftHeader, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
+import {
+  ILocation,
+  ISubLocation,
+  IShiftHeader,
+  IEmployees,
+} from '../../flexible-leave-allocation/leave-allocation.model';
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-hours-allocation',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     SelectModule,
     MultiSelectModule,
     NoDataFoundComponent,
-    DateformatPipe,],
+    DateformatPipe,
+  ],
   templateUrl: './hours-allocation.component.html',
-  styleUrl: './hours-allocation.component.scss'
+  styleUrl: './hours-allocation.component.scss',
 })
 export class HoursAllocationComponent {
- hoursAllocationForm!: FormGroup;
+  hoursAllocationForm!: FormGroup;
   selectedEmployees: any[] = [];
   isSubmitting = false;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
-  categoryDetails = [{ name: 'Role', value: 'Role' },{ name: 'Employee', value: 'Employee' }];
+  categoryDetails = [
+    { name: 'Employee', value: 'Employee' },
+  ];
+   // { name: 'Role', value: 'Role' },
   employeeDetails = [] as IEmployees[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   isloading = false;
@@ -73,21 +93,23 @@ export class HoursAllocationComponent {
       shift: [{ value: '', disabled: true }, Validators.required],
       type: [{ value: '', disabled: true }, Validators.required],
       employeeId: [{ value: '', disabled: true }, Validators.required],
-      roleId:[{ value: '', disabled: true }, Validators.required],
+      roleId: [{ value: '', disabled: true }, Validators.required],
       employees: this.fb.array([]) as FormArray,
     });
   }
   getAllroles(): void {
-    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.roles = data as IRoles[];
-        console.log(this.roles)
-        
-      },
-      error: (error: any) => {
-        console.log(error);
-      }
-    })
+    this.http
+      .getData('FusionRole')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.roles = data as IRoles[];
+          console.log(this.roles);
+        },
+        error: (error: any) => {
+          console.log(error);
+        },
+      });
   }
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
@@ -107,7 +129,9 @@ export class HoursAllocationComponent {
         this.maxYearDate = `${selectedYear}-12-31`;
 
         // Re-validate all employees’ effective dates
-        const employees = this.hoursAllocationForm.get('employees') as FormArray;
+        const employees = this.hoursAllocationForm.get(
+          'employees'
+        ) as FormArray;
         employees.controls.forEach((emp) => {
           emp.get('effectivedate')?.updateValueAndValidity();
           emp.get('effectiveto')?.updateValueAndValidity();
@@ -119,7 +143,8 @@ export class HoursAllocationComponent {
   //method to enable the category name
   categoryenable() {
     if (this.hoursAllocationForm.get('shift')?.value) {
-      this.hoursAllocationForm.get('type')?.enable();
+      this.hoursAllocationForm.get('employeeId')?.enable();
+      this.getAllEmployees();
     }
   }
 
@@ -170,36 +195,42 @@ export class HoursAllocationComponent {
   }
 
   getAllEmployees() {
-    if(this.hoursAllocationForm?.get('type')?.value==='Employee'){
-    const payload = {
-      locationId: this.hoursAllocationForm.get('location')?.value?.id,
-      subLocationId: this.hoursAllocationForm.get('subLocation')?.value?.id,
-      shiftId: this.hoursAllocationForm.get('shift')?.value?.id,
-    };
-    this.http
-      .getDataWithQueryParams('Employeedata/getAll', payload)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.employeeDetails = res.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.firstName} ${
-              employee.middleName ? employee.middleName + ' ' : ''
-            }${employee.lastName}`,
-          }));
-          this.hoursAllocationForm.get('employeeId')?.enable();
-        },
-        error: (err) => {
-          console.error('Error fetching employees:', err);
-          this.hoursAllocationForm.get('employeeId')?.reset();
-          this.hoursAllocationForm.get('employeeId')?.disable();
-        },
-      });
-      
-    }
-    else{
-      this.hoursAllocationForm.get('roleId')?.enable();
-    }
+    // if (this.hoursAllocationForm?.get('type')?.value === 'Employee') {
+      const payload = {
+        locationId: this.hoursAllocationForm.get('location')?.value?.id,
+        subLocationId: this.hoursAllocationForm.get('subLocation')?.value?.id,
+        shiftId: this.hoursAllocationForm.get('shift')?.value?.id,
+      };
+      this.http
+        .getDataWithQueryParams('Employeedata/getAll', payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            if(res.length>0){
+             this.employeeDetails = res.map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            }));
+            this.hoursAllocationForm.get('employeeId')?.enable();
+            }
+            else{
+            this.employeeDetails=[];
+            this.hoursAllocationForm.get('employeeId')?.reset();
+            // this.hoursAllocationForm.get('employeeId')?.disable();
+            }
+           
+          },
+          error: (err) => {
+            console.error('Error fetching employees:', err);
+            this.hoursAllocationForm.get('employeeId')?.reset();
+            this.hoursAllocationForm.get('employeeId')?.disable();
+          },
+        });
+    // } else {
+    //   this.hoursAllocationForm.get('roleId')?.enable();
+    // }
   }
 
   get employeeFormArray(): FormArray {
@@ -212,49 +243,111 @@ export class HoursAllocationComponent {
     const loggedInUserName = `${loggedInUserId.firstName ?? ''} ${
       loggedInUserId.middleName ?? ''
     } ${loggedInUserId.lastName}`;
-    const employeeArray = this.fb.array<FormGroup>([]);
-    // Loop through all selected employees
-    employeeIds.forEach((selectedEmp: any) => {
-      // Push either existing or blank form
-      employeeArray?.push(
-        this.fb.group(
-          {
-            employeeId: [selectedEmp?.employeeId ? selectedEmp?.employeeId :selectedEmp?.id],
-            fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
-            halfminhours: ['', [Validators.required]],
-            fullminhours: ['', [Validators.required]],
-            effectivedate: [
-             { value: '', disabled: !this.hoursAllocationForm.get('year')?.value },
-              [Validators.required, this.validateEffectiveDate?.bind(this)],
-            ],
-            effectiveto: [{ value: '', disabled: !this.hoursAllocationForm.get('year')?.value }, [Validators.required]],
-            createdBy: [loggedInUserName],
-            createdOn: [moment()?.format('YYYY-MM-DD') || ''],
-          },
-          {
-            validators: [
-              this.validateEffectiveToDate,
-              this.validateDaysWithinRange(),
-            ],
-          }
-        )
-      );
-    });
+    // const employeeArray = this.fb.array<FormGroup>([]);
+    // // Loop through all selected employees
+    // employeeIds.forEach((selectedEmp: any) => {
+    //   // Push either existing or blank form
+    //   employeeArray?.push(
+    //     this.fb.group(
+    //       {
+    //         employeeId: [
+    //           selectedEmp?.employeeId
+    //             ? selectedEmp?.employeeId
+    //             : selectedEmp?.id,
+    //         ],
+    //         fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
+    //         halfminhours: ['', [Validators.required]],
+    //         fullminhours: ['', [Validators.required]],
+    //         effectivedate: [
+    //           {
+    //             value: '',
+    //             disabled: !this.hoursAllocationForm.get('year')?.value,
+    //           },
+    //           [Validators.required, this.validateEffectiveDate?.bind(this)],
+    //         ],
+    //         effectiveto: [
+    //           {
+    //             value: '',
+    //             disabled: !this.hoursAllocationForm.get('year')?.value,
+    //           },
+    //           [Validators.required],
+    //         ],
+    //         createdBy: [loggedInUserName],
+    //         createdOn: [moment()?.format('YYYY-MM-DD') || ''],
+    //       },
+    //       {
+    //         validators: [
+    //           this.validateEffectiveToDate,
+    //           this.validateDaysWithinRange(),
+    //         ],
+    //       }
+    //     )
+    //   );
+    // });
 
     // Set the updated employee list in form
-    form.setControl('employees', employeeArray);
+    // form.setControl('employees', employeeArray);
+
+    const ids = employeeIds.map((emp: any) => emp.employeeId);
+    let params = new HttpParams();
+    employeeIds.forEach((id: any) => {
+      params = params.append('employeeIds', id.employeeId);
+    });
+    this.http
+      .getDataIncludeParams(`FlexibleWorkhoursAllocation/GetAll`, { params })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.isloading = false;
+          const apiData = res?.data || [];
+          const employeeArray = this.fb.array<FormGroup>([]);
+          // Loop through all selected employees
+          employeeIds.forEach((selectedEmp: any) => {
+            // Try to find matching allocation data from API
+            const existing = apiData?.find(
+              (x: any) => x.employeeId?.id === selectedEmp?.employeeId
+            );
+
+            // Push either existing or blank form
+            employeeArray?.push(
+              this.fb.group({
+                createdBy: [loggedInUserName],
+                createdOn: [moment()?.format('YYYY-MM-DD') || ''],
+                employeeId: [selectedEmp?.employeeId],
+                fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
+                halfminhours: [existing?.allowedDays || '',[Validators.required],],
+                fullminhours: [ existing?.allowedDays || '',[Validators.required],],
+                days: [existing?.allowedDays || '', [Validators.required]],
+                effectivedate: [{value: existing?.effectiveFromDate? moment(existing?.effectiveFromDate)?.format('YYYY-MM-DD') : '',disabled: !this.hoursAllocationForm.get('year')?.value,},
+                  [Validators.required, this.validateEffectiveDate?.bind(this)],
+                ],
+                effectiveto: [{value: existing?.effectiveToDate? moment(existing?.effectiveToDate)?.format('YYYY-MM-DD'): '',disabled: !this.hoursAllocationForm.get('year')?.value},
+                  [Validators.required, this.validateEffectiveDate?.bind(this)],
+                ],
+              })
+            );
+          });
+
+          // Set the updated employee list in form
+          form.setControl('employees', employeeArray);
+        },
+        error: (err) => {
+          this.isloading = false;
+          console.error('Error fetching shifts:', err);
+        },
+      });
   }
-validateEffectiveDate(control: any) {
-  if (!control.value) return null;
-  const selectedDate = moment(control.value, 'YYYY-MM-DD');
-  const startOfCurrentMonth = moment().startOf('month'); // 1st day of current month
-  //  If selected date is before the start of current month → invalid
-  if (selectedDate.isBefore(startOfCurrentMonth, 'day')) {
-    return { invalidDate: true };
+  validateEffectiveDate(control: any) {
+    if (!control.value) return null;
+    const selectedDate = moment(control.value, 'YYYY-MM-DD');
+    const startOfCurrentMonth = moment().startOf('month'); // 1st day of current month
+    //  If selected date is before the start of current month → invalid
+    if (selectedDate.isBefore(startOfCurrentMonth, 'day')) {
+      return { invalidDate: true };
+    }
+    // Otherwise valid (current or future)
+    return null;
   }
-  // Otherwise valid (current or future)
-  return null;
-}
 
   // Validator to ensure effectiveToDate is not before effectiveFromDate
   validateEffectiveToDate(formGroup: FormGroup) {
@@ -354,24 +447,14 @@ validateEffectiveDate(control: any) {
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         form.get('location')?.reset();
-        resetAndDisable([
-          'subLocation',
-          'shift',
-          'type',
-          'employeeId',
-        ]);
+        resetAndDisable(['subLocation', 'shift', 'type', 'employeeId']);
       });
 
     form
       .get('location')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetAndDisable([
-          'subLocation',
-          'shift',
-          'type',
-          'employeeId',
-        ]);
+        resetAndDisable(['subLocation', 'shift', 'type', 'employeeId']);
       });
 
     form
@@ -405,10 +488,10 @@ validateEffectiveDate(control: any) {
     const formData = form.value;
     // Build payload array from employees FormArray
     const employees = formData.employees || [];
-    debugger
+    debugger;
     const payload = employees.map((emp: any) => ({
-      entityType:this.hoursAllocationForm.get('type')?.value,
-      entityValue: emp.employeeId?emp.employeeId?.toString():null,
+      entityType: this.hoursAllocationForm.get('type')?.value,
+      entityValue: emp.employeeId ? emp.employeeId?.toString() : null,
       halfDayMinHrs: Number(emp.halfminhours) || 0,
       fullDayMinHrs: Number(emp.fullminhours) || 0,
       effectiveFromDate: emp.effectivedate
@@ -439,7 +522,9 @@ validateEffectiveDate(control: any) {
           this.hoursAllocationForm.get('shiftName')?.disable();
           this.hoursAllocationForm.get('type')?.disable();
           this.hoursAllocationForm.get('shift')?.disable();
-          this.modal.openSuccessModal('Flexible Work Hours allocated successfully');
+          this.modal.openSuccessModal(
+            'Flexible Work Hours allocated successfully'
+          );
         },
         error: (err: any) => {
           this.isloading = false;

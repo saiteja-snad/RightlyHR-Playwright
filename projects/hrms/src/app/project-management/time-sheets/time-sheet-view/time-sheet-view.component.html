@@ -53,27 +53,14 @@
                         resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false" required
                         (onChange)="onCheckemployee($event.value,'team')">
                     </p-select>
-
                 </div>
             </div>
             } -->
-            <div class="total-duration"><u (click)="navigation()">My Summary</u></div>
+            <button type="button" class="custom-btn btn-primary px-4" (click)="navigation()">My Summary</button>
 
             <div *ngIf="employeeSelected">
                 <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">
                     My Timesheet
-                </button>
-            </div>
-
-            <div *ngIf="!employeeSelected">
-                <button type="button" class="custom-btn btn-primary px-4" (click)="openModalforsubmit(sumbitconfirmationpopup)"
-                    [disabled]="isSubmitDisabled()">
-                    @if (spinnerLoaderforallrecoders) {
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    <span>{{'Loading' | translate}}...</span>
-                    } @else {
-                    <span>{{'Submit for Approval'| translate}}</span>
-                    }
                 </button>
             </div>
         </div>
@@ -359,16 +346,30 @@
                         </tr>
                     </tfoot>
                 </table>
-                <div class="d-flex justify-content-between align-items-center p-3">
-                    <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
-                        <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
+                <div class="d-flex justify-content-between flex-wrap align-items-center gap-2 p-3">
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
+                            <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
+                        </div>
+                        <div *ngIf="!employeeSelected">
+                            <button type="button" class="custom-btn btn-primary px-4" (click)="openModalforsubmit(sumbitconfirmationpopup)"
+                                [disabled]="isSubmitDisabled()">
+                                @if (spinnerLoaderforallrecoders) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading' | translate}}...</span>
+                                } @else {
+                                <span>{{'Submit for Approval'| translate}}</span>
+                                }
+                            </button>
+                        </div>
                     </div>
-                    <div class="d-flex  align-items-center gap-3">
-                           <div class="d-flex align-items-center gap-1">
-                            <div class="circular-dot circle-holiday "></div>
+
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="circular-dot circle-holiday"></div>
                             <div class="status-text">Holidays</div>
                         </div>
-                           <div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-leave"></div>
                             <div class="status-text">Leaves</div>
                         </div>

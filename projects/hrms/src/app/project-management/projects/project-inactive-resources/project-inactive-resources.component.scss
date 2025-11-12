@@ -1,0 +1,12 @@
+.component-left-tabs-container{
+  height: calc(100vh - 12rem) !important;
+}
+
+.custom-table-content {
+  border: 1px solid var(--border-color) !important;
+  height: calc(100vh - 12rem) !important;
+}
+
+.resource-right-content {
+  width: calc(100% - 8.5rem);
+}

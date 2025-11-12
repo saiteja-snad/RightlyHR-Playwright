@@ -68,7 +68,7 @@
                                         <td>{{ project.kickoffDate | dateformat }}</td> -->
                                         <td>{{ project.projectType }}</td>
                                         <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
-                                        <td>{{ project.status }}</td>
+                                        <td class="text-capitalize">{{ project.status }}</td>
                                         @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
                                         inactiveClientStatus!=='inactive'){
                                         <td class="text-center">

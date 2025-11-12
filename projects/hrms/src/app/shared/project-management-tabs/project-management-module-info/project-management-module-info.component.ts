@@ -20,7 +20,7 @@ export class ProjectManagementModuleInfoComponent {
   componentname: string = '';
   employename: any;
   clientID: any;
-    clientName: any;
+  clientName: any;
   clients: any = {};
   subscription!: Subscription;
   lastUrl: string = ''
@@ -55,7 +55,7 @@ export class ProjectManagementModuleInfoComponent {
       }
       // If we are on the correct route and have an employeeId, load employee name
       if ((currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
-          currentUrl === '/project-management/clients/details/timesheet/resource-summary') && employeeId) {
+        currentUrl === '/project-management/clients/details/timesheet/resource-summary') && employeeId) {
         this.getEmployeeId(employeeId, currentUrl);
       }
     });
@@ -85,9 +85,10 @@ export class ProjectManagementModuleInfoComponent {
     this.ComponentnameDisplay();
     this.routeToInfoMap = {
       '/project-management/clients/active': MODULE_INFOS.CLIENT_INFO,
-      '/project-management/clients/inactive': MODULE_INFOS.CLIENT_INFO,
+      '/project-management/clients/inactive': MODULE_INFOS.CLIENT_INFO_Inactive,
       '/project-management/projects/active': MODULE_INFOS.PROJECT_Info,
-      '/project-management/projects/inactive': MODULE_INFOS.PROJECT_Info,
+      '/project-management/projects/inactive': MODULE_INFOS.PROJECT_Info_Inactive,
+      '/project-management/projects/hold': MODULE_INFOS.PROJECT_INFO_On_Hold,
       '/project-management/time-sheet': MODULE_INFOS.TIME_SHEET_INFO,
       '/project-management/clients/details': MODULE_INFOS.CLIENT_INFORMATION_INFO,
       '/project-management/clients/details/info': MODULE_INFOS.CLIENT_INFORMATION_INFO,
@@ -114,15 +115,21 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/clients/details/timesheet/resource-summary': MODULE_INFOS.Resource_Summary,
       '/project-management/clients/details/timesheet/phases': MODULE_INFOS.Resource_Summary,
       '/project-management/projects/details/phases': MODULE_INFOS.PROJECT_PHASE_MODULE_INFO,
+      '/project-management/projects/details/inactive-phases': MODULE_INFOS.PROJECT_PHASE_MODULE_INFO_Inactive,
+      '/project-management/projects/details/hold-phases': MODULE_INFOS.PROJECT_PHASE_MODULE_INFO_Hold
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
 
   ComponentnameDisplay() {
     const currentUrl = this.router.url.split('?')[0];
-    if (currentUrl === '/project-management/clients/active' || currentUrl === '/project-management/clients/inactive' || currentUrl==='/project-management/clients/hold') {
-      this.componentname = 'Clients';
+    if (currentUrl === '/project-management/clients/active') {
+      this.componentname = 'Active Clients';
     }
+    else if (currentUrl === '/project-management/clients/inactive') {
+      this.componentname = 'Inactive Clients';
+    }
+
     else if (currentUrl === '/project-management/clients/add/info') {
       this.componentname = 'Add Client';
     }
@@ -144,9 +151,17 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/contact-info') {
       this.componentname = 'Contact Information';
     }
-    else if (currentUrl === '/project-management/clients/details/projects' || currentUrl === '/project-management/clients/details/inactiveprojects'  ) {
-      this.componentname = 'Projects';
+    else if (currentUrl === '/project-management/clients/details/projects') {
+      this.componentname = 'Active Projects';
     }
+
+    else if (currentUrl === '/project-management/clients/details/inactiveprojects') {
+      this.componentname = 'Inactive Projects';
+    }
+       else if (currentUrl === '/project-management/clients/details/hold') {
+      this.componentname = 'On Hold Projects';
+    }
+
     else if (currentUrl === '/project-management/clients/details/resources') {
       this.componentname = 'Resources';
     }
@@ -156,14 +171,14 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/documents') {
       this.componentname = 'Documents';
     }
-    else if (currentUrl === '/project-management/projects/active'  ) {
+    else if (currentUrl === '/project-management/projects/active') {
       this.componentname = 'Active Projects';
     }
-       else if (currentUrl=== '/project-management/projects/inactive'   ) {
+    else if (currentUrl === '/project-management/projects/inactive') {
       this.componentname = 'Inactive Projects';
     }
-       else if (currentUrl ===  '/project-management/projects/hold' ) {
-      this.componentname = 'Hold Projects';
+    else if (currentUrl === '/project-management/projects/hold') {
+      this.componentname = 'On Hold Projects';
     }
     else if (currentUrl === '/project-management/projects/details/information') {
       this.componentname = 'Project Information';
@@ -192,9 +207,17 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/mysummary') {
       this.componentname = 'My Timesheet Summary';
     }
-    else if (currentUrl === '/project-management/clients/details/phases' || currentUrl === '/project-management/projects/details/phases') {
-      this.componentname = 'Phases / Milestones';
+    else if (currentUrl === '/project-management/projects/details/phases') {
+      this.componentname = 'Active Phases / Milestones';
     }
+    else if (currentUrl === '/project-management/projects/details/inactive-phases') {
+      this.componentname = 'Inactive Phases / Milestones';
+    }
+    else if (currentUrl === '/project-management/projects/details/hold-phases') {
+      this.componentname = ' Hold Phases / Milestones';
+    }
+
+
     else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' ||
       '/project-management/projects/details/timesheet/resource-summary') {
       this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');

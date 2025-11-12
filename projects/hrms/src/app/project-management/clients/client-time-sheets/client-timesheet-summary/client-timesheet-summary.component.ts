@@ -93,9 +93,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         this.getClientById(clientID);
       }
     });
-
-
-
     this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
       if (request && request.dateRange) {
         // Call API with date filter (if BehaviorSubject has data)
@@ -198,7 +195,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
   // Project wise Resource Count
   projectSummery(request?: any) {
     this.projectsummaryLoader = true;
-
     // Base URL
     let apiUrl = `ProjectManagementGraph/client/project-summary/${this.storeclientId}`;
     // Prepare query parameters if BehaviorSubject data exists
@@ -228,13 +224,11 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching project-wise resource count chart:', err);
       }
     });
-
   }
 
   // Project wise Resource Count
   projectWiseResourceCountGraph(request?: any) {
     this.ProjectwiseResourceCountLoader = true;
-
     // Base URL
     let apiUrl = `ProjectManagementGraph/client/project-wise-resource/${this.storeclientId}`;
     // Prepare query parameters if BehaviorSubject data exists
@@ -259,7 +253,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           return;
         }
         // Extract data from API response
-        const labels = data.map((item: any) => item.projectName);
+        const labels = data.map((item: any) => item.projectColor?.graphData?.code);
         const resourceCounts = data.map((item: any) => item.resourceCount);
         // Assign chart data
         this.projectResourceData = {
@@ -327,7 +321,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching project-wise resource count chart:', err);
       }
     });
-
   }
 
   onDeptProjectChange(event: any) {
@@ -341,7 +334,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
   // Department wise Contribution
   departmentWiseContributionGraph(request?: any) {
     this.DepartmentwiseContributionLoader = true;
-
     // Base URL
     let apiUrl = `ProjectManagementGraph/client/deptwisecontribution/${this.storeclientId}`;
     // Prepare query parameters if BehaviorSubject data exists
@@ -393,13 +385,11 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         this.departmentContributionData = [];
       }
     });
-
   }
 
   // Project Type (Pie)
   projectTypeChart(request?: any) {
     this.ProjectTypeLoader = true;
-
     // Base URL
     let apiUrl = `ProjectManagementGraph/client/project-type-summary/${this.storeclientId}`;
     // Prepare query parameters if BehaviorSubject data exists
@@ -451,13 +441,11 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching project type summary chart:', err);
       }
     });
-
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart(request?: any) {
     this.EstimatedActualHoursLoader = true;
-
     // Base URL
     let apiUrl = `ProjectManagementGraph/client/allocated-vs-actual/${this.storeclientId}?groupBy=project`;
     // Prepare query parameters if BehaviorSubject data exists
@@ -533,13 +521,11 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching estimated vs actual chart:', err);
       }
     });
-
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
   billableChart(request?: any) {
     this.BillablevsNonBillableHoursLoader = true;
-
     // Base URL
     let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${this.storeclientId}?groupBy=project`;
     // Prepare query parameters if BehaviorSubject data exists
@@ -570,7 +556,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           }
           return parseFloat(str); // directly convert decimal string to number
         };
-        // Example usage
         // const chartData = response.data.data;
         const labels = chartData.map((item: any) => item.name);
         const billable = chartData.map((item: any) => convertToHours(item.billableHours));
@@ -629,13 +614,11 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching billable/non-billable chart data:', err);
       }
     });
-
   }
 
   // Project Burndown Chart (Line)
   burnDownChart(request?: any) {
     this.ProjectBurndownChartLoader = true;
-
     let apiUrl = `ProjectManagementGraph/client/burndownchart/${this.storeclientId}`;
     const queryParams: string[] = [];
     if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -645,7 +628,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
     if (queryParams.length > 0) {
       apiUrl += `?${queryParams.join('&')}`;
     }
-
     this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.ProjectBurndownChartLoader = false;
@@ -735,7 +717,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching burndown chart data:', err);
       }
     });
-
   }
 
   //graphs no data found conditions
@@ -780,8 +761,6 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
     const data = datasets[0]?.data;
     return Array.isArray(data) && data.some(value => value > 0);
   }
-
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

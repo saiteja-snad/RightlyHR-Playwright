@@ -7,8 +7,15 @@
 
     <!-- Year Dropdown using PrimeNG p-select -->
     <div class="custom-p-select-content">
-      <p-dropdown [options]="availableYears" [(ngModel)]="selectedYear" placeholder="Select Year" optionLabel="label"
-        optionValue="value" (onChange)="onYearChange()" class="form-select custom-select custom-year-dropdown">
+      <p-dropdown
+        [options]="availableYears"
+        [(ngModel)]="selectedYear"
+        placeholder="Select Year"
+        optionLabel="label"
+        optionValue="value"
+        (onChange)="onYearChange()"
+        class="form-select custom-select custom-year-dropdown"
+      >
       </p-dropdown>
     </div>
   </div>
@@ -22,28 +29,42 @@
           <th>Project Name</th>
           <th>Project Type</th>
           <th class="text-center">Phases</th>
-          <th class="text-center">Hours Spent</th>
+          <th>Hours Spent</th>
         </tr>
       </thead>
 
       <tbody>
-        @if (projectData.length > 0) {
-        @for (project of projectData; track $index) {
+        @if (projectData.length > 0) { @for (project of projectData; track
+        $index) {
         <tr>
-          <td>{{ project.projectName || '-' }}</td>
-          <td>{{ project.projectType || '-' }}</td>
-          <td class="text-center" [class.clickable]="project.phasesCount > 0"
-            (click)="openModal(projectDisplay,project)">
+          <td>
+  <span
+    pTooltip="{{ project.projectName }}"
+    tooltipPosition="top"
+  >
+    {{ project.projectName || '-' }}
+  </span>
+</td>
+
+          <td>{{ project.projectType || "-" }}</td>
+          <td
+            class="text-center"
+            [class.clickable]="project.phasesCount > 0"
+            (click)="
+              project.phasesCount > 0 && openModal(projectDisplay, project)
+            "
+          >
             {{ project.phasesCount }}
           </td>
-          <td class="text-center">
+          <td>
             <span class="spent-hours">{{ project.spentHours }}</span> /
-            {{ project.allocatedHours }} hrs
+            {{ project.allocatedHours }} Hrs
           </td>
         </tr>
-        }
-        } @else {
-        <tr><app-no-data-found /></tr>
+        } } @else {
+        <tr>
+          <app-no-data-found />
+        </tr>
         }
       </tbody>
     </table>
@@ -57,10 +78,12 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">{{selectedProject.projectName}}</p>
+        <p class="popup-heading mb-0">{{ selectedProject.projectName }}</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss()"
+          ><img src="icons/close.png" alt="Close Icon" class="close-icon"
+        /></a>
       </div>
     </div>
 
@@ -73,7 +96,7 @@
                 <th>Phase Name</th>
                 <th>Start Date</th>
                 <th>End Date</th>
-                <th class="text-center">Hours Spent</th>
+                <th>Hours Spent</th>
                 <th class="text-center">Status</th>
               </tr>
             </thead>
@@ -81,13 +104,20 @@
               @for (phase of selectedProject?.phases; track $index) {
               <tr>
                 <td>{{ phase.phaseName }}</td>
-                <td>{{ phase.startDate | date: 'MMM d, y' }}</td>
-                <td>{{ phase.endDate | date: 'MMM d, y' }}</td>
-                <td class="text-center">
+                <td>{{ phase.startDate | date : "MMM d, y" }}</td>
+                <td>{{ phase.endDate | date : "MMM d, y" }}</td>
+                <td>
                   <span class="spent-hours">{{ phase.spentHours }}</span> /
-                  {{ phase.allocatedHours }} hrs
+                  {{ phase.allocatedHours }} Hrs
                 </td>
-                <td class="text-center">{{ formatStatus(phase.status) }}</td>
+                <td class="text-center">
+                  <span
+                    class="status-text"
+                    [ngClass]="getStatusClass(phase.status)"
+                  >
+                    {{ formatStatus(phase.status) }}
+                  </span>
+                </td>
               </tr>
               }
             </tbody>
@@ -95,10 +125,11 @@
         </div>
 
         <div class="popup-table-footer">
-          <!-- Total Duration: <b>{{ logsDuration }}</b> -->
           <div>
             Total Logged Hours -
-            {{ selectedProject.totalPhaseSpentHours || 0 }}:00 Hrs
+            <span class="total-logged-hours"
+              >{{ selectedProject.totalPhaseSpentHours || 0 }}:00 Hrs</span
+            >
           </div>
         </div>
       </div>

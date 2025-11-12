@@ -71,15 +71,22 @@
 
 .progress-labels {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
     justify-content: space-between;
     font-size: 11px;
     font-weight: 500;
-}
+    flex-wrap: wrap;
+    gap: 1rem;
 
-.label {
-    white-space: nowrap;
+    .label {
+        background: #FFF;
+        padding: 0.25rem 0.325rem;
+        white-space: nowrap;
+        border-radius: 0.25rem;
+    }
+
+    .hrs {
+        color: var(--primary-color);
+    }
 }
 
 .approved {

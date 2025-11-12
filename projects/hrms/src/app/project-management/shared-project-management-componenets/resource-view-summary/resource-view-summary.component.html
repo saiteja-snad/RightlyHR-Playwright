@@ -7,7 +7,7 @@
                     <thead>
                         <th class="text-center">{{'Date' | translate}}</th>
                         <th class="text-center">{{'Phase/Milestone' | translate }}</th>
-                        <th>{{'Logged Hours' | translate }}</th>
+                        <th class="text-center">{{'Logged Hours' | translate }}</th>
                         <th class="text-center">{{'Description' | translate}}</th>
                         <th>{{'Status' | translate }}</th>
                     </thead>
@@ -16,7 +16,7 @@
                             <tr *ngFor="let row of attendanceSummaryData">
                                 <td class="text-center">{{row.date | dateformat }}</td>
                                 <td class="text-center">{{row.entries?.phaseName || "-" }}</td>
-                                <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
+                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
                                 <td class="text-center">
                                     <ng-container *ngIf="row.entries?.summary; else noEntries">
                                         <a type="button" [ngbPopover]="description">
@@ -120,17 +120,14 @@
                     <div class="stacked-progress-container">
                         <!-- overlay color bar -->
                         <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
-                                        + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                                        + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
-                                        + rejectedColor + ' 100%)'"></div>
+                        + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                        + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                        + rejectedColor + ' 100%)'"></div>
             
                         <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }}
-                                    Hrs</span></div>
-                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }}
-                                    Hrs</span></div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }}
-                                    Hrs</span></div>
+                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
+                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
                         </div>
                     </div>
                 </ng-container>

@@ -158,7 +158,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color : [''],
+      color : ['', Validators.required],
       resourceRole: [null,Validators.required],
       resourcePhase : [null, Validators.required],
       resourceAuthority : [null]

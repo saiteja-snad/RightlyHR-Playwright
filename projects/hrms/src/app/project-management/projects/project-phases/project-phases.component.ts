@@ -91,7 +91,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       phaseDescription: [null, this.formValidation.maxCharactersValidator(501)],
       allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
       approvalidAuthority: [{ value: null, disabled: true }],
-      updatecolor: [''],
+      updatecolor: ['', Validators.required],
     });
     this.updatePhaseForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();

@@ -7,6 +7,8 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TooltipModule } from 'primeng/tooltip';
+
 
 @Component({
   selector: 'app-project-info',
@@ -15,6 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     FormsModule,
     DropdownModule,
+    TooltipModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
   ],
@@ -28,7 +31,7 @@ export class ProjectInfoComponent implements OnInit {
   selectedProject: any = null;
   employeeId: number | null = null;
 
-  // 🔹 Year dropdown data
+  // Year dropdown data
   availableYears: { label: string; value: number }[] = [];
   selectedYear: number = new Date().getFullYear();
 
@@ -55,9 +58,9 @@ export class ProjectInfoComponent implements OnInit {
   formatStatus(status: string): string {
     if (!status) return '-';
     return status
-      .split(' ') // split words (e.g. "in progress")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // capitalize each
-      .join(' '); // join them back
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 
   getEmpInfoFromRoute(): void {
@@ -103,7 +106,7 @@ export class ProjectInfoComponent implements OnInit {
       });
   }
 
-  // 🔹 Triggered when year dropdown changes
+  // Triggered when year dropdown changes
   onYearChange(): void {
     this.getProjectSummary();
   }
@@ -126,4 +129,20 @@ export class ProjectInfoComponent implements OnInit {
     this.showPhasePopup = false;
     this.selectedProject = null;
   }
+
+  getStatusClass(status: string): string {
+  if (!status) return '';
+
+  const normalized = status.toLowerCase();
+
+  if (normalized === 'yet to start') return 'status-yet-to-start';
+  if (normalized === 'in progress') return 'status-in-progress';
+  if (normalized === 'extended') return 'status-extended';
+  if (normalized === 'hold') return 'status-hold';
+  if (normalized === 'completed') return 'status-completed';
+  if (normalized === 'closed') return 'status-closed';
+
+  return '';
+}
+
 }

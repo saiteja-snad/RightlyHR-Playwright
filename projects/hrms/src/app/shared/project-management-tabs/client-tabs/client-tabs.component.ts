@@ -77,6 +77,11 @@ export class ClientTabsComponent {
         currentUrl.includes('/project-management/clients/details/timesheet/resource-summary'); 
     }
 
+    if (link === '/project-management/clients/details/resources') {
+      return currentUrl.includes('/project-management/clients/details/inactive-resources') ||
+        currentUrl.includes('/project-management/clients/details/resources');
+    }
+
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }

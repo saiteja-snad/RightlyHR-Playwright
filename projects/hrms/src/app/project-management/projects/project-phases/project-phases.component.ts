@@ -263,6 +263,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       endDate: formValue?.endDate,
       phaseName: formValue?.phaseName,
       timesheetApprovalAuthorityId: formValue?.approvalidAuthority,
+      description: formValue?.phaseDescription,
       meta: { graphData: { color: formValue?.updatecolor } },
       actionType
     });
@@ -277,6 +278,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     phaseName?: string,
     meta?: any,
     timesheetApprovalAuthorityId?: any,
+    description?: any,
     allocatedHours?: any,
     actionType?: string;
   }, modal?: any) {
@@ -289,6 +291,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       status: options?.status,
       timesheetApprovalAuthorityId: options?.timesheetApprovalAuthorityId,
       allocatedHours: options?.allocatedHours,
+      description:options?.description,
       updatedBy: parseInt(this.empinfo.employeeId)
     };
 

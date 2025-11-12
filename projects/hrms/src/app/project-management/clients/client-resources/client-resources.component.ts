@@ -22,7 +22,8 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule,ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, 
+    DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
 })
@@ -72,6 +73,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedResource: any;
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
+
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute, 
     private conformationPopup: OpenModalService) { }
@@ -161,56 +163,49 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     });
   }
 
-getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolean = false) {
-  const params: any = {
-    entityType: 'project',
-    entityRefId: projectId
-  };
-
-  if (phaseId) {
-    params.phaseId = phaseId;
-  }
-
-  this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
-    next: (data: any) => {
-      if (isPopupCall) {
-        const popupData = data.data ?? [];
-        this.resoucesDropDownData = popupData
-          .filter((r: any) => r.employee)
-          .map((r: any) => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
-        this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
-      } else {
-        this.resourcesDataByPhase = data.data ?? [];
-        this.resoucesDropDownData = this.resourcesDataByPhase
-          .filter(r => r.employee)
-          .map(r => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
-        this.defaultPendingAuthorityId = this.resourcesDataByPhase[0]?.pendingApprovalAuthority?.id ?? null;
-      }
-      
-      const authorityControl = this.updateResourceForm.get('resourceAuthority');
-      if (this.resoucesDropDownData.length === 0) {
-        authorityControl?.disable();
-        authorityControl?.reset();
-      } else {
-        authorityControl?.enable();
-        const hasExistingValue = authorityControl?.value;
-        if (!hasExistingValue && this.defaultPendingAuthorityId) {
-          authorityControl?.patchValue(this.defaultPendingAuthorityId);
-        }
-      }
-    },
-    error: (reason: any) => {
-      console.error(reason);
-      this.updateResourceForm.get('resourceAuthority')?.disable();
+  getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolean = false) {
+    const params: any = {
+      entityType: 'project',
+      entityRefId: projectId
+    };
+    if (phaseId) {
+      params.phaseId = phaseId;
     }
-  });
-}
+    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+      next: (data: any) => {
+        if (isPopupCall) {
+          const popupData = data.data ?? [];
+          this.resoucesDropDownData = popupData.filter((r: any) => r.employee).map((r: any) => ({
+            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+            value: r.employee.id
+          }));
+          this.defaultPendingAuthorityId = popupData[0]?.pendingApprovalAuthority?.id ?? null;
+        } else {
+          this.resourcesDataByPhase = data.data ?? [];
+          this.resoucesDropDownData = this.resourcesDataByPhase.filter(r => r.employee).map(r => ({
+            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+            value: r.employee.id
+          }));
+          this.defaultPendingAuthorityId = this.resourcesDataByPhase[0]?.pendingApprovalAuthority?.id ?? null;
+        }
+        const authorityControl = this.updateResourceForm.get('resourceAuthority');
+        if (this.resoucesDropDownData.length === 0) {
+          authorityControl?.disable();
+          authorityControl?.reset();
+        } else {
+          authorityControl?.enable();
+          const hasExistingValue = authorityControl?.value;
+          if (!hasExistingValue && this.defaultPendingAuthorityId) {
+            authorityControl?.patchValue(this.defaultPendingAuthorityId);
+          }
+        }
+      },
+      error: (reason: any) => {
+        console.error(reason);
+        this.updateResourceForm.get('resourceAuthority')?.disable();
+      }
+    });
+  }
 
   projectStartDate!: string | null;
   projectEndDate!: string | null;
@@ -227,34 +222,29 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolea
     });
   }
 
-onPhaseChange(event: any) {
-  if (!event?.value) return;
-
-  const selectedPhaseId = event.value;
-  const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
-
-  if (selectedPhase) {
-    this.selectedPhaseId = selectedPhase.value;
-    this.projectStartDate = selectedPhase.startDate ?? null;
-    this.projectEndDate = selectedPhase.endDate ?? null;
-
-    const phaseAuthority = selectedPhase?.pendingApprovalAuthority ?? null;
-    const authorityControl = this.updateResourceForm.get('resourceAuthority');
-    if (authorityControl) {
-      authorityControl.patchValue(phaseAuthority);
-      if (phaseAuthority) {
-        authorityControl.disable();
-      } else {
-        authorityControl.enable();
+  onPhaseChange(event: any) {
+    if (!event?.value) return;
+    const selectedPhaseId = event.value;
+    const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
+    if (selectedPhase) {
+      this.selectedPhaseId = selectedPhase.value;
+      this.projectStartDate = selectedPhase.startDate ?? null;
+      this.projectEndDate = selectedPhase.endDate ?? null;
+      const phaseAuthority = selectedPhase?.pendingApprovalAuthority ?? null;
+      const authorityControl = this.updateResourceForm.get('resourceAuthority');
+      if (authorityControl) {
+        authorityControl.patchValue(phaseAuthority);
+        if (phaseAuthority) {
+          authorityControl.disable();
+        } else {
+          authorityControl.enable();
+        }
       }
+      this.updateResourceForm.get('startDate')?.updateValueAndValidity();
+      this.updateResourceForm.get('endDate')?.updateValueAndValidity();
+      this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
     }
-
-    this.updateResourceForm.get('startDate')?.updateValueAndValidity();
-    this.updateResourceForm.get('endDate')?.updateValueAndValidity();
-
-    this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
   }
-}
 
   onRoleChange(selectedValue: any) {
     if (selectedValue) {
@@ -281,27 +271,25 @@ onPhaseChange(event: any) {
   getJobrole() {
     this.loader = true;
     const departmentParam = this.departmentIds?.join(',') || '';
-    this.subscription = this.http
-      .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
-      .subscribe({
-        next: (response: any) => {
-          this.loader = false;
-          if (response && response.success && Array.isArray(response.data)) {
-            this.projectRoleDropdown = response.data.map((item: any) => ({
-              label: `${item.roleName}`,
-              value: {
-                roleId: item.id,
-                entityReferenceId: item.entity?.entityReferenceId || 0
-              }
-            }));
-          } else {
-            this.projectRoleDropdown = [];
-          }
-        },
-        error: () => {
-          this.loader = false;
-        },
-      });
+    this.subscription = this.http.getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`).subscribe({
+      next: (response: any) => {
+        this.loader = false;
+        if (response && response.success && Array.isArray(response.data)) {
+          this.projectRoleDropdown = response.data.map((item: any) => ({
+            label: `${item.roleName}`,
+            value: {
+              roleId: item.id,
+              entityReferenceId: item.entity?.entityReferenceId || 0
+            }
+          }));
+        } else {
+          this.projectRoleDropdown = [];
+        }
+      },
+      error: () => {
+        this.loader = false;
+      },
+    });
   }
 
   formatDateToLocal(dateString: string) {
@@ -407,7 +395,6 @@ onPhaseChange(event: any) {
     this.selectedResource = data;
     this.ResourceId = data?.resourceId;
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
-    
     this.projectId = data?.project?.projectId;
     const selectedProject = this.projectsDataDrown.find(p => p.projectId === this.projectId);
     if (selectedProject) {
@@ -415,10 +402,8 @@ onPhaseChange(event: any) {
       this.projectStartDate = this.formatDateToLocal(selectedProject.startDate);
       this.projectEndDate = this.formatDateToLocal(selectedProject.endDate);
     }
-
     this.getJobrole();
     this.getPhaseDataByProject(this.projectId);
-
     setTimeout(() => {
       const selectedRole = this.projectRoleDropdown.find(
         (r: any) => r.value.roleId === data.projectRoleId
@@ -426,12 +411,10 @@ onPhaseChange(event: any) {
       const selectedPhase = this.phaseDropdown.find(
         (r: any) => r.value === data?.phase?.phaseId
       );
-
       if (selectedPhase) {
         this.selectedPhaseId = selectedPhase.value;
         this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId, true);
       }
-
       setTimeout(() => {
         const authorityFromResource = this.resoucesDropDownData.find(
           (r: any) => r.value === data?.pendingApprovalAuthority?.id
@@ -441,15 +424,12 @@ onPhaseChange(event: any) {
         if (!authorityValueToPatch && selectedPhase?.pendingApprovalAuthority) {
           authorityValueToPatch = selectedPhase.pendingApprovalAuthority;
         }
-
         this.updateResourceForm.patchValue({
           resourceName: data?.employee?.id,
           resourceEmail: data?.employee?.workMail,
           overtimeEligible: data.overtimeEligibile,
-          resourcePhone:
-            data?.employee
-              ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
-              : '-',
+          resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''} 
+          ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-' : '-',
           designation: data?.employee?.designation,
           resourceAllocationhrs: data.allocatedHours || null,
           projectName: data?.project?.projectId,
@@ -472,16 +452,12 @@ onPhaseChange(event: any) {
       this.updateResourceForm.markAllAsTouched();
       return;
     }
-
     this.loader = true;
     const formValue = this.updateResourceForm.getRawValue();
-
     const projectRoleId = formValue.resourceRole?.roleId;
     const projectDepartmentId = formValue.resourceRole?.entityReferenceId;
-
     const currentStatus = this.selectedResource?.status?.toLowerCase();
     const finalStatus = currentStatus === 'assigned' ? 'Assigned' : 'Active';
-
     const payload = {
       entityType: 'project',
       entityRefId: this.projectId,
@@ -505,7 +481,6 @@ onPhaseChange(event: any) {
         }
       }
     };
-
     this.updateResourceStatus(payload, null, 'Resource updated successfully');
   }
 
@@ -515,7 +490,6 @@ onPhaseChange(event: any) {
       console.error('Resource ID missing.');
       return;
     }
-
     this.http.putData(`ProjectResource/${resourceId}`, payload).subscribe({
       next: (res) => {
         this.loader = false;
@@ -604,9 +578,7 @@ onPhaseChange(event: any) {
 
   handleAction(action: string, data: any) {
     const config = this.confirmationMessages[action];
-
     if (!config) return;
-
     if (action === 'Update') {
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
@@ -629,19 +601,16 @@ onPhaseChange(event: any) {
     this.extendForm.reset();
     const today = new Date().toISOString().split('T')[0];
     const phaseStart = data.startDate?.substring(0, 10);
-
     this.extendForm.patchValue({
       newStartDate: phaseStart,
       newEndDate: data.endDate?.substring(0, 10),
       extendReason: ''
     });
-
     if (phaseStart && phaseStart < today) {
       this.extendForm.get('newStartDate')?.disable();
     } else {
       this.extendForm.get('newStartDate')?.enable();
     }
-
     this.startndEndDateValid = true;
     this.modalService.open(this.extendModal, { centered: true, size: 'md', backdrop: 'static' });
   }
@@ -651,20 +620,16 @@ onPhaseChange(event: any) {
       this.reasonForm.markAllAsTouched();
       return;
     }
-
     const reason = this.reasonForm.value.reason;
     const title = this.modalData?.title ?? '';
     const data = this.modalData?.data;
     const resourceId = data?.resourceId;
-
     if (!resourceId) {
       console.error('Resource ID missing.');
       return;
     }
-
     const config = Object.values(this.confirmationMessages).find(c => c.title === title);
     const status = config?.nextStatus || 'Active';
-
     const payload = {
       resourceId,
       entityType: 'project',
@@ -686,7 +651,6 @@ onPhaseChange(event: any) {
       projectId: data.project?.projectId,
       meta: data.meta || { graphData: { color: data.meta?.graphData?.color || '' } }
     };
-
     this.updateResourceStatus(payload, modal, config?.successMessage);
   }
 
@@ -695,15 +659,12 @@ onPhaseChange(event: any) {
       this.extendForm.markAllAsTouched();
       return;
     }
-
     const { newStartDate, newEndDate, extendReason } = this.extendForm.value;
     const resource = this.modalData?.data;
-
     if (!resource?.resourceId) {
       console.error('Resource ID missing for extension');
       return;
     }
-
     const payload = {
       entityType: "Client",
       entityRefId: this.clientID,
@@ -728,7 +689,6 @@ onPhaseChange(event: any) {
         }
       }
     };
-
     this.updateResourceStatus(payload, modal);
   }
 
@@ -765,9 +725,8 @@ onPhaseChange(event: any) {
     this.selectedEmployee = this.employeeDetails?.find(emp => emp.employeeId === employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee
-        ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
-        : '-'
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
+      ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-'
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
   }

@@ -202,9 +202,9 @@
                 defaultLabel="Please select department name" formControlName="updatedepartment"
                 class="form-select custom-select"></p-multiSelect>
             </div>
-            <div *ngIf="updateprojectform.get('department')?.touched && updateprojectform.get('department')?.invalid"
+            <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
               class="error-msg">
-              <div *ngIf="updateprojectform.get('department')?.errors?.['required']">{{'Department name is
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is
                 required'|translate}}
               </div>
             </div>
@@ -310,7 +310,7 @@
 
           <!-- Project Color -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">{{'Project Color' | translate}}</label>
+            <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span class="text-danger">*</span></label>
             <input type="color" class="form-control custom-color" formControlName="updatecolor" />
           </div>
 

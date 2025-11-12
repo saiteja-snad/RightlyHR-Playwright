@@ -128,7 +128,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color: ['#FFFFFF'],
+      color: ['#FFFFFF', Validators.required],
       resourceRole: [null, Validators.required],
       resourcePhase: [null, Validators.required],
       resourceAuthority: [null]

@@ -19,10 +19,11 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,NgbPopover],
+    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
@@ -166,7 +167,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
@@ -253,7 +255,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
     const params: any = {
       entityType: 'project',
-      entityRefId: projectId
+      entityRefId: projectId,
+      status:'active,assigned'
     };
 
     if (phaseId) {
@@ -478,6 +481,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.modalService.dismissAll();
       this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
       this.getResourceData(this.projectId);
+      this.http.setnewcountfornewresourcecount()
     },
     error: (err) => {
       this.loader = false;
@@ -704,6 +708,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
 
     const reason = this.reasonForm.value.reason;
+    const statusEffectiveDate = this.reasonForm.value.statusEffectiveDate;
     const title = this.modalData?.title ?? '';
     const data = this.modalData?.data;
     const resourceId = data?.resourceId;
@@ -717,7 +722,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     const config = Object.values(this.confirmationMessages).find(c => c.title === title);
     const status = config?.nextStatus || 'Active';
 
-    const payload = {
+    const payload: any = {
       resourceId,
       entityType: 'project',
       entityRefId: this.projectId,
@@ -737,6 +742,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       phaseId: data.phase?.phaseId,
       meta: data.meta || { graphData: { color: data.meta?.graphData?.color || '' } }
     };
+
+    if (status === 'Released' && statusEffectiveDate) {
+      payload.statusEffectiveDate = new Date(statusEffectiveDate).toISOString();
+    }
 
     this.updateResourceStatus(payload, modal, config?.successMessage);
   }

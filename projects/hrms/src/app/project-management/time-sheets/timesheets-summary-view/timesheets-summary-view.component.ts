@@ -120,13 +120,15 @@ export class TimesheetsSummaryViewComponent {
       resourceId: [null]
     });
   }
-    isFilterApplied(): boolean {
-      const formValue = this.datepickerForm?.value;
-      // Check if any field has value
-      return (
-        (formValue?.dateRange && formValue?.dateRange?.length > 0)
-      );
-    }
+  
+  isFilterApplied(): boolean {
+    const formValue = this.datepickerForm?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0)
+    );
+  }
+
   resetForm() {
     // Reset other form fields
     this.datepickerForm.reset({
@@ -151,7 +153,7 @@ export class TimesheetsSummaryViewComponent {
         this.getEmployeeId(resoureID);
       }
     });
-         this.setDefaultmounth();
+    this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectTypeChart();
@@ -201,7 +203,7 @@ export class TimesheetsSummaryViewComponent {
       this.estimatedVsActualGraphData.datasets[0]?.data?.length
     );
   }
- 
+
   getEmployeeId(employeeId: any) {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
@@ -371,7 +373,7 @@ export class TimesheetsSummaryViewComponent {
       labels,
       datasets: [
         {
-          label: 'Project Hours (in hrs)',
+          label: 'Project Hours (in Hrs)',
           data,
           backgroundColor: backgroundColors,
         },
@@ -380,7 +382,7 @@ export class TimesheetsSummaryViewComponent {
     // Chart options
     this.projectTypeGraphOptions = {
       plugins: {
-        legend: {display: false },
+        legend: { display: false },
       },
     };
   }

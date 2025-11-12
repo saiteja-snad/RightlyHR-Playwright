@@ -19,10 +19,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent,NgbPopoverModule,InfoIconComponent],
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, InfoIconComponent, DateformatPipe],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })
@@ -51,7 +52,8 @@ export class TeamTimesheetsComponent {
   ];
   resourcesList: IResourceDetail[] = [];
   selectedEntries: TimesheetEntry[] = [];
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,private modalService: NgbModal) { }
+
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -62,7 +64,6 @@ export class TeamTimesheetsComponent {
     this.getteamsummary(); // always call once
   }
 
-
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
     // Check if any field has value
@@ -70,27 +71,27 @@ export class TeamTimesheetsComponent {
       (formValue?.dateRange && formValue?.dateRange?.length > 0)
     );
   }
-resetForm() {
-  // Reset other form fields
-  this.datepickerForm.reset({
-    resourceId: null,
-    dateRange: null
-  });
 
-  // Now manually set the default month range
-  // const defaultRange = this.setDefaultmounth();
-   const startOfMonth = dayjs().startOf('month').toDate();
+  resetForm() {
+    // Reset other form fields
+    this.datepickerForm.reset({
+      resourceId: null,
+      dateRange: null
+    });
+    // Now manually set the default month range
+    // const defaultRange = this.setDefaultmounth();
+    const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
-     this.getteamsummary();
-}
+    this.getteamsummary();
+  }
+
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
       resourceId: [null]
-
     });
   }
 
@@ -100,13 +101,14 @@ resetForm() {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
-      // return [startOfMonth, endOfMonth];
+    // return [startOfMonth, endOfMonth];
   }
+
   openModal(entries: any, content?: any) {
-    console.log(entries)
     this.selectedEntries = entries;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
@@ -176,7 +178,7 @@ resetForm() {
           // Extract dates for header dynamically (use first record)
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
-              dayjs(d.date).format('ddd<br>MMM D')
+              dayjs(d.date).format('D MMM<br>ddd')
             );
           }
         }

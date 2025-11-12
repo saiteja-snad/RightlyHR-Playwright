@@ -31,7 +31,6 @@
 
 .time-sheet-graph-card {
     width: 100%;
-    height: 100%;
     border: 1px solid #FFFFFF;
     border-radius: 0.5rem;
     background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
@@ -105,6 +104,7 @@
     font-size: 11px;
     font-weight: 500;
     flex-wrap: wrap;
+    gap: 1rem;
 
     .label {
         background: #FFF;
@@ -134,12 +134,11 @@
     color: rgba(133, 137, 145, 1);
     font-weight: 500;
     font-size: var(--fontsize14);
-    cursor: pointer;
 }
 
 .total-duration {
-    font-size: var(--fontsize15) !important;
-    font-weight: 600;
+    font-size: var(--fontsize16) !important;
+    font-weight: 700;
     color: var(--primary-color);
 }
 
@@ -191,9 +190,9 @@
 
 .chart-card-skeleton {
     width: 100%;
-    height: 24vh;
     margin: 0 auto;
     background: transparent;
+    min-height: 15rem;
 
     .p-skeleton {
         background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;

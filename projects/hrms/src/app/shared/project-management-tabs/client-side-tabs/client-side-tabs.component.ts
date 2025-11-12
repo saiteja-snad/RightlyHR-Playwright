@@ -17,11 +17,11 @@ export class ClientSideTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
     {
-      label: 'Active', link: '/project-management/clients/active', icon: '/my-info-icons/contact-icon.png', statusKey: 'active',
+      label: 'Active', link: '/project-management/clients/active', icon: 'project-mangement-icons/activeclient.png', statusKey: 'active',
       permission: { feature: 'Client Projects', action: 'view' }
     },
     {
-      label: 'Inactive', link: '/project-management/clients/inactive', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
+      label: 'Inactive', link: '/project-management/clients/inactive', icon: 'project-mangement-icons/Inactiveclient.png', statusKey: 'inactive',
       permission: { feature: 'Client Projects', action: 'view' },
     },
     // {

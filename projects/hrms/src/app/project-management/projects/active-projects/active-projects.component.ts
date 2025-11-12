@@ -123,7 +123,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           this.http.projectDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.getprojectbyid(parseInt(clientID));
           });
-          this.updateprojectform.get('updateclientName')?.disable();
+          this.updateprojectform?.get('updateclientName')?.disable();
         }
       });
     }
@@ -389,6 +389,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   openModalstatus(modal: any, project: Project) {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
     this.selectedProject = { ...project }; // store project details
+  }
+  
+  closeall(){
+    this.modalService.dismissAll()
   }
 
   confirmStatusChange(modal: any) {

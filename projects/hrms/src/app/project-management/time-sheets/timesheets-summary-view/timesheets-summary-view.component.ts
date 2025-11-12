@@ -390,7 +390,7 @@ export class TimesheetsSummaryViewComponent {
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
+    const labels = this.estimatedVsActualData.map((item: any) => item.meta.graphData.code?item.meta.graphData.code: item.projectName);
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
     // Convert "HH:mm" to numeric hours for actualHours

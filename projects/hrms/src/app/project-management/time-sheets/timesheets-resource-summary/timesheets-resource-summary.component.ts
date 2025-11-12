@@ -1,9 +1,18 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { TimesheetsResourceTabsComponent } from '../timesheets-resource-tabs/timesheets-resource-tabs.component';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgbPopover, NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbPopover,
+  NgbPopoverModule,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { DatePicker } from 'primeng/datepicker';
@@ -12,8 +21,14 @@ import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { Subscription, Subject, BehaviorSubject, takeUntil } from 'rxjs';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
-import { TimeTrackingData, DailyData } from '../../../Interfaces/team-summary-time-sheet.model';
-import { MonthlySummaryItem, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
+import {
+  TimeTrackingData,
+  DailyData,
+} from '../../../Interfaces/team-summary-time-sheet.model';
+import {
+  MonthlySummaryItem,
+  TimesheetSummaryResponse,
+} from '../../../Interfaces/timesheetsummary';
 import { TimesheetEntry } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -26,14 +41,27 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 @Component({
   selector: 'app-timesheets-resource-summary',
-  imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, 
-    CommonModule, Select, NgbPopoverModule, NoDataFoundComponent, ProgressBarModule, ModuleInfoIconComponent, 
-    ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent],
+  imports: [
+    TimesheetsTabsComponent,
+    ReactiveFormsModule,
+    NgbPopover,
+    DatePicker,
+    ChartModule,
+    TranslateModule,
+    CommonModule,
+    Select,
+    NgbPopoverModule,
+    NoDataFoundComponent,
+    ProgressBarModule,
+    ModuleInfoIconComponent,
+    ModuleInformationComponent,
+    Skeleton,
+    TimesheetsResourceTabsComponent,
+  ],
   templateUrl: './timesheets-resource-summary.component.html',
   styleUrl: './timesheets-resource-summary.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class TimesheetsResourceSummaryComponent implements OnInit {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
@@ -82,11 +110,17 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   displayApproved!: string;
   displaySubmitted!: string;
   displayRejected!: string;
-  projectsummaryinfo = 'The Project-Wise hours summary widget represents a pie chart visualization of the hours logged across different assigned projects. It displays each project along with the total submitted hours, providing a clear graphical representation of effort distribution and helping managers analyse time allocation effectively. ';
-  AllocatedActualhours = 'The Allocated and Actual Hours widget provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts. ';
-  TimesheetSummary = 'The Timesheet Summary widget provides a visual representation of timesheet data through a line diagram. It consolidates the total hours that are approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.  ';
-  BillablevsNonBillableHoursInfo = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.';
-  ProjectBurndownChartInfo = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends.';
+  projectsummaryinfo =
+    'The Project-Wise hours summary widget represents a pie chart visualization of the hours logged across different assigned projects. It displays each project along with the total submitted hours, providing a clear graphical representation of effort distribution and helping managers analyse time allocation effectively. ';
+  AllocatedActualhours =
+    'The Allocated and Actual Hours widget provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts. ';
+  TimesheetSummary =
+    'The Timesheet Summary widget provides a visual representation of timesheet data through a line diagram. It consolidates the total hours that are approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.  ';
+  BillablevsNonBillableHoursInfo =
+    'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.';
+  ProjectBurndownChartInfo =
+    'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends.';
+  timeAllocatedInfo = '';
   // content loaders variables
   tableLoader = false;
   allocatedVsActualLoader = false;
@@ -99,6 +133,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   EstimatedActualHoursLoader = false;
   BillablevsNonBillableHoursLoader = false;
   ProjectBurndownChartLoader = false;
+  timeAllocatedLoader = false;
   billablelabels = [
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
@@ -110,9 +145,17 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   burndownData: any;
   burndownOptions: any;
   projectSummeryData: any;
-
-  constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, 
-    private http: HttpService, public rbac: RbacService, private route: ActivatedRoute) { }
+  timeAllocatedData: any;
+  timeAllocatedOptions: any;
+  timeAllocatedlist: any;
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private modalService: NgbModal,
+    private http: HttpService,
+    public rbac: RbacService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -132,6 +175,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         this.getEmployeeId(resoureID);
         this.billableChart(resoureID);
         this.burnDownChart(resoureID);
+        this.timeAllocatedacrossGraph(resoureID);
       }
     });
     this.setDefaultmounth();
@@ -141,12 +185,14 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
   onSubmit() {
     // Check if form is valid (optional)
-    const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
+    const resoureID =
+      this.datepickerForm.get('resourceId')?.value || this.employeeId;
     this.projectSummery(resoureID);
     this.getallocatedSummary(resoureID);
     this.getEmployeeId(resoureID);
     this.billableChart(resoureID);
     this.burnDownChart(resoureID);
+    this.timeAllocatedacrossGraph(resoureID);
   }
 
   createDatepickerForm() {
@@ -186,6 +232,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         this.getEmployeeId(resoureID);
         this.billableChart(resoureID);
         this.burnDownChart(resoureID);
+        this.timeAllocatedacrossGraph(resoureID);
         this.getEmployeeId(resoureID);
       }
     });
@@ -223,14 +270,16 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   getEmployeeId(employeeId: any) {
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.employename = data;
-      },
-      error: (reason) => {
-        console.log(reason);
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.employename = data;
+        },
+        error: (reason) => {
+          console.log(reason);
+        },
+      });
   }
 
   updateModuleInfo() {
@@ -246,32 +295,46 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
-    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
-      next: (res: any) => {
-        if (res?.success) {
-          this.resourcesList = res.data.filter((emp: IResourceDetail) =>
-            emp.id !== EmployeeId && emp.isReportee === true).map((emp: IResourceDetail) => ({
-              ...emp,
-              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
-              key: 'team',
-            }));
-        }
-      },
-      error: (err: any) => console.error(err),
-    });
+    this.subscription = this.http
+      .getData(`Timesheet/get-resources?employeeId=${EmployeeId}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res?.success) {
+            this.resourcesList = res.data
+              .filter(
+                (emp: IResourceDetail) =>
+                  emp.id !== EmployeeId && emp.isReportee === true
+              )
+              .map((emp: IResourceDetail) => ({
+                ...emp,
+                fullName: emp.fusionEmpId
+                  ? `${emp.fusionEmpId} - ${emp.name}`
+                  : emp.name,
+                key: 'team',
+              }));
+          }
+        },
+        error: (err: any) => console.error(err),
+      });
   }
 
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
     const satus = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
-      next: (res: any) => {
-        this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId,
-        }));
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/v3/Getallemployees?statuses=${satus}`)
+      .subscribe({
+        next: (res: any) => {
+          this.activeEmplist = res
+            .filter((emp: any) => emp.employeeId !== EmployeeId)
+            .map((employee: any) => ({
+              label: `${employee.fusionEmpId ?? ''} - ${
+                employee.firstName ?? ''
+              }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+              value: employee.employeeId,
+            }));
+        },
+      });
   }
 
   navigatetomy() {
@@ -306,17 +369,23 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     if (queryParams.length > 0) {
       apiUrl += `?${queryParams.join('&')}`;
     }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.projectsummaryLoader = false;
-        this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
-      },
-      error: (err) => {
-        this.projectsummaryLoader = false;
-        this.projectSummeryData = [];
-        console.error('Error fetching project-wise resource count chart:', err);
-      },
-    });
+    this.http
+      .getData(apiUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.projectsummaryLoader = false;
+          this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+        },
+        error: (err) => {
+          this.projectsummaryLoader = false;
+          this.projectSummeryData = [];
+          console.error(
+            'Error fetching project-wise resource count chart:',
+            err
+          );
+        },
+      });
   }
 
   resetCharts() {
@@ -326,7 +395,11 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
   openModal(entries: TimesheetEntry[], content?: any) {
     this.selectedEntries = entries;
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
 
   get hasbillableData(): boolean {
@@ -353,95 +426,102 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     if (queryParams.length > 0) {
       apiUrl += `?${queryParams.join('&')}`;
     }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.BillablevsNonBillableHoursLoader = false;
-        const chartData = res?.data?.data || [];
-        if (!chartData.length) {
-          this.billableData = { labels: [], datasets: [] };
-          return;
-        }
-        // Utility to handle both "HH:mm" and decimal string formats
-        const convertToHours = (timeStr: string | number): number => {
-          if (!timeStr) return 0;
-          const str = timeStr.toString();
-          if (str.includes(':')) {
-            const [hours, minutes] = str.split(':').map(Number);
-            return hours + minutes / 60;
+    this.http
+      .getData(apiUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.BillablevsNonBillableHoursLoader = false;
+          const chartData = res?.data?.data || [];
+          if (!chartData.length) {
+            this.billableData = { labels: [], datasets: [] };
+            return;
           }
-          return parseFloat(str); // directly convert decimal string to number
-        };
-        // Example usage
-        // const chartData = response.data.data;
-        const labels = chartData.map((item: any) => item.projectColor.graphData.code ? item.projectColor.graphData.code : item.name);
-        const billable = chartData.map((item: any) =>
-          convertToHours(item.billableHours)
-        );
-        const nonBillable = chartData.map((item: any) =>
-          convertToHours(item.nonBillableHours)
-        );
-        // Assign dynamic chart data
-        this.billableData = {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Billable Hours',
-              backgroundColor: '#283593',
-              data: billable,
-            },
-            {
-              label: 'Non-Billable Hours',
-              backgroundColor: '#9FA8DA',
-              data: nonBillable,
-            },
-          ],
-        };
-        // Chart options
-        this.billableOptions = {
-          responsive: true,
-          barThickness: 30,
-          scales: {
-            x: {
-              stacked: true,
-              ticks: { color: '#141414', font: { size: 11 } },
-            },
-            y: {
-              stacked: true,
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Hours',
-                color: '#505050',
-                font: { size: 9 },
+          // Utility to handle both "HH:mm" and decimal string formats
+          const convertToHours = (timeStr: string | number): number => {
+            if (!timeStr) return 0;
+            const str = timeStr.toString();
+            if (str.includes(':')) {
+              const [hours, minutes] = str.split(':').map(Number);
+              return hours + minutes / 60;
+            }
+            return parseFloat(str); // directly convert decimal string to number
+          };
+          // Example usage
+          // const chartData = response.data.data;
+          const labels = chartData.map((item: any) =>
+            item.projectColor.graphData.code
+              ? item.projectColor.graphData.code
+              : item.name
+          );
+          const billable = chartData.map((item: any) =>
+            convertToHours(item.billableHours)
+          );
+          const nonBillable = chartData.map((item: any) =>
+            convertToHours(item.nonBillableHours)
+          );
+          // Assign dynamic chart data
+          this.billableData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Billable Hours',
+                backgroundColor: '#283593',
+                data: billable,
               },
-              ticks: { color: '#72777B', font: { size: 11 } },
+              {
+                label: 'Non-Billable Hours',
+                backgroundColor: '#9FA8DA',
+                data: nonBillable,
+              },
+            ],
+          };
+          // Chart options
+          this.billableOptions = {
+            responsive: true,
+            barThickness: 30,
+            scales: {
+              x: {
+                stacked: true,
+                ticks: { color: '#141414', font: { size: 11 } },
+              },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Hours',
+                  color: '#505050',
+                  font: { size: 9 },
+                },
+                ticks: { color: '#72777B', font: { size: 11 } },
+              },
             },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-            tooltip: {
-              callbacks: {
-                label: (context: any) => {
-                  const value = context.parsed.y;
-                  return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const value = context.parsed.y;
+                    return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                  },
                 },
               },
             },
-          },
-          maintainAspectRatio: false,
-        };
-      },
-      error: (err) => {
-        this.BillablevsNonBillableHoursLoader = false;
-        this.billableData = { labels: [], datasets: [] };
-        console.error(
-          'Error fetching billable/non-billable chart data:',
-          err
-        );
-      },
-    });
+            maintainAspectRatio: false,
+          };
+        },
+        error: (err) => {
+          this.BillablevsNonBillableHoursLoader = false;
+          this.billableData = { labels: [], datasets: [] };
+          console.error(
+            'Error fetching billable/non-billable chart data:',
+            err
+          );
+        },
+      });
   }
 
   // Project Burndown Chart (Line)
@@ -459,122 +539,125 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     if (queryParams.length > 0) {
       apiUrl += `?${queryParams.join('&')}`;
     }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.ProjectBurndownChartLoader = false;
-        const data = res?.data;
-        const projectCharts = data?.projectBurndownCharts || [];
-        if (!projectCharts.length) {
-          this.burndownData = { labels: [], datasets: [] };
-          return;
-        }
-        // --- Store all project names ---
-        this.projectNames = projectCharts.map(
-          (p: any) => p.projectName || `Project ${p.projectId}`
-        );
-        // --- Function to group by week ---
-        const groupByWeek = (line: any[]) => {
-          const weeks: Record<string, number> = {};
-          line.forEach((item) => {
-            const d = new Date(item.date);
-            const monday = new Date(d);
-            monday.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Monday of that week
-            const sunday = new Date(monday);
-            sunday.setDate(monday.getDate() + 6);
-            const label = `${monday.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-            })}-${sunday.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-            })}`;
-            weeks[label] = item.remainingHours;
-          });
-          return weeks;
-        };
-        // --- Collect all labels and datasets dynamically ---
-        const allLabelsSet = new Set<string>();
-        const datasets: any[] = [];
-        // Predefined color palette (extendable)
-        const colors = [
-          '#42A5F5',
-          '#E91E63',
-          '#9C27B0',
-          '#FF9800',
-          '#4CAF50',
-          '#795548',
-          '#009688',
-          '#F44336',
-          '#3F51B5',
-          '#8BC34A',
-        ];
-        projectCharts.forEach((project: any, index: number) => {
-          const actualLine = project.actualLine.map((item: any) => ({
-            date: new Date(item.date),
-            remainingHours: item.remainingHours,
-          }));
-          const actualByWeek = groupByWeek(actualLine);
-          Object.keys(actualByWeek).forEach((label) =>
-            allLabelsSet.add(label)
+    this.http
+      .getData(apiUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.ProjectBurndownChartLoader = false;
+          const data = res?.data;
+          const projectCharts = data?.projectBurndownCharts || [];
+          if (!projectCharts.length) {
+            this.burndownData = { labels: [], datasets: [] };
+            return;
+          }
+          // --- Store all project names ---
+          this.projectNames = projectCharts.map(
+            (p: any) => p.projectName || `Project ${p.projectId}`
           );
-          datasets.push({
-            label: `${project.projectName || 'Project ' + project.projectId}`,
-            data: Object.values(actualByWeek),
-            borderColor: colors[index % colors.length],
-            borderWidth: 2,
-            fill: false,
-            tension: 0.3,
+          // --- Function to group by week ---
+          const groupByWeek = (line: any[]) => {
+            const weeks: Record<string, number> = {};
+            line.forEach((item) => {
+              const d = new Date(item.date);
+              const monday = new Date(d);
+              monday.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Monday of that week
+              const sunday = new Date(monday);
+              sunday.setDate(monday.getDate() + 6);
+              const label = `${monday.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+              })}-${sunday.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+              })}`;
+              weeks[label] = item.remainingHours;
+            });
+            return weeks;
+          };
+          // --- Collect all labels and datasets dynamically ---
+          const allLabelsSet = new Set<string>();
+          const datasets: any[] = [];
+          // Predefined color palette (extendable)
+          const colors = [
+            '#42A5F5',
+            '#E91E63',
+            '#9C27B0',
+            '#FF9800',
+            '#4CAF50',
+            '#795548',
+            '#009688',
+            '#F44336',
+            '#3F51B5',
+            '#8BC34A',
+          ];
+          projectCharts.forEach((project: any, index: number) => {
+            const actualLine = project.actualLine.map((item: any) => ({
+              date: new Date(item.date),
+              remainingHours: item.remainingHours,
+            }));
+            const actualByWeek = groupByWeek(actualLine);
+            Object.keys(actualByWeek).forEach((label) =>
+              allLabelsSet.add(label)
+            );
+            datasets.push({
+              label: `${project.projectName || 'Project ' + project.projectId}`,
+              data: Object.values(actualByWeek),
+              borderColor: colors[index % colors.length],
+              borderWidth: 2,
+              fill: false,
+              tension: 0.3,
+            });
           });
-        });
-        const labels = Array.from(allLabelsSet);
-        this.burndownData = {
-          labels,
-          datasets,
-        };
-        this.burndownOptions = {
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (context: any) => {
-                  const value = context.parsed.y;
-                  return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+          const labels = Array.from(allLabelsSet);
+          this.burndownData = {
+            labels,
+            datasets,
+          };
+          this.burndownOptions = {
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const value = context.parsed.y;
+                    return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                  },
                 },
               },
             },
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              title: {
-                display: true,
-                text: 'Weeks',
-                color: '#141414',
-                font: { size: 11 },
+            scales: {
+              x: {
+                grid: { display: false },
+                title: {
+                  display: true,
+                  text: 'Weeks',
+                  color: '#141414',
+                  font: { size: 11 },
+                },
+                ticks: { color: '#141414', font: { size: 11 } },
               },
-              ticks: { color: '#141414', font: { size: 11 } },
-            },
-            y: {
-              stacked: true,
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'No. of Hours',
-                color: '#141414',
-                font: { size: 11 },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'No. of Hours',
+                  color: '#141414',
+                  font: { size: 11 },
+                },
+                ticks: { color: '#72777B', font: { size: 11 } },
               },
-              ticks: { color: '#72777B', font: { size: 11 } },
             },
-          },
-          maintainAspectRatio: false,
-        };
-      },
-      error: (err) => {
-        this.ProjectBurndownChartLoader = false;
-        this.burndownData = { labels: [], datasets: [] };
-        console.error('Error fetching burndown chart data:', err);
-      },
-    });
+            maintainAspectRatio: false,
+          };
+        },
+        error: (err) => {
+          this.ProjectBurndownChartLoader = false;
+          this.burndownData = { labels: [], datasets: [] };
+          console.error('Error fetching burndown chart data:', err);
+        },
+      });
   }
 
   // Just an example to generate different colors
@@ -602,70 +685,81 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   getallocatedSummary(resoureID: any) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
-    const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
-    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
-    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.loading = false;
-        const data: TimesheetSummaryResponse = res?.data || {};
-        const graphSummary = res?.data?.graphSummary || {};
-        this.totalhrs = res?.data?.totalLoggedHHMM || '00:00';
-        this.projectTypeData = graphSummary?.projectWiseSummary || [];
-        this.estimatedVsActualData =
-          graphSummary?.allocatedVsActualSummary || [];
-        const tsSummary = graphSummary?.timesheetSummary || {
-          approved: '00:00',
-          submitted: '00:00',
-          rejected: '00:00',
-        };
-        this.approved = this.convertTimeToHours(tsSummary?.approved);
-        this.submitted = this.convertTimeToHours(tsSummary?.submitted);
-        this.rejected = this.convertTimeToHours(tsSummary?.rejected);
-        // Percentages for bar visualization
-        const total = this.approved + this.submitted + this.rejected;
-        // avoid division by 0
-        if (total > 0) {
-          this.approvedPercent = (this.approved / total) * 100;
-          this.submittedPercent = (this.submitted / total) * 100;
-          this.rejectedPercent = (this.rejected / total) * 100;
-        } else {
-          this.approvedPercent =
-            this.submittedPercent =
-            this.rejectedPercent =
-            0;
-        }
-        // Display values in HH:mm format
-        this.displayApproved = this.formatHoursToHHMM(this.approved);
-        this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
-        this.displayRejected = this.formatHoursToHHMM(this.rejected);
-        // Handle empty data gracefully — reset charts if needed
-        if (
-          (!this.projectTypeData || this.projectTypeData.length === 0) &&
-          (!this.estimatedVsActualData ||
-            this.estimatedVsActualData.length === 0)
-        ) {
-          this.resetCharts();
-        } else {
-          this.estimatedActualChart();
-        }
-        this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
-          ...item,
-          entries: Array.isArray(item.entries)
-            ? item.entries
-            : item.entries
+    const resourceId = formValue.resourceId
+      ? `&resourceId=${formValue.resourceId}`
+      : '';
+    const start = startDate
+      ? dayjs(startDate).format('YYYY-MM-DD')
+      : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate
+      ? dayjs(endDate).format('YYYY-MM-DD')
+      : dayjs().endOf('month').format('YYYY-MM-DD');
+    const url = `Timesheet/detailemployeesummary?resourceId=${
+      resoureID || formValue.resourceId
+    }&startDate=${start}&endDate=${end}${resourceId}`;
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          const data: TimesheetSummaryResponse = res?.data || {};
+          const graphSummary = res?.data?.graphSummary || {};
+          this.totalhrs = res?.data?.totalLoggedHHMM || '00:00';
+          this.projectTypeData = graphSummary?.projectWiseSummary || [];
+          this.estimatedVsActualData =
+            graphSummary?.allocatedVsActualSummary || [];
+          const tsSummary = graphSummary?.timesheetSummary || {
+            approved: '00:00',
+            submitted: '00:00',
+            rejected: '00:00',
+          };
+          this.approved = this.convertTimeToHours(tsSummary?.approved);
+          this.submitted = this.convertTimeToHours(tsSummary?.submitted);
+          this.rejected = this.convertTimeToHours(tsSummary?.rejected);
+          // Percentages for bar visualization
+          const total = this.approved + this.submitted + this.rejected;
+          // avoid division by 0
+          if (total > 0) {
+            this.approvedPercent = (this.approved / total) * 100;
+            this.submittedPercent = (this.submitted / total) * 100;
+            this.rejectedPercent = (this.rejected / total) * 100;
+          } else {
+            this.approvedPercent =
+              this.submittedPercent =
+              this.rejectedPercent =
+                0;
+          }
+          // Display values in HH:mm format
+          this.displayApproved = this.formatHoursToHHMM(this.approved);
+          this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
+          this.displayRejected = this.formatHoursToHHMM(this.rejected);
+          // Handle empty data gracefully — reset charts if needed
+          if (
+            (!this.projectTypeData || this.projectTypeData.length === 0) &&
+            (!this.estimatedVsActualData ||
+              this.estimatedVsActualData.length === 0)
+          ) {
+            this.resetCharts();
+          } else {
+            this.estimatedActualChart();
+          }
+          this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
+            ...item,
+            entries: Array.isArray(item.entries)
+              ? item.entries
+              : item.entries
               ? [item.entries]
               : [],
-        }));
-      },
-      error: (err) => {
-        this.loading = false;
-        console.error('Error fetching attendance summary:', err);
-        this.resetCharts();
-        this.attendanceSummaryData = [];
-      },
-    });
+          }));
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('Error fetching attendance summary:', err);
+          this.resetCharts();
+          this.attendanceSummaryData = [];
+        },
+      });
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
@@ -673,8 +767,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)
       return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map(
-      (item: any) => item.meta.graphData.code?item.meta.graphData.code: item.projectName
+    const labels = this.estimatedVsActualData.map((item: any) =>
+      item.meta.graphData.code ? item.meta.graphData.code : item.projectName
     );
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map(
@@ -746,7 +840,93 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       },
     };
   }
+  //time allocated across project
+  timeAllocatedacrossGraph(employeeId: any) {
+    this.timeAllocatedLoader = true;
+    //  Get stored date range from HttpService
+    const dateRange = this.datepickerForm.get('dateRange')?.value;
+    const startDate = dateRange?.startDate ?? null;
+    const endDate = dateRange?.endDate ?? null;
+    // Build the API URL conditionally
+    let url = `ProjectManagementGraph/employee/time-allocation/${employeeId}`;
+    if (startDate && endDate) {
+      url += `?startDate=${startDate}&endDate=${endDate}`;
+    }
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.timeAllocatedLoader = false;
+          const apiData = res?.data?.projectAllocations || [];
+          console.log(res);
+          console.log(apiData);
+          if (!apiData.length) {
+            this.timeAllocatedData = { labels: [], datasets: [] };
+            return;
+          }
+          // if (!Array.isArray(apiData) || apiData.length === 0) {
+          //   this.timeAllocatedlist = [];
+          //   this.timeAllocatedData = null;
+          //   return;
+          // }
 
+          // Save list for legends
+          this.timeAllocatedlist = apiData;
+
+          // Extract values from API
+          const labels = apiData.map((item: any) => item.projectName);
+          const dataValues = apiData.map(
+            (item: any) => item.allocationPercentage
+          ); // or loggedHours if numeric
+          const backgroundColors = apiData.map(
+            (item: any) => item.meta?.graphData?.color || '#CCCCCC'
+          );
+          // Build chart dataset dynamically
+          this.timeAllocatedData = {
+            labels,
+            datasets: [
+              {
+                data: dataValues,
+                backgroundColor: backgroundColors,
+                hoverBackgroundColor: backgroundColors,
+              },
+            ],
+          };
+          // Chart options
+          this.timeAllocatedOptions = {
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (tooltipItem: any) => {
+                    const label =
+                      this.timeAllocatedData.labels[tooltipItem.dataIndex];
+                    const value =
+                      this.timeAllocatedData.datasets[0].data[
+                        tooltipItem.dataIndex
+                      ];
+                    return `${value}%`; // 👈 append % for tooltip
+                  },
+                },
+              },
+            },
+          };
+        },
+        error: (err) => {
+          this.timeAllocatedLoader = false;
+          console.error('Error fetching Role-wise hours:', err);
+          this.timeAllocatedlist = [];
+          this.timeAllocatedData = null;
+        },
+      });
+  }
+  get hasallocationTypeData(): boolean {
+    const datasets = this.timeAllocatedData?.datasets;
+    if (!datasets?.length) return false;
+    const data = datasets[0]?.data;
+    return Array.isArray(data) && data.some((value) => value > 0);
+  }
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
@@ -768,7 +948,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         return '';
     }
   }
-  
+
   get hasburndownData(): boolean {
     const datasets = this.burndownData?.datasets;
     if (!datasets?.length) return false;

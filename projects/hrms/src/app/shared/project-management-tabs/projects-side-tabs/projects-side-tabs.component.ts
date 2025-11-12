@@ -5,9 +5,10 @@ import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { TabsModule } from 'primeng/tabs';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 @Component({
   selector: 'app-projects-side-tabs',
-  imports: [RouterModule, CommonModule, TabsModule],
+  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
   templateUrl: './projects-side-tabs.component.html',
   styleUrl: './projects-side-tabs.component.scss'
 })
@@ -15,6 +16,7 @@ import { TabsModule } from 'primeng/tabs';
 export class ProjectsSideTabsComponent {
   filteredTabs: any[] = [];
   statusCounts: any = {};
+  loading: boolean = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
@@ -51,14 +53,18 @@ export class ProjectsSideTabsComponent {
   }
 
   getcountData(): void {
+    this.loading = true;
     this.http.getData(`StatusCount?moduleName=Project`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+         this.loading=false
         this.statusCounts = {};
         res.data.forEach((item: any) => {
           this.statusCounts[item.status.toLowerCase()] = item.count || 0;
         })
       },
-      error: (err) => { }
+      error: (err) => { 
+        this.loading=false
+      }
     });
   }
 

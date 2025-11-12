@@ -8,14 +8,15 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-client-resource-tab',
-  imports: [TabsModule,RouterModule,CommonModule],
+  imports: [TabsModule, RouterModule, CommonModule],
   templateUrl: './client-resource-tab.component.html',
   styleUrl: './client-resource-tab.component.scss'
 })
 export class ClientResourceTabComponent {
- filteredTabs: any[] = [];
+  filteredTabs: any[] = [];
   statusCounts: any = {};
   projectId: any
+  loading = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
@@ -26,7 +27,7 @@ export class ClientResourceTabComponent {
       label: 'Inactive', link: '/project-management/clients/details/inactive-resources', icon: 'main-menu-icons/project-management-project.png', statusKey: 'inactive',
       permission: { feature: 'Client Resources', action: 'view' },
     },
-   
+
   ];
 
   constructor(public rbac: RbacService, private router: Router, private http: HttpService, private route: ActivatedRoute,) { }
@@ -53,42 +54,45 @@ export class ClientResourceTabComponent {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
- statusGroups: any = {
+  statusGroups: any = {
     active: ['assigned', 'active'],
     inactive: ['released'],
-   
+
   };
 
-getcountData(projectId: any): void {
-  const statuses = 'assigned,released,active';
+  getcountData(projectId: any): void {
+    this.loading = true
+    const statuses = 'assigned,released,active';
 
-  this.http.getData(`StatusCount?moduleName=Resource&entityId=${projectId}&statuses=${statuses}`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-        this.statusCounts = {};
-        const rawCounts: any = {};
+    this.http.getData(`StatusCount?moduleName=Resource&clientId=${projectId}&statuses=${statuses}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          this.statusCounts = {};
+          const rawCounts: any = {};
 
-        // Step 1: Store all raw counts from API
-        res?.data?.forEach((item: any) => {
-          rawCounts[item.status.toLowerCase()] = item.count || 0;
-        });
-
-        // Step 2: Aggregate based on groups
-        Object.keys(this.statusGroups).forEach(groupKey => {
-          const statuses = this.statusGroups[groupKey];
-          let total = 0;
-          statuses.forEach((status: string | number) => {
-            total += rawCounts[status] || 0; // Add 0 if missing
+          // Step 1: Store all raw counts from API
+          res?.data?.forEach((item: any) => {
+            rawCounts[item.status.toLowerCase()] = item.count || 0;
           });
-          this.statusCounts[groupKey] = total;
-        });
-      },
-      error: (err) => {
-        console.error('Error fetching phase status count', err);
-      }
-    });
-}
+
+          // Step 2: Aggregate based on groups
+          Object.keys(this.statusGroups).forEach(groupKey => {
+            const statuses = this.statusGroups[groupKey];
+            let total = 0;
+            statuses.forEach((status: string | number) => {
+              total += rawCounts[status] || 0; // Add 0 if missing
+            });
+            this.statusCounts[groupKey] = total;
+          });
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('Error fetching phase status count', err);
+        }
+      });
+  }
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }

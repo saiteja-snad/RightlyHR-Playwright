@@ -15,6 +15,9 @@ import {
   SETTINGS_ASSEST_CONFIGURATION_TABS,
   SETTINGS_DYNAMIC_FORMS_TABS,
   SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS,
+  SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_TABS,
+  SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS_CONFIG_UPDATE,
+  SETTINGS_EMPLOYEE_FIELDS_JOB_TABS_CONFIG_UPDATE,
   SETTINGS_EMPLOYEE_FIELDS_TABS,
   SETTINGS_ROLES_TABS,
   SETTINGS_TIMEOFF_TABS,
@@ -851,7 +854,7 @@ export class AccessNavigationService {
         }
         break;
 
-    
+
     }
     return route;
   }
@@ -979,7 +982,6 @@ export class AccessNavigationService {
           }
         }
         break;
-
       case '/settings/roles-permissions':
         for (const item of SETTINGS_ROLES_TABS) {
           return item.route;
@@ -1249,6 +1251,26 @@ export class AccessNavigationService {
       case '/settings/timeoff-configurations/load-entitlements':
         if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
           return (route = '/settings/timeoff-configurations/load-entitlements');
+        }
+        break;
+
+      case '/settings/employee-fields-update-configurations/personal':
+        if (this.rbac.allowedToAccess('Personal Config Update Tab.view')) {
+          for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS_CONFIG_UPDATE) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/settings/employee-fields-update-configurations/job':
+        if (this.rbac.allowedToAccess('Job Config Update Tab.view')) {
+          for (const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS_CONFIG_UPDATE) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 

@@ -2,20 +2,20 @@
   <!--Add Btn-->
   <div class="mb-3 d-flex gap-2">
     <button type="button" (click)="openFieldConfigDialog()" class="custom-btn btn-primary"
-      *ngIf="rbac.allowedToAccess('Job Role.create')">{{'Add Field Configuration' | translate}}</button>
+      *ngIf="rbac.allowedToAccess('Academics.create')">{{'Add Field Configuration' | translate}}</button>
   </div>
 
   <div class="custom-main-component-container">
     <div class="custom-table-content">
       @if(!loader){
-      <table class="w-100" *ngIf="rbac.allowedToAccess('Job Role.view')">
+      <table class="w-100" *ngIf="rbac.allowedToAccess('Academics.view')">
         <thead>
           <tr>
             <th>{{'Field Name' | translate}}</th>
             <th>{{'Approval Required' | translate}}</th>
             <th>{{'Approval Type' | translate}}</th>
             <th class="text-center"
-              *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">
+              *ngIf="rbac.allowedToAccess('Academics.update') || rbac.allowedToAccess('Academics.delete')">
               {{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
           </tr>
         </thead>
@@ -23,23 +23,23 @@
         <tbody>
           <ng-container>
             <tr *ngFor="let configItem of academicsFieldsConfigList">
-              <td>{{configItem.columnName || ''}}</td>
+              <td>{{configItem.columnName || 'N/A'}}</td>
               <td>{{configItem.requiresApproval?'Yes': 'No'}}</td>
-              <td>{{configItem.approvalType || ''}}</td>
+              <td>{{configItem.approvalType || 'N/A'}}</td>
               <td class="text-center"
-                *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">
+                *ngIf="rbac.allowedToAccess('Academics.update') || rbac.allowedToAccess('Academics.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li (click)="openUpdateFieldConfigDialog(configItem)"
-                      *ngIf="rbac.allowedToAccess('Job Role.update')">
+                      *ngIf="rbac.allowedToAccess('Academics.update')">
                       <a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
                       </a>
                     </li>
-                    <li (click)="opendelete(configItem)" *ngIf="rbac.allowedToAccess('Job Role.delete')">
+                    <li (click)="opendelete(configItem)" *ngIf="rbac.allowedToAccess('Academics.delete')">
                       <a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
                       </a>

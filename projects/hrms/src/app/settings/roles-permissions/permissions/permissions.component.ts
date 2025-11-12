@@ -408,6 +408,24 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expense Tab',
     'NoDue Clearance Tab',
   ];
+  employeeFieldsConfigUpdate = [
+    'Personal Config Update Tab',
+    'Job Config Update Tab',
+    'Document Config Update Tab',
+  ];
+  settingsEmployeeConfigUpdateJobTabs = [
+    'Certifications',
+    'Employment History'
+  ];
+  settingsEmployeeConfigUpdatePersonalTabs = [
+    'Basic Info',
+    'Contact Info',
+    'Addresses',
+    'Emergency Contacts',
+    'Identity Info',
+    'Bank Info',
+    'Academics',
+  ];
   settingsEmployeeJobFields = [
     'Job Role',
     'IT Support Category',
@@ -470,7 +488,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expense Threshold Validation',
     'Global Expense Configuration'
   ]
-  
+
   settingsAttendanceLockingTab = [
     'Pending Attendance Locking',
     'Published Attendance Locking'
@@ -486,7 +504,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
-  flexibleWFHTabsFields=[
+  flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
@@ -573,7 +591,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
   ];
-   cardsModuleFields = [
+  cardsModuleFields = [
     'Cards Allocated',
     'Cards Available',
     'Cards Expired',
@@ -840,7 +858,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(WFH)',
     'Attendance Team Manager List(WFH)',
     'My Team Report(WFH)',
-     'Attendance All Employees List(RemoteLogin)',
+    'Attendance All Employees List(RemoteLogin)',
     'Attendance Team Manager List(RemoteLogin)',
     'My Team Report(RemoteLogin)',
     'Attendance All Employees List(Permission)',
@@ -882,7 +900,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // 'Attendance vs Timesheet Report - Export',
   ];
 
-    expenseReportsEmployeeTeamTabsFields = [
+  expenseReportsEmployeeTeamTabsFields = [
     'Expense Report - Generate',
     'Expense Report All Employees List',
     'Expense Report Manager List',
@@ -1297,6 +1315,20 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  isemployeeConfigUpdateCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Only enabled for 'NoDue Clearance Tab'
+      return (!this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields));
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return (!this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields));
+    }
+    return false;
+  }
+
   isattendenceCheckboxDisabled(
     per: any,
     action: 'View' | 'Update' | 'Create' | 'Delete'
@@ -1332,6 +1364,40 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  isSettingsEmployeeJobTabsFieldConfigCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isSettingsEmployeePersonalTabsFieldConfigCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+
 
   isSettingsEmployeePersonalCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
@@ -1644,7 +1710,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
- iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }

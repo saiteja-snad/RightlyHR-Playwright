@@ -13,8 +13,8 @@ export class JobFieldUpdateConfigComponent implements OnInit {
   filteredTabs: any[] = [];
 
   allNavLinks = [    
-    { label: 'Certifications', route: '/settings/employee-fields-update-configurations/job/certifications', permission: { feature: 'Salutation', action: 'view' } },
-    { label: 'Employment History', route: '/settings/employee-fields-update-configurations/job/employment-history', permission: { feature: 'Salutation', action: 'view' } },
+    { label: 'Certifications', route: '/settings/employee-fields-update-configurations/job/certifications', permission: { feature: 'Certifications', action: 'view' } },
+    { label: 'Employment History', route: '/settings/employee-fields-update-configurations/job/employment-history', permission: { feature: 'Employment History', action: 'view' } },
     // { label: 'Job Info', route: '/settings/employee-fields-update-configurations/job/job-info', permission: { feature: 'Salutation', action: 'view' } },
     // { label: 'Assigned Tasks', route: '/settings/employee-fields-update-configurations/job/assigned-tasks', permission: { feature: 'Salutation', action: 'view' } }, 
     // { label: 'Contract Info', route: '/settings/employee-fields-update-configurations/job/contract-info', permission: { feature: 'Salutation', action: 'view' } },

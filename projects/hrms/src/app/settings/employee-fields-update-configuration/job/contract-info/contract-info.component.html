@@ -23,9 +23,9 @@
         <tbody>
           <ng-container>
             <tr *ngFor="let configItem of contractInfoFieldsConfigList">
-              <td>{{configItem.columnName || ''}}</td>
+              <td>{{configItem.columnName || 'N/A'}}</td>
               <td>{{configItem.requiresApproval?'Yes': 'No'}}</td>
-              <td>{{configItem.approvalType || ''}}</td>
+              <td>{{configItem.approvalType || 'N/A'}}</td>
               <td class="text-center"
                 *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">
                 <div class="dropdown">

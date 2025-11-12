@@ -19,25 +19,25 @@ export class SettingsEmployeeFieldsUpdateConfigurationsComponent implements OnIn
   allTabs: any[] = [
     {
       label: 'Personal Information Update',
-      link: '/settings/employee-fields-update-configurations/personal/basic-info',
+      link: '/settings/employee-fields-update-configurations/personal',
       icon: '/settings-icon/personal-icon.png',
-      permission: { feature: 'Personal Tab', action: 'view' },
+      permission: { feature: 'Personal Config Update Tab', action: 'view' },
       subjectText: MODULE_INFOS.SETTINGS_PERSONAL_INFO_MODULE_INFO,
     },
     {
       label: 'Job Information Update',
-      link: '/settings/employee-fields-update-configurations/job/job-info',
+      link: '/settings/employee-fields-update-configurations/job',
       icon: '/images/jobdetailes.png',
-      permission: { feature: 'Job Tab', action: 'view' },
+      permission: { feature: 'Job Config Update Tab', action: 'view' },
       subjectText: MODULE_INFOS.SETTINGS_JOB_INFO_MODULE_INFO,
     },
-    {
-      label: 'Document Information Update',
-      link: '/settings/employee-fields-update-configurations/documents',
-      icon: '/main-menu-icons/generate-documents.png',
-      permission: { feature: 'Document Tab', action: 'view' },
-      subjectText: MODULE_INFOS.SETTINGS_DOCUMENTS_INFO_MODULE_INFO,
-    }
+    // {
+    //   label: 'Document Information Update',
+    //   link: '/settings/employee-fields-update-configurations/documents',
+    //   icon: '/main-menu-icons/generate-documents.png',
+    //   permission: { feature: 'Document Config Update Tab', action: 'view' },
+    //   subjectText: MODULE_INFOS.SETTINGS_DOCUMENTS_INFO_MODULE_INFO,
+    // }
   ];
 
   constructor(
@@ -60,9 +60,7 @@ export class SettingsEmployeeFieldsUpdateConfigurationsComponent implements OnIn
   }
 
   navigateToAccessedRoute(route: string) {
-    this.router.navigate([route]);
-    return
-    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);    
     if (actualRoute) {
       this.router.navigate([actualRoute]);
     } else {

@@ -102,15 +102,15 @@
 
                         <div class="legends-view">
                             <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     <div class="d-flex align-items-center gap-1">
                                         <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                         <div class="legend-name">{{ item.name }}</div>
                                     </div>
                                 </div>
-                                <div class="hrs-display text-nowrap col-md-4">
+                                <div class="hrs-display col-md-5">
                                     <span class="actual">{{item.actualHours}}</span>/
-                                    <span>{{item.allocateHours}} hrs</span>
+                                    <span>{{item.allocateHours}} Hrs</span>
                                 </div>
                             </div>
                         </div>

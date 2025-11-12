@@ -134,73 +134,78 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   lockMessage: string | null = null;
   lockextendMessage:string | null = null;
 
-  checkTimesheetLock(apiResponse: any) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // normalize time for comparison
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+ checkTimesheetLock(apiResponse: any, selectedStart?: Date, selectedEnd?: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    this.lockMessages = []; // store multiple messages
-
-    if (!apiResponse || apiResponse.length === 0) {
-      console.log("No lock data available.");
-      return;
+  // Default to the component's current week if not provided; otherwise fall back to current month range
+  if (!selectedStart || !selectedEnd) {
+    if (this.start && this.end) {
+      selectedStart = new Date(this.start);
+      selectedEnd = new Date(this.end);
+    } else {
+      selectedStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      selectedEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     }
-
-    // Filter locks that overlap with current month
-    const currentMonthItems = apiResponse.filter((item: any) => {
-      const start = new Date(item.startDate);
-      const end = new Date(item.endDate);
-      return (
-        (start.getMonth() === currentMonth && start.getFullYear() === currentYear) ||
-        (end.getMonth() === currentMonth && end.getFullYear() === currentYear) ||
-        (start < new Date(currentYear, currentMonth + 1, 0) &&
-          end > new Date(currentYear, currentMonth, 1))
-      );
-    });
-
-    if (currentMonthItems.length === 0) {
-      console.log("No locked records for current month.");
-      return;
-    }
-
-    // Sort by start date
-    currentMonthItems.sort(
-      (a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-    );
-
-    // Build message list
-    currentMonthItems.forEach((item: any) => {
-      const start = new Date(item.startDate);
-      const end = new Date(item.endDate);
-      const effective = new Date(item.effectiveDate);
-      effective.setHours(0, 0, 0, 0); // normalize
-
-      const startStr = start.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-      const endStr = end.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-      const effStr = effective.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-
-      if (effective > today) {
-        // ⏳ Future effective date
-        this.lockMessages.push({
-          type: 'upcoming',
-          text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. 
-               Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
-        });
-      } else if (effective.getTime() === today.getTime()) {
-        // 🔒 Effective date is today
-        this.lockMessages.push({
-          type: 'locked',
-          text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>.
-               Please contact HR/Admin for assistance.`
-        });
-      }
-      // else skip (past effective date) ❌ do not show anything
-    });
-
-    console.log(this.lockMessages);
   }
 
+  // Normalize incoming dates
+  selectedStart.setHours(0, 0, 0, 0);
+  selectedEnd.setHours(0, 0, 0, 0);
+
+  this.lockMessages = [];
+
+  if (!apiResponse || apiResponse.length === 0) return;
+
+  // Filter only records where end >= selectedStart (period not fully past)
+  const relevantRecords = apiResponse.filter((item: any) => {
+    const end = new Date(item.endDate);
+    end.setHours(0, 0, 0, 0);
+    return end >= selectedStart!;
+  });
+
+  // Sort by start date
+  relevantRecords.sort((a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+  relevantRecords.forEach((item: any) => {
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    const effective = new Date(item.effectiveDate);
+
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    effective.setHours(0, 0, 0, 0);
+
+    // Only show if overlaps selected week
+    if (selectedEnd! < start || selectedStart! > end) return;
+
+    const startStr = start.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const endStr = end.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const effStr = effective.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+    if (effective > today) {
+      // Future effective date
+      this.lockMessages.push({
+        type: 'upcoming',
+        text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+      });
+    } else if (effective < today) {
+      // Past effective date
+      this.lockMessages.push({
+        type: 'locked',
+        text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. Please contact HR/Admin for assistance.`
+      });
+    } else if (effective.getTime() === today.getTime()) {
+      // Effective today
+      this.lockMessages.push({
+        type: 'locked-today',
+        text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. Please contact HR/Admin for assistance.`
+      });
+    }
+  });
+
+  console.log(this.lockMessages);
+}
   checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
     const lockedItems = this.TimesheetLockData || [];
     this.lockMessages = []; //  reset array each time

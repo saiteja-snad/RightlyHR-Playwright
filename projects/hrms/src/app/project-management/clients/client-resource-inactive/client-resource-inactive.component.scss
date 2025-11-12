@@ -1,8 +1,7 @@
-.custom-table-content {
-  border: 1px solid var(--border-color) !important;
-  height: calc(100vh - 12rem) !important;
-}
-
 .resource-right-content {
   width: calc(100% - 0.5rem);
+}
+
+.custom-table-content {
+  height: calc(100vh - 12rem) !important;
 }

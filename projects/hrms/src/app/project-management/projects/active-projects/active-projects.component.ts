@@ -206,7 +206,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateallowweekendWork: [false],
       // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
       // approvalidAuthority: [{value:null,disabled:true}],
-      updatecolor: ['']
+      updatecolor: ['', Validators.required]
     });
     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();

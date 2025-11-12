@@ -199,7 +199,7 @@ onPhaseChange(selectedValue: any) {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color: [''],
+      color: ['', Validators.required],
       resourcePhase : [null, Validators.required],
       resourceAuthority : [{value: null, disabled: true}]
     }, { validators: [this.DateValidator()] },);

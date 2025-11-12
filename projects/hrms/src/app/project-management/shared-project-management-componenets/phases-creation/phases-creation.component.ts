@@ -58,7 +58,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       phaseDescription: [null, this.formValidation.maxCharactersValidator(501)],
       allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
       approvalidAuthority: [{ value: null, disabled: true }],
-      color: [''],
+      color: ['',Validators.required],
     });
     this.addPhaseForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();

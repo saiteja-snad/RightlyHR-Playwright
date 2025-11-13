@@ -591,11 +591,13 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
             '#3F51B5',
             '#8BC34A',
           ];
+
           projectCharts.forEach((project: any, index: number) => {
-            const actualLine = project.actualLine.map((item: any) => ({
+            const actualLine = project?.actualLine?.map((item: any) => ({
               date: new Date(item.date),
               remainingHours: item.remainingHours,
             }));
+            console.log(actualLine)
             const actualByWeek = groupByWeek(actualLine);
             Object.keys(actualByWeek).forEach((label) =>
               allLabelsSet.add(label)
@@ -770,6 +772,9 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const labels = this.estimatedVsActualData.map((item: any) =>
       item.meta.graphData.code ? item.meta.graphData.code : item.projectName
     );
+    const color = this.estimatedVsActualData.map((item: any) =>
+      item.meta.graphData.color ? item.meta.graphData.color : '#1A237E'
+    );
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map(
       (item: any) => Number(item.estimatedHours) || 0
@@ -793,7 +798,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       datasets: [
         {
           label: 'Estimated Hours',
-          backgroundColor: '#1A237E',
+          backgroundColor: color,
           data: estimatedData,
           stack: 'Estimated',
         },
@@ -953,6 +958,6 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const datasets = this.burndownData?.datasets;
     if (!datasets?.length) return false;
     const data = datasets[0]?.data;
-    return Array.isArray(data) && data.some((value) => value > 0);
+    return Array.isArray(data) && data?.some((value) => value > 0);
   }
 }

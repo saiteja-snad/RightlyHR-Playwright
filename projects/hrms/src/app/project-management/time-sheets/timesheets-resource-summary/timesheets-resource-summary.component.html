@@ -105,7 +105,7 @@
                             <form [formGroup]="datepickerForm">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                                     <div class="summary-header d-inline-flex gap-2">
-                                        <div>Resource Summary</div>
+                                        <div>Projects Summary</div>
                                         <div>
                                             <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
                                             <ng-template #resourceSummaryContent>
@@ -130,9 +130,9 @@
                                     <tbody>
                                         <tr *ngFor="let item of projectSummeryData">
                                             <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
-                                            <td class="project-name">{{item.department?item.department:'-'}}</td>
-                                            <td class="project-name">{{item.phaseName?item.phaseName:'-'}}</td>
-                                            <td class="project-name">{{item.role?item.role:'-'}}</td>
+                                            <td >{{item.department?item.department:'-'}}</td>
+                                            <td >{{item.phaseName?item.phaseName:'-'}}</td>
+                                            <td >{{item.role?item.role:'-'}}</td>
                                             <td><span class="logged-hrs">{{item.loggedHours?item.loggedHours:'0'}}</span>
                                                 /{{item.allocatedHours?item.allocatedHours:''}}hrs
                                             </td>
@@ -302,7 +302,7 @@
                         }
                     </div>
                      
-                    <div class="col-xxl-6 col-xl-6 mb-3">
+                    <!-- <div class="col-xxl-6 col-xl-6 mb-3">
                         @if (!ProjectwiseResourceCountLoader) {
                         <div class="time-sheet-graph-card">
                             <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
@@ -339,7 +339,7 @@
                             <p-skeleton width="100%" height="100%" borderRadius="12px" />
                         </div>
                         }
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

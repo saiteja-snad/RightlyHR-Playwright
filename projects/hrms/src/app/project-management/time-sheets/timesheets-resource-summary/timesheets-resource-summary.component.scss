@@ -280,12 +280,12 @@
     }
 
     td {
-        font-size: 11px !important;
+        font-size: var(--fontsize12) !important;
     }
 
     th {
         font-size: var(--fontsize12) !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         color: #3B3B3B !important;
     }
 

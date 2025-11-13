@@ -104,7 +104,7 @@ resetForm() {
   }
   openModal(entries: any, content?: any) {
     console.log(entries)
-    this.selectedEntries = entries;
+    this.selectedEntries = entries?.filter((ele:any)=>ele?.status!=='Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
   getResourceDetailsByManagerId() {

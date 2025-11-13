@@ -505,4 +505,9 @@ export class TimesheetsSummaryViewComponent {
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
+      ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    this.http.clearTeamDateRange();
+  }
 }

@@ -862,7 +862,9 @@ export class HttpService {
   getteamCurrentDateRange() {
     return this.teamdateRangeSubject.getValue();
   }
-
+clearTeamDateRange() {
+  this.teamdateRangeSubject.next({ startDate: null, endDate: null, employeeId: null,employeeName: null });
+}
   //  Example API call
   getDatEdATA(url: string) {
     return this.http.get(url);

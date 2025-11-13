@@ -58,6 +58,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   phaseData = [] as IPhases[];
   phaseDropdown: any[] = [];
   selectedPhaseId : any;
+    projectStartDate!: string | null;
+  projectEndDate!: string | null;
   resoucesDropDownData = [] as any[];
   defaultPendingAuthorityId : any;
   modalData: { title?: string; data?: any } = {};
@@ -187,20 +189,19 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     // });
   }
 
-  projectStartDate!: string | null;
-  projectEndDate!: string | null;
+
   getProjects(projectId: string) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
         this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
-        if (project) {
-          this.projectStartDate = this.formatDateToLocal(project.startDate);
-          this.projectEndDate = this.formatDateToLocal(project.endDate);
-          // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
-          // this.updateResourceForm.updateValueAndValidity();
-        }
+        // if (project) {
+        //   this.projectStartDate = this.formatDateToLocal(project.startDate);
+        //   this.projectEndDate = this.formatDateToLocal(project.endDate);
+        //   // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
+        //   // this.updateResourceForm.updateValueAndValidity();
+        // }
         this.getJobrole();
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
           p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'

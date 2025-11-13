@@ -35,7 +35,7 @@ import moment from 'moment';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
+export class TimesheetsResourceSummaryComponent implements OnInit {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
@@ -116,6 +116,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
   timeAllocatedData: any;
   timeAllocatedOptions: any;
   timeAllocatedlist: any;
+  startDate: any;
+  endDate: any;
 
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService, 
     public rbac: RbacService, private route: ActivatedRoute) { }
@@ -124,26 +126,62 @@ export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo();
     this.createDatepickerForm();
+  this.http.getteamDateRangeObservable().subscribe((data) => {
+      console.log('Received BehaviorSubject data:', data);
+      // Optional check to avoid running on empty initial values
+      if (data && (data.startDate || data.endDate || data.employeeId)) {
 
-    
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-    this.route.queryParams.subscribe((params) => {
-      const resoureID = params['id'];
-      if (resoureID) {
-        this.employeeId = parseInt(resoureID);
-        this.projectSummery(resoureID);
+
+        this.employeeId = data.employeeId || null;
+        this.startDate = data.startDate;
+        this.endDate = data.endDate;
+        this.setDefaultmounth();
+        // You can trigger your logic with these updated values
+       // this.getProjectSummary(this.employeeId);
+        this.projectSummery(this.employeeId);
+        this.getallocatedSummary(this.employeeId);
+        this.getEmployeeId(this.employeeId);
+        this.billableChart(this.employeeId);
+        // this.burnDownChart(resoureID);
+        this.timeAllocatedacrossGraph(this.employeeId);
+      } else {
+        this.route.queryParams.subscribe(params => {
+          const resoureID = params['id'];
+          if (resoureID) {
+            this.employeeId = parseInt(resoureID)
+            this.setDefaultmounth();
+           this.projectSummery(resoureID);
         this.getallocatedSummary(resoureID);
         this.getEmployeeId(resoureID);
         this.billableChart(resoureID);
         // this.burnDownChart(resoureID);
         this.timeAllocatedacrossGraph(resoureID);
+          }
+        });
       }
     });
-    this.setDefaultmounth();
+    
+    // const startOfMonth = dayjs().startOf('month').toDate();
+    // const endOfMonth = dayjs().endOf('month').toDate();
+    // this.datepickerForm.patchValue({
+    //   dateRange: [startOfMonth, endOfMonth],
+    // });
+
+
+    // this.route.queryParams.subscribe((params) => {
+    //   const resoureID = params['id'];
+    //   if (resoureID) {
+    //     this.employeeId = parseInt(resoureID);
+    //      this.setDefaultmounth();
+    //     this.projectSummery(resoureID);
+    //     this.getallocatedSummary(resoureID);
+    //     this.getEmployeeId(resoureID);
+    //     this.billableChart(resoureID);
+    //     // this.burnDownChart(resoureID);
+    //     this.timeAllocatedacrossGraph(resoureID);
+    //   }
+    // });
+  //  this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
   }
@@ -205,12 +243,28 @@ export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
     this.getResourceDetailsByManagerId();
   }
 
+  // setDefaultmounth() {
+  //   const startOfMonth = dayjs().startOf('month').toDate();
+  //   const endOfMonth = dayjs().endOf('month').toDate();
+  //   this.datepickerForm.patchValue({
+  //     dateRange: [startOfMonth, endOfMonth],
+  //   });
+  // }
   setDefaultmounth() {
+    // Define current month's start & end
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
+    // Check if BehaviorSubject values exist
+    const BehaviorDataexist = this.startDate && this.endDate;
+    // If present → use them; else → fallback to month start/end
+    const start = BehaviorDataexist ? dayjs(this.startDate).toDate() : startOfMonth;
+    const end = BehaviorDataexist ? dayjs(this.endDate).toDate() : endOfMonth;
+    // Patch form values
     this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
+      dateRange: [start, end],
+      resourceId: this.employeeId || null
     });
+    console.log('📅 Date Range set:', start, end);
   }
 
   isShowtimesheetforteamRoute(): boolean {
@@ -316,7 +370,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
       queryParams.push(`endDate=${endDate}`);
     }
     if (queryParams.length > 0) {
-      apiUrl += `?${queryParams.join('&')}`;
+      apiUrl += `${queryParams.join('&')}`;
     }
     this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -833,9 +887,9 @@ export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
     return Array.isArray(data) && data?.some((value) => value > 0);
   }
  
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.complete();
-    this.http.clearTeamDateRange();
-  }
+  // ngOnDestroy() {
+  //   this.destroy$.next(true);
+  //   this.destroy$.complete();
+  //   this.http.clearTeamDateRange();
+  // }
 }

@@ -340,7 +340,7 @@
                                         <td>{{ entry.clientName }}</td>
                                         <td>{{ entry.projectName }}</td>
                                         <td>{{ entry?.phaseName || '-' }}</td>
-                                        <td>{{ entry.loggedHours }} hrs</td>
+                                        <td>{{ entry.loggedHHMM }} hrs</td>
                                         <td class="text-center">
                                             <div *ngIf="entry.summary; else noRequestedComments" type="button"
                                                 [ngbPopover]="requestedComments">

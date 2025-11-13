@@ -101,15 +101,29 @@
                                             {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged' 
                                             && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status : day.dailySummary.loggedHHMM }}</a> -->
                                         <!-- Clickable only for loggedHHMM -->
-                                        <div *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
+                                        <!-- <div *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
                                         || day.dailySummary.loggedHHMM !== '0:00'">
                                             <a  class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
                                                 {{ day.dailySummary.loggedHHMM }}</a>
                                         </div>
-                                        <!-- Non-clickable for status -->
                                         <div *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
                                         day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
-                                        <b>{{ day.dailySummary.status }}</b></div>
+                                        <b>{{ day.dailySummary.status }}</b>
+                                        </div> -->
+                                          <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
+                                        <div *ngIf="day.dailySummary.loggedHHMM !== '0:00'">
+                                            <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                                {{ day.dailySummary.loggedHHMM }}
+                                            </a>
+                                        </div>
+                                        
+                                        <!-- SHOW STATUS ONLY WHEN hours = 0:00 -->
+                                        <div *ngIf="day.dailySummary.loggedHHMM === '0:00' &&
+                                                            day.dailySummary.status &&
+                                                            day.dailySummary.status !== '-' &&
+                                                            day.dailySummary.status !== 'Not Logged'">
+                                            <b>{{ day.dailySummary.status }}</b>
+                                        </div>
                                         <div class="d-flex">
                                             @if(day.dailySummary.weekday != null){
                                             <div [style.color]="day.dailySummary.textColor">{{day.dailySummary.weekday}}</div>
@@ -210,7 +224,7 @@
                                 <td>{{ entry.clientName }}</td>
                                 <td>{{ entry.projectName }}</td>
                                 <td>{{ entry?.phaseName || '-' }}</td>
-                                <td>{{ entry.loggedHours }} Hrs</td>
+                                <td>{{ entry.loggedHHMM }} Hrs</td>
                                 <td class="text-center">
                                     <div>
                                         <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">

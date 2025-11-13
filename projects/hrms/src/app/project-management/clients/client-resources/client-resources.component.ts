@@ -141,7 +141,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
       reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
-      statusEffectiveDate: ['', Validators.required]
+      statusEffectiveDate: ['', ]
     });
 
     this.extendForm = this.fb.group({

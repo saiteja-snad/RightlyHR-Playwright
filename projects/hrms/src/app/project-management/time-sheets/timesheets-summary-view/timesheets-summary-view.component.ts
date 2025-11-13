@@ -201,13 +201,23 @@ export class TimesheetsSummaryViewComponent {
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
+  // onCheckemployee(employeed: any) {
+  //   if (employeed) {
+  //     //  this.getProjectSummary(employeed);
+  //     this.getEmployeeId(employeed);
+  //   }
+  //   else {
+  //     //  this.getProjectSummary(this.employeeId);
+  //     this.getEmployeeId(this.employeeId);
+  //   }
+  // }
+
   onCheckemployee(employeed: any) {
-    if (employeed) {
-      //  this.getProjectSummary(employeed);
-      this.getEmployeeId(employeed);
-    }
-    else {
-      //  this.getProjectSummary(this.employeeId);
+    if (employeed === null) {
+      this.datepickerForm.get('resourceId')?.setValue(null);
+      console.log(employeed);
+
+      this.getProjectSummary(this.employeeId);
       this.getEmployeeId(this.employeeId);
     }
   }

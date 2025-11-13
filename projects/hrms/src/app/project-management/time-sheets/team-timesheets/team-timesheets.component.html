@@ -19,7 +19,7 @@
                         </div>
                     </div>
 
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view') ) {
+                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view') ) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
@@ -29,15 +29,27 @@
                                 placeholder="Please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
-                    }
-                    @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
+                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" >
+                            </p-select>
+                        </div>
+                    </div>
+                    } -->
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
-                                optionValue="value" formControlName="resourceId" (onChange)="onCheckemployee($event.value)" [showClear]="true"
-                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
+                                formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
+                                [showClear]="true" placeholder="Please select employee"
+                                class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -46,11 +58,14 @@
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
-                                name="myteamemployees" (onChange)="onCheckemployee($event.value)" placeholder="Please select employee"
-                                formControlName="resourceId" [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" required></p-select>
+                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="Please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false">
+                            </p-select>
                         </div>
                     </div>
+                    }@else {
+                        
                     }
                     <div>
                         <button class="custom-btn btn-primary" type="submit" [disabled]="datepickerForm.invalid">Apply</button>

@@ -37,7 +37,8 @@ export class SeparationRequestComponent {
   separationRequestFieldsConfigList = [] as any;
   approvalTypeOptions = [
     { label: 'Employee', value: 'EMP' },
-    { label: 'Role', value: 'ROLE' }
+    { label: 'Role', value: 'ROLE' },
+    { label: 'Manager', value: 'MANAGER' }
   ];
   activeEmplist = [] as any;
   roles = [] as any;
@@ -58,7 +59,8 @@ export class SeparationRequestComponent {
       approvalRequired: [true],
       approvalType: [''],
       selectedEmployee: [''],
-      selectedRole: ['']
+      selectedRole: [''],
+      selectedManager:['']
     });
     this.getSeparationRequestFields();
     this.setupFormSubscriptions();
@@ -272,7 +274,7 @@ export class SeparationRequestComponent {
   }
 
   // Update validators based on approval type
-  updateApprovalValidators(approvalType: string) {
+    updateApprovalValidators(approvalType: string) {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
@@ -282,8 +284,10 @@ export class SeparationRequestComponent {
       this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
     } else if (approvalType === 'ROLE') {
       this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+    } else if (approvalType === 'MANAGER') {
+      this.fieldConfigForm.get('selectedManager')?.setValidators([Validators.required]);
     }
-
+    this.fieldConfigForm.get('selectedManager')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
   }

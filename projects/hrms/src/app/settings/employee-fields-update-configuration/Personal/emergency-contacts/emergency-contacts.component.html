@@ -138,7 +138,7 @@
           </div>
         </div>
 
-        <!-- Role Selection (when approval type is employee) -->
+     <!-- Role Selection (when approval type is employee) -->
         <div class="mb-3"
           *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
           <label class="form-label custom-label mb-2">
@@ -154,6 +154,26 @@
             class="error-msg">
             <div *ngIf="fieldConfigForm.get('selectedEmployee')?.errors?.['required']">
               {{ 'Employee selection is required' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Manager Selection (when approval type is manager) -->
+        <div class="mb-3"
+          *ngIf="fieldConfigForm.get('approvalType')?.value === 'MANAGER' ">
+          <label class="form-label custom-label mb-2">
+            {{ 'Select Manager Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="activeEmplist" optionLabel="label" optionValue="value"
+              formControlName="selectedManager" placeholder="{{'Please select manager' | translate}}" [filter]="true">
+            </p-select>
+          </div>
+          <div
+            *ngIf="fieldConfigForm.get('selectedManager')?.touched && fieldConfigForm.get('selectedManager')?.invalid"
+            class="error-msg">
+            <div *ngIf="fieldConfigForm.get('selectedManager')?.errors?.['required']">
+              {{ 'Manager selection is required' | translate }}
             </div>
           </div>
         </div>

@@ -37,7 +37,8 @@ export class CompensationsComponent {
   compensationsFieldsConfigList = [] as any;
   approvalTypeOptions = [
     { label: 'Employee', value: 'EMP' },
-    { label: 'Role', value: 'ROLE' }
+    { label: 'Role', value: 'ROLE' },
+    { label: 'Manager', value: 'MANAGER' }
   ];
   activeEmplist = [] as any;
   roles = [] as any;
@@ -59,7 +60,8 @@ export class CompensationsComponent {
       approvalRequired: [true],
       approvalType: [''],
       selectedEmployee: [''],
-      selectedRole: ['']
+      selectedRole: [''],
+      selectedManager:['']
     });
     this.getCompensationsFields();
     this.setupFormSubscriptions();
@@ -273,7 +275,7 @@ export class CompensationsComponent {
   }
 
   // Update validators based on approval type
-  updateApprovalValidators(approvalType: string) {
+   updateApprovalValidators(approvalType: string) {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
@@ -283,8 +285,10 @@ export class CompensationsComponent {
       this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
     } else if (approvalType === 'ROLE') {
       this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+    } else if (approvalType === 'MANAGER') {
+      this.fieldConfigForm.get('selectedManager')?.setValidators([Validators.required]);
     }
-
+    this.fieldConfigForm.get('selectedManager')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
   }

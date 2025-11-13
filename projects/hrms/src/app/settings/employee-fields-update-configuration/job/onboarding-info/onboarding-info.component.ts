@@ -37,7 +37,8 @@ export class OnboardingInfoComponent {
   onboardingInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
     { label: 'Employee', value: 'EMP' },
-    { label: 'Role', value: 'ROLE' }
+    { label: 'Role', value: 'ROLE' },
+    { label: 'Manager', value: 'MANAGER' }
   ];
   activeEmplist = [] as any;
   roles = [] as any;
@@ -59,7 +60,8 @@ export class OnboardingInfoComponent {
       approvalRequired: [true],
       approvalType: [''],
       selectedEmployee: [''],
-      selectedRole: ['']
+      selectedRole: [''],
+      selectedManager:['']
     });
     this.getOnboardingInfoFields();
     this.setupFormSubscriptions();
@@ -279,7 +281,7 @@ export class OnboardingInfoComponent {
   }
 
   // Update validators based on approval type
-  updateApprovalValidators(approvalType: string) {
+     updateApprovalValidators(approvalType: string) {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
@@ -289,8 +291,10 @@ export class OnboardingInfoComponent {
       this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
     } else if (approvalType === 'ROLE') {
       this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+    } else if (approvalType === 'MANAGER') {
+      this.fieldConfigForm.get('selectedManager')?.setValidators([Validators.required]);
     }
-
+    this.fieldConfigForm.get('selectedManager')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
   }

@@ -38,7 +38,8 @@ subscription!: Subscription;
   bankInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
     { label: 'Employee', value: 'EMP' },
-    { label: 'Role', value: 'ROLE' }
+    { label: 'Role', value: 'ROLE' },
+    { label: 'Manager', value: 'MANAGER' }
   ];
   activeEmplist = [] as any;
   roles = [] as any;
@@ -60,7 +61,8 @@ subscription!: Subscription;
       approvalRequired: [true],
       approvalType: [''],
       selectedEmployee: [''],
-      selectedRole: ['']
+      selectedRole: [''],
+      selectedManager:['']
     });
     this.setupFormSubscriptions();
     this.getBankInfoFields();
@@ -295,20 +297,22 @@ subscription!: Subscription;
  
    // Update validators based on approval type
    updateApprovalValidators(approvalType: string) {
-     // Clear existing validators
-     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
-     this.fieldConfigForm.get('selectedRole')?.clearValidators();
- 
-     // Set validators based on approval type
-     if (approvalType === 'EMP') {
-       this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
-     } else if (approvalType === 'ROLE') {
-       this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
-     }
- 
-     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
-     this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
-   }
+    // Clear existing validators
+    this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
+    this.fieldConfigForm.get('selectedRole')?.clearValidators();
+
+    // Set validators based on approval type
+    if (approvalType === 'EMP') {
+      this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
+    } else if (approvalType === 'ROLE') {
+      this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+    } else if (approvalType === 'MANAGER') {
+      this.fieldConfigForm.get('selectedManager')?.setValidators([Validators.required]);
+    }
+    this.fieldConfigForm.get('selectedManager')?.updateValueAndValidity();
+    this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
+    this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
+  }
  
    // Reset field config form
    resetFieldConfigForm() {

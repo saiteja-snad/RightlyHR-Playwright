@@ -272,9 +272,22 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         };
         // Chart options
         this.projectResourceOptions = {
-          indexAxis: 'y', // Horizontal bar
+          indexAxis: 'y',
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems: any) => {
+                  const index = tooltipItems[0].dataIndex;
+                  return data[index].projectName || 'No Name';
+                },
+                label: (tooltipItem: any) => {
+                  const datasetLabel = tooltipItem.dataset.label || '';
+                  const value = tooltipItem.raw;
+                  return `${datasetLabel}: ${value}`;
+                }
+              }
+            }
           },
           scales: {
             x: {
@@ -289,11 +302,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
                 color: '#505050',
                 font: { size: 10, weight: '400' },
                 stepSize: 1,
-                // Add explicit typing for 'value'
-                callback: (value: number | string) => {
-                  const numValue = Number(value);
-                  return Number.isInteger(numValue) ? numValue : '';
-                }
+                callback: (value: any) => Number.isInteger(Number(value)) ? value : ''
               },
             },
             y: {
@@ -301,13 +310,13 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
                 display: true,
                 text: 'Projects',
                 color: '#505050',
-                font: { size: 10, weight: 400 },
+                font: { size: 10, weight: 400 }
               },
               grid: { display: false },
               ticks: {
                 color: '#505050',
                 font: { size: 10, weight: '400' }
-              },
+              }
             }
           }
         };
@@ -463,7 +472,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         this.EstimatedActualHoursLoader = false;
         if (res?.success && res?.data?.data?.length) {
           const chartData = res.data.data;
-          const labels = chartData.map((item: any) => item.name);
+          const labels = chartData.map((item: any) => item.meta.graphData.code);
           const estimatedHours = chartData.map((item: any) => item.allocateHours);
           const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
           const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
@@ -496,10 +505,23 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
             barThickness: 30,
             plugins: {
               legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: (tooltipItems: any) => {
+                    const index = tooltipItems[0].dataIndex;
+                    return chartData[index].name;
+                  },
+                  label: (tooltipItem: any) => {
+                    const datasetLabel = tooltipItem.dataset.label || '';
+                    const value = tooltipItem.raw;
+                    return `${datasetLabel}: ${value}`;
+                  }
+                }
+              }
             },
             scales: {
               x: {
-                stacked: false, // show Estimated vs Actual+Overdue as separate bars
+                stacked: false,
                 grid: { display: false },
                 ticks: { color: '#141414', font: { size: 11 } },
               },
@@ -557,7 +579,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           return parseFloat(str); // directly convert decimal string to number
         };
         // const chartData = response.data.data;
-        const labels = chartData.map((item: any) => item.name);
+        const labels = chartData.map((item: any) => item.projectColor?.graphData.code);
         const billable = chartData.map((item: any) => convertToHours(item.billableHours));
         const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
         // Assign dynamic chart data
@@ -593,17 +615,20 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
             },
           },
           plugins: {
-            legend: {
-              display: false,
-            },
+            legend: { display: false },
             tooltip: {
               callbacks: {
-                label: (context: any) => {
-                  const value = context.parsed.y;
-                  return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                title: (tooltipItems: any) => {
+                  const index = tooltipItems[0].dataIndex;
+                  return chartData[index].name;
                 },
-              },
-            },
+                label: (tooltipItem: any) => {
+                  const datasetLabel = tooltipItem.dataset.label || '';
+                  const value = tooltipItem.raw;
+                  return `${datasetLabel}: ${value}`;
+                }
+              }
+            }
           },
           maintainAspectRatio: false,
         };

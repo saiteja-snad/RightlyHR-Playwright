@@ -106,6 +106,48 @@
         <div class="custom-main-popup-content">
             <form [formGroup]="updateResourceForm" autocomplete="off" (ngSubmit)="updateResources()">
                 <div class="row">
+                         <!-- Project Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="projectName" class="form-label custom-label mb-2">Project Name
+                            <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true" [resetFilterOnHide]="true"
+                                filterBy="projectName" optionValue="projectId" formControlName="projectName"
+                                placeholder="Please select project name" class="form-select custom-select"
+                                (onChange)="selectProject($event.value)"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched && 
+                        updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
+                    </div>
+
+                    <!-- Project Type -->
+                    <div class="col-md-6 mb-3">
+                        <label for="projectType" class="form-label custom-label mb-2">Project Type
+                            <span class="text-danger">*</span></label>
+                        <input type="text" id="projectType" formControlName="projectType"
+                            class="form-control custom-input" placeholder="Enter project type" readonly />
+                        <div class="error-msg"
+                            *ngIf="updateResourceForm.get('projectType')?.touched && updateResourceForm.get('projectType')?.invalid">
+                            Project Type is required
+                        </div>
+                    </div>
+                         <!--Phase/Milestone Name-->
+                    <div class="col-md-6 mb-3">
+                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="label" formControlName="resourcePhase"
+                                placeholder="Please select phase / milestone" class="form-select custom-select"
+                                (onChange)="onPhaseChange($event)">
+                            </p-select>
+                        </div>
+                        <div class="error-msg">
+                            <div *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
+                                Phase / Milestone Name is required
+                            </div>
+                        </div>
+                    </div>
                     <!-- Resource Name -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceName" class="form-label custom-label mb-2">Resource Name
@@ -131,30 +173,23 @@
                         updateResourceForm.get('designation')?.invalid">Designation is required</div>
                     </div>
 
-                    <!-- Project Name -->
+                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">
-                        <label for="projectName" class="form-label custom-label mb-2">Project Name
+                        <label for="resourceEmail" class="form-label custom-label mb-2">Email
                             <span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true" [resetFilterOnHide]="true"
-                                filterBy="projectName" optionValue="projectId" formControlName="projectName"
-                                placeholder="Please select project name" class="form-select custom-select"
-                                (onChange)="selectProject($event.value)"></p-select>
-                        </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched && 
-                        updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
+                        <input type="email" id="resourceEmail" formControlName="resourceEmail"
+                            class="form-control custom-input" placeholder="Enter email address" readonly />
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched && 
+                        updateResourceForm.get('resourceEmail')?.invalid">Email is required</div>
                     </div>
 
-                    <!-- Project Type -->
+                    <!-- Phone Number -->
                     <div class="col-md-6 mb-3">
-                        <label for="projectType" class="form-label custom-label mb-2">Project Type
-                            <span class="text-danger">*</span></label>
-                        <input type="text" id="projectType" formControlName="projectType"
-                            class="form-control custom-input" placeholder="Enter project type" readonly />
-                        <div class="error-msg"
-                            *ngIf="updateResourceForm.get('projectType')?.touched && updateResourceForm.get('projectType')?.invalid">
-                            Project Type is required
-                        </div>
+                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
+                        <input type="text" id="resourcePhone" formControlName="resourcePhone"
+                            class="form-control custom-input" placeholder="Please enter phone number" readonly />
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched && 
+                        updateResourceForm.get('resourcePhone')?.invalid">Phone Number is required</div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -175,24 +210,37 @@
                         </div>
                     </div>
 
-                    <!--Phase/Milestone Name-->
+               
+
+
+              
+
+                    <!-- Start Date -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true"
-                                [resetFilterOnHide]="true" filterBy="label" formControlName="resourcePhase"
-                                placeholder="Please select phase / milestone" class="form-select custom-select"
-                                (onChange)="onPhaseChange($event)">
-                            </p-select>
-                        </div>
-                        <div class="error-msg">
-                            <div *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                                Phase / Milestone Name is required
-                            </div>
-                        </div>
+                        <label for="startDate" class="form-label custom-label mb-2">Start Date
+                            <span class="text-danger">*</span></label>
+                        <input type="date" id="startDate" formControlName="startDate"
+                            [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
+                            (change)="oncheckdates(updateResourceForm.get('startDate')?.value)" class="form-control custom-input" />
+                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
+                        updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
+                        <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
 
+                    <!-- End Date -->
+                    <div class="col-md-6 mb-3">
+                        <label for="endDate" class="form-label custom-label mb-2">End Date
+                            <span class="text-danger">*</span></label>
+                        <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
+                            [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
+                        <div class="error-msg"
+                            *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
+                            End Date is required
+                        </div>
+                    </div>
+                    
                     <!-- Authority Name -->
                     <div class="col-md-6 mb-3">
                         <div class="d-flex gap-2">
@@ -221,52 +269,7 @@
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched && 
                         updateResourceForm.get('resourceAuthority')?.invalid">Timesheet Approval Authority is required</div>
                     </div>
-
-                    <!-- Resource Email -->
-                    <div class="col-md-6 mb-3">
-                        <label for="resourceEmail" class="form-label custom-label mb-2">Email
-                            <span class="text-danger">*</span></label>
-                        <input type="email" id="resourceEmail" formControlName="resourceEmail"
-                            class="form-control custom-input" placeholder="Enter email address" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched && 
-                        updateResourceForm.get('resourceEmail')?.invalid">Email is required</div>
-                    </div>
-
-                    <!-- Phone Number -->
-                    <div class="col-md-6 mb-3">
-                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
-                        <input type="text" id="resourcePhone" formControlName="resourcePhone"
-                            class="form-control custom-input" placeholder="Please enter phone number" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched && 
-                        updateResourceForm.get('resourcePhone')?.invalid">Phone Number is required</div>
-                    </div>
-
-                    <!-- Start Date -->
-                    <div class="col-md-6 mb-3">
-                        <label for="startDate" class="form-label custom-label mb-2">Start Date
-                            <span class="text-danger">*</span></label>
-                        <input type="date" id="startDate" formControlName="startDate"
-                            [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
-                            (change)="oncheckdates(updateResourceForm.get('startDate')?.value)" class="form-control custom-input" />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
-                        updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
-                        <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
-                    </div>
-
-                    <!-- End Date -->
-                    <div class="col-md-6 mb-3">
-                        <label for="endDate" class="form-label custom-label mb-2">End Date
-                            <span class="text-danger">*</span></label>
-                        <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
-                            [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
-                        <div class="error-msg"
-                            *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
-                            End Date is required
-                        </div>
-                    </div>
-
+                    
                     <!-- Resource Allocation Hours -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceAllocationhrs" class="form-label custom-label mb-2">Allocation Hours

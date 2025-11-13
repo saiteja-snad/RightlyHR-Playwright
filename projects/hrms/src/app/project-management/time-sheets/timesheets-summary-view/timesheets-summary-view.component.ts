@@ -105,6 +105,8 @@ export class TimesheetsSummaryViewComponent {
     console.log('Received BehaviorSubject data:', data);
     // Optional check to avoid running on empty initial values
     if (data && (data.startDate || data.endDate || data.employeeId)) {
+
+      
       this.employeeId = data.employeeId || null;
       this.startDate = data.startDate;
       this.endDate = data.endDate;
@@ -145,18 +147,15 @@ export class TimesheetsSummaryViewComponent {
   }
 
   resetForm() {
+   
+    this.http.clearTeamDateRange()
     // Reset other form fields
-    this.datepickerForm.reset({
-      resourceId: null,
-      dateRange: null
-    });
+    this.datepickerForm?.get('resourceId')?.reset()
+     
     // Now manually set the default month range
     // const defaultRange = this.setDefaultmounth();
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth]
-    });
+  
+  
     this.updateModuleInfo()
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
@@ -167,7 +166,12 @@ export class TimesheetsSummaryViewComponent {
         this.getEmployeeId(resoureID);
       }
     });
-    this.setDefaultmounth();
+      const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+      this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth]
+    });
+    // this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();

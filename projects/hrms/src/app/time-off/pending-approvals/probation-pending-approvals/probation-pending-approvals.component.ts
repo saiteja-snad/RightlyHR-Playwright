@@ -298,6 +298,7 @@ openModalView(){
   clearDiscontinueData() {
     this.selectedData.comments = '';
     this.selectedData.rejectedReason = '';
+     this.selectedLeaveStatus = null;
   }
 
   issubmitdiable: boolean = false;
@@ -307,6 +308,7 @@ openModalView(){
 
     if (!trimmedValue || startsWithSpecialChar) {
     this.issubmitdiable = true;
+    this.selectedLeaveStatus = null;
     } else {
     this.issubmitdiable = false;
      }

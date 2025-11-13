@@ -64,7 +64,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
   destroy$: Subject<boolean> = new Subject<boolean>();
-selectedLeaveStatus: string = '';
+selectedLeaveStatus: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -143,12 +143,22 @@ onStatusApproveSelect(status: string) {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
+     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
+     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getAllPendingApprovals() {

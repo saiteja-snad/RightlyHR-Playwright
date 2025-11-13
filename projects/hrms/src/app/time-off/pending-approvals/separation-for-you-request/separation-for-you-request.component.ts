@@ -108,7 +108,12 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.selectedSpRequestData.comments = 'Approved'
   }
 }
-
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+  }
+}
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'reject') {

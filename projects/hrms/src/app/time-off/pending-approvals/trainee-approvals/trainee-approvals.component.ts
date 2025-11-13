@@ -83,6 +83,11 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
       trcomments: ['', Validators.required],
       rejectedReason: ['', Validators.required]
     });
+      this.rejectForm.get('trcomments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
     this.rejectForm.valueChanges.subscribe((val) => {
       this.selectedLeaveData.extenddate = val.extenddate;
       this.selectedLeaveData.trcomments = val.trcomments;
@@ -96,7 +101,12 @@ onStatusApproveSelect(status: string) {
    this.selectedLeaveData.trcomments= 'Approved';
   }
 }
-
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+  }
+}
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'reject') {

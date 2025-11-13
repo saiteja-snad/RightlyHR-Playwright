@@ -149,7 +149,7 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide comments" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedContractData.trcomments"
+                    [(ngModel)]="selectedContractData.trcomments"  (ngModelChange)="onCommentChange($event)" 
                     (keydown)="formsValidation.restrictInitialSpace($event)" rows="3" required></textarea>
                 <div class="textarea-count-text">
                     {{selectedContractData.trcomments?.length?selectedContractData.trcomments?.length:0}}/250</div>
@@ -197,7 +197,7 @@
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
                         name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
                         placeholder="Please provide the reason" #Descriptiondetails="ngModel" autocomplete="off"
-                        [(ngModel)]="selectedContractData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
+                        [(ngModel)]="selectedContractData.rejectedReason" (ngModelChange)="onCommentChange($event)" (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">{{selectedContractData.rejectedReason?.length ?
                         selectedContractData.rejectedReason.length : 0}} /250</div>
                     <div class="error-msg"
@@ -206,8 +206,8 @@
                     </div>
                 </div>
             </div>
-                    <div class="leave-tabs d-flex align-items-center gap-2 mb-3">
-                        <button type="button" class="btn leave-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                        <button type="button" class="custom-btn btn-secondary chip-btn"  [class.active]="selectedLeaveStatus === 'reject'"
                             (click)="onStatusRejectSelect('reject')">
                             Rejected
                         </button>

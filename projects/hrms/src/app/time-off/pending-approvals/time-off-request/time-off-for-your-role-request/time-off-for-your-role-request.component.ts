@@ -65,7 +65,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
-  selectedLeaveStatus: string = '';
+  selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
@@ -209,6 +209,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   ifreasonnull(Value: any) {
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
+       this.selectedLeaveStatus = null;
     } else {
       this.issubmitdiable = false;
     }

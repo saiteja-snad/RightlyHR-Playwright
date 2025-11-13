@@ -98,6 +98,11 @@ onStatusApproveSelect(status: string) {
         ],
       ],
     });
+     this.AcceptForm.get('AcceptReason')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
     this.rejectForm = this.fb.group({
       notes: [
         null,
@@ -108,6 +113,11 @@ onStatusApproveSelect(status: string) {
         ],
       ],
     });
+     this.rejectForm.get('notes')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getAllPendingApprovalsNoDue() {

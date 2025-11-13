@@ -139,12 +139,22 @@ export class ExtraHoursForYourRoleComponent {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
+     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
+     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
   }
 
   getAllPendingApprovals() {

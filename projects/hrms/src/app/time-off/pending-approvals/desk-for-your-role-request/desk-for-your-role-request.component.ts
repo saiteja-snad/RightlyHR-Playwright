@@ -62,6 +62,11 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
+     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getexpensespendingforyou(): void {

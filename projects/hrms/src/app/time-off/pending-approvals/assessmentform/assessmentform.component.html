@@ -200,7 +200,7 @@
           <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
             placeholder="Please provide comments" name="earlyrelievingreason" #earlyrelievingreason="ngModel"
             maxlength="250" [(ngModel)]="selected_approve.comments"
-            (ngModelChange)="ifreasonnull(selected_approve?.comments)" required rows="3"></textarea>
+            (ngModelChange)="ifreasonnull(selected_approve?.comments, 'approve')" required rows="3"></textarea>
           <div class="textarea-count-text">{{selected_approve.comments?.length?selected_approve.comments?.length:0}}/250
           </div>
           <div class="error-msg">
@@ -209,7 +209,12 @@
              <div  *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
             </div>
         
-         
+          <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
         </div>
          @if(selected_approve.probationextendedcount<probationExtensionTimes){
           <div class="mb-3" *ngIf="extend">
@@ -238,7 +243,7 @@
           <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
             placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
             [(ngModel)]="selected_approve.reasonForExtend" maxlength="250"
-            (ngModelChange)="ifreasonnull(selected_approve.reasonForExtend)" required rows="3"></textarea>
+             (ngModelChange)="ifreasonnull(selected_approve.reasonForExtend, 'extend')" required rows="3"></textarea>
           <div class="textarea-count-text">
             {{selected_approve.reasonForExtend?.length?selected_approve.reasonForExtend?.length:0}}/250</div>
             <div class="error-msg">
@@ -247,9 +252,14 @@
             {{'Feedback for Extend is required' | translate}}</div>
              <div  *ngIf="Extendreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
             </div>
-       
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusExtendSelect('approved')">
+                    Approved
+                </button>
+            </div>
         </div>
-
+        
          }
        
         <div class="mb-3" *ngIf="discontinue">
@@ -258,7 +268,7 @@
           <textarea type="text" class="form-control custom-input" id="Descriptiondetails" name="Descriptiondetails"
             aria-label="Description" rows="3" maxlength="250" placeholder="Please provide reason"
             #Descriptiondetails="ngModel" autocomplete="off"
-            (ngModelChange)="ifreasonnull(selected_approve.rejectedReason)"
+            (ngModelChange)="ifreasonnull(selected_approve.rejectedReason, 'reject')"
             [(ngModel)]="selected_approve.rejectedReason" required></textarea>
           <div class="textarea-count-text">{{selected_approve.rejectedReason?.length ?
             selected_approve.rejectedReason.length : 0}}/250</div>
@@ -267,6 +277,12 @@
           (Descriptiondetails.invalid && selectedData.submitted)">{{'Reason is required' | translate}}
           </div>
           <div *ngIf="Descriptiondetails.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
+            </div>
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusRejectSelect('approved')">
+                    Approved
+                </button>
             </div>
           </div>
           </div>

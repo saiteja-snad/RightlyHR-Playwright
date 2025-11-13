@@ -110,6 +110,11 @@ onStatusApproveSelect(status: string) {
         ],
       ],
     });
+     this.recallAcceptFormForProcess.get('recallReason')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
     this.recallAcceptForm = this.fb.group({
       AcceptReason: [
         null,
@@ -132,6 +137,11 @@ onStatusApproveSelect(status: string) {
         ],
       ],
     });
+     this.rejectSeparationForm.get('notes')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   //function to open the modal

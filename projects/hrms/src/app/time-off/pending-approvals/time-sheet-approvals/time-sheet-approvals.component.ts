@@ -126,12 +126,22 @@ onStatusApproveSelect(status: string) {
     this.timeSheetApproveForm = this.fb.group({
       comments: [null, [Validators.required, Validators.maxLength(250)]]
     });
+     this.timeSheetApproveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
     this.timeSheetRejectForm = this.fb.group({
       comments: [
         null,
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+      this.timeSheetRejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
   }
 
   // called for pagination 

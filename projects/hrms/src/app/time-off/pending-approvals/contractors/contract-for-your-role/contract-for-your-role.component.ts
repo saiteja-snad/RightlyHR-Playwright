@@ -216,7 +216,12 @@ onStatusApproveSelect(status: string) {
       },
     });
   }
-
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+  }
+}
   //function to send the rejected status and comments
   handleReject(f: NgForm) {
     let loggedInUser = this.authService.getToken();

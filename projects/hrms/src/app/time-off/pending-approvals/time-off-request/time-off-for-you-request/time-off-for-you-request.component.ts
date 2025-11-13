@@ -62,7 +62,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
- selectedLeaveStatus: string = '';
+ selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   options = [
@@ -390,6 +390,7 @@ onStatusRejectSelect(status: string) {
   ifreasonnull(Value: any) {
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
+       this.selectedLeaveStatus = null;
     } else {
       this.issubmitdiable = false;
     }

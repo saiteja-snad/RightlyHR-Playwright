@@ -213,7 +213,7 @@
                     <label class="form-label custom-label mb-2">{{'Comments' | translate}}<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"(ngModelChange)="onCommentChange($event)"
                         #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
                         (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">
@@ -235,7 +235,7 @@
                         <span class="text-danger">*</span></label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        [min]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
+                        [min]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"(ngModelChange)="onCommentChange($event)"
                         (keypress)="letters($event)" [(ngModel)]="selectedSpRequestData.extenddate" required
                         [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
                     <div class="error-msg"
@@ -284,7 +284,7 @@
                         translate}}
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250" (ngModelChange)="onCommentChange($event)"
                         #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"
                         required></textarea>
                     <div class="textarea-count-text">
@@ -341,7 +341,7 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
                         {{'Reject Reason' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250"
+                        placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250" (ngModelChange)="onCommentChange($event)"
                         [(ngModel)]="selectedSpRequestData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250

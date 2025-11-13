@@ -74,13 +74,27 @@ isLoading = false;
   ngOnInit(): void {
     this.getAllPendingApprovals();
   }
-
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+    this.selectedContractData.trcomments = null;
+    this.selectedContractData.rejectedReason = null;
+  }
+}
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
       trcomments: ['', Validators.required],
       rejectedReason: ['', Validators.required]
     });
+      this.rejectForm.get('trcomments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; 
+      this.selectedContractData.trcomments = null;
+       this.selectedContractData.rejectedReason = null;// remove chip highlight if cleared
+    }
+     });
     this.rejectForm.valueChanges.subscribe((val) => {
       this.selectedContractData.extenddate = val.extenddate;
       this.selectedContractData.trcomments = val.trcomments;
@@ -124,6 +138,7 @@ isLoading = false;
     this.extend = false;
     this.selectedContractData = {};
     this.modalService.dismissAll();
+   // this.selectedLeaveStatus = null;
   }
 appover_comments = {} as any;
   commentsFunction(value: any, content: any) {

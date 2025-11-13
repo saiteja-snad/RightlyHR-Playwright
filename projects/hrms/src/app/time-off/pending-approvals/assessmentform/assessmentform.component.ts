@@ -57,6 +57,7 @@ export class AssessmentformComponent {
   @ViewChild('cancelmodal') cancelmodal!: any;
   Status: any;
   employeedata ={} as any;
+  selectedLeaveStatus: any;
   constructor(
     private router: Router,
     private http: HttpService,
@@ -81,7 +82,26 @@ export class AssessmentformComponent {
       this.selected_approve = this.formemployeedetails.entity;
     }
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'approved') {
+    this.selected_approve.comments = 'Approved';
 
+  }
+}
+onStatusExtendSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'approved') {
+     this.selected_approve.reasonForExtend ='Approved'
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+         this.selected_approve.rejectedReason = 'Approved';
+    }
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -132,17 +152,45 @@ getEmployeeId(EmployeeId:number): void {
   }
 
   //function when they enter nulls in start
-  ifreasonnull(Value: any) {
-    //console.log(Value);
-    const trimmedValue = Value?.trim();
+  // ifreasonnull(Value: any) {
+  //   //console.log(Value);
+  //   const trimmedValue = Value?.trim();
+  // const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+
+  // if (!trimmedValue || startsWithSpecialChar) {
+  //   this.issubmitdiable = true;
+  // } else {
+  //   this.issubmitdiable = false;
+  // }
+  //    if (!trimmedValue) {
+  //   this.selectedLeaveStatus = null;
+  // }
+  // }
+ifreasonnull(value: any, type: 'approve' | 'extend' | 'reject') {
+  const trimmedValue = value?.trim();
   const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
 
-  if (!trimmedValue || startsWithSpecialChar) {
+  // handle validation
+    if (!trimmedValue || startsWithSpecialChar) {
     this.issubmitdiable = true;
+     this.selectedLeaveStatus = null;
   } else {
     this.issubmitdiable = false;
+      if (!trimmedValue) {
+    // if (type === 'approve' && this.selected_approve.comments === '') {
+    //   this.selectedLeaveStatus = null;
+    // } else if (type === 'extend' && this.selected_approve.reasonForExtend === '') {
+    //   this.selectedLeaveStatus = null;
+    // } else 
+      if (type === 'reject') {
+      this.selectedLeaveStatus = null;
+    }
   }
   }
+
+  // only remove highlight for the correct section when text is empty
+
+}
 
   //function call to get the data
   functioncall() {

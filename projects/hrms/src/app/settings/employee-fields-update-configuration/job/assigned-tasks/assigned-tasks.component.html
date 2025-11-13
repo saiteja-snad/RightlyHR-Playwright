@@ -166,8 +166,8 @@
             {{ 'Select Manager Type' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select class="form-select custom-input" [options]="activeEmplist" optionLabel="label" optionValue="value"
-              formControlName="selectedManager" placeholder="{{'Please select manager' | translate}}" [filter]="true">
+            <p-select class="form-select custom-input" [options]="managerOptions" optionLabel="label" optionValue="value"
+              formControlName="selectedManager" placeholder="{{'Please select manager' | translate}}" >
             </p-select>
           </div>
           <div

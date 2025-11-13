@@ -41,6 +41,10 @@ export class PreOnboardingInfoComponent {
     { label: 'Manager', value: 'MANAGER' }
   ];
   activeEmplist = [] as any;
+ managerOptions = [
+    { label: 'Reporting Manager', value: 'RM' },
+    { label: 'Team Manager', value: 'TM' }
+  ];
   roles = [] as any;
 
   constructor(

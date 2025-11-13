@@ -26,7 +26,6 @@ export class ProjectTabsComponent {
   constructor(private rbac: RbacService, private router: Router) { }
 
   ngOnInit(): void {
-
     this.filterTabsByRbac();
   }
 
@@ -45,7 +44,6 @@ export class ProjectTabsComponent {
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }
 
-
   isDocumentTabActive(link: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
     // For Documents tab, check both documents and inactivedocuments routes
@@ -54,8 +52,9 @@ export class ProjectTabsComponent {
         currentUrl.includes('/project-management/projects/details/timesheet/summary')
         || currentUrl.includes('/project-management/projects/details/timesheet/resource-summary');
     }
-    if(link === '/project-management/projects/details/phases'){
-       return currentUrl.includes('/project-management/projects/details/inactive-phases') ||
+
+    if (link === '/project-management/projects/details/phases') {
+      return currentUrl.includes('/project-management/projects/details/inactive-phases') ||
         currentUrl.includes('/project-management/projects/details/hold-phases') ||
          currentUrl.includes('/project-management/projects/details/phases')
 
@@ -63,8 +62,17 @@ export class ProjectTabsComponent {
        if(link === '/project-management/projects/details/resources'){
        return currentUrl.includes('/project-management/projects/details/resources') ||
         currentUrl.includes('/project-management/projects/details/inactive-resources')
+        currentUrl.includes('/project-management/projects/details/phases')
+    }
 
+    if (link === '/project-management/projects/details/resources') {
+      return currentUrl.includes('/project-management/projects/details/resources') ||
+        currentUrl.includes('/project-management/projects/details/inactive-resources')
+    }
 
+    if (link === '/project-management/projects/details/documents') {
+      return currentUrl.includes('/project-management/projects/details/documents') ||
+        currentUrl.includes('/project-management/projects/details/inactivedocuments')
     }
 
     // For other tabs, use exact match.

@@ -199,14 +199,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       // updateeffectiveDate: [null, Validators.required],
       // updatekickoffDate: [null, Validators.required],
       updateprojectType: [null, Validators.required],
-      updatedepartment: [[], Validators.required],
+      updatedepartment: [[], [Validators.required]],
       updateprojectDescription: [null],
       updateovertimeEligible: [false],
       updatebillable: [false],
       updateallowweekendWork: [false],
       // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
       // approvalidAuthority: [{value:null,disabled:true}],
-      updatecolor: ['']
+      updatecolor: ['', Validators.required]
     });
     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();

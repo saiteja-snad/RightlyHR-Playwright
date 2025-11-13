@@ -43,10 +43,21 @@ export interface Entry {
   [key: string]: any;
 }
 
+// export interface DailySummary {
+//   totalLoggedHours: string; // "00:00:00"
+//   status: string; // "Not Logged" | "Weekend" | etc.
+//   colour: string; // "#4E4E4E"
+//   loggedHHMM: string; // "0:00"
+//   loggedISO: string; // "PT0S"
+// }
 export interface DailySummary {
-  totalLoggedHours: string; // "00:00:00"
-  status: string; // "Not Logged" | "Weekend" | etc.
-  colour: string; // "#4E4E4E"
-  loggedHHMM: string; // "0:00"
-  loggedISO: string; // "PT0S"
+  totalLoggedHours?: string; // "00:00:00"
+  status?: string; // "Not Logged" | "Weekend" | etc.
+  colour?: string; // "#4E4E4E"
+  loggedHHMM?: string; // "0:00"
+  loggedISO?: string; // "PT0S"
+  weekday?: string | null; // e.g., "Wednesday" or null
+  holiday?: string | null; // e.g., "National Holiday" or null
+  textColor?: string; // "#000000"
+  backgroundColor?: string; // "#F0F0F0"
 }

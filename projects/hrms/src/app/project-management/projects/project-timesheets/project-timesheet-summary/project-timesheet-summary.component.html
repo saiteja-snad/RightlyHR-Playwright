@@ -19,23 +19,23 @@
                             <th>{{'Phase/Milestone'|translate}}</th>
                             <th>{{'Resource Name'|translate}}</th>
                             <th>{{'Role'|translate}}</th>
-                            <th>{{'Hours Utilized'|translate}}</th>
-                            <th>{{'total Hours'|translate}}</th>
-                            <th>{{'Utilization (%)'|translate}}</th>
+                            <th class="text-center">{{'Hours Utilized'|translate}}</th>
+                            <th class="text-center">{{'total Hours'|translate}}</th>
+                            <th class="text-center">{{'Utilization (%)'|translate}}</th>
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectResourceSummaryData">
                                 <td>{{roles?.phase || "-"}}</td>
                                 <td>{{roles?.employeeName}}</td>
                                 <td>{{roles?.projectRole}}</td>
-                                <td>
+                                <td class="text-center">
                                     <div class="progress-wrapper">
                                         <div class="progress-bar" [ngStyle]="{width: roles?.utilizationPercent + '%', 
                                             backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
                                     </div>
                                 </td>
-                                <td><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
-                                <td class="logged-hrs">{{roles.utilizationPercent}} %</td>
+                                <td class="text-center"><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
+                                <td class="logged-hrs text-center">{{roles.utilizationPercent}} %</td>
                             </tr>
                         </tbody>
                     </table>
@@ -102,15 +102,15 @@
 
                         <div class="legends-view">
                             <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     <div class="d-flex align-items-center gap-1">
                                         <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                         <div class="legend-name">{{ item.name }}</div>
                                     </div>
                                 </div>
-                                <div class="hrs-display text-nowrap col-md-4">
+                                <div class="hrs-display col-md-5">
                                     <span class="actual">{{item.actualHours}}</span>/
-                                    <span>{{item.allocateHours}} hrs</span>
+                                    <span>{{item.allocateHours}} Hrs</span>
                                 </div>
                             </div>
                         </div>

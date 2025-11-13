@@ -243,6 +243,7 @@ export class ProjectDocumentCreationComponent {
         this.addDocumentForm.reset();
         this.modalService.dismissAll();
         this.http.setnewdocumentsDetails();
+        this.http.setnewcountfornewdocumentscount();
         this.conformationPopup.openSuccessModal('Document added successfully');
       },
       error: (err: any) => {

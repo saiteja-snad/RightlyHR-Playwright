@@ -30,6 +30,7 @@ import { ProjectResourceTabComponent } from "../../../shared/project-management-
 
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
+  resourcestartdate:any
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -58,6 +59,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   phaseData = [] as IPhases[];
   phaseDropdown: any[] = [];
   selectedPhaseId : any;
+    projectStartDate!: string | null;
+  projectEndDate!: string | null;
   resoucesDropDownData = [] as any[];
   defaultPendingAuthorityId : any;
   modalData: { title?: string; data?: any } = {};
@@ -158,7 +161,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color : [''],
+      color : ['', Validators.required],
       resourceRole: [null,Validators.required],
       resourcePhase : [null, Validators.required],
       resourceAuthority : [null]
@@ -187,20 +190,19 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     // });
   }
 
-  projectStartDate!: string | null;
-  projectEndDate!: string | null;
+
   getProjects(projectId: string) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
         this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
-        if (project) {
-          this.projectStartDate = this.formatDateToLocal(project.startDate);
-          this.projectEndDate = this.formatDateToLocal(project.endDate);
-          // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
-          // this.updateResourceForm.updateValueAndValidity();
-        }
+        // if (project) {
+        //   this.projectStartDate = this.formatDateToLocal(project.startDate);
+        //   this.projectEndDate = this.formatDateToLocal(project.endDate);
+        //   // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
+        //   // this.updateResourceForm.updateValueAndValidity();
+        // }
         this.getJobrole();
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
           p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
@@ -253,6 +255,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
+  
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
@@ -643,6 +646,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       // 'On Hold': 'bi-pause-circle',
       // 'Resume': 'bi-arrow-repeat'
     }[action] || 'bi-question-circle';
+    
   }
 
   getActionsByStatus(status: string): string[] {
@@ -651,7 +655,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return this.statusActionsMap[normalized] ?? [];
   }
 
+formatDateToLocalforresource(dateString: string | null): Date | null {
+  if (!dateString) return null;
+  return new Date(dateString); // Converts ISO string to Date object
+}
   handleAction(action: string, data: any) {
+  
     const config = this.confirmationMessages[action];
 
     if (!config) return;
@@ -660,6 +669,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);
+        this.resourcestartdate=this.formatDateToLocalforresource(data?.startDate)
+        console.log(this.resourcestartdate);
+        
     }
   }
 

@@ -4,10 +4,11 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-projects-side-tabsfor-phases',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './projects-side-tabsfor-phases.component.html',
   styleUrl: './projects-side-tabsfor-phases.component.scss'
 })
@@ -15,6 +16,7 @@ export class ProjectsSideTabsforPhasesComponent {
   filteredTabs: any[] = [];
   statusCounts: any = {};
   projectId: any;
+  loading=false
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
@@ -62,17 +64,18 @@ export class ProjectsSideTabsforPhasesComponent {
 
   statusGroups: any = {
     active: ['yet to start', 'in progress', 'extended'],
-    inactive: ['completed', 'close'],
+    inactive: ['completed', 'closed'],
     hold: ['hold']
   };
 
 getcountData(projectId: any): void {
-  const statuses = 'yet to start,in progress,extended,hold,completed,close';
-
+  this.loading=true
+  const statuses = 'yet to start,in progress,extended,hold,completed,closed';
   this.http.getData(`StatusCount?moduleName=Phase&entityId=${projectId}&statuses=${statuses}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (res: any) => {
+        this.loading=false
         this.statusCounts = {};
         const rawCounts: any = {};
 
@@ -92,6 +95,7 @@ getcountData(projectId: any): void {
         });
       },
       error: (err) => {
+        this.loading=false
         console.error('Error fetching phase status count', err);
       }
     });

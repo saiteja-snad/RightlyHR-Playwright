@@ -34,7 +34,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     { label: 'Per week', value: 'Per week' },
     { label: 'Per project', value: 'Per project' }
   ];
-    departmentlist = [] as any;
+  departmentlist = [] as any;
   projectId: any;
   empinfo: any = {};
   projectsDataDrown: Project[] = [];
@@ -47,11 +47,12 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   loader: boolean | undefined;
   departmentIds: number[] = [];
   phaseData = [] as IPhases[];
+  resourceAuthorityid: any
   phaseDropdown: any[] = [];
-  selectedPhaseId : any;
+  selectedPhaseId: any;
   resourcesData = [] as IResource[];
   resoucesDropDownData = [] as any[];
-  selectedAuthorityId : any;
+  selectedAuthorityId: any;
   constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationService,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService) { }
 
@@ -69,7 +70,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       this.addResourceForm.get('resourceAllocationhrs')?.updateValueAndValidity();
     });
   }
- DepartmentList() {
+  DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
         // console.log(data);
@@ -79,76 +80,79 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   }
   projectRoles: any[] = [];
 
-projectRoleDropdown: any[] = [];
+  projectRoleDropdown: any[] = [];
 
-getJobrole() {
-  this.loader = true;
-  const departmentParam = this.departmentIds?.join(',') || '';
+  getJobrole() {
+    this.loader = true;
+    const departmentParam = this.departmentIds?.join(',') || '';
 
-  this.subscription = this.http
-    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
-    .subscribe({
-      next: (response: any) => {
-        this.loader = false;
-        if (response && response.success && Array.isArray(response.data)) {
-          this.projectRoleDropdown = response.data.map((item: any) => ({
-            label: `${item.roleName}`,
-            value: {
-              roleId: item.id,
-              entityReferenceId: item.entity?.entityReferenceId || 0
-            }
-          }));
-        } else {
-          this.projectRoleDropdown = [];
-        }
-      },
-      error: () => {
-        this.loader = false;
-      },
-    });
-}
-
-selectedRoleId: number = 0;
-selectedEntityRefId: number = 0;
-
-onRoleChange(selectedValue: any) {
-  if (selectedValue) {
-    this.selectedRoleId = selectedValue.roleId;
-    this.selectedEntityRefId = selectedValue.entityReferenceId;
+    this.subscription = this.http
+      .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
+      .subscribe({
+        next: (response: any) => {
+          this.loader = false;
+          if (response && response.success && Array.isArray(response.data)) {
+            this.projectRoleDropdown = response.data.map((item: any) => ({
+              label: `${item.roleName}`,
+              value: {
+                roleId: item.id,
+                entityReferenceId: item.entity?.entityReferenceId || 0
+              }
+            }));
+          } else {
+            this.projectRoleDropdown = [];
+          }
+        },
+        error: () => {
+          this.loader = false;
+        },
+      });
   }
-}
 
-onPhaseChange(selectedValue: any) {
-  if (selectedValue?.value) {
-    const phase = selectedValue.value;
-    console.log(phase);
-    
-    this.selectedPhaseId = phase.value ?? null;
-    this.projectStartDate = phase.startDate ?? null;
-    this.projectEndDate = phase.endDate ?? null;
+  selectedRoleId: number = 0;
+  selectedEntityRefId: number = 0;
 
-    // Update validators safely
-    this.addResourceForm.get('startDate')?.updateValueAndValidity();
-    this.addResourceForm.get('endDate')?.updateValueAndValidity();
-    console.log(this.projectStartDate,this.projectEndDate);
-    
-    // Reset approval authority safely
-    const resourceAuthorityControl = this.addResourceForm.get('resourceAuthority');
-    if (resourceAuthorityControl) {
-      resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
-      resourceAuthorityControl.disable();
-    }
-
-    if (this.projectId != null && this.selectedPhaseId != null) {
-      this.getResourceData(this.projectId, this.selectedPhaseId);
+  onRoleChange(selectedValue: any) {
+    if (selectedValue) {
+      this.selectedRoleId = selectedValue.roleId;
+      this.selectedEntityRefId = selectedValue.entityReferenceId;
     }
   }
-}
+
+  onPhaseChange(selectedValue: any) {
+    if (selectedValue?.value) {
+      const phase = selectedValue?.value;
+      this.resourceAuthorityid = selectedValue?.value?.pendingApprovalAuthority;
+      console.log(this.resourceAuthorityid);
+
+      this.selectedPhaseId = phase.value ?? null;
+      this.projectStartDate = phase.startDate ?? null;
+      this.projectEndDate = phase.endDate ?? null;
+
+      // Update validators safely
+      this.addResourceForm.get('startDate')?.updateValueAndValidity();
+      this.addResourceForm.get('endDate')?.updateValueAndValidity();
+      console.log(this.projectStartDate, this.projectEndDate);
+
+      // Reset approval authority safely
+      const resourceAuthorityControl = this.addResourceForm.get('resourceAuthority');
+      console.log(resourceAuthorityControl);
+
+      if (resourceAuthorityControl) {
+        resourceAuthorityControl.patchValue(phase?.pendingApprovalAuthority);
+        resourceAuthorityControl.disable();
+      }
+
+      if (this.projectId != null && this.selectedPhaseId != null) {
+        this.getResourceData(this.projectId, this.selectedPhaseId);
+      }
+    }
+  }
 
 
-  onAuthorityChange(selectedValue: any){
-    if(selectedValue){
-      this.selectedAuthorityId = selectedValue.value.value;
+  onAuthorityChange(selectedValue: any) {
+    if (selectedValue) {
+      this.selectedAuthorityId = selectedValue?.value?.value;
     }
   }
 
@@ -160,8 +164,8 @@ onPhaseChange(selectedValue: any) {
         if (projectId) {
           this.getProjects(projectId);
           this.projectId = parseInt(projectId);
-           this.getPhaseData();
-          
+          this.getPhaseData();
+
         }
       });
     } else if (fullPath.startsWith('/project-management/clients')) {
@@ -195,9 +199,9 @@ onPhaseChange(selectedValue: any) {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color: [''],
-      resourcePhase : [null, Validators.required],
-      resourceAuthority : [{value: null, disabled: true}]
+      color: ['', Validators.required],
+      resourcePhase: [null, Validators.required],
+      resourceAuthority: [{ value: null, disabled: true }]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -205,7 +209,7 @@ onPhaseChange(selectedValue: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = res?.data ?? [];
-         this.departmentIds = this.projectsDataDrown[0]?.departments?.map((d: any) => d.departmentId) || [];
+        this.departmentIds = this.projectsDataDrown[0]?.departments?.map((d: any) => d.departmentId) || [];
         this.addResourceForm.patchValue({
           projectName: this.projectsDataDrown[0]?.projectId,
           projectType: this.projectsDataDrown[0]?.projectType,
@@ -243,7 +247,7 @@ onPhaseChange(selectedValue: any) {
       next: (res: any) => {
         const project = res?.data[0];
         if (project) {
-        this.departmentIds = project?.departments?.map((d: any) => d.departmentId) || [];
+          this.departmentIds = project?.departments?.map((d: any) => d.departmentId) || [];
           this.projectId = project.projectId;
           this.addResourceForm.patchValue({
             projectType: project.projectType,
@@ -252,7 +256,7 @@ onPhaseChange(selectedValue: any) {
             allowweekendWork: project.isWeekendWorkAllowed
           });
 
-                    // Reset dependent dropdowns
+          // Reset dependent dropdowns
           this.phaseDropdown = [];
           this.resoucesDropDownData = [];
           this.addResourceForm.patchValue({
@@ -304,14 +308,14 @@ onPhaseChange(selectedValue: any) {
   }
 
 
-  
-  getResourceData(projectId: number,phaseId:number) {
+
+  getResourceData(projectId: number, phaseId: number) {
 
     const params = {
       status: 'Active',
       entityType: 'project',
       entityRefId: projectId,
-      phaseId:phaseId
+      phaseId: phaseId
     };
     this.subscription = this.http
       .getDataIncludeParams('ProjectResource', params)
@@ -348,8 +352,8 @@ onPhaseChange(selectedValue: any) {
     this.addResourceForm.patchValue({
       resourceEmail: this.selectedEmployee.workEmail,
       resourcePhone: this.selectedEmployee
-  ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
-  : '-',
+        ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
+        : '-',
 
     });
     this.getJobdetails(this.selectedEmployee.employeeId);
@@ -391,8 +395,8 @@ onPhaseChange(selectedValue: any) {
       employeeId: this.selectedEmployee.employeeId,
       startDate: formValue.startDate,
       endDate: formValue.endDate,
-       projectRoleId: formValue.resourceRole.value.roleId,
-    projectDepartmentId: formValue.resourceRole.value.entityReferenceId,
+      projectRoleId: formValue.resourceRole.value.roleId,
+      projectDepartmentId: formValue.resourceRole.value.entityReferenceId,
       allocatedHours: formValue.resourceAllocationhrs,
       allocatedFrequencyType: formValue.allocatedFrequencyType?.value || null,
       overtimeEligibile: formValue.overtimeEligible,
@@ -401,18 +405,21 @@ onPhaseChange(selectedValue: any) {
       status: status,
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
-      phaseId : this.selectedPhaseId,
-      pendingApprovalAuthority : formValue?.resourceAuthority?.value,
+      phaseId: this.selectedPhaseId,
+      pendingApprovalAuthority: this.addResourceForm.get('resourceAuthority')?.value || this.resourceAuthorityid,
       meta: {
-      graphData: {
-        color: formValue.color
-      }
+        graphData: {
+          color: formValue.color
+        }
       }
     };
+    console.log(payload);
+
     this.http.postdata(`ProjectResource`, payload).subscribe({
       next: (res) => {
         this.modalService.dismissAll();
         this.addResourceForm.reset();
+        this.resourceAuthorityid = null
         this.http.setnewresourceDetails();
         this.http.setnewcountfornewresourcecount();
         this.spinnerLoader = false;
@@ -511,24 +518,25 @@ onPhaseChange(selectedValue: any) {
 
   getPhaseData() {
     const params = {
-    projectId: this.projectId
+      projectId: this.projectId,
+      status: 'yet to start,in progress,extended'
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
         this.phaseData = (data?.data || []).filter(
-        (p: any) =>
-          p?.status?.toLowerCase() === 'in progress' ||
-          p?.status?.toLowerCase() === 'extended'
-      );
+          (p: any) =>
+            p?.status?.toLowerCase() === 'in progress' ||
+            p?.status?.toLowerCase() === 'extended'
+        );
         this.phaseDropdown = this.phaseData?.map(p => ({
-        label: p?.phaseName,
-        value: p?.phaseId,
-        projectId:p?.project?.projectId,
-        clientId:p?.project?.clientId,
-        startDate: p?.startDate,
-        endDate: p?.endDate,
-        pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
-      }));
+          label: p?.phaseName,
+          value: p?.phaseId,
+          projectId: p?.project?.projectId,
+          clientId: p?.project?.clientId,
+          startDate: p?.startDate,
+          endDate: p?.endDate,
+          pendingApprovalAuthority: p?.pendingApprovalAuthority?.id
+        }));
         this.spinnerLoader = false;
       },
       error: (reason: any) => {
@@ -536,7 +544,7 @@ onPhaseChange(selectedValue: any) {
       }
     });
   }
-  
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

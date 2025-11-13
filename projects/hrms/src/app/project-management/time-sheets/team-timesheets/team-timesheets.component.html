@@ -19,25 +19,37 @@
                         </div>
                     </div>
 
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view') ) {
+                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view') ) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
-                                formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)" [showClear]="true"
+                                formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)" 
                                 placeholder="Please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
-                    }
-                    @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
+                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" >
+                            </p-select>
+                        </div>
+                    </div>
+                    } -->
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
-                                optionValue="value" formControlName="resourceId" (onChange)="onCheckemployee($event.value)" [showClear]="true"
-                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
+                                formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
+                                 placeholder="Please select employee"
+                                class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -45,15 +57,18 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
-                                name="myteamemployees" (onChange)="onCheckemployee($event.value)" placeholder="Please select employee"
-                                formControlName="resourceId" [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" required></p-select>
+                            <p-select [options]="resourcesList" optionLabel="fullName"  optionValue="id"
+                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="Please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false">
+                            </p-select>
                         </div>
                     </div>
+                    }@else {
+                        
                     }
                     <div>
-                        <button class="custom-btn btn-primary" type="submit" [disabled]="datepickerForm.invalid">Apply</button>
+                        <button class="custom-btn btn-primary" type="submit" (mousedown)="$event.preventDefault()" [disabled]="datepickerForm.invalid">Apply</button>
                     </div>
                 </div>
             </form>
@@ -80,17 +95,30 @@
                                     <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{ emp.employee.name}}</a>
                                 </td>
                                 <td class="text-center" *ngFor="let day of emp.dailyData" [style.color]="day.dailySummary.colour">
-                                    <!-- <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
-                                    {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged' 
-                                    && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status : day.dailySummary.loggedHHMM }}</a> -->
-                                    <!-- Clickable only for loggedHHMM -->
-                                    <a *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
-                                    || day.dailySummary.loggedHHMM !== '0:00'" class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
-                                        {{ day.dailySummary.loggedHHMM }}</a>
-                                    <!-- Non-clickable for status -->
-                                    <span *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
-                                    day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
-                                        <b>{{ day.dailySummary.status }}</b></span>
+                                    <div class="d-flex flex-column align-items-center gap-2">
+                                        <!-- <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)" 
+                                         [style.background]="day.dailySummary.backgroundColor">
+                                            {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged' 
+                                            && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status : day.dailySummary.loggedHHMM }}</a> -->
+                                        <!-- Clickable only for loggedHHMM -->
+                                        <div *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
+                                        || day.dailySummary.loggedHHMM !== '0:00'">
+                                            <a  class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                                {{ day.dailySummary.loggedHHMM }}</a>
+                                        </div>
+                                        <!-- Non-clickable for status -->
+                                        <div *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
+                                        day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
+                                        <b>{{ day.dailySummary.status }}</b></div>
+                                        <div class="d-flex">
+                                            @if(day.dailySummary.weekday != null){
+                                            <div [style.color]="day.dailySummary.textColor">{{day.dailySummary.weekday}}</div>
+                                            }
+                                            @if (day.dailySummary.holiday != null){
+                                            <div [style.color]="day.dailySummary.textColor">{{day.dailySummary.holiday}}</div>
+                                            }
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </ng-container>

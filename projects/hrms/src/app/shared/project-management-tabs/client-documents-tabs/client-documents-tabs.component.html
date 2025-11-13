@@ -1,0 +1,13 @@
+<div class="component-nav-tabs-container card " >
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of filteredTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="[tab.link]" [queryParamsHandling]="'preserve'" routerLinkActive="active-nav-link" 
+                    class="nav-link">{{tab.label}} ({{statusCounts[tab.statusKey] ?? 0}})</a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
+</div>
+

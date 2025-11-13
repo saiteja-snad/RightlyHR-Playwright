@@ -226,6 +226,8 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   onPhaseChange(event: any) {
     if (!event?.value) return;
     const selectedPhaseId = event.value;
+    console.log(selectedPhaseId);
+    
     const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
     if (selectedPhase) {
       this.selectedPhaseId = selectedPhase.value;

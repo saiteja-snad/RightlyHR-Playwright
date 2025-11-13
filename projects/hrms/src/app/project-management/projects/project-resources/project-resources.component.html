@@ -18,7 +18,7 @@
                 <div class="custom-table-content">
                     <table class="w-100">
                         <thead>
-                            <th>Phasev / Milestone</th>
+                            <th>Phases / Milestones</th>
                             <th>Employee ID</th>
                             <th>Name</th>
                             <th>Designation</th>
@@ -30,8 +30,7 @@
                             <th>Allocated Hours</th>
                             <th>Timesheet Approval Authority</th>
                             <th>Status</th>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources
-                            Tab.delete'))
+                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <th class="text-center">{{"Action" | translate}}</th>
                             }
@@ -254,7 +253,7 @@
                         </div>
                     </div>
 
-                    
+
                     <!-- Authority Name -->
                     <div class="col-md-6 mb-3">
                         <div class="d-flex gap-2">

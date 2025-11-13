@@ -121,6 +121,7 @@
                                 <table class="w-100">
                                     <thead>
                                         <th>{{'Project Name'|translate}}</th>
+                                        <th>{{'Project Code'|translate}}</th>
                                         <th>{{'Department'|translate}}</th>
                                         <th>{{'Phase'|translate}}</th>
                                         <th>{{'Role'|translate}}</th>
@@ -129,7 +130,8 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let item of projectSummeryData">
-                                            <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
+                                            <td [style.color]="item.projectColor.graphData.color">{{item.projectName ? item.projectName:'-'}}</td>
+                                            <td >{{item.projectColor.graphData.code ? item.projectColor.graphData.code:'-'}}</td>
                                             <td >{{item.department?item.department:'-'}}</td>
                                             <td >{{item.phaseName?item.phaseName:'-'}}</td>
                                             <td >{{item.role?item.role:'-'}}</td>

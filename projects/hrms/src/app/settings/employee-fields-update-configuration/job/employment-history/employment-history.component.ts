@@ -142,7 +142,9 @@ export class EmploymentHistoryComponent {
     if (this.fieldConfigForm.valid) {
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : formValue.selectedRole || '';
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
+                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
+                              formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
 
       if (this.isEditMode) {
         // Update operation
@@ -151,7 +153,7 @@ export class EmploymentHistoryComponent {
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
-          approvalType: formValue.approvalType || "",
+          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
           approvalAuthority: approvalAuthority.toString() || '',
           updatedBy: loggedInUser.employeeId,
         };
@@ -176,7 +178,7 @@ export class EmploymentHistoryComponent {
           moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Employment History",
           displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Job",
           requiresApproval: true,
-          approvalType: formValue.approvalType || "",
+          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
           approvalAuthority: approvalAuthority.toString() || '',
           createdBy: loggedInUser.employeeId,
         };
@@ -242,12 +244,13 @@ export class EmploymentHistoryComponent {
   openUpdateFieldConfigDialog(fieldConfig: any) {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
-    this.fieldConfigForm.patchValue({
+     this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
       approvalType: fieldConfig.approvalType || '',
       selectedEmployee: fieldConfig.approvalType === 'EMP' ? Number(fieldConfig.approvalAuthority) : '',
-      selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : ''
+      selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : '',
+      selectedManager: fieldConfig.approvalType === 'MANAGER' ? fieldConfig.approvalAuthority : ''
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
@@ -264,9 +267,10 @@ export class EmploymentHistoryComponent {
     // Watch for approval type changes
     this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {
       // Reset employee/role selections when type changes
-      this.fieldConfigForm.patchValue({
+       this.fieldConfigForm.patchValue({
         selectedEmployee: '',
-        selectedRole: ''
+        selectedRole: '',
+        selectedManager: ''
       });
       this.updateApprovalValidators(value);
     });

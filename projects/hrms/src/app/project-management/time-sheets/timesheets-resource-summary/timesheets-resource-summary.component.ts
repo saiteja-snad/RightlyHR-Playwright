@@ -370,7 +370,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       queryParams.push(`endDate=${endDate}`);
     }
     if (queryParams.length > 0) {
-      apiUrl += `${queryParams.join('&')}`;
+      apiUrl += `?${queryParams.join('&')}`;
     }
     this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

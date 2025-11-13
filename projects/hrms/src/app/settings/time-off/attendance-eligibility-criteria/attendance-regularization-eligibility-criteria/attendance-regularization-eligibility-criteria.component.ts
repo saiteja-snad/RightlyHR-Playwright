@@ -35,7 +35,7 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
   getAttendanceCriteria() {
     this.disableEdit();
     const params = 'AttendanceRegularization'
-    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth','maxRegularizeHoursPerDay','maxRegularizeHoursPerMonth'];
+    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth','maxRegularizeHoursPerDay','maxRegularizeHoursPerMonth','pastDaysAllowed'];
     this.dataLoad =  true;
     this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {

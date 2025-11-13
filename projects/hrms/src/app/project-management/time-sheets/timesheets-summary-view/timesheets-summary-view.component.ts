@@ -172,7 +172,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
-    // this.setDefaultmounth();
+    this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
@@ -217,16 +217,6 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   //   }
   // }
 
-  onCheckemployee(employeed: any) {
-    if (employeed === null) {
-      this.datepickerForm.get('resourceId')?.setValue(null);
-      console.log(employeed);
-
-      this.getProjectSummary(this.employeeId);
-      this.getEmployeeId(this.employeeId);
-      this.setDefaultmounth();
-    }
-  }
 
   //graphs no data found conditions
   get hasprojectWiseHoursData(): boolean {

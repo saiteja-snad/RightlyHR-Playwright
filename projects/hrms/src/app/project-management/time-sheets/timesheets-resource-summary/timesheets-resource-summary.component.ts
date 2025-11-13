@@ -106,8 +106,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
   ];
-  
-   estimatedlabels = [
+
+  estimatedlabels = [
     { label: 'Allocated Hours', color: '#0F358A' },
     { label: 'Actual Hours', color: '#A2B5E2' },
     { label: 'Over Due', color: '#FF4848' }
@@ -130,6 +130,12 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.route.queryParams.subscribe(params => {
+      const resoureID = params['id'];
+      if (resoureID) {
+        this.employeeId = parseInt(resoureID)
+      }
+    })
     this.updateModuleInfo();
     this.createDatepickerForm();
     this.http.getteamDateRangeObservable().subscribe((data) => {
@@ -138,7 +144,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       if (data && (data.startDate || data.endDate || data.employeeId)) {
 
 
-        this.employeeId = data.employeeId || null;
+        this.employeeId = data.employeeId ||  this.employeeId
         this.startDate = data.startDate;
         this.endDate = data.endDate;
         this.setDefaultmounth();

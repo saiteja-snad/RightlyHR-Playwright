@@ -254,6 +254,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
+  
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,

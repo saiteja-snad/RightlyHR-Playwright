@@ -200,7 +200,7 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
         case 'pastDaysAllowed':
         // Enforce minimum 1 (user request). Allow integer values >= 1.
         if (isNaN(numericValue) || numericValue < 1) {
-          return 'Past Days Allowed should be at least 1';
+          return 'Past Allowed Days must be at least 1';
         }
         break;
 

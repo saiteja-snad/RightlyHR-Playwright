@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { TimesheetsResourceTabsComponent } from '../timesheets-resource-tabs/timesheets-resource-tabs.component';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -12,7 +12,6 @@ import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { Subscription, Subject, BehaviorSubject, takeUntil } from 'rxjs';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
-import { TimeTrackingData, DailyData } from '../../../Interfaces/team-summary-time-sheet.model';
 import { MonthlySummaryItem, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { TimesheetEntry } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
@@ -24,10 +23,11 @@ import { TimesheetsTabsComponent } from '../../../shared/project-management-tabs
 import { IResourceDetail } from '../../../timesheetmodel';
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { DailyData, TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 @Component({
   selector: 'app-timesheets-resource-summary',
-  imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule,
-    TranslateModule, CommonModule, Select, NgbPopoverModule, NoDataFoundComponent, ProgressBarModule,
+  imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, 
+    TranslateModule, CommonModule, Select, NgbPopoverModule, NoDataFoundComponent, ProgressBarModule, 
     ModuleInfoIconComponent, ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,
   ],
   templateUrl: './timesheets-resource-summary.component.html',
@@ -116,72 +116,32 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   timeAllocatedData: any;
   timeAllocatedOptions: any;
   timeAllocatedlist: any;
-  startDate: any;
-  endDate: any;
 
-  constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
+  constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService, 
     public rbac: RbacService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo();
     this.createDatepickerForm();
-    this.http.getteamDateRangeObservable().subscribe((data) => {
-      console.log('Received BehaviorSubject data:', data);
-      // Optional check to avoid running on empty initial values
-      if (data && (data.startDate || data.endDate || data.employeeId)) {
-
-
-        this.employeeId = data.employeeId || null;
-        this.startDate = data.startDate;
-        this.endDate = data.endDate;
-        this.setDefaultmounth();
-        // You can trigger your logic with these updated values
-        // this.getProjectSummary(this.employeeId);
-        this.projectSummery(this.employeeId);
-        this.getallocatedSummary(this.employeeId);
-        this.getEmployeeId(this.employeeId);
-        this.billableChart(this.employeeId);
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth],
+    });
+    this.route.queryParams.subscribe((params) => {
+      const resoureID = params['id'];
+      if (resoureID) {
+        this.employeeId = parseInt(resoureID);
+        this.projectSummery(resoureID);
+        this.getallocatedSummary(resoureID);
+        this.getEmployeeId(resoureID);
+        this.billableChart(resoureID);
         // this.burnDownChart(resoureID);
-        this.timeAllocatedacrossGraph(this.employeeId);
-      } else {
-        this.route.queryParams.subscribe(params => {
-          const resoureID = params['id'];
-          if (resoureID) {
-            this.employeeId = parseInt(resoureID)
-            this.setDefaultmounth();
-            this.projectSummery(resoureID);
-            this.getallocatedSummary(resoureID);
-            this.getEmployeeId(resoureID);
-            this.billableChart(resoureID);
-            // this.burnDownChart(resoureID);
-            this.timeAllocatedacrossGraph(resoureID);
-          }
-        });
+        this.timeAllocatedacrossGraph(resoureID);
       }
     });
-
-    // const startOfMonth = dayjs().startOf('month').toDate();
-    // const endOfMonth = dayjs().endOf('month').toDate();
-    // this.datepickerForm.patchValue({
-    //   dateRange: [startOfMonth, endOfMonth],
-    // });
-
-
-    // this.route.queryParams.subscribe((params) => {
-    //   const resoureID = params['id'];
-    //   if (resoureID) {
-    //     this.employeeId = parseInt(resoureID);
-    //      this.setDefaultmounth();
-    //     this.projectSummery(resoureID);
-    //     this.getallocatedSummary(resoureID);
-    //     this.getEmployeeId(resoureID);
-    //     this.billableChart(resoureID);
-    //     // this.burnDownChart(resoureID);
-    //     this.timeAllocatedacrossGraph(resoureID);
-    //   }
-    // });
-    //  this.setDefaultmounth();
+    this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
   }
@@ -243,28 +203,12 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.getResourceDetailsByManagerId();
   }
 
-  // setDefaultmounth() {
-  //   const startOfMonth = dayjs().startOf('month').toDate();
-  //   const endOfMonth = dayjs().endOf('month').toDate();
-  //   this.datepickerForm.patchValue({
-  //     dateRange: [startOfMonth, endOfMonth],
-  //   });
-  // }
   setDefaultmounth() {
-    // Define current month's start & end
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
-    // Check if BehaviorSubject values exist
-    const BehaviorDataexist = this.startDate && this.endDate;
-    // If present → use them; else → fallback to month start/end
-    const start = BehaviorDataexist ? dayjs(this.startDate).toDate() : startOfMonth;
-    const end = BehaviorDataexist ? dayjs(this.endDate).toDate() : endOfMonth;
-    // Patch form values
     this.datepickerForm.patchValue({
-      dateRange: [start, end],
-      resourceId: this.employeeId || null
+      dateRange: [startOfMonth, endOfMonth],
     });
-    console.log('📅 Date Range set:', start, end);
   }
 
   isShowtimesheetforteamRoute(): boolean {
@@ -561,8 +505,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         const allLabelsSet = new Set<string>();
         const datasets: any[] = [];
         // Predefined color palette (extendable)
-        const colors = ['#42A5F5', '#E91E63', '#9C27B0', '#FF9800', '#4CAF50',
-          '#795548', '#009688', '#F44336', '#3F51B5', '#8BC34A',];
+        const colors = ['#42A5F5','#E91E63','#9C27B0','#FF9800','#4CAF50',
+          '#795548','#009688','#F44336','#3F51B5','#8BC34A',];
         projectCharts.forEach((project: any, index: number) => {
           const actualLine = project?.actualLine?.map((item: any) => ({
             date: new Date(item.date),
@@ -634,7 +578,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
   // Just an example to generate different colors
   getColor(index: number): string {
-    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FFC300', '#9B59B6', '#1ABC9C', '#E67E22', '#34495E',];
+    const colors = ['#FF5733','#33FF57','#3357FF','#FFC300','#9B59B6','#1ABC9C','#E67E22','#34495E',];
     return colors[index % colors.length];
   }
 
@@ -858,7 +802,6 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   navigatetoteam() {
-    this.http.clearTeamDateRange();
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
 
@@ -886,10 +829,4 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const data = datasets[0]?.data;
     return Array.isArray(data) && data?.some((value) => value > 0);
   }
-
-  // ngOnDestroy() {
-  //   this.destroy$.next(true);
-  //   this.destroy$.complete();
-  //   this.http.clearTeamDateRange();
-  // }
 }

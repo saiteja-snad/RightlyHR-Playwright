@@ -15,7 +15,7 @@ export class ProjectTabsComponent {
   filteredTabs: any[] = [];
   columnsPerRow = 3;
   navTabs = [
-    { label: 'Project Info', link: '/project-management/projects/details/information', permission: { feature: 'Project Details Tab', action: 'view' } },
+    { label: 'Assigned Projects', link: '/project-management/projects/details/information', permission: { feature: 'Project Details Tab', action: 'view' } },
     { label: 'Phases / Milestones', link: '/project-management/projects/details/phases', permission: { feature: 'Project Phases Tab', action: 'view' } },
     { label: 'Contact Info', link: '/project-management/projects/details/contact-info', permission: { feature: 'Contact Info Tab', action: 'view' } },
     { label: 'Documents', link: '/project-management/projects/details/documents', permission: { feature: 'Documents Tab', action: 'view' } },
@@ -52,19 +52,19 @@ export class ProjectTabsComponent {
     if (link === '/project-management/projects/details/timesheet/summary') {
       return currentUrl.includes('/project-management/projects/details/timesheet/detailed') ||
         currentUrl.includes('/project-management/projects/details/timesheet/summary')
-        || currentUrl.includes('/project-management/projects/details/timesheet/resource-summary');  
+        || currentUrl.includes('/project-management/projects/details/timesheet/resource-summary');
     }
     if(link === '/project-management/projects/details/phases'){
        return currentUrl.includes('/project-management/projects/details/inactive-phases') ||
         currentUrl.includes('/project-management/projects/details/hold-phases') ||
          currentUrl.includes('/project-management/projects/details/phases')
-        
+
     }
        if(link === '/project-management/projects/details/resources'){
        return currentUrl.includes('/project-management/projects/details/resources') ||
-        currentUrl.includes('/project-management/projects/details/inactive-resources') 
-     
-        
+        currentUrl.includes('/project-management/projects/details/inactive-resources')
+
+
     }
 
     // For other tabs, use exact match

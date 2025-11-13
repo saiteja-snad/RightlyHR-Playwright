@@ -664,7 +664,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'contactor-info': "Contractor Info",
-    'project-info': "Project Info",
+    'project-info': "Assigned Projects",
     'cards': 'Cards',
     // Documents
     'general-documents': 'Documents',

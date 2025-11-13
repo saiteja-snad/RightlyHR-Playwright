@@ -111,7 +111,14 @@
                                             <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
                                         </a>
                                     </ng-container>
-                                    <ng-template #noEntries>-</ng-template>
+                                    <ng-template #noEntries>
+                                    @if(row.dailySummary.weekday != null){
+                                        <span>{{row.dailySummary.weekday}}</span>
+                                    }
+                                    @if (row.dailySummary.holiday != null){
+                                        <span>{{row.dailySummary.holiday}}</span>
+                                    }
+                                    </ng-template>
                                 </td>
                             </tr>
                         </ng-container>

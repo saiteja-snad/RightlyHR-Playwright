@@ -26,11 +26,12 @@ import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { Skeleton } from "primeng/skeleton";
+import { TimesheetsResourceTabsComponent } from "../timesheets-resource-tabs/timesheets-resource-tabs.component";
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
     NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent,
-    ModuleInformationComponent, Skeleton],
+    ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -379,7 +380,7 @@ export class TimesheetsSummaryViewComponent {
   }
 
   openModal(entries: TimesheetEntry[], content?: any) {
-    this.selectedEntries = entries;
+    this.selectedEntries = entries?.filter(ele=>ele?.status!=='Not Entered');
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -445,7 +446,7 @@ export class TimesheetsSummaryViewComponent {
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.meta?.graphData?.code);
+    const labels = this.estimatedVsActualData.map((item: any) => item.meta.graphData.code?item.meta.graphData.code: item.projectName);
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
     // Convert "HH:mm" to numeric hours for actualHours

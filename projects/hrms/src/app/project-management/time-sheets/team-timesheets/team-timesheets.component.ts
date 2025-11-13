@@ -105,7 +105,7 @@ export class TeamTimesheetsComponent {
   }
 
   openModal(entries: any, content?: any) {
-    this.selectedEntries = entries;
+    this.selectedEntries = entries?.filter((ele:any)=>ele?.status!=='Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -357,6 +357,6 @@ export class TeamTimesheetsComponent {
   }
 
   navigateView(employeeId: any) {
-    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
   }
 }

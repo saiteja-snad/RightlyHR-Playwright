@@ -88,7 +88,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   TimesheetSummary = 'The Timesheet Summary widget provides a visual representation of timesheet data through a line diagram. It consolidates the total hours that are approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.  ';
   BillablevsNonBillableHoursInfo = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.';
   ProjectBurndownChartInfo = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends.';
-  timeAllocatedInfo = '';
+  timeAllocatedInfo = 'This widget displays the percentage of hours allocated across all active projects for the selected period.It helps managers quickly understand where team effort is being utilized and identify project workload distribution.';
   // content loaders variables
   tableLoader = false;
   allocatedVsActualLoader = false;
@@ -245,8 +245,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   updateModuleInfo() {
     const urlWithoutQuery = this.router.url.split('?')[0];
     this.routeToInfoMap = {
-      '/project-management/timesheet/mysummary':
-        MODULE_INFOS.My_Timesheet_Summary_view,
+      '/project-management/timesheet/resourcesummary':
+        MODULE_INFOS.My_Timesheet_Resource_Summary_view,
       '/project-management/timesheet/summary':
         MODULE_INFOS.Team_Timesheet_Summary_view,
     };

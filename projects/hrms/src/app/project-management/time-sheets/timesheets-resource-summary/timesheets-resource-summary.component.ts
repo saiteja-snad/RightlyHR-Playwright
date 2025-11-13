@@ -35,7 +35,7 @@ import moment from 'moment';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class TimesheetsResourceSummaryComponent implements OnInit {
+export class TimesheetsResourceSummaryComponent implements OnInit,OnDestroy {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
@@ -124,6 +124,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo();
     this.createDatepickerForm();
+
+    
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
     this.datepickerForm.patchValue({
@@ -802,6 +804,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   navigatetoteam() {
+       this.http.clearTeamDateRange();
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
 
@@ -828,5 +831,11 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     if (!datasets?.length) return false;
     const data = datasets[0]?.data;
     return Array.isArray(data) && data?.some((value) => value > 0);
+  }
+ 
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    this.http.clearTeamDateRange();
   }
 }

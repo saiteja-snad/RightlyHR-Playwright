@@ -67,7 +67,7 @@
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true" [showClear]="true"
+                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true"  optionValue="id"
                                     [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>

@@ -219,6 +219,7 @@ export class TimesheetsSummaryViewComponent {
 
       this.getProjectSummary(this.employeeId);
       this.getEmployeeId(this.employeeId);
+       this.setDefaultmounth();
     }
   }
 

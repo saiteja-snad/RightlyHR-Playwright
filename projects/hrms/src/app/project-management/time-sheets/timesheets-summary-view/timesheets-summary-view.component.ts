@@ -91,6 +91,8 @@ export class TimesheetsSummaryViewComponent {
   tableLoader = false;
   allocatedVsActualLoader = false;
   projectwisehour = false;
+  startDate: any;
+  endDate: any;
 
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute) { }
@@ -99,15 +101,28 @@ export class TimesheetsSummaryViewComponent {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo()
     this.createDatepickerForm();
+  this.http.getteamDateRangeObservable().subscribe((data) => {
+    console.log('Received BehaviorSubject data:', data);
+    // Optional check to avoid running on empty initial values
+    if (data && (data.startDate || data.endDate || data.employeeId)) {
+      this.employeeId = data.employeeId || null;
+      this.startDate = data.startDate;
+      this.endDate = data.endDate;
+         this.setDefaultmounth();
+      // You can trigger your logic with these updated values
+      this.getProjectSummary(this.employeeId);
+    }else{
     this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
-        this.getProjectSummary(resoureID);
+           this.setDefaultmounth();
+         this.getProjectSummary(resoureID);
         this.getEmployeeId(resoureID);
       }
     });
-    this.setDefaultmounth();
+    }
+  });
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
@@ -159,13 +174,22 @@ export class TimesheetsSummaryViewComponent {
     this.estimatedActualChart();
   }
 
-  setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth]
-    });
-  }
+ setDefaultmounth() {
+  // Define current month's start & end
+  const startOfMonth = dayjs().startOf('month').toDate();
+  const endOfMonth = dayjs().endOf('month').toDate();
+  // Check if BehaviorSubject values exist
+  const BehaviorDataexist = this.startDate && this.endDate;
+  // If present → use them; else → fallback to month start/end
+  const start = BehaviorDataexist ? dayjs(this.startDate).toDate() : startOfMonth;
+  const end = BehaviorDataexist ? dayjs(this.endDate).toDate() : endOfMonth;
+  // Patch form values
+  this.datepickerForm.patchValue({
+    dateRange: [start, end],
+    resourceId: this.employeeId || null
+  });
+  console.log('📅 Date Range set:', start, end);
+}
 
   isShowtimesheetforteamRoute(): boolean {
     const showPaths = ['/project-management/timesheet/summary'];

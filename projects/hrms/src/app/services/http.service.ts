@@ -841,6 +841,27 @@ export class HttpService {
   getCurrentDateRange() {
     return this.dateRangeSubject.getValue();
   }
+// team timesheet summery
+ //  Set data (e.g., after selecting date range and employee)
+   private teamdateRangeSubject = new BehaviorSubject<any>({
+    startDate: null,
+    endDate: null,
+    employeeId: null,
+    employeeName: null
+  });
+  setteamDateRange(startDate: string | null , endDate: string | null , employeeId?: string | null, employeeName?: string) {
+    this.teamdateRangeSubject.next({ startDate, endDate, employeeId, employeeName });
+  }
+
+  //  Get as observable (subscribe in other component)
+  getteamDateRangeObservable() {
+    return this.teamdateRangeSubject.asObservable();
+  }
+
+  // Get current value synchronously (optional)
+  getteamCurrentDateRange() {
+    return this.teamdateRangeSubject.getValue();
+  }
 
   //  Example API call
   getDatEdATA(url: string) {

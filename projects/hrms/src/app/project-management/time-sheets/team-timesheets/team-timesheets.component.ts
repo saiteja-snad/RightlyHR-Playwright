@@ -155,6 +155,19 @@ export class TeamTimesheetsComponent {
     if (this.datepickerForm.invalid) {
       return;
     }
+  const formValue = this.datepickerForm.value;
+  const [startDate, endDate] = formValue.dateRange || [];
+
+  const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
+  const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
+
+  const empId = formValue.resourceId ?? null;
+  const selectedEmployee = this.activeEmplist.find((emp: any) => emp.value === empId);
+  const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
+
+  //  Store it in BehaviorSubject (inside HttpService)
+  this.http.setteamDateRange(start, end, empId, empName);
+
     // Trigger your existing API call
     this.page = 1; // Reset to first page on new filter apply
     this.getteamsummary();

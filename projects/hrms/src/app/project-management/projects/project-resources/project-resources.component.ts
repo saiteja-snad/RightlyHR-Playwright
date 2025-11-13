@@ -30,6 +30,7 @@ import { ProjectResourceTabComponent } from "../../../shared/project-management-
 
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
+  resourcestartdate:any
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -645,6 +646,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       // 'On Hold': 'bi-pause-circle',
       // 'Resume': 'bi-arrow-repeat'
     }[action] || 'bi-question-circle';
+    
   }
 
   getActionsByStatus(status: string): string[] {
@@ -653,7 +655,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return this.statusActionsMap[normalized] ?? [];
   }
 
+formatDateToLocalforresource(dateString: string | null): Date | null {
+  if (!dateString) return null;
+  return new Date(dateString); // Converts ISO string to Date object
+}
   handleAction(action: string, data: any) {
+  
     const config = this.confirmationMessages[action];
 
     if (!config) return;
@@ -662,6 +669,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);
+        this.resourcestartdate=this.formatDateToLocalforresource(data?.startDate)
+        console.log(this.resourcestartdate);
+        
     }
   }
 

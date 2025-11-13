@@ -366,7 +366,7 @@
 
             <div class="mb-3 mt-3" *ngIf="modalData?.title?.includes('release')">
                 <label for="statusEffectiveDate" class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
-                <input type="date" id="statusEffectiveDate" formControlName="statusEffectiveDate" class="form-control custom-input" />
+                <input type="date" id="statusEffectiveDate" [min]="resourcestartdate | date:'yyyy-MM-dd'"  formControlName="statusEffectiveDate" class="form-control custom-input" />
                 <div class="error-msg" *ngIf="reasonForm.get('statusEffectiveDate')?.touched && reasonForm.get('statusEffectiveDate')?.invalid">
                     Effective Date is required
                 </div>

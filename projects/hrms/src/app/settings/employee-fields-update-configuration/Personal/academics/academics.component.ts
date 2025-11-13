@@ -63,7 +63,7 @@ export class AcademicsComponent {
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
       approvalRequired: [true],
-      approvalType: [''],
+      approvalType: ['', Validators.required],
       selectedEmployee: [''],
       selectedRole: [''],
       selectedManager:['']

@@ -115,15 +115,12 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
           ...this.resourceDataids, // keep clientId & projectId from localStorage
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
           dateRange: request.dateRange
-          
         };
          this.getProjectSummary();
       } else {
         this.getProjectSummary();
       }
-      
     });
-
     //this.getProjectSummary();
     // this.setDefaultmounth();
   }

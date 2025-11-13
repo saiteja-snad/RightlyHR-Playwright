@@ -106,8 +106,6 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       console.log('Received BehaviorSubject data:', data);
       // Optional check to avoid running on empty initial values
       if (data && (data.startDate || data.endDate || data.employeeId)) {
-
-
         this.employeeId = data.employeeId || null;
         this.startDate = data.startDate;
         this.endDate = data.endDate;
@@ -148,15 +146,11 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
 
   resetForm() {
-
     this.http.clearTeamDateRange()
     // Reset other form fields
     this.datepickerForm?.get('resourceId')?.reset()
-
     // Now manually set the default month range
     // const defaultRange = this.setDefaultmounth();
-
-
     this.updateModuleInfo()
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
@@ -193,7 +187,6 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       dateRange: [start, end],
       resourceId: this.employeeId || null
     });
-    console.log('📅 Date Range set:', start, end);
   }
 
   isShowtimesheetforteamRoute(): boolean {
@@ -442,10 +435,10 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
       const [h, m] = item.actualHours.split(':').map(Number);
-      return h + (m / 60);
+      const actualDecimal = h + (m / 60);   // convert HH:mm → decimal
+      const overdue = Number(item.overDue || 0);  // overdue already decimal
+      return actualDecimal - overdue;   // REMOVE overdue from actual
     });
-    // Keep original HH:mm format for display
-    const actualDisplay = this.estimatedVsActualData.map((item: any) => item.actualHours);
     // Convert overdue (may come as string)
     const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
     // Chart datasets

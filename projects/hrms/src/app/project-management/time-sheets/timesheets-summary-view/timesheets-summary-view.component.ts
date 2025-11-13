@@ -371,7 +371,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   projectWiseChart() {
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
     // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code);
+    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item.projectName);
     // Convert "HH:mm" string → numeric hours for plotting
     const data = this.projectTypeData.map((item: any) => {
       const [hours, minutes] = item.hours.split(':').map(Number);

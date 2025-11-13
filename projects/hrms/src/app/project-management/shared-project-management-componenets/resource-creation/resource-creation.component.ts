@@ -419,6 +419,7 @@ onPhaseChange(selectedValue: any) {
       next: (res) => {
         this.modalService.dismissAll();
         this.addResourceForm.reset();
+        this.resourceAuthorityid=null
         this.http.setnewresourceDetails();
         this.http.setnewcountfornewresourcecount();
         this.spinnerLoader = false;

@@ -293,7 +293,7 @@
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{ modalData?.title }}</p>
             </div>
-            <div class="mb-3 mt-3">
+            <div class="my-3 text-start">
                 <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" formControlName="reason" maxlength="250"
                     placeholder="Please enter reason" (keydown)="formValidation.restrictInitialSpace($event)">
@@ -322,7 +322,7 @@
                 <p class="confirmation-text">Are you sure you want to extend this phase?</p>
             </div>
             <!-- Start Date -->
-            <div class="mb-3 mt-3">
+            <div class="my-3 text-start">
                 <label for="newStartDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
                 <input type="date" id="newStartDate" formControlName="newStartDate" class="form-control custom-input" 
                 [min]="projectMinStartDate" [max]="newEndDate" [readonly]="extendForm.get('newStartDate')?.disabled" />
@@ -332,7 +332,7 @@
             </div>
 
             <!-- End Date -->
-            <div class="mb-3 mt-3">
+            <div class="my-3 text-start">
                 <label for="newEndDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
                 <input type="date" id="newEndDate" formControlName="newEndDate" class="form-control custom-input"
                     [min]="projectMinEndDate" [max]="projectMaxEndDate" />
@@ -340,7 +340,7 @@
                     End Date is required</div>
                 <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 text-start">
                 <label class="form-label custom-label mb-2">Reason<span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" maxlength="250" placeholder="Please enter extend reason"
                 formControlName="extendReason" (keydown)="formValidation.restrictInitialSpace($event)"></textarea>

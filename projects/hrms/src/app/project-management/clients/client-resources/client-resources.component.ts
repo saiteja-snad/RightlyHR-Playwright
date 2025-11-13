@@ -56,6 +56,8 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   resoucesDropDownData = [] as any[];
   phaseDropdown: any[] = [];
   phaseData = [] as IPhases[];
+  projectStartDate!: string | null;
+  projectEndDate!: string | null;
   selectedPhaseId: any;
   startndEndDateValid: any;
   startDatevalidate: any;
@@ -208,8 +210,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     });
   }
 
-  projectStartDate!: string | null;
-  projectEndDate!: string | null;
+  
   getclientProjects(clientId: any) {
     this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

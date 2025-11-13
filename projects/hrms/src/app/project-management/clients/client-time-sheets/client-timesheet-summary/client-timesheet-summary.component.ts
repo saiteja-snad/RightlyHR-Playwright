@@ -253,7 +253,8 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           return;
         }
         // Extract data from API response
-        const labels = data.map((item: any) => item.projectColor?.graphData?.code);
+        const labels = data.map((item: any) => item.projectColor?.graphData?.code ? 
+        item.projectColor?.graphData?.code : item.projectName);
         const resourceCounts = data.map((item: any) => item.resourceCount);
         // Assign chart data
         this.projectResourceData = {
@@ -472,7 +473,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         this.EstimatedActualHoursLoader = false;
         if (res?.success && res?.data?.data?.length) {
           const chartData = res.data.data;
-          const labels = chartData.map((item: any) => item.meta.graphData.code);
+          const labels = chartData.map((item: any) => item.meta.graphData.code ? item.meta.graphData.code : item.name);
           const estimatedHours = chartData.map((item: any) => item.allocateHours);
           const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
           const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
@@ -579,7 +580,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           return parseFloat(str); // directly convert decimal string to number
         };
         // const chartData = response.data.data;
-        const labels = chartData.map((item: any) => item.projectColor?.graphData.code);
+        const labels = chartData.map((item: any) => item.projectColor?.graphData.code ? item.projectColor?.graphData.code : item.name);
         const billable = chartData.map((item: any) => convertToHours(item.billableHours));
         const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
         // Assign dynamic chart data

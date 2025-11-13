@@ -294,11 +294,7 @@ export class HoursAllocationComponent {
     //   params = params.append('entityValues', id.employeeId);
     // });
     const ids = employeeIds.map((emp: any) => emp.employeeId);
-    let params = new HttpParams().set(
-      'year',
-      this.hoursAllocationForm.get('year')?.value
-    );
-
+    let params = new HttpParams().set('year',this.hoursAllocationForm.get('year')?.value).set('entityType', 'employee');
     ids.forEach((id: number) => {
       params = params.append('entityValues', id);
     });
@@ -313,10 +309,11 @@ export class HoursAllocationComponent {
           // Loop through all selected employees
           employeeIds.forEach((selectedEmp: any) => {
             // Try to find matching allocation data from API
+            console.log(apiData)
             const existing = apiData?.find(
-              (x: any) => x.employeeId?.id === selectedEmp?.employeeId
+              (x: any) => parseInt(x.entityValue?.id) === parseInt(selectedEmp?.employeeId)
             );
-
+            console.log(existing);
             // Push either existing or blank form
             employeeArray?.push(
               this.fb.group({
@@ -324,9 +321,8 @@ export class HoursAllocationComponent {
                 createdOn: [moment()?.format('YYYY-MM-DD') || ''],
                 employeeId: [selectedEmp?.employeeId],
                 fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
-                halfminhours: [existing?.allowedDays || '',[Validators.required],],
-                fullminhours: [ existing?.allowedDays || '',[Validators.required],],
-                days: [existing?.allowedDays || '', [Validators.required]],
+                halfminhours: [existing?.shiftDetails?.halfDayMinHrs || '',[Validators.required],],
+                fullminhours: [ existing?.shiftDetails?.fullDayMinHrs || '',[Validators.required],],
                 effectivedate: [{value: existing?.effectiveFromDate? moment(existing?.effectiveFromDate)?.format('YYYY-MM-DD') : '',disabled: !this.hoursAllocationForm.get('year')?.value,},
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
@@ -497,9 +493,8 @@ export class HoursAllocationComponent {
     const formData = form.value;
     // Build payload array from employees FormArray
     const employees = formData.employees || [];
-    debugger;
     const payload = employees.map((emp: any) => ({
-      entityType: this.hoursAllocationForm.get('type')?.value,
+      entityType: 'Employee',
       entityValue: emp.employeeId ? emp.employeeId?.toString() : null,
       halfDayMinHrs: Number(emp.halfminhours) || 0,
       fullDayMinHrs: Number(emp.fullminhours) || 0,

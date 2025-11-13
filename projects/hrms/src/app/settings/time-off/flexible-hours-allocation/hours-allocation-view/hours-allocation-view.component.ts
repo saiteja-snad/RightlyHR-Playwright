@@ -136,7 +136,7 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
       url +=`&year=${this.selectedYear}`;};
     // Add employeeIds if available
     if (this.employeeId) {
-      url += `&employeeIds=${encodeURIComponent(this.employeeId)}`;
+      url += `&entityValues=${encodeURIComponent(this.employeeId)}`;
     }
     // Only add searchValue if it's not empty/null/undefined
     if (this.searchValue && this.searchValue.trim() !== '') {

@@ -242,3 +242,9 @@
     white-space: normal !important;
     word-wrap: break-word !important;
 }
+
+.custom-p-select-content {
+    .p-select {
+        width: 240px !important;
+    }
+}

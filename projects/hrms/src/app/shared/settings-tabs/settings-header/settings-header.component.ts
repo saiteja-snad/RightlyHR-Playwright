@@ -198,17 +198,29 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
     }
-     else if (url.startsWith('/settings/project-management-config/task')) {
+    else if (url.startsWith('/settings/project-management-config/task')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Task';
     }
-      else if (url.startsWith('/settings/it-configuration/itsupport-category')) {
+    else if (url.startsWith('/settings/it-configuration/itsupport-category')) {
       this.moduleName = 'IT Configuration';
       this.componentName = 'IT Support Category';
     }
     else if (url.startsWith('/settings/it-configuration/itsupport-sub-category')) {
       this.moduleName = 'IT Configuration';
       this.componentName = 'IT Support Sub Category';
+    }
+    // else if (url.startsWith('/settings/timesheet-locking-configuration')) {
+    //   this.moduleName = 'Timesheet Configuration';
+    //   this.componentName = 'Timesheet Locking';
+    // }
+    else if (url.startsWith('/settings/timesheet-locking-configuration/pending-for-submission')) {
+      this.moduleName = 'Timesheet Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/timesheet-locking-configuration/published')) {
+      this.moduleName = 'Timesheet Configuration';
+      this.componentName = 'Published';
     }
   }
 

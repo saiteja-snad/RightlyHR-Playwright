@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
-import { count, Subscription } from 'rxjs';
+import { count, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 @Component({
   selector: 'app-settings-attendance-tabs',
@@ -19,16 +19,17 @@ export class SettingsAttendanceTabsComponent implements OnInit, OnDestroy {
   page = 1;
   pageSize = 10;
   public navLinks: any[] = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
   allLinks = [
     {
       label: 'Pending For Submission',
       route: '/settings/attendance-configuration/pending-for-submission',
-      permission: { feature: 'Attendance Pending Tab', action: 'view' },count:0
+      permission: { feature: 'Attendance Pending Tab', action: 'view' }, count: 0
     },
     {
       label: 'Published',
       route: '/settings/attendance-configuration/published',
-      permission: { feature: 'Attendance Published Tab', action: 'view' },count:0
+      permission: { feature: 'Attendance Published Tab', action: 'view' }, count: 0
     }
   ];
   constructor(
@@ -76,44 +77,44 @@ export class SettingsAttendanceTabsComponent implements OnInit, OnDestroy {
   searchText = '';
   dataLoad: any;
   getAttendanceLocks(pagenum: number, pagesize: number, year?: number) {
-    const params: { pageNumber: number; pageSize: number; search?: string; year?: number } = {
+    const categoryIds = '1,2,3,17,18';
+    const params: any = {
       pageNumber: pagenum,
       pageSize: pagesize,
+      categoryIds: categoryIds,
     };
+    // if (this.searchText) {
+    //   params.search = this.searchText;
+    // }
 
-    if (this.searchText) {
-      params.search = this.searchText;
-    }
-
-    if (year) {
-      params.year = year;
-    }
+    // if (year) {
+    //   params.year = year;
+    // }
 
     this.dataLoad = true;
+    const queryString = `?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}&categoryIds=${encodeURIComponent(params.categoryIds)}`;
+    this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$)).subscribe({
+        next: (data: any) => {
+          this.pendingcount = data.statusCounts?.PendingforSubmission || 0;
+          this.publishedcount = data.statusCounts?.Published || 0;
 
-    this.http.getpagentiontData(`AttendanceLockConfigurations/getall`, params).subscribe({
-      next: (data: any) => {
-        this.pendingcount = data.statusCounts?.PendingforSubmission || 0;
-        this.publishedcount = data.statusCounts?.Published || 0;
-
-        this.navLinks = this.navLinks.map(link => {
-          if (link.label === 'Pending For Submission') {
-            return { ...link, count: this.pendingcount  || 0 };
-          } else if (link.label === 'Published') {
-            return { ...link, count: this.publishedcount || 0 };
-          }
-          return link;
-        });
-      },
-      error: () => {
-        this.dataLoad = false;
-      },
-      complete: () => {
-        this.dataLoad = false;
-      }
-    });
+          this.navLinks = this.navLinks.map(link => {
+            if (link.label === 'Pending For Submission') {
+              return { ...link, count: this.pendingcount || 0 };
+            } else if (link.label === 'Published') {
+              return { ...link, count: this.publishedcount || 0 };
+            }
+            return link;
+          });
+        },
+        error: () => {
+          this.dataLoad = false;
+        },
+        complete: () => {
+          this.dataLoad = false;
+        }
+      });
   }
-
 
   ngOnDestroy(): void {
     if (this.subscription) {

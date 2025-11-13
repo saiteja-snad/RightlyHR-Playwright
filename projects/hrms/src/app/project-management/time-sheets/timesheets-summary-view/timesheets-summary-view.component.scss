@@ -248,3 +248,7 @@
         width: 240px !important;
     }
 }
+
+.custom-content-height {
+    height: calc(100dvh - 12rem) !important;
+}

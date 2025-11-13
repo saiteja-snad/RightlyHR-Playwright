@@ -106,6 +106,11 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
   ];
+  estimatedlabels = [
+    { label: 'Allocated Hours', color: '#0F358A' },
+    { label: 'Actual Hours', color: '#A2B5E2' },
+    { label: 'Over Due', color: '#FF4848' }
+  ];
   billableData: any;
   billableOptions: any;
   storeclientId: any;

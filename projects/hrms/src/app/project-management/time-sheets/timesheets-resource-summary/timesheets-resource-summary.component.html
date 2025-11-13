@@ -235,16 +235,26 @@
                     <div class="col-xxl-6 col-xl-6 mb-3">
                         @if (!allocatedVsActualLoader) {
                         <div class="time-sheet-graph-card p-3">
-                            <div class="summary-header d-flex gap-2 pb-3">
-                                <div>Allocated vs Actual Hours</div>
-                                <div>
-                                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
-                                    <ng-template #resourceSummaryContent>
-                                        <div class="module-info-text">{{AllocatedActualhours}}</div>
-                                    </ng-template>
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
+                                <div class="summary-header d-flex gap-2 mb-2">
+                                    <div>Allocated vs Actual Hours</div>
+                                    <div>
+                                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedContent" class="module-icon">
+                                        <!--Module Information-->
+                                        <ng-template #estimatedContent>
+                                            <div class="module-info-text">{{AllocatedActualhours}}</div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
+                                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                                        <span class="legend-label">{{ item.label }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        
+
                             <div class="bar-chart">
                                 <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
                                     <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />

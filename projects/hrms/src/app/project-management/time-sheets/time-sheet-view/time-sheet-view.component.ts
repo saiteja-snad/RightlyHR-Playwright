@@ -290,7 +290,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         r.client?.clientId === day?.clientId &&
         r?.phase?.phaseId === (day?.phaseId ? day.phaseId : null
     ));
-     
     const resourcestartdate = matchedResource?.startDate ? new Date(matchedResource.startDate) : null;
     const resourceenddate = matchedResource?.endDate ? new Date(matchedResource.endDate) : null;
     // const resourceenddate = matchedResource?.endDate
@@ -313,7 +312,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
       const resourceEndValid = resourceenddate && entryDateObj
         ? entryDateObj.getTime() <= resourceenddate.getTime() : true;
-
       // Check phase date range if phase exists
       let phaseDateValid = true;
       if (matchedResource.phase && entryDateObj) {
@@ -335,8 +333,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
-      isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && 
+    (this.employeeId === this.empdata?.employeeId) ? isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
     const billablecheck = !!(matchedResource?.billable || this.selectedProjectResource?.billable);
     const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
@@ -549,9 +547,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           // No filter
           this.getEmployeeInfo = response.map((employee: any) => ({
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           }));
         }
       },
@@ -560,11 +557,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
-
     if (!project || !project.days) return [];
-
-    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' || day.approvalStatus?.toLowerCase() === 'not entered') &&
-      !!day.entryId).map((day: any) => day.entryId);
+    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' || day.approvalStatus?.toLowerCase() === 'not entered') 
+    && !!day.entryId).map((day: any) => day.entryId);
   }
 
   openModalforsubmit(content: any) {
@@ -1000,16 +995,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Auto-save failed', err);
-       // this.conformationPopup.openErrorModal(err.error.message);
-         this.errormodaldata = err.error.message;
-          const modalRef = this.modalService.open(this.errormodal, { centered: true });
-         // Auto close the error modal after 3 seconds
-          setTimeout(() => {
-            modalRef.close();
-          }, 3000);
-          this.errorOccurred = true;
-         dayForm.reset();
-       // this.conformationPopup.openErrorModal(err.error.message);
+        // this.conformationPopup.openErrorModal(err.error.message);
+        this.errormodaldata = err.error.message;
+        const modalRef = this.modalService.open(this.errormodal, { centered: true });
+        // Auto close the error modal after 3 seconds
+        setTimeout(() => {
+          modalRef.close();
+        }, 3000);
+        this.errorOccurred = true;
+        dayForm.reset();
+        // this.conformationPopup.openErrorModal(err.error.message);
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });
@@ -1109,39 +1104,32 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getFilteredClientsForRow(project: AbstractControl): any[] {
     const term = (project.get('searchTerm')?.value || '').trim().toLowerCase();
     if (!term) return this.clients;
-
     return this.clients.map((client) => {
-        // If client name matches
-        if (client.clientName.toLowerCase().includes(term)) {
-          return client;
+      // If client name matches
+      if (client.clientName.toLowerCase().includes(term)) {
+        return client;
+      }
+      // Filter projects inside client
+      const filteredProjects = client.projects.map((proj: any) => {
+        // If project name matches
+        if (proj.projectName.toLowerCase().includes(term)) {
+          return proj;
         }
-
-        // Filter projects inside client
-        const filteredProjects = client.projects.map((proj: any) => {
-            // If project name matches
-            if (proj.projectName.toLowerCase().includes(term)) {
-              return proj;
-            }
-
-            // Otherwise filter by phase name
-            const filteredPhases = proj.phases?.filter((ph: any) =>
-              ph.phaseName?.toLowerCase().includes(term)
-            );
-
-            if (filteredPhases && filteredPhases.length > 0) {
-              return { ...proj, phases: filteredPhases };
-            }
-
-            return null;
-          })
-          .filter((p: any) => p !== null);
-
-        if (filteredProjects.length > 0) {
-          return { ...client, projects: filteredProjects };
+        // Otherwise filter by phase name
+        const filteredPhases = proj.phases?.filter((ph: any) =>
+          ph.phaseName?.toLowerCase().includes(term)
+        );
+        if (filteredPhases && filteredPhases.length > 0) {
+          return { ...proj, phases: filteredPhases };
         }
-
         return null;
-      })
+      }).filter((p: any) => p !== null);
+      if (filteredProjects.length > 0) {
+        return { ...client, projects: filteredProjects };
+      }
+
+      return null;
+    })
       .filter((c: any) => c && c.projects.length > 0);
   }
 

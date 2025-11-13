@@ -4,56 +4,52 @@
       <app-project-management-module-info />
     </div>
 
+    @if(rbac.allowedToAccess('Project Details Tab.create')){
     <div class="d-flex gap-3 align-items-center">
-      @if(rbac.allowedToAccess('Project Details Tab.delete')){
-      <div>
-        <a [routerLink]="['/project-management/projects/inactive']" class="primary-link">
-          <u>Inactive Projects</u>
-        </a>
-      </div>
-      }
-      @if(rbac.allowedToAccess('Project Details Tab.create')){
-      <div>
-        <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
-          {{'Add Project' | translate }}
-        </button>
-      </div>
-      }
+      <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
+        {{'Add Project' | translate }}</button>
     </div>
+    }
   </div>
-  <div class="main-content">
-    <!--Input search-->
-    <div class="input-group custom-search mb-3">
-      <span class="input-group-text custom-input-group-search" id="basic-addon1">
-        <i class="bi bi-search"></i>
-      </span>
-      <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-        placeholder="Search by client name / project name / project type" aria-label="Search" aria-describedby="basic-addon1">
+
+  <div class="d-flex w-100 gap-3">
+    <div class="component-left-tabs-container" *ngIf="isActive('/project-management/projects/active')">
+      <app-projects-side-tabs />
     </div>
 
-    <ng-container *ngIf="loading; else maincontent">
-      <ng-template #loadingSpinner>
-        <div>
-          <app-data-loader-content />
-        </div>
-      </ng-template>
-      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
+    <div class="main-content"
+      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+      <div *ngIf="isActive('/project-management/clients')" class="mb-3">
+        <app-projects-side-tabs-for-clients />
+      </div>
 
-    <ng-template #maincontent>
-      <div class="custom-table-content">
+      <!--Input search-->
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+          placeholder="Search by client name / project name / project type" aria-label="Search"
+          aria-describedby="basic-addon1">
+      </div>
+
+
+
+      <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
+        @if (!loading) {
         <table class="w-100">
           <thead>
             <th>Client Name</th>
             <th>Project Name</th>
+            <th>Project Code</th>
             <!-- <th>Start Date</th>
-            <th>End Date</th>
-            <th>Effective Date</th>
-            <th>Kickoff Date</th> -->
+              <th>End Date</th>
+              <th>Effective Date</th>
+              <th>Kickoff Date</th> -->
             <th>Project Type</th>
-            <th>Verticals</th>
+            <th>Department</th>
             <th>Status</th>
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) 
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
@@ -63,13 +59,15 @@
               <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
                 <tr *ngFor="let project of filteredProjects; let i = index">
                   <td>{{ project.client.clientName }}</td>
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                      project.projectName}}</a></td>
+                  <td>{{ project?.meta?.graphData?.code || '-' }}</td>
                   <!-- <td>{{ project.startDate | dateformat }}</td>
-                  <td>{{ project.endDate | dateformat }}</td>
-                  <td>{{ project.effectiveDate | dateformat }}</td>
-                  <td>{{ project.kickoffDate | dateformat }}</td> -->
+                    <td>{{ project.endDate | dateformat }}</td>
+                    <td>{{ project.effectiveDate | dateformat }}</td>
+                    <td>{{ project.kickoffDate | dateformat }}</td> -->
                   <td>{{ project.projectType }}</td>
-                  <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td> 
+                  <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                   <td>{{ project.status }}</td>
                   @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
@@ -79,8 +77,8 @@
                         <i class="bi bi-three-dots-vertical"></i>
                       </a>
                       <ul class="dropdown-menu custom-dropdown-menu">
-                        @if((rbac.allowedToAccess('Project Details Tab.update')) && project.client.status?.toLowerCase()
-                        !== 'inactive' ){
+                        @if((rbac.allowedToAccess('Project Details Tab.update')) &&
+                        project.client.status?.toLowerCase() !== 'inactive' ){
                         <li (click)="openUpdateModal(updateProjectmodal, project)">
                           <a class="dropdown-item">
                             <i class="bi bi-pencil me-2"></i>Update
@@ -91,6 +89,13 @@
                         <li (click)="openModalstatus(statuschanges,project)">
                           <a class="dropdown-item">
                             <i class="bi bi-slash-circle me-2"></i>Inactive
+                          </a>
+                        </li>
+                        }
+                        @if(rbac.allowedToAccess('Project Details Tab.delete')){
+                        <li (click)="openModalstatus(statuschangeshold,project)">
+                          <a class="dropdown-item">
+                            <i class="bi bi-pause-circle me-2"></i>Hold
                           </a>
                         </li>
                         }
@@ -108,8 +113,13 @@
             </ng-template>
           </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
       </div>
-    </ng-template>
+    </div>
+
   </div>
 </div>
 
@@ -127,6 +137,31 @@
     <div class="custom-main-popup-content">
       <form [formGroup]="updateprojectform" autocomplete="off" (ngSubmit)="saveUpdatedProject()">
         <div class="row">
+          <!-- Client Name -->
+          <div class="col-md-6 mb-3">
+            <label for="updateclientName" class="form-label custom-label mb-2">Client Name<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="clients" [filter]="true" [resetFilterOnHide]="true" filterBy="clientName"
+                optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
+                placeholder="Please select client name" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched && 
+            updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
+          </div>
+
+          <!-- Project Code -->
+          <div class="col-md-6 mb-3">
+            <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" formControlName="updatecode" maxlength="20"
+              placeholder="Please enter project code">
+            <div class="error-msg"
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.invalid">
+              Project Code is required
+            </div>
+          </div>
+
           <!-- Project Name -->
           <div class="col-md-6 mb-3">
             <label for="updateprojectName" class="form-label custom-label mb-2">Project Name
@@ -145,21 +180,6 @@
             </div>
           </div>
 
-          <!-- Client Name -->
-          <div class="col-md-6 mb-3">
-            <label for="updateclientName" class="form-label custom-label mb-2">Client Name<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="clients" [filter]="true" [resetFilterOnHide]="true" filterBy="clientName"
-                optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
-                placeholder="Please select client name" class="form-select custom-select"></p-select>
-            </div>
-            <div class="error-msg"
-              *ngIf="updateprojectform.get('updateclientName')?.touched && updateprojectform.get('updateclientName')?.invalid">
-              Client Name is required
-            </div>
-          </div>
-
           <!-- Project Type -->
           <div class="col-md-6 mb-3">
             <label for="updateprojectType" class="form-label custom-label mb-2">Project Type<span
@@ -173,21 +193,22 @@
             updateprojectform.get('updateprojectType')?.invalid">Project Type is required</div>
           </div>
 
-             <!-- Department Name Field -->
-         <div class="col-md-6 mb-3">
-          <label for="department" class="form-label custom-label mb-2">
-            {{ 'Department' | translate }} <span class="error-msg">*</span>
-          </label>
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-              defaultLabel="Please select department name" formControlName="updatedepartment"
-              class="form-select custom-select"></p-multiSelect>
-        </div>
-          <div *ngIf="updateprojectform.get('department')?.touched && updateprojectform.get('department')?.invalid" class="error-msg">
-            <div *ngIf="updateprojectform.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
+          <!-- Department Name Field -->
+          <div class="col-md-6 mb-3">
+            <label for="department" class="form-label custom-label mb-2">{{'Department' | translate}}<span
+                class="error-msg">*</span></label>
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+                defaultLabel="Please select department name" formControlName="updatedepartment"
+                class="form-select custom-select"></p-multiSelect>
+            </div>
+            <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
+              class="error-msg">
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is
+                required'|translate}}
+              </div>
             </div>
           </div>
-        </div>
 
           <!-- Start Date -->
           <div class="col-md-6 mb-3">
@@ -208,8 +229,9 @@
                 class="text-danger">*</span></label>
             <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate"
               class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updateendDate')?.touched && 
-            updateprojectform.get('updateendDate')?.invalid">End Date is required</div>
+            <div class="error-msg"
+              *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
+              End Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
             </div>
@@ -284,26 +306,22 @@
               Timesheet Approval Authority is required
             </div>
           </div>
-          
           </div> -->
 
-           <!-- Project Description -->
+          <!-- Project Color -->
           <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span class="text-danger">*</span></label>
+            <input type="color" class="form-control custom-color" formControlName="updatecolor" />
+          </div>
+
+          <!-- Project Description -->
+          <div class="col-md-12 mb-3">
             <label for="updateprojectDescription" class="form-label custom-label mb-2">Project Description</label>
             <textarea id="updateprojectDescription" formControlName="updateprojectDescription" maxlength="500"
               class="form-control custom-input" placeholder="Please enter project description"></textarea>
             <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length ||
               0}}/500</div>
           </div>
-
-          <!--Color Picker-->
-          <div class="col-md-6 mb-3">
-            <label class="form-label custom-label">{{'Color' | translate}}</label>
-            <input type="color" class="form-control custom-color" formControlName="updatecolor" />
-          </div>
-           
-          
-          
 
           <!-- Switches -->
           <div class="col-md-12 mb-3">
@@ -372,7 +390,20 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close();closeall()">{{'Yes'}}</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #statuschangeshold let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Hold this project?'}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
     </div>
   </div>
 </ng-template>

@@ -412,8 +412,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsEmployeeJobFields = [
     'Job Role',
-    'IT Support Category',
-    'IT Support Sub-Category',
     'Job Type',
     'Probation Status',
     'Background check Status',
@@ -472,7 +470,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expense Threshold Validation',
     'Global Expense Configuration'
   ]
-  
+
   settingsAttendanceLockingTab = [
     'Pending Attendance Locking',
     'Published Attendance Locking'
@@ -1228,6 +1226,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Letter Configurations',
     'Project Management Authority',
     'Project Role',
+    'Task',
     'Letter Frequency Configurations'
   ];
   selectAllLettersTabs = [
@@ -1245,6 +1244,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team', 'Request On Behalf Of RemoteLogin Button'
   ]
   SkillSetManagementModule = ['Skills Dashboard', 'Skills Directory'];
+  itSupportFields = [
+    'IT Support Configuration ',
+  ];
+   settingsItSupportFields = [
+    'IT Support Category',
+    'IT Support Sub-Category',
+
+  ];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(

@@ -1,84 +1,92 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content">
-        @if (!loading) {
-        <table class="w-100">
-            <thead>
-                <th>Document Type</th>
-                <th>Created Date</th>
-                <!-- <th>File Name</th> -->
-                <th>Signed Copy</th>
-                <th>Attachment</th>
-                <th class="text-center">Dowload</th>
-                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
-                && this.inactiveClientStatus !== 'inactive'){
-                <th class="text-center">{{"Action" | translate}}</th>
-                }
-            </thead>
-            <tbody>
-                <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
-                    <tr *ngFor="let data of documentdata">
-                        <td>{{data.documentType}}</td>
-                        <td>{{data.createdAt | dateformat}}</td>
-                        <!-- <td>{{data.documentName}}</td> -->
-                        <td>
-                            <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
-                                <ng-container *ngFor="let attr of data.attributes">
-                                    <span class="text-capitalize">
-                                        {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' : 'No'}}
-                                    </span>
+    <div class="resource-right-content">
+        <div class="mb-3">
+            <app-client-documents-tabs />
+        </div>
+        <div class="custom-table-content">
+            @if (!loading) {
+            <table class="w-100">
+                <thead>
+                    <th>Document Type</th>
+                    <th>Created Date</th>
+                    <!-- <th>File Name</th> -->
+                    <th>Signed Copy</th>
+                    <th>Attachment</th>
+                    <th class="text-center">Dowload</th>
+                    @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                    && this.inactiveClientStatus !== 'inactive'){
+                    <th class="text-center">{{"Action" | translate}}</th>
+                    }
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
+                        <tr *ngFor="let data of documentdata">
+                            <td>{{data.documentType}}</td>
+                            <td>{{data.createdAt | dateformat}}</td>
+                            <!-- <td>{{data.documentName}}</td> -->
+                            <td>
+                                <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
+                                    <ng-container *ngFor="let attr of data.attributes">
+                                        <span class="text-capitalize">
+                                            {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' :
+                                            'No'}}
+                                        </span>
+                                    </ng-container>
                                 </ng-container>
-                            </ng-container>
-                            <ng-template #noAttributes>
-                                <span>-</span>
-                            </ng-template>
-                        </td>
-                        <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
-                        <td class="text-center">
-                            <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
-                                <app-download-icon />
-                            </span>
-                            <ng-template #noData>-</ng-template>
-                        </td>
-                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
-                        && this.inactiveClientStatus !== 'inactive'){
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <!-- @if(rbac.allowedToAccess('Client Documents.update')){
+                                <ng-template #noAttributes>
+                                    <span>-</span>
+                                </ng-template>
+                            </td>
+                            <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
+                            <td class="text-center">
+                                <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
+                                    <app-download-icon />
+                                </span>
+                                <ng-template #noData>-</ng-template>
+                            </td>
+                            @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                            && this.inactiveClientStatus !== 'inactive'){
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <!-- @if(rbac.allowedToAccess('Client Documents.update')){
                                         <li>
                                             <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
                                             <i class="bi bi-pencil me-2"></i>Update
                                             </a>
                                         </li>
                                     } -->
-                                    @if(rbac.allowedToAccess('Client Documents.delete')){
-                                    <li (click)="openModal(deleteconformation, data, 'm')">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-slash-circle me-2"></i>Archive
-                                        </a>
-                                    </li>
-                                    }
-                                </ul>
-                            </div>
-                        </td>
-                        }
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-        }
-        @else {
-        <app-data-loader-content />
-        }
+                                        @if(rbac.allowedToAccess('Client Documents.delete')){
+                                        <li (click)="openModal(deleteconformation, data, 'm')">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-slash-circle me-2"></i>Archive
+                                            </a>
+                                        </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                            }
+                        </tr>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
+        </div>
     </div>
+
+
 </div>
 
 <!--Update-->
@@ -97,9 +105,10 @@
                         <label for="documentType" class="form-label custom-label mb-2">Document Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
-                                optionLabel="value" optionValue="value" formControlName="documentType"
-                                placeholder="Please select document type" class="form-select custom-select"></p-select>
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
+                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
+                                formControlName="documentType" placeholder="Please select document type"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateDocumentForm.get('documentType')?.touched && 
                         updateDocumentForm.get('documentType')?.invalid">Document Type is required</div>
@@ -125,8 +134,10 @@
                             accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                             (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
                         <span class="custom-file-name text-wrap">
-                            {{(updateDocumentForm.get('documentUrl')?.value?.name ?  updateDocumentForm.get('documentUrl')?.value?.name.split('/').pop()
-                            : (updateDocumentForm.get('documentUrl')?.value ? updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_'))}}
+                            {{(updateDocumentForm.get('documentUrl')?.value?.name ?
+                            updateDocumentForm.get('documentUrl')?.value?.name.split('/').pop()
+                            : (updateDocumentForm.get('documentUrl')?.value ?
+                            updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_'))}}
                         </span>
                         <div class="error-msg" *ngIf="updateDocumentForm.get('documentAttachment')?.touched && 
                         updateDocumentForm.get('documentAttachment')?.invalid">Attachment is required</div>
@@ -141,8 +152,10 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid">Update</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="updateDocumentForm.invalid">Update</button>
                 </div>
             </form>
         </div>
@@ -154,11 +167,13 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to archive this Documents?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to archive this Document?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
+                translate}}</button>
         </div>
     </div>
 </ng-template>

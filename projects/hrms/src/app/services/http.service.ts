@@ -68,12 +68,12 @@ export class HttpService {
   }
 
   //state mangement
-private clickingonresourceSource = new BehaviorSubject<boolean>(false);
-clickingonresource$ = this.clickingonresourceSource.asObservable();
+  private clickingonresourceSource = new BehaviorSubject<boolean>(false);
+  clickingonresource$ = this.clickingonresourceSource.asObservable();
 
-notifyresource() {
-  this.clickingonresourceSource.next(true);
-}
+  notifyresource() {
+    this.clickingonresourceSource.next(true);
+  }
 
   //setting cards count
   private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
@@ -115,6 +115,39 @@ notifyresource() {
   setnewcountDetails() {
     this.expensescount.next();
   }
+
+
+  clientcount = new Subject<void>();
+  clientcountfuntion$ = this.clientcount.asObservable();
+  setnewcountDetailsfornewclient() {
+    this.clientcount.next();
+  }
+
+  projectcount = new Subject<void>();
+  projectcountfuntion$ = this.projectcount.asObservable();
+  setnewcountDetailsfornewprojectcount() {
+    this.projectcount.next();
+  }
+
+  projectphasecount = new Subject<void>();
+  projectcountfuntionphases$ = this.projectphasecount.asObservable();
+  setnewcountfornewprojectphasecount() {
+    this.projectphasecount.next();
+  }
+
+  projectresourcecount = new Subject<void>();
+  projectcountresource$ = this.projectresourcecount.asObservable();
+  setnewcountfornewresourcecount() {
+    this.projectresourcecount.next();
+  }
+
+
+  projectdocumentscount = new Subject<void>();
+  projectcountdocuments$ = this.projectdocumentscount.asObservable();
+  setnewcountfornewdocumentscount() {
+    this.projectdocumentscount.next();
+  }
+
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
@@ -792,7 +825,7 @@ notifyresource() {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
   // DATE RANGE
- private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+  private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
 
   // Set date range 
   setDateRange(startDate: string | null, endDate: string | null) {
@@ -808,7 +841,30 @@ notifyresource() {
   getCurrentDateRange() {
     return this.dateRangeSubject.getValue();
   }
+// team timesheet summery
+ //  Set data (e.g., after selecting date range and employee)
+   private teamdateRangeSubject = new BehaviorSubject<any>({
+    startDate: null,
+    endDate: null,
+    employeeId: null,
+    employeeName: null
+  });
+  setteamDateRange(startDate: string | null , endDate: string | null , employeeId?: string | null, employeeName?: string) {
+    this.teamdateRangeSubject.next({ startDate, endDate, employeeId, employeeName });
+  }
 
+  //  Get as observable (subscribe in other component)
+  getteamDateRangeObservable() {
+    return this.teamdateRangeSubject.asObservable();
+  }
+
+  // Get current value synchronously (optional)
+  getteamCurrentDateRange() {
+    return this.teamdateRangeSubject.getValue();
+  }
+clearTeamDateRange() {
+  this.teamdateRangeSubject.next({ startDate: null, endDate: null, employeeId: null,employeeName: null });
+}
   //  Example API call
   getDatEdATA(url: string) {
     return this.http.get(url);
@@ -819,5 +875,11 @@ notifyresource() {
   setnewPhaseDetails() {
     this.phaseadded.next();
   }
+  // store department id
+  private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
+  selectedDepartmentIds$ = this.departmentIdsSource.asObservable();
 
+  setDepartmentIds(ids: number[]) {
+    this.departmentIdsSource.next(ids);
+  }
 }

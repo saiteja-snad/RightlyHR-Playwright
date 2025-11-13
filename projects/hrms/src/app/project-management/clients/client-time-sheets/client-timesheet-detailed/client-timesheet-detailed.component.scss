@@ -30,6 +30,7 @@
         font-weight: 600 !important;
         font-size: var(--fontsize14) !important;
         text-transform: capitalize !important;
+        background: #F0F4F8 !important;
     }
 }
 
@@ -40,4 +41,10 @@
 .total-hrs-text {
     width: 250px !important;
     text-align: left !important;
+}
+
+.custom-accordian-data-content {
+    .p-accordioncontent {
+        border: 2px solid #D1D8E3 !important;
+    }
 }

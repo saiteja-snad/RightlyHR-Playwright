@@ -19,16 +19,18 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,NgbPopover],
+    Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
 
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
+  resourcestartdate:any
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -57,6 +59,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   phaseData = [] as IPhases[];
   phaseDropdown: any[] = [];
   selectedPhaseId : any;
+    projectStartDate!: string | null;
+  projectEndDate!: string | null;
   resoucesDropDownData = [] as any[];
   defaultPendingAuthorityId : any;
   modalData: { title?: string; data?: any } = {};
@@ -157,7 +161,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color : [''],
+      color : ['', Validators.required],
       resourceRole: [null,Validators.required],
       resourcePhase : [null, Validators.required],
       resourceAuthority : [null]
@@ -166,7 +170,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
@@ -185,20 +190,19 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     // });
   }
 
-  projectStartDate!: string | null;
-  projectEndDate!: string | null;
+
   getProjects(projectId: string) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
         this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
-        if (project) {
-          this.projectStartDate = this.formatDateToLocal(project.startDate);
-          this.projectEndDate = this.formatDateToLocal(project.endDate);
-          // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
-          // this.updateResourceForm.updateValueAndValidity();
-        }
+        // if (project) {
+        //   this.projectStartDate = this.formatDateToLocal(project.startDate);
+        //   this.projectEndDate = this.formatDateToLocal(project.endDate);
+        //   // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
+        //   // this.updateResourceForm.updateValueAndValidity();
+        // }
         this.getJobrole();
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
           p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
@@ -251,9 +255,11 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
+  
     const params: any = {
       entityType: 'project',
-      entityRefId: projectId
+      entityRefId: projectId,
+      status:'active,assigned'
     };
 
     if (phaseId) {
@@ -478,6 +484,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.modalService.dismissAll();
       this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
       this.getResourceData(this.projectId);
+      this.http.setnewcountfornewresourcecount()
     },
     error: (err) => {
       this.loader = false;
@@ -591,8 +598,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
   statusActionsMap: Record<string, string[]> = {
     'assigned': ['Active', 'Release', 'Update'],
-    'active': ['Update', 'On Hold', 'Release'],
-    'on hold': ['Resume', 'Release Resource']
+    'active': ['Update', 'Release'],
+    // 'on hold': ['Resume', 'Release Resource']
   };
 
   // Titles for confirmation popups
@@ -602,16 +609,16 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       nextStatus: 'Active',
       successMessage: 'Resource activated successfully'
     },
-    'On Hold': {
-      title: 'Are you sure you want to put this resource on hold?',
-      nextStatus: 'On Hold',
-      successMessage: 'Resource status changed to On Hold successfully.'
-    },
-    'Resume': {
-      title: 'Are you sure you want to resume this resource?',
-      nextStatus: 'Active',
-      successMessage: 'Resource resumed successfully'
-    },
+    // 'On Hold': {
+    //   title: 'Are you sure you want to put this resource on hold?',
+    //   nextStatus: 'On Hold',
+    //   successMessage: 'Resource status changed to On Hold successfully.'
+    // },
+    // 'Resume': {
+    //   title: 'Are you sure you want to resume this resource?',
+    //   nextStatus: 'Active',
+    //   successMessage: 'Resource resumed successfully'
+    // },
     'Release': {
       title: 'Are you sure you want to release this resource?',
       nextStatus: 'Released',
@@ -636,9 +643,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       'Release': 'bi-x-circle',
       'Release Resource': 'bi-x-circle',
       'Update': 'bi-pencil',
-      'On Hold': 'bi-pause-circle',
-      'Resume': 'bi-arrow-repeat'
+      // 'On Hold': 'bi-pause-circle',
+      // 'Resume': 'bi-arrow-repeat'
     }[action] || 'bi-question-circle';
+    
   }
 
   getActionsByStatus(status: string): string[] {
@@ -647,7 +655,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return this.statusActionsMap[normalized] ?? [];
   }
 
+formatDateToLocalforresource(dateString: string | null): Date | null {
+  if (!dateString) return null;
+  return new Date(dateString); // Converts ISO string to Date object
+}
   handleAction(action: string, data: any) {
+  
     const config = this.confirmationMessages[action];
 
     if (!config) return;
@@ -656,6 +669,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);
+        this.resourcestartdate=this.formatDateToLocalforresource(data?.startDate)
+        console.log(this.resourcestartdate);
+        
     }
   }
 
@@ -704,6 +720,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
 
     const reason = this.reasonForm.value.reason;
+    const statusEffectiveDate = this.reasonForm.value.statusEffectiveDate;
     const title = this.modalData?.title ?? '';
     const data = this.modalData?.data;
     const resourceId = data?.resourceId;
@@ -717,7 +734,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     const config = Object.values(this.confirmationMessages).find(c => c.title === title);
     const status = config?.nextStatus || 'Active';
 
-    const payload = {
+    const payload: any = {
       resourceId,
       entityType: 'project',
       entityRefId: this.projectId,
@@ -737,6 +754,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       phaseId: data.phase?.phaseId,
       meta: data.meta || { graphData: { color: data.meta?.graphData?.color || '' } }
     };
+
+    if (status === 'Released' && statusEffectiveDate) {
+      payload.statusEffectiveDate = new Date(statusEffectiveDate).toISOString();
+    }
 
     this.updateResourceStatus(payload, modal, config?.successMessage);
   }

@@ -2,39 +2,39 @@
     @if(!contentLoader) {
     <div class="custom-accordians">
         <div class="custom-accordian-data-content">
-            @if(projectDetails.length > 0){
+            @if(projectDetails?.length > 0){
             <p-accordion>
                 <p-accordion-panel *ngFor="let project of projectDetails; let i = index" [value]="i">
                     <p-accordion-header>
-                        <div class="accordian-header-text text-truncate">{{ project.project.projectName }}</div>
+                        <div class="accordian-header-text text-truncate">{{ project?.project?.projectName }}</div>
                         <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
-                            <span class="hrs-text">{{ project.totalProjectHours }} HRs</span>
+                            <span class="hrs-text">{{ project?.totalProjectHours }} Hrs</span>
                         </div>
                     </p-accordion-header>
 
                     <p-accordion-content>
                         <div class="custom-p-multi-select-table custom-accordian-table">
-                            <p-table [value]="project.project.resources" dataKey="resourceId">
+                            <p-table [value]="project?.project?.resources" dataKey="resourceId">
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Resource Name</th>
                                         <th>Role</th>
-                                        <th>Start Date</th>
-                                        <th>Days Spent</th>
-                                        <th>Logged Hours</th>
+                                        <th class="text-center">Start Date</th>
+                                        <th class="text-center">Days Spent</th>
+                                        <th class="text-center">Logged Hours</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-entry>
                                     <tr>
                                         <td>
-                                            <a class="project-name cursor" (click)="navigateView(project.project,entry.employee.id )">
-                                                {{ entry.employee.name}}
+                                            <a class="project-name cursor" (click)="navigateView(project?.project,entry?.employee?.id )">
+                                                {{ entry?.employee?.name}}
                                             </a>
                                         </td>
-                                        <td>{{ entry.roleName }}</td>
-                                        <td>{{ entry.startDate | dateformat }}</td>
-                                        <td>{{ entry.daysSpent }}</td>
-                                        <td>{{ entry.loggedHours }}</td>
+                                        <td>{{ entry?.roleName }}</td>
+                                        <td class="text-center">{{ entry?.startDate | dateformat }}</td>
+                                        <td class="text-center">{{ entry?.daysSpent }}</td>
+                                        <td class="text-center">{{ entry?.loggedHours }}</td>
                                     </tr>
                                 </ng-template>
                             </p-table>

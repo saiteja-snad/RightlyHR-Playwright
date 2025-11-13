@@ -27,6 +27,7 @@ export const MY_INFO_JOB_ROUTES = [
   { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' },
   { permission: 'My Info Contract Details.view', route: '/myinfo/job/contactor-info' },
+  { permission: 'My Info Project Details.view', route: '/myinfo/job/project-info' },
 ];
 
 export const MY_INFO_DOCUMENTS_ROUTES = [
@@ -111,6 +112,11 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/identitytype', permission: 'Identity Type.view' },
   { route: '/settings/employee-fields/personal/relationship', permission: 'Relationship.view' },
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
+]
+
+export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
+  { route: '/settings/it-configuration/itsupport-category', permission: 'IT Support Category.view' },
+  { route: '/settings/it-configuration/itsupport-sub-category', permission: 'IT Support Sub-Category.view' },
 ]
 
 export const TIME_OFF_TABS = [
@@ -362,6 +368,7 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
   { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
   { route: '/settings/project-management-config/project-role', permission: 'Project Role.view'},
+  { route: '/settings/project-management-config/task', permission: 'Task.view'},
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -475,6 +482,7 @@ export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
   { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' },
   { permission: 'Employee My Skills.view', route: '/personalinfo/personal/my-skills' },
+  { permission: 'Employee Info Project Details.view', route: '/myinfo/personal/project-info' },
 ];
 
 export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [

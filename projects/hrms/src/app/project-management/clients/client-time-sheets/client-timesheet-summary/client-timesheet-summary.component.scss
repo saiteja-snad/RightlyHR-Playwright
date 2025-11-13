@@ -27,13 +27,22 @@
         font-size: var(--fontsize10);
         color: #323130;
     }
+
+    .no-data-image {
+        width: 7rem !important;
+        height: 6rem !important;
+    }
+
+    .no-data-text {
+        font-size: var(--fontsize14) !important;
+    }
 }
 
 .summary-header {
     align-items: center;
     font-weight: 600;
     font-size: var(--fontsize14);
-    color: #222222;
+    color: var(--primary-color);
 
     .module-icon {
         width: 1.125rem;
@@ -88,7 +97,8 @@
     height: 18rem !important;
     border: 1.68px solid #FFFFFF !important;
 
-    th, td {
+    th,
+    td {
         padding: 0.625rem !important;
     }
 
@@ -102,7 +112,7 @@
         color: #3B3B3B !important;
     }
 
-     .project-name {
+    .project-name {
         font-weight: 600;
         color: var(--primary-color);
     }
@@ -252,13 +262,13 @@
 }
 
 .chart-card-skeleton {
-  width: 100%;
-  height: 100%;
-  min-height: 30vh;
-  margin: 0 auto;
-  background: transparent;
+    width: 100%;
+    height: 100%;
+    min-height: 30vh;
+    margin: 0 auto;
+    background: transparent;
 
-  .p-skeleton {
-    background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
-  }
+    .p-skeleton {
+        background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+    }
 }

@@ -13,7 +13,7 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, 
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule,
     DateformatPipe, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',
@@ -31,31 +31,31 @@ export class ClientTimesheetDetailedComponent {
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.getResourceDetails();
+    this.route.queryParams.subscribe(params => {
+      const clientID = params['id'];
+      if (clientID) {
+        this.getResourceDetails(clientID);
+        this.clientId = clientID;
+      }
+    });
+
   }
 
-  getResourceDetails(): void {
-    this.contentLoader = true;
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
-      const clientID = params['id'];
-      this.clientId = clientID;
-      if (!clientID) {
+  getResourceDetails(clientID: any): void {
+    // Build the API URL conditionally
+    let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectDetails = res?.data;
+        this.contentLoader = false;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+        this.contentLoader = false;
         this.projectDetails = [];
-        return;
       }
-      // Build the API URL conditionally
-      let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
-      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          this.projectDetails = res?.data;
-          this.contentLoader = false;
-        },
-        error: (err) => {
-          console.error('Error fetching clients:', err);
-          this.contentLoader = false;
-        }
-      });
     });
+
   }
 
   navigateView(projectdata: any, employeeId: any): void {

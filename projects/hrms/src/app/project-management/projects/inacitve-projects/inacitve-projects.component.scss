@@ -1,3 +1,23 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem);
+}
+
+.main-content {
+    width: 100% !important;
+}
+
+.project-main-active-content {
+    width: calc(100% - 8.5rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 12rem) !important;
+}
+
+.project-client-table {
+    height: calc(100dvh - 15.25rem) !important;
+}
+
 .primary-link {
     font-size: var(--fontsize13);
     font-weight: 600;
@@ -15,8 +35,4 @@
 
 .department-list-view {
     width: 250px !important;
-}
-
-.custom-table-content {
-    height: calc(100dvh - 12rem) !important;
 }

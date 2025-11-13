@@ -4,13 +4,13 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { FormValidationsService } from '../../../../services/form-validations.service';
-import { HttpService } from '../../../../services/http.service';
-import { OpenModalService } from '../../../../services/open-modal.service';
-import { RbacService } from '../../../../services/rbac.service';
-import { SettingsLoaderComponent } from '../../../../shared/settings-loader/settings-loader.component';
+import { FormValidationsService } from '../../../services/form-validations.service';
+import { HttpService } from '../../../services/http.service';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
+import { SettingsLoaderComponent } from '../../../shared/settings-loader/settings-loader.component';
 import { SelectModule } from 'primeng/select';
-import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-itsupport-add-subcategory',

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './client-information.component.scss'
 })
 
-export class ClientInformationComponent {
+export class ClientInformationComponent implements OnInit, OnDestroy {
   clientForm!: FormGroup;
   empinfo: any = {};
   logoimg: any;
@@ -76,7 +76,7 @@ export class ClientInformationComponent {
       billable: [{ value: null, disabled: true }],
       allowWeekendWork: [{ value: null, disabled: true }],
       logo: [{ value: '', disabled: true }, attachmentValidators],
-      color: [{value: '', disabled:true}]
+      color: [{ value: '', disabled: true }]
     });
     // Clean emojis dynamically as user types or pastes
     // Object.keys(this.clientForm.controls).forEach(controlName => {
@@ -118,7 +118,7 @@ export class ClientInformationComponent {
       overtimeEligibility: client.overtimeEligibile,
       billable: client.billable,
       allowWeekendWork: client.weekendWorkAllowed,
-      color : client?.meta?.graphData?.color
+      color: client?.meta?.graphData?.color
     });
     this.clientAttachment = client.logoPath
     this.displayClientAttachment = client.logoPath ? client.logoPath.split('/').pop() : null;
@@ -277,10 +277,20 @@ export class ClientInformationComponent {
       createdBy: this.empinfo.employeeId,
       updatedBy: this.empinfo.employeeId,
       meta: {
-      graphData: {
-        color: formValue.color
-      }
+        graphData: {
+          color: formValue.color
+        }
       }
     };
   }
+
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

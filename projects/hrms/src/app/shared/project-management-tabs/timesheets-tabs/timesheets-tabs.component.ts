@@ -59,12 +59,13 @@ export class TimesheetsTabsComponent {
 
     // For Team Timesheets tab, include summary page
     if (link === '/project-management/timesheet/teamtimesheet') {
-      return currentUrl === link || currentUrl === '/project-management/timesheet/summary';
+      return currentUrl === link || currentUrl === '/project-management/timesheet/summary'||currentUrl === '/project-management/timesheet/resourcesummary';
     }
-
+    // For Team Timesheets tab, include summary page
+    if (link === '/project-management/timesheet/teamtimesheet') {
+      return currentUrl === link || currentUrl === '/project-management/timesheet/resourcesummary';
+    }
    
-
-
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }

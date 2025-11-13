@@ -105,6 +105,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     this.addprojectform = this.fb.group({
       projectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(101)]],
       clientName: [{ value: null, disabled: true }, Validators.required],
+      code: [null, [Validators.required, this.formValidation.maxCharactersValidator(20)]],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
       // effectiveDate: [null, Validators.required],
@@ -117,7 +118,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       allowweekendWork: [false],
       // approvalidAuthority: [{value:null,disabled:true}],
       department:[null, Validators.required],
-      color: [''],
+      color: ['', Validators.required],
     });
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -207,7 +208,8 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       updatedBy: parseInt(this.empinfo.employeeId),
       meta: {
       graphData: {
-        color: formValue.color
+        color: formValue.color,
+        code: formValue.code
         }
       }
     };
@@ -219,6 +221,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
         this.addprojectform.reset();
         this.conformationPopup.openSuccessModal('Project created successfully');
         this.http.setnewprojectDetails();
+        this.http.setnewcountDetailsfornewprojectcount()
       },
       error: (err) => {
         console.error('Error creating project:', err);

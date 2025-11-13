@@ -68,6 +68,8 @@ export interface DailySummary {
   colour: string
   loggedISO: string;
   loggedHHMM: string;
+  weekday: string;
+  holiday: string;
 }
 
 

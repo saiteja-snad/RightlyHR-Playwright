@@ -29,4 +29,5 @@ export interface IPhases {
       color?: string;
     };
   };
+  statusEffectiveDate?: string;
 }

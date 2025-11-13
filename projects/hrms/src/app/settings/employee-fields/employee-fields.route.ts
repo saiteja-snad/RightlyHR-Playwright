@@ -46,8 +46,8 @@ export default [
             { path: 'probation-frequency', loadComponent: () => import('./job/probation-frequency/probation-frequency.component').then((m) => m.ProbationFrequencyComponent)},
             { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)},
             { path: 'letter-acknowledgement', loadComponent: () => import('./job/letter-acknowledgement/letter-acknowledgement.component').then((m) => m.LetterAcknowledgementComponent), canActivate: [PermissionsGuard], data: { permission: 'Job Role.view' } },
-            {path: 'itsupport-category', loadComponent: () => import('./job/itsupport-add-category/itsupport-add-category.component').then((m) => m.ItsupportAddCategoryComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Category.view' } },
-            {path: 'itsupport-sub-category', loadComponent: () => import('./job/itsupport-add-subcategory/itsupport-add-subcategory.component').then((m) => m.ItsupportAddSubcategoryComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Sub-Category.view' } },
+            // {path: 'itsupport-category', loadComponent: () => import('../it-configuration/it-support/itsupport-add-category/itsupport-add-category.component').then((m) => m.ItsupportAddCategoryComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Category.view' } },
+            // {path: 'itsupport-sub-category', loadComponent: () => import('../it-configuration/it-support/itsupport-add-subcategory/itsupport-add-subcategory.component').then((m) => m.ItsupportAddSubcategoryComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Sub-Category.view' } },
 
 
         ]

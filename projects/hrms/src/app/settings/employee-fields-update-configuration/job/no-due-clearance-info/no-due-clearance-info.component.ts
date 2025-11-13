@@ -162,7 +162,7 @@ export class NoDueClearanceInfoComponent {
             this.getNoDueClearanceFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -187,7 +187,7 @@ export class NoDueClearanceInfoComponent {
             this.getNoDueClearanceFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -215,7 +215,7 @@ export class NoDueClearanceInfoComponent {
         this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
       },
       error: (error: any) => {
-        const errorMessage = error.error?.Message;
+        const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
       }
     });

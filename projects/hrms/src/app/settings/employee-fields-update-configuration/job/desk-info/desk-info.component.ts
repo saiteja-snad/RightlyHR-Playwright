@@ -163,7 +163,7 @@ export class DeskInfoComponent {
             this.getDeskInfoFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -188,7 +188,7 @@ export class DeskInfoComponent {
             this.getDeskInfoFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -216,7 +216,7 @@ export class DeskInfoComponent {
         this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
       },
       error: (error: any) => {
-        const errorMessage = error.error?.Message;
+        const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
       }
     });

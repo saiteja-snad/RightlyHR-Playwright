@@ -164,7 +164,7 @@ subscription!: Subscription;
             this.getBasicInfoFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -189,7 +189,7 @@ subscription!: Subscription;
             this.getBasicInfoFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -217,7 +217,7 @@ subscription!: Subscription;
         this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
       },
       error: (error: any) => {
-        const errorMessage = error.error?.Message;
+        const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
       }
     });

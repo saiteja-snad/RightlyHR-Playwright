@@ -170,7 +170,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
             this.getEmergencyContactsFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -195,7 +195,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
             this.getEmergencyContactsFieldsConfigList();
           },
           error: (error: any) => {
-            const errorMessage = error.error?.Message;
+            const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -223,7 +223,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
       },
       error: (error: any) => {
-        const errorMessage = error.error?.Message;
+        const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
       }
     });

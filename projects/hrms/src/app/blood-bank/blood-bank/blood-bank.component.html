@@ -3,8 +3,7 @@
         <div class="heading-content">
             <div class="component-header">Blood Bank ({{selectedBloodGroup}})</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
         </div>
     </div>
@@ -20,8 +19,7 @@
             @for (item of bloodGroups; track $index) {
             <div class="employees-category-card" (click)="filterByBloodGroup(item.group)"
                 [class.bloodGroupTab]="selectedBloodGroup === item.group">
-                <div class="blood-group" [ngStyle]="{'background-color': item.bgColor, 'color': item.textColor}">{{
-                    item.group }}</div>
+                <div class="blood-group" [ngStyle]="{'background-color': item.bgColor, 'color': item.textColor}">{{ item.group }}</div>
                 <div class="count-text">{{ item.count }}</div>
             </div>
             }

@@ -110,7 +110,7 @@ export class TimesheetsSummaryViewComponent {
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    this.projectTypeChart();
+    this.projectWiseChart();
     this.estimatedActualChart();
   }
 
@@ -135,7 +135,6 @@ export class TimesheetsSummaryViewComponent {
       resourceId: null,
       dateRange: null
     });
-
     // Now manually set the default month range
     // const defaultRange = this.setDefaultmounth();
     const startOfMonth = dayjs().startOf('month').toDate();
@@ -156,7 +155,7 @@ export class TimesheetsSummaryViewComponent {
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    this.projectTypeChart();
+    this.projectWiseChart();
     this.estimatedActualChart();
   }
 
@@ -318,7 +317,7 @@ export class TimesheetsSummaryViewComponent {
           (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)) {
           this.resetCharts();
         } else {
-          this.projectTypeChart();
+          this.projectWiseChart();
           this.estimatedActualChart();
         }
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
@@ -346,10 +345,10 @@ export class TimesheetsSummaryViewComponent {
   }
 
   // Project Type (Pie)
-  projectTypeChart() {
+  projectWiseChart() {
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
     // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.projectName);
+    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code);
     // Convert "HH:mm" string → numeric hours for plotting
     const data = this.projectTypeData.map((item: any) => {
       const [hours, minutes] = item.hours.split(':').map(Number);
@@ -383,7 +382,23 @@ export class TimesheetsSummaryViewComponent {
     this.projectTypeGraphOptions = {
       plugins: {
         legend: { display: false },
-      },
+        tooltip: {
+          titleFont: { size: 11 },
+          bodyFont: { size: 10 },
+          callbacks: {
+            title: (tooltipItems: any) => {
+              const index = tooltipItems[0].dataIndex;
+              const name = this.projectTypeData[index].projectName;
+              // Wrap long names (max 20 chars per line)
+              return name.match(/.{1,20}/g);
+            },
+            label: (tooltipItem: any) => {
+              const value = Number(tooltipItem.raw).toFixed(2);
+              return `Project Hours (in Hrs): ${value}`;
+            }
+          }
+        }
+      }
     };
   }
 
@@ -391,7 +406,7 @@ export class TimesheetsSummaryViewComponent {
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
+    const labels = this.estimatedVsActualData.map((item: any) => item.meta?.graphData?.code);
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
     // Convert "HH:mm" to numeric hours for actualHours
@@ -431,11 +446,6 @@ export class TimesheetsSummaryViewComponent {
     this.estimatedVsActualGraphOptions = {
       responsive: true,
       barThickness: 30,
-      plugins: {
-        legend: {
-          display: false,
-        },
-      },
       scales: {
         x: {
           stacked: false,
@@ -448,6 +458,22 @@ export class TimesheetsSummaryViewComponent {
           title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
           ticks: { color: '#72777B', font: { size: 11 } },
         },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (tooltipItems: any) => {
+              const index = tooltipItems[0].dataIndex;
+              return this.estimatedVsActualData[index].projectName;
+            },
+            label: (tooltipItem: any) => {
+              const datasetLabel = tooltipItem.dataset.label || '';
+              const value = tooltipItem.raw;
+              return `${datasetLabel}: ${value}`;
+            }
+          }
+        }
       },
     };
   }

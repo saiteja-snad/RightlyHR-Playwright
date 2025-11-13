@@ -288,13 +288,22 @@ export class HoursAllocationComponent {
     // Set the updated employee list in form
     // form.setControl('employees', employeeArray);
 
+    // const ids = employeeIds.map((emp: any) => emp.employeeId);
+    // let params = new HttpParams().set('year', this.hoursAllocationForm.get('year')?.value);
+    // ids.forEach((id: any) => {
+    //   params = params.append('entityValues', id.employeeId);
+    // });
     const ids = employeeIds.map((emp: any) => emp.employeeId);
-    let params = new HttpParams();
-    employeeIds.forEach((id: any) => {
-      params = params.append('employeeIds', id.employeeId);
+    let params = new HttpParams().set(
+      'year',
+      this.hoursAllocationForm.get('year')?.value
+    );
+
+    ids.forEach((id: number) => {
+      params = params.append('entityValues', id);
     });
     this.http
-      .getDataIncludeParams(`FlexibleWorkhoursAllocation/GetAll`, { params })
+      .getDataIncludeParams(`FlexibleWorkhoursAllocation/GetAll`,params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {

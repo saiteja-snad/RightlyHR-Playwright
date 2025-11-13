@@ -163,6 +163,7 @@ export class EmploymentHistoryComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+             this.getEmploymentHistoryFields();
             this.getEmploymentHistoryFieldsConfigList();
           },
           error: (error: any) => {
@@ -188,6 +189,7 @@ export class EmploymentHistoryComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+             this.getEmploymentHistoryFields();
             this.getEmploymentHistoryFieldsConfigList();
           },
           error: (error: any) => {

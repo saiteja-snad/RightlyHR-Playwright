@@ -156,6 +156,7 @@ export class CertificationsComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getCertificationsFields();
             this.getCertificationsFieldsConfigList();
           },
           error: (error: any) => {
@@ -180,6 +181,7 @@ export class CertificationsComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getCertificationsFields();
             this.getCertificationsFieldsConfigList();
           },
           error: (error: any) => {

@@ -161,7 +161,9 @@ subscription!: Subscription;
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getBasicInfoFields();
             this.getBasicInfoFieldsConfigList();
+            
           },
           error: (error: any) => {
             const errorMessage = error.error?.message;
@@ -186,7 +188,9 @@ subscription!: Subscription;
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getBasicInfoFields();
             this.getBasicInfoFieldsConfigList();
+            
           },
           error: (error: any) => {
             const errorMessage = error.error?.message;

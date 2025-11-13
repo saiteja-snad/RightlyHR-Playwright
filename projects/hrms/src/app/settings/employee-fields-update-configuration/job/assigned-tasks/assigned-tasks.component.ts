@@ -161,6 +161,7 @@ export class AssignedTasksComponent {
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
             this.getAssignedTasksFieldsConfigList();
+            this.getAssignedTasksFields();
           },
           error: (error: any) => {
             const errorMessage = error.error?.message;
@@ -186,6 +187,7 @@ export class AssignedTasksComponent {
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
             this.getAssignedTasksFieldsConfigList();
+            this.getAssignedTasksFields();
           },
           error: (error: any) => {
             const errorMessage = error.error?.message;

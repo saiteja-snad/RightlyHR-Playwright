@@ -160,6 +160,7 @@ export class ContractInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getContractInfoFields();
             this.getContractInfoFieldsConfigList();
           },
           error: (error: any) => {
@@ -185,6 +186,7 @@ export class ContractInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getContractInfoFields();
             this.getContractInfoFieldsConfigList();
           },
           error: (error: any) => {

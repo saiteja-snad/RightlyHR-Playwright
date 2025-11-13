@@ -155,6 +155,7 @@ export class TeamMembersComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getTeamMembersFields();
             this.getTeamMembersFieldsConfigList();
           },
           error: (error: any) => {
@@ -179,6 +180,7 @@ export class TeamMembersComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getTeamMembersFields();
             this.getTeamMembersFieldsConfigList();
           },
           error: (error: any) => {

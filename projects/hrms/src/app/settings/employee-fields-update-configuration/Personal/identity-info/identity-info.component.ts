@@ -167,6 +167,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getIdentityInfoFields();
             this.getIdentityInfoFieldsConfigList();
           },
           error: (error: any) => {
@@ -192,6 +193,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getIdentityInfoFields();
             this.getIdentityInfoFieldsConfigList();
           },
           error: (error: any) => {

@@ -160,6 +160,7 @@ export class DeskInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getDeskInfoFields();
             this.getDeskInfoFieldsConfigList();
           },
           error: (error: any) => {
@@ -185,6 +186,7 @@ export class DeskInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getDeskInfoFields();
             this.getDeskInfoFieldsConfigList();
           },
           error: (error: any) => {

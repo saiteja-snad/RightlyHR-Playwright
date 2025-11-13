@@ -167,6 +167,7 @@ export class ContactInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getContactInfoFields();
             this.getContactInfoFieldsConfigList();
           },
           error: (error: any) => {
@@ -192,6 +193,7 @@ export class ContactInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getContactInfoFields();
             this.getContactInfoFieldsConfigList();
           },
           error: (error: any) => {

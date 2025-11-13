@@ -157,6 +157,7 @@ export class CompensationsComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getCompensationsFields();
             this.getCompensationsFieldsConfigList();
           },
           error: (error: any) => {
@@ -181,6 +182,7 @@ export class CompensationsComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getCompensationsFields();
             this.getCompensationsFieldsConfigList();
           },
           error: (error: any) => {

@@ -159,6 +159,7 @@ export class NoDueClearanceInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getNoDueClearanceFields();
             this.getNoDueClearanceFieldsConfigList();
           },
           error: (error: any) => {
@@ -184,6 +185,7 @@ export class NoDueClearanceInfoComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getNoDueClearanceFields();
             this.getNoDueClearanceFieldsConfigList();
           },
           error: (error: any) => {

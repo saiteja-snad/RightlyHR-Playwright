@@ -161,6 +161,7 @@ export class AcademicsComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getAcademicsFields();
             this.getAcademicsFieldsConfigList();
           },
           error: (error: any) => {
@@ -186,6 +187,7 @@ export class AcademicsComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getAcademicsFields();
             this.getAcademicsFieldsConfigList();
           },
           error: (error: any) => {

@@ -156,6 +156,7 @@ export class SeparationRequestComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
             this.resetFieldConfigForm();
+            this.getSeparationRequestFields();
             this.getSeparationRequestFieldsConfigList();
           },
           error: (error: any) => {
@@ -180,6 +181,7 @@ export class SeparationRequestComponent {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
             this.resetFieldConfigForm();
+            this.getSeparationRequestFields();
             this.getSeparationRequestFieldsConfigList();
           },
           error: (error: any) => {

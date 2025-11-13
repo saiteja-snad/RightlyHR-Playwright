@@ -264,13 +264,15 @@ export class CertificationsComponent {
   }
 
   // Clear validators for approval fields
-  clearApprovalValidators() {
+    clearApprovalValidators() {
     this.fieldConfigForm.get('approvalType')?.clearValidators();
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
+    this.fieldConfigForm.get('selectedManager')?.clearValidators();
     this.fieldConfigForm.get('approvalType')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
+    this.fieldConfigForm.get('selectedManager')?.clearValidators();
   }
 
   // Update validators based on approval type

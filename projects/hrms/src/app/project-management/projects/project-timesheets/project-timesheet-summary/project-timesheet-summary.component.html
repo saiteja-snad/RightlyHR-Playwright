@@ -1,6 +1,6 @@
 <div class="custom-main-component-container time-sheet-summary-container">
     <div class="row">
-        <div class="col-xxl-7 col-xl-6 mb-3">
+        <div class="col-xxl-8 col-xl-6 mb-3">
             @if (!resourceSummaryLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex flex-nowrap gap-2 mb-2">
@@ -25,7 +25,7 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectResourceSummaryData">
-                                 <td>{{roles?.phase || "-"}}</td>
+                                <td>{{roles?.phase || "-"}}</td>
                                 <td>{{roles?.employeeName}}</td>
                                 <td>{{roles?.projectRole}}</td>
                                 <td>
@@ -53,7 +53,7 @@
             }
         </div>
 
-        <div class="col-xxl-5 col-xl-6 mb-3">
+        <div class="col-xxl-4 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project Completion Rate</div>
@@ -102,15 +102,15 @@
 
                         <div class="legends-view">
                             <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     <div class="d-flex align-items-center gap-1">
                                         <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                         <div class="legend-name">{{ item.name }}</div>
                                     </div>
                                 </div>
-                                <div class="hrs-display text-nowrap col-md-4">
+                                <div class="hrs-display col-md-5">
                                     <span class="actual">{{item.actualHours}}</span>/
-                                    <span>{{item.allocateHours}} hrs</span>
+                                    <span>{{item.allocateHours}} Hrs</span>
                                 </div>
                             </div>
                         </div>

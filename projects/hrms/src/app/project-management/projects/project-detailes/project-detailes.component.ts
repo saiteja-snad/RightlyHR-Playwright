@@ -37,6 +37,7 @@ export class ProjectDetailesComponent implements OnInit, OnDestroy {
     this.addprojectform = this.fb.group({
       projectName: [{ value: null, disabled: true }],
       clientName: [{ value: null, disabled: true }],
+      code: [{ value: null, disabled: true }],
       startDate: [{ value: null, disabled: true }],
       endDate: [{ value: null, disabled: true }],
       effectiveDate: [{ value: null, disabled: true }],
@@ -63,6 +64,7 @@ export class ProjectDetailesComponent implements OnInit, OnDestroy {
         this.addprojectform.patchValue({
           projectName: this.projectsData[0]?.projectName,
           clientName: this.projectsData[0]?.client?.clientName,
+          code: this.projectsData[0]?.meta?.graphData?.code,
           startDate: this.formatDateToLocal(this.projectsData[0]?.startDate),
           endDate: this.formatDateToLocal(this.projectsData[0]?.endDate),
           effectiveDate: this.formatDateToLocal(this.projectsData[0]?.effectiveDate),

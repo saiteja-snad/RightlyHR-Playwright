@@ -11,9 +11,7 @@
         }
 
         <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/documents')">
-            <div>
-                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
-            </div>
+            
 
             @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'inactive'){
             <div *ngIf="isActive('/project-management/clients/details/documents')">
@@ -23,34 +21,20 @@
             }
         </div>
 
-        @if(rbac.allowedToAccess('Client Documents.delete')){
-        <div *ngIf="isActive('/project-management/clients/details/inactivedocuments')">
-            <div>
-                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Documents</u></a>
-            </div>
-        </div>
-        }
+     
 
-        @if(rbac.allowedToAccess('Client Projects.create')){
-        <div *ngIf="isActive('/project-management/clients/details/inactiveprojects')">
-            <a class="primary-link" (click)="navigationactive()"><u>Active Projects</u></a>
-        </div>
-        }
+    
         <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')">
             @if(rbac.allowedToAccess('Client Projects.view')){
             <!-- Department Name Field -->
             <div class="custom-p-multiSelect-content">
                 <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-                    defaultLabel="Please select department name" formControlName="department" class="form-select custom-select"
+                    defaultLabel="Please select department name" class="form-select custom-select"
                     (onChange)="onDepartmentChangelist($event)"></p-multiSelect>
             </div>
             }
 
-            @if(rbac.allowedToAccess('Client Projects.delete')){
-            <div>
-                <a (click)="navigationtoinactive()" class="primary-link"><u>Inactive Projects</u></a>
-            </div>
-            }
+      
 
             @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'inactive'){
             <div>

@@ -49,4 +49,5 @@ export interface IResource {
         workMail : string;
     },
     reason : string;
+    statusEffectiveDate?: string;
 }

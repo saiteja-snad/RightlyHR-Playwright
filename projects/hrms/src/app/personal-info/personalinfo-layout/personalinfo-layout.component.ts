@@ -299,7 +299,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.http.getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`).subscribe({
       next: (response: any) => {
         this.conformationPopup.openSuccessModal('Regenerate credentials generated successfully and shared with the employee via email');
-        
+
       },
       error: (error: any) => {
         console.log(error);
@@ -664,6 +664,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'contactor-info': "Contractor Info",
+    'project-info': "Project Info",
     'cards': 'Cards',
     // Documents
     'general-documents': 'Documents',
@@ -722,6 +723,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
+      '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
 
       // My Info Documents
@@ -754,6 +756,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/trainee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
       '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       '/personalinfo/job/cards': MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,

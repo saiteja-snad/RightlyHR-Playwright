@@ -129,6 +129,25 @@ export class HttpService {
     this.projectcount.next();
   }
 
+  projectphasecount = new Subject<void>();
+  projectcountfuntionphases$ = this.projectphasecount.asObservable();
+  setnewcountfornewprojectphasecount() {
+    this.projectphasecount.next();
+  }
+
+  projectresourcecount = new Subject<void>();
+  projectcountresource$ = this.projectresourcecount.asObservable();
+  setnewcountfornewresourcecount() {
+    this.projectresourcecount.next();
+  }
+
+
+  projectdocumentscount = new Subject<void>();
+  projectcountdocuments$ = this.projectdocumentscount.asObservable();
+  setnewcountfornewdocumentscount() {
+    this.projectdocumentscount.next();
+  }
+
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
@@ -822,7 +841,30 @@ export class HttpService {
   getCurrentDateRange() {
     return this.dateRangeSubject.getValue();
   }
+// team timesheet summery
+ //  Set data (e.g., after selecting date range and employee)
+   private teamdateRangeSubject = new BehaviorSubject<any>({
+    startDate: null,
+    endDate: null,
+    employeeId: null,
+    employeeName: null
+  });
+  setteamDateRange(startDate: string | null , endDate: string | null , employeeId?: string | null, employeeName?: string) {
+    this.teamdateRangeSubject.next({ startDate, endDate, employeeId, employeeName });
+  }
 
+  //  Get as observable (subscribe in other component)
+  getteamDateRangeObservable() {
+    return this.teamdateRangeSubject.asObservable();
+  }
+
+  // Get current value synchronously (optional)
+  getteamCurrentDateRange() {
+    return this.teamdateRangeSubject.getValue();
+  }
+clearTeamDateRange() {
+  this.teamdateRangeSubject.next({ startDate: null, endDate: null, employeeId: null,employeeName: null });
+}
   //  Example API call
   getDatEdATA(url: string) {
     return this.http.get(url);
@@ -833,8 +875,8 @@ export class HttpService {
   setnewPhaseDetails() {
     this.phaseadded.next();
   }
-// store department id
-private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
+  // store department id
+  private departmentIdsSource = new BehaviorSubject<number[] | null>(null);
   selectedDepartmentIds$ = this.departmentIdsSource.asObservable();
 
   setDepartmentIds(ids: number[]) {

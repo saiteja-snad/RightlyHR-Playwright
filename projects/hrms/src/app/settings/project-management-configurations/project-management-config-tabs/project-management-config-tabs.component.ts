@@ -22,6 +22,7 @@ export class ProjectManagementConfigTabsComponent {
     { label: 'Frequency Configurations', route: '/settings/project-management-config/letter-frequency', permission: { feature: 'Letter Frequency Configurations', action: 'view' }},
     { label: 'Project Management Authority', route: '/settings/project-management-config/signature-authority', permission: { feature: 'Project Management Authority', action: 'view' }},
     { label: 'Project Role', route: '/settings/project-management-config/project-role', permission: { feature: 'Project Role', action: 'view' }},
+    { label: 'Task', route: '/settings/project-management-config/task', permission: { feature: 'Task', action: 'view' }},
 
   ];
 

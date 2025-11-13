@@ -114,14 +114,14 @@
     color: rgba(133, 137, 145, 1);
     font-weight: 500;
     font-size: var(--fontsize12);
-    cursor: pointer;
 }
 
 .total-duration {
-    font-size: var(--fontsize15) !important;
-    font-weight: 600;
+    font-size: var(--fontsize16) !important;
+    font-weight: 700;
     color: var(--primary-color);
 }
+
 .clear-all-btn {
     background: none;
     border: none;
@@ -135,25 +135,7 @@
 .clear-all-btn:focus {
     outline: none;
 }
-.popup-table-scroll-container {
-    border-radius: 0.5rem !important;
 
-    th:first-child {
-        border-top-left-radius: 0.5rem;
-    }
-
-    th:last-child {
-        border-top-right-radius: 0.5rem;
-    }
-
-    td:first-child {
-        border-bottom-left-radius: 0.5rem;
-    }
-
-    td:last-child {
-        border-bottom-right-radius: 0.5rem;
-    }
-}
 .popup-table-wrapper {
     width: 100%;
     overflow: hidden;
@@ -164,7 +146,8 @@
         max-height: 30vh;
         overflow-y: auto;
         border: 1px solid #D1D8E3;
-        border-bottom: 0rem !important;
+        border-bottom: 1px solid #D1D8E3 !important;
+        border-radius: 0.5rem !important;
     }
 
     .popup-table {
@@ -172,8 +155,7 @@
         border-collapse: collapse;
         table-layout: fixed;
 
-        th,
-        td {
+        th, td {
             text-align: center;
             padding: 0.5rem;
             border: 1px solid #D1D8E3;
@@ -187,6 +169,22 @@
             position: sticky;
             top: 0;
             z-index: 2;
+        }
+
+        th:first-child {
+            border-top-left-radius: 0.25rem;
+        }
+
+        th:last-child {
+            border-top-right-radius: 0.25rem;
+        }
+
+        td:first-child {
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        td:last-child {
+            border-bottom-right-radius: 0.25rem;
         }
 
         .log-time {
@@ -209,6 +207,7 @@
         border-bottom-right-radius: 0.5rem;
     }
 }
+
 .approved {
     color: rgba(0, 169, 18, 1) !important;
 }
@@ -219,4 +218,8 @@
 
 .waiting {
     color: rgba(252, 185, 16, 1) !important;
+}
+
+.th-date {
+    line-height: 1.5 !important;
 }

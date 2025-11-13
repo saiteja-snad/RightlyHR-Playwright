@@ -27,12 +27,11 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
-
+            <div class="total-hrs">{{"Total Logged Hours"}}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
             @if(isFilterApplied()) {
             <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
             }
-
+            
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="custom-date-range-picker">
@@ -41,26 +40,26 @@
                     </div>
 
                     <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                        <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
                         <div class="d-flex align-items-center gap-2">
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
                                     formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" [showClear]="true"
-                                    [resetFilterOnHide]="true" placeholder="please select employee"
+                                    [resetFilterOnHide]="true" placeholder="Please select employee"
                                     class="form-select custom-select"></p-select>
                             </div>
                         </div>
-                        }
-                        @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                        } -->
+                        @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
                         <div class="d-flex align-items-center gap-2">
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
-                                    formControlName="resourceId" [showClear]="true" [resetFilterOnHide]="true"
-                                    placeholder="please select employee" class="form-select custom-select"></p-select>
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value" (onChange)="onCheckemployee($event.value)"
+                                    formControlName="resourceId" [showClear]="true" [resetFilterOnHide]="true" placeholder="Please select employee"
+                                    class="form-select custom-select" required></p-select>
                             </div>
                         </div>
                         }
@@ -68,17 +67,18 @@
                         <div class="d-flex align-items-center gap-2">
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                    placeholder="please select employee" formControlName="resourceId" [filter]="true" [showClear]="true"
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees" optionValue="id"
+                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true" [showClear]="true" (onChange)="onCheckemployee($event.value)"
                                     [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
                         </div>
                         }
+                        @else {}
                     </div>
 
                     <div>
-                        <button class="custom-btn btn-primary" type="submit">Apply</button>
+                        <button class="custom-btn btn-primary" type="submit" [disabled]="datepickerForm.invalid">Apply</button>
                     </div>
                 </div>
             </form>
@@ -257,7 +257,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Summary' | translate}}</p>
+                <p class="popup-heading mb-0">{{'Logged Hours BreakDown' | translate}} ({{ selectedEntries[0]?.entryDate | dateformat }})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -284,26 +284,18 @@
                                 <td>{{ entry?.phaseName || '-' }}</td>
                                 <td>{{ entry.loggedHours }} hrs</td>
                                 <td class="text-center">
-                                        <div>
-                                            <span>
-                                            <div *ngIf="entry.summary; else noRequestedComments" type="button"
-                                                [ngbPopover]="requestedComments">
-                                                <app-info-icon />
-                                            </div>
-                                            <ng-template #requestedComments>
-                                                <div>
-                                                <p class="mb-0">{{ entry.summary }}</p>
-                                                </div>
-                                            </ng-template>
-                                            <ng-template #noRequestedComments>
-                                                <span>-</span>
-                                            </ng-template>
-                                            </span>
-                                        </div>
+                                    <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">
+                                        <app-info-icon />
+                                    </div>
+                                    <ng-template #requestedComments>
+                                        <p class="mb-0">{{ entry.summary }}</p>
+                                    </ng-template>
+                                    <ng-template #noRequestedComments><span>-</span></ng-template>
                                 </td>
-                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
-                                 'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">{{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status
-                                         }}</td>
+                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected', 
+                                    'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
+                                    {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

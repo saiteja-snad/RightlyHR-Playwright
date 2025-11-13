@@ -1,3 +1,23 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem);
+}
+
+.main-content {
+    width: 100% !important;
+}
+
+.project-main-active-content {
+    width: calc(100% - 8.5rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 12rem) !important;
+}
+
+.project-client-table {
+    height: calc(100dvh - 15.25rem) !important;
+}
+
 .primary-link {
     font-size: var(--fontsize13);
     font-weight: 600;
@@ -13,26 +33,10 @@
     text-decoration: underline;
 }
 
-.custom-table-content {
-    height: calc(100dvh - 12rem) !important;
-}
-
 .department-list-view {
     width: 250px !important;
 }
 
 .custom-color {
-  width: 60px !important;
-}
-
-.component-left-tabs-container{
-    width: 7.5rem;
-    min-width: 7.5rem;
-    padding: 0.75rem;
-    height: calc(100dvh - 9rem);
-    border-radius: 0.5rem;
-    overflow-y: auto;
-    background-color: var(--white-color);
-    border: 1px solid #CCDAEC;
     width: 60px !important;
 }

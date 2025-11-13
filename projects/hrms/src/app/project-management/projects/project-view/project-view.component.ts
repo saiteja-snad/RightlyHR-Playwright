@@ -230,6 +230,8 @@ export class ProjectViewComponent implements OnInit {
           this.inactiveStatus = (res?.data ?? []).some((p: any) =>
             p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
           ) ? 'inactive' : 'active';
+          console.log(this.inactiveStatus);
+          
         } else {
           this.clientsId = null; // No projects returned
         }

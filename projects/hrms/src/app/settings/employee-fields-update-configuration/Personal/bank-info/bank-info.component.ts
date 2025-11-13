@@ -57,7 +57,7 @@ subscription!: Subscription;
   ngOnInit(): void {
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
-      approvalRequired: [false],
+      approvalRequired: [true],
       approvalType: [''],
       selectedEmployee: [''],
       selectedRole: ['']
@@ -142,7 +142,7 @@ subscription!: Subscription;
           columnName: this.selectedFieldConfig.columnName,
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
-          requiresApproval: formValue.approvalRequired || false,
+          requiresApproval: true,
           approvalType: formValue.approvalType || "",
           approvalAuthority: approvalAuthority.toString() || '',
           updatedBy: loggedInUser.employeeId,
@@ -167,7 +167,7 @@ subscription!: Subscription;
           columnNames: selectedFields,
           moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Bank Info",
           displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
-          requiresApproval: formValue.approvalRequired || false,
+          requiresApproval: true,
           approvalType: formValue.approvalType || "",
           approvalAuthority: approvalAuthority.toString() || '',
           createdBy: loggedInUser.employeeId,
@@ -236,7 +236,7 @@ subscription!: Subscription;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
-      approvalRequired: fieldConfig.requiresApproval || false,
+      approvalRequired: true,
       approvalType: fieldConfig.approvalType || '',
       selectedEmployee: fieldConfig.approvalType === 'EMP' ? Number(fieldConfig.approvalAuthority) : '',
       selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : ''

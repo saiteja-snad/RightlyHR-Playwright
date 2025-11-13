@@ -55,7 +55,7 @@ export class AddressesComponent {
   ngOnInit(): void {
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
-      approvalRequired: [false],
+      approvalRequired: [true],
       approvalType: [''],
       selectedEmployee: [''],
       selectedRole: ['']
@@ -140,7 +140,7 @@ export class AddressesComponent {
           columnName: this.selectedFieldConfig.columnName,
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
-          requiresApproval: formValue.approvalRequired || false,
+          requiresApproval: true,
           approvalType: formValue.approvalType || "",
           approvalAuthority: approvalAuthority.toString() || '',
           updatedBy: loggedInUser.employeeId,
@@ -165,7 +165,7 @@ export class AddressesComponent {
           columnNames: selectedFields,
           moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Addresses",
           displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
-          requiresApproval: formValue.approvalRequired || false,
+          requiresApproval: true,
           approvalType: formValue.approvalType || "",
           approvalAuthority: approvalAuthority.toString() || '',
           createdBy: loggedInUser.employeeId,
@@ -234,7 +234,7 @@ export class AddressesComponent {
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
-      approvalRequired: fieldConfig.requiresApproval || false,
+      approvalRequired: true,
       approvalType: fieldConfig.approvalType || '',
       selectedEmployee: fieldConfig.approvalType === 'EMP' ? Number(fieldConfig.approvalAuthority) : '',
       selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : ''
@@ -249,20 +249,7 @@ export class AddressesComponent {
 
  // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-    // Watch for approval required changes
-    this.fieldConfigForm.get('approvalRequired')?.valueChanges.subscribe(value => {
-      if (!value) {
-        // Reset approval-related fields when approval is disabled
-        this.fieldConfigForm.patchValue({
-          approvalType: '',
-          selectedEmployee: '',
-          selectedRole: ''
-        });
-        this.clearApprovalValidators();
-      } else {
-        this.setApprovalValidators();
-      }
-    });
+   
 
     // Watch for approval type changes
     this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {

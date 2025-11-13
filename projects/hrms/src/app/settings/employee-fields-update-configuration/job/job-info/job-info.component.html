@@ -101,18 +101,9 @@
           </div>
         </div>
 
-        <!-- Approval Required Toggle -->
-        <div class="mb-3">
-          <label class="form-label custom-label mb-2">
-            {{ 'Approval Required' | translate }}
-          </label>
-          <div class="small-blue-toggle mt-2">
-            <p-toggleSwitch formControlName="approvalRequired"></p-toggleSwitch>
-          </div>
-        </div>
 
         <!-- Approval Type -->
-        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalRequired')?.value">
+        <div class="mb-3" >
           <label class="form-label custom-label mb-2">
             {{ 'Approval Type' | translate }} <span class="error-msg">*</span>
           </label>
@@ -132,7 +123,7 @@
 
         <!-- Role Selection (when approval type is role) -->
         <div
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' && fieldConfigForm.get('approvalRequired')?.value">
+          *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Role' | translate }} <span class="error-msg">*</span>
           </label>
@@ -151,7 +142,7 @@
 
         <!-- Role Selection (when approval type is employee) -->
         <div class="mb-3"
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' && fieldConfigForm.get('approvalRequired')?.value">
+          *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Employee' | translate }} <span class="error-msg">*</span>
           </label>

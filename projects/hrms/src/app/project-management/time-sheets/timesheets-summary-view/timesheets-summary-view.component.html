@@ -187,8 +187,8 @@
                     @if (!projectwisehour) {
                     <div class="time-sheet-graph-card p-3">
                         <ng-container *ngIf="hasprojectWiseHoursData; else noData">
-                            <div class="rolewise-chart-grid justify-content-between gap-3">
-                                <div class="bar-chart">
+                            <div class="projectwise-chart-grid justify-content-between gap-3">
+                                <div>
                                     <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
                                 </div>
                                 <div class="legends-view custom-legend-width">
@@ -199,11 +199,12 @@
                                                 <div class="legend-name">{{ item.label }}</div>
                                             </div>
                                         </div>
-                                        <div class="hrs-display text-nowrap col-md-4">{{item.hours}} HRs</div>
+                                        <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>
                                     </div>
                                 </div>
                             </div>
                         </ng-container>
+                    
                         <ng-template #noData>
                             <div class="graph-no-data-content">
                                 <app-no-data-found />

@@ -46,7 +46,7 @@
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
-                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" [showClear]="true"
+                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
                                     [resetFilterOnHide]="true" placeholder="Please select employee"
                                     class="form-select custom-select"></p-select>
                             </div>
@@ -58,7 +58,7 @@
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
-                                    formControlName="resourceId" [showClear]="true" [resetFilterOnHide]="true"
+                                    formControlName="resourceId" [resetFilterOnHide]="true"
                                     placeholder="Please select employee" class="form-select custom-select"></p-select>
                             </div>
                         </div>
@@ -67,8 +67,8 @@
                         <div class="d-flex align-items-center gap-2">
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true" [showClear]="true"
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees" optionValue="id"
+                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true" 
                                     [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
@@ -77,7 +77,7 @@
                     </div>
 
                     <div>
-                        <button class="custom-btn btn-primary" type="submit">Apply</button>
+                        <button class="custom-btn btn-primary" (mousedown)="$event.preventDefault()" type="submit">Apply</button>
                     </div>
                 </div>
             </form>

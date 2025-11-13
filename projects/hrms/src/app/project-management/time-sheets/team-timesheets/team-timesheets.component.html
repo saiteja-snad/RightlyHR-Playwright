@@ -25,7 +25,7 @@
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
-                                formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)" [showClear]="true"
+                                formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)" 
                                 placeholder="Please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
-                                optionValue="value" formControlName="resourceId" (onChange)="onCheckemployee($event.value)" [showClear]="true"
+                                optionValue="value" formControlName="resourceId" (onChange)="onCheckemployee($event.value)" 
                                 placeholder="Please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
+                            <p-select [options]="resourcesList" optionLabel="fullName" optionValue="id"
                                 name="myteamemployees" (onChange)="onCheckemployee($event.value)" placeholder="Please select employee"
                                 formControlName="resourceId" [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
                                 [autoDisplayFirst]="false" required></p-select>
@@ -53,7 +53,7 @@
                     </div>
                     }
                     <div>
-                        <button class="custom-btn btn-primary" type="submit" [disabled]="datepickerForm.invalid">Apply</button>
+                        <button class="custom-btn btn-primary" type="submit" (mousedown)="$event.preventDefault()" [disabled]="datepickerForm.invalid">Apply</button>
                     </div>
                 </div>
             </form>

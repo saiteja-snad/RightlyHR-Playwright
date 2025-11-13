@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -26,17 +26,18 @@ import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { Skeleton } from "primeng/skeleton";
+import { TimesheetsResourceTabsComponent } from "../timesheets-resource-tabs/timesheets-resource-tabs.component";
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
     NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent,
-    ModuleInformationComponent, Skeleton],
+    ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
-export class TimesheetsSummaryViewComponent {
+export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
@@ -101,30 +102,30 @@ export class TimesheetsSummaryViewComponent {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo()
     this.createDatepickerForm();
-  this.http.getteamDateRangeObservable().subscribe((data) => {
-    console.log('Received BehaviorSubject data:', data);
-    // Optional check to avoid running on empty initial values
-    if (data && (data.startDate || data.endDate || data.employeeId)) {
+    this.http.getteamDateRangeObservable().subscribe((data) => {
+      console.log('Received BehaviorSubject data:', data);
+      // Optional check to avoid running on empty initial values
+      if (data && (data.startDate || data.endDate || data.employeeId)) {
 
-      
-      this.employeeId = data.employeeId || null;
-      this.startDate = data.startDate;
-      this.endDate = data.endDate;
-         this.setDefaultmounth();
-      // You can trigger your logic with these updated values
-      this.getProjectSummary(this.employeeId);
-    }else{
-    this.route.queryParams.subscribe(params => {
-      const resoureID = params['id'];
-      if (resoureID) {
-        this.employeeId = parseInt(resoureID)
-           this.setDefaultmounth();
-         this.getProjectSummary(resoureID);
-        this.getEmployeeId(resoureID);
+
+        this.employeeId = data.employeeId || null;
+        this.startDate = data.startDate;
+        this.endDate = data.endDate;
+        this.setDefaultmounth();
+        // You can trigger your logic with these updated values
+        this.getProjectSummary(this.employeeId);
+      } else {
+        this.route.queryParams.subscribe(params => {
+          const resoureID = params['id'];
+          if (resoureID) {
+            this.employeeId = parseInt(resoureID)
+            this.setDefaultmounth();
+            this.getProjectSummary(resoureID);
+            this.getEmployeeId(resoureID);
+          }
+        });
       }
     });
-    }
-  });
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
@@ -137,7 +138,7 @@ export class TimesheetsSummaryViewComponent {
       resourceId: [null]
     });
   }
-  
+
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
     // Check if any field has value
@@ -147,15 +148,15 @@ export class TimesheetsSummaryViewComponent {
   }
 
   resetForm() {
-   
+
     this.http.clearTeamDateRange()
     // Reset other form fields
     this.datepickerForm?.get('resourceId')?.reset()
-     
+
     // Now manually set the default month range
     // const defaultRange = this.setDefaultmounth();
-  
-  
+
+
     this.updateModuleInfo()
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
@@ -166,34 +167,34 @@ export class TimesheetsSummaryViewComponent {
         this.getEmployeeId(resoureID);
       }
     });
-      const startOfMonth = dayjs().startOf('month').toDate();
+    const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
-      this.datepickerForm.patchValue({
+    this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
-    // this.setDefaultmounth();
+    this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
     this.estimatedActualChart();
   }
 
- setDefaultmounth() {
-  // Define current month's start & end
-  const startOfMonth = dayjs().startOf('month').toDate();
-  const endOfMonth = dayjs().endOf('month').toDate();
-  // Check if BehaviorSubject values exist
-  const BehaviorDataexist = this.startDate && this.endDate;
-  // If present → use them; else → fallback to month start/end
-  const start = BehaviorDataexist ? dayjs(this.startDate).toDate() : startOfMonth;
-  const end = BehaviorDataexist ? dayjs(this.endDate).toDate() : endOfMonth;
-  // Patch form values
-  this.datepickerForm.patchValue({
-    dateRange: [start, end],
-    resourceId: this.employeeId || null
-  });
-  console.log('📅 Date Range set:', start, end);
-}
+  setDefaultmounth() {
+    // Define current month's start & end
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    // Check if BehaviorSubject values exist
+    const BehaviorDataexist = this.startDate && this.endDate;
+    // If present → use them; else → fallback to month start/end
+    const start = BehaviorDataexist ? dayjs(this.startDate).toDate() : startOfMonth;
+    const end = BehaviorDataexist ? dayjs(this.endDate).toDate() : endOfMonth;
+    // Patch form values
+    this.datepickerForm.patchValue({
+      dateRange: [start, end],
+      resourceId: this.employeeId || null
+    });
+    console.log('📅 Date Range set:', start, end);
+  }
 
   isShowtimesheetforteamRoute(): boolean {
     const showPaths = ['/project-management/timesheet/summary'];
@@ -216,16 +217,6 @@ export class TimesheetsSummaryViewComponent {
   //   }
   // }
 
-  onCheckemployee(employeed: any) {
-    if (employeed === null) {
-      this.datepickerForm.get('resourceId')?.setValue(null);
-      console.log(employeed);
-
-      this.getProjectSummary(this.employeeId);
-      this.getEmployeeId(this.employeeId);
-       this.setDefaultmounth();
-    }
-  }
 
   //graphs no data found conditions
   get hasprojectWiseHoursData(): boolean {
@@ -379,7 +370,7 @@ export class TimesheetsSummaryViewComponent {
   }
 
   openModal(entries: TimesheetEntry[], content?: any) {
-    this.selectedEntries = entries;
+    this.selectedEntries = entries?.filter(ele => ele?.status !== 'Not Entered');
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -445,7 +436,7 @@ export class TimesheetsSummaryViewComponent {
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.meta?.graphData?.code);
+    const labels = this.estimatedVsActualData.map((item: any) => item.meta.graphData.code ? item.meta.graphData.code : item.projectName);
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
     // Convert "HH:mm" to numeric hours for actualHours
@@ -520,7 +511,8 @@ export class TimesheetsSummaryViewComponent {
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
-      ngOnDestroy() {
+
+  ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
     this.http.clearTeamDateRange();

@@ -2,19 +2,22 @@
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name">Project Management<span class="ms-1">
-                    <i class="bi bi-chevron-double-right"></i></span></div>
+            <i class="bi bi-chevron-double-right"></i></span></div>
+
             @if(isShowtimesheetforteamRoute()){
             <div class="commpoment-name">
                 <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             }
+
             @if(isShowtimesheetformyRoute()){
             <div class="commpoment-name">
                 <a (click)="navigatetomy()"><u>My Timesheet</u></a>
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             }
+
             <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
                 {{employename?.lastName}}</div>
 
@@ -22,9 +25,6 @@
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
-        <!-- <div>
-            <app-project-management-module-info />
-        </div>  -->
 
         <div class="d-flex align-items-center gap-3">
             <div class="total-hrs">{{"Total Logged Hours"}}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
@@ -35,8 +35,8 @@
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
-                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'" selectionMode="range"
+                            [showIcon]="true" [readonlyInput]="true" />
                     </div>
 
                     <div *ngIf="this.employeeId !== this.empdata?.employeeId">
@@ -57,7 +57,7 @@
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value" (onChange)="onCheckemployee($event.value)"
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
                                     formControlName="resourceId"  [resetFilterOnHide]="true" placeholder="Please select employee"
                                     class="form-select custom-select" required></p-select>
                             </div>
@@ -68,7 +68,7 @@
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees" optionValue="id"
-                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true"  (onChange)="onCheckemployee($event.value)"
+                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true" 
                                     [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
@@ -84,156 +84,170 @@
             </form>
         </div>
     </div>
-
+    
     <div class="d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
             <app-timesheets-tabs />
         </div>
 
-        <div class="d-flex custom-view-right-content gap-3">
-            <div class="custom-table-content w-100">
-                @if (!loading) {
-                <table class="w-100">
-                    <thead>
-                        <th class="text-center">{{'Date' | translate}}</th>
-                        <th class="text-center">{{'Logged Hours' | translate }}</th>
-                        <th class="text-center">{{'Summary' | translate}}</th>
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
-                            <tr *ngFor="let row of attendanceSummaryData">
-                                <td class="text-center">{{row.date | dateformat }}</td>
-                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
-                                    row.dailySummary.loggedHHMM + ' Hrs'}}</td>
-                                <td class="text-center">
-                                    <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
-                                        <a>
-                                            <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
-                                        </a>
-                                    </ng-container>
-                                    <ng-template #noEntries>-</ng-template>
-                                </td>
-                            </tr>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
-                                <app-no-data-found />
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
-                }
-                @else {
-                <app-data-loader-content />
-                }
+        <div class="custom-view-right-content">
+            @if(isShowtimesheetforteamRoute()){
+            <div class="mb-3 w-100">
+                <app-timesheets-resource-tabs />
             </div>
-
-            <div class="timesheet-graph-content p-3">
-                <div class="summary-header d-flex gap-2 pb-3">
-                    <div>Timesheet Summary</div>
-                    <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent" class="module-icon">
-                        <ng-template #timesheetSummaryContent>
-                            <div class="module-info-text">{{TimesheetSummary}}</div>
-                        </ng-template>
-                    </div>
+            }
+            <div class="d-flex gap-3 mb-3">
+                <div class="custom-table-content w-100">
+                    @if (!loading) {
+                    <table class="w-100">
+                        <thead>
+                            <th class="text-center">{{'Date' | translate}}</th>
+                            <th class="text-center">{{'Logged Hours' | translate }}</th>
+                            <th class="text-center">{{'Summary' | translate}}</th>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
+                                <tr *ngFor="let row of attendanceSummaryData">
+                                    <td class="text-center">{{row.date | dateformat }}</td>
+                                    <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
+                                        row.dailySummary.loggedHHMM + ' Hrs'}}</td>
+                                    <td class="text-center">
+                                        <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                            <a>
+                                                <app-info-icon class="cursor"
+                                                    (click)="openModal(row.entries, summaryforlogs)" />
+                                            </a>
+                                        </ng-container>
+                                        <ng-template #noEntries>-</ng-template>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noDataTemplate>
+                                <tr>
+                                    <app-no-data-found />
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                    }
+                    @else {
+                    <app-data-loader-content />
+                    }
                 </div>
-
-                <div class="time-sheet-graph-card p-3">
-                    <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
-                        <div class="stacked-progress-container">
-                            <!-- overlay color bar -->
-                            <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
-                            + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                            + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
-                            + rejectedColor + ' 100%)'"></div>
-                            
-                            <div class="progress-labels">
-                                <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
-                                <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
-                                <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
-                            </div>
+        
+                <div class="timesheet-graph-content p-3">
+                    <div class="summary-header d-flex gap-2 pb-3">
+                        <div>Timesheet Summary</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
+                                class="module-icon">
+                            <ng-template #timesheetSummaryContent>
+                                <div class="module-info-text">{{TimesheetSummary}}</div>
+                            </ng-template>
                         </div>
-                    </ng-container>
-                    <ng-template #noData>
-                        <div class="graph-no-data-content"><app-no-data-found /></div>
-                    </ng-template>
-                </div>
-
-                <div class="dashed-line my-3"></div>
-
-                <div class="summary-header d-flex gap-2 pb-3">
-                    <div>Project Wise Hours Summary</div>
-                    <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata" class="module-icon">
-                        <ng-template #projectwisehoursSummarydata>
-                            <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
-                        </ng-template>
                     </div>
-                </div>
-
-                @if (!projectwisehour) {
-                <div class="time-sheet-graph-card p-3">
-                    <ng-container *ngIf="hasprojectWiseHoursData; else noData">
-                        <div class="projectwise-chart-grid justify-content-between gap-3">
-                            <div>
-                                <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
-                            </div>
-                            <div class="legends-view custom-legend-width">
-                                <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
-                                    <div class="col-md-8">
-                                        <div class="d-flex align-items-center gap-1">
-                                            <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
-                                            <div class="legend-name">{{ item.label }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>
+        
+                    <div class="time-sheet-graph-card p-3">
+                        <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
+                            <div class="stacked-progress-container">
+                                <!-- overlay color bar -->
+                                <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
+                                    + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                                    + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                                    + rejectedColor + ' 100%)'"></div>
+        
+                                <div class="progress-labels">
+                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
+                                            displayApproved }} Hrs</span></div>
+                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{
+                                            displaySubmitted }} Hrs</span></div>
+                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{
+                                            displayRejected }} Hrs</span></div>
                                 </div>
                             </div>
-                        </div>
-                    </ng-container>
-
-                    <ng-template #noData>
-                        <div class="graph-no-data-content">
-                            <app-no-data-found />
-                        </div>
-                    </ng-template>
-                </div>
-                }@else {
-                <div class="chart-card-skeleton">
-                    <p-skeleton width="100%" height="100%" borderRadius="12px" />
-                </div>
-                }
-                
-                <div class="dashed-line my-3"></div>
-
-                <div class="summary-header d-flex gap-2 pb-3">
-                    <div>Allocated vs Actual Hours</div>
-                    <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
-                        <ng-template #resourceSummaryContent>
-                            <div class="module-info-text">{{AllocatedActualhours}}</div>
+                        </ng-container>
+                        <ng-template #noData>
+                            <div class="graph-no-data-content"><app-no-data-found /></div>
                         </ng-template>
                     </div>
-                </div>
-                
-                @if (!allocatedVsActualLoader) {
-                <div class="time-sheet-graph-card p-3">
-                    <div class="bar-chart">
-                        <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
-                            <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
-                        </ng-container>
+        
+                    <div class="dashed-line my-3"></div>
+        
+                    <div class="summary-header d-flex gap-2 pb-3">
+                        <div>Project Wise Hours Summary</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata"
+                                class="module-icon">
+                            <ng-template #projectwisehoursSummarydata>
+                                <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
+                            </ng-template>
+                        </div>
                     </div>
-
-                    <ng-template #noActualData>
-                        <div class="graph-no-data-content"><app-no-data-found /></div>
-                    </ng-template>
+        
+                    @if (!projectwisehour) {
+                    <div class="time-sheet-graph-card p-3">
+                        <ng-container *ngIf="hasprojectWiseHoursData; else noData">
+                            <div class="projectwise-chart-grid justify-content-between gap-3">
+                                <div>
+                                    <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                                </div>
+                                <div class="legends-view custom-legend-width">
+                                    <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
+                                        <div class="col-md-8">
+                                            <div class="d-flex align-items-center gap-1">
+                                                <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                                <div class="legend-name">{{ item.label }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    
+                        <ng-template #noData>
+                            <div class="graph-no-data-content">
+                                <app-no-data-found />
+                            </div>
+                        </ng-template>
+                    </div>
+                    }@else {
+                    <div class="chart-card-skeleton">
+                        <p-skeleton width="100%" height="100%" borderRadius="12px" />
+                    </div>
+                    }
+        
+                    <div class="dashed-line my-3"></div>
+        
+                    <div class="summary-header d-flex gap-2 pb-3">
+                        <div>Allocated vs Actual Hours</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
+                                class="module-icon">
+                            <ng-template #resourceSummaryContent>
+                                <div class="module-info-text">{{AllocatedActualhours}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+        
+                    @if (!allocatedVsActualLoader) {
+                    <div class="time-sheet-graph-card p-3">
+                        <div class="bar-chart">
+                            <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
+                                <p-chart type="bar" [data]="estimatedVsActualGraphData"
+                                    [options]="estimatedVsActualGraphOptions" />
+                            </ng-container>
+                        </div>
+                        <ng-template #noActualData>
+                            <div class="graph-no-data-content"><app-no-data-found /></div>
+                        </ng-template>
+                    </div>
+                    }@else {
+                    <div class="chart-card-skeleton">
+                        <p-skeleton width="100%" height="100%" borderRadius="12px" />
+                    </div>
+                    }
                 </div>
-                }@else {
-                <div class="chart-card-skeleton">
-                    <p-skeleton width="100%" height="100%" borderRadius="12px" />
-                </div>
-                }
             </div>
         </div>
     </div>

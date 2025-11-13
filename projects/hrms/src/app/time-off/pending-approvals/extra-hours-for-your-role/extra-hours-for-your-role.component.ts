@@ -71,6 +71,8 @@ export class ExtraHoursForYourRoleComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedLeaveStatus: any;
+  rejectcomments: any;
 
   constructor(
     private modalService: NgbModal,
@@ -89,7 +91,20 @@ export class ExtraHoursForYourRoleComponent {
   selectCheck(Value: any) {
     this.multiSelect = Array.isArray(Value) && Value.length > 0;
   }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
 
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
     this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });

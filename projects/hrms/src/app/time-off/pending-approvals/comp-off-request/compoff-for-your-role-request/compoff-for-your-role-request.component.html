@@ -155,6 +155,12 @@
                     </div>
                 </div>
             </div>
+                 <div class="leave-tabs d-flex align-items-center gap-2 mb-3">
+                <button type="button" class="btn leave-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
@@ -199,6 +205,12 @@
                     </div>
                 </div>
             </div>
+                <div class="leave-tabs d-flex align-items-center gap-2 mb-3">
+                    <button type="button" class="btn leave-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusRejectSelect('reject')">
+                        Rejected
+                    </button>
+                </div>
 
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|

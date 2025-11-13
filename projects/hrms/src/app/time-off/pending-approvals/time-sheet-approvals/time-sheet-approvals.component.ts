@@ -77,6 +77,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
+  selectedLeaveStatus: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
@@ -107,7 +108,20 @@ export class TimeSheetApprovalsComponent implements OnInit {
 
     this.intializeApproveForm();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.timeSheetApproveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.timeSheetRejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   intializeApproveForm() {
     this.timeSheetApproveForm = this.fb.group({
       comments: [null, [Validators.required, Validators.maxLength(250)]]

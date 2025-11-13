@@ -66,6 +66,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   recallAcceptFormForProcess!: FormGroup;
   recallAcceptForm!: FormGroup;
   rejectSeparationForm!: FormGroup;
+  selectedLeaveStatus: any;
 
   constructor(
     private authService: AuthService,
@@ -82,7 +83,20 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
     this.formInializer();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.recallAcceptFormForProcess.get('recallReason')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectSeparationForm.get('notes')?.setValue('Rejected');
+    }
+  }
   //function to initalize the form
   formInializer() {
     this.recallAcceptFormForProcess = this.fb.group({

@@ -91,6 +91,7 @@ export class SeparationForYourRoleRequestComponent {
   jsonData = {} as any;
   myApproverComments = {} as any;
   successmessage !: string;
+  selectedLeaveStatus: any;
 
   constructor(
     private authService: AuthService,
@@ -105,7 +106,20 @@ export class SeparationForYourRoleRequestComponent {
   ngOnInit(): void {
     this.getseparationforrolerequests();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.selectedSpRequestData.comments = 'Approved'
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedSpRequestData.rejectedReason = 'Rejected';
+    }
+  }
   resetForm(f: NgForm) {
     f.resetForm();
     // Clear the selected data structure completely and set defaults

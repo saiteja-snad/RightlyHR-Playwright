@@ -70,6 +70,7 @@ export class ProbationPendingApprovalsComponent {
   ]
   @ViewChild('assessmentForm') assessmentForm!: NgbModal;
   @ViewChild('commentspopup') commentspopup!: NgbModal;
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -99,7 +100,20 @@ export class ProbationPendingApprovalsComponent {
     this.getProbationExtendDays();
     this.getAllPendingApprovals();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+   this.selectedData.comments ='Approved'
+  }
+}
+
+  // onStatusRejectSelect(status: string) {
+  //   this.selectedLeaveStatus = status;
+  //   if (status === 'reject') {
+  //     this.rejectForm.get('comments')?.setValue('Rejected');
+  //   }
+  // }
   getAllPendingApprovals() {
     this.loading = true;
     let loggedInUser = this.authService.getToken();

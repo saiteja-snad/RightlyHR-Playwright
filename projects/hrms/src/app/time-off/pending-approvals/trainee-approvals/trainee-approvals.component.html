@@ -132,7 +132,12 @@
                     *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>
             </div>
-
+             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
                     translate}}</button>
@@ -201,7 +206,14 @@
                         {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || 
                     (Extendreason.errors?.['pattern']) ">Feedback for Extend is required</div>
+             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusRejectSelect('reject')">
+                        Rejected
+                    </button>
                 </div>
+                </div>
+                   
 
                 <div *ngIf="discontinue" class="mb-3">
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">Reason<span
@@ -216,7 +228,14 @@
                         *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && selectedLeaveData.submitted)">
                         Reason is required
                     </div>
+                   <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusdiccontinueRejectSelect('reject')">
+                        Rejected
+                    </button>
                 </div>
+                </div>
+               
             </div>
 
             <div class="custom-modal-footer">

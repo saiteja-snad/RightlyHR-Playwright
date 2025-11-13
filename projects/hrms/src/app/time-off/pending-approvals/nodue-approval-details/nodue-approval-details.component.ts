@@ -55,6 +55,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   isLoading = false;
   selectedNoDueData = {} as any;
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -71,7 +72,20 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     this.formInializer();
     this.getAllPendingApprovalsNoDue();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.AcceptForm.get('AcceptReason')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('notes')?.setValue('Rejected');
+    }
+  }
   //function to initalize the form
   formInializer() {
     this.AcceptForm = this.fb.group({

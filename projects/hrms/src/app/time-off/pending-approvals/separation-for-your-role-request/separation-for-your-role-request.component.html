@@ -296,6 +296,12 @@
                         <span *ngIf="comments.errors?.['pattern']">Comments should not start with a space</span>
                     </div>
                 </div>
+                     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
                 }
 
                 <!-- Buttons -->
@@ -344,6 +350,12 @@
                     (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Reject Reason is
                         required</div>
                 </div>
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="closepopup(rejectconfirmationpopup)">{{'Cancel'|translate}}</button>
@@ -493,6 +505,12 @@
                             space</span>
                     </div>
                 </div>
+                 <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                        <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                            (click)="onStatusApproveSelect('approved')">
+                            Approved
+                        </button>
+                    </div>
 
             </div>
 
@@ -524,6 +542,12 @@
                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
+                      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                            <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                                (click)="onStatusApproveSelect('approved')">
+                                Approved
+                            </button>
+                        </div>
                     <div class="error-msg"
                         *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptFormforprocess.submitted)">
                         <span *ngIf="Extendreason.errors?.['required']">Feedback for Extend is required</span>
@@ -561,6 +585,12 @@
                         <span *ngIf="comments.errors?.['pattern']">Comments should not start with a space</span>
                     </div>
                 </div>
+                  <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                        <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                            (click)="onStatusApproveSelect('approved')">
+                            Approved
+                        </button>
+                    </div>
             </div>
 
 

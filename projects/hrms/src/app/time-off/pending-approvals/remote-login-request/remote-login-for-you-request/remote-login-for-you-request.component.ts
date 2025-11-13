@@ -72,6 +72,8 @@ export class RemoteLoginForYouRequestComponent implements OnInit, OnDestroy {
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   remoteLoginModuleId =  environment.remoteLoginModuleId;
+  selectedLeaveStatus: any;
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -84,6 +86,20 @@ export class RemoteLoginForYouRequestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
+  }
+  onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+
+  if (status === 'approved') {
+    this.approveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
   }
 
   selectCheck(value: any) {

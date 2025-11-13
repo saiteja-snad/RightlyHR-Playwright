@@ -72,6 +72,7 @@ export class ClaimsandexpensesForYouRequestComponent
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -88,7 +89,20 @@ export class ClaimsandexpensesForYouRequestComponent
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
+ onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.approveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],

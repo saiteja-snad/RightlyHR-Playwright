@@ -71,6 +71,8 @@ export class ExtraHoursForYouComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedLeaveStatus: any;
+  rejectcomments: any;
 
   constructor(
     private modalService: NgbModal,
@@ -85,7 +87,20 @@ export class ExtraHoursForYouComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.approveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   // selectCheck(Value: any) {
   //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
   // }

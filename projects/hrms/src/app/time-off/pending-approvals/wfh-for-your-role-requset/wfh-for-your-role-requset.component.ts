@@ -88,6 +88,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   @ViewChild('dt') table!: Table;
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -102,6 +103,28 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    } else if (status === 'planned') {
+      this.approveForm.get('comments')?.setValue('planned Wfh');
+    } else if (status === 'unplanned') {
+      this.approveForm.get('comments')?.setValue('Unplanned Wfh');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    } else if (status === 'planned') {
+      this.rejectForm.get('comments')?.setValue('planned Wfh');
+    } else if (status === 'unplanned') {
+      this.rejectForm.get('comments')?.setValue('Unplanned Wfh');
+    }
+  }
+
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 

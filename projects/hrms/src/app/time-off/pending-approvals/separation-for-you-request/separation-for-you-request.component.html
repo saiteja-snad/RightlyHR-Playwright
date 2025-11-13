@@ -254,6 +254,12 @@
                             space</span>
                     </div>
                 </div>
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+                </div>
                 }
                 }
 
@@ -295,6 +301,12 @@
                             space</span>
                     </div>
                 </div>
+               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+                </div>
                 }
                 }
 
@@ -326,6 +338,12 @@
                         <span *ngIf="comments.errors?.['required']">Comments are required</span>
                         <span *ngIf="comments.errors?.['pattern']">Comments should not start with a space</span>
                     </div>
+                </div>
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
                 </div>
                 }
                 }
@@ -384,6 +402,12 @@
                             Reject Reason cannot exceed 250 characters
                         </div>
                     </div>
+                </div>
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
                 </div>
 
                 <div class="custom-modal-footer">

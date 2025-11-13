@@ -84,6 +84,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   myApproverComments = {} as any;
   rejectForm!: FormGroup;
   @ViewChild('acceptForm') acceptForm!: NgForm;
+  selectedLeaveStatus: any;
 
   constructor(
     private authService: AuthService,
@@ -100,7 +101,20 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.initializeRejectForm();
     this.getseparationforyourequests();
   }
+ onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.selectedSpRequestData.comments = 'Approved'
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('notes')?.setValue('Rejected');
+    }
+  }
   closepopup(content: any) {
     // this.isCheckBoxEnabledRegular = false;
     this.modalService.open(content, { centered: true, backdrop: 'static' });

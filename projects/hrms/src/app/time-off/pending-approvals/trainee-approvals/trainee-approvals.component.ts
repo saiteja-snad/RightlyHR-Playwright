@@ -65,6 +65,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedLeaveStatus: any;
 
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
     private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
@@ -88,7 +89,26 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
       this.selectedLeaveData.rejectedReason = val.rejectedReason;
     });
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+   this.selectedLeaveData.trcomments= 'Approved';
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedLeaveData.trcomments='Rejected';
+    }
+  }
+    onStatusdiccontinueRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedLeaveData.rejectedReason='Rejected';
+    }
+  }
   blockLeadingSpace(event: Event, value: string) {
     const inputElement = event.target as HTMLTextAreaElement;
     if (inputElement.value.startsWith(' ')) {

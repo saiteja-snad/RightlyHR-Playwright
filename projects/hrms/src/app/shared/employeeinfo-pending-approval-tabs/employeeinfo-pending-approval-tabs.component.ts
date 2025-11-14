@@ -30,7 +30,7 @@ export class EmployeeinfoPendingApprovalTabsComponent implements OnInit, OnDestr
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   navTabs = computed(() => {
-  const data = this.pendingApprovalCount().find(item => item.moduleId === environment.expensesModuleId);
+  const data = this.pendingApprovalCount().find(item => item.moduleId === environment.pendingapprovalemployeid);
   const allTabs = [
     { label: 'For You', link: 'for-you', count: data?.forYou ?? 0, permission: { feature: 'For You (Employee Info)', action: 'view' } },
     { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0, permission: { feature: 'For Role (Employee Info)', action: 'view' } }
@@ -45,7 +45,7 @@ export class EmployeeinfoPendingApprovalTabsComponent implements OnInit, OnDestr
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getAllExpensesPendingApprovalsCount();
+    this.getAllEmployeinfoPendingApprovalsCount();
   }
 
   constructor(
@@ -55,17 +55,17 @@ export class EmployeeinfoPendingApprovalTabsComponent implements OnInit, OnDestr
     private rbac: RbacService
   ) {
      effect(() => {
-      if (this.signalService.claimsandexpensesForRoleTriggerSignal() || this.signalService.clamisandexpensesForYouTriggerSignal()) {
+      if (this.signalService.employeinfoDetailsForRoleTriggerSignal() || this.signalService.employeinfoDetailsForYouTriggerSignal()) {
         // Call the function to fetch the pending approvals count
-        this.getAllExpensesPendingApprovalsCount();
+        this.getAllEmployeinfoPendingApprovalsCount();
       
         // Conditionally reset the signals based on their current state
-        if (this.signalService.claimsandexpensesForRoleTriggerSignal()) {
-          this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
+        if (this.signalService.employeinfoDetailsForRoleTriggerSignal()) {
+          this.signalService.employeinfoDetailsForRoleTriggerSignal.set(false);
         }
         
-        if (this.signalService.clamisandexpensesForYouTriggerSignal()) {
-          this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
+        if (this.signalService.employeinfoDetailsForYouTriggerSignal()) {
+          this.signalService.employeinfoDetailsForYouTriggerSignal.set(false);
         }
       }
       
@@ -76,9 +76,9 @@ export class EmployeeinfoPendingApprovalTabsComponent implements OnInit, OnDestr
     return this.router.isActive(route, true);
   }
 
-  getAllExpensesPendingApprovalsCount() {
+  getAllEmployeinfoPendingApprovalsCount() {
     const employeeId = parseInt(this.empinfo.employeeId);
-    const moduleId = 19;
+    const moduleId = 32;
 
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {

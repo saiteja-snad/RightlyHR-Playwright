@@ -1,0 +1,75 @@
+<div class="custom-main-component-container">
+    @if(!dataLoad){
+    <div class="custom-table-content">
+
+        <ng-container *ngIf="flexibleWorkhours | async as data; else noDataTemplate">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th *ngIf="rbac.allowedToAccess('Flexible Work Hours Configuration Tab.update')">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data; let i = index">
+                        <td class="table-text">{{ item.attribute }}</td>
+                        <td class="table-text">
+                            <ng-container *ngIf="editingIndex !== i">
+                                {{ item.value }}
+                            </ng-container>
+
+                            <ng-container *ngIf="editingIndex === i">
+                                <input class="form-control custom-input" type="number" [(ngModel)]="temporaryValue"
+                                    [ngModelOptions]="{ standalone: true }" min="0"
+                                    (keypress)="validateNumber($event)" (ngModelChange)="checkValueRange()"/>
+                                <div *ngIf="isValueInvalid" class="error-msg mt-2">
+                                    Value must be 0 or greater.
+                                </div>
+                            </ng-container>
+                        </td>
+
+                        <td *ngIf="rbac.allowedToAccess('Flexible Work Hours Configuration Tab.update')">
+                            <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item"
+                                            (click)="enableEdit(i, item.id, item.value)">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <ng-template #editingMode>
+                                <div class="d-flex gap-3">
+                                    <button class="custom-btn btn-primary" type="button"
+                                        (click)="submitForm(i, item.id, temporaryValue)"
+                                        [disabled]="isValueInvalid">
+                                        Update
+                                    </button>
+                                    <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </ng-container>
+
+    </div>
+    }@else { <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>}
+</div>
+
+<ng-template #noDataTemplate>
+    <tr>
+        <td colspan="3"><app-no-data-found></app-no-data-found></td>
+    </tr>
+</ng-template>

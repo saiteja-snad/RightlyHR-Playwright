@@ -8,12 +8,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
+import { ChipModule } from 'primeng/chip';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule,
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, ChipModule,
     DateformatPipe, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',

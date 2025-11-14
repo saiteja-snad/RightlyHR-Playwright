@@ -34,8 +34,20 @@
                                                 {{ entry?.employee?.name}}
                                             </a>
                                         </td>
-                                        <td>{{ entry?.roles || '-' }}</td>
-                                        <td>{{ entry?.departments || '-' }}</td>
+                                        <td>
+                                            @if(entry?.roles) {
+                                                <p-chip *ngFor="let role of entry.roles.split(',')" [label]="role.trim()" styleClass="mr-1 mb-1"></p-chip>
+                                            } @else {
+                                                -
+                                            }
+                                        </td>
+                                        <td>
+                                            @if(entry?.departments) {
+                                                <p-chip *ngFor="let dept of entry.departments.split(',')" [label]="dept.trim()" styleClass="mr-1 mb-1"></p-chip>
+                                            } @else {
+                                                -
+                                            }
+                                        </td>
                                         <td class="text-center"><a class="project-name cursor"
                                                 (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">{{
                                                 entry?.phasesCount ?? 0 }}</a></td>

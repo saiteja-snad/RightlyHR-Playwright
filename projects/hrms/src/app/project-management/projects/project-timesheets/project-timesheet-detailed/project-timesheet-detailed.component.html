@@ -19,8 +19,26 @@
                             {{ project?.employee?.name }}
                         </a>
                     </td>
-                    <td>{{ project?.roles }}</td>
-                    <td class="text-center">{{ project?.departments || '-' }}</td>
+                    <td>
+                        @if(project?.roles) {
+                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                            <p-chip *ngFor="let role of project.roles.split(',')" [label]="role.trim()" />
+                        </div>
+
+                        } @else {
+                        -
+                        }
+                    </td>
+                    <td>
+                        @if(project?.departments) {
+                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                            <p-chip *ngFor="let dept of project.departments.split(',')" [label]="dept.trim()" />
+                        </div>
+                        } @else {
+                        -
+                        }
+                    </td>
+                   
                     <td class="text-center"><a class="project-name cursor"
                             (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">{{
                             project?.phasesCount ?? 0 }}</a></td>

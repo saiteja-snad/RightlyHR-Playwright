@@ -28,6 +28,8 @@ export class ClientTimesheetDetailedComponent {
   projectId: any;
   contentLoader = false;
 
+  employeeName: any
+  selectedEntries: any
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -40,24 +42,50 @@ export class ClientTimesheetDetailedComponent {
     });
 
   }
-
   getResourceDetails(clientID: any): void {
-    // Build the API URL conditionally
     let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
+
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.projectDetails = res?.data;
+        const rawProjects = res?.data || [];
+
+        this.projectDetails = rawProjects.map((item: any) => ({
+          ...item,
+          groupedResources: item.project.resources   // ⬅ DIRECTLY USE BACKEND DATA
+        }));
+
         this.contentLoader = false;
       },
       error: (err) => {
-        console.error('Error fetching clients:', err);
+        console.error('Error:', err);
         this.contentLoader = false;
         this.projectDetails = [];
       }
     });
-
   }
 
+
+
+  openModal(entry: any, content: any) {
+    this.employeeName = {
+      id: entry.employee.id,
+      fusionEmployeeId: entry.employee.fusionEmployeeId,
+      name: entry.employee.name,
+      workMail: entry.employee.workMail
+    };
+    // Convert the entry.phases into popup format
+    this.selectedEntries = entry.phases.map((phase: any) => ({
+
+      phaseName: phase.phaseName,
+      resourceStartDate: phase.resourceStartDate,
+      resourceEndDate: phase.resourceEndDate,
+      resourceRole: phase.resourceRole,
+      loggedHours: phase.loggedHours,
+      resourceStatus: phase.resourceStatus
+    }));
+
+    this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
+  }
   navigateView(projectdata: any, employeeId: any): void {
     const resourceData = {
       employeeId: employeeId,

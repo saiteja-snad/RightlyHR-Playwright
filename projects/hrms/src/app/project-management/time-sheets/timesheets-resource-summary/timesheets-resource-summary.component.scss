@@ -68,7 +68,7 @@
 .summary-header {
     font-weight: 600;
     font-size: var(--fontsize14);
-    color: #222222;
+    color: var(--primary-color) !important;
 
     .popover-body {
         padding: 0.5rem !important;

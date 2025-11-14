@@ -19,23 +19,23 @@
                             <th>{{'Phase/Milestone'|translate}}</th>
                             <th>{{'Resource Name'|translate}}</th>
                             <th>{{'Role'|translate}}</th>
-                            <th>{{'Hours Utilized'|translate}}</th>
-                            <th>{{'total Hours'|translate}}</th>
-                            <th>{{'Utilization (%)'|translate}}</th>
+                            <th class="text-center">{{'Hours Utilized'|translate}}</th>
+                            <th class="text-center">{{'total Hours'|translate}}</th>
+                            <th class="text-center">{{'Utilization (%)'|translate}}</th>
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectResourceSummaryData">
                                 <td>{{roles?.phase || "-"}}</td>
                                 <td>{{roles?.employeeName}}</td>
                                 <td>{{roles?.projectRole}}</td>
-                                <td>
+                                <td class="text-center">
                                     <div class="progress-wrapper">
                                         <div class="progress-bar" [ngStyle]="{width: roles?.utilizationPercent + '%', 
                                             backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
                                     </div>
                                 </td>
-                                <td><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
-                                <td class="logged-hrs">{{roles.utilizationPercent}} %</td>
+                                <td class="text-center"><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
+                                <td class="logged-hrs text-center">{{roles.utilizationPercent}} %</td>
                             </tr>
                         </tbody>
                     </table>

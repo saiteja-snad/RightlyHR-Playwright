@@ -62,7 +62,8 @@ export class SignalsService {
   traineeDetailsTriggerSignal = signal<boolean>(false);
   // probation deatils
   probationDetailsTriggerSignal = signal<boolean>(false);
-
+// employeinfo
+  employeinfoDetailsTriggerSignal = signal<boolean>(false);
   contractForyouTriggerSignal = signal<boolean>(false);
 
   contractConversionForYouTriggerSignal = signal<boolean>(false);

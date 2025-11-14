@@ -436,6 +436,7 @@ export interface TimesheetEntry {
   comments: any[];
   id: number;
   approvalHeader: number;
+  pendingApprovalHeader: any;
 
 }
 
@@ -448,6 +449,7 @@ export interface TimesheetDay {
   entries: TimesheetEntry[];
   selectedEntries: TimesheetEntry[];
   employeeName:string;
+  pendingApprovalHeader: any;
 }
 export interface EMPLOYEEINFO {
   employeeId: number;

@@ -226,83 +226,6 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
   //   });
   // }
 
-
-
-
-
-// loadClientsAndProjects(page: number, pageSize: number): void {
-//   this.dataload = true;
-
-//   let url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=EMP&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
-
-//   this.http.getData(url).subscribe({
-//     next: (res: any) => {
-//       this.dataload = false;
-
-//       if (res.success) {
-
-//         const items = res.data.items ?? [];
-// this.emp = res.data.items.map((item: { employeeName: any; items: any[]; }) => ({
-//   employeeName: item.employeeName,
-//   entries: item.items.flatMap(it => 
-//     it.entries.flatMap((e: { fields: any[]; employeeFieldHeader: { requestedDate: any; displayName: any; }; }) => 
-//       e.fields.map(f => ({
-//         fieldName: f.fieldName,
-//         oldValue: f.oldValue,
-//         newValue: f.newValue,
-//         approvedBy: f.approvedBy,
-//         approvedOn: f.approvedOn,
-//         description: f.description,
-//         requestedDate: e.employeeFieldHeader?.requestedDate,
-//         moduleName: e.employeeFieldHeader?.displayName
-//       }))
-//     )
-//   )
-// }));
-
-//         if (items.length > 0) {
-
-//           this.emp = items[0];
-
-//           // 1️⃣ STORE EMPLOYEE NAME
-//           this.employeeName = this.emp.employeeName;
-//           console.log("EMPLOYEE NAME:", this.employeeName);
-
-//           // 2️⃣ STORE EMPLOYEE ENTRIES
-//           this.employeeEntries = this.emp.entries;
-//           console.log("ENTRIES:", this.employeeEntries);
-
-//           // 3️⃣ STORE ALL FIELDS (FLAT)
-//           this.allFields = this.emp.entries.flatMap((entry: any) => entry.fields);
-//           console.log("ALL FIELDS:", this.allFields);
-
-//           // 4️⃣ STORE ALL PENDING APPROVAL DATA
-//           this.allPendingApprovals = this.allFields.map((f: { pendingApproval: any; }) => f.pendingApproval);
-//           console.log("ALL PENDING APPROVALS:", this.allPendingApprovals);
-
-//           // 5️⃣ STORE ALL pendingApproval.items INTO A SINGLE ARRAY
-//           this.allPendingApprovalItems = this.allFields.flatMap((f: { pendingApproval: { items: any; }; }) => f.pendingApproval?.items ?? []);
-//           console.log("ALL PENDING APPROVAL ITEMS:", this.allPendingApprovalItems);
-
-//           // 6️⃣ Add unique field IDs
-//           this.allFields.forEach((f: { id: any; itemId: any; }) => f.id = f.itemId);
-
-          
-//         }
-//       }
-//     },
-
-//     error: () => {
-//       this.dataload = false;
-
-//       this.employeeName = null;
-//       this.employeeEntries = [];
-//       this.allFields = [];
-//       this.allPendingApprovals = [];
-//       this.allPendingApprovalItems = [];
-//     }
-//   });
-// }
 loadClientsAndProjects(page: number, pageSize: number): void {
   this.dataload = true;
 
@@ -316,41 +239,60 @@ loadClientsAndProjects(page: number, pageSize: number): void {
         this.emp = [];
         return;
       }
+ this.collectionSize = res.data.totalCount;
+      const finalEmployees: any[] = [];
 
-      const apiItem = res.data.items[0];
+      // LOOP ALL EMPLOYEES (your previous code only used items[0])
+      res.data.items.forEach((empBlock: any) => {
 
-      // Store employee name
-      this.employeeName = apiItem.employeeName;
+        const flatEntries: any[] = [];
 
-      // ⭐ FLATTEN ENTRIES → FIELDS TO SHOW IN TABLE
-      const flatEntries: { id: any; fieldName: any; oldValue: any; newValue: any; requestedDate: any; description: any; approvedBy: any; approvedOn: any; }[] = [];
+        // Loop entries of this employee
+        empBlock.entries.forEach((entry: any) => {
 
-      apiItem.entries.forEach((entry: any) => {
-        entry.fields.forEach((f: any) => {
-          flatEntries.push({
-            id: f.itemId,
-            fieldName: f.fieldName,
-            oldValue: f.oldValue,
-            newValue: f.newValue,
-            requestedDate: f.createdDate,
-            description: f.pendingApproval?.comments?.length
-              ? f.pendingApproval.comments[0].comment
-              : null,
-            approvedBy: f.pendingApproval?.items?.[0]?.approverId || '-',
-            approvedOn: f.pendingApproval?.items?.[0]?.requestedDate || null
+          // Loop fields inside entry
+          entry.fields.forEach((f: any) => {
+            const pa = f.pendingApproval;
+
+            flatEntries.push({
+              // FIELD DETAILS
+              id: f.itemId,
+              fieldName: f.fieldName,
+              oldValue: f.oldValue,
+              newValue: f.newValue,
+              requestedDate: f.createdDate,
+
+              // HEADER (employeeFieldHeader)
+              headerId: entry.employeeFieldHeader?.headerId,
+              moduleName: entry.employeeFieldHeader?.moduleName,
+              displayName: entry.employeeFieldHeader?.displayName,
+              headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
+              headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
+
+              // APPROVAL HEADER
+              pendingApprovalHeader: pa?.header ?? null,
+
+              // APPROVAL ITEMS (array)
+              approvalItems: pa?.items ?? [],
+
+              // COMMENTS (array)
+              comments: pa?.comments ?? []
+            });
           });
+        });
+
+        // 🔥 Push employee + flattened entries into final array
+        finalEmployees.push({
+          employeeId: empBlock.employeeId,
+          employeeName: empBlock.employeeName,
+          entries: flatEntries
         });
       });
 
-      // FINAL STRUCTURE NEEDED BY YOUR HTML
-      this.emp = [
-        {
-          employeeName: apiItem.employeeName,
-          entries: flatEntries
-        }
-      ];
+      // Assign to your view model
+      this.emp = finalEmployees;
 
-      console.log("FINAL EMP DATA FOR TABLE 👉", this.emp);
+      console.log("FINAL EMP DATA FOR TABLE:", this.emp);
     },
 
     error: () => {
@@ -388,16 +330,31 @@ loadClientsAndProjects(page: number, pageSize: number): void {
   }
 
   // HEADER checkbox helpers (per-day)
-  areAllSelected(dayIndex: number): boolean {
-    const day = this.timesheetData?.[dayIndex];
-    const sel = this.selectedMap[dayIndex] || [];
-    if (!day || !day.entries) return false;
-    return day.entries.every(e => sel.some(s => s.id === e.id));
-  }
+  // areAllSelected(dayIndex: number): boolean {
+  //   const day = this.emp?.[dayIndex];
+  //   const sel = this.selectedMap[dayIndex] || [];
+  //   if (!day || !day.entries) return false;
+  //   return day.entries.every(e => sel.some(s => s.id === e.id));
+  // }
+// areAllSelected(dayIndex: number): boolean {
+//   const day = this.emp?.[dayIndex];
+//   const sel = this.selectedMap[dayIndex] || [];
+//   if (!day || !day.entries) return false;
+//   return day.entries.every(e => sel.some(s => s.id === e.id));
+// }
+areAllSelected(dayIndex: number): boolean {
+  const day: any = this.emp?.[dayIndex];
+  const sel: any[] = this.selectedMap[dayIndex] || [];
 
+  if (!day || !day.entries) return false;
+
+  return day.entries.every((e: any) =>
+    sel.some((s: any) => s.id === e.id)
+  );
+}
   // used for check box show indeterminate state
   isIndeterminate(dayIndex: number): boolean {
-    const day = this.timesheetData?.[dayIndex];
+    const day = this.emp?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
     return sel.length > 0 && sel.length < day.entries.length;
@@ -405,7 +362,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // checkbox select,unselect all
   toggleSelectAll(dayIndex: number, isChecked: boolean) {
-    const day = this.timesheetData[dayIndex];
+    const day = this.emp[dayIndex];
     if (!day) return;
     if (isChecked) {
       this.showhideaction = false;
@@ -445,11 +402,11 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          moduleId: environment.timesheetModuleId,
+          moduleId: environment.pendingapprovalemployeid,
           onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
-            headerID: item.approvalHeader.id,
-            currentStage: item.approvalHeader.currentapprovalStage,
+            headerID: item.pendingApprovalHeader.id,
+            currentStage: item.pendingApprovalHeader.currentapprovalStage,
           })),
         };
       } else if (this.selectedLeaveData) {
@@ -459,15 +416,16 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           status: this.conformationstatus,
           comments: comments,
           onBehalfOfApproval: true,
-          moduleId: environment.timesheetModuleId,
+          moduleId: environment.pendingapprovalemployeid,
           headerRequests: [
             {
-              headerID: this.selectedLeaveData.approvalHeader.id,
-              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+              headerID: this.selectedLeaveData.pendingApprovalHeader.id,
+              currentStage: this.selectedLeaveData.pendingApprovalHeader.currentapprovalStage,
             },
           ],
         };
       }
+      console.log("payload",this.requestBody)
 
       // Same API call
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -528,11 +486,11 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           requestProcessedBy: approvedBy,
           status: this.conformationstatus,
           comments: comments,
-          moduleId: environment.timesheetModuleId,
+          moduleId: environment.pendingapprovalemployeid,
           onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
-            headerID: item.approvalHeader.id,
-            currentStage: item.approvalHeader.currentapprovalStage,
+            headerID: item.pendingApprovalHeader.id,
+            currentStage: item.pendingApprovalHeader.currentapprovalStage,
           })),
         };
       } else if (this.selectedLeaveData) {
@@ -542,11 +500,11 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           status: this.conformationstatus,
           comments: comments,
           onBehalfOfApproval: true,
-          moduleId: environment.timesheetModuleId,
+          moduleId: environment.pendingapprovalemployeid,
           headerRequests: [
             {
-              headerID: this.selectedLeaveData.approvalHeader.id,
-              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+              headerID: this.selectedLeaveData.pendingApprovalHeader.id,
+              currentStage: this.selectedLeaveData.pendingApprovalHeader.currentapprovalStage,
             },
           ],
         };
@@ -599,45 +557,78 @@ loadClientsAndProjects(page: number, pageSize: number): void {
   }
 
   // select all Check if ALL entries in ALL days are selected
-  areAllDaysSelected(): boolean {
-    if (!this.timesheetData || this.timesheetData.length === 0) return false;
-    return this.timesheetData.every(
-      (day, i) =>
-        day.entries &&
-        this.selectedMap[i] &&
-        day.entries.length === this.selectedMap[i].length
-    );
-  }
-
+  // areAllDaysSelected(): boolean {
+  //   if (!this.emp || this.emp.length === 0) return false;
+  //   return this.emp.every(
+  //     (day, i) =>
+  //       day.entries &&
+  //       this.selectedMap[i] &&
+  //       day.entries.length === this.selectedMap[i].length
+  //   );
+  // }
+areAllDaysSelected(): boolean {
+  return this.emp.every((d: any, i: number) =>
+    (this.selectedMap[i]?.length || 0) === d.entries.length
+  );
+}
   //select all Show indeterminate when partial selection exists
-  isGlobalIndeterminate(): boolean {
-    if (!this.timesheetData || this.timesheetData.length === 0) return false;
-    const totalEntries = this.timesheetData.reduce(
-      (acc, day) => acc + (day.entries?.length || 0),
-      0
-    );
-    const selectedCount = Object.values(this.selectedMap)
-      .filter(Array.isArray)
-      .reduce((acc, arr) => acc + arr.length, 0);
+  // isGlobalIndeterminate(): boolean {
+  //   if (!this.emp || this.emp.length === 0) return false;
+  //   const totalEntries = this.emp.reduce(
+  //     (acc, day) => acc + (day.entries?.length || 0),
+  //     0
+  //   );
+  //   const selectedCount = Object.values(this.selectedMap)
+  //     .filter(Array.isArray)
+  //     .reduce((acc, arr) => acc + arr.length, 0);
 
-    return selectedCount > 0 && selectedCount < totalEntries;
-  }
+  //   return selectedCount > 0 && selectedCount < totalEntries;
+  // }
+isGlobalIndeterminate(): boolean {
+  if (!this.emp || this.emp.length === 0) return false;
 
+  const totalEntries = this.emp.reduce(
+    (acc: number, day: any) => acc + (day.entries?.length || 0),
+    0
+  );
+
+  const selectedCount = Object.values(this.selectedMap)
+    .filter((arr: any) => Array.isArray(arr))
+    .reduce((acc: number, arr: any[]) => acc + arr.length, 0);
+
+  return selectedCount > 0 && selectedCount < totalEntries;
+}
   //select all Toggle all entries across all days
-  toggleSelectAllDays(isChecked: boolean): void {
-    if (!this.timesheetData || this.timesheetData.length === 0) return;
-    if (isChecked) {
-      this.showhideaction = false;
-      this.timesheetData.forEach((day, i) => {
-        this.selectedMap[i] = [...day.entries];
-      });
-    } else {
-      this.showhideaction = true;
-      this.selectedMap = {};
-    }
-    this.syncGlobalSelectedEntries();
+  // toggleSelectAllDays(isChecked: boolean): void {
+  //   if (!this.emp || this.emp.length === 0) return;
+  //   if (isChecked) {
+  //     this.showhideaction = false;
+  //     this.emp.forEach((day, i) => {
+  //       this.selectedMap[i] = [...day.entries];
+  //     });
+  //   } else {
+  //     this.showhideaction = true;
+  //     this.selectedMap = {};
+  //   }
+  //   this.syncGlobalSelectedEntries();
+  // }
+toggleSelectAllDays(isChecked: boolean): void {
+  if (!this.emp || this.emp.length === 0) return;
+
+  if (isChecked) {
+    this.showhideaction = false;
+
+    this.emp.forEach((day: any, i: number) => {
+      this.selectedMap[i] = [...(day.entries || [])];
+    });
+
+  } else {
+    this.showhideaction = true;
+    this.selectedMap = {};
   }
 
+  this.syncGlobalSelectedEntries();
+}
   // destroy the component
   ngOnDestroy(): void {
     this.destroy$.next(true);

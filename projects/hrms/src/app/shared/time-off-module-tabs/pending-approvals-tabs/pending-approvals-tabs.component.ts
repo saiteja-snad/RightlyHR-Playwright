@@ -222,6 +222,10 @@ export class PendingApprovalsTabsComponent {
         this.getAllPendingApprovalsCount();
         this.signalService.probationDetailsTriggerSignal.set(false);
       }
+       if (this.signalService.employeinfoDetailsTriggerSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.employeinfoDetailsTriggerSignal.set(false);
+      }
     });
   }
 

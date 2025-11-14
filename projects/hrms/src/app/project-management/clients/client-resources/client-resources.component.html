@@ -10,11 +10,11 @@
                 <thead>
                     <th>Employee ID</th>
                     <th>Name</th>
+                    <th class="text-center">Phases / Milestones</th>
                     <!-- <th>Designation</th> -->
                     <th class="text-center">Role</th>
                     <!-- <th>Email</th>
                     <th>Phone Number</th> -->
-                    <th class="text-center">Phases / Milestones</th>
                     <th>Project Assigned</th>
                     <th class="text-center">Start Date</th>
                     <th class="text-center">End Date</th>
@@ -31,11 +31,11 @@
                         <tr *ngFor="let data of resourcesData">
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
+                            <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
                             <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
                             <td class="text-center">{{ data?.role || '-' }}</td>
                             <!-- <td>{{ data?.employee?.workMail || '-' }}</td>
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td> -->
-                            <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
                             <td>{{ data?.project?.projectName || '-' }}</td>
                             <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>

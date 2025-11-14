@@ -30,6 +30,7 @@ export class ClientTimesheetDetailedComponent {
 
   employeeName: any
   selectedEntries: any
+  selectedProject: any
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -66,12 +67,15 @@ export class ClientTimesheetDetailedComponent {
 
 
 
-  openModal(entry: any, content: any) {
+  openModal(entry: any, project: any, content: any) {
     this.employeeName = {
       id: entry.employee.id,
       fusionEmployeeId: entry.employee.fusionEmployeeId,
       name: entry.employee.name,
       workMail: entry.employee.workMail
+    };
+    this.selectedProject = {
+      projectName: project.project.projectName
     };
     // Convert the entry.phases into popup format
     this.selectedEntries = entry.phases.map((phase: any) => ({

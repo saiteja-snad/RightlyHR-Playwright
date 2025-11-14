@@ -32,7 +32,7 @@
                                         <td>{{ entry?.roles || '-' }}</td>
                                         <td>{{ entry?.departments || '-' }}</td>
                                         <td class="text-center"><a class="project-name cursor"
-                                                (click)="entry?.phasesCount !== 0 && openModal(entry, summaryforlogs)">{{
+                                                (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">{{
                                                 entry?.phasesCount ?? 0 }}</a></td>
                                         <td class="text-center">{{ entry?.totalLoggedHours ?? '-' }}</td>
                                     </tr>
@@ -76,7 +76,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{employeeName?.name}}</p>
+                <p class="popup-heading mb-0">{{selectedProject?.projectName}} - {{employeeName?.name}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

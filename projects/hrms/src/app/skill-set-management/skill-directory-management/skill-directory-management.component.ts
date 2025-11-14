@@ -382,7 +382,7 @@ export class SkillDirectoryManagementComponent {
   }
 
   submitExport() {
-    this.spinnerLoaderforallrecoders = true;
+    // this.spinnerLoaderforallrecoders = true;
     const isActive = true;
     const resourceStatus = !this.selectedStatus || this.selectedStatus === 'All Status' ? '' : this.selectedStatus;
     const searchQuery = this.searchQuery || '';
@@ -537,20 +537,6 @@ export class SkillDirectoryManagementComponent {
     this.employeeSummary = {};
     this.allEmployees = [];
     this.summaryCards = [];
-  }
-
-
-  private getImageUrl(imagePath: string): string | null {
-    if (!imagePath) return null;
-    const lowerPath = imagePath.toLowerCase();
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
-    if (lowerPath.startsWith('profilepics/')) {
-      return `${environment.viewUrl.replace(/\/$/, '')}/${imagePath}`;
-    }
-    // Fallback for other paths
-    return `${environment.ApiUrl.replace(/\/$/, '')}/EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
 
   openEnd2(content: TemplateRef<any>, card: any): void {

@@ -33,6 +33,7 @@
         <thead>
             <tr>
                 <th class="text-center">{{'Employee Name'|translate}}</th>
+                <th class="text-center">{{'Shift Name'|translate}}</th>
                 <th class="text-center">{{'Effective From'|translate}}</th>
                 <th class="text-center">{{'Effective To'|translate}}</th>
                 <th class="text-center">{{'Half Day Min Hrs'|translate}}</th>
@@ -51,6 +52,7 @@
             @for (item of getAllocationDetails; track item) {
             <tr>
                 <td class="text-center">{{ item?.entityValue?.name || '-' }}</td>
+                <td class="text-center">{{ item?.shiftDetails?.name || '-' }}</td>
                 <td class="text-center">{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
                 <td class="text-center">{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
                 <td class="text-center">{{ item?.halfDayMinHrs || '-' }}</td>

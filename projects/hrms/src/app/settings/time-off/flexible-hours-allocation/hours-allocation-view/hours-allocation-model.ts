@@ -12,6 +12,7 @@ status?: string,
 entityType?:string,
 halfDayMinHrs?:string,
 fullDayMinHrs?:string
+shiftDetails?:any
 }
 export interface IEmployeeResponse{
     id: number, 

@@ -207,6 +207,7 @@ export class HoursAllocationComponent {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id,
     };
+    //orgShifts/getshiftlocation?locationId=4&subLocationId=5&year=2025
 
     this.http
       .getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
@@ -539,7 +540,7 @@ export class HoursAllocationComponent {
       });
 
     form
-      .get('type')
+      .get('shift')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         resetOnly(['employeeId', 'employees']);
@@ -550,7 +551,7 @@ export class HoursAllocationComponent {
       .get('employeeId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetOnly(['days']);
+        resetOnly(['fullminhours','halfminhours']);
       });
   }
 

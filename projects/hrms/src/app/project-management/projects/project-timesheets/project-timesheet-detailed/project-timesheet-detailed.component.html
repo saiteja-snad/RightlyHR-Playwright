@@ -5,7 +5,7 @@
             <thead>
                 <tr>
                     <th>Employee Name</th>
-                    <th>Role</th>
+                    <th class="text-center">Role</th>
                     <th class="text-center">Start Date</th>
                     <th class="text-center">Days Spent</th>
                     <th class="text-center">Logged Hours</th>
@@ -19,7 +19,7 @@
                             {{ project?.employee?.name }}
                         </a>
                     </td>
-                    <td>{{ project?.roleName }}</td>
+                    <td class="text-center">{{ project?.roleName }}</td>
                     <td class="text-center">{{ project?.startDate | dateformat }}</td>
                     <td class="text-center">{{ project?.daysSpent || '-' }} Days</td>
                     <td class="text-center">{{ project?.loggedHours || '0' }} Hrs</td>

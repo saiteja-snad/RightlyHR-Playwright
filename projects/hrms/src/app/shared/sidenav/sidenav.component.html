@@ -105,14 +105,6 @@
             </li>
             }
 
-            <!--Cards mangement-->
-            @if(this.rbac.allowedToAccess('Cards Management.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/card-management');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/card-management')">
-                <img src="main-menu-icons/policies.png" alt="Icon" class="main-menu-icon">Cards Management
-            </li>
-            }
-
             <!--Selected Item form the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"

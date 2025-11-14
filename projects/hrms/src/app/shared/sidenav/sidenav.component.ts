@@ -12,7 +12,7 @@ import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-
 import { SkillSetMainTabsComponent } from "../skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent, SkillSetMainTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -74,6 +74,11 @@ export class SidenavComponent implements OnInit {
     {
       label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
       route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
+    },
+    //Card Management
+    {
+      label: 'Cards Management', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/policies.png',
+      route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' }
     },
   ];
   columnsPerRow = 3;

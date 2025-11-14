@@ -2,16 +2,16 @@
   <div class="component-header-content">
     <div class="heading-content">
       @if(!router.url.startsWith('/card-management/card-history')){
-      <div class="commpoment-name" >Cards<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name">Cards<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Cards Management</div>
       <div>
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
       }@else {
-      <div (click)="goBack()" class="commpoment-name" style="cursor: pointer;">Cards Management<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div (click)="goBack()" class="commpoment-name" style="cursor: pointer;">Cards Management<span class="ms-1">
+        <i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Card History</div>
       }
-      
     </div>
 
     <div class="d-flex gap-3 align-items-center">
@@ -34,7 +34,7 @@
     <div class="component-left-tabs-container">
       <app-cardsmanagement-tabs />
     </div>
-  }
+    }
     <div class="component-right-content">
       <router-outlet />
     </div>
@@ -75,7 +75,6 @@
             </div>
           </div>
 
-
           <!-- Card Type Field -->
           <div class="col-md-6 mb-3">
             <label for="cardtype" class="form-label custom-label mb-2">Card Type<span class="text-danger">*</span></label>
@@ -115,9 +114,7 @@
 
           <!-- Card Holder Name -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">
-              {{ 'Card Holder Name' | translate }}<span class="text-danger">*</span>
-            </label>
+            <label class="form-label custom-label mb-2">{{ 'Card Holder Name' | translate }}<span class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" formControlName="cardHolderName"
               placeholder="Please enter card holder name" (keypress)="restrictInput($event)">
             <div class="error-msg" *ngIf="cardDetailsForm.get('cardHolderName')?.invalid && cardDetailsForm.get('cardHolderName')?.touched">
@@ -138,24 +135,13 @@
           <div class="col-md-6 mb-3">
             <label class="form-label custom-label mb-2">{{ 'Expiry Month (MM)' | translate }}<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" formControlName="expiryMonth" placeholder="Enter month (1–12)"
-              (keypress)="restrictMonthInput($event)"  [maxLength]="2" />
-            <!-- <div class="error-msg" *ngIf="cardDetailsForm.get('expiryMonth')?.invalid && cardDetailsForm.get('expiryMonth')?.touched">
-              Expiry month is required
-            </div> -->
-              <div class="error-msg" *ngIf="
-                    cardDetailsForm.get('expiryMonth')?.invalid &&
-                    cardDetailsForm.get('expiryMonth')?.touched
-                  ">
-                <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['required']">
-                  Expiry month is required
-                </div>
-                <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['maxlength']">
-                  Maximum 2 digits allowed
-                </div>
-                <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['max']">
-                  Must be between 1–12
-                </div>
-              </div>
+              (keypress)="restrictMonthInput($event)" [maxLength]="2" />
+            <div class="error-msg"
+              *ngIf="cardDetailsForm.get('expiryMonth')?.invalid && cardDetailsForm.get('expiryMonth')?.touched">
+              <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['required']">Expiry month is required</div>
+              <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['maxlength']">Maximum 2 digits allowed</div>
+              <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['max']">Must be between 1–12</div>
+            </div>
           </div>
 
           <!-- Expiry Year -->
@@ -184,12 +170,10 @@
                 *ngIf="cardDetailsForm.get('creditLimit')?.hasError('required') && cardDetailsForm.get('creditLimit')?.touched">
                 Credit Limit is required
               </div>
-              
               <div class="error-msg"
                 *ngIf="cardDetailsForm.get('creditLimit')?.hasError('min') && cardDetailsForm.get('creditLimit')?.touched">
                 Must be a positive number
               </div>
-
           </div>
 
           <!-- Shared Limit -->

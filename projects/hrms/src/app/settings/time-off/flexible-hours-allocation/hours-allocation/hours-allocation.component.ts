@@ -123,7 +123,7 @@ export class HoursAllocationComponent {
   inititializeForm() {
     this.hoursAllocationForm = this.fb.group({
       // year: ['', Validators.required],
-      location: [{ value: ''}, Validators.required],
+      location: ['', Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
       type: [{ value: '', disabled: true }, Validators.required],
@@ -153,26 +153,6 @@ export class HoursAllocationComponent {
       yearsList.push(currentYear + i);
     }
     return yearsList;
-  }
-
-  enableLocation(): void {
-    if (this.hoursAllocationForm.get('year')?.value) {
-      this.hoursAllocationForm.get('location')?.enable();
-      const selectedYear = this.hoursAllocationForm.get('year')?.value;
-      if (selectedYear) {
-        this.minYearDate = `${selectedYear}-01-01`;
-        this.maxYearDate = `${selectedYear}-12-31`;
-
-        // Re-validate all employees’ effective dates
-        const employees = this.hoursAllocationForm.get(
-          'employees'
-        ) as FormArray;
-        employees.controls.forEach((emp) => {
-          emp.get('effectivedate')?.updateValueAndValidity();
-          emp.get('effectiveto')?.updateValueAndValidity();
-        });
-      }
-    }
   }
 
   //method to enable the category name
@@ -605,10 +585,9 @@ export class HoursAllocationComponent {
           this.selectedEmployees = [];
           this.hoursAllocationForm.reset();
           (this.hoursAllocationForm.get('employees') as FormArray).clear();
-          this.hoursAllocationForm.get('location')?.disable();
           this.hoursAllocationForm.get('subLocation')?.disable();
           this.hoursAllocationForm.get('shiftName')?.disable();
-          this.hoursAllocationForm.get('type')?.disable();
+          this.hoursAllocationForm.get('employeeId')?.disable();
           this.hoursAllocationForm.get('shift')?.disable();
           this.modal.openSuccessModal(
             'Flexible Work Hours allocated successfully'
@@ -634,9 +613,8 @@ export class HoursAllocationComponent {
     // clear employees array
     (this.hoursAllocationForm.get('employees') as FormArray).clear();
     this.hoursAllocationForm.get('subLocation')?.disable();
-    this.hoursAllocationForm.get('location')?.disable();
     this.hoursAllocationForm.get('shiftName')?.disable();
-    this.hoursAllocationForm.get('type')?.disable();
+    this.hoursAllocationForm.get('employeeId')?.disable();
     this.hoursAllocationForm.get('shift')?.disable();
   }
   //to open the confirmation popup

@@ -133,10 +133,10 @@
                             formControlName="employeeId" placeholder="Select Employee(s)" resetFilterOnHide="true"
                             (onChange)="onSelectedEmployee($event.value, hoursAllocationForm)">
                             <ng-template let-selectedOption #selectedItem>
-                                {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{
+                             {{selectedOption?.fusionEmpId}}  - {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{
                                 selectedOption.lastName }}
                             </ng-template>
-                            <ng-template let-user #item>{{ user.firstName }} {{ user.middleName }} {{ user.lastName
+                            <ng-template let-user #item>{{user?.fusionEmpId}} <span *ngIf="user?.fusionEmpId">-</span> {{ user.firstName }} {{ user.middleName }} {{ user.lastName
                                 }}</ng-template>
                         </p-multiSelect>
                     </div>

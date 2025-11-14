@@ -38,7 +38,7 @@
                         -
                         }
                     </td>
-                   
+
                     <td class="text-center"><a class="project-name cursor"
                             (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">{{
                             project?.phasesCount ?? 0 }}</a></td>
@@ -95,12 +95,12 @@
                                 <td><b>{{ entry?.loggedHours ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
 
                                 <td [ngClass]="{
-                                        'active': entry.resourceStatus === 'active',
-                                        'released': entry.resourceStatus === 'released',
-                                        'assigned': entry.resourceStatus === 'assigned'
-                        }">
-                                    {{
-                                    entry?.resourceStatus ?? '-' }}
+                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
+                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
+                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
+                }">
+                                <b>    {{
+                                    entry?.resourceStatus ?? '-' }}</b>
                                 </td>
                             </tr>
                         </tbody>

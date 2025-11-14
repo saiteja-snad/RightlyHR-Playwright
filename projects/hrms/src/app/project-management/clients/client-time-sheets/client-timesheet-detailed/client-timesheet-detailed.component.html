@@ -132,13 +132,12 @@
                                 <td><b>{{ entry?.loggedHours ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
 
                                 <td [ngClass]="{
-                                        'active': entry.resourceStatus === 'active',
-                                        'released': entry.resourceStatus === 'released',
-                                       'assigned': entry.resourceStatus === 'assigned'
-                                    
-                        }">
-                                    {{
-                                    entry?.resourceStatus ?? '-' }}
+                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
+                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
+                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
+                }">
+                                   <b> {{
+                                    entry?.resourceStatus ?? '-' }}</b>
                                 </td>
                             </tr>
                         </tbody>

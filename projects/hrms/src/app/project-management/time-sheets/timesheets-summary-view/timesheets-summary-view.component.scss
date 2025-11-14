@@ -252,3 +252,13 @@
 .custom-content-height {
     height: calc(100dvh - 12rem) !important;
 }
+
+.data-chip {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: max-content;
+    padding: 0.365rem 1rem 0.25rem;
+    border-radius: 0.325rem;
+    border: 2px solid;
+}

@@ -40,12 +40,18 @@
 }
 
 .project-name {
-    font-weight: 700;
-    font-style: Bold;
+    // font-weight: 700;
+    // font-style: Bold;
     font-size: 14px;
     text-decoration: none;
     color: var(--primary-color);
     text-decoration: underline;
+}
+
+.project-legendCode{
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
 }
 
 .circular-dot {
@@ -228,4 +234,8 @@
     .p-select {
         width: 240px !important;
     }
+}
+
+.custom-text {
+  font-size: var(--fontsize10) !important;
 }

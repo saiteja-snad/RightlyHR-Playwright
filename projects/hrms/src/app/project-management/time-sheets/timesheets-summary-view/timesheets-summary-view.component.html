@@ -114,16 +114,27 @@
                                 <tr *ngFor="let row of attendanceSummaryData">
                                     <td class="text-center">{{row.date | dateformat }}</td>
                                     <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ?
-                                        '-' :
-                                        row.dailySummary.loggedHHMM + ' Hrs'}}</td>
-                                    <td class="text-center">
-                                        <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
-                                            <a>
-                                                <app-info-icon class="cursor"
-                                                    (click)="openModal(row.entries, summaryforlogs)" />
-                                            </a>
-                                        </ng-container>
-                                        <ng-template #noEntries>-</ng-template>
+                                        '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
+                                            <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                                <a>
+                                                    <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
+                                                </a>
+                                            </ng-container>
+                                            <ng-template #noEntries>
+                                                @if(row.dailySummary.weekday != null){
+                                                <!-- <div class="data-chip"> -->
+                                                    <b>{{row.dailySummary.weekday}}</b>
+                                                <!-- </div> -->
+                                                }
+                                                @if (row.dailySummary.holiday != null){
+                                                <!-- <div class="data-chip"> -->
+                                                    <b>{{row.dailySummary.holiday}}</b>
+                                                <!-- </div> -->
+                                                }
+                                            </ng-template>
+                                        </div>
                                     </td>
                                 </tr>
                             </ng-container>

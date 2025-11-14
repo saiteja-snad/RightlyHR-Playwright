@@ -154,6 +154,13 @@ export class PendingApprovalsTabsComponent {
       route: '/time-off/pending-approvals/time-sheets',
       moduleId: environment.timesheetModuleId, permission: { feature: 'Time Sheet approval Tab', action: 'view' },
       icon: '/time-off-icon/calender-activity.png',
+    },
+    {
+      label: 'Employee Info',
+      route: '/time-off/pending-approvals/employeeinfo-request',
+      moduleId: environment.pendingapprovalemployeid,
+      permission: { feature: 'EmployeeInfo Tab', action: 'view' },
+      icon: '/main-menu-icons/expenses-icon.png',
     }
   ];
 

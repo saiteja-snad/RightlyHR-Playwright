@@ -440,10 +440,25 @@ export interface TimesheetEntry {
 }
 
 export interface TimesheetDay {
+  fields: any;
   date: string;
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
   entries: TimesheetEntry[];
   selectedEntries: TimesheetEntry[];
+  employeeName:string;
+}
+export interface EMPLOYEEINFO {
+  employeeId: number;
+  employeeName: string;
+
+  fieldName: string;
+  oldValue: string;
+  newValue: string;
+
+  pendingApprovalHeaderId: number;
+  pendingApprovalHeader: any;       // whole header
+  pendingApprovalItems: any[];      // <-- YOU NEED THIS
+  pendingComments: any[];
 }

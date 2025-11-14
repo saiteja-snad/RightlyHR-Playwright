@@ -270,6 +270,7 @@ export const PENDING_APPROVALS_TABS = [
   { route: '/time-off/pending-approvals/desk-approval', permission: 'Desk Requests Tab.view' },
   { route: '/time-off/pending-approvals/probation-request', permission: 'Probation Details Tab.view' },
   { route: '/time-off/pending-approvals/contract-conversion', permission: 'Contract-Conversion Tab.view' },
+  { route: '/time-off/pending-approvals/employeeinfo-request', permission: 'EmployeeInfo Tab.view' },
 ]
 
 export const PENDING_APPROVALS_TIME_OFF_SUB_TABS = [
@@ -327,7 +328,10 @@ export const EXPENSES_REQUEST_SUB_TABS = [
   { route: '/time-off/pending-approvals/claimsandexpenses-request/for-you', permission: 'For You (Claims and Expenses).view' },
   { route: '/time-off/pending-approvals/claimsandexpenses-request/for-your-role', permission: 'For Role (Claims and Expenses).view' },
 ]
-
+export const EMPLOYEINFO_REQUEST_SUB_TABS = [
+  { route: '/time-off/pending-approvals/employeeinfo-request/for-you', permission: 'For You (Employee Info).view' },
+  { route: '/time-off/pending-approvals/employeeinfo-request/for-your-role', permission: 'For Role (Employee Info.view' },
+]
 export const DESK_REQUEST_SUB_TABS = [
   { route: '/time-off/pending-approvals/desk-approval/for-you', permission: 'For You (Desk Requests).view' },
   { route: '/time-off/pending-approvals/desk-approval/for-your-role', permission: 'For Role (Desk Requests).view' },

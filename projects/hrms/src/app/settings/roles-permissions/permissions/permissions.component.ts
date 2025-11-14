@@ -740,6 +740,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Probation Details Tab',
     'Contractor Details Tab',
     'Contract-Conversion Tab',
+    'EmployeeInfo Tab'
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
@@ -770,6 +771,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   pendingApprovalClaimsAndExpensesSubTabs = [
     'For You (Claims and Expenses)',
     'For Role (Claims and Expenses)',
+  ];
+   pendingApprovalEmployeinfoSubTabs = [
+    'For You (Employee Info',
+    'For Role (Employee Info)',
   ];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',

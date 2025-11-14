@@ -1,0 +1,23 @@
+<div class="custom-main-component-container">
+  <div class="d-flex w-100 gap-3">
+    <div class="component-right-content w-100">
+      <div class="component-nav-tabs-container card mb-3 mt-2">
+        <p-tabs value="0" scrollable>
+          <p-tablist>
+            <ng-container *ngFor="let tabItem of navTabsViewHistory">
+              <p-tab [value]="tabItem.link">
+                <a [routerLink]="[tabItem.link]" routerLinkActive="active-nav-link"
+                  [class.active-nav-link]="isActiveRoute(tabItem.link)" class="nav-link">
+                  {{ tabItem.label }}
+                </a>
+              </p-tab>
+            </ng-container>
+          </p-tablist>
+        </p-tabs>
+      </div>
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

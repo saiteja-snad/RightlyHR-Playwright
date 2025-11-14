@@ -25,7 +25,7 @@
         <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Inactive Button.view')){
             <button class="custom-btn btn-primary"
-                *ngIf="isActive('personalinfo/job/employmentType') && 
+                *ngIf="isActive('personalinfo/job/employmentType') &&
             empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
                 (click)="navigation()">Inactive</button>
             }
@@ -42,29 +42,36 @@
             }
 
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective'||emppersonalinfo.empstatus == 'Prospective Contract'
-                || emppersonalinfo.empstatus == 'Trainee Prospective')  && (emppersonalinfo?.substatus == 'Employee Created' || 
-                emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 
-                emppersonalinfo?.substatus == 'Documents Rejected'|| emppersonalinfo?.substatus == 'Documents Accepted' || 
+                || emppersonalinfo.empstatus == 'Trainee Prospective')  && (emppersonalinfo?.substatus == 'Employee Created' ||
+                emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' ||
+                emppersonalinfo?.substatus == 'Documents Rejected'|| emppersonalinfo?.substatus == 'Documents Accepted' ||
                 emppersonalinfo?.substatus == 'Documents Verified')" (click)="openModal(archivedbtn)">
                 {{'Archive'|translate}}
             </button>
 
+            @if(rbac.allowedToAccess('View History Button.view') && isActive('/myinfo')){
+            <button class="custom-btn btn-primary" (click)="navigateMyInfo()">{{'View History'|translate}}</button>
+            }
+
+            @if(rbac.allowedToAccess('View History Button.view') && isActive('/personalinfo')){
+            <button class="custom-btn btn-primary" (click)="navigatePersonal()">{{'View History'|translate}}</button>
+            }
             <!-- <div *ngIf=""> -->
-               @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract')
+               <!-- @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && getOfferDetails?.letterType?.toLowerCase() === 'offer letter' && emppersonalinfo.empType !== 'Contract')
             {
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Prospective Contract'
             || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created') && (getOfferDetails?.letterType?.toLowerCase() === 'offer letter')"
                 (click)="openModal(revokeoffer)">
                 {{'Revoke Offer'|translate}}
             </button>
-            } 
+            }
 
-            
-            <!-- <div *ngIf=""> -->
-            @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted' 
+
+            <! <div *ngIf=""> -->
+            @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract' ){
-            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
+            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective'
             || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
                 {{' Revoke Offer'|translate}}
             </button>
@@ -95,7 +102,7 @@
                 {{'Regenerate Credentials'|translate}}
             </button>
             }
-             
+
             @if(this.rbac.allowedToAccess('Reset Password Button.view') && this.empdata?.isUserRegistred){
             <button class="custom-btn btn-secondary"
                 *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active'|| empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'"

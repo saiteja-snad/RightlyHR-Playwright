@@ -257,7 +257,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           fieldName: field.fieldName,
           displayName: field.tabName,
           actualFieldName: field.actualFieldName,
-          oldValue: oldValue,
+          oldValue: oldValue?oldValue.toString():'',
           newValue: newValue,
           referenceCategory: "",
           isFieldRequired: field.isRequired,
@@ -302,7 +302,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       'BloodGroup': formValue.bloodGroup?.name,
       'MaritalStatus': formValue.maritalStatus?.maritalstatus1,
       'marriedDate': formValue.marriageDate
-    };    
+    };
     return mapping[actualFieldName] || '';
   }
 
@@ -380,13 +380,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
 
   isFieldPendingApproval(fieldName: string): boolean {
-    return this.getFieldsApprovalStatusList.some(item => 
+    return this.getFieldsApprovalStatusList.some(item =>
       item.fieldName === fieldName && item.approvalStatus === 'Pending'
     );
   }
 
   getPendingApprovalMessage(fieldName: string): string {
-    const pendingField = this.getFieldsApprovalStatusList.find(item => 
+    const pendingField = this.getFieldsApprovalStatusList.find(item =>
       item.fieldName === fieldName && item.approvalStatus === 'Pending'
     );
     return pendingField?.message || 'This field change request is awaiting approval.';

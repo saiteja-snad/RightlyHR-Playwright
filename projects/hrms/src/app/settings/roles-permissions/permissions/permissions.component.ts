@@ -988,7 +988,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Asset Details',
     'My Info Separation Request Button',
     'My Info Card Details',
+
   ];
+
+  myInfoApprovalFields = [
+    'My Info Personal Approval History',
+    'My Info Job Approval History',
+    'My Info Documents Approval History',
+  ]
+
+  employeeApprovalFields = [
+    'Employee Personal Approval History',
+    'Employee Job Approval History',
+    'Employee Documents Approval History',
+  ]
+
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
     'Submission Of No Due Clearance',

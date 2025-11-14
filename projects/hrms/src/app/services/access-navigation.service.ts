@@ -73,6 +73,7 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',

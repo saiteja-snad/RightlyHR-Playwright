@@ -152,45 +152,29 @@ getEmployeeId(EmployeeId:number): void {
   }
 
   //function when they enter nulls in start
-  // ifreasonnull(Value: any) {
-  //   //console.log(Value);
-  //   const trimmedValue = Value?.trim();
-  // const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
-
-  // if (!trimmedValue || startsWithSpecialChar) {
-  //   this.issubmitdiable = true;
-  // } else {
-  //   this.issubmitdiable = false;
-  // }
-  //    if (!trimmedValue) {
-  //   this.selectedLeaveStatus = null;
-  // }
-  // }
-ifreasonnull(value: any, type: 'approve' | 'extend' | 'reject') {
-  const trimmedValue = value?.trim();
+  ifreasonnull(Value: any) {
+    //console.log(Value);
+    const trimmedValue = Value?.trim();
   const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
 
-  // handle validation
-    if (!trimmedValue || startsWithSpecialChar) {
+  if (!trimmedValue || startsWithSpecialChar) {
     this.issubmitdiable = true;
-     this.selectedLeaveStatus = null;
   } else {
     this.issubmitdiable = false;
-      if (!trimmedValue) {
-    // if (type === 'approve' && this.selected_approve.comments === '') {
-    //   this.selectedLeaveStatus = null;
-    // } else if (type === 'extend' && this.selected_approve.reasonForExtend === '') {
-    //   this.selectedLeaveStatus = null;
-    // } else 
-      if (type === 'reject') {
+  }
+     if (!trimmedValue) {
+    this.selectedLeaveStatus = null;
+  }
+  }
+
+
+  onCommentChange() {
+    const reject = this.selected_approve?.rejectedReason?.trim();
+    // If ALL 3 fields are empty → remove chip highlight
+    if (reject) {
       this.selectedLeaveStatus = null;
     }
   }
-  }
-
-  // only remove highlight for the correct section when text is empty
-
-}
 
   //function call to get the data
   functioncall() {
@@ -865,6 +849,7 @@ ifreasonnull(value: any, type: 'approve' | 'extend' | 'reject') {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
+    this.selectedLeaveStatus = null; 
   }
 
   // Function to handle toggling Extend option
@@ -877,6 +862,7 @@ ifreasonnull(value: any, type: 'approve' | 'extend' | 'reject') {
     // Clear data related to approve Relieving and Discontinue
     this.clearApproveData();
     this.clearDiscontinueData();
+    this.selectedLeaveStatus = null; 
   }
 
   // Function to handle toggling Discontinue option
@@ -889,6 +875,7 @@ ifreasonnull(value: any, type: 'approve' | 'extend' | 'reject') {
     // Clear data related to Early Relieving and Extend
     this.clearApproveData();
     this.clearExtendData();
+    this.selectedLeaveStatus = null; 
   }
 
   // Function to clear data related to Early Relieving

@@ -200,7 +200,7 @@
           <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
             placeholder="Please provide comments" name="earlyrelievingreason" #earlyrelievingreason="ngModel"
             maxlength="250" [(ngModel)]="selected_approve.comments"
-            (ngModelChange)="ifreasonnull(selected_approve?.comments, 'approve')" required rows="3"></textarea>
+            (ngModelChange)="ifreasonnull(selected_approve?.comments)" required rows="3"></textarea>
           <div class="textarea-count-text">{{selected_approve.comments?.length?selected_approve.comments?.length:0}}/250
           </div>
           <div class="error-msg">
@@ -243,7 +243,7 @@
           <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
             placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
             [(ngModel)]="selected_approve.reasonForExtend" maxlength="250"
-             (ngModelChange)="ifreasonnull(selected_approve.reasonForExtend, 'extend')" required rows="3"></textarea>
+             (ngModelChange)="ifreasonnull(selected_approve.reasonForExtend)" required rows="3"></textarea>
           <div class="textarea-count-text">
             {{selected_approve.reasonForExtend?.length?selected_approve.reasonForExtend?.length:0}}/250</div>
             <div class="error-msg">
@@ -268,7 +268,7 @@
           <textarea type="text" class="form-control custom-input" id="Descriptiondetails" name="Descriptiondetails"
             aria-label="Description" rows="3" maxlength="250" placeholder="Please provide reason"
             #Descriptiondetails="ngModel" autocomplete="off"
-            (ngModelChange)="ifreasonnull(selected_approve.rejectedReason, 'reject')"
+            (ngModelChange)="ifreasonnull(selected_approve.rejectedReason)"(ngModelChange)="onCommentChange()"
             [(ngModel)]="selected_approve.rejectedReason" required></textarea>
           <div class="textarea-count-text">{{selected_approve.rejectedReason?.length ?
             selected_approve.rejectedReason.length : 0}}/250</div>

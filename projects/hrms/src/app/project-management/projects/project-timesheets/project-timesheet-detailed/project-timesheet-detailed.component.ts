@@ -44,10 +44,7 @@ export class ProjectTimesheetDetailedComponent {
       next: (res: any) => {
         const rawProjects = res?.data || [];
         this.selectedProject= rawProjects[0]?.project?.projectName
-       this.clientId = rawProjects[0]?.client?.clientId;
-
-        console.log(this.clientId);
-        
+       this.clientId = rawProjects[0]?.client?.clientId;   
         this.projectEmployeeDetails = rawProjects.flatMap((item: any) =>
           item.project.resources.map((resource: any) => ({
             employee: resource.employee,

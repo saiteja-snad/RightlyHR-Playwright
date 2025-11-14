@@ -113,10 +113,8 @@
                                         </div> -->
                                           <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
-                                        <div>
-                                            <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
-                                                {{ day.dailySummary.loggedHHMM }}
-                                            </a>
+                                        <div class="cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                            <u>{{ day.dailySummary.loggedHHMM }}</u>
                                         </div>
                                         <div class="d-flex custom-text">
                                             <div [style.color]="day.dailySummary.textColor">{{day.dailySummary.legendCode}}</div>

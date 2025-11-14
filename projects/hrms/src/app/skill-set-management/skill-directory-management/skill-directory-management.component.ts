@@ -304,10 +304,6 @@ export class SkillDirectoryManagementComponent {
     if (this.selectedSkills?.length > 0) {
       params.skillSearch = this.selectedSkills.join(',');
     }
-    if (this.monthStartDate && this.monthEndDate) {
-      params.fromDate = this.monthStartDate.toISOString();
-      params.toDate = this.monthEndDate.toISOString();
-    }
     if (this.searchQuery?.trim()) {
       params.searchQuery = this.searchQuery.trim();
     }
@@ -612,5 +608,7 @@ export class SkillDirectoryManagementComponent {
     if (normalized === 'active') return 'status-active';
     return '';
   }
-
+  trackByIndex(index: number) {
+    return index;
+  }
 }

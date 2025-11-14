@@ -202,7 +202,7 @@
           </p-tablist>
           <!-- Skills -->
           <p-tabpanel value="0">
-            <div class="skills-container custom-offcanvas-content pt-3">
+            <div class="skills-container custom-offcanvas-content pt-3 pe-2">
               @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) {
               <!-- Technical Skills -->
               @if (selectedEmployee?.techSkills?.length) {
@@ -265,7 +265,7 @@
                         Phases ({{ proj.phasesCount }})
                       </a>
                     </p-chip>
-                  </div>         
+                  </div>
                 </div>
               </div>
               } @else {
@@ -364,8 +364,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (phase of selectedProject?.phases; track $index) {
-              <tr *ngFor="let phase of selectedPhases">
+              <tr *ngFor="let phase of selectedPhases; trackBy: trackByIndex">
                 <td>{{ phase.name }}</td>
                 <td>{{ phase.startDate | date:'MMM dd, yyyy' }}</td>
                 <td>{{ phase.endDate | date:'MMM dd, yyyy' }}</td>
@@ -375,7 +374,6 @@
                   </span>
                 </td>
               </tr>
-              }
             </tbody>
           </table>
         </div>

@@ -29,7 +29,6 @@
     padding: 0.25rem;
     text-decoration: underline;
   }
-
   .Phase-link {
     color: var(--primary-color);
   }
@@ -450,13 +449,33 @@
 }
 
 .popup-table-wrapper {
-  border-radius: 0.5rem;
+  .popup-table-scroll-container {
+    border: 1px solid #D1D8E3 !important;
+    border-bottom: 1px solid #D1D8E3 !important;
+    border-radius: 0.5rem !important;
+  }
 
   th:first-child {
-    border-top-left-radius: 0.325rem;
+    border-top-left-radius: 0.5rem;
+    border-left: 0px !important;
+  }
+
+  th {
+    border-top: 0px !important;
   }
 
   th:last-child {
-    border-top-right-radius: 0.325rem;
+    border-top-right-radius: 0.5rem;
+    border-right: 0px !important;
+  }
+
+  td:first-child {
+    border-top-left-radius: 0.5rem;
+    border-left: 0px !important;
+  }
+
+  td:last-child {
+    border-top-right-radius: 0.5rem;
+    border-right: 0px !important;
   }
 }

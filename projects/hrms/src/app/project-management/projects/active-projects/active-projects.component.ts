@@ -193,7 +193,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform = this.fb.group({
       updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
       updateclientName: [null, Validators.required],
-      updatecode: [null, [Validators.required, this.formValidation.maxCharactersValidator(20)]],
+      updatecode: [null, [Validators.required,  Validators.maxLength(5)]],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],
@@ -400,9 +400,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     const updatedProject = {
       ...this.selectedProject,
       status: 'Inactive',
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo?.employeeId)
     };
-    this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
+    this.http.putData(`Project/${this.selectedProject?.projectId}`, updatedProject).subscribe({
       next: (res) => {
         this.http.setnewcountDetailsfornewprojectcount()
         this.conformationPopup.openSuccessModal('Project marked as Inactive successfully');

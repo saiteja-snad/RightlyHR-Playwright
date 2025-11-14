@@ -154,12 +154,16 @@
           <div class="col-md-6 mb-3">
             <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="updatecode" maxlength="20"
+            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"  formControlName="updatecode" maxlength="6"
               placeholder="Please enter project code">
             <div class="error-msg"
-              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.invalid">
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['required']">
               Project Code is required
             </div>
+            <div class="error-msg"
+            *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
+            Project Code cannot exceed 5 characters
+          </div>
           </div>
 
           <!-- Project Name -->

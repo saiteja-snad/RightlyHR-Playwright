@@ -400,3 +400,44 @@
 .popup-loader {
   height: 100dvh;
 }
+
+.status-closed {
+  color: #9AA2A7;
+}
+
+.status-extended {
+  color: #0056E6;
+}
+
+.status-yet-to-start {
+  color: #08B1FA;
+}
+
+.status-hold {
+  color: #EA362C;
+}
+
+.status-completed {
+  color: #00D520;
+}
+
+.status-active {
+  color: #00a912;
+}
+
+
+.status-in-progress {
+  color: #FF9500;
+}
+
+.popup-table-wrapper {
+  border-radius: 0.5rem;
+
+  th:first-child {
+    border-top-left-radius: 0.325rem;
+  }
+
+  th:last-child {
+    border-top-right-radius: 0.325rem;
+  }
+}

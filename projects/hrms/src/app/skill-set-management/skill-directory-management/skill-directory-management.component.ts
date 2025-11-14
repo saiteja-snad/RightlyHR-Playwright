@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { Chip } from "primeng/chip";
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -93,8 +93,10 @@ export class SkillDirectoryManagementComponent {
   selectedSkillKey: string = ''
   noDataFound = false;
   chartLoader = false;
+  selectedProject: any = null;
+  selectedPhases: any[] = [];
 
-  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer, private modalService: NgbModal,
     private offcanvasService: NgbOffcanvas, private openmodalservice: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
@@ -314,11 +316,17 @@ export class SkillDirectoryManagementComponent {
       next: (res: any) => {
         this.isloading = false;
         this.spinnerLoaderforallrecoders = false;
-
         if (res?.success && Array.isArray(res?.data?.items) && res.data.items.length > 0) {
-          this.MySkills = res.data.items;
+          this.MySkills = res.data.items.map((emp: any) => {
+            emp.projects = emp.projects?.map((project: any) => ({
+              ...project,
+              phasesCount: project?.phases?.length || 0
+            })) || [];
+            return emp;
+          });
           this.totalCount = res.data.totalCount || this.MySkills.length;
           this.noDataFound = false;
+
         } else {
           this.MySkills = [];
           this.totalCount = 0;
@@ -592,15 +600,31 @@ export class SkillDirectoryManagementComponent {
   }
 
   isAnyFilterApplied(): boolean {
-  return (
-    (this.selectedStatus && this.selectedStatus !== 'All Status') ||
-    (this.selectedSkills && this.selectedSkills.length > 0) ||
-    (this.resourceSearchQuery && this.resourceSearchQuery.trim() !== '') ||
-    (this.searchQuery && this.searchQuery.trim() !== '') ||
-    (this.displayLabel && this.displayLabel.trim() !== '') ||
-    (this.date && this.date.length > 0)
-  );
-}
-
+    return (
+      (this.selectedStatus && this.selectedStatus !== 'All Status') ||
+      (this.selectedSkills && this.selectedSkills.length > 0) ||
+      (this.resourceSearchQuery && this.resourceSearchQuery.trim() !== '') ||
+      (this.searchQuery && this.searchQuery.trim() !== '') ||
+      (this.displayLabel && this.displayLabel.trim() !== '') ||
+      (this.date && this.date.length > 0)
+    );
+  }
+  openModal(content: any, project: any) {
+    this.selectedProject = project;
+    this.selectedPhases = project?.phases || [];
+    this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
+  }
+  getStatusClass(status: string): string {
+    if (!status) return '';
+    const normalized = status.toLowerCase();
+    if (normalized === 'yet to start') return 'status-yet-to-start';
+    if (normalized === 'in progress') return 'status-in-progress';
+    if (normalized === 'extended') return 'status-extended';
+    if (normalized === 'hold') return 'status-hold';
+    if (normalized === 'completed') return 'status-completed';
+    if (normalized === 'closed') return 'status-closed';
+    if (normalized === 'active') return 'status-active';
+    return '';
+  }
 
 }

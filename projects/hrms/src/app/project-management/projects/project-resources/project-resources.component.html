@@ -26,7 +26,7 @@
                             <th class="text-center">End Date</th>
                             <th class="text-center">Allocated Hours</th>
                             <th>Timesheet Approval Authority</th>
-                            <th>Status</th>
+                            <th class="text-center">Status</th>
                             @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <th class="text-center">{{"Action" | translate}}</th>

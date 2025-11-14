@@ -18,7 +18,7 @@
                     <table class="w-100">
                         <thead>
                             <th>Project Name</th>
-                            <th>Phase / Milestone Name</th>
+                            <th class="text-center">Phase / Milestone Name</th>
                             <th class="text-center">Start Date</th>
                             <th class="text-center">End Date</th>
                             <th class="text-center">Kickoff Date</th>
@@ -36,7 +36,7 @@
                             <ng-container *ngIf="(phaseData?.length ?? 0) > 0; else noDataTemplate">
                                 <tr *ngFor="let data of phaseData">
                                     <td>{{ data?.project?.projectName || '-' }}</td>
-                                    <td>{{ data?.phaseName || '-' }}</td>
+                                    <td class="text-center">{{ data?.phaseName || '-' }}</td>
                                     <td class="text-center">{{ data?.startDate | dateformat }}</td>
                                     <td class="text-center">{{ data?.endDate | dateformat }}</td>
                                     <td class="text-center">{{ data?.kickoffDate | dateformat }}</td>

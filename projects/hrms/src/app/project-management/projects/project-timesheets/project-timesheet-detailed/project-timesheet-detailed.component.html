@@ -5,8 +5,8 @@
             <thead>
                 <tr>
                     <th>Resource Name</th>
-                    <th>Role</th>
-                    <th>Departments</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">Department</th>
                     <th class="text-center">Phases / Milestones</th>
                     <th class="text-center">Total Logged Hours</th>
                 </tr>
@@ -19,9 +19,9 @@
                             {{ project?.employee?.name }}
                         </a>
                     </td>
-                    <td>
+                    <td class="text-center">
                         @if(project?.roles) {
-                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                        <div class="d-flex align-items-center gap-2 flex-wrap ">
                             <p-chip *ngFor="let role of project.roles.split(',')" [label]="role.trim()" />
                         </div>
 
@@ -29,9 +29,9 @@
                         -
                         }
                     </td>
-                    <td>
+                    <td class="text-center">
                         @if(project?.departments) {
-                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                        <div class="d-flex align-items-center gap-2 flex-wrap ">
                             <p-chip *ngFor="let dept of project.departments.split(',')" [label]="dept.trim()" />
                         </div>
                         } @else {

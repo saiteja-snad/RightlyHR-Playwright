@@ -77,7 +77,7 @@ export class SidenavComponent implements OnInit {
     },
     //Card Management
     {
-      label: 'Cards Management', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/policies.png',
+      label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png',
       route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' }
     },
   ];
@@ -138,13 +138,13 @@ export class SidenavComponent implements OnInit {
 
   isActiveprojectManagement(): boolean {
     const currentUrl = this.router.url;
-    // ✅Active for pending-approvals and its subroutes
+    // Active for pending-approvals and its subroutes
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
   }
 
   isActiveskillsetManagement(): boolean {
     const currentUrl = this.router.url;
-    // ✅Active for pending-approvals and its subroutes
+    // Active for pending-approvals and its subroutes
     return currentUrl === '/skill-management' || currentUrl.startsWith('/skill-management');
   }
 

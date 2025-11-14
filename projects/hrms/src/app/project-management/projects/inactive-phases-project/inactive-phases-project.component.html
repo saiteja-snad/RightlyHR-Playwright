@@ -19,15 +19,15 @@
                         <thead>
                             <th>Project Name</th>
                             <th>Phase / Milestone Name</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Kickoff Date</th>
-                            <th>Effective Date</th>
-                            <th>Allocated Hours</th>
+                            <th class="text-center">Start Date</th>
+                            <th class="text-center">End Date</th>
+                            <th class="text-center">Kickoff Date</th>
+                            <th class="text-center">Effective Date</th>
+                            <th class="text-center">Allocated Hours</th>
                             <th>Timesheet Approval Authority</th>
                             <th class="text-center">Phase / Milestone Description</th>
-                            <th>Status</th>
-                            <th>Status Effective Date</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Status Effective Date</th>
                             @if((rbac.allowedToAccess('Project Phases Tab.update') || rbac.allowedToAccess('Project PhasesTab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <th class="text-center">{{"Action" | translate}}</th>
@@ -38,11 +38,11 @@
                                 <tr *ngFor="let data of phaseData">
                                     <td>{{ data?.project?.projectName || '-' }}</td>
                                     <td>{{ data?.phaseName || '-' }}</td>
-                                    <td>{{ data?.startDate | dateformat }}</td>
-                                    <td>{{ data?.endDate | dateformat }}</td>
-                                    <td>{{ data?.kickoffDate | dateformat }}</td>
-                                    <td>{{ data?.effectiveDate | dateformat }}</td>
-                                    <td>{{ data?.allocatedHours || '-' }}</td>
+                                    <td class="text-center">{{ data?.startDate | dateformat }}</td>
+                                    <td class="text-center">{{ data?.endDate | dateformat }}</td>
+                                    <td class="text-center">{{ data?.kickoffDate | dateformat }}</td>
+                                    <td class="text-center">{{ data?.effectiveDate | dateformat }}</td>
+                                    <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
                                     <td>{{ data?.pendingApprovalAuthority?.name  || '-'}}</td>
                                     <td class="text-center">
                                         <div>
@@ -55,7 +55,7 @@
                                             <ng-template #noReason><span>-</span></ng-template>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <div>
                                             <span>{{ formatStatus(data?.status) || '-' }}</span>
                                             <ng-container *ngIf="data.reason && data.status?.toLowerCase() !== 'in progress'; else noStatusReason">

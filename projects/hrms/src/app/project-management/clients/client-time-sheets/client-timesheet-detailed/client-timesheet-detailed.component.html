@@ -18,7 +18,7 @@
                                 <ng-template pTemplate="header">
                                     <tr>
                                         <th>Resource Name</th>
-                                        <th>Role</th>
+                                        <th class="text-center">Role</th>
                                         <th class="text-center">Start Date</th>
                                         <th class="text-center">Days Spent</th>
                                         <th class="text-center">Logged Hours</th>
@@ -31,7 +31,7 @@
                                                 {{ entry?.employee?.name}}
                                             </a>
                                         </td>
-                                        <td>{{ entry?.roleName }}</td>
+                                        <td class="text-center">{{ entry?.roleName }}</td>
                                         <td class="text-center">{{ entry?.startDate | dateformat }}</td>
                                         <td class="text-center">{{ entry?.daysSpent }}</td>
                                         <td class="text-center">{{ entry?.loggedHours }}</td>

@@ -86,7 +86,8 @@ export class ClientTimesheetDetailedComponent {
       resourceEndDate: phase.resourceEndDate,
       resourceRole: phase.resourceRole,
       loggedHours: phase.loggedHours,
-      resourceStatus: phase.resourceStatus
+      resourceStatus: phase.resourceStatus,
+          allocatedHours:phase.allocatedHours
     }));
 
     this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });

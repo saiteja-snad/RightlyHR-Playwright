@@ -12,7 +12,6 @@
 
     td {
         border: 1px solid #CCDAEC !important;
-        background-color: #FFFFFF !important;
     }
 
     th {
@@ -32,6 +31,7 @@
 
     td:first-child {
         border-left: 0px !important;
+        background-color: #FFF !important;
     }
 
     td:last-child {

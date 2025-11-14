@@ -202,7 +202,7 @@ getAllocationDetails$ = new BehaviorSubject<IHoursAllocationViewModel[]>([]);
       .subscribe({
         next: (res: any) => {
           
-          this.modal.openSuccessModal(`${res.data.entityValue.name} Work hours allocation has been inactivated.`);
+          this.modal.openSuccessModal(`${res.data.entityValue.name} Work hours allocation has been Inactivated.`);
           this.getAllhoursallocations();
         },
         error: (err: any) => {

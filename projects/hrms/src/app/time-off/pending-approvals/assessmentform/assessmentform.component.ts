@@ -57,6 +57,7 @@ export class AssessmentformComponent {
   @ViewChild('cancelmodal') cancelmodal!: any;
   Status: any;
   employeedata ={} as any;
+  selectedLeaveStatus: any;
   constructor(
     private router: Router,
     private http: HttpService,
@@ -81,7 +82,26 @@ export class AssessmentformComponent {
       this.selected_approve = this.formemployeedetails.entity;
     }
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'approved') {
+    this.selected_approve.comments = 'Approved';
 
+  }
+}
+onStatusExtendSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'approved') {
+     this.selected_approve.reasonForExtend ='Approved'
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+         this.selected_approve.rejectedReason = 'Approved';
+    }
+  }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -142,6 +162,18 @@ getEmployeeId(EmployeeId:number): void {
   } else {
     this.issubmitdiable = false;
   }
+     if (!trimmedValue) {
+    this.selectedLeaveStatus = null;
+  }
+  }
+
+
+  onCommentChange() {
+    const reject = this.selected_approve?.rejectedReason?.trim();
+    // If ALL 3 fields are empty → remove chip highlight
+    if (reject) {
+      this.selectedLeaveStatus = null;
+    }
   }
 
   //function call to get the data
@@ -817,6 +849,7 @@ getEmployeeId(EmployeeId:number): void {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
+    this.selectedLeaveStatus = null; 
   }
 
   // Function to handle toggling Extend option
@@ -829,6 +862,7 @@ getEmployeeId(EmployeeId:number): void {
     // Clear data related to approve Relieving and Discontinue
     this.clearApproveData();
     this.clearDiscontinueData();
+    this.selectedLeaveStatus = null; 
   }
 
   // Function to handle toggling Discontinue option
@@ -841,6 +875,7 @@ getEmployeeId(EmployeeId:number): void {
     // Clear data related to Early Relieving and Extend
     this.clearApproveData();
     this.clearExtendData();
+    this.selectedLeaveStatus = null; 
   }
 
   // Function to clear data related to Early Relieving

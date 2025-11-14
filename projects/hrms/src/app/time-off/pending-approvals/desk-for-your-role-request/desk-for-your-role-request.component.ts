@@ -33,6 +33,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   rejectForm!: FormGroup;
   searchValue: any
+  selectedLeaveStatus: any;
   constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService, public rbac: RbacService,
     private fb: FormBuilder, public formValidation: FormValidationService,
     private signalService: SignalsService,) { }
@@ -43,11 +44,29 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.getexpensespendingforyou();
     this.intializeRejectForm()
   }
+// onStatusApproveSelect(status: string) {
+//   this.selectedLeaveStatus = status;
 
+//   if (status === 'approved') {
+//     this.approveForm.get('comments')?.setValue('Approved');
+//   }
+// }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
+     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getexpensespendingforyou(): void {

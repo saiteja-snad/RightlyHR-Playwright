@@ -243,7 +243,7 @@
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
+                        #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" (ngModelChange)="onCommentChange($event)"
                         (keydown)="formsValidation.restrictInitialSpace($event)" required [disabled]="!isCheckBoxEnabledEarly"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
@@ -253,6 +253,12 @@
                         <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a
                             space</span>
                     </div>
+                </div>
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
                 </div>
                 }
                 }
@@ -283,7 +289,7 @@
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
-                        [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
+                        [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"(ngModelChange)="onCommentChange($event)"
                         (keydown)="formsValidation.restrictInitialSpace($event)" [disabled]="!isCheckBoxEnabledExtended"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250
@@ -294,6 +300,12 @@
                         <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a
                             space</span>
                     </div>
+                </div>
+               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
                 </div>
                 }
                 }
@@ -316,7 +328,7 @@
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label mb-2">{{"Comments" |
                         translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
+                        placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"(ngModelChange)="onCommentChange($event)"
                         #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"
                         required [disabled]="!isCheckBoxEnabledRegular"></textarea>
                     <div class="textarea-count-text">
@@ -326,6 +338,12 @@
                         <span *ngIf="comments.errors?.['required']">Comments are required</span>
                         <span *ngIf="comments.errors?.['pattern']">Comments should not start with a space</span>
                     </div>
+                </div>
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
                 </div>
                 }
                 }
@@ -368,7 +386,7 @@
                         {{ "Reject Reason" | translate }}<span class="text-danger">*</span>
                     </label>
 
-                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1" formControlName="notes"
+                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1" formControlName="notes" (ngModelChange)="onCommentChange($event)"
                         placeholder="Please enter reject reason" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"></textarea>
 
                     <div class="textarea-count-text">
@@ -384,6 +402,12 @@
                             Reject Reason cannot exceed 250 characters
                         </div>
                     </div>
+                </div>
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
                 </div>
 
                 <div class="custom-modal-footer">

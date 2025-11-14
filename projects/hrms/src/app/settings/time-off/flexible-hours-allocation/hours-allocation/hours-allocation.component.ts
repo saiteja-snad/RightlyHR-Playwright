@@ -77,12 +77,14 @@ export class HoursAllocationComponent {
   ) {}
 
   ngOnInit(): void {
-    this.yearsList = this.getYears();
+    // this.yearsList = this.getYears();
     this.inititializeForm();
     this.getAllLocations();
     this.handleFormValueChanges();
     this.getAllroles();
-    this.getpastdatesallowed();
+    const currentYear = moment().year();
+    this.minEffectiveDate = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
+    this.maxEffectiveDate = moment(`${currentYear}-12-31`).format('YYYY-MM-DD');
   }
   //get past dates allowed for the work hours effective from
   getpastdatesallowed() {
@@ -120,8 +122,8 @@ export class HoursAllocationComponent {
   //to initalize the form
   inititializeForm() {
     this.hoursAllocationForm = this.fb.group({
-      year: ['', Validators.required],
-      location: [{ value: '', disabled: true }, Validators.required],
+      // year: ['', Validators.required],
+      location: [{ value: ''}, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
       type: [{ value: '', disabled: true }, Validators.required],
@@ -230,13 +232,15 @@ export class HoursAllocationComponent {
 
   getAllEmployees() {
     // if (this.hoursAllocationForm?.get('type')?.value === 'Employee') {
+    const selectedShifts = this.hoursAllocationForm.get('shift')?.value || [];  
+    const shiftIdsString = selectedShifts.map((s: any) => s.id).join(',');
     const payload = {
       locationId: this.hoursAllocationForm.get('location')?.value?.id,
       subLocationId: this.hoursAllocationForm.get('subLocation')?.value?.id,
-      shiftId: this.hoursAllocationForm.get('shift')?.value?.id,
+      shiftIds: shiftIdsString,
     };
     this.http
-      .getDataWithQueryParams('Employeedata/getAll', payload)
+      .getDataWithQueryParams('Employeedata/getAllByShifts', payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -327,7 +331,6 @@ export class HoursAllocationComponent {
     // });
     const ids = employeeIds.map((emp: any) => emp.employeeId);
     let params = new HttpParams()
-      .set('year', this.hoursAllocationForm.get('year')?.value)
       .set('entityType', 'employee');
     ids.forEach((id: number) => {
       params = params.append('entityValues', id);
@@ -368,18 +371,15 @@ export class HoursAllocationComponent {
                 effectivedate: [
                   {
                     value: '',
-                    disabled: !this.hoursAllocationForm.get('year')?.value,
                   },
                   [
                     Validators.required,
-                    this.validateDynamicEffectiveDate(),
-                    this.validateEffectiveDate?.bind(this),
+                    this.validateEffectiveFromDate?.bind(this),
                   ],
                 ],
                 effectiveto: [
                   {
                     value: '',
-                    disabled: !this.hoursAllocationForm.get('year')?.value,
                   },
                   [
                     Validators.required,
@@ -417,17 +417,31 @@ export class HoursAllocationComponent {
       return null;
     };
   }
-  validateEffectiveDate(control: any) {
-    if (!control.value) return null;
-    const selectedDate = moment(control.value, 'YYYY-MM-DD');
-    const startOfCurrentMonth = moment().startOf('day').subtract(this.pastDaysAllowed, 'days').format('YYYY-MM-DD'); // 1st day of current month
-    //  If selected date is before the start of current month → invalid
-    if (selectedDate.isBefore(startOfCurrentMonth, 'day')) {
-      return { invalidDate: true };
-    }
-    // Otherwise valid (current or future)
-    return null;
+  validateEffectiveFromDate(control: any) {
+  if (!control.value) return null;
+
+  const selectedDate = moment(control.value, 'YYYY-MM-DD');
+  const currentYear = moment().year();
+
+  // Check if year is not equal to current year
+  if (selectedDate.year() !== currentYear) {
+    return { invalidDate: true };
   }
+
+  return null; // Valid date
+
+}
+  // validateEffectiveDate(control: any) {
+  //   if (!control.value) return null;
+  //   const selectedDate = moment(control.value, 'YYYY-MM-DD');
+  //   const startOfCurrentMonth = moment().startOf('day').subtract(this.pastDaysAllowed, 'days').format('YYYY-MM-DD'); // 1st day of current month
+  //   //  If selected date is before the start of current month → invalid
+  //   if (selectedDate.isBefore(startOfCurrentMonth, 'day')) {
+  //     return { invalidDate: true };
+  //   }
+  //   // Otherwise valid (current or future)
+  //   return null;
+  // }
 
   // Validator to ensure effectiveToDate is not before effectiveFromDate
   validateEffectiveToDate(control: AbstractControl): ValidationErrors | null {
@@ -517,26 +531,26 @@ export class HoursAllocationComponent {
       });
     };
 
-    form
-      .get('year')
-      ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        form.get('location')?.reset();
-        resetAndDisable(['subLocation', 'shift', 'type', 'employeeId']);
-      });
+    // form
+    //   .get('year')
+    //   ?.valueChanges.pipe(takeUntil(this.destroy$))
+    //   .subscribe(() => {
+    //     form.get('location')?.reset();
+    //     resetAndDisable(['subLocation', 'shift', 'type', 'employeeId']);
+    //   });
 
     form
       .get('location')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetAndDisable(['subLocation', 'shift', 'type', 'employeeId']);
+        resetAndDisable(['subLocation', 'shift', 'employeeId']);
       });
 
     form
       .get('subLocation')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetAndDisable(['shift', 'type', 'employeeId']);
+        resetAndDisable(['shift', 'employeeId']);
       });
 
     form

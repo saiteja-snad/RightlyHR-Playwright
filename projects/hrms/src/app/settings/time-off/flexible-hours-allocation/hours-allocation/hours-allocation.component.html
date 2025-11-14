@@ -3,7 +3,7 @@
         <div class="card custom-background-card p-3 mb-3">
             <div class="row">
                 <!-- Year -->
-                <div class="col-md-4 mb-3">
+                <!-- <div class="col-md-4 mb-3">
                     <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
@@ -18,7 +18,7 @@
                         class="error-msg">
                         <div *ngIf="hoursAllocationForm.get('year')?.errors?.['required']">Please select year</div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Location -->
                 <div class="col-md-4 mb-3">
@@ -69,13 +69,13 @@
                     <label for="shift" class="form-label custom-label mb-2">
                         {{ "Shift" | translate }}<span class="text-danger">*</span>
                     </label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                             [showClear]="false" formControlName="shift" placeholder="Please select shift" resetFilterOnHide="true"
                             class="form-select custom-select" (onChange)="categoryenable()"> 
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
-                        </p-select>
+                        </p-multiSelect>
                     </div>
                     <div *ngIf="hoursAllocationForm.get('shift')?.touched && hoursAllocationForm.get('shift')?.invalid"
                         class="error-msg">

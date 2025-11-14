@@ -41,7 +41,7 @@
                 <th class="text-center">{{'Allocated By'|translate}}</th>
                 <th class="text-center">{{'Allocated On'|translate}}</th>
                 <th class="text-center">{{'Status'|translate}}</th>
-                <th></th>
+                <!-- <th></th> -->
                 <!-- <th>Last Updated By</th>
                 <th>Last Updated On</th> -->
             </tr>
@@ -60,7 +60,7 @@
                 <td class="text-center">{{ item?.createdBy?.name || '-' }}</td>
                 <td class="text-center">{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
                 <td class="text-center">{{ item?.status ? item?.status:'-'  }}</td>
-                 <td ><div class="dropdown" *ngIf="item.isLatest">
+                 <!-- <td ><div class="dropdown" *ngIf="item.isLatest">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
               </a>
@@ -74,7 +74,7 @@
                   <a class="dropdown-item">Inactive</a>
                 </li>
               </ul>
-            </div></td>
+            </div></td> -->
             </tr>
             }
             } @else {

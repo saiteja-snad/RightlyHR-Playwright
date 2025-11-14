@@ -29,6 +29,7 @@ export default [
             { path: 'remote-login-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/remote-login-eligibility-criteria/remote-login-eligibility-criteria.component').then((m) => m.RemoteLoginEligibilityCriteriaComponent)},
             { path: 'late-login-alert-configuration', loadComponent: () => import('./attendance-eligibility-criteria/late-login-alert-configuration/late-login-alert-configuration.component').then((m) => m.LateLoginAlertConfigurationComponent)},
             { path: 'extra-hours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/extra-hours-configuration/extra-hours-configuration.component').then((m) => m.ExtraHoursConfigurationComponent)},
+            { path: 'flexible-workhours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/flexible-workhours-configuration/flexible-workhours-configuration.component').then((m) => m.FlexibleWorkhoursConfigurationComponent)},
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },

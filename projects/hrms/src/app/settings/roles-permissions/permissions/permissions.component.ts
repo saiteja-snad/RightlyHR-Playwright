@@ -305,7 +305,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Create',
       'Team Tickets Tab',
       'Late Login Alert Configuration Tab',
-      'Extra Hours Configuration Tab'
+      'Extra Hours Configuration Tab',
+      'Flexible Work Hours Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&
@@ -504,7 +505,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
-    'Extra Hours Configuration Tab'
+    'Extra Hours Configuration Tab',
+    'Flexible Work Hours Configuration Tab'
   ];
   settingsAssetConfigurationFields = [
     'Vendor Details',

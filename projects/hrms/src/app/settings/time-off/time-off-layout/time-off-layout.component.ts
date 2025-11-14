@@ -8,10 +8,11 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 import { WfhAllocationTabsComponent } from "../flexible-wfh-allocation/wfh-allocation-tabs/wfh-allocation-tabs.component";
+import { HoursAllocationTabsComponent } from "../flexible-hours-allocation/hours-allocation-tabs/hours-allocation-tabs.component";
 @Component({
   selector: 'app-time-off-layout',
-  imports: [RouterModule, CommonModule, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent, 
-    NgbPopoverModule, SettingsHeaderComponent, WfhAllocationTabsComponent],
+  imports: [RouterModule, CommonModule, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent,
+    NgbPopoverModule, SettingsHeaderComponent, WfhAllocationTabsComponent, HoursAllocationTabsComponent],
   templateUrl: './time-off-layout.component.html',
   styleUrl: './time-off-layout.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -45,6 +46,7 @@ export class TimeOffLayoutComponent implements OnInit {
       '/settings/timeoff-configurations/eligibility-criterias': MODULE_INFOS.SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO,
       '/settings/timeoff-configurations/load-entitlements': MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
       '/settings/timeoff-configurations/flexible-wfh-allocation': MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
+      '/settings/timeoff-configurations/flexible-workhours-allocation':MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

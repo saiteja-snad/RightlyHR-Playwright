@@ -188,7 +188,7 @@
                       </td>
 
                       <td>{{ entry.fieldName }}</td>
-                      <td>{{ entry.requestedDate }}</td>
+                      <td>{{ entry.requestedDate | date }}</td>
                       <td>{{ entry.oldValue }}</td>
                       <td>{{ entry.newValue }}</td>                     
                       @if (showhideaction) {

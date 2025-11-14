@@ -90,3 +90,14 @@ table th:first-child {
   color: #FF9500 ;
 }
 
+
+.tooltip-text {
+  display: inline-block;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  line-height: 1.4;
+  padding-bottom: 2px;
+}

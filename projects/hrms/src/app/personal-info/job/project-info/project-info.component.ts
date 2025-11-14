@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
@@ -8,6 +8,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { DropdownModule } from 'primeng/dropdown';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipModule } from 'primeng/tooltip';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -24,12 +25,13 @@ import { TooltipModule } from 'primeng/tooltip';
   templateUrl: './project-info.component.html',
   styleUrls: ['./project-info.component.scss'],
 })
-export class ProjectInfoComponent implements OnInit {
-  loading = false;
+export class ProjectInfoComponent implements OnInit, OnDestroy {
+  loader = false;
   projectData: any[] = [];
   showPhasePopup = false;
   selectedProject: any = null;
   employeeId: number | null = null;
+  subscription!: Subscription
 
   // Year dropdown data
   availableYears: { label: string; value: number }[] = [];
@@ -83,9 +85,9 @@ export class ProjectInfoComponent implements OnInit {
 
   getProjectSummary(): void {
     if (!this.employeeId) return;
-    this.loading = true;
+    this.loader = true;
 
-    this.http
+    this.subscription = this.http
       .getData(
         `ProjectResource/resource-summary?year=${this.selectedYear}&employeeId=${this.employeeId}`
       )
@@ -96,12 +98,12 @@ export class ProjectInfoComponent implements OnInit {
           } else {
             this.projectData = [];
           }
-          this.loading = false;
+          this.loader = false;
         },
         error: (err: any) => {
           console.error('Error fetching project summary:', err);
           this.projectData = [];
-          this.loading = false;
+          this.loader = false;
         },
       });
   }
@@ -131,18 +133,46 @@ export class ProjectInfoComponent implements OnInit {
   }
 
   getStatusClass(status: string): string {
-  if (!status) return '';
+    if (!status) return '';
 
-  const normalized = status.toLowerCase();
+    const normalized = status.toLowerCase();
 
-  if (normalized === 'yet to start') return 'status-yet-to-start';
-  if (normalized === 'in progress') return 'status-in-progress';
-  if (normalized === 'extended') return 'status-extended';
-  if (normalized === 'hold') return 'status-hold';
-  if (normalized === 'completed') return 'status-completed';
-  if (normalized === 'closed') return 'status-closed';
+    if (normalized === 'yet to start') return 'status-yet-to-start';
+    if (normalized === 'in progress') return 'status-in-progress';
+    if (normalized === 'extended') return 'status-extended';
+    if (normalized === 'hold') return 'status-hold';
+    if (normalized === 'completed') return 'status-completed';
+    if (normalized === 'closed') return 'status-closed';
 
-  return '';
+    return '';
+  }
+
+  convertDecimalToHours(decimalHours: number): string {
+  if (decimalHours == null || isNaN(decimalHours)) return '-';
+
+  const hours = Math.floor(decimalHours);
+  const minutes = Math.round((decimalHours - hours) * 60);
+
+  // handle case like 14.999 -> 15:00
+  const adjustedHours = minutes === 60 ? hours + 1 : hours;
+  const adjustedMinutes = minutes === 60 ? 0 : minutes;
+
+  // return in HH:mm format
+  return `${adjustedHours}:${adjustedMinutes.toString().padStart(2, '0')}`;
 }
 
+shouldShowTooltip(element: HTMLElement): boolean {
+  if (!element) return false;
+  return element.offsetWidth < element.scrollWidth;
+}
+
+
+
+
+
+    ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

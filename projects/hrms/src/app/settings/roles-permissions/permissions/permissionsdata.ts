@@ -7,6 +7,8 @@ export const permissionsData = [
   { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Tabs Sections
   { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
@@ -36,7 +38,9 @@ export const permissionsData = [
   // Attendance Locking
   { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Published Tab', View: false, Update: false, Create: false, Delete: false },
-
+    // Timesheet Locking
+  { fields: 'Timesheet Locking Pending Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Timesheet Locking Published Tab', View: false, Update: false, Create: false, Delete: false },
   //Job Tab
   { fields: 'Job Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },
@@ -899,8 +903,10 @@ export const permissionsData = [
   //Settings Header Icon
   { fields: 'Settings Icon', View: false, Update: false, Create: false, Delete: false },
   //{ fields: 'Employee Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
+
   //My Info Letter Acknowledgement
   { fields: 'My Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
+  
   //Draft Forms MArk As Active Action
   { fields: 'Mark As Active Action', View: false, Update: false, Create: false, Delete: false },
 
@@ -924,7 +930,7 @@ export const permissionsData = [
   { fields: 'Client Documents', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Detailed Tab', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },
@@ -935,7 +941,6 @@ export const permissionsData = [
   { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Task', View: false, Update: false, Create: false, Delete: false },
-
 
   { fields: 'My Team (Timesheet)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Timesheet)', View: false, Update: false, Create: false, Delete: false },
@@ -982,9 +987,9 @@ export const permissionsData = [
   { fields: 'Expenses All Employees List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses Team Manager List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Report - Export', View: false, Update: false, Create: false, Delete: false },
-  //IT Support Settings Tabs Section
- { fields: 'IT Support Configuration', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'IT Support Category', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'IT Support Sub-Category', View: false, Update: false, Create: false, Delete: false },
 
+  //IT Support Settings Tabs Section
+  { fields: 'IT Support Configuration', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Category', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'IT Support Sub-Category', View: false, Update: false, Create: false, Delete: false },
 ];

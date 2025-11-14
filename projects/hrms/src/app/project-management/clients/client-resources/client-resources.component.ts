@@ -22,13 +22,14 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover, 
+  imports: [CommonModule, ReactiveFormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
     DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
 })
 
 export class ClientResourcesComponent implements OnInit, OnDestroy {
+  resourcestartdate: any
   resourcesData = [] as IResource[];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
@@ -77,7 +78,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedEntityRefId: number = 0;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
-    private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute, 
+    private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
@@ -140,7 +141,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
       reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
-      statusEffectiveDate: ['', Validators.required]
+      statusEffectiveDate: ['', ]
     });
 
     this.extendForm = this.fb.group({
@@ -210,7 +211,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
   getclientProjects(clientId: any) {
     this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -228,7 +229,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     if (!event?.value) return;
     const selectedPhaseId = event.value;
     console.log(selectedPhaseId);
-    
+
     const selectedPhase = this.phaseDropdown.find(p => p.value === selectedPhaseId);
     if (selectedPhase) {
       this.selectedPhaseId = selectedPhase.value;
@@ -581,6 +582,10 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     return this.statusActionsMap[normalized] ?? [];
   }
 
+  formatDateToLocalforresource(dateString: string | null): Date | null {
+    if (!dateString) return null;
+    return new Date(dateString); // Converts ISO string to Date object
+  }
   handleAction(action: string, data: any) {
     const config = this.confirmationMessages[action];
     if (!config) return;
@@ -588,6 +593,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       this.openModal(this.updateResourcemodal, 'lg', data);
     } else {
       this.openReasonModal(config.title, data);
+      this.resourcestartdate = this.formatDateToLocalforresource(data?.startDate)
     }
   }
 
@@ -600,7 +606,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
   get newStartDate() { return this.extendForm.get('newStartDate')?.value; }
   get newEndDate() { return this.extendForm.get('newEndDate')?.value; }
-  
+
   openExtendModal(data: any) {
     this.modalData = { data };
     this.extendForm.reset();

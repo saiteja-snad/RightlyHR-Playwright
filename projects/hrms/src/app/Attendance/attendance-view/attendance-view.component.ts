@@ -238,7 +238,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-
+  maxPastDaysAllowed: any;
   //function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
@@ -247,15 +247,22 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       'maxRegularizePerMonth',
       'maxRegularizeHoursPerDay',
       'maxRegularizeHoursPerMonth',
+      'pastDaysAllowed'
     ];
     this.subscription = this.http
       .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
       .subscribe({
         next: (data: any) => {
           this.regularizationValues = data as IPermissionsvalue[];
+          const pastDaysAllowedConfig = this.regularizationValues?.find(
+            (item: any) => item.attribute === 'pastDaysAllowed'
+          );
+          this.maxPastDaysAllowed = pastDaysAllowedConfig ? parseFloat(pastDaysAllowedConfig.value) : undefined;
+          console.log(this.maxPastDaysAllowed, 'maxPastDaysAllowed');
           const maxHoursConfig = this.regularizationValues?.find(
             (item) => item.attribute === 'maxRegularizeHoursPerDay'
           );
+
           const maxHours = maxHoursConfig
             ? parseFloat(maxHoursConfig.value)
             : 2; // default to 2 if not found
@@ -268,6 +275,15 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
           console.log('errors', err);
         },
       });
+  }
+
+  isWithinPastDaysAllowed(date: Date | string): boolean {
+    if (this.maxPastDaysAllowed === undefined) return false;
+    const today = new Date();
+    const selected = new Date(date);
+    // Calculate the difference in days
+    const diff = Math.floor((today.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24));
+    return diff <= this.maxPastDaysAllowed && diff >= 0;
   }
 
   //function to get the day logs
@@ -390,6 +406,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
+          this.getAttendanceCriteria()
           this.dataLoader = false;
           const updatedAttendanceData = response.data.attendanceData.map(
             (item: any) => ({

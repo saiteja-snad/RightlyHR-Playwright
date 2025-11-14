@@ -230,19 +230,15 @@ export class TeamTimesheetsComponent {
     if (this.datepickerForm.invalid) {
       return;
     }
-  const formValue = this.datepickerForm.value;
-  const [startDate, endDate] = formValue.dateRange || [];
-
-  const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
-  const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
-
-  const empId = formValue.resourceId ?? null;
-  const selectedEmployee = this.activeEmplist.find((emp: any) => emp.value === empId);
-  const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
-
-  //  Store it in BehaviorSubject (inside HttpService)
-  this.http.setteamDateRange(start, end, empId, empName);
-
+    const formValue = this.datepickerForm.value;
+    const [startDate, endDate] = formValue.dateRange || [];
+    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
+    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
+    const empId = formValue.resourceId ?? null;
+    const selectedEmployee = this.activeEmplist.find((emp: any) => emp.value === empId);
+    const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
+    //  Store it in BehaviorSubject (inside HttpService)
+    this.http.setteamDateRange(start, end, empId, empName);
     // Trigger your existing API call
     this.page = 1; // Reset to first page on new filter apply
     this.getteamsummary();
@@ -251,30 +247,24 @@ export class TeamTimesheetsComponent {
   // getteamsummary() {
   //   const formValue = this.datepickerForm.value;
   //   const [startDate, endDate] = formValue.dateRange || [];
-
   //   const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
   //   const start = startDate
   //     ? dayjs(startDate).format('YYYY-MM-DD')
   //     : dayjs().startOf('month').format('YYYY-MM-DD');
-
   //   const end = endDate
   //     ? dayjs(endDate).format('YYYY-MM-DD')
   //     : dayjs().endOf('month').format('YYYY-MM-DD');
-
   //   const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
   //   this.loading = true
   //   this.subscription = this.http.getData(url).subscribe({
   //     next: (res: any) => {
   //       this.loading = false
   //       if (res?.success) {
-
   //         this.teamSummaryData = res.data;
   //         this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
   //         console.log(this.totalhrs);
-
   //         this.collectionSize = res.pagination.totalRecords;
-
-  //         // ✅ Extract dates for header dynamically (use first record)
+  //         // Extract dates for header dynamically (use first record)
   //         if (this.teamSummaryData.length > 0) {
   //           this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
   //             dayjs(d.date).format('ddd<br>MMM D')
@@ -291,34 +281,27 @@ export class TeamTimesheetsComponent {
   getteamsummary() {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
-
     const start = startDate
       ? dayjs(startDate).format('YYYY-MM-DD')
       : dayjs().startOf('month').format('YYYY-MM-DD');
-
     const end = endDate
       ? dayjs(endDate).format('YYYY-MM-DD')
       : dayjs().endOf('month').format('YYYY-MM-DD');
-
     let url = `Timesheet/teamsummary?startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
-
     const hasMyTeam = this.rbac.allowedToAccess('My Team (Timesheet).view');
     const hasAllEmployees = this.rbac.allowedToAccess('All Employees (Timesheet).view');
-
-    // ✅ Case 1: Only "My Team (Timesheet).view" — include resourceId
+    // Case 1: Only "My Team (Timesheet).view" — include resourceId
     if (hasMyTeam && !hasAllEmployees) {
       url += `&resourceId=${this.empdata?.employeeId}`;
-
       // Include selected subordinate if chosen
       if (formValue.resourceId) {
         url += `&employeeId=${formValue.resourceId}`;
       }
     }
-    // ✅ Case 2: "All Employees" or both claims — only send employeeId if present
+    // Case 2: "All Employees" or both claims — only send employeeId if present
     else if (formValue.resourceId) {
       url += `&employeeId=${formValue.resourceId}`;
     }
-
     this.loading = true;
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
@@ -327,7 +310,6 @@ export class TeamTimesheetsComponent {
           this.teamSummaryData = res.data;
           this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
           this.collectionSize = res.pagination.totalRecords;
-          // Extract dates for header dynamically (use first record)
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
               dayjs(d.date).format('D MMM<br>ddd')

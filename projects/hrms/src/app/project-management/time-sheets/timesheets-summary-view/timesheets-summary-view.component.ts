@@ -102,11 +102,17 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo()
     this.createDatepickerForm();
+     this.route.queryParams.subscribe(params => {
+      const resoureID = params['id'];
+      if (resoureID) {
+        this.employeeId = parseInt(resoureID)
+      }
+    })
     this.http.getteamDateRangeObservable().subscribe((data) => {
       console.log('Received BehaviorSubject data:', data);
       // Optional check to avoid running on empty initial values
       if (data && (data.startDate || data.endDate || data.employeeId)) {
-        this.employeeId = data.employeeId || null;
+        this.employeeId = data.employeeId || this.employeeId;
         this.startDate = data.startDate;
         this.endDate = data.endDate;
         this.setDefaultmounth();
@@ -371,7 +377,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   projectWiseChart() {
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
     // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code);
+    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item.projectName);
     // Convert "HH:mm" string → numeric hours for plotting
     const data = this.projectTypeData.map((item: any) => {
       const [hours, minutes] = item.hours.split(':').map(Number);

@@ -1,0 +1,344 @@
+<div class="custom-main-component-container">
+    <div class="d-flex gap-3 justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">{{'Timesheet Lock'|translate}}</span></div>
+        <div class="custom-add-btn" class="d-flex gap-3 align-items-center">
+            <button type="button" *ngIf="rbac.allowedToAccess('Timesheet Locking Pending Tab.create')"
+                (click)="openModal(addTimesheetLockModal)" class="custom-btn btn-primary">Add
+                Timesheet Lock</button>
+        </div>
+    </div>
+    <ng-container *ngIf="dataLoad; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>{{'Category Type'|translate}}</th>
+                        <th>{{'From Date'|translate}}</th>
+                        <th>{{'To Date'|translate}}</th>
+                        <th>{{'Effective Date'|translate}}</th>
+                        <th>{{'Status' |translate}}</th>
+                        <th>{{'Created By'|translate}}</th>
+                        <th>{{'Created On'|translate}}</th>
+                        <th class="text-center" style="text-transform: none;" *ngIf="
+                            rbac.allowedToAccess('Timesheet Locking Pending Tab.create') ||
+                            rbac.allowedToAccess('Timesheet Locking Pending Tab.update') ||
+                            rbac.allowedToAccess('Timesheet Locking Pending Tab.delete')">{{'Action'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(TimesheetLockDatacount > 0){
+                    <tr *ngFor="let timesheet of pendingSubmissionData">
+                        <td>{{ timesheet.module.moduleName | lowercase | titlecase }}</td>
+                        <td>{{timesheet.startDate | dateformat}}</td>
+                        <td>{{timesheet.endDate | dateformat}}</td>
+                        <td>{{timesheet.effectiveDate | dateformat}}</td>
+                        <td>{{timesheet.status}}</td>
+                        <td>{{timesheet.addedByEmployee.employeeName}}</td>
+                        <td>{{timesheet.createdDate | dateformat}}</td>
+                        <td class="text-center" *ngIf="
+                            rbac.allowedToAccess('Timesheet Locking Pending Tab.create') ||
+                            rbac.allowedToAccess('Timesheet Locking Pending Tab.update') ||
+                            rbac.allowedToAccess('Timesheet Locking Pending Tab.delete')">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li *ngIf="rbac.allowedToAccess('Timesheet Locking Pending Tab.update')"
+                                        (click)="openUpdateModal(updateTimesheetLockModal, timesheet)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil-fill me-2"></i>{{ 'Update' | translate }}
+                                        </a>
+                                    </li>
+
+                                    <li *ngIf="timesheet.status === 'Pending for Submission' && rbac.allowedToAccess('Timesheet Locking Pending Tab.create')"
+                                        (click)="openPublishModal(publishModal, timesheet)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-box-arrow-up me-2"></i>{{ 'Publish' | translate }}
+                                        </a>
+                                    </li>
+
+                                    <li *ngIf="timesheet.status === 'Pending for Submission' && rbac.allowedToAccess('Timesheet Locking Pending Tab.delete')"
+                                        (click)="openDeleteModal(deleteModal, timesheet)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash-fill me-2"></i>{{ 'Delete' | translate }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }@else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+<!-- Add Timesheet Lock Modal -->
+<ng-template #addTimesheetLockModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Add Timesheet Lock' | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="TimesheetLockForm"
+                (ngSubmit)="addTimesheetLock(TimesheetLockForm)">
+                <div class="row">
+                    <!-- Category Name -->
+                    <div class="col-md-12 mb-3">
+                        <label for="categoryType" class="form-label custom-label custom-label mb-2">{{ 'Category Type' |
+                            translate }}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
+                            <p-select class="custom-select w-100" [options]="categoriesList" optionLabel="moduleName"
+                                [filter]="true" filterBy="moduleName" [showClear]="false" formControlName="categoryType"
+                                resetFilterOnHide="true" placeholder="Please select category type">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.moduleName
+                                    }}</ng-template>
+                                <ng-template let-maker #item>{{ maker.moduleName }}</ng-template>
+                            </p-select>
+                            <div class="error-msg"
+                                *ngIf="TimesheetLockForm.get('categoryType')?.invalid && TimesheetLockForm.get('categoryType')?.touched">
+                                Category Type is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- From Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label custom-label mb-2">{{'From Date' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="fromDate" onkeydown="return false"
+                            (change)="onFromDateChange(TimesheetLockForm)" />
+                        <div class="error-msg"
+                            *ngIf="TimesheetLockForm.get('fromDate')?.invalid && TimesheetLockForm.get('fromDate')?.touched">
+                            From Date is required
+                        </div>
+                    </div>
+
+                    <!-- To Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label custom-label mb-2">{{'To Date'| translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="toDate"onkeydown="return false"
+                            [min]="fromDateString" (change)="onToDateChange(TimesheetLockForm)" />
+                        <div class="error-msg"
+                            *ngIf="TimesheetLockForm.get('toDate')?.invalid && TimesheetLockForm.get('toDate')?.touched">
+                            To Date is required
+                        </div>
+                        <div class="error-msg" *ngIf="toDateInvalid">
+                            To Date cannot be less than From Date
+                        </div>
+                    </div>
+
+                    <!-- Effective Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label custom-label mb-2">{{'Effective Date'| translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="effectiveDate" onkeydown="return false"
+                            [min]="getEffectiveDateMin()" (change)="onEffectiveDateChange(TimesheetLockForm)" />
+                        <div class="error-msg" *ngIf="TimesheetLockForm.get('effectiveDate')?.hasError('required') &&
+                                   TimesheetLockForm.get('effectiveDate')?.touched">
+                            Effective Date is required
+                        </div>
+
+                        <!-- Greater than To Date Validation -->
+                        <div class="error-msg" *ngIf="effectiveDateInvalid">
+                            Effective Date cannot be less than or equal to To Date
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader"
+                        (click)="openModal(confirmationpopup)">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="TimesheetLockForm.invalid || spinnerLoader ||toDateInvalid ||effectiveDateInvalid">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Add' | translate}}</span>
+                        </ng-template>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Update Timesheet Lock Modal -->
+<ng-template #updateTimesheetLockModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">Update Timesheet Lock</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="updateTimesheetLockForm"
+                (ngSubmit)="updateTimesheetLock(updateTimesheetLockForm)">
+                <div class="row">
+                    <!-- Category Type -->
+                    <div class="col-md-12 mb-3">
+                        <label for="reviewCycle" class="form-label custom-label mb-2"><b>{{ 'Category Type' | translate
+                                }}</b><span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
+                        <p-select class="custom-select w-100" [options]="categoriesList" optionLabel="moduleName" optionValue="value"
+                            formControlName="categoryType" [filter]="true" [showClear]="false" placeholder="Please select category type">
+                        </p-select>
+
+                            <div class="error-msg"
+                                *ngIf="updateTimesheetLockForm.get('categoryType')?.invalid && updateTimesheetLockForm.get('categoryType')?.touched">
+                                Category Type is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- From Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'From Date' | translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="fromDate" onkeydown="return false"
+                            (change)="onFromDateChange(updateTimesheetLockForm)" [disabled]="isPublished" />
+                        <div class="error-msg"
+                            *ngIf="updateTimesheetLockForm.get('fromDate')?.invalid && updateTimesheetLockForm.get('fromDate')?.touched">
+                            From Date is required
+                        </div>
+                    </div>
+
+                    <!-- To Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'To Date' | translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="toDate"onkeydown="return false"
+                            [min]="fromDateString" (change)="onToDateChange(updateTimesheetLockForm)"
+                            [disabled]="isPublished" />
+                        <!-- Required Validation -->
+                        <div class="error-msg" *ngIf="updateTimesheetLockForm.get('toDate')?.hasError('required') &&
+                                updateTimesheetLockForm.get('toDate')?.touched">
+                            To Date is required
+                        </div>
+
+                        <!-- To Date cannot be less than From Date -->
+                        <div class="error-msg" *ngIf="toDateInvalid">
+                            To Date cannot be less than From Date
+                        </div>
+                    </div>
+
+                    <!-- Effective Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'Effective Date' | translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="effectiveDate"onkeydown="return false"
+                            [min]="getEffectiveDateMin()" (change)="onEffectiveDateChange(updateTimesheetLockForm)"
+                            [disabled]="!isPublished" />
+                        <div class="error-msg"
+                            *ngIf="updateTimesheetLockForm.get('effectiveDate')?.hasError('required') && updateTimesheetLockForm.get('effectiveDate')?.touched">
+                            Effective Date is required
+                        </div>
+                        <!-- Effective Date cannot be greater than Effective Date -->
+                        <div class="error-msg" *ngIf="effectiveDateInvalid">
+                            Effective Date cannot be less than or equal to To Date
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)"
+                        [disabled]="spinnerLoader">
+                        {{ 'Cancel' | translate }}
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="updateTimesheetLockForm.invalid || spinnerLoader ||toDateInvalid ||effectiveDateInvalid">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{ 'Loading...' }}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{ 'Update' | translate }}</span>
+                        </ng-template>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Publish Timesheet Lock Modal -->
+<ng-template #publishModal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text">{{'Are you sure you want to publish this Timesheet Lock?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="PublishTimesheetLock()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Delete Timesheet Lock Modal -->
+<ng-template #deleteModal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete this Timesheet Lock?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="deleteTimesheetLock()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--confirmation Model-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">{{'Yes' | translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+
+<!--  -->
+<ng-template #errormodal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{errormodaldata}}</p>
+        </div>
+    </div>
+</ng-template>

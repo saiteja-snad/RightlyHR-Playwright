@@ -173,6 +173,19 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
       statusEffectiveDate: ['', ]
     });
+    
+    // Add conditional validator for statusEffectiveDate when modal opens
+    this.updateStatusEffectiveDateValidation();
+  }
+  
+  updateStatusEffectiveDateValidation() {
+    const statusEffectiveDateControl = this.reasonForm.get('statusEffectiveDate');
+    if (this.modalData?.title?.includes('release')) {
+      statusEffectiveDateControl?.setValidators([Validators.required]);
+    } else {
+      statusEffectiveDateControl?.clearValidators();
+    }
+    statusEffectiveDateControl?.updateValueAndValidity();
 
     this.extendForm = this.fb.group({
       newStartDate: ['', Validators.required],
@@ -680,6 +693,7 @@ formatDateToLocalforresource(dateString: string | null): Date | null {
   openReasonModal(title: string, data: any) {
     this.modalData = { title, data };
     this.reasonForm.reset();
+    this.updateStatusEffectiveDateValidation();
     this.modalService.open(this.reasonModal, { centered: true, backdrop: 'static' });
   }
 

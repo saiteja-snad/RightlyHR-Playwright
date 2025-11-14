@@ -2294,8 +2294,8 @@
                          <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="checkbox" #selectallpremissionsforrecall (change)="toggleSelectAll(pendingApprovalEmployeinfoSubTabs, 
-                                        selectallpremissionsforrecall?.checked, isonlycreatfunction.bind(this))"
+                                    <input type="checkbox" #selectallpremissionsforempinfo (change)="toggleSelectAll(pendingApprovalEmployeinfoSubTabs, 
+                                        selectallpremissionsforempinfo?.checked, isonlyempinfofunction.bind(this))"
                                         [checked]="isAllSelected(pendingApprovalEmployeinfoSubTabs)"
                                         [indeterminate]="isSomeSelected(pendingApprovalEmployeinfoSubTabs)"
                                         [disabled]="!roleToFilter?.id">

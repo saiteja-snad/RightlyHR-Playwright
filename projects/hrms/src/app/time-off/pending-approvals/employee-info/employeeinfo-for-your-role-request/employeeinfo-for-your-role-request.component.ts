@@ -159,6 +159,82 @@ export class EmployeeinfoForYourRoleRequestComponent {
   }
 
 
+// loadClientsAndProjects(page: number, pageSize: number): void {
+//   this.dataload = true;
+
+//   const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=ROLE&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
+
+//   this.http.getData(url).subscribe({
+//     next: (res: any) => {
+//       this.dataload = false;
+
+//       if (!res.success || !res.data?.items?.length) {
+//         this.emp = [];
+//         return;
+//       }
+//  this.collectionSize = res.data.totalCount;
+//       const finalEmployees: any[] = [];
+
+//       // LOOP ALL EMPLOYEES (your previous code only used items[0])
+//       res.data.items.forEach((empBlock: any) => {
+
+//         const flatEntries: any[] = [];
+
+//         // Loop entries of this employee
+//         empBlock.entries.forEach((entry: any) => {
+
+//           // Loop fields inside entry
+//           entry.fields.forEach((f: any) => {
+//             const pa = f.pendingApproval;
+
+//             flatEntries.push({
+//               // FIELD DETAILS
+//               id: f.itemId,
+//               fieldName: f.fieldName,
+//               oldValue: f.oldValue,
+//               newValue: f.newValue,
+//               requestedDate: f.createdDate,
+
+//               // HEADER (employeeFieldHeader)
+//               headerId: entry.employeeFieldHeader?.headerId,
+//               moduleName: entry.employeeFieldHeader?.moduleName,
+//               displayName: entry.employeeFieldHeader?.displayName,
+//               headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
+//               headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
+
+//               // APPROVAL HEADER
+//               pendingApprovalHeader: pa?.header ?? null,
+
+//               // APPROVAL ITEMS (array)
+//               approvalItems: pa?.items ?? [],
+
+//               // COMMENTS (array)
+//               comments: pa?.comments ?? []
+//             });
+//           });
+//         });
+
+//         // Push employee + flattened entries into final array
+//         finalEmployees.push({
+//           employeeId: empBlock.employeeId,
+//           employeeName: empBlock.employeeName,
+//           entries: flatEntries
+//         });
+//       });
+
+//       // Assign to your view model
+//       this.emp = finalEmployees;
+
+//       console.log("FINAL EMP DATA FOR TABLE:", this.emp);
+//     },
+
+//     error: () => {
+//       this.dataload = false;
+//       this.emp = [];
+//     }
+//   });
+// }
+
 loadClientsAndProjects(page: number, pageSize: number): void {
   this.dataload = true;
 
@@ -172,60 +248,58 @@ loadClientsAndProjects(page: number, pageSize: number): void {
         this.emp = [];
         return;
       }
- this.collectionSize = res.data.totalCount;
+
+      this.collectionSize = res.data.totalCount;
       const finalEmployees: any[] = [];
 
-      // LOOP ALL EMPLOYEES (your previous code only used items[0])
+      // LOOP ALL EMPLOYEES
       res.data.items.forEach((empBlock: any) => {
 
         const flatEntries: any[] = [];
 
-        // Loop entries of this employee
         empBlock.entries.forEach((entry: any) => {
 
-          // Loop fields inside entry
-          entry.fields.forEach((f: any) => {
-            const pa = f.pendingApproval;
+          entry.fields
+            // ⭐ FILTER: ONLY WAITING FOR APPROVAL RECORDS
+            .filter((f: any) =>
+              f.pendingApproval?.header?.status === "Waiting for Approval"
+            )
+            .forEach((f: any) => {
+              const pa = f.pendingApproval;
 
-            flatEntries.push({
-              // FIELD DETAILS
-              id: f.itemId,
-              fieldName: f.fieldName,
-              oldValue: f.oldValue,
-              newValue: f.newValue,
-              requestedDate: f.createdDate,
+              flatEntries.push({
+                id: f.itemId,
+                fieldName: f.fieldName,
+                oldValue: f.oldValue,
+                newValue: f.newValue,
+                requestedDate: f.createdDate,
 
-              // HEADER (employeeFieldHeader)
-              headerId: entry.employeeFieldHeader?.headerId,
-              moduleName: entry.employeeFieldHeader?.moduleName,
-              displayName: entry.employeeFieldHeader?.displayName,
-              headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
-              headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
+                headerId: entry.employeeFieldHeader?.headerId,
+                moduleName: entry.employeeFieldHeader?.moduleName,
+                displayName: entry.employeeFieldHeader?.displayName,
+                headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
+                headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
 
-              // APPROVAL HEADER
-              pendingApprovalHeader: pa?.header ?? null,
-
-              // APPROVAL ITEMS (array)
-              approvalItems: pa?.items ?? [],
-
-              // COMMENTS (array)
-              comments: pa?.comments ?? []
+                pendingApprovalHeader: pa?.header ?? null,
+                approvalItems: pa?.items ?? [],
+                comments: pa?.comments ?? []
+              });
             });
-          });
+
         });
 
-        // Push employee + flattened entries into final array
-        finalEmployees.push({
-          employeeId: empBlock.employeeId,
-          employeeName: empBlock.employeeName,
-          entries: flatEntries
-        });
+        // ONLY PUSH EMPLOYEE IF THEY HAVE ANY WAITING RECORDS
+        if (flatEntries.length > 0) {
+          finalEmployees.push({
+            employeeName: empBlock.employeeName,
+            entries: flatEntries
+          });
+        }
+
       });
 
-      // Assign to your view model
       this.emp = finalEmployees;
-
-      console.log("FINAL EMP DATA FOR TABLE:", this.emp);
+      console.log("FILTERED EMP TABLE DATA:", this.emp);
     },
 
     error: () => {
@@ -234,8 +308,6 @@ loadClientsAndProjects(page: number, pageSize: number): void {
     }
   });
 }
-
-
   // called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {
     this.showhideaction = false;

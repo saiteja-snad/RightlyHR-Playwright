@@ -772,10 +772,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'For You (Claims and Expenses)',
     'For Role (Claims and Expenses)',
   ];
-   pendingApprovalEmployeinfoSubTabs = [
-    'For You (Employee Info',
-    'For Role (Employee Info)',
-  ];
+  pendingApprovalEmployeinfoSubTabs = [
+  'For You (Employee Info)',
+  'For Role (Employee Info)',
+];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',
     'For Role (Desk Requests)',
@@ -1784,7 +1784,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isonlyempinfofunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Create') {
+      return true;
+    }
+    if (action === 'Update' || action === 'View' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+ isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'Create') {
       return true;
     }

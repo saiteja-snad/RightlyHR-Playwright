@@ -172,10 +172,13 @@
                         <td class="text-center">{{ emp.get('fullName')?.value }}</td>
                         <td class="text-center">
                             <input type="date" formControlName="effectivedate" class="form-control custom-input mt-2"
-                                placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
+                                placeholder="Please enter date" [min]="minEffectiveDate"[max]="maxEffectiveDate" />
                             <div *ngIf="emp.get('effectivedate')?.touched && emp.get('effectivedate')?.invalid"
                                 class="error-msg">
                                 <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective From date is required
+                                </div>
+                                <div *ngIf="emp.get('effectivedate')?.errors?.['invalidDynamicDate']">
+                                    Selected date is not allowed. Please choose a date within the permitted range.
                                 </div>
                                 <div *ngIf="emp.get('effectivedate')?.errors?.['invalidDate']">
                                     Date must be from the current month and year
@@ -184,15 +187,14 @@
                         </td>
                          <td class="text-center">
                             <input type="date" formControlName="effectiveto" class="form-control custom-input mt-2"
-                                placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
+                                placeholder="Please enter date" [min]="minEffectiveDate" [max]="maxEffectiveDate" />
                             <div *ngIf="emp.get('effectiveto')?.touched && (emp.get('effectiveto')?.invalid || emp.errors?.['invalidEffectiveToDate'])"
                                 class="error-msg">
                                 <div *ngIf="emp.get('effectiveto')?.errors?.['required']">Effective To date is required
                                 </div>
                                 <!-- Custom validation: To Date must be later than From Date -->
-                                <div *ngIf="emp.errors?.['invalidEffectiveToDate']">
-                                    Effective To date must be later than Effective From
-                                </div>
+                                <div *ngIf="emp.get('effectiveto')?.touched && emp.get('effectiveto')?.errors?.['invalidEffectiveToDate']">
+                                    Effective To date must be later than Effective From</div>
                             </div>
                         </td>
                         <td class="text-center">

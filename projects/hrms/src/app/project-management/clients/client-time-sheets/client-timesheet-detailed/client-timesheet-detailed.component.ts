@@ -91,6 +91,7 @@ export class ClientTimesheetDetailedComponent {
     this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
   }
   navigateView(projectdata: any, employeeId: any): void {
+    console.log(projectdata);
     const resourceData = {
       employeeId: employeeId,
       clientId: parseInt(this.clientId),

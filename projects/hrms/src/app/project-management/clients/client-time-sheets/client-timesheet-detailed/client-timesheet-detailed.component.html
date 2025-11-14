@@ -28,7 +28,12 @@
 
                                 <ng-template pTemplate="body" let-entry>
                                     <tr>
-                                        <td>{{ entry?.employee.name ?? '-' }}</td>
+                                        <td>
+                                            <a class="project-name cursor"
+                                                (click)="navigateView(project?.project,entry?.employee?.id )">
+                                                {{ entry?.employee?.name}}
+                                            </a>
+                                        </td>
                                         <td>{{ entry?.roles || '-' }}</td>
                                         <td>{{ entry?.departments || '-' }}</td>
                                         <td class="text-center"><a class="project-name cursor"
@@ -90,11 +95,10 @@
                             <tr>
 
                                 <th>Phase / Milestone</th>
+                                <th>Role</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Role</th>
-                                <th>Logged Hours</th>
-
+                                <th> Hours Spent</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -102,16 +106,18 @@
                             <tr *ngFor="let entry of selectedEntries">
 
                                 <td>{{ entry?.phaseName ?? '-' }}</td>
+                                <td>{{entry?.resourceRole ?? '-'}}</td>
                                 <td>
                                     {{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}
                                 </td>
                                 <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
-                                <td>{{entry?.resourceRole ?? '-'}}</td>
+
                                 <td><b>{{ entry?.loggedHours ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
 
                                 <td [ngClass]="{
                                         'active': entry.resourceStatus === 'active',
                                         'released': entry.resourceStatus === 'released',
+                                       'assigned': entry.resourceStatus === 'assigned'
                                     
                         }">
                                     {{

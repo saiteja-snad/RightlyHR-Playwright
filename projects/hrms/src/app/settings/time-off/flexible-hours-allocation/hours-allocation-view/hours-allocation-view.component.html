@@ -32,14 +32,14 @@
     <table class="w-100">
         <thead>
             <tr>
-                <th>{{'Employee/Role Name'|translate}}</th>
-                <th>{{'Effective From'|translate}}</th>
-                <th>{{'Effective To'|translate}}</th>
-                <th>{{'Half Day Min Hrs'|translate}}</th>
-                <th>{{'Full Day Min Hr'|translate}}s</th>
-                <th>{{'Allocated By'|translate}}</th>
-                <th>{{'Allocated On'|translate}}</th>
-                <th>{{'Status'|translate}}</th>
+                <th class="text-center">{{'Employee Name'|translate}}</th>
+                <th class="text-center">{{'Effective From'|translate}}</th>
+                <th class="text-center">{{'Effective To'|translate}}</th>
+                <th class="text-center">{{'Half Day Min Hrs'|translate}}</th>
+                <th class="text-center">{{'Full Day Min Hr'|translate}}s</th>
+                <th class="text-center">{{'Allocated By'|translate}}</th>
+                <th class="text-center">{{'Allocated On'|translate}}</th>
+                <th class="text-center">{{'Status'|translate}}</th>
                 <th></th>
                 <!-- <th>Last Updated By</th>
                 <th>Last Updated On</th> -->
@@ -50,14 +50,14 @@
             @if (!isloading && getAllocationDetails.length > 0) {
             @for (item of getAllocationDetails; track item) {
             <tr>
-                <td>{{ item?.entityValue?.name || '-' }}</td>
-                <td>{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
-                <td>{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
-                <td>{{ item?.halfDayMinHrs || '-' }}</td>
-                <td>{{ item?.fullDayMinHrs || '-' }}</td>
-                <td>{{ item?.createdBy?.name || '-' }}</td>
-                <td>{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
-                <td>{{ item?.status ? item?.status:'-'  }}</td>
+                <td class="text-center">{{ item?.entityValue?.name || '-' }}</td>
+                <td class="text-center">{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
+                <td class="text-center">{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
+                <td class="text-center">{{ item?.halfDayMinHrs || '-' }}</td>
+                <td class="text-center">{{ item?.fullDayMinHrs || '-' }}</td>
+                <td class="text-center">{{ item?.createdBy?.name || '-' }}</td>
+                <td class="text-center">{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
+                <td class="text-center">{{ item?.status ? item?.status:'-'  }}</td>
                  <td ><div class="dropdown" *ngIf="item.isLatest">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>

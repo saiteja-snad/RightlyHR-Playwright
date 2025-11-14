@@ -66,6 +66,7 @@ export class HoursAllocationComponent {
   minYearDate!: string;
   maxYearDate!: string;
   roles: IRoles[] = [];
+  pastdatesalloweddata=[] as any;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -83,8 +84,19 @@ export class HoursAllocationComponent {
     this.getAllLocations();
     this.handleFormValueChanges();
     this.getAllroles();
+    this.getpastdatesallowed();
   }
-
+//get past dates allowed for the work hours effective from
+  getpastdatesallowed() {
+    this.http.getData('entityAttributeValues?entity=FlexibleWorkhours').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.pastdatesalloweddata = data;
+      },
+      error: (error: any) => {
+      }
+    });
+  }
   inititializeForm() {
     this.hoursAllocationForm = this.fb.group({
       year: ['', Validators.required],
@@ -323,10 +335,10 @@ export class HoursAllocationComponent {
                 fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
                 halfminhours: [existing?.shiftDetails?.halfDayMinHrs || '',[Validators.required],],
                 fullminhours: [ existing?.shiftDetails?.fullDayMinHrs || '',[Validators.required],],
-                effectivedate: [{value: existing?.effectiveFromDate? moment(existing?.effectiveFromDate)?.format('YYYY-MM-DD') : '',disabled: !this.hoursAllocationForm.get('year')?.value,},
+                effectivedate: [{value:'',disabled: !this.hoursAllocationForm.get('year')?.value,},
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
-                effectiveto: [{value: existing?.effectiveToDate? moment(existing?.effectiveToDate)?.format('YYYY-MM-DD'): '',disabled: !this.hoursAllocationForm.get('year')?.value},
+                effectiveto: [{value:'',disabled: !this.hoursAllocationForm.get('year')?.value},
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
               })
@@ -370,34 +382,26 @@ export class HoursAllocationComponent {
 
     return null;
   }
-  // Validator to ensure days do not exceed the range between effective dates
-  validateDaysWithinRange(): ValidatorFn {
-    return (group: AbstractControl): ValidationErrors | null => {
-      const fromDate = group.get('effectivedate')?.value;
-      const toDate = group.get('effectiveto')?.value;
-      const days = group.get('days')?.value;
+  // Validator to ensure days do not allow invalide hours
+ validateDays(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const days = control.value;
 
-      if (!fromDate || !toDate || !days) {
-        return null; // skip validation if values are missing
-      }
+    if (days === null || days === undefined || days === '') {
+      return null; // allow empty
+    }
 
-      const start = new Date(fromDate);
-      const end = new Date(toDate);
+    // Allow only digits (0–9)
+    const validPattern = /^[0-9]+$/;
 
-      if (end < start) {
-        return { invalidEffectiveToDate: true }; // Already handled in your template
-      }
+    // ❌ Reject: -, +, _, letters, decimals, spaces
+    if (!validPattern.test(days)) {
+      return { invalidDaysFormat: true };
+    }
 
-      const diffInMs = end.getTime() - start.getTime();
-      const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24)) + 1; // include both dates
-
-      if (days > diffInDays) {
-        return { invalidDaysRange: true }; // custom error key
-      }
-
-      return null;
-    };
-  }
+    return null; // valid
+  };
+}
   //method to handle selected employees from multi select
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
     this.selectedEmployees = selectedList || [];

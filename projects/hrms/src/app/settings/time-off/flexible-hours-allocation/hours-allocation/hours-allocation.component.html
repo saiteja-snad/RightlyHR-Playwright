@@ -155,13 +155,13 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Employee/Role Name</th>
-                        <th>Effective From</th>
-                        <th>Effective To</th>
-                        <th>Half Day Min Hrs</th>
-                        <th>Full Day Min Hrs</th>
-                        <th>Allocated By</th>
-                        <th>Allocated On</th>
+                        <th class="text-center">{{'Employee Name'|translate}}</th>
+                        <th class="text-center">{{'Effective From'|translate}}</th>
+                        <th class="text-center">{{'Effective To'|translate}}</th>
+                        <th class="text-center">{{'Half Day Min Hrs'|translate}}</th>
+                        <th class="text-center"> {{'Full Day Min Hrs'|translate}}</th>
+                        <th class="text-center">{{'Allocated By'|translate}}</th>
+                        <th class="text-center">{{'Allocated On'|translate}}</th>
                         <!-- <th>Last Updated By</th>
                         <th>Last Updated On</th> -->
                         <th></th>
@@ -169,8 +169,8 @@
                 </thead>
                 <tbody formArrayName="employees">
                     <tr *ngFor="let emp of employeeFormArray.controls; let i = index" [formGroupName]="i">
-                        <td>{{ emp.get('fullName')?.value }}</td>
-                        <td>
+                        <td class="text-center">{{ emp.get('fullName')?.value }}</td>
+                        <td class="text-center">
                             <input type="date" formControlName="effectivedate" class="form-control custom-input mt-2"
                                 placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
                             <div *ngIf="emp.get('effectivedate')?.touched && emp.get('effectivedate')?.invalid"
@@ -182,7 +182,7 @@
                                 </div>
                             </div>
                         </td>
-                         <td>
+                         <td class="text-center">
                             <input type="date" formControlName="effectiveto" class="form-control custom-input mt-2"
                                 placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
                             <div *ngIf="emp.get('effectiveto')?.touched && (emp.get('effectiveto')?.invalid || emp.errors?.['invalidEffectiveToDate'])"
@@ -195,9 +195,9 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <input type="number" formControlName="halfminhours" class="form-control custom-input mt-2"
-                                placeholder="Enter half day min hrs" min="0" max="24" />
+                                placeholder="Enter half day min hrs" min="0" max="24" style="text-align: center;"/>
                             <div *ngIf="emp.get('halfminhours')?.touched && (emp.get('halfminhours')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
                                 <div *ngIf="emp.get('halfminhours')?.errors?.['required']">Please enter a valid number of hours</div>
                                 <div *ngIf="emp.errors?.['invalidDaysRange']" class="error-msg">
@@ -205,9 +205,9 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <input type="number" formControlName="fullminhours" class="form-control custom-input mt-2"
-                                placeholder="Enter full day min hrs" min="0" max="24" />
+                                placeholder="Enter full day min hrs" min="0" max="24" style="text-align: center;"/>
                             <div *ngIf="emp.get('fullminhours')?.touched && (emp.get('fullminhours')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
                                 <div *ngIf="emp.get('fullminhours')?.errors?.['required']">Please enter a valid number of hours</div>
                                 <div *ngIf="emp.errors?.['invalidDaysRange']" class="error-msg">
@@ -216,8 +216,8 @@
                             </div>
                         </td>
 
-                        <td>{{ emp.get('createdBy')?.value ?emp.get('createdBy')?.value:'-' }}</td>
-                        <td>{{ emp.get('createdOn')?.value ?(emp.get('createdOn')?.value | dateformat) :'-' }}</td>
+                        <td class="text-center">{{ emp.get('createdBy')?.value ?emp.get('createdBy')?.value:'-' }}</td>
+                        <td class="text-center">{{ emp.get('createdOn')?.value ?(emp.get('createdOn')?.value | dateformat) :'-' }}</td>
                         <!-- <td>{{ emp.get('lastUpdatedBy')?.value ?emp.get('lastUpdatedBy')?.value :'-' }}</td>
                         <td>{{ emp.get('lastUpdatedOn')?.value ?(emp.get('lastUpdatedOn')?.value|dateformat) :'-' }}</td> -->
                         <td class="text-center"><a class="custom-action-btn"

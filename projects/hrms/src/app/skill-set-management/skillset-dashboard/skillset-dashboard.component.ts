@@ -283,7 +283,7 @@ export class SkillsetDashboardComponent {
             { key: 'total', title: 'Total Resources', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
             { key: 'committed', title: 'Committed Resources', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
             { key: 'available', title: 'Available Resources', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
-            { key: 'upcoming', title: 'Resources Releasing Within 30 Days', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
+            { key: 'upcoming', title: 'Releasing in 30 Days', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
           ];
         }
       },

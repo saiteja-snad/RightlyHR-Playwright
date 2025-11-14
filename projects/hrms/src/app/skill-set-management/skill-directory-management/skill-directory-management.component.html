@@ -259,11 +259,13 @@
                 <p class="project-name mb-1">{{ proj.projectName }}</p>
                 <div class="d-flex align-items-center justify-content-between">
                   <p class="project-role mb-0">{{ proj.projectDesignation }}</p>
-                  <p class="mb-0" >
-                    <a class="view-link" *ngIf="proj.phasesCount > 0" (click)="openModal(projectDisplay, proj)">
-                      {{ proj.phasesCount }}
-                    </a>
-                  </p>
+                  <div class="offcanvas-chips">
+                    <p-chip class="mb-0">
+                      <a class="Phase-link" *ngIf="proj.phasesCount > 0" (click)="openModal(projectDisplay, proj)">
+                        Phases ({{ proj.phasesCount }})
+                      </a>
+                    </p-chip>
+                  </div>         
                 </div>
               </div>
               } @else {

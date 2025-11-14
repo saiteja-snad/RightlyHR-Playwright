@@ -18,6 +18,23 @@
   }
 }
 
+.offcanvas-chips {
+  .p-chip {
+    border: 0.5px solid;
+    font-weight: 500;
+    font-size: var(--fontsize10);
+    color: #305889;
+    border-radius: 0.25rem;
+    line-height: 100%;
+    padding: 0.25rem;
+    text-decoration: underline;
+  }
+
+  .Phase-link {
+    color: var(--primary-color);
+  }
+}
+
 .skill-view {
   min-width: 150px !important;
 }
@@ -371,6 +388,8 @@
   text-decoration: underline;
   color: var(--primary-color);
 }
+
+
 
 .popup-header-border {
   border-bottom: 1.5px solid transparent;

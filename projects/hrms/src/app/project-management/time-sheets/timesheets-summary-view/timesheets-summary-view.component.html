@@ -123,14 +123,9 @@
                                                 </a>
                                             </ng-container>
                                             <ng-template #noEntries>
-                                                @if(row.dailySummary.weekday != null){
+                                                @if(row.dailySummary.legendCode != null){
                                                 <!-- <div class="data-chip"> -->
-                                                    <b>{{row.dailySummary.weekday}}</b>
-                                                <!-- </div> -->
-                                                }
-                                                @if (row.dailySummary.holiday != null){
-                                                <!-- <div class="data-chip"> -->
-                                                    <b>{{row.dailySummary.holiday}}</b>
+                                                    <b>{{row.dailySummary.legendCode}}</b>
                                                 <!-- </div> -->
                                                 }
                                             </ng-template>

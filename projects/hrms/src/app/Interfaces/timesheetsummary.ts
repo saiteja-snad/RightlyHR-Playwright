@@ -71,6 +71,8 @@ export interface DailySummary {
   weekday: string;
   holiday: string;
   textColor?: string;
+  legendCode?: any;
+
 }
 
 

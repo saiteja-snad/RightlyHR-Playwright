@@ -20,12 +20,15 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { TranslateModule } from '@ngx-translate/core';
 import { SkillSetMainTabsComponent } from "../../shared/skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
 import { DomSanitizer } from '@angular/platform-browser';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { SkeletonModule } from 'primeng/skeleton';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-skillset-dashboard',
-  imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent,
-    NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, NgbPopoverModule, ModuleInformationComponent,
-    TranslateModule, SkillSetMainTabsComponent],
+  imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent, ModuleInfoIconComponent,
+    NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, NgbPopoverModule, ModuleInformationComponent, SkeletonModule,
+    TranslateModule, SkillSetMainTabsComponent, DataLoaderContentComponent],
   templateUrl: './skillset-dashboard.component.html',
   styleUrl: './skillset-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -81,6 +84,11 @@ export class SkillsetDashboardComponent {
   allocatedEmployeesList: any[] = [];
   availableEmployeesList: any[] = [];
   selectedSkillKey: string = '';
+  isgraphsContent = false
+  isLoadingGraphDepartment = false;
+  isLoadingGraphSkillProficiency = false;
+  isLoadingGraphTopSkills = false;
+  chartLoader = false
   // contentInfo
   topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
   skillProficiencyContentInfo = 'Presents a consolidated view of employee skill levels—categorized as Beginner, Intermediate, and Expert. This chart enables HR and leadership teams to evaluate overall workforce competency and pinpoint areas requiring skill enhancement or upskilling.';
@@ -134,6 +142,9 @@ export class SkillsetDashboardComponent {
     if (normalized === 'available') return 'status-available';
     if (normalized === 'committed') return 'status-committed';
     return '';
+  }
+  trackBySkillName(index: number, item: any): string {
+    return item?.skillName ?? index;
   }
 
   ComponentnameDisplay() {
@@ -262,10 +273,10 @@ export class SkillsetDashboardComponent {
   }
 
   getSkillSummary() {
-    this.isloading = true;
+
     this.subscription = this.http.getData('EmployeeSkills/getEmployeeSummaryCount').subscribe({
       next: (res: any) => {
-        this.isloading = false;
+        this.chartLoader = true;
         if (res?.data) {
           const summary = res.data;
           this.summaryCards = [
@@ -278,13 +289,33 @@ export class SkillsetDashboardComponent {
       },
       error: (err) => {
         this.isloading = false;
+        this.chartLoader = false;
         console.error('Error fetching summary counts:', err);
       }
     });
   }
-
+  get hasskilllevelGraphData(): boolean {
+    return !!(
+      this.skillLevelData?.datasets?.length &&
+      this.skillLevelData.datasets[0]?.data?.length
+    );
+  }
+  get hasDepartmentwiseGraphData(): boolean {
+    return !!(
+      this.skillByDepartmentData?.datasets?.length &&
+      this.skillByDepartmentData.datasets[0]?.data?.length
+    );
+  }
+  get hasTopSkillGraphData(): boolean {
+    return !!(
+      this.topSkillsData?.datasets?.length &&
+      this.topSkillsData.datasets[0]?.data?.length
+    );
+  }
+  hasnodata = false;
   skilllevelGraph(): void {
-    this.isloading = true;
+    this.isLoadingGraphSkillProficiency = true;
+    this.noDataFound = false;
     const params: any = {};
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
@@ -295,6 +326,12 @@ export class SkillsetDashboardComponent {
     this.http.getDataIncludeParams('EmployeeSkills/getSkillSummary', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
+        this.isLoadingGraphSkillProficiency = false;
+        if (res.data.totalSkillCount === 0 && res.data.intermediateCount === 0 && res.data.beginnerCount === 0 && res.data.expertCount === 0) {
+          this.hasnodata = true;
+        } else {
+          this.hasnodata = false;
+        }
         if (res?.data) {
           const { expertCount, intermediateCount, beginnerCount, totalSkillCount } = res.data;
           this.totalSkillCount = totalSkillCount;
@@ -332,13 +369,15 @@ export class SkillsetDashboardComponent {
             { label: 'Beginner', count: beginnerCount, color: colors[2] },
           ];
         }
+        this.noDataFound = false;
       },
       error: () => (this.isloading = false),
     });
   }
 
   skillByDepartmentGraph(): void {
-    this.isloading = true;
+    this.isLoadingGraphDepartment = true;
+    this.noDataFound = false;
     const params: any = {};
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
@@ -348,7 +387,7 @@ export class SkillsetDashboardComponent {
     }
     this.http.getDataIncludeParams('EmployeeSkills/getDepartmentSkillSummary', params).subscribe({
       next: (res: any) => {
-        this.isloading = false;
+        this.isLoadingGraphDepartment = false;
         if (res?.data?.length) {
           const validDepartments = res.data.filter((d: any) => d.departmentName?.trim());
           const counts = validDepartments.map((d: any) => d.uniqueSkillCount);
@@ -390,9 +429,11 @@ export class SkillsetDashboardComponent {
             count: d.uniqueSkillCount,
             color: d.colorCode, percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
           }));
+          this.noDataFound = false;
         } else {
           this.skillByDepartmentData = { labels: [], datasets: [] };
           this.deptCounts = [];
+          // this.noDataFound = true;
         }
       },
       error: (err) => {
@@ -406,6 +447,7 @@ export class SkillsetDashboardComponent {
 
   topSkillsGraph(): void {
     this.isloading = true;
+    this.isLoadingGraphTopSkills = true
     const params: any = {};
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
@@ -415,6 +457,7 @@ export class SkillsetDashboardComponent {
     }
     this.http.getDataIncludeParams('EmployeeSkills/getMostCommonSkills', params).subscribe({
       next: (res: any) => {
+        this.isLoadingGraphTopSkills = false;
         this.isloading = false;
         if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
           const skills: TopSkill[] = res.data;
@@ -513,6 +556,7 @@ export class SkillsetDashboardComponent {
   }
 
   getSkillSetTableData(): void {
+    this.noDataFound = true;
     this.isloading = true;
     const params: any = {};
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
@@ -529,14 +573,14 @@ export class SkillsetDashboardComponent {
           this.noDataFound = false;
         } else {
           this.skillSummaryList = [];
-          this.noDataFound = true;
+          this.noDataFound = false;
         }
       },
       error: (err) => {
         console.error('Error fetching skill summary table:', err);
         this.isloading = false;
         this.skillSummaryList = [];
-        this.noDataFound = true;
+        this.noDataFound = false;
       }
     });
   }
@@ -585,18 +629,6 @@ export class SkillsetDashboardComponent {
     });
   }
 
-  private getImageUrl(imagePath: string): string | null {
-    if (!imagePath) {
-      return null;
-    }
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
-    if (imagePath.startsWith('Profilepics/')) {
-      return `${environment.viewUrl}${imagePath}`;
-    }
-    return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
-  }
 
   downloadAndSetProfileImage(emp: any): void {
     if (!emp || !emp.originalProfileUrl) return;
@@ -608,9 +640,7 @@ export class SkillsetDashboardComponent {
         emp.profileImage = this.sanitizer.bypassSecurityTrustUrl(objectURL);
       },
       error: () => {
-        // fallback if image not found
         emp.profileImage = 'images/alternate.png';
-        console.warn(`Failed to download profile image for ${emp.employeeId || 'unknown'}`);
       }
     });
   }
@@ -640,15 +670,28 @@ export class SkillsetDashboardComponent {
   }
 
   clearAllFilters(): void {
-    this.selectedStatus = ['All Proficiencies'];
-    this.selectedSkills = ['All Skills'];
-    this.skilllevelGraph();
-    this.skillByDepartmentGraph();
-    this.getSkillSetTableData();
-    this.topSkillsGraph();
-    this.searchQuery = ''
+    const isFilterApplied =
+      (this.selectedStatus && this.selectedStatus.length && this.selectedStatus[0] !== 'All Proficiencies') ||
+      (this.selectedSkills && this.selectedSkills.length && this.selectedSkills[0] !== 'All Skills') ||
+      (this.searchQuery && this.searchQuery.trim() !== '');
+
+    if (isFilterApplied) {
+      this.selectedStatus = ['All Proficiencies'];
+      this.selectedSkills = ['All Skills'];
+      this.searchQuery = '';
+
+      this.skilllevelGraph();
+      this.skillByDepartmentGraph();
+      this.getSkillSetTableData();
+      this.topSkillsGraph();
+    } else {
+      this.selectedStatus = ['All Proficiencies'];
+      this.selectedSkills = ['All Skills'];
+      this.searchQuery = '';
+    }
   }
 
+  
   onSkillSelectionChange(): void {
     this.skilllevelGraph();
     this.skillByDepartmentGraph();

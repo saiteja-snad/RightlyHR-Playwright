@@ -16,7 +16,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-my-skills',
-  imports: [ReactiveFormsModule, Select, FormsModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [ReactiveFormsModule, Select, FormsModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent,],
   templateUrl: './my-skills.component.html',
   styleUrl: './my-skills.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -46,9 +46,10 @@ export class MySkillsComponent {
   deleteModalRef: any;
   Status: any;
   values: string[] | undefined;
+  typedSkill: string = '';
 
   constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService,
-    private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router, public formValidations: FormValidationsService, 
+    private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router, public formValidations: FormValidationsService,
     public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
@@ -58,7 +59,7 @@ export class MySkillsComponent {
     this.getSkills()
     this.AddForm = this.fb.group({
       skillcategory: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      skills: [[], [this.validateSkillArray.bind(this),this.formValidations.maxCharactersValidators(41)]],
+      skills: [[], [this.validateSkillArray.bind(this), this.formValidations.maxCharactersValidators(41)]],
       proficiencylevel: ['', Validators.required],
     });
   }
@@ -253,36 +254,67 @@ export class MySkillsComponent {
   addSkill(event: any): void {
     const input = event.target as HTMLInputElement;
     const value = input.value.trim();
+    const control = this.AddForm.get('skills');
     if (value) {
-      const skills = this.AddForm.get('skills')?.value || [];
+      const skills = control?.value || [];
       if (!skills.includes(value)) {
         skills.push(value);
-        this.AddForm.get('skills')?.setValue(skills);
-       this.AddForm.get('skills')?.updateValueAndValidity();
+        control?.setValue(skills);
       }
+      control?.setErrors(null);
     }
-    input.value = '';
-    event.preventDefault(); // prevent form submission on Enter
+    this.typedSkill = '';
+    input.value = "";
+    event.preventDefault();
   }
-  
+
   removeSkill(skill: string): void {
     const skills = this.AddForm.get('skills')?.value || [];
     const updatedSkills = skills.filter((s: string) => s !== skill);
     this.AddForm.get('skills')?.setValue(updatedSkills);
     this.AddForm.get('skills')?.updateValueAndValidity();
     const control = this.AddForm.get('skills');
-    control?.markAsTouched(); // 👈 ensures validation visible
+    control?.markAsTouched(); 
     control?.updateValueAndValidity();
   }
 
-  onSkillBlur(): void {
-    const skillsControl = this.AddForm.get('skills');
-    if (skillsControl) {
-      skillsControl.markAsTouched({ onlySelf: true }); // mark it as touched
-      skillsControl.updateValueAndValidity(); // recheck validation
+ onSkillBlur(): void {
+  const control = this.AddForm.get('skills');
+  const skills = control?.value || [];
+
+  if (this.typedSkill.length > 0) {
+    control?.setErrors({ pendingSkill: true });
+  } 
+  else {
+    if (skills.length === 0) {
+      control?.setErrors({ required: true });
+    } else {
+      control?.setErrors(null);
     }
   }
-    getSkillsByLevel(level: string, skills: any[]) {
+
+  control?.markAsTouched();
+}
+
+  getSkillsByLevel(level: string, skills: any[]) {
     return skills.filter(skill => skill.proficiencyLevel === level);
   }
+
+ onSkillInput(event: any): void {
+  this.typedSkill = event.target.value.trim();
+  const control = this.AddForm.get('skills');
+  const skills = control?.value || [];
+  if (this.typedSkill.length > 0) {
+    control?.setErrors({ pendingSkill: true });
+  } 
+  else {
+    if (skills.length === 0) {
+      control?.setErrors({ required: true });
+    } else {
+      control?.setErrors(null);
+    }
+  }
+  control?.markAsTouched();
+}
+
 }

@@ -36,14 +36,19 @@
                                         </td>
                                         <td>
                                             @if(entry?.roles) {
-                                                <p-chip *ngFor="let role of entry.roles.split(',')" [label]="role.trim()" styleClass="mr-1 mb-1"></p-chip>
+                                                <div class="d-flex gap-2 flex-wrap align-items-center">
+                                                    <p-chip *ngFor="let role of entry.roles.split(',')" [label]="role.trim()" />
+                                                </div>
+                                
                                             } @else {
                                                 -
                                             }
                                         </td>
                                         <td>
                                             @if(entry?.departments) {
-                                                <p-chip *ngFor="let dept of entry.departments.split(',')" [label]="dept.trim()" styleClass="mr-1 mb-1"></p-chip>
+                                                <div class="d-flex gap-2 flex-wrap align-items-center">
+                                                    <p-chip *ngFor="let dept of entry.departments.split(',')" [label]="dept.trim()"/>
+                                                 </div>
                                             } @else {
                                                 -
                                             }

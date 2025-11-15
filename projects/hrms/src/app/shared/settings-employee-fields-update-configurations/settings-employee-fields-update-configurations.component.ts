@@ -22,14 +22,14 @@ export class SettingsEmployeeFieldsUpdateConfigurationsComponent implements OnIn
       link: '/settings/employee-fields-update-configurations/personal',
       icon: '/settings-icon/personal-icon.png',
       permission: { feature: 'Personal Config Update Tab', action: 'view' },
-      subjectText: MODULE_INFOS.SETTINGS_PERSONAL_INFO_MODULE_INFO,
+      subjectText: MODULE_INFOS.SETTINGS_PERSONAL_INFORMATION_UPDATE_MODULE_INFO,
     },
     {
       label: 'Job Information Update',
       link: '/settings/employee-fields-update-configurations/job',
       icon: '/images/jobdetailes.png',
       permission: { feature: 'Job Config Update Tab', action: 'view' },
-      subjectText: MODULE_INFOS.SETTINGS_JOB_INFO_MODULE_INFO,
+      subjectText: MODULE_INFOS.SETTINGS_JOB_INFORMATION_UPDATE_MODULE_INFO,
     },
     // {
     //   label: 'Document Information Update',
@@ -60,7 +60,7 @@ export class SettingsEmployeeFieldsUpdateConfigurationsComponent implements OnIn
   }
 
   navigateToAccessedRoute(route: string) {
-    const actualRoute = this.accessNav.navigateToAccessedRoute(route);    
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
     } else {

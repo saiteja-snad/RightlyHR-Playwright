@@ -14,6 +14,7 @@ import { RbacService } from '../../../../services/rbac.service';
 import { AuthService } from '../../../../services/auth.service';
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-identity-info',
@@ -24,7 +25,8 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
     MultiSelectModule,
     SelectModule,
     ToggleSwitchModule,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    NoDataFoundComponent
 ],
   templateUrl: './identity-info.component.html',
   styleUrl: './identity-info.component.scss',
@@ -43,7 +45,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     fieldOptions = [] as any;
   identityInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
-    { label: 'Employee', value: 'EMP' },
+    // { label: 'Employee', value: 'EMP' },
     { label: 'Role', value: 'ROLE' },
     { label: 'Manager', value: 'MANAGER' }
   ];
@@ -99,6 +101,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
   }
 
   getIdentityInfoFieldsConfigList() {
+    this.loader = true
     const params = {
       displayName: 'Personal',
       moduleName: 'Identity Info'
@@ -110,9 +113,11 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
         } else {
           console.log('No data found.');
         }
+        this.loader = false
       },
       error: (err) => {
         console.error('Error fetching data:', err);
+        this.loader = false
       }
     });
   }
@@ -144,10 +149,11 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
   // Method to save field configuration (handles both create and update)
   saveFieldConfig(modal: any) {
     if (this.fieldConfigForm.valid) {
+      this.loader = true
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee :
+                              formValue.approvalType == 'ROLE' ? formValue.selectedRole :
                               formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
 
       if (this.isEditMode) {
@@ -157,7 +163,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
-          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
+          approvalType: formValue.approvalType,
           approvalAuthority: approvalAuthority.toString() || '',
           updatedBy: loggedInUser.employeeId,
         };
@@ -166,6 +172,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           next: () => {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
+            this.loader = false
             this.resetFieldConfigForm();
             this.getIdentityInfoFields();
             this.getIdentityInfoFieldsConfigList();
@@ -173,6 +180,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           error: (error: any) => {
             const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
+            this.loader = false
           }
         });
       } else {
@@ -183,7 +191,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Identity Info",
           displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
           requiresApproval: true,
-          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
+          approvalType: formValue.approvalType,
           approvalAuthority: approvalAuthority.toString() || '',
           createdBy: loggedInUser.employeeId,
         };
@@ -192,6 +200,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           next: () => {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
+            this.loader = false
             this.resetFieldConfigForm();
             this.getIdentityInfoFields();
             this.getIdentityInfoFieldsConfigList();
@@ -199,6 +208,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           error: (error: any) => {
             const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
+            this.loader = false
           }
         });
       }
@@ -217,16 +227,20 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
   }
   onDelete(modal: any) {
     if (!this.selectedDeleteConfigItem) return;
+    this.loader = true
 
     this.subscription = this.http.deleteData(`EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
       next: () => {
         modal.close();
+         this.getIdentityInfoFields();
         this.getIdentityInfoFieldsConfigList();
         this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
+        this.loader = false
       },
       error: (error: any) => {
         const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
+        this.loader = false
       }
     });
   }
@@ -268,7 +282,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
 
 // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-   
+
 
     // Watch for approval type changes
     this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {

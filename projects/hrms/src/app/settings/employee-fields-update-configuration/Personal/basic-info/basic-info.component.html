@@ -12,8 +12,8 @@
         <thead>
           <tr>
             <th>{{'Field Name' | translate}}</th>
-            <th>{{'Approval Required' | translate}}</th>
-            <th>{{'Approval Type' | translate}}</th>
+            <th class="text-center">{{'Approval Required' | translate}}</th>
+            <th class="text-center">{{'Approval Type' | translate}}</th>
             <th class="text-center"
               *ngIf="rbac.allowedToAccess('Basic Info.update') || rbac.allowedToAccess('Basic Info.delete')">
               {{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
@@ -21,35 +21,51 @@
         </thead>
 
         <tbody>
-          <ng-container>
-            <tr *ngFor="let configItem of basicInfoFieldsConfigList">
-              <td>{{configItem.columnName || 'N/A'}}</td>
-              <td>{{configItem.requiresApproval?'Yes': 'No'}}</td>
-              <td>{{configItem.approvalType || 'N/A'}}</td>
-              <td class="text-center"
-                *ngIf="rbac.allowedToAccess('Basic Info.update') || rbac.allowedToAccess('Basic Info.delete')">
-                <div class="dropdown">
-                  <span type="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </span>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="openUpdateFieldConfigDialog(configItem)"
-                      *ngIf="rbac.allowedToAccess('Basic Info.update')">
-                      <a class="dropdown-item">
-                        <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
-                      </a>
-                    </li>
-                    <li (click)="opendelete(configItem)" *ngIf="rbac.allowedToAccess('Basic Info.delete')">
-                      <a class="dropdown-item">
-                        <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
+  @if (basicInfoFieldsConfigList.length > 0) {
+    @for (configItem of basicInfoFieldsConfigList; track configItem.id) {
+      <tr>
+        <td>{{ configItem.columnName || 'N/A' }}</td>
+        <td class="text-center">{{ configItem.requiresApproval ? 'Yes' : 'No' }}</td>
+        <td class="text-center">{{ configItem.approvalType || 'N/A' }}</td>
+
+        <td class="text-center"
+          *ngIf="rbac.allowedToAccess('Basic Info.update') || rbac.allowedToAccess('Basic Info.delete')">
+
+          <div class="dropdown">
+            <span type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-three-dots-vertical"></i>
+            </span>
+
+            <ul class="dropdown-menu custom-dropdown-menu">
+              <li (click)="openUpdateFieldConfigDialog(configItem)"
+                  *ngIf="rbac.allowedToAccess('Basic Info.update')">
+                <a class="dropdown-item">
+                  <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                </a>
+              </li>
+
+              <li (click)="opendelete(configItem)"
+                  *ngIf="rbac.allowedToAccess('Basic Info.delete')">
+                <a class="dropdown-item">
+                  <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
+                </a>
+              </li>
+            </ul>
+
+          </div>
+        </td>
+      </tr>
+    }
+  }
+  @else {
+    <tr>
+      <td colspan="4">
+        <app-no-data-found></app-no-data-found>
+      </td>
+    </tr>
+  }
+</tbody>
+
       </table>
       }
       @else {

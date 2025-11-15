@@ -1,5 +1,10 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpService } from '../../../../services/http.service';
@@ -11,21 +16,30 @@ import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { jobRoleDATA } from '../../../employee-fields/job/jobrole/jobrole-model';
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 import { AuthService } from '../../../../services/auth.service';
-
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-academics',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, ToggleSwitchModule, DataLoaderContentComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    SelectModule,
+    MultiSelectModule,
+    ToggleSwitchModule,
+    DataLoaderContentComponent,
+    NoDataFoundComponent,
+  ],
   templateUrl: './academics.component.html',
   styleUrl: './academics.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class AcademicsComponent {
- subscription!: Subscription;
+  subscription!: Subscription;
   loader = false;
   isEditMode = false;
   selectedFieldConfig: any = null;
@@ -37,14 +51,14 @@ export class AcademicsComponent {
   fieldOptions = [] as any;
   academicsFieldsConfigList = [] as any;
   approvalTypeOptions = [
-    { label: 'Employee', value: 'EMP' },
+    // { label: 'Employee', value: 'EMP' },
     { label: 'Role', value: 'ROLE' },
-    { label: 'Manager', value: 'MANAGER' }
+    { label: 'Manager', value: 'MANAGER' },
   ];
   activeEmplist = [] as any;
- managerOptions = [
+  managerOptions = [
     { label: 'Reporting Manager', value: 'RM' },
-    { label: 'Team Manager', value: 'TM' }
+    { label: 'Team Manager', value: 'TM' },
   ];
   roles = [] as any;
 
@@ -55,10 +69,8 @@ export class AcademicsComponent {
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
-    private authService: AuthService,
-  ) {
-
-  }
+    private authService: AuthService
+  ) {}
   ngOnInit(): void {
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
@@ -66,7 +78,7 @@ export class AcademicsComponent {
       approvalType: ['', Validators.required],
       selectedEmployee: [''],
       selectedRole: [''],
-      selectedManager:['']
+      selectedManager: [''],
     });
     this.getAcademicsFields();
     this.setupFormSubscriptions();
@@ -78,49 +90,69 @@ export class AcademicsComponent {
   getAcademicsFields() {
     const params = 'Personal';
     const param = 'Academics';
-    this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
-      next: (data: any) => {
-        if (data.data.length > 0) {
-          this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+    this.http
+      .getDatabyentityvalueForFieldUpdate(
+        `EmployeeInfoApprovalFields/getApprovalFields`,
+        params,
+        param
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.fieldOptions = data.data.filter(
+              (field: any) => field.isRequired !== false
+            );
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   getAcademicsFieldsConfigList() {
+    this.loader = true;
     const params = {
       displayName: 'Personal',
-      moduleName: 'Academics'
-    }
-    this.http.getDataIncludeParams(`EmployeeInfoFieldConfig/getEmployeeInfoApprovals`, params).subscribe({
-      next: (data: any) => {
-        if (data.data.length > 0) {
-          this.academicsFieldsConfigList = data.data
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+      moduleName: 'Academics',
+    };
+    this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldConfig/getEmployeeInfoApprovals`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.academicsFieldsConfigList = data.data;
+          } else {
+            console.log('No data found.');
+          }
+          this.loader = false;
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+           this.loader = false;
+        },
+      });
   }
 
   getAllEmployeeDetails() {
     const status = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
-      next: (res: any) => {
-        this.activeEmplist = res.map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/v3/Getallemployees?statuses=${status}`)
+      .subscribe({
+        next: (res: any) => {
+          this.activeEmplist = res.map((employee: any) => ({
+            label: `${employee.fusionEmpId ?? ''} - ${
+              employee.firstName ?? ''
+            }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+            value: employee.employeeId,
+          }));
+        },
+      });
   }
 
   getAllRoles(): void {
@@ -130,71 +162,100 @@ export class AcademicsComponent {
       },
       error: (error: any) => {
         console.log(error);
-      }
-    })
+      },
+    });
   }
-
 
   // Method to save field configuration (handles both create and update)
   saveFieldConfig(modal: any) {
     if (this.fieldConfigForm.valid) {
-      const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
+      this.loader = true;
+      const formValue = this.isEditMode
+        ? this.fieldConfigForm.getRawValue()
+        : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
-                              formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
+      let approvalAuthority =
+        formValue.approvalType == 'EMP'
+          ? formValue.selectedEmployee
+          : formValue.approvalType == 'ROLE'
+          ? formValue.selectedRole
+          : formValue.approvalType == 'MANAGER'
+          ? formValue.selectedManager
+          : '';
 
       if (this.isEditMode) {
+        debugger;
         // Update operation
         const request = {
           columnName: this.selectedFieldConfig.columnName,
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
-          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
+          approvalType: formValue.approvalType,
           approvalAuthority: approvalAuthority.toString() || '',
           updatedBy: loggedInUser.employeeId,
         };
 
-        this.subscription = this.http.putData(`EmployeeInfoFieldConfig/${this.selectedFieldConfig.id}`, request).subscribe({
-          next: () => {
-            modal.close();
-            this.conformationPopup.openSuccessModal('Field configuration updated successfully');
-            this.resetFieldConfigForm();
-            this.getAcademicsFields();
-            this.getAcademicsFieldsConfigList();
-          },
-          error: (error: any) => {
-            const errorMessage = error.error?.message;
-            this.conformationPopup.openErrorModal(errorMessage);
-          }
-        });
+        this.subscription = this.http
+          .putData(
+            `EmployeeInfoFieldConfig/${this.selectedFieldConfig.id}`,
+            request
+          )
+          .subscribe({
+            next: () => {
+              modal.close();
+              this.loader = false;
+              this.conformationPopup.openSuccessModal(
+                'Field configuration updated successfully'
+              );
+              this.resetFieldConfigForm();
+              this.getAcademicsFields();
+              this.getAcademicsFieldsConfigList();
+            },
+            error: (error: any) => {
+              this.loader = false;
+              const errorMessage = error.error?.message;
+              this.conformationPopup.openErrorModal(errorMessage);
+            },
+          });
       } else {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
         const request = {
           columnNames: selectedFields,
-          moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Academics",
-          displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
+          moduleName:
+            this.fieldOptions.length > 0
+              ? this.fieldOptions[0]?.moduleName
+              : 'Academics',
+          displayName:
+            this.fieldOptions.length > 0
+              ? this.fieldOptions[0]?.tabName
+              : 'Personal',
           requiresApproval: true,
-          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
+          approvalType: formValue.approvalType,
           approvalAuthority: approvalAuthority.toString() || '',
           createdBy: loggedInUser.employeeId,
         };
 
-        this.subscription = this.http.postdata('EmployeeInfoFieldConfig', request).subscribe({
-          next: () => {
-            modal.close();
-            this.conformationPopup.openSuccessModal('Field configuration saved successfully');
-            this.resetFieldConfigForm();
-            this.getAcademicsFields();
-            this.getAcademicsFieldsConfigList();
-          },
-          error: (error: any) => {
-            const errorMessage = error.error?.message;
-            this.conformationPopup.openErrorModal(errorMessage);
-          }
-        });
+        this.subscription = this.http
+          .postdata('EmployeeInfoFieldConfig', request)
+          .subscribe({
+            next: () => {
+              modal.close();
+              this.loader = false;
+              this.conformationPopup.openSuccessModal(
+                'Field configuration saved successfully'
+              );
+              this.resetFieldConfigForm();
+              this.getAcademicsFields();
+              this.getAcademicsFieldsConfigList();
+            },
+            error: (error: any) => {
+              this.loader = false;
+              const errorMessage = error.error?.message;
+              this.conformationPopup.openErrorModal(errorMessage);
+            },
+          });
       }
     }
   }
@@ -207,26 +268,39 @@ export class AcademicsComponent {
   // DELETE
   opendelete(configItem: any) {
     this.selectedDeleteConfigItem = configItem;
-    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.deletepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
   onDelete(modal: any) {
+    this.loader = true;
     if (!this.selectedDeleteConfigItem) return;
 
-    this.subscription = this.http.deleteData(`EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
-      next: () => {
-        modal.close();
-        this.getAcademicsFieldsConfigList();
-        this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
-      },
-      error: (error: any) => {
-        const errorMessage = error.error?.message;
-        this.conformationPopup.openErrorModal(errorMessage);
-      }
-    });
+    this.subscription = this.http
+      .deleteData(
+        `EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`
+      )
+      .subscribe({
+        next: () => {
+          modal.close();
+           this.loader = false;
+          this.getAcademicsFields();
+          this.getAcademicsFieldsConfigList();
+          this.conformationPopup.openSuccessModal(
+            'Field configuration deleted successfully'
+          );
+        },
+        error: (error: any) => {
+          this.loader = false;
+          const errorMessage = error.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
+        },
+      });
   }
   closeDelete(modal: any) {
     modal.dismiss();
-  };
+  }
 
   // Method to open field configuration popup
   openFieldConfigDialog() {
@@ -236,7 +310,7 @@ export class AcademicsComponent {
     this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
-      centered: true
+      centered: true,
     });
   }
 
@@ -244,46 +318,57 @@ export class AcademicsComponent {
   openUpdateFieldConfigDialog(fieldConfig: any) {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
-     this.fieldConfigForm.patchValue({
+    this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
       approvalType: fieldConfig.approvalType || '',
-      selectedEmployee: fieldConfig.approvalType === 'EMP' ? Number(fieldConfig.approvalAuthority) : '',
-      selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : '',
-      selectedManager: fieldConfig.approvalType === 'MANAGER' ? fieldConfig.approvalAuthority : ''
+      selectedEmployee:
+        fieldConfig.approvalType === 'EMP'
+          ? Number(fieldConfig.approvalAuthority)
+          : '',
+      selectedRole:
+        fieldConfig.approvalType === 'ROLE'
+          ? fieldConfig.approvalAuthority
+          : '',
+      selectedManager:
+        fieldConfig.approvalType === 'MANAGER'
+          ? fieldConfig.approvalAuthority
+          : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
-      centered: true
+      centered: true,
     });
   }
 
   // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-   
-
     // Watch for approval type changes
-    this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {
-      // Reset employee/role selections when type changes
-       this.fieldConfigForm.patchValue({
-        selectedEmployee: '',
-        selectedRole: '',
-        selectedManager: ''
+    this.fieldConfigForm
+      .get('approvalType')
+      ?.valueChanges.subscribe((value) => {
+        // Reset employee/role selections when type changes
+        this.fieldConfigForm.patchValue({
+          selectedEmployee: '',
+          selectedRole: '',
+          selectedManager: '',
+        });
+        this.updateApprovalValidators(value);
       });
-      this.updateApprovalValidators(value);
-    });
   }
 
   // Set validators for approval fields
   setApprovalValidators() {
-    this.fieldConfigForm.get('approvalType')?.setValidators([Validators.required]);
+    this.fieldConfigForm
+      .get('approvalType')
+      ?.setValidators([Validators.required]);
     this.fieldConfigForm.get('approvalType')?.updateValueAndValidity();
   }
 
   // Clear validators for approval fields
-    clearApprovalValidators() {
+  clearApprovalValidators() {
     this.fieldConfigForm.get('approvalType')?.clearValidators();
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
@@ -295,18 +380,24 @@ export class AcademicsComponent {
   }
 
   // Update validators based on approval type
-   updateApprovalValidators(approvalType: string) {
+  updateApprovalValidators(approvalType: string) {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
 
     // Set validators based on approval type
     if (approvalType === 'EMP') {
-      this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
+      this.fieldConfigForm
+        .get('selectedEmployee')
+        ?.setValidators([Validators.required]);
     } else if (approvalType === 'ROLE') {
-      this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+      this.fieldConfigForm
+        .get('selectedRole')
+        ?.setValidators([Validators.required]);
     } else if (approvalType === 'MANAGER') {
-      this.fieldConfigForm.get('selectedManager')?.setValidators([Validators.required]);
+      this.fieldConfigForm
+        .get('selectedManager')
+        ?.setValidators([Validators.required]);
     }
     this.fieldConfigForm.get('selectedManager')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
@@ -321,7 +412,6 @@ export class AcademicsComponent {
     this.isEditMode = false;
     this.selectedFieldConfig = null;
   }
-
 
   ngOnDestroy(): void {
     if (this.subscription) {

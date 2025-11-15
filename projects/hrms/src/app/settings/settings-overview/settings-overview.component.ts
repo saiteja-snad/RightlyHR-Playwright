@@ -22,6 +22,7 @@ import { SettingsEmployeeFieldsUpdateConfigurationsComponent } from '../../share
 })
 
 export class SettingsOverviewComponent {
+  settingsEmployeefieldupdateconfigModule = MODULE_INFOS.SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_MODULE_INFO
   settingEmployeefieldsModule = MODULE_INFOS.SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO;
   settingRolesPermissionsModule = MODULE_INFOS.SETTINGS_ROLES_PERMISSIONS_MODULE_INFO;
   settingTimeOffModule = MODULE_INFOS.SETTINGS_TIME_OFF_MODULE_INFO;
@@ -29,7 +30,7 @@ export class SettingsOverviewComponent {
   settingsPMSConfigurations = MODULE_INFOS.PMS_CONFIGURATION_MODULE_INFO;
   settingDynamicFormsModule = MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO;
   settingAttendanceConfigurationModule = MODULE_INFOS.SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO;
-  
+
   constructor(
     public rbac: RbacService,
     private router: Router,

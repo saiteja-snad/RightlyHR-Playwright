@@ -14,10 +14,11 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 import { AuthService } from '../../../../services/auth.service';
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-addresses',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, ToggleSwitchModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, ToggleSwitchModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './addresses.component.html',
   styleUrl: './addresses.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -35,7 +36,7 @@ export class AddressesComponent {
   fieldOptions = [] as any;
   addressesFieldsConfigList = [] as any;
   approvalTypeOptions = [
-    { label: 'Employee', value: 'EMP' },
+    // { label: 'Employee', value: 'EMP' },
     { label: 'Role', value: 'ROLE' },
     { label: 'Manager', value: 'MANAGER' }
   ];
@@ -91,6 +92,7 @@ export class AddressesComponent {
   }
 
   getAddressesFieldsConfigList() {
+     this.loader = true;
     const params = {
       displayName: 'Personal',
       moduleName: 'Address'
@@ -102,9 +104,11 @@ export class AddressesComponent {
         } else {
           console.log('No data found.');
         }
+        this.loader = false;
       },
       error: (err) => {
         console.error('Error fetching data:', err);
+        this.loader = false;
       }
     });
   }
@@ -136,10 +140,11 @@ export class AddressesComponent {
   // Method to save field configuration (handles both create and update)
   saveFieldConfig(modal: any) {
     if (this.fieldConfigForm.valid) {
+      this.loader = true;
       const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee : 
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole : 
+      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee :
+                              formValue.approvalType == 'ROLE' ? formValue.selectedRole :
                               formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
 
       if (this.isEditMode) {
@@ -149,7 +154,7 @@ export class AddressesComponent {
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
-          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
+          approvalType: formValue.approvalType,
           approvalAuthority: approvalAuthority.toString() || '',
           updatedBy: loggedInUser.employeeId,
         };
@@ -158,6 +163,7 @@ export class AddressesComponent {
           next: () => {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration updated successfully');
+             this.loader = false;
             this.resetFieldConfigForm();
             this.getAddressesFields();
             this.getAddressesFieldsConfigList();
@@ -165,6 +171,7 @@ export class AddressesComponent {
           error: (error: any) => {
             const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
+             this.loader = false;
           }
         });
       } else {
@@ -175,7 +182,7 @@ export class AddressesComponent {
           moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Addresses",
           displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
           requiresApproval: true,
-          approvalType: formValue.approvalType === 'MANAGER' ? "" : formValue.approvalType || "",
+          approvalType: formValue.approvalType,
           approvalAuthority: approvalAuthority.toString() || '',
           createdBy: loggedInUser.employeeId,
         };
@@ -184,6 +191,7 @@ export class AddressesComponent {
           next: () => {
             modal.close();
             this.conformationPopup.openSuccessModal('Field configuration saved successfully');
+             this.loader = false;
             this.resetFieldConfigForm();
             this.getAddressesFields();
             this.getAddressesFieldsConfigList();
@@ -191,6 +199,7 @@ export class AddressesComponent {
           error: (error: any) => {
             const errorMessage = error.error?.message;
             this.conformationPopup.openErrorModal(errorMessage);
+             this.loader = false;
           }
         });
       }
@@ -209,16 +218,20 @@ export class AddressesComponent {
   }
   onDelete(modal: any) {
     if (!this.selectedDeleteConfigItem) return;
+    this.loader = true;
 
     this.subscription = this.http.deleteData(`EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
       next: () => {
         modal.close();
+         this.loader = false;
+         this.getAddressesFields();
         this.getAddressesFieldsConfigList();
         this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
       },
       error: (error: any) => {
         const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
+         this.loader = false;
       }
     });
   }
@@ -260,7 +273,7 @@ export class AddressesComponent {
 
  // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-   
+
 
     // Watch for approval type changes
     this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {

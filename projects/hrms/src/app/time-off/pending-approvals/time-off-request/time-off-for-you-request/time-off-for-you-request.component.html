@@ -309,8 +309,8 @@
                     </div>
                     <div class="form-check">
                         <input class="form-check-input ms-2 me-2" type="radio" [value]="false" id="Unplanned"
-                            name="isPlannedLeave" [(ngModel)]="selectedLeaveData.isPlannedLeave"
-                            #isPlannedLeave="ngModel" required>
+                            name="isPlannedLeave" [(ngModel)]="selectedLeaveData.isPlannedLeave" #isPlannedLeave="ngModel"
+                            required>
                         <label class="form-check-label" for="Unplanned">
                             No
                         </label>
@@ -321,11 +321,11 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for approval<span
                             class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" required 
-                        [(ngModel)]="selectedLeaveData.comments"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)">
-                    </textarea>
-
+                        name="Reasons" #Reasons="ngModel" maxlength="250" required [(ngModel)]="selectedLeaveData.comments"
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
+                        (keydown)="formsValidation.restrictInitialSpace($event)">
+                            </textarea>
+        
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length? selectedLeaveData.comments?.length : 0}}/250
                     </div>
@@ -334,8 +334,25 @@
                         Reason for approval is required
                     </div>
                 </div>
-            </div>
 
+               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                        (click)="onStatusApproveSelect('approved')">
+                        Approved
+                    </button>
+                
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'planned'"
+                        (click)="onStatusApproveSelect('planned')">
+                        Planned Leave
+                    </button>
+                
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'unplanned'"
+                        (click)="onStatusApproveSelect('unplanned')">
+                        Unplanned Leave
+                    </button>
+                </div>
+            </div>
+        
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
                     [disabled]="spinnerLoader">{{'Cancel'|
@@ -380,6 +397,22 @@
                     </div>
                 </div>
             </div>
+           <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusRejectSelect('reject')">
+                        Rejected
+                    </button>
+        
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'planned'"
+                        (click)="onStatusRejectSelect('planned')">
+                        Planned Leave
+                    </button>
+        
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'unplanned'"
+                        (click)="onStatusRejectSelect('unplanned')">
+                        Unplanned Leave
+                    </button>
+                </div>
 
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"

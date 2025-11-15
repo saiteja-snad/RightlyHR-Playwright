@@ -32,6 +32,7 @@ export class AttendanceEligibilityCriteriaTabsComponent {
     { label: 'Attendance Regularization Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria',permission: { feature: 'Attendance Regularization Eligibility Tab', action: 'view' } },
     { label: 'Remote Login Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria',permission: { feature: 'Remote Login Eligibility Tab', action: 'view' } },
     { label: 'Late Login Alert Configuration', route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: { feature: 'Late Login Alert Configuration Tab', action: 'view' } },
-    { label: 'Extra Hours Configuration', route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: { feature: 'Extra Hours Configuration Tab', action: 'view' } }
+    { label: 'Extra Hours Configuration', route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: { feature: 'Extra Hours Configuration Tab', action: 'view' } },
+    { label: 'Flexible Work Hours Configuration', route: '/settings/timeoff-configurations/eligibility-criterias/flexible-workhours-configuration', permission: { feature: 'Flexible Work Hours Configuration Tab', action: 'view' } }
   ];
 }

@@ -121,6 +121,7 @@ export const permissionsData = [
   { fields: 'Eligibility Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Late Login Alert Configuration Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Extra Hours Configuration Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Flexible Work Hours Configuration Tab', View: false, Update: false, Create: false, Delete: false },
 
   // Settings Dynamic Forms Section
   { fields: 'Active Forms', View: false, Update: false, Create: false, Delete: false },
@@ -992,4 +993,8 @@ export const permissionsData = [
   { fields: 'IT Support Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Category', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Sub-Category', View: false, Update: false, Create: false, Delete: false },
+  //flexible work hours Section
+  { fields: 'Flexible Work Hours Allocation Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Work Hours Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Work Hours Allocations Tab', View: false, Update: false, Create: false, Delete: false },
 ];

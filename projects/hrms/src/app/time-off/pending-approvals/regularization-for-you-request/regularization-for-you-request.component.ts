@@ -64,13 +64,14 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+selectedLeaveStatus: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  rejectcomments: any;
 
   constructor(
     private modalService: NgbModal,
@@ -89,7 +90,20 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   // selectCheck(Value: any) {
   //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
   // }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.approveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
     this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
@@ -129,12 +143,22 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
+     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
+     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getAllPendingApprovals() {

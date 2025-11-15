@@ -72,6 +72,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   requestBody = {} as any;
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
+  selectedLeaveStatus: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -87,7 +88,20 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
   }
 
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.approveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
@@ -206,6 +220,11 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
@@ -215,6 +234,11 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+      this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
   }
 
   getAllPendingApprovals() {

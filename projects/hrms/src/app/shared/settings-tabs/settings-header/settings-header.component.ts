@@ -222,6 +222,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Timesheet Configuration';
       this.componentName = 'Published';
     }
+    else if(url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')){
+    this.moduleName='Time Off';
+    this.componentName='Flexible Work Hours Allocation';
+   }
   }
 
   navigateToSettings() {

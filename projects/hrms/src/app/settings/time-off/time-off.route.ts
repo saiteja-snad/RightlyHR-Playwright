@@ -29,6 +29,7 @@ export default [
             { path: 'remote-login-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/remote-login-eligibility-criteria/remote-login-eligibility-criteria.component').then((m) => m.RemoteLoginEligibilityCriteriaComponent)},
             { path: 'late-login-alert-configuration', loadComponent: () => import('./attendance-eligibility-criteria/late-login-alert-configuration/late-login-alert-configuration.component').then((m) => m.LateLoginAlertConfigurationComponent)},
             { path: 'extra-hours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/extra-hours-configuration/extra-hours-configuration.component').then((m) => m.ExtraHoursConfigurationComponent)},
+            { path: 'flexible-workhours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/flexible-workhours-configuration/flexible-workhours-configuration.component').then((m) => m.FlexibleWorkhoursConfigurationComponent)},
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },
@@ -40,6 +41,14 @@ export default [
             { path: '', redirectTo: 'wfh-allocation', pathMatch: 'full' },
             { path: 'wfh-allocation', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation/wfh-allocation.component').then((m) => m.WfhAllocationComponent) },
             { path: 'wfh-allocation-view', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent) },
+        
+        ]
+    },
+    {
+        path: 'flexible-workhours-allocation', children: [
+            { path: '', redirectTo: 'workhours-allocation', pathMatch: 'full' },
+            { path: 'workhours-allocation', loadComponent: () => import('./flexible-hours-allocation/hours-allocation/hours-allocation.component').then((m) => m.HoursAllocationComponent) },
+            { path: 'workhours-allocation-view', loadComponent: () => import('./flexible-hours-allocation/hours-allocation-view/hours-allocation-view.component').then((m) => m.HoursAllocationViewComponent) },
         
         ]
     },

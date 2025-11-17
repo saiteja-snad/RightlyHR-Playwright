@@ -23,6 +23,7 @@
                                         <th class="text-center">Department</th>
                                         <th class="text-center">Phases / Milestones</th>
                                         <th class="text-center">Total Logged Hours</th>
+
                                     </tr>
                                 </ng-template>
 
@@ -34,6 +35,7 @@
                                                 {{ entry?.employee?.name}}
                                             </a>
                                         </td>
+
                                         <td class="text-center">
                                             @if(entry?.roles) {
                                                 <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
@@ -53,10 +55,11 @@
                                                 -
                                             }
                                         </td>
-                                        <td class="text-center"><a class="project-name cursor"
-                                                (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">{{
-                                                entry?.phasesCount ?? 0 }}</a></td>
+                                       <td class="text-center"><a class="project-name cursor" 
+                                        (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">
+                                        {{ entry?.phasesCount ?? 0 }}</a></td>
                                         <td class="text-center">{{ entry?.totalLoggedHours ?? '-' }}</td>
+
                                     </tr>
                                 </ng-template>
 

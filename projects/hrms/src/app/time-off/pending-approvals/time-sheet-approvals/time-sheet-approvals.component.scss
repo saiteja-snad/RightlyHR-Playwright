@@ -10,14 +10,16 @@
 .custom-accordian-table {
     width: 100%;
 
-    .custom-accordian-table {
-        th:first-child {
-            border-top-left-radius: 0rem !important;
-        }
+    .p-datatable-table-container {
+        max-height: 50dvh !important;
+    }
 
-        th:last-child {
-            border-top-right-radius: 0rem !important;
-        }
+    th:first-child {
+        border-top-left-radius: 0rem !important;
+    }
+
+    th:last-child {
+        border-top-right-radius: 0rem !important;
     }
 
     th {

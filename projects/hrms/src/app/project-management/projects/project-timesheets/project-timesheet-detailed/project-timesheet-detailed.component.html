@@ -4,11 +4,13 @@
         <table class="w-100">
             <thead>
                 <tr>
+
                     <th>Resource Name</th>
                     <th class="text-center">Role</th>
                     <th class="text-center">Department</th>
                     <th class="text-center">Phases / Milestones</th>
                     <th class="text-center">Total Logged Hours</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +21,7 @@
                             {{ project?.employee?.name }}
                         </a>
                     </td>
+
                     <td class="text-center">
                         @if(project?.roles) {
                         <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
@@ -43,6 +46,7 @@
                             (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">{{
                             project?.phasesCount ?? 0 }}</a></td>
                     <td class="text-center">{{ project?.totalLoggedHours ?? '-' }}</td>
+
                 </tr>
                 }@else {
                 <app-no-data-found />

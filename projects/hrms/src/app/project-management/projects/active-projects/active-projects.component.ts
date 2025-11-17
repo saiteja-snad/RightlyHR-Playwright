@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
-import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -21,14 +21,12 @@ import { IResource } from '../../../Interfaces/project-management/resources.mode
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-
-import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component";
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent],
+    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, 
+    ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })
@@ -69,12 +67,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.http.selectedDepartmentIds$.pipe(takeUntil(this.destroy$))
-      .subscribe((deptIds) => {
-        this.selectedDepartmentIds = deptIds || [];
-        this.getProjectsBasedOnRoute();
-
-      });
+    this.http.selectedDepartmentIds$.pipe(takeUntil(this.destroy$)).subscribe((deptIds) => {
+      this.selectedDepartmentIds = deptIds || [];
+      this.getProjectsBasedOnRoute();
+    });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();

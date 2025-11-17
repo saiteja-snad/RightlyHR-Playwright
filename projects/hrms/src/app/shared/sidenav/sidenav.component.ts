@@ -12,7 +12,7 @@ import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-
 import { SkillSetMainTabsComponent } from "../skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent, SkillSetMainTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -75,6 +75,11 @@ export class SidenavComponent implements OnInit {
       label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
       route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
     },
+    //Card Management
+    {
+      label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png',
+      route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' }
+    },
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon
@@ -133,13 +138,13 @@ export class SidenavComponent implements OnInit {
 
   isActiveprojectManagement(): boolean {
     const currentUrl = this.router.url;
-    // ✅Active for pending-approvals and its subroutes
+    // Active for pending-approvals and its subroutes
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
   }
 
   isActiveskillsetManagement(): boolean {
     const currentUrl = this.router.url;
-    // ✅Active for pending-approvals and its subroutes
+    // Active for pending-approvals and its subroutes
     return currentUrl === '/skill-management' || currentUrl.startsWith('/skill-management');
   }
 

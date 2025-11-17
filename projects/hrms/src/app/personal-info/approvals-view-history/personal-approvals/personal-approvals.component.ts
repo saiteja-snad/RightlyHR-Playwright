@@ -9,9 +9,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Router } from '@angular/router';
-import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
-import { Tooltip, TooltipModule } from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 
 interface ApprovalItem {
   fieldName: string;
@@ -37,9 +37,9 @@ interface ModuleData {
     AccordionModule,
     FormsModule,
     ReactiveFormsModule,
-    NoDataFoundComponent,
     DataLoaderContentComponent,
     TooltipModule,
+    NoDataFoundComponent,
   ],
   templateUrl: './personal-approvals.component.html',
   styleUrls: ['./personal-approvals.component.scss'],
@@ -51,6 +51,8 @@ export class PersonalApprovalsComponent implements OnInit {
   isLoading = false;
   selectedItem: ApprovalItem | null = null;
   private empdata: any = {};
+  cameFromPersonalInfo = false;
+
 
   @ViewChild('cancelModal') cancelModal!: TemplateRef<any>;
   @ViewChild('confirmationModal') confirmationModal!: TemplateRef<any>;
@@ -76,13 +78,20 @@ export class PersonalApprovalsComponent implements OnInit {
     this.fetchApprovalHistory();
   }
 
+  shouldShowTooltip(element: HTMLElement): boolean {
+    if (!element) return false;
+    return element.offsetWidth < element.scrollWidth;
+  }
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
 
     if (fullPath.startsWith('/personalinfo')) {
+      this.cameFromPersonalInfo = true;
       this.empdata = JSON.parse(localStorage.getItem('personaldata') || '{}');
       this.employeeId = this.empdata?.employeeId;
     } else if (fullPath.startsWith('/myinfo')) {
+      this.cameFromPersonalInfo = false;
       this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     }
   }

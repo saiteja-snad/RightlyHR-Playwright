@@ -10,42 +10,61 @@ import { RbacService } from '../../../services/rbac.service';
   standalone: true,
   imports: [CommonModule, RouterModule, TabsModule, TranslateModule],
   templateUrl: './view-history-approvals-layout.component.html',
-  styleUrl: './view-history-approvals-layout.component.scss'
+  styleUrl: './view-history-approvals-layout.component.scss',
 })
-
 export class ViewHistoryApprovalsLayoutComponent {
   navTabsViewHistory: any[] = [];
 
   constructor(public router: Router, public rbac: RbacService) {}
 
   ngOnInit(): void {
+    this.setBasePath();
     this.viewHistoryTabItems();
+  }
+
+  basePath = '/myinfo';
+
+  setBasePath() {
+    const url = this.router.url;
+    if (url.startsWith('/personalinfo')) {
+      this.basePath = '/personalinfo';
+    } else if (url.startsWith('/myinfo')) {
+      this.basePath = '/myinfo';
+    }
   }
 
   viewHistoryTabItems() {
     this.navTabsViewHistory = [
       {
         label: 'Personal',
-        link: '/myinfo/approvals/personal',
-        permission: { feature: 'My Info Personal Approval History', action: 'view' }
+        link: `${this.basePath}/approvals/personal`,
+        permission: {
+          feature: 'My Info Personal Approval History',
+          action: 'view',
+        },
       },
       {
         label: 'Job',
-        link: '/myinfo/approvals/job',
-        permission: { feature: 'My Info Job Approval History', action: 'view' }
+        link: `${this.basePath}/approvals/job`,
+        permission: { feature: 'My Info Job Approval History', action: 'view' },
       },
       {
         label: 'Documents',
-        link: '/myinfo/approvals/documents',
-        permission: { feature: 'My Info Documents Approval History', action: 'view' }
-      }
-    ].filter(tab =>
-      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+        link: `${this.basePath}/approvals/documents`,
+        permission: {
+          feature: 'My Info Documents Approval History',
+          action: 'view',
+        },
+      },
+    ].filter((tab) =>
+      this.rbac.allowedToAccess(
+        `${tab.permission.feature}.${tab.permission.action}`
+      )
     );
   }
 
   isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;
-    return currentUrl === link || currentUrl.startsWith(link + '/');
+    return currentUrl === link || currentUrl.startsWith(link);
   }
 }

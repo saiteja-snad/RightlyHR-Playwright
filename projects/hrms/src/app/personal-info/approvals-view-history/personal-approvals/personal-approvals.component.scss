@@ -35,69 +35,61 @@
 }
 
 .custom-accordians {
-    .p-accordionheader {
-        padding: 1rem 1.5rem !important;
-    }
+  .p-accordionheader {
+    padding: 1rem 1.5rem !important;
+  }
 }
 
 .popup-table-wrapper {
-    width: 100%;
-    overflow: hidden;
-    background-color: #fff;
-    border-radius: 0rem;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fff;
+  border-radius: 0rem;
 
-    .popup-table-scroll-container {
-        max-height: 30vh;
-        overflow-y: auto;
-        border: 1px solid #D1D8E3;
-        border-bottom: 0rem !important;
-    }
+  .popup-table-scroll-container {
+    max-height: 30vh;
+    overflow-y: auto;
+    border: 1px solid #d1d8e3;
+    border-bottom: 0rem !important;
+  }
 
-    .popup-table {
-        th,
-        td {
-            padding: 0.8rem;
-        }
+  .popup-table {
+    th,
+    td {
+      padding: 0.8rem;
     }
+  }
 
-    .popup-table-footer {
-        text-align: center;
-        padding: 0.5rem;
-        border: 2px solid #D1D8E3;
-        border-top: 1px solid #D1D8E3;
-        color: #3B3B3B;
-        font-size: var(--fontsize14);
-        border-bottom-left-radius: 0.5rem;
-        border-bottom-right-radius: 0.5rem;
-    }
+  .popup-table-footer {
+    text-align: center;
+    padding: 0.5rem;
+    border: 2px solid #d1d8e3;
+    border-top: 1px solid #d1d8e3;
+    color: #3b3b3b;
+    font-size: var(--fontsize14);
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
 }
 
 .status-approved {
-  color: #00D520 !important;
+  color: #00d520 !important;
   font-weight: 600;
 }
 
 .status-cancelled {
-  color: #EA362C !important;
+  color: #ea362c !important;
   font-weight: 600;
 }
 
 .status-pending {
-  color: #FF9500 !important;
+  color: #ff9500 !important;
   font-weight: 600;
 }
 
 .popup-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-.no-data-center-wrapper {
-  width: 100%;
-  height: 600px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .popup-table td,
@@ -109,8 +101,21 @@
   position: relative;
 }
 
+.ellipsis-cell {
+  display: inline-block;
+  max-width: 180px; /* same width as your table cells */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
 
 .popup-table tbody tr:last-child td {
   padding-bottom: 10px !important;
 }
 
+.no-data-wrapper {
+  position: relative;
+  min-height: 600px; /* or 350px depending on popup height */
+  width: 100%;
+}

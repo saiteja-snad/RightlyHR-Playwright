@@ -45,7 +45,6 @@ import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirm
   styleUrl: './personalinfo-layout.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   teamForm!: FormGroup;
@@ -861,6 +860,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
+
+      // My Info Approvals
+      '/myinfo/approvals/personal': MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/job': MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/documents': MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+
       // Personal Info perosnal
       '/personalinfo/personal/basic-info':
         MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
@@ -918,6 +923,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       '/personalinfo/job/cards':
         MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
+
+      // Personal Info Approvals
+      '/personalinfo/approvals/personal': MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/job': MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/documents': MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)

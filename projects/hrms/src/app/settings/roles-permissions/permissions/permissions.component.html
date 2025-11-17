@@ -3158,7 +3158,7 @@
                                 </td>
                             </tr>
                         </ng-container>
-                         <!-- My Info Personal Sub tabs -->
+                         <!-- My Info View History tabs -->
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
@@ -3175,8 +3175,8 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="
-                            per.fields === 'My Info Address Details' || per.fields === 'My Info Contact Details' ||
-                            per.fields === 'My Info Emergency Contact Details'">
+                            per.fields === 'My Info Personal Approval History' || per.fields === 'My Info Job Approval History' ||
+                            per.fields === 'My Info Documents Approval History'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <!-- View -->
                                 <td>
@@ -3187,24 +3187,74 @@
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
                                         (change)="onCheckboxChange(per, 'Update')"
-                                        [disabled]="!roleToFilter?.id || per.fields === 'My Skills'">
+                                        [disabled]="!roleToFilter?.id || !['My Info Personal Approval History','My Info Job Approval History',
+                                    'My Info Documents Approval History'].includes(per.fields)">
                                 </td>
                                 <!-- Create -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
                                         (change)="onCheckboxChange(per, 'Create')"
-                                        [disabled]="!roleToFilter?.id || !['My Info Education Details','My Info Identity Details',
-                                    'My Info Family Details','My Info Bank Details','My Info Visa Details','My Skills'].includes(per.fields)">
+                                        [disabled]="!roleToFilter?.id || !['My Info Personal Approval History','My Info Job Approval History',
+                                    'My Info Documents Approval History'].includes(per.fields)">
                                 </td>
                                 <!-- Delete -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
-                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id ||
-                                    !['My Info Education Details','My Info Identity Details','My Info Family Details','My Info Bank Details',
-                                    'My Info Visa Details','My Skills'].includes(per.fields)">
+                                        (change)="onCheckboxChange(per, 'Delete')">
                                 </td>
                             </tr>
                         </ng-container>
+<!-- Employee View History tabs -->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectAllMyInfoPersonalSubTabs
+                                        (change)="toggleSelectAll(employeeApprovalFields,
+                                    selectAllMyInfoPersonalSubTabs?.checked, isMyInfoPersonalActionDisabled.bind(this))"
+                                        [checked]="isAllSelected(employeeApprovalFields)"
+                                        [indeterminate]="isSomeSelected(employeeApprovalFields)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div>Employee Approvals</div>
+                                </div>
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center"
+                                *ngIf="
+                            per.fields === 'Employee Personal Approval History' || per.fields === 'Employee Job Approval History' ||
+                            per.fields === 'Employee Documents Approval History'">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <!-- View -->
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.View" [name]="per.fields + '.view'"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <!-- Update -->
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
+                                        (change)="onCheckboxChange(per, 'Update')"
+                                        [disabled]="!roleToFilter?.id || !['Employee Personal Approval History','Employee Job Approval History',
+                                    'Employee Documents Approval History'].includes(per.fields)">
+                                </td>
+                                <!-- Create -->
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
+                                        (change)="onCheckboxChange(per, 'Create')"
+                                        [disabled]="!roleToFilter?.id || !['Employee Personal Approval History','Employee Job Approval History',
+                                    'Employee Documents Approval History'].includes(per.fields)">
+                                </td>
+                                <!-- Delete -->
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
+                                        (change)="onCheckboxChange(per, 'Delete')">
+                                </td>
+                            </tr>
+                        </ng-container>
+
+
+
+
+
                         <!-- Employee Info Sub tabs -->
                         <tr>
                             <th colspan="5" class="custom-header">

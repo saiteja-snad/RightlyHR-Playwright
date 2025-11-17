@@ -6,26 +6,7 @@
     <div class="custom-component-right-content">
         <div class="component-tabs-accordian">
             <ul class="accordian-tabs-list-content">
-                <p-accordion value="7">
-                    @if(rbac.allowedToAccess('Employee Fields Config Update Module.view')){
-                    <li class="accordian-list-item">
-                        <p-accordion-panel value="7">
-                            <p-accordion-header>
-                                <div>
-                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/Employee-Fields-icon.png" alt="Icon"
-                                            class="list-icon">
-                                        <div class="list-label-name">Employee Field Update Configuration</div>
-                                    </div>
-                                    <p class="list-description m-0">{{settingsEmployeefieldupdateconfigModule}}</p>
-                                </div>
-                            </p-accordion-header>
-                            <p-accordion-content>
-                                <app-settings-employee-fields-update-configurations />
-                            </p-accordion-content>
-                        </p-accordion-panel>
-                    </li>
-                    }
+                <p-accordion value="0">
                     <!--Employee Fields-->
                     @if(rbac.allowedToAccess('Employee Fields Module.view')){
                     <li class="accordian-list-item">
@@ -183,7 +164,25 @@
                     </li>
                     }
 
-
+                    @if(rbac.allowedToAccess('Employee Fields Config Update Module.view')){
+                    <li class="accordian-list-item">
+                        <p-accordion-panel value="7">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/main-menu-icons/Employee-fields-update-config.png" alt="Icon"
+                                            class="list-icon">
+                                        <div class="list-label-name">Employee Field Update Configuration</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingsEmployeefieldupdateconfigModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                            <p-accordion-content>
+                                <app-settings-employee-fields-update-configurations />
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    </li>
+                    }
                 </p-accordion>
             </ul>
         </div>

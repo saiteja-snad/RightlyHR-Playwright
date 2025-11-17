@@ -15,7 +15,7 @@ import { environment } from '../../../../../environments/environment';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from '../../../../icons/confirmation-icon/confirmation-icon.component';
-import { TimesheetDay } from '../../../../Interfaces/timoff-model';
+import { EMPLOYEEINFO } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 
@@ -27,23 +27,18 @@ import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.compone
   styleUrl: './employeeinfo-for-you-request.component.scss'
 })
 export class EmployeeinfoForYouRequestComponent implements OnInit {
-  timesheetData: TimesheetDay[] = [];
+  emp: EMPLOYEEINFO[] = [];
   subscription!: Subscription;
   empinfo: any;
-  //requestSummary!: any;
-  //moduleId = 25;
-  selectedLeaveData = {} as TimesheetDay;
-  selectedLeavesItems: TimesheetDay[] = [];
+  selectedLeaveData = {} as EMPLOYEEINFO;
+  selectedLeavesItems: EMPLOYEEINFO[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   requestBody = {} as any;
   responseSummary!: any;
-  // approveReason: string = '';
   spinnerLoader = false;
   conformationstatus: any;
   timeSheetApproveForm!: FormGroup;
   timeSheetRejectForm!: FormGroup;
-  // multiSelect = false;
-  // hasSelectedAllOnce = false;
   totalRecordCount: number = 0;
   successRecordsCount: number = 0;
   failureRecordsCount: number = 0;
@@ -77,7 +72,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
   allFields: any;
   allPendingApprovals: any;
   allPendingApprovalItems: any;
-  emp: any;
+  //emp: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
@@ -108,7 +103,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
 
     this.intializeApproveForm();
   }
-
+// initialization
   intializeApproveForm() {
     this.timeSheetApproveForm = this.fb.group({
       comments: [null, [Validators.required, Validators.maxLength(250)]]
@@ -234,6 +229,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
 //     }
 //   });
 // }
+// display the data in table
 
 loadClientsAndProjects(page: number, pageSize: number): void {
   this.dataload = true;
@@ -262,7 +258,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
         empBlock.entries.forEach((entry: any) => {
 
           entry.fields
-            // ⭐ FILTER: ONLY WAITING FOR APPROVAL RECORDS
+            //  FILTER: ONLY WAITING FOR APPROVAL RECORDS
             .filter((f: any) =>
               f.pendingApproval?.header?.status === "Waiting for Approval"
             )
@@ -338,28 +334,13 @@ loadClientsAndProjects(page: number, pageSize: number): void {
   }
 
   // HEADER checkbox helpers (per-day)
-  // areAllSelected(dayIndex: number): boolean {
-  //   const day = this.emp?.[dayIndex];
-  //   const sel = this.selectedMap[dayIndex] || [];
-  //   if (!day || !day.entries) return false;
-  //   return day.entries.every(e => sel.some(s => s.id === e.id));
-  // }
-// areAllSelected(dayIndex: number): boolean {
-//   const day = this.emp?.[dayIndex];
-//   const sel = this.selectedMap[dayIndex] || [];
-//   if (!day || !day.entries) return false;
-//   return day.entries.every(e => sel.some(s => s.id === e.id));
-// }
-areAllSelected(dayIndex: number): boolean {
-  const day: any = this.emp?.[dayIndex];
-  const sel: any[] = this.selectedMap[dayIndex] || [];
+  areAllSelected(dayIndex: number): boolean {
+    const day = this.emp?.[dayIndex];
+    const sel = this.selectedMap[dayIndex] || [];
+    if (!day || !day.entries) return false;
+    return day.entries.every(e => sel.some(s => s.id === e.id));
+  }
 
-  if (!day || !day.entries) return false;
-
-  return day.entries.every((e: any) =>
-    sel.some((s: any) => s.id === e.id)
-  );
-}
   // used for check box show indeterminate state
   isIndeterminate(dayIndex: number): boolean {
     const day = this.emp?.[dayIndex];
@@ -565,79 +546,46 @@ areAllSelected(dayIndex: number): boolean {
   }
 
   // select all Check if ALL entries in ALL days are selected
-  // areAllDaysSelected(): boolean {
-  //   if (!this.emp || this.emp.length === 0) return false;
-  //   return this.emp.every(
-  //     (day, i) =>
-  //       day.entries &&
-  //       this.selectedMap[i] &&
-  //       day.entries.length === this.selectedMap[i].length
-  //   );
-  // }
-areAllDaysSelected(): boolean {
-  return this.emp.every((d: any, i: number) =>
-    (this.selectedMap[i]?.length || 0) === d.entries.length
-  );
-}
-  //select all Show indeterminate when partial selection exists
-  // isGlobalIndeterminate(): boolean {
-  //   if (!this.emp || this.emp.length === 0) return false;
-  //   const totalEntries = this.emp.reduce(
-  //     (acc, day) => acc + (day.entries?.length || 0),
-  //     0
-  //   );
-  //   const selectedCount = Object.values(this.selectedMap)
-  //     .filter(Array.isArray)
-  //     .reduce((acc, arr) => acc + arr.length, 0);
-
-  //   return selectedCount > 0 && selectedCount < totalEntries;
-  // }
-isGlobalIndeterminate(): boolean {
-  if (!this.emp || this.emp.length === 0) return false;
-
-  const totalEntries = this.emp.reduce(
-    (acc: number, day: any) => acc + (day.entries?.length || 0),
-    0
-  );
-
-  const selectedCount = Object.values(this.selectedMap)
-    .filter((arr: any) => Array.isArray(arr))
-    .reduce((acc: number, arr: any[]) => acc + arr.length, 0);
-
-  return selectedCount > 0 && selectedCount < totalEntries;
-}
-  //select all Toggle all entries across all days
-  // toggleSelectAllDays(isChecked: boolean): void {
-  //   if (!this.emp || this.emp.length === 0) return;
-  //   if (isChecked) {
-  //     this.showhideaction = false;
-  //     this.emp.forEach((day, i) => {
-  //       this.selectedMap[i] = [...day.entries];
-  //     });
-  //   } else {
-  //     this.showhideaction = true;
-  //     this.selectedMap = {};
-  //   }
-  //   this.syncGlobalSelectedEntries();
-  // }
-toggleSelectAllDays(isChecked: boolean): void {
-  if (!this.emp || this.emp.length === 0) return;
-
-  if (isChecked) {
-    this.showhideaction = false;
-
-    this.emp.forEach((day: any, i: number) => {
-      this.selectedMap[i] = [...(day.entries || [])];
-    });
-
-  } else {
-    this.showhideaction = true;
-    this.selectedMap = {};
+  areAllDaysSelected(): boolean {
+    if (!this.emp || this.emp.length === 0) return false;
+    return this.emp.every(
+      (day, i) =>
+        day.entries &&
+        this.selectedMap[i] &&
+        day.entries.length === this.selectedMap[i].length
+    );
   }
 
-  this.syncGlobalSelectedEntries();
-}
+  //select all Show indeterminate when partial selection exists
+  isGlobalIndeterminate(): boolean {
+    if (!this.emp || this.emp.length === 0) return false;
+    const totalEntries = this.emp.reduce(
+      (acc, day) => acc + (day.entries?.length || 0),
+      0
+    );
+    const selectedCount = Object.values(this.selectedMap)
+      .filter(Array.isArray)
+      .reduce((acc, arr) => acc + arr.length, 0);
+
+    return selectedCount > 0 && selectedCount < totalEntries;
+  }
+  
+  //select all Toggle all entries across all days
+  toggleSelectAllDays(isChecked: boolean): void {
+    if (!this.emp || this.emp.length === 0) return;
+    if (isChecked) {
+      this.showhideaction = false;
+      this.emp.forEach((day, i) => {
+        this.selectedMap[i] = [...day.entries];
+      });
+    } else {
+      this.showhideaction = true;
+      this.selectedMap = {};
+    }
+    this.syncGlobalSelectedEntries();
+  }
   // destroy the component
+  
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -452,15 +452,32 @@ export interface TimesheetDay {
   pendingApprovalHeader: any;
 }
 export interface EMPLOYEEINFO {
-  employeeId: number;
+   fields: any;
+  date: string;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+  entries: EmployeeinfoEntry[];
+  selectedEntries: EmployeeinfoEntry[];
+  employeeName:string;
+  pendingApprovalHeader: any;
+}
+export interface EmployeeinfoEntry {
+  selected: any;
   employeeName: string;
+  clientName: string;
+  projectName: string;
+  totalHours: string;
+  description: string;
+  timesheetEntryId: number;
+  approvalStatus: string;
+  entryDate: string;
+  status: string;
+  timesheetId: number;
+  pendingItemId: number;
+  comments: any[];
+  id: number;
+  approvalHeader: number;
+  pendingApprovalHeader: any;
 
-  fieldName: string;
-  oldValue: string;
-  newValue: string;
-
-  pendingApprovalHeaderId: number;
-  pendingApprovalHeader: any;       // whole header
-  pendingApprovalItems: any[];      // <-- YOU NEED THIS
-  pendingComments: any[];
 }

@@ -270,6 +270,7 @@ export class PersonalApprovalsComponent implements OnInit {
       case 'approved':
         return 'status-approved';
       case 'cancelled':
+      case 'rejected':
         return 'status-cancelled';
       case 'pending':
         return 'status-pending';

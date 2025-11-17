@@ -9,23 +9,23 @@
 
 .custom-accordian-table {
     width: 100%;
-
+ 
     .p-datatable-table-container {
         max-height: 50dvh !important;
     }
-
+ 
     th:first-child {
         border-top-left-radius: 0rem !important;
     }
-
+ 
     th:last-child {
         border-top-right-radius: 0rem !important;
     }
-
+ 
     th {
         background-color: var(--body-bg-color) !important;
     }
-
+ 
     th, td {
         text-align: center !important;
     }

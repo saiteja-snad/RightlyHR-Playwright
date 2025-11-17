@@ -63,16 +63,24 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Trainee Details.update') ) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <li>
+                                <!-- <li>
                                     <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)">Approve</a>
-                                </li>
+                                </li> -->
+                                 <li (click)="openModal(PermissionsApprove);handleRequests(trn)">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" |
+                                            translate}}</a>
+                                    </li>
                                 }
                                 }
                                 @if( rbac.allowedToAccess('Trainee Details.delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <li>
+                                <!-- <li>
                                     <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)">Reject</a>
-                                </li>
+                                </li> -->
+                                 <li (click)="openModal(RejectTrainee);handleRequests(trn)">
+                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" |
+                                            translate}}</a>
+                                    </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Trainee Details.update')) {
@@ -124,7 +132,7 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.trcomments"
+                    [(ngModel)]="selectedLeaveData.trcomments"  (ngModelChange)="onCommentChange($event)"
                     (keydown)="formsValidation.restrictInitialSpace($event)" rows="3" required></textarea>
                 <div class="textarea-count-text">
                     {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
@@ -132,7 +140,12 @@
                     *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>
             </div>
-
+             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
                     translate}}</button>
@@ -195,20 +208,27 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Feedback for Extend
                         <span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                        placeholder="Please provide Feedback" name="Extendreason" #Extendreason="ngModel"  (ngModelChange)="onCommentChange($event)"
                         [(ngModel)]="selectedLeaveData.trcomments" (keydown)="formsValidation.restrictInitialSpace($event)"  required rows="3" maxlength="250"></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || 
                     (Extendreason.errors?.['pattern']) ">Feedback for Extend is required</div>
+             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusRejectSelect('reject')">
+                        Rejected
+                    </button>
                 </div>
+                </div>
+                   
 
                 <div *ngIf="discontinue" class="mb-3">
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">Reason<span
                             class="error-msg">*</span></label>
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
                         name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
-                        placeholder="Please provide the reason" #Descriptiondetails="ngModel" autocomplete="off"
+                        placeholder="Please provide the reason" #Descriptiondetails="ngModel" autocomplete="off" (ngModelChange)="onCommentChange($event)"
                         [(ngModel)]="selectedLeaveData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">{{selectedLeaveData.rejectedReason?.length ?
                         selectedLeaveData.rejectedReason.length : 0}} /250</div>
@@ -216,7 +236,14 @@
                         *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && selectedLeaveData.submitted)">
                         Reason is required
                     </div>
+                   <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                        (click)="onStatusdiccontinueRejectSelect('reject')">
+                        Rejected
+                    </button>
                 </div>
+                </div>
+               
             </div>
 
             <div class="custom-modal-footer">

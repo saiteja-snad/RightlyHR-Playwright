@@ -73,6 +73,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
   subscription!: Subscription;
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -89,7 +90,20 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
 
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: [
@@ -97,6 +111,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         [Validators.required, Validators.maxLength(250)],
       ],
     });
+     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
@@ -106,6 +125,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         [Validators.required, Validators.maxLength(250)],
       ],
     });
+      this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
   }
 
   getAllPendingApprovals() {

@@ -172,7 +172,9 @@
                 <!-- Skills Field -->
                 <div class="mb-3">
                     <label for="skills" class="form-label custom-label mb-2">{{'Skill(s)'}}
-                        <span class="error-msg">*</span></label>
+                        <span class="error-msg">*</span>
+                    </label>
+                
                     <div class="custom-input d-flex flex-wrap custom-chip-input" (click)="skillInput.focus()">
                         <div class="d-flex flex-wrap gap-2">
                             <div *ngFor="let skill of AddForm.get('skills')?.value"
@@ -185,13 +187,14 @@
                         </div>
                         <!-- Input field for new skills -->
                         <input #skillInput type="text" class="border-0 flex-grow-1 inside-input" maxlength="41"
-                            (keydown)="formValidation.restrictInitialSpace($event)"
+                            (keydown)="formValidation.restrictInitialSpace($event)" (input)="onSkillInput($event)"
                             [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Please type a skill and press enter to add'"
                             (blur)="onSkillBlur()" (keydown.enter)="addSkill($event)" />
                     </div>
                     <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">At least one skill is required.</div>
+                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">At least one skill is required</div>
                         <div *ngIf="AddForm.get('skills')?.errors?.['maxCharacters']">Invalid Skill</div>
+                        <div *ngIf="AddForm.get('skills')?.errors?.['pendingSkill']">Press enter after typing to add skil</div>            
                     </div>
                 </div>
 

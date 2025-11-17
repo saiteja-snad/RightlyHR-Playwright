@@ -85,20 +85,16 @@
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first,.p-paginator-prev,
+        .p-paginator-next,.p-paginator-last {
             border-radius: 50%;
             margin: 0rem;
             background-color: #f8f8f8;
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }

@@ -283,6 +283,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Leave Allocation Tab',
       'Flexible Leave Allocation Tab',
       'Flexible WFH Allocation Tab',
+      'Flexible Work Hours Allocation Tab',
       'Load Entitlements Tab',
       'Attendance Eligibility Criteria Tab',
       'Comp Off Entitlement Tab',
@@ -304,7 +305,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Create',
       'Team Tickets Tab',
       'Late Login Alert Configuration Tab',
-      'Extra Hours Configuration Tab'
+      'Extra Hours Configuration Tab',
+      'Flexible Work Hours Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&
@@ -490,6 +492,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
+  flexibleWorkHoursTabsFields=[
+    'Work Hours Allocation History Tab',
+    'Work Hours Allocations Tab'
+  ]
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',
@@ -499,7 +505,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
-    'Extra Hours Configuration Tab'
+    'Extra Hours Configuration Tab',
+    'Flexible Work Hours Configuration Tab'
   ];
   settingsAssetConfigurationFields = [
     'Vendor Details',

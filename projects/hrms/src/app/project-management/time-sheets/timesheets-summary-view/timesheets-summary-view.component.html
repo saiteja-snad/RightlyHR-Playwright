@@ -121,11 +121,20 @@
                                                 <a>
                                                     <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
                                                 </a>
+                                                @if(row.dailySummary.legendCode != null){
+                                                <!-- <div class="data-chip"> -->
+                                                    <span [style.color]="row.dailySummary.colour">
+                                                        <b>{{row.dailySummary.legendCode}}</b>
+                                                    </span>
+                                                <!-- </div> -->
+                                                }
                                             </ng-container>
                                             <ng-template #noEntries>
                                                 @if(row.dailySummary.legendCode != null){
                                                 <!-- <div class="data-chip"> -->
-                                                    <b>{{row.dailySummary.legendCode}}</b>
+                                                    <span [style.color]="row.dailySummary.colour">
+                                                        <b>{{row.dailySummary.legendCode}}</b>
+                                                    </span>
                                                 <!-- </div> -->
                                                 }
                                             </ng-template>

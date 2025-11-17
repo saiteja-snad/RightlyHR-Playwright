@@ -134,7 +134,7 @@ export class AcademicsComponent {
         },
         error: (err) => {
           console.error('Error fetching data:', err);
-           this.loader = false;
+          this.loader = false;
         },
       });
   }
@@ -174,14 +174,24 @@ export class AcademicsComponent {
         ? this.fieldConfigForm.getRawValue()
         : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority =
-        formValue.approvalType == 'EMP'
-          ? formValue.selectedEmployee
-          : formValue.approvalType == 'ROLE'
-          ? formValue.selectedRole
-          : formValue.approvalType == 'MANAGER'
-          ? formValue.selectedManager
-          : '';
+      let approvalTypeToSend = formValue.approvalType;
+      let approvalAuthority = '';
+
+      // EMP
+      if (formValue.approvalType === 'EMP') {
+        approvalAuthority = formValue.selectedEmployee;
+      }
+
+      // ROLE
+      else if (formValue.approvalType === 'ROLE') {
+        approvalAuthority = formValue.selectedRole;
+      }
+
+      // MANAGER
+      else if (formValue.approvalType === 'MANAGER') {
+        approvalTypeToSend = formValue.selectedManager; // TM / RM
+        approvalAuthority = ''; // always empty
+      }
 
       if (this.isEditMode) {
         debugger;
@@ -191,8 +201,8 @@ export class AcademicsComponent {
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
-          approvalType: formValue.approvalType,
-          approvalAuthority: approvalAuthority.toString() || '',
+          approvalType: approvalTypeToSend,
+          approvalAuthority: approvalAuthority.toString(),
           updatedBy: loggedInUser.employeeId,
         };
 
@@ -232,8 +242,8 @@ export class AcademicsComponent {
               ? this.fieldOptions[0]?.tabName
               : 'Personal',
           requiresApproval: true,
-          approvalType: formValue.approvalType,
-          approvalAuthority: approvalAuthority.toString() || '',
+          approvalType: approvalTypeToSend,
+          approvalAuthority: approvalAuthority.toString(),
           createdBy: loggedInUser.employeeId,
         };
 
@@ -284,7 +294,7 @@ export class AcademicsComponent {
       .subscribe({
         next: () => {
           modal.close();
-           this.loader = false;
+          this.loader = false;
           this.getAcademicsFields();
           this.getAcademicsFieldsConfigList();
           this.conformationPopup.openSuccessModal(
@@ -321,7 +331,10 @@ export class AcademicsComponent {
     this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
-      approvalType: fieldConfig.approvalType || '',
+      approvalType:
+        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
+          ? 'MANAGER'
+          : fieldConfig.approvalType,
       selectedEmployee:
         fieldConfig.approvalType === 'EMP'
           ? Number(fieldConfig.approvalAuthority)
@@ -331,8 +344,8 @@ export class AcademicsComponent {
           ? fieldConfig.approvalAuthority
           : '',
       selectedManager:
-        fieldConfig.approvalType === 'MANAGER'
-          ? fieldConfig.approvalAuthority
+        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
+          ? fieldConfig.approvalType
           : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode

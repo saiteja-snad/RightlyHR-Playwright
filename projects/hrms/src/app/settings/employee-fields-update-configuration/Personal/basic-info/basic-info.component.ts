@@ -1,5 +1,10 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpService } from '../../../../services/http.service';
@@ -11,22 +16,30 @@ import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { jobRoleDATA } from '../../../employee-fields/job/jobrole/jobrole-model';
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 import { AuthService } from '../../../../services/auth.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
-
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, ToggleSwitchModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    SelectModule,
+    MultiSelectModule,
+    ToggleSwitchModule,
+    DataLoaderContentComponent,
+    NoDataFoundComponent,
+  ],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class BasicInfoComponent {
-subscription!: Subscription;
+  subscription!: Subscription;
   loader = false;
   isEditMode = false;
   selectedFieldConfig: any = null;
@@ -40,12 +53,12 @@ subscription!: Subscription;
   approvalTypeOptions = [
     // { label: 'Employee', value: 'EMP' },
     { label: 'Role', value: 'ROLE' },
-    { label: 'Manager', value: 'MANAGER' }
+    { label: 'Manager', value: 'MANAGER' },
   ];
   activeEmplist = [] as any;
- managerOptions = [
+  managerOptions = [
     { label: 'Reporting Manager', value: 'RM' },
-    { label: 'Team Manager', value: 'TM' }
+    { label: 'Team Manager', value: 'TM' },
   ];
   roles = [] as any;
 
@@ -56,10 +69,8 @@ subscription!: Subscription;
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
-    private authService: AuthService,
-  ) {
-
-  }
+    private authService: AuthService
+  ) {}
   ngOnInit(): void {
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
@@ -67,7 +78,7 @@ subscription!: Subscription;
       approvalType: ['', Validators.required],
       selectedEmployee: [''],
       selectedRole: [''],
-      selectedManager:['']
+      selectedManager: [''],
     });
     this.setupFormSubscriptions();
     this.getBasicInfoFields();
@@ -79,52 +90,69 @@ subscription!: Subscription;
   getBasicInfoFields() {
     const params = 'Personal';
     const param = 'Basic Info';
-    this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
-      next: (data: any) => {
-        if (data.data.length > 0) {
-          this.fieldOptions = data.data.filter((field: any) => field.isRequired !== false);
-        } else {
-          console.log('No data found.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+    this.http
+      .getDatabyentityvalueForFieldUpdate(
+        `EmployeeInfoApprovalFields/getApprovalFields`,
+        params,
+        param
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.fieldOptions = data.data.filter(
+              (field: any) => field.isRequired !== false
+            );
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   getBasicInfoFieldsConfigList() {
-    this.loader = true
+    this.loader = true;
     const params = {
       displayName: 'Personal',
-      moduleName: 'Basic Info'
-    }
-    this.http.getDataIncludeParams(`EmployeeInfoFieldConfig/getEmployeeInfoApprovals`, params).subscribe({
-      next: (data: any) => {
-        if (data.data.length > 0) {
-          this.basicInfoFieldsConfigList = data.data
-        } else {
-          console.log('No data found.');
-        }
-        this.loader = false
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-        this.loader = false
-      }
-    });
+      moduleName: 'Basic Info',
+    };
+    this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldConfig/getEmployeeInfoApprovals`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.basicInfoFieldsConfigList = data.data;
+          } else {
+            console.log('No data found.');
+          }
+          this.loader = false;
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+          this.loader = false;
+        },
+      });
   }
 
   getAllEmployeeDetails() {
     const status = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
-      next: (res: any) => {
-        this.activeEmplist = res.map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/v3/Getallemployees?statuses=${status}`)
+      .subscribe({
+        next: (res: any) => {
+          this.activeEmplist = res.map((employee: any) => ({
+            label: `${employee.fusionEmpId ?? ''} - ${
+              employee.firstName ?? ''
+            }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+            value: employee.employeeId,
+          }));
+        },
+      });
   }
 
   getAllRoles(): void {
@@ -134,20 +162,36 @@ subscription!: Subscription;
       },
       error: (error: any) => {
         console.log(error);
-      }
-    })
+      },
+    });
   }
-
 
   // Method to save field configuration (handles both create and update)
   saveFieldConfig(modal: any) {
     if (this.fieldConfigForm.valid) {
-      this.loader = true
-      const formValue = this.isEditMode ? this.fieldConfigForm.getRawValue() : this.fieldConfigForm.value;
+      this.loader = true;
+      const formValue = this.isEditMode
+        ? this.fieldConfigForm.getRawValue()
+        : this.fieldConfigForm.value;
       let loggedInUser = this.authService.getToken();
-      let approvalAuthority = formValue.approvalType == 'EMP' ? formValue.selectedEmployee :
-                              formValue.approvalType == 'ROLE' ? formValue.selectedRole :
-                              formValue.approvalType == 'MANAGER' ? formValue.selectedManager : '';
+      let approvalTypeToSend = formValue.approvalType;
+      let approvalAuthority = '';
+
+      // EMP
+      if (formValue.approvalType === 'EMP') {
+        approvalAuthority = formValue.selectedEmployee;
+      }
+
+      // ROLE
+      else if (formValue.approvalType === 'ROLE') {
+        approvalAuthority = formValue.selectedRole;
+      }
+
+      // MANAGER
+      else if (formValue.approvalType === 'MANAGER') {
+        approvalTypeToSend = formValue.selectedManager;
+        approvalAuthority = '';
+      }
 
       if (this.isEditMode) {
         // Update operation
@@ -156,56 +200,71 @@ subscription!: Subscription;
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
-          approvalType: formValue.approvalType,
-          approvalAuthority: approvalAuthority.toString() || '',
+          approvalType: approvalTypeToSend,
+          approvalAuthority: approvalAuthority.toString(),
           updatedBy: loggedInUser.employeeId,
         };
 
-        this.subscription = this.http.putData(`EmployeeInfoFieldConfig/${this.selectedFieldConfig.id}`, request).subscribe({
-          next: () => {
-            modal.close();
-            this.conformationPopup.openSuccessModal('Field configuration updated successfully');
-            this.loader = false
-            this.resetFieldConfigForm();
-            this.getBasicInfoFields();
-            this.getBasicInfoFieldsConfigList();
-
-          },
-          error: (error: any) => {
-            const errorMessage = error.error?.message;
-            this.conformationPopup.openErrorModal(errorMessage);
-            this.loader = false
-          }
-        });
+        this.subscription = this.http
+          .putData(
+            `EmployeeInfoFieldConfig/${this.selectedFieldConfig.id}`,
+            request
+          )
+          .subscribe({
+            next: () => {
+              modal.close();
+              this.conformationPopup.openSuccessModal(
+                'Field configuration updated successfully'
+              );
+              this.loader = false;
+              this.resetFieldConfigForm();
+              this.getBasicInfoFields();
+              this.getBasicInfoFieldsConfigList();
+            },
+            error: (error: any) => {
+              const errorMessage = error.error?.message;
+              this.conformationPopup.openErrorModal(errorMessage);
+              this.loader = false;
+            },
+          });
       } else {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
         const request = {
           columnNames: selectedFields,
-          moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Basic Info",
-          displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
+          moduleName:
+            this.fieldOptions.length > 0
+              ? this.fieldOptions[0]?.moduleName
+              : 'Basic Info',
+          displayName:
+            this.fieldOptions.length > 0
+              ? this.fieldOptions[0]?.tabName
+              : 'Personal',
           requiresApproval: true,
-          approvalType: formValue.approvalType,
-          approvalAuthority: approvalAuthority.toString() || '',
+          approvalType: approvalTypeToSend,
+          approvalAuthority: approvalAuthority.toString(),
           createdBy: loggedInUser.employeeId,
         };
 
-        this.subscription = this.http.postdata('EmployeeInfoFieldConfig', request).subscribe({
-          next: () => {
-            modal.close();
-            this.conformationPopup.openSuccessModal('Field configuration saved successfully');
-            this.loader = false
-            this.resetFieldConfigForm();
-            this.getBasicInfoFields();
-            this.getBasicInfoFieldsConfigList();
-
-          },
-          error: (error: any) => {
-            const errorMessage = error.error?.message;
-            this.conformationPopup.openErrorModal(errorMessage);
-            this.loader = false
-          }
-        });
+        this.subscription = this.http
+          .postdata('EmployeeInfoFieldConfig', request)
+          .subscribe({
+            next: () => {
+              modal.close();
+              this.conformationPopup.openSuccessModal(
+                'Field configuration saved successfully'
+              );
+              this.loader = false;
+              this.resetFieldConfigForm();
+              this.getBasicInfoFields();
+              this.getBasicInfoFieldsConfigList();
+            },
+            error: (error: any) => {
+              const errorMessage = error.error?.message;
+              this.conformationPopup.openErrorModal(errorMessage);
+              this.loader = false;
+            },
+          });
       }
     }
   }
@@ -218,30 +277,39 @@ subscription!: Subscription;
   // DELETE
   opendelete(configItem: any) {
     this.selectedDeleteConfigItem = configItem;
-    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.deletepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
   onDelete(modal: any) {
     if (!this.selectedDeleteConfigItem) return;
-    this.loader = true
+    this.loader = true;
 
-    this.subscription = this.http.deleteData(`EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`).subscribe({
-      next: () => {
-        modal.close();
-         this.getBasicInfoFields();
-        this.getBasicInfoFieldsConfigList();
-        this.conformationPopup.openSuccessModal('Field configuration deleted successfully');
-        this.loader = false
-      },
-      error: (error: any) => {
-        const errorMessage = error.error?.message;
-        this.conformationPopup.openErrorModal(errorMessage);
-        this.loader = false
-      }
-    });
+    this.subscription = this.http
+      .deleteData(
+        `EmployeeInfoFieldConfig/deleteApprovalConfig/${this.selectedDeleteConfigItem.id}`
+      )
+      .subscribe({
+        next: () => {
+          modal.close();
+          this.getBasicInfoFields();
+          this.getBasicInfoFieldsConfigList();
+          this.conformationPopup.openSuccessModal(
+            'Field configuration deleted successfully'
+          );
+          this.loader = false;
+        },
+        error: (error: any) => {
+          const errorMessage = error.error?.message;
+          this.conformationPopup.openErrorModal(errorMessage);
+          this.loader = false;
+        },
+      });
   }
   closeDelete(modal: any) {
     modal.dismiss();
-  };
+  }
 
   // Method to open field configuration popup
   openFieldConfigDialog() {
@@ -251,7 +319,7 @@ subscription!: Subscription;
     this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
-      centered: true
+      centered: true,
     });
   }
 
@@ -262,43 +330,57 @@ subscription!: Subscription;
     this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
-      approvalType: fieldConfig.approvalType || '',
-      selectedEmployee: fieldConfig.approvalType === 'EMP' ? Number(fieldConfig.approvalAuthority) : '',
-      selectedRole: fieldConfig.approvalType === 'ROLE' ? fieldConfig.approvalAuthority : '',
-      selectedManager: fieldConfig.approvalType === 'MANAGER' ? fieldConfig.approvalAuthority : ''
+      approvalType:
+        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
+          ? 'MANAGER'
+          : fieldConfig.approvalType,
+      selectedEmployee:
+        fieldConfig.approvalType === 'EMP'
+          ? Number(fieldConfig.approvalAuthority)
+          : '',
+      selectedRole:
+        fieldConfig.approvalType === 'ROLE'
+          ? fieldConfig.approvalAuthority
+          : '',
+      selectedManager:
+        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
+          ? fieldConfig.approvalType
+          : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
-      centered: true
+      centered: true,
     });
   }
 
   // Setup form subscriptions for reactive changes
   setupFormSubscriptions() {
-
-
     // Watch for approval type changes
-    this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {
-      // Reset employee/role/manager selections when type changes
-      this.fieldConfigForm.patchValue({
-        selectedEmployee: '',
-        selectedRole: '',
-        selectedManager: ''
+    this.fieldConfigForm
+      .get('approvalType')
+      ?.valueChanges.subscribe((value) => {
+        // Reset employee/role/manager selections when type changes
+        this.fieldConfigForm.patchValue({
+          selectedEmployee: '',
+          selectedRole: '',
+          selectedManager: '',
+        });
+        this.updateApprovalValidators(value);
       });
-      this.updateApprovalValidators(value);
-    });
   }
 
   // Set validators for approval fields
   setApprovalValidators() {
-    this.fieldConfigForm.get('approvalType')?.setValidators([Validators.required]);
+    this.fieldConfigForm
+      .get('approvalType')
+      ?.setValidators([Validators.required]);
     this.fieldConfigForm.get('approvalType')?.updateValueAndValidity();
   }
 
   // Clear validators for approval fields
-    clearApprovalValidators() {
+  clearApprovalValidators() {
     this.fieldConfigForm.get('approvalType')?.clearValidators();
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
@@ -310,25 +392,29 @@ subscription!: Subscription;
   }
 
   // Update validators based on approval type
-   updateApprovalValidators(approvalType: string) {
+  updateApprovalValidators(approvalType: string) {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
 
     // Set validators based on approval type
     if (approvalType === 'EMP') {
-      this.fieldConfigForm.get('selectedEmployee')?.setValidators([Validators.required]);
+      this.fieldConfigForm
+        .get('selectedEmployee')
+        ?.setValidators([Validators.required]);
     } else if (approvalType === 'ROLE') {
-      this.fieldConfigForm.get('selectedRole')?.setValidators([Validators.required]);
+      this.fieldConfigForm
+        .get('selectedRole')
+        ?.setValidators([Validators.required]);
     } else if (approvalType === 'MANAGER') {
-      this.fieldConfigForm.get('selectedManager')?.setValidators([Validators.required]);
+      this.fieldConfigForm
+        .get('selectedManager')
+        ?.setValidators([Validators.required]);
     }
     this.fieldConfigForm.get('selectedManager')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedEmployee')?.updateValueAndValidity();
     this.fieldConfigForm.get('selectedRole')?.updateValueAndValidity();
   }
-
-
 
   // Reset field config form
   resetFieldConfigForm() {
@@ -338,7 +424,6 @@ subscription!: Subscription;
     this.isEditMode = false;
     this.selectedFieldConfig = null;
   }
-
 
   ngOnDestroy(): void {
     if (this.subscription) {

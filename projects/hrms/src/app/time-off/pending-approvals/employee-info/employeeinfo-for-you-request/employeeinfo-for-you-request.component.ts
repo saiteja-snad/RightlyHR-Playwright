@@ -27,7 +27,7 @@ import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.compone
   styleUrl: './employeeinfo-for-you-request.component.scss'
 })
 export class EmployeeinfoForYouRequestComponent implements OnInit {
-  emp: EMPLOYEEINFO[] = [];
+  empinfodata: EMPLOYEEINFO[] = [];
   subscription!: Subscription;
   empinfo: any;
   selectedLeaveData = {} as EMPLOYEEINFO;
@@ -103,7 +103,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
 
     this.intializeApproveForm();
   }
-// initialization
+  // initialization
   intializeApproveForm() {
     this.timeSheetApproveForm = this.fb.group({
       comments: [null, [Validators.required, Validators.maxLength(250)]]
@@ -153,159 +153,71 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
     this.openModal(popup, null, this.conformationstatus);
   }
 
+  loadClientsAndProjects(page: number, pageSize: number): void {
+    this.dataload = true;
+    const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=EMP&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
 
-// loadClientsAndProjects(page: number, pageSize: number): void {
-//   this.dataload = true;
-
-//   const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=EMP&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
-
-//   this.http.getData(url).subscribe({
-//     next: (res: any) => {
-//       this.dataload = false;
-
-//       if (!res.success || !res.data?.items?.length) {
-//         this.emp = [];
-//         return;
-//       }
-//  this.collectionSize = res.data.totalCount;
-//       const finalEmployees: any[] = [];
-
-//       // LOOP ALL EMPLOYEES (your previous code only used items[0])
-//       res.data.items.forEach((empBlock: any) => {
-
-//         const flatEntries: any[] = [];
-
-//         // Loop entries of this employee
-//         empBlock.entries.forEach((entry: any) => {
-
-//           // Loop fields inside entry
-//           entry.fields.forEach((f: any) => {
-//             const pa = f.pendingApproval;
-
-//             flatEntries.push({
-//               // FIELD DETAILS
-//               id: f.itemId,
-//               fieldName: f.fieldName,
-//               oldValue: f.oldValue,
-//               newValue: f.newValue,
-//               requestedDate: f.createdDate,
-
-//               // HEADER (employeeFieldHeader)
-//               headerId: entry.employeeFieldHeader?.headerId,
-//               moduleName: entry.employeeFieldHeader?.moduleName,
-//               displayName: entry.employeeFieldHeader?.displayName,
-//               headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
-//               headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
-
-//               // APPROVAL HEADER
-//               pendingApprovalHeader: pa?.header ?? null,
-
-//               // APPROVAL ITEMS (array)
-//               approvalItems: pa?.items ?? [],
-
-//               // COMMENTS (array)
-//               comments: pa?.comments ?? []
-//             });
-//           });
-//         });
-
-//         //  Push employee + flattened entries into final array
-//         finalEmployees.push({
-//           employeeId: empBlock.employeeId,
-//           employeeName: empBlock.employeeName,
-//           entries: flatEntries
-//         });
-//       });
-
-//       // Assign to your view model
-//       this.emp = finalEmployees;
-
-//       console.log("FINAL EMP DATA FOR TABLE:", this.emp);
-//     },
-
-//     error: () => {
-//       this.dataload = false;
-//       this.emp = [];
-//     }
-//   });
-// }
-// display the data in table
-
-loadClientsAndProjects(page: number, pageSize: number): void {
-  this.dataload = true;
-
-  const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${
-      environment.pendingapprovalemployeid
-    }&approvedType=EMP&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
-
-  this.http.getData(url).subscribe({
-    next: (res: any) => {
-      this.dataload = false;
-
-      if (!res.success || !res.data?.items?.length) {
-        this.emp = [];
-        return;
-      }
-
-      this.collectionSize = res.data.totalCount;
-      const finalEmployees: any[] = [];
-
-      // LOOP ALL EMPLOYEES
-      res.data.items.forEach((empBlock: any) => {
-
-        const flatEntries: any[] = [];
-
-        empBlock.entries.forEach((entry: any) => {
-
-          entry.fields
-            //  FILTER: ONLY WAITING FOR APPROVAL RECORDS
-            .filter((f: any) =>
-              f.pendingApproval?.header?.status === "Waiting for Approval"
-            )
-            .forEach((f: any) => {
-              const pa = f.pendingApproval;
-
-              flatEntries.push({
-                id: f.itemId,
-                fieldName: f.fieldName,
-                oldValue: f.oldValue,
-                newValue: f.newValue,
-                requestedDate: f.createdDate,
-
-                headerId: entry.employeeFieldHeader?.headerId,
-                moduleName: entry.employeeFieldHeader?.moduleName,
-                displayName: entry.employeeFieldHeader?.displayName,
-                headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
-                headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
-
-                pendingApprovalHeader: pa?.header ?? null,
-                approvalItems: pa?.items ?? [],
-                comments: pa?.comments ?? []
-              });
-            });
-
-        });
-
-        // ONLY PUSH EMPLOYEE IF THEY HAVE ANY WAITING RECORDS
-        if (flatEntries.length > 0) {
-          finalEmployees.push({
-            employeeName: empBlock.employeeName,
-            entries: flatEntries
-          });
+    this.http.getData(url).subscribe({next: (res: any) => {
+        this.dataload = false;
+        if (!res.success || !res.data?.items?.length) {
+          this.empinfodata = [];
+          return;
         }
+        this.collectionSize = res.data.totalCount;
+        const finalEmployees: any[] = [];
+        // LOOP ALL EMPLOYEES
+        res.data.items.forEach((empBlock: any) => {
+          const flatEntries: any[] = [];
+          empBlock.entries.forEach((entry: any) => {
+            // entry.fields
+            //   //  FILTER: ONLY WAITING FOR APPROVAL RECORDS
+            //   .filter((f: any) =>
+            //     f.pendingApproval?.header?.status === "Waiting for Approval"
+            //   )
+            entry.fields.filter((fields: any) => {
+                const pandingapproval = fields.pendingApproval;
+                if (!pandingapproval) return false;
+                const headerWaiting = pandingapproval.header?.status === "Waiting for Approval";
+                const anyItemWaiting = pandingapproval.items?.some((items: any) => items.approvedStatus === "Waiting for Approval");
+                return headerWaiting || anyItemWaiting;
+              }).forEach((fieldname: any) => {
+                const padingapprovaldata = fieldname.pendingApproval;
+                flatEntries.push({
+                  id: fieldname.itemId,
+                  fieldName: fieldname.fieldName,
+                  oldValue: fieldname.oldValue,
+                  newValue: fieldname.newValue,
+                  requestedDate: fieldname.createdDate,
+                  headerId: entry.employeeFieldHeader?.headerId,
+                  moduleName: entry.employeeFieldHeader?.moduleName,
+                  displayName: entry.employeeFieldHeader?.displayName,
+                  headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
+                  headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
+                  pendingApprovalHeader: padingapprovaldata?.header ?? null,
+                  approvalItems: padingapprovaldata?.items ?? [],
+                  comments: padingapprovaldata?.comments ?? []
+                });
+              });
+          });
 
-      });
+          // ONLY PUSH EMPLOYEE IF THEY HAVE ANY WAITING RECORDS
+          if (flatEntries.length > 0) {
+            finalEmployees.push({
+              employeeName: empBlock.employeeName,
+              entries: flatEntries
+            });
+          }
+        });
+        this.empinfodata = finalEmployees;
+        console.log("FILTERED EMP TABLE DATA:", this.empinfodata);
+      },
 
-      this.emp = finalEmployees;
-      console.log("FILTERED EMP TABLE DATA:", this.emp);
-    },
-
-    error: () => {
-      this.dataload = false;
-      this.emp = [];
-    }
-  });
-}
+      error: () => {
+        this.dataload = false;
+        this.empinfodata = [];
+      }
+    });
+  }
 
   // called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {
@@ -335,7 +247,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // HEADER checkbox helpers (per-day)
   areAllSelected(dayIndex: number): boolean {
-    const day = this.emp?.[dayIndex];
+    const day = this.empinfodata?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
     return day.entries.every(e => sel.some(s => s.id === e.id));
@@ -343,7 +255,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // used for check box show indeterminate state
   isIndeterminate(dayIndex: number): boolean {
-    const day = this.emp?.[dayIndex];
+    const day = this.empinfodata?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
     return sel.length > 0 && sel.length < day.entries.length;
@@ -351,7 +263,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // checkbox select,unselect all
   toggleSelectAll(dayIndex: number, isChecked: boolean) {
-    const day = this.emp[dayIndex];
+    const day = this.empinfodata[dayIndex];
     if (!day) return;
     if (isChecked) {
       this.showhideaction = false;
@@ -414,7 +326,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           ],
         };
       }
-      console.log("payload",this.requestBody)
+      console.log("payload", this.requestBody)
 
       // Same API call
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -547,8 +459,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
-    if (!this.emp || this.emp.length === 0) return false;
-    return this.emp.every(
+    if (!this.empinfodata || this.empinfodata.length === 0) return false;
+    return this.empinfodata.every(
       (day, i) =>
         day.entries &&
         this.selectedMap[i] &&
@@ -558,8 +470,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   //select all Show indeterminate when partial selection exists
   isGlobalIndeterminate(): boolean {
-    if (!this.emp || this.emp.length === 0) return false;
-    const totalEntries = this.emp.reduce(
+    if (!this.empinfodata || this.empinfodata.length === 0) return false;
+    const totalEntries = this.empinfodata.reduce(
       (acc, day) => acc + (day.entries?.length || 0),
       0
     );
@@ -569,13 +481,13 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
     return selectedCount > 0 && selectedCount < totalEntries;
   }
-  
+
   //select all Toggle all entries across all days
   toggleSelectAllDays(isChecked: boolean): void {
-    if (!this.emp || this.emp.length === 0) return;
+    if (!this.empinfodata || this.empinfodata.length === 0) return;
     if (isChecked) {
       this.showhideaction = false;
-      this.emp.forEach((day, i) => {
+      this.empinfodata.forEach((day, i) => {
         this.selectedMap[i] = [...day.entries];
       });
     } else {
@@ -585,7 +497,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
     this.syncGlobalSelectedEntries();
   }
   // destroy the component
-  
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -27,7 +27,7 @@ import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.compone
   styleUrl: './employeeinfo-for-your-role-request.component.scss'
 })
 export class EmployeeinfoForYourRoleRequestComponent {
-  emp: EMPLOYEEINFO[] = [];
+  empinfodata: EMPLOYEEINFO[] = [];
   subscription!: Subscription;
   empinfo: any;
   selectedLeaveData = {} as EMPLOYEEINFO;
@@ -156,15 +156,13 @@ export class EmployeeinfoForYourRoleRequestComponent {
 
 loadClientsAndProjects(page: number, pageSize: number): void {
   this.dataload = true;
-
   const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=ROLE&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
 
-  this.http.getData(url).subscribe({
-    next: (res: any) => {
+  this.http.getData(url).subscribe({next: (res: any) => {
       this.dataload = false;
 
       if (!res.success || !res.data?.items?.length) {
-        this.emp = [];
+        this.empinfodata = [];
         return;
       }
 
@@ -173,38 +171,37 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
       // LOOP ALL EMPLOYEES
       res.data.items.forEach((empBlock: any) => {
-
         const flatEntries: any[] = [];
-
         empBlock.entries.forEach((entry: any) => {
-
-          entry.fields
-            // ⭐ FILTER: ONLY WAITING FOR APPROVAL RECORDS
-            .filter((f: any) =>
-              f.pendingApproval?.header?.status === "Waiting for Approval"
-            )
-            .forEach((f: any) => {
-              const pa = f.pendingApproval;
-
+          // entry.fields
+          //   //  FILTER: ONLY WAITING FOR APPROVAL RECORDS
+          //   .filter((f: any) =>
+          //     f.pendingApproval?.header?.status === "Waiting for Approval"
+          //   )
+            entry.fields.filter((fields: any) => {
+                const pandingapproval = fields.pendingApproval;
+                if (!pandingapproval) return false;
+                const headerWaiting = pandingapproval.header?.status === "Waiting for Approval";
+                const anyItemWaiting = pandingapproval.items?.some((items: any) => items.approvedStatus === "Waiting for Approval");
+                return headerWaiting || anyItemWaiting;
+              }).forEach((fieldname: any) => {
+              const pandingapproval = fieldname.pendingApproval;
               flatEntries.push({
-                id: f.itemId,
-                fieldName: f.fieldName,
-                oldValue: f.oldValue,
-                newValue: f.newValue,
-                requestedDate: f.createdDate,
-
+                id: fieldname.itemId,
+                fieldName: fieldname.fieldName,
+                oldValue: fieldname.oldValue,
+                newValue: fieldname.newValue,
+                requestedDate: fieldname.createdDate,
                 headerId: entry.employeeFieldHeader?.headerId,
                 moduleName: entry.employeeFieldHeader?.moduleName,
                 displayName: entry.employeeFieldHeader?.displayName,
                 headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
                 headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
-
-                pendingApprovalHeader: pa?.header ?? null,
-                approvalItems: pa?.items ?? [],
-                comments: pa?.comments ?? []
+                pendingApprovalHeader: pandingapproval?.header ?? null,
+                approvalItems: pandingapproval?.items ?? [],
+                comments: pandingapproval?.comments ?? []
               });
             });
-
         });
 
         // ONLY PUSH EMPLOYEE IF THEY HAVE ANY WAITING RECORDS
@@ -214,16 +211,13 @@ loadClientsAndProjects(page: number, pageSize: number): void {
             entries: flatEntries
           });
         }
-
       });
-
-      this.emp = finalEmployees;
-      console.log("FILTERED EMP TABLE DATA:", this.emp);
+      this.empinfodata = finalEmployees;
+      console.log("FILTERED EMP TABLE DATA:", this.empinfodata);
     },
-
     error: () => {
       this.dataload = false;
-      this.emp = [];
+      this.empinfodata = [];
     }
   });
 }
@@ -255,7 +249,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // HEADER checkbox helpers (per-day)
   areAllSelected(dayIndex: number): boolean {
-    const day = this.emp?.[dayIndex];
+    const day = this.empinfodata?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
     return day.entries.every(e => sel.some(s => s.id === e.id));
@@ -263,7 +257,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // used for check box show indeterminate state
   isIndeterminate(dayIndex: number): boolean {
-    const day = this.emp?.[dayIndex];
+    const day = this.empinfodata?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
     return sel.length > 0 && sel.length < day.entries.length;
@@ -271,7 +265,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // checkbox select,unselect all
   toggleSelectAll(dayIndex: number, isChecked: boolean) {
-    const day = this.emp[dayIndex];
+    const day = this.empinfodata[dayIndex];
     if (!day) return;
     if (isChecked) {
       this.showhideaction = false;
@@ -467,35 +461,27 @@ loadClientsAndProjects(page: number, pageSize: number): void {
 
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
-    if (!this.emp || this.emp.length === 0) return false;
-    return this.emp.every(
-      (day, i) =>
-        day.entries &&
-        this.selectedMap[i] &&
+    if (!this.empinfodata || this.empinfodata.length === 0) return false;
+    return this.empinfodata.every((day, i) =>
+        day.entries &&this.selectedMap[i] &&
         day.entries.length === this.selectedMap[i].length
     );
   }
 
   //select all Show indeterminate when partial selection exists
   isGlobalIndeterminate(): boolean {
-    if (!this.emp || this.emp.length === 0) return false;
-    const totalEntries = this.emp.reduce(
-      (acc, day) => acc + (day.entries?.length || 0),
-      0
-    );
-    const selectedCount = Object.values(this.selectedMap)
-      .filter(Array.isArray)
-      .reduce((acc, arr) => acc + arr.length, 0);
-
+    if (!this.empinfodata || this.empinfodata.length === 0) return false;
+    const totalEntries = this.empinfodata.reduce((acc, day) => acc + (day.entries?.length || 0),0);
+    const selectedCount = Object.values(this.selectedMap).filter(Array.isArray).reduce((acc, arr) => acc + arr.length, 0);
     return selectedCount > 0 && selectedCount < totalEntries;
   }
 
   toggleSelectAllDays(isChecked: boolean): void {
-    if (!this.emp || this.emp.length === 0) return;
+    if (!this.empinfodata || this.empinfodata.length === 0) return;
     if (isChecked) {
       this.showhideaction = false;
-      this.emp.forEach((day, i) => {
-        this.selectedMap[i] = [...day.entries];
+      this.empinfodata.forEach((day, i) => {
+      this.selectedMap[i] = [...day.entries];
       });
     } else {
       this.showhideaction = true;

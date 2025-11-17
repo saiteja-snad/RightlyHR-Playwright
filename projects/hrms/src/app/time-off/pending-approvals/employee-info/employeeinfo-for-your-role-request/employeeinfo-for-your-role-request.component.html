@@ -2,7 +2,7 @@
   <div class="custom-accordian-data-content">
 
     @if (!dataload) {
-      @if (emp.length > 0) {
+      @if (empinfodata.length > 0) {
 
         <p-accordion>
 
@@ -28,7 +28,7 @@
           </div>
 
           <!-- ACCORDION PANELS -->
-          <p-accordion-panel *ngFor="let day of emp; let i = index" [value]="i">
+          <p-accordion-panel *ngFor="let day of empinfodata; let i = index" [value]="i">
 
             <p-accordion-header>
               <div class="d-flex align-items-center gap-3">

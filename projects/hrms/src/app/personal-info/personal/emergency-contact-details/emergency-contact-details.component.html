@@ -28,7 +28,10 @@
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
+          <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>@if(isFieldPendingApproval('Primary Name')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Primary Name')" tooltipPosition="top"></i>
+  }</label>
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
           <div class="error-msg"
@@ -38,7 +41,10 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Email" class="form-label custom-label mb-2">Email ID</label>
+          <label for="contact1Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Primary Email Id')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Primary Email Id')" tooltipPosition="top"></i>
+  }</label>
           <input type="email" class="form-control custom-input" id="contact1Email" formControlName="contact1Email"
             placeholder="Please enter email">
           <div class="error-msg"
@@ -50,7 +56,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Phone Number')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Primary Phone Number')" tooltipPosition="top"></i>
+  }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
@@ -81,7 +90,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Relationship')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Primary Relationship')" tooltipPosition="top"></i>
+  }</label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact1Relationship"
               placeholder="Please select relationship" class="form-select custom-select"></p-select>
@@ -106,7 +118,10 @@
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
+          <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Name')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Secondary Name')" tooltipPosition="top"></i>
+  }</label>
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
           <div class="error-msg"
@@ -116,7 +131,10 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Email" class="form-label custom-label mb-2">Email ID </label>
+          <label for="contact2Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Secondary Email Id')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Secondary Email Id')" tooltipPosition="top"></i>
+  }</label>
           <input type="email" class="form-control custom-input" id="contact2Email" formControlName="contact2Email"
             placeholder="Please enter email">
           <div class="error-msg"
@@ -128,7 +146,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Phone Number')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Secondary Phone Number')" tooltipPosition="top"></i>
+  }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
@@ -159,7 +180,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Relationship')) {
+    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+       [pTooltip]="getPendingApprovalMessage('Secondary Relationship')" tooltipPosition="top"></i>
+  }</label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact2Relationship"
               placeholder="Please select relationship" class="form-select custom-select"></p-select>

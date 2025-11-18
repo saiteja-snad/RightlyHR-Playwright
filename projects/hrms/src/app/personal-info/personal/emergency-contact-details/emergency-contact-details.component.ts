@@ -15,10 +15,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule,Skeleton, TooltipModule],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -51,6 +52,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   empinfo: any
   employedata = {} as any;
   isMyInfoRoute = false;
+  fieldOptions: any[] = [];
+getFieldsApprovalStatusList: any[] = [];
 
   constructor(private modalService: NgbModal,
     private fb: FormBuilder, public formValidation: FormValidationService,
@@ -66,10 +69,64 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.getFamilyRelations();
     this.getEmpInfoFromRoute();
     this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
+    this.getEmergencyApprovalFields()
+    this.getEmergencyFieldsApprovalStatus()
   }
   showButtons() {
     this.buttons = !this.buttons
   }
+
+    // Add this method
+  isFieldDisabledDueToPending(fieldName: string): boolean {
+    return this.isFieldPendingApproval(fieldName);
+  }
+
+  // Check if field has pending approval
+isFieldPendingApproval(fieldName: string): boolean {
+  return this.getFieldsApprovalStatusList.some(
+    (item: any) => item.fieldName === fieldName && item.approvalStatus === 'Pending'
+  );
+}
+
+getPendingApprovalMessage(fieldName: string): string {
+  const item = this.getFieldsApprovalStatusList.find(
+    (item: any) => item.fieldName === fieldName && item.approvalStatus === 'Pending'
+  );
+  return item?.message || 'This field change request is awaiting approval.';
+}
+
+// Fetch approval fields for Emergency Contact
+getEmergencyApprovalFields() {
+  const params = 'Personal';
+  const param = 'Emergency Contacts';
+  this.http
+    .getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param)
+    .subscribe({
+      next: (data: any) => {
+        if (data.data?.length > 0) {
+          this.fieldOptions = data.data;
+        }
+      },
+      error: (err) => console.error('Error loading emergency approval fields:', err)
+    });
+}
+
+// Fetch pending approval status
+getEmergencyFieldsApprovalStatus() {
+  const params = {
+    displayName: 'Personal',
+    moduleName: 'Emergency Contacts',
+    employeeId: parseInt(this.empinfo.employeeId)
+  };
+  this.http
+    .getDataIncludeParams(`EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`, params)
+    .subscribe({
+      next: (data: any) => {
+        this.getFieldsApprovalStatusList = data.data || [];
+      },
+      error: (err) => console.error('Error loading pending status:', err)
+    });
+}
 
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -158,7 +215,32 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.buttons = true;
     this.buttons2 = true;
     this.emergencyContactForm.enable();
+    this.disablePendingFields();
   }
+
+ private disablePendingFields(): void {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item => item.approvalStatus === 'Pending')
+    .map(item => item.fieldName);
+
+  const fieldMap: { [key: string]: string } = {
+    'Primary Name': 'contact1Name',
+    'Primary Email Id': 'contact1Email',
+    'Primary Phone Number': 'contact1Phone',
+    'Primary Relationship': 'contact1Relationship',
+    'Secondary Name': 'contact2Name',
+    'Secondary Email Id': 'contact2Email',
+    'Secondary Phone Number': 'contact2Phone',
+    'Secondary Relationship': 'contact2Relationship',
+  };
+
+  pendingFields.forEach(fieldName => {
+    const controlName = fieldMap[fieldName];
+    if (controlName) {
+      this.emergencyContactForm.get(controlName)?.disable({ emitEvent: false });
+    }
+  });
+}
 
   disableForm(): void {
     this.buttons = false;
@@ -170,63 +252,71 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
 
 
-  saveForm(): void {
-    const formValue = this.emergencyContactForm.value;
-    // Clean and format phone numbers
-    const cleanPhoneNumber = (phone: any): string => {
-      if (!phone) return ''; // Return an empty string if phone is null or undefined
-      return String(phone).replace(/\D+/g, '');; // Convert to string and remove spaces and dashes
-    };
+saveForm(): void {
+  const formValue = this.emergencyContactForm.getRawValue();
+  const cleanPhone = (phone: any) => phone ? String(phone).replace(/\D+/g, '') : '';
 
-    const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.employedata.mobileNumber || '');
-    const contact2Phone = cleanPhoneNumber(formValue.contact2Phone || this.employedata.emergencyNumber1 || '');
-    const updatePayload = {
-      ...this.employedata,
-      emailId: formValue.contact1Email || null,
-      emergencycode: this.selectedDialCode,
-      emergencycode1: this.selectedDialCode1,
-      emergencyName: formValue.contact1Name || this.employedata.emergencyName,
-      relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.employedata.relationShip,
-      emergencynumber: contact1Phone,
-      emergencyName1: formValue.contact2Name || this.employedata.emergencyName1,
-      emergencyEmail1: formValue.contact2Email || null,
-      emergencyNumber1: contact2Phone,
-      relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.employedata.relationship1,
-      emergencyphonecountryflag: this.selectedCountryflag,
-      emergencynumbercountryflag: this.selectedCountryCodegflag,
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item => item.approvalStatus === 'Pending')
+    .map(item => item.fieldName);
 
-       selfUpdate: this.isMyInfoRoute,
-  moduleName: this.isMyInfoRoute ? 'Emergency Contact Details' : undefined,
-  displayName: this.isMyInfoRoute ? 'Personal' : undefined,
-    };
+  const updatePayload: any = {
+    ...this.employedata,
+    selfUpdate: this.isMyInfoRoute,
+    moduleName: this.isMyInfoRoute ? 'Emergency Contacts' : undefined,
+    displayName: this.isMyInfoRoute ? 'Personal' : undefined,
+  };
 
+  const mapping: { [key: string]: { apiKey: string; control?: string } } = {
+    'Primary Name': { apiKey: 'emergencyName', control: 'contact1Name' },
+    'Primary Email Id': { apiKey: 'emailId', control: 'contact1Email' },
+    'Primary Phone Number': { apiKey: 'emergencynumber', control: 'contact1Phone' },
+    'Primary Relationship': { apiKey: 'relationShip', control: 'contact1Relationship' },
+    'Secondary Name': { apiKey: 'emergencyName1', control: 'contact2Name' },
+    'Secondary Email Id': { apiKey: 'emergencyEmail1', control: 'contact2Email' },
+    'Secondary Phone Number': { apiKey: 'emergencyNumber1', control: 'contact2Phone' },
+    'Secondary Relationship': { apiKey: 'relationship1', control: 'contact2Relationship' },
+  };
 
-    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Data updated successfully:', data);
-          if (data.statusCode === 200) {
-            this.conformationPopup.openSuccessModal('Emergency contact information updated successfully');
-            this.emergencyContactForm.disable();
-            this.buttons = false;
-            this.buttons2 = false;
-            this.getEmployeeId();
-          }
-          else if (data.statusCode === 409) {
-            console.log('Conflict:', data.message);
-            this.conformationPopup.openErrorModal(data.message);
-            this.patchForm(data);
-          }
+  Object.keys(mapping).forEach(displayName => {
+    if (!pendingFields.includes(displayName)) {
+      const { apiKey, control } = mapping[displayName];
+      const value = formValue[control!];
 
+      if (value !== undefined && value !== null && value !== '') {
+        if (displayName.includes('Phone Number')) {
+          updatePayload[apiKey] = cleanPhone(value);
+        } else if (displayName.includes('Relationship')) {
+          updatePayload[apiKey] = value?.relationship1 || value;
+        } else {
+          updatePayload[apiKey] = value;
+        }
+      }
+    }
+  });
 
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          this.conformationPopup.openErrorModal('Emergency contact information update failed');
-        },
-      });
-  }
+  // Always send country codes/flags
+  updatePayload.emergencycode = this.selectedDialCode || this.employedata.emergencycode;
+  updatePayload.emergencycode1 = this.selectedDialCode1 || this.employedata.emergencycode1;
+  updatePayload.emergencynumbercountryflag = this.selectedCountryCodegflag || this.employedata.emergencynumbercountryflag;
+  updatePayload.emergencyphonecountryflag = this.selectedCountryflag || this.employedata.emergencyphonecountryflag;
 
+  this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload).subscribe({
+    next: (data: any) => {
+      if (data.statusCode === 200) {
+        this.conformationPopup.openSuccessModal('Emergency contact updated successfully');
+        this.getEmergencyFieldsApprovalStatus();
+        this.emergencyContactForm.disable();
+        this.buttons = false;
+        this.buttons2 = false;
+        this.getEmployeeId();
+      } else if (data.statusCode === 409) {
+        this.conformationPopup.openErrorModal(data.message);
+      }
+    },
+    error: () => this.conformationPopup.openErrorModal('Update failed')
+  });
+}
 
   //get family relations dropdown
   getFamilyRelations() {

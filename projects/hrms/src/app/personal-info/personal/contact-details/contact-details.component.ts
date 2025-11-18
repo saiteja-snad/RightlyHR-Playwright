@@ -311,6 +311,7 @@ getFieldsApprovalStatusList: any[] = [];
           this.contactForm.disable();
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
+          this.getFieldsApprovalStatus();
 
           } else if (data.statusCode === 409) {
           this.getEmployeeId();

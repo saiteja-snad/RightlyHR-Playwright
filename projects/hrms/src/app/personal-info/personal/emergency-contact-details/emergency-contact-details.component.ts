@@ -310,6 +310,7 @@ saveForm(): void {
         this.buttons = false;
         this.buttons2 = false;
         this.getEmployeeId();
+        this.getEmergencyFieldsApprovalStatus()
       } else if (data.statusCode === 409) {
         this.conformationPopup.openErrorModal(data.message);
       }

@@ -30,6 +30,9 @@ export const permissionsData = [
   { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
 
+
+
+
   //Personal field update config Tabs
   { fields: 'Basic Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contact Info', View: false, Update: false, Create: false, Delete: false },
@@ -636,6 +639,7 @@ export const permissionsData = [
   { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Skills', View: false, Update: false, Create: false, Delete: false },
 
+
   //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
@@ -683,6 +687,7 @@ export const permissionsData = [
   { fields: 'Employee Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Reset Password Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'View History Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Generate Credentials Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Project Details', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
@@ -926,7 +931,7 @@ export const permissionsData = [
 
   //My Info Letter Acknowledgement
   { fields: 'My Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
-  
+
   //Draft Forms MArk As Active Action
   { fields: 'Mark As Active Action', View: false, Update: false, Create: false, Delete: false },
 
@@ -1016,4 +1021,14 @@ export const permissionsData = [
   { fields: 'Flexible Work Hours Allocation Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Work Hours Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Work Hours Allocations Tab', View: false, Update: false, Create: false, Delete: false },
+
+     //View History Approvals
+  { fields: 'My Info Personal Approval History', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Job Approval History', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Documents Approval History', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'Employee Personal Approval History', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Job Approval History', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Documents Approval History', View: false, Update: false, Create: false, Delete: false },
 ];
+

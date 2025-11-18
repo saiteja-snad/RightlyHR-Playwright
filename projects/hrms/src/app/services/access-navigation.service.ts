@@ -76,6 +76,9 @@ import {
   CARDS_SUB_TABS,
   SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS,
   SETTINGS_TIMESHEET_LOCKING_TABS,
+
+  MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES
+
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',

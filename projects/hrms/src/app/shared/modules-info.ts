@@ -35,6 +35,7 @@ export const MODULE_INFOS = {
     SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO: "The Flexible WFH Allocation module enables Admins or HR to assign work-from-home entitlements to employees by configuring specific allocation criteria. Once entitle, the entitled WFHs are automatically reflected in the WFH module, allowing employees to utilize them as per policy.",
     SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO:"The Flexible Work Hours Allocation module allows HR/Admin users to define and assign flexible working hours within the organization. Using this feature, HR/Admin can allocate working hours based on specific roles or individual employees, ensuring that work schedules align with organizational policies and employee needs.",
 
+
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO: "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
     SETTINGS_ASSET_CONFIGURATION_VENDOR_DETAILS: "Manage and track vendor information for all your assets in one place. Easily view contact details, status, and addresses for seamless vendor coordination.",
@@ -228,6 +229,13 @@ export const MODULE_INFOS = {
 
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
+
+    //My Info Approvals Module Info
+
+    MY_INFO_PERSONAL_APPROVALS_MODULE_INFO: "The View History section allows employees to review all their submitted update requests, including previous and requested details, status, and update dates. Employees can also cancel any pending requests directly from this page. This helps track profile changes easily and maintain clarity on all submitted updates.",
+
+    // Employee Info Approvals Module Info
+    EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO: "The View History section allows HR/Admin to track all update requests made to personal, job, and document information. It displays previous values, requested changes, approval status, and the dates of each update for complete transparency. This helps maintain an accurate audit trail of all profile modifications.",
 
     //Team Members Module Info
     TEAM_MEMBERS_MODULE_INFO: "Clicking on the Team Members tab will display the list of team members, with a button at the top to change the TM or RM. You can update the Reporting Manager (RM) or Team Manager (TM) for individual employees or apply changes in bulk for a group.",

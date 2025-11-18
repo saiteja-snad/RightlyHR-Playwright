@@ -513,6 +513,18 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
 ];
 
+export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
+  { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },
+  { permission: 'My Info Job Approval History.view', route: 'myinfo/approvals/job' },
+  { permission: 'My Info Documents Approval History.view', route: 'myinfo/approvals/documents' }
+]
+
+export const EMPLOYEE_APPROVALS_VIEW_HISTORY_ROUTES = [
+  { permission: 'Employee Personal Approval History.view', route: 'personalinfo/approvals/personal' },
+  { permission: 'Employee Job Approval History.view', route: 'personalinfo/approvals/job' },
+  { permission: 'Employee Documents Approval History.view', route: 'personalinfo/approvals/documents' }
+]
+
 export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Pre-Onboarding Details.view', route: '/personalinfo/job/pre-onboarding-details' },
   { permission: 'Employee Info Onboarding Details.view', route: '/personalinfo/job/onboarding-details' },

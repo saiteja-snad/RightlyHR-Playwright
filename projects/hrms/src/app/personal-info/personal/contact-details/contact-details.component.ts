@@ -45,11 +45,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   mobileNumberData: IphoneNumberData | null = null;
- 
+
    selectedworkcoutrycode = signal<any>('');
    selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService , 
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService ,
     private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
@@ -58,11 +58,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   }
   ngOnInit(): void {
-    
+
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.contactForm.disable();
-  
+
   }
 
 
@@ -75,7 +75,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    
+
       this.getEmployeeId();
     }
   }
@@ -83,7 +83,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]],
-      workMail: ['', [Validators.email]], 
+      workMail: ['', [Validators.email]],
       countyCode1: [null,],
        countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
@@ -137,7 +137,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       } ,
       complete: () => {
         this.loading = false;
-        this.dataLoader = false; 
+        this.dataLoader = false;
       }
     });
   }
@@ -163,7 +163,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     const worknumber = cleanPhoneNumber(formValue.workNumber || this.employedata?.workNumber || null);
     const updatePayload = {
       ...this.employedata,
-     
+
       emailaddress: formValue.personalEmail,
       workEmail: formValue.workMail || this.employedata.workEmail,
       contactnumber: contactnumber,
@@ -186,7 +186,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
           this.contactForm.disable();
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
-        
+
           } else if (data.statusCode === 409) {
           this.getEmployeeId();
             this.conformationPopup.openErrorModal(data.message);
@@ -216,7 +216,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       workNumberControl.setValue(formattedValue, { emitEvent: false });
     }
   }
- 
+
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;
@@ -236,7 +236,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.contactForm.get('phoneNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodephoneflag)]);
     this.contactForm.get('phoneNumber')?.updateValueAndValidity();
     this.employedata.mobilePhoneCountryCode = country.dialling_code;
-    this.employedata.mobilephonecountryflag = country.code; 
+    this.employedata.mobilephonecountryflag = country.code;
   }
 
   formatPhoneNumber(value: any,countryCode:any) {

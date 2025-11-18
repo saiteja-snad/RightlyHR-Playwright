@@ -256,8 +256,8 @@
     height: calc(100dvh - 14.625rem) !important;
 }
 
-.custom-graph-content-height{
-  height: calc(100dvh - 12rem) !important;
+.custom-graph-content-height {
+    height: calc(100dvh - 12rem) !important;
 }
 
 .data-chip {
@@ -277,6 +277,13 @@
     border-bottom-right-radius: 0.5rem;
 
 }
+
+.status-text {
+    font-weight: 400;
+    font-size: var(--fontsize12);
+    color: #747474;
+}
+
 
 .circular-dot {
     width: 12px;
@@ -308,7 +315,7 @@
     background-color: #EA362C;
 }
 
-.circle-pending{
+.circle-pending {
     background-color: #565557;
 }
 

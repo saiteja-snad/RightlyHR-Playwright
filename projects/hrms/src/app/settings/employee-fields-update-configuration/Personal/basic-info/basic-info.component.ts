@@ -189,7 +189,7 @@ export class BasicInfoComponent {
 
       // MANAGER
       else if (formValue.approvalType === 'MANAGER') {
-        approvalTypeToSend = formValue.selectedManager;
+        approvalTypeToSend = 'EMP';
         approvalAuthority = '';
       }
 
@@ -206,6 +206,7 @@ export class BasicInfoComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
         };
 
@@ -251,6 +252,7 @@ export class BasicInfoComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           createdBy: loggedInUser.employeeId,
         };
 

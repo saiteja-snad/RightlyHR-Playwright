@@ -188,7 +188,7 @@ export class ContactInfoComponent {
 
       // MANAGER
       else if (formValue.approvalType === 'MANAGER') {
-        approvalTypeToSend = formValue.selectedManager; // TM / RM
+        approvalTypeToSend = 'EMP';
         approvalAuthority = ''; // always empty
       }
 
@@ -205,6 +205,7 @@ export class ContactInfoComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
         };
 
@@ -250,6 +251,7 @@ export class ContactInfoComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           createdBy: loggedInUser.employeeId,
         };
 

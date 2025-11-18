@@ -195,7 +195,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
 
       // MANAGER
       else if (formValue.approvalType === 'MANAGER') {
-        approvalTypeToSend = formValue.selectedManager; // TM / RM
+        approvalTypeToSend = 'EMP';
         approvalAuthority = ''; // always empty
       }
 
@@ -212,6 +212,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
         };
 
@@ -257,6 +258,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           createdBy: loggedInUser.employeeId,
         };
 

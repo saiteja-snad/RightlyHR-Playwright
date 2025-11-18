@@ -200,7 +200,7 @@ export class AddressesComponent {
 
       // MANAGER
       else if (formValue.approvalType === 'MANAGER') {
-        approvalTypeToSend = formValue.selectedManager; // TM / RM
+        approvalTypeToSend = 'EMP';
         approvalAuthority = ''; // always empty
       }
 
@@ -217,6 +217,7 @@ export class AddressesComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           referenceCategory: referenceCategory,
           updatedBy: loggedInUser.employeeId,
         };
@@ -263,6 +264,7 @@ export class AddressesComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
             referenceCategory: referenceCategory,
           createdBy: loggedInUser.employeeId,
         };

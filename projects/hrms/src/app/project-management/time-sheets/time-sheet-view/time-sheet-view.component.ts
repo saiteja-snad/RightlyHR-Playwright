@@ -359,7 +359,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }],
       endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }],
       duration: durationControl,
-      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
+      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable },  Validators.required],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
       isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
@@ -1738,10 +1738,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const duration = form.get('duration')?.value;
-    return !!duration; // Only checks duration now
+    const { description, duration,  } = form.value;
+    return !!(description && duration );
   }
 
   //based status colour

@@ -1,0 +1,210 @@
+<div class="custom-main-component-container">
+  <!--Add Btn-->
+  <div class="mb-3 d-flex gap-2">
+    <button type="button" (click)="openFieldConfigDialog()" class="custom-btn btn-primary"
+      *ngIf="rbac.allowedToAccess('Certifications.create')">{{'Add Field Configuration' | translate}}</button>
+  </div>
+
+  <div class="custom-main-component-container">
+    <div class="custom-table-content">
+      @if(!loader){
+      <table class="w-100" *ngIf="rbac.allowedToAccess('Certifications.view')">
+        <thead>
+          <tr>
+            <th>{{'Field Name' | translate}}</th>
+            <th>{{'Approval Required' | translate}}</th>
+            <th>{{'Approval Type' | translate}}</th>
+            <th class="text-center"
+              *ngIf="rbac.allowedToAccess('Certifications.update') || rbac.allowedToAccess('Certifications.delete')">
+              {{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <ng-container>
+            <tr *ngFor="let configItem of certificationsFieldsConfigList">
+              <td>{{configItem.columnName || 'N/A'}}</td>
+              <td>{{configItem.requiresApproval?'Yes': 'No'}}</td>
+              <td>{{configItem.approvalType || 'N/A'}}</td>
+              <td class="text-center"
+                *ngIf="rbac.allowedToAccess('Certifications.update') || rbac.allowedToAccess('Certifications.delete')">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openUpdateFieldConfigDialog(configItem)"
+                      *ngIf="rbac.allowedToAccess('Certifications.update')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
+                      </a>
+                    </li>
+                    <li (click)="opendelete(configItem)" *ngIf="rbac.allowedToAccess('Certifications.delete')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      }
+      @else {
+      <app-data-loader-content />
+      }
+    </div>
+  </div>
+</div>
+
+
+<!-- Field Configuration popup -->
+<ng-template #fieldConfigpopup let-modal>
+  <form autocomplete="off" [formGroup]="fieldConfigForm">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{ (isEditMode ? 'Update Field Configuration' : 'Field Configuration') |
+            translate }}</p>
+        </div>
+        <div>
+          <a (click)="close(modal)">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <!-- Field Name -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Field Name' | translate }} <span class="error-msg" *ngIf="!isEditMode">*</span>
+          </label>
+          <!-- Multi-select for create mode -->
+          <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
+             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
+              optionValue="fieldName"  optionDisabled="optionDisabled" formControlName="fieldNames"
+              placeholder="{{'Please select field names' | translate}}" [filter]="true">
+            </p-multiSelect>
+          </div>
+          <!-- Read-only input for update mode -->
+          <input type="text" class="form-control custom-input" [value]="selectedFieldConfig?.columnName" readonly
+            *ngIf="isEditMode">
+          <div
+            *ngIf="fieldConfigForm.get('fieldNames')?.touched && fieldConfigForm.get('fieldNames')?.invalid && !isEditMode"
+            class="error-msg">
+            <div *ngIf="fieldConfigForm.get('fieldNames')?.errors?.['required']">
+              {{ 'Field Name is required' | translate }}
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Approval Type -->
+        <div class="mb-3" >
+          <label class="form-label custom-label mb-2">
+            {{ 'Approval Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="approvalTypeOptions" optionLabel="label"
+              optionValue="value" formControlName="approvalType"
+              placeholder="{{'Please select approval type' | translate}}">
+            </p-select>
+          </div>
+          <div *ngIf="fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"
+            class="error-msg">
+            <div *ngIf="fieldConfigForm.get('approvalType')?.errors?.['required']">
+              {{ 'Approval Type is required' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Selection (when approval type is role) -->
+        <div
+          *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' ">
+          <label class="form-label custom-label mb-2">
+            {{ 'Select Role' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="roles" optionLabel="name" optionValue="id"
+              formControlName="selectedRole" placeholder="{{'Please select role' | translate}}" [filter]="true">
+            </p-select>
+          </div>
+          <div *ngIf="fieldConfigForm.get('selectedRole')?.touched && fieldConfigForm.get('selectedRole')?.invalid"
+            class="error-msg">
+            <div *ngIf="fieldConfigForm.get('selectedRole')?.errors?.['required']">
+              {{ 'Role selection is required' | translate }}
+            </div>
+          </div>
+        </div>
+
+     <!-- Role Selection (when approval type is employee) -->
+        <div class="mb-3"
+          *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
+          <label class="form-label custom-label mb-2">
+            {{ 'Select Employee' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="activeEmplist" optionLabel="label" optionValue="value"
+              formControlName="selectedEmployee" placeholder="{{'Please select employee' | translate}}" [filter]="true">
+            </p-select>
+          </div>
+          <div
+            *ngIf="fieldConfigForm.get('selectedEmployee')?.touched && fieldConfigForm.get('selectedEmployee')?.invalid"
+            class="error-msg">
+            <div *ngIf="fieldConfigForm.get('selectedEmployee')?.errors?.['required']">
+              {{ 'Employee selection is required' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Manager Selection (when approval type is manager) -->
+        <div class="mb-3"
+          *ngIf="fieldConfigForm.get('approvalType')?.value === 'MANAGER' ">
+          <label class="form-label custom-label mb-2">
+            {{ 'Select Manager Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="managerOptions" optionLabel="label" optionValue="value"
+              formControlName="selectedManager" placeholder="{{'Please select manager' | translate}}" >
+            </p-select>
+          </div>
+          <div
+            *ngIf="fieldConfigForm.get('selectedManager')?.touched && fieldConfigForm.get('selectedManager')?.invalid"
+            class="error-msg">
+            <div *ngIf="fieldConfigForm.get('selectedManager')?.errors?.['required']">
+              {{ 'Manager selection is required' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="button" class="custom-btn btn-primary" (click)="saveFieldConfig(modal)"
+            [disabled]="fieldConfigForm.invalid">
+            {{ (isEditMode ? 'Update' : 'Save') | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,31 @@
+<div class="custom-main-component-container">
+    <!--header-->
+     @if (shouldShowSection() && router.url !== '/settings/employee-fields-update-configurations/no-due-clearnce' ) {
+    <div class="component-header-content pt-2">
+        <app-settings-header />
+    </div>
+    }
+    <!--Content-->
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        @if (shouldShowSection() && router.url !== '/settings/employee-fields-update-configurations/no-due-clearnce' ) {
+        <!--sub tabs Content-->
+        <div class="custom-component-left-content">
+            <!--Persoanl tabs-->
+            <div *ngIf="isActive('/settings/employee-fields-update-configurations/personal')">
+                <app-personal-field-update-config />
+            </div>
+            <!--Job tabs-->
+            <div *ngIf="isActive('/settings/employee-fields-update-configurations/job')">
+                <app-job-field-update-config />
+            </div>
+        </div>
+        <div class="custom-setting-right-content">
+            <router-outlet />
+        </div>
+        } @else {
+        <div class="w-100">
+            <router-outlet />
+        </div>
+        }
+    </div>
+</div>

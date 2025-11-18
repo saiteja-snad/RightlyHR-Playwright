@@ -1,4 +1,10 @@
 export const MODULE_INFOS = {
+    //Settings Employee Fields Update Config Module Info
+    SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_MODULE_INFO: "The Employee Info Update  allows HR/Admin to configure which employee profile fields require approval when an employee submits an update request from the My Info page. HR/Admin can define approval authorities, set validation rules, and control the overall workflow for updating employee information, ensuring accuracy and compliance across the system.",
+    SETTINGS_PERSONAL_INFORMATION_UPDATE_MODULE_INFO:"The Personal Information Update enables the configuration of personal-related fields such as name details, date of birth, gender, marital status, identity details, contact information, and other personal attributes. HR/Admin can specify which fields require approval when edited by employees, helping maintain secure, verified, and consistent personal data across the organization.",
+    SETTINGS_JOB_INFORMATION_UPDATE_MODULE_INFO:"The Job Information Update enabled the configuration of job-related fields including job role, department, team, job type, work location, grade, reporting manager, pay type, and other employment attributes. HR/Admin can set approval requirements for any changes requested by employees to ensure proper authorization, transparency, and alignment with organizational structure and HR policies.",
+
+
     //Settings Employee Fields Module Info
     SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO: "Define and manage core employee data sections such as personal details, job info, documents, and policies. Central hub for configuring fields that shape the employee profile structure.",
     SETTINGS_PERSONAL_INFO_MODULE_INFO: "This section allows configuration of dropdown values like Salutation, Status, Gender, Marital Status, Degree, Visa Type, Identity Type, Relationship, and Bank Names. It ensures standardization and consistency across employee profile creation and HR processes.",
@@ -27,7 +33,11 @@ export const MODULE_INFOS = {
     SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO: "This module allows viewing and managing leave entitlements for employees based on filters like Employee ID, DOJ, Location, and Shift. It displays detailed leave categories with corresponding policy and entitled leaves for each individual.",
     SETTINGS_TIMESHEET_REPORT_MODULE_INFO: "The Timesheet Report provides a comprehensive view of employee work logs, approvals, and utilization. It consolidates individual and team-level data to help managers, HR, and finance teams track productivity, project efforts, and pending actions. Each tab offers focused insights, ensuring accurate reporting and efficient decision-making.",
     SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO: "The Flexible WFH Allocation module enables Admins or HR to assign work-from-home entitlements to employees by configuring specific allocation criteria. Once entitle, the entitled WFHs are automatically reflected in the WFH module, allowing employees to utilize them as per policy.",
+<<<<<<< HEAD
     SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO:"The Flexible Work Hours Allocation module allows HR/Admin users to define and assign flexible working hours within the organization. Using this feature, HR/Admin can allocate working hours based on specific roles or individual employees, ensuring that work schedules align with organizational policies and employee needs.",
+=======
+
+>>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO: "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
     SETTINGS_ASSET_CONFIGURATION_VENDOR_DETAILS: "Manage and track vendor information for all your assets in one place. Easily view contact details, status, and addresses for seamless vendor coordination.",
@@ -43,9 +53,14 @@ export const MODULE_INFOS = {
 
     //attendance Configuration Module Info
 
+<<<<<<< HEAD
     // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     
+=======
+   // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+   // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+>>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
     //Expenses Module Info
     EXPENSES_MODULE_INFO: "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
     
@@ -125,7 +140,10 @@ export const MODULE_INFOS = {
     UTILIZATION_REPORTS_MODULE_INFO: "Shows the utilization percentage of each resource, comparing logged hours against available working hours. This helps identify underutilized or overburdened employees.",
     RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO: "Provides a snapshot of each employee’s availability status, scheduled leaves, and working capacity. Useful for planning resource allocation and workload balancing.",
     ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO: "Compares attendance records with timesheet entries to ensure consistency and detect any mismatches. This supports accurate payroll processing and compliance.",
+<<<<<<< HEAD
     
+=======
+>>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
     //Calendar Module Info
     CALENDAR_MODULE_INFO: "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 
@@ -202,6 +220,10 @@ export const MODULE_INFOS = {
     PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO: "The Visa Details section enables employees to add and manage visa information including Visa Type, Issue Date, Expiry Date, Issued Country, and Status. Users can add new visa records and perform actions such as edit or delete existing entries.",
     PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skills section allows employees to add their technical and soft skills, showcasing their areas of expertise. This helps the organization easily identify and map employee competencies for project or role allocation.",
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
     //My info Job Module info
     JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO: "The Pre Onboarding Info section captures key milestones like offer, appointment, and trainee offer dates, along with the sender's name and current status. It helps track the progression of onboarding documents.",
     JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO: "The Onboarding Info section includes the employee's joining date, probation timeline, statutory components (PF, ESIC, PT), and background check status. It also captures prior experience, remote login eligibility, and work location to ensure a complete onboarding record.",
@@ -221,7 +243,11 @@ export const MODULE_INFOS = {
     
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
     //Team Members Module Info
     TEAM_MEMBERS_MODULE_INFO: "Clicking on the Team Members tab will display the list of team members, with a button at the top to change the TM or RM. You can update the Reporting Manager (RM) or Team Manager (TM) for individual employees or apply changes in bulk for a group.",
     Bloodbank_MODULE_INFO: "Easily access a list of employees' blood group details for emergencies. Quickly search, filter, and contact donors when needed—right within the system.",

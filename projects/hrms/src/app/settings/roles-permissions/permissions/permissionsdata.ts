@@ -2,6 +2,7 @@ export const permissionsData = [
   // Settings sidebar
   { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Fields Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Fields Config Update Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Settings Timeoff Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assets Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
@@ -9,6 +10,11 @@ export const permissionsData = [
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
+
+  //Employee Field Config Update Tabs Sections
+  { fields: 'Personal Config Update Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Job Config Update Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Document Config Update Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Tabs Sections
   { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
@@ -23,6 +29,19 @@ export const permissionsData = [
   { fields: 'Expense Types Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
+
+  //Personal field update config Tabs
+  { fields: 'Basic Info', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Contact Info', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Addresses', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Emergency Contacts', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Identity Info', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Bank Info', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Academics', View: false, Update: false, Create: false, Delete: false },
+
+  //Job field update config Tabs
+  { fields: 'Certifications', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employment History', View: false, Update: false, Create: false, Delete: false },
 
   //Personal Tab
   { fields: 'Salutation', View: false, Update: false, Create: false, Delete: false },

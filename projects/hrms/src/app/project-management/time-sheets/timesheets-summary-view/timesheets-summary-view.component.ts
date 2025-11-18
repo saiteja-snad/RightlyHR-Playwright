@@ -435,18 +435,18 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.meta.graphData.code ? item.meta.graphData.code : item.projectName);
+    const labels = this.estimatedVsActualData.map((item: any) => item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName);
     // Convert estimated hours to numbers (already numeric strings)
-    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
+    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item?.estimatedHours) || 0);
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHours.split(':').map(Number);
+      const [h, m] = item?.actualHours.split(':').map(Number);
       const actualDecimal = h + (m / 60);   // convert HH:mm → decimal
-      const overdue = Number(item.overDue || 0);  // overdue already decimal
+      const overdue = Number(item?.overDue || 0);  // overdue already decimal
       return actualDecimal - overdue;   // REMOVE overdue from actual
     });
     // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
+    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item?.overDue) || 0);
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -472,7 +472,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       ]
     };
     // Chart options
-    this.estimatedVsActualGraphOptions = {
+   this.estimatedVsActualGraphOptions = {
       responsive: true,
       barThickness: 30,
       scales: {
@@ -493,8 +493,15 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         tooltip: {
           callbacks: {
             title: (tooltipItems: any) => {
-              const index = tooltipItems[0].dataIndex;
-              return this.estimatedVsActualData[index].projectName;
+              if (!tooltipItems || !tooltipItems.length) return '';
+              const ti = tooltipItems[0];
+              let index = ti.dataIndex;
+              if (index === undefined || index === null) {
+                const label = ti.label ?? ti.title ?? '';
+                index = this.estimatedVsActualGraphData?.labels?.indexOf(label);
+              }
+              const project = (typeof index === 'number' && index >= 0) ? this.estimatedVsActualData?.[index]?.projectName : (ti.label ?? '');
+              return project || '';
             },
             label: (tooltipItem: any) => {
               const datasetLabel = tooltipItem.dataset.label || '';

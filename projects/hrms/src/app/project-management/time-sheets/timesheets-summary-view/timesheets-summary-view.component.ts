@@ -221,14 +221,14 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   get hasprojectWiseHoursData(): boolean {
     return !!(
       this.projectTypeGraphData?.datasets?.length &&
-      this.projectTypeGraphData.datasets[0]?.data?.length
+      this.projectTypeGraphData?.datasets[0]?.data?.length
     );
   }
 
   get hasallocatedvsactualData(): boolean {
     return !!(
       this.estimatedVsActualGraphData?.datasets?.length &&
-      this.estimatedVsActualGraphData.datasets[0]?.data?.length
+      this.estimatedVsActualGraphData?.datasets[0]?.data?.length
     );
   }
 

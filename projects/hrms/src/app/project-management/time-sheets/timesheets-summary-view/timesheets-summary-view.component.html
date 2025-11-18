@@ -128,7 +128,7 @@
                                                     </a>
                                                     @if(row.dailySummary.legendCode != null){
                                                     <!-- <div class="data-chip"> -->
-                                                    <span [style.color]="row.dailySummary.colour">
+                                                    <span [style.color]="row.dailySummary.textColor">
                                                         <b>{{row.dailySummary.legendCode}}</b>
                                                     </span>
                                                     <!-- </div> -->
@@ -137,7 +137,7 @@
                                                 <ng-template #noEntries>
                                                     @if(row.dailySummary.legendCode != null){
                                                     <!-- <div class="data-chip"> -->
-                                                    <span [style.color]="row.dailySummary.colour">
+                                                    <span [style.color]="row.dailySummary.textColor">
                                                         <b>{{row.dailySummary.legendCode}}</b>
                                                     </span>
                                                     <!-- </div> -->

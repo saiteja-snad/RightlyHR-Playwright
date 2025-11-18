@@ -255,7 +255,6 @@
 .close-icon {
   width: 2rem;
   height: 2rem;
-  margin-left: 10rem;
 }
 
 .status-badge {
@@ -355,4 +354,8 @@
 
 .popup-loader {
   height: 100dvh;
+}
+.custom-no-data-found {
+  position: relative;
+  height: 60dvh;
 }

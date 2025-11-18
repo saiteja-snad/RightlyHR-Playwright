@@ -29,6 +29,7 @@
     padding: 0.25rem;
     text-decoration: underline;
   }
+
   .Phase-link {
     color: var(--primary-color);
   }
@@ -103,7 +104,7 @@
   /* Tabs */
   .custom-skill-set-tabs {
     .p-tablist {
-      background: #ECF1F5;
+      background: linear-gradient(360deg, #ECF1F5 0%, var(--module-accordian-bg-color) 150%);
       border-radius: 0.5rem;
       padding: 0.25rem;
       display: inline-flex;
@@ -111,7 +112,7 @@
     }
 
     .p-tablist-tab-list {
-      background: #ECF1F5;
+      background: linear-gradient(360deg, #ECF1F5 0%, var(--module-accordian-bg-color) 150%);
       font-weight: 700;
       font-size: var(--fontsize14) !important;
     }
@@ -220,8 +221,6 @@
   .close-icon {
     width: 2rem;
     height: 2rem;
-    margin-left: 21rem;
-    margin-top: 1rem;
   }
 }
 
@@ -378,7 +377,6 @@
   .close-icon {
     width: 2rem;
     height: 2rem;
-    margin-left: 10rem;
   }
 }
 
@@ -478,4 +476,8 @@
     border-top-right-radius: 0.5rem;
     border-right: 0px !important;
   }
+}
+.custom-no-data-found {
+  position: relative;
+  height: 60dvh;
 }

@@ -177,25 +177,41 @@ export class SkillsetDashboardComponent {
     });
   }
 
-  onCheckemployeeProficiency(selectedValues: string[]) {
-    // If 'All Proficiencies' is selected along with others, remove it
-    if (selectedValues.includes('All Proficiencies') && selectedValues.length > 1) {
-      selectedValues = selectedValues.filter(v => v !== 'All Proficiencies');
+
+  prevSelectedProficiency: string[] = ['All Proficiencies'];
+
+  onCheckemployeeProficiency(event: any): void {
+    const newValues: string[] = Array.isArray(event?.value) ? event.value : (this.selectedStatus || []);
+
+    const wasAllPreviously = this.prevSelectedProficiency.includes('All Proficiencies');
+    const isAllNow = newValues.includes('All Proficiencies');
+
+    if (isAllNow && !wasAllPreviously) {
+      this.selectedStatus = ['All Proficiencies'];
+    }
+    else {
+  
+      if (newValues.includes('All Proficiencies') && newValues.length > 1) {
+        this.selectedStatus = newValues.filter(v => v !== 'All Proficiencies');
+      }
+ 
+      else if (newValues.length === 0) {
+        this.selectedStatus = ['All Proficiencies'];
+      }
+      else {
+        this.selectedStatus = newValues;
+      }
     }
 
-    // If nothing is selected, default to 'All Proficiencies'
-    if (!selectedValues || selectedValues.length === 0) {
-      selectedValues = ['All Proficiencies'];
-    }
+    this.prevSelectedProficiency = [...this.selectedStatus];
 
-    this.selectedStatus = selectedValues;
-
-    // Call your graph/table update methods
+    // Your existing graph calls
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.getSkillSetTableData();
     this.topSkillsGraph();
   }
+
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -273,7 +289,6 @@ export class SkillsetDashboardComponent {
   }
 
   getSkillSummary() {
-
     this.subscription = this.http.getData('EmployeeSkills/getEmployeeSummaryCount').subscribe({
       next: (res: any) => {
         this.chartLoader = true;
@@ -609,10 +624,7 @@ export class SkillsetDashboardComponent {
             profileImage: 'images/alternate.png',
             originalProfileUrl: emp.profileImage || emp.profileUrl || ''
           }));
-
-          // download actual images after list ready
           this.employeeList.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
-
           this.noDataFound = this.employeeList.length === 0;
         }
         else {
@@ -691,8 +703,26 @@ export class SkillsetDashboardComponent {
     }
   }
 
-  
-  onSkillSelectionChange(): void {
+
+
+  prevSelected: string[] = ['All Skills'];
+  onSkillSelectionChange(event: any): void {
+    const newValue: string[] = Array.isArray(event?.value) ? event.value : (this.selectedSkills || []);
+    const wasAllPreviously = this.prevSelected.includes('All Skills');
+    const isAllNow = newValue.includes('All Skills');
+    if (isAllNow && !wasAllPreviously) {
+      this.selectedSkills = ['All Skills'];
+    } else {
+      if (newValue.includes('All Skills') && newValue.length > 1) {
+        this.selectedSkills = newValue.filter(s => s !== 'All Skills');
+      } else if (newValue.length === 0) {
+
+        this.selectedSkills = ['All Skills'];
+      } else {
+        this.selectedSkills = newValue;
+      }
+    }
+    this.prevSelected = [...this.selectedSkills];
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.getSkillSetTableData();

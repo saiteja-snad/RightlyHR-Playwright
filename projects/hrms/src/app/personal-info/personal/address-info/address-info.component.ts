@@ -218,7 +218,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       currentAddress: this.currentAddress,
       permanentAddress: this.permanentAddress,
 
-      selfUpdate: this.isMyInfoRoute,
+
+  selfUpdate: this.isMyInfoRoute,
   moduleName: this.isMyInfoRoute ? 'Address Info' : undefined,
   displayName: this.isMyInfoRoute ? 'Personal' : undefined,
     };

@@ -415,6 +415,21 @@
           </div>
         </div>
 
+        <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true">
+          <label class="form-label custom-label mb-2" for="noticePeriodFrequencyType">
+            Leave Type Selection<span class="text-danger">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select [options]="leaveTypeOptions" optionLabel="label" optionValue="value" placeholder="Select Leave Type"
+              formControlName="noticePeriodFrequencyType" class="custom-select w-100" appendTo="body">
+            </p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="leavePolicyForm.get('noticePeriodFrequencyType')?.invalid && leavePolicyForm.get('noticePeriodFrequencyType')?.touched">
+            Leave Type Selection is required
+          </div>
+        </div>
+
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="gender">Maximum Leaves Allowed Per Month<span
               class="text-danger">*</span></label>

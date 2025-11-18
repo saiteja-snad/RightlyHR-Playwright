@@ -440,7 +440,9 @@ getTeamManagersDetails() {
 
   get totalAvailableLeaves(): number {
     return this.categoryDetails.reduce((total, item) => {
-      if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+      if (item.category.noticeperiodAllowedType && item.noticePeriodLeaves > 0) {
+        return total + (item.noticePeriodLeaves - item.utilizedDays - item.booked);
+      } else if (item.category.isProbationAllowed && item.probationLeaves > 0) {
         return total + (item.probationLeaves - item.utilizedDays - item.booked);
       } else {
         return total + (item.allowedDays - item.utilizedDays - item.booked);
@@ -475,7 +477,9 @@ getTeamManagersDetails() {
   }
 
   getAvailableLeaves(item: any): number {
-    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
+    if (item.category?.noticeperiodAllowedType && item.noticePeriodLeaves > 0) {
+      return item.noticePeriodLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+    } else if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
       return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0); 
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
@@ -613,7 +617,12 @@ getTeamManagersDetails() {
     const booked = this.selectedleave?.booked;
     const expired = this.selectedleave.expiryDaysLeaves;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.noticeperiodAllowedType) {
+      const noticePeriodLeavesTaken = this.selectedleave.noticePeriodLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
+      if (noticePeriodLeavesTaken >= 0) {
+        this.remainingLeaves = noticePeriodLeavesTaken;
+      }
+    } else if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
       const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;

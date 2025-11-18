@@ -375,16 +375,16 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   // Project Type (Pie)
   projectWiseChart() {
-    if (!this.projectTypeData || this.projectTypeData.length === 0) return;
+    if (!this.projectTypeData || this.projectTypeData?.length === 0) return;
     // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item.projectName);
+    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item?.projectName);
     // Convert "HH:mm" string → numeric hours for plotting
     const data = this.projectTypeData.map((item: any) => {
       const [hours, minutes] = item.hours.split(':').map(Number);
       return hours + minutes / 60;
     });
     // Keep original HH:mm values for display
-    const originalTimes = this.projectTypeData.map((item: any) => item.hours);
+    const originalTimes = this.projectTypeData.map((item: any) => item?.hours);
     // Chart colors
     const backgroundColors = [
       '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
@@ -416,13 +416,13 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
           bodyFont: { size: 10 },
           callbacks: {
             title: (tooltipItems: any) => {
-              const index = tooltipItems[0].dataIndex;
-              const name = this.projectTypeData[index].projectName;
+              const index = tooltipItems[0]?.dataIndex;
+              const name = this.projectTypeData[index]?.projectName;
               // Wrap long names (max 20 chars per line)
               return name.match(/.{1,20}/g);
             },
             label: (tooltipItem: any) => {
-              const value = Number(tooltipItem.raw).toFixed(2);
+              const value = Number(tooltipItem?.raw).toFixed(2);
               return `Project Hours (in Hrs): ${value}`;
             }
           }
@@ -433,7 +433,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
+    if (!this.estimatedVsActualData || this.estimatedVsActualData?.length === 0) return;
     // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) => item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName);
     // Convert estimated hours to numbers (already numeric strings)
@@ -495,7 +495,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
           bodyFont: { size: 10 },
           callbacks: {
             title: (tooltipItems: any) => {
-              if (!tooltipItems || !tooltipItems.length) return '';
+              if (!tooltipItems || !tooltipItems?.length) return '';
               const ti = tooltipItems[0];
               let index = ti.dataIndex;
               if (index === undefined || index === null) {
@@ -506,8 +506,8 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
               return project || '';
             },
             label: (tooltipItem: any) => {
-              const datasetLabel = tooltipItem.dataset.label || '';
-              const value = tooltipItem.raw;
+              const datasetLabel = tooltipItem?.dataset?.label || '';
+              const value = tooltipItem?.raw;
               return `${datasetLabel}: ${value}`;
             }
           }

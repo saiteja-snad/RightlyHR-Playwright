@@ -277,7 +277,7 @@ export class AccessNavigationService {
             }
           }
         }
-        
+
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
           return '/settings/timesheet-locking-configuration';
         }
@@ -991,7 +991,6 @@ export class AccessNavigationService {
           }
         }
         break;
-<<<<<<< HEAD
 
 
 
@@ -1006,8 +1005,6 @@ export class AccessNavigationService {
         }
         break;
 
-=======
->>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
       case '/settings/roles-permissions':
         for (const item of SETTINGS_ROLES_TABS) {
           return item.route;

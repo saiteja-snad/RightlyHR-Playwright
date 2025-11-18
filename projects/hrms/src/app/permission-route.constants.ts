@@ -96,7 +96,7 @@ export const SETTINGS_AttendanceLock_TABS = [
 ];
 // Timesheet Locking Tabs
 export const SETTINGS_TIMESHEET_LOCKING_TABS = [
-  
+
   { route: '/settings/timesheet-locking-configuration/pending-for-submission', permission: 'Timesheet Locking Pending Tab.view' },
   { route: '/settings/timesheet-locking-configuration/published', permission: 'Timesheet Locking Published Tab.view' }
 ];
@@ -120,12 +120,10 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
 ]
 
-<<<<<<< HEAD
 export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
   { route: '/settings/it-configuration/itsupport-category', permission: 'IT Support Category.view' },
   { route: '/settings/it-configuration/itsupport-sub-category', permission: 'IT Support Sub-Category.view' },
 ]
-=======
 export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS_CONFIG_UPDATE = [
   { route: '/settings/employee-fields-update-configurations/personal/basic-info', permission: 'Basic Info.view' },
   { route: '/settings/employee-fields-update-configurations/personal/contact-info', permission: 'Contact Info.view' },
@@ -141,7 +139,6 @@ export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS_CONFIG_UPDATE = [
   { route: '/settings/employee-fields-update-configurations/job/employment-history', permission: 'Employment History.view' },
 ];
 
->>>>>>> 9e255976dbcf4530b057cef967117f811bd4dc48
 
 export const TIME_OFF_TABS = [
   { route: '/time-off/leaves', permission: 'Time Off Tab.view' },

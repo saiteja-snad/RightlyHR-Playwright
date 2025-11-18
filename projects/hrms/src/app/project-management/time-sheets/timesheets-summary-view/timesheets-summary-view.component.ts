@@ -479,18 +479,20 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         x: {
           stacked: false,
           grid: { display: false, },
-          ticks: { color: '#141414', font: { size: 11 } },
+          ticks: { color: '#141414' },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
-          ticks: { color: '#72777B', font: { size: 11 } },
+          title: { display: true, text: 'Hours', color: '#505050',  },
+          ticks: { color: '#72777B', },
         },
       },
       plugins: {
         legend: { display: false },
         tooltip: {
+          titleFont: { size: 11 },
+          bodyFont: { size: 10 },
           callbacks: {
             title: (tooltipItems: any) => {
               const index = tooltipItems[0].dataIndex;

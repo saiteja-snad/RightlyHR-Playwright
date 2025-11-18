@@ -12,7 +12,7 @@
 
     td {
         border: 1px solid #CCDAEC !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
     }
 
     th {
@@ -85,8 +85,12 @@
     background-color: #EA362C;
 }
 
+.circle-pending{
+    background-color: #565557;
+}
+
 .circle-yellow {
-    background-color: #FCB910;
+    background-color: #FFEA00;
 }
 
 .status-text {

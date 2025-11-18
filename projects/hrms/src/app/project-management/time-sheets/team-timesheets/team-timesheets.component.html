@@ -48,8 +48,7 @@
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
                                 [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
                                 formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
-                                 placeholder="Please select employee"
-                                class="form-select custom-select"></p-select>
+                                placeholder="Please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -57,18 +56,19 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName"  optionValue="id"
-                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="Please select employee" formControlName="resourceId"
-                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false">
+                            <p-select [options]="resourcesList" optionLabel="fullName" optionValue="id"
+                                name="myteamemployees" (onChange)="onCheckemployee($event.value)"
+                                placeholder="Please select employee" formControlName="resourceId" [filter]="true"
+                                resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false">
                             </p-select>
                         </div>
                     </div>
                     }@else {
-                        
+
                     }
                     <div>
-                        <button class="custom-btn btn-primary" type="submit" (mousedown)="$event.preventDefault()" [disabled]="datepickerForm.invalid">Apply</button>
+                        <button class="custom-btn btn-primary" type="submit" (mousedown)="$event.preventDefault()"
+                            [disabled]="datepickerForm.invalid">Apply</button>
                     </div>
                 </div>
             </form>
@@ -92,7 +92,8 @@
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let emp of teamSummaryData">
                                 <td>
-                                    <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{ emp.employee.name}}</a>
+                                    <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{
+                                        emp.employee.name}}</a>
                                 </td>
                                 <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{
                                     'color': day.dailySummary.colour, 'background': day.dailySummary.backgroundColor}">
@@ -111,13 +112,14 @@
                                         day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
                                         <b>{{ day.dailySummary.status }}</b>
                                         </div> -->
-                                          <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
+                                        <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
                                         <div class="cursor" (click)="openModal(day.entries, summaryforlogs)">
                                             <u>{{ day.dailySummary.loggedHHMM }}</u>
                                         </div>
                                         <div class="d-flex custom-text">
-                                            <div [style.color]="day.dailySummary.textColor">{{day.dailySummary.legendCode}}</div>
+                                            <div [style.color]="day.dailySummary.textColor">
+                                                {{day.dailySummary.legendCode}}</div>
                                         </div>
                                         }
                                         @else{
@@ -154,15 +156,30 @@
                         <div class="circular-dot circle-holiday "></div>
                         <div class="status-text">Holidays(H)</div>
                     </div>
-                
+                     <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-red"></div>
+                        <div class="status-text">Absent(AB)</div>
+                    </div>
+
+
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-leave"></div>
                         <div class="status-text">Leaves</div>
                     </div>
-                
+
+                    
+
                     <div class="d-flex align-items-center gap-2">
-                        <div class="circular-dot circle-red"></div>
+                        <div class="circular-dot circle-pending"></div>
                         <div class="status-text">Pending(P)</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-yellow"></div>
+                        <div class="status-text">Waiting for Approval</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-green"></div>
+                        <div class="status-text">Approved</div>
                     </div>
                 </div>
             </div>
@@ -170,12 +187,12 @@
             <div class="pagination-content" *ngIf="teamSummaryData.length > 0">
                 <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
                     <div class="d-flex align-items-center gap-3 p-2">
-                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows" 
-                        (ngModelChange)="onPageSizeChange($event)">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
                             <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
                             (+first + +rows) }} of {{ collectionSize }}
                         </span>
                     </div>
@@ -192,7 +209,8 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Logged Hrs BreakDown' | translate}} ({{ selectedEntries[0]?.entryDate | dateformat }})</p>
+                <p class="popup-heading mb-0">{{'Logged Hrs BreakDown' | translate}} ({{ selectedEntries[0]?.entryDate |
+                    dateformat }})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -220,7 +238,8 @@
                                 <td>{{ entry.loggedHHMM }} Hrs</td>
                                 <td class="text-center">
                                     <div>
-                                        <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">
+                                        <div *ngIf="entry.summary; else noRequestedComments" type="button"
+                                            [ngbPopover]="requestedComments">
                                             <app-info-icon />
                                         </div>
                                         <ng-template #requestedComments>
@@ -229,7 +248,8 @@
                                         <ng-template #noRequestedComments><span>-</span></ng-template>
                                     </div>
                                 </td>
-                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
+                                <td
+                                    [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                  'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
                                     {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}</td>
                             </tr>

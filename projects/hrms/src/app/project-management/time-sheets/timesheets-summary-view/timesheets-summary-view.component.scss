@@ -7,9 +7,12 @@
 }
 
 .custom-table-content {
-    height: calc(100dvh - 8.5rem) !important;
+    height: calc(100dvh - 11.25rem) !important;
+    border-bottom-left-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
 
-    th, td {
+    th,
+    td {
         font-size: var(--fontsize14) !important;
     }
 
@@ -250,6 +253,10 @@
 }
 
 .custom-content-height {
+    height: calc(100dvh - 14.625rem) !important;
+}
+
+.custom-graph-content-height {
     height: calc(100dvh - 12rem) !important;
 }
 
@@ -261,4 +268,57 @@
     padding: 0.365rem 1rem 0.25rem;
     border-radius: 0.325rem;
     border: 2px solid;
+}
+
+.downdisplay-content {
+    background-color: #FFF;
+    border: 1px solid #FFF !important;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+
+}
+
+.status-text {
+    font-weight: 400;
+    font-size: var(--fontsize12);
+    color: #747474;
+}
+
+
+.circular-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.circle-weakend {
+    background-color: #6A5ACD;
+}
+
+.circle-holiday {
+    background-color: #A700D0;
+}
+
+.circle-leave {
+    background-color: #F29000;
+}
+
+.circle-blue {
+    background-color: #3397E8;
+}
+
+.circle-green {
+    background-color: #00A912;
+}
+
+.circle-red {
+    background-color: #EA362C;
+}
+
+.circle-pending {
+    background-color: #565557;
+}
+
+.circle-yellow {
+    background-color: #FFEA00;
 }

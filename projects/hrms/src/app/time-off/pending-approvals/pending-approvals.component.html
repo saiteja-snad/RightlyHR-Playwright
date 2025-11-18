@@ -2,12 +2,19 @@
     <div class="component-header-content">
         @if (router.url !== '/time-off/pending-approvals/assessmentform') {
         <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">Pending Approvals<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">
+                @if (isTimeOffRoute()) {Time Off}
+                @else if (router.url === '/pending-approvals/probation-request') {Probation}
+                @else if (router.url === '/pending-approvals/trainee-approvals') {Trainee}
+                @else if (isContractRoute()) {Contractor}
+                @else if (isOffboardingRoute()) {Offboarding}
+                @else if (isDeskRoute()) {Desk}
+                @else if (isExpensesRoute()) {Expenses}
+                @else if (router.url === '/pending-approvals/time-sheets') {Timesheet}
             </div>
-            <div class="component-header">Pending Approvals</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
@@ -16,13 +23,12 @@
         }
         @else {
         <div class="heading-content">
-            <div class="commpoment-name cursor" (click)="navigate()">Time off
+            <div class="commpoment-name cursor" (click)="navigate()">Probation
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             <div class="component-header">Assessment Form</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
@@ -35,35 +41,28 @@
                 @if(isFilterApplied()) {
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 }
+
                 <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
-                        selectionMode="range" [showIcon]="true" [readonlyInput]="true" [maxDate]="today">
-                    </p-datepicker>
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+                        [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
                 </div>
-
+                
                 <div class="custom-p-multiSelect-content">
-                    <!-- <p-select [options]="projectsData" optionLabel="displayName" optionValue="projectId" [filter]="true"
-                        [resetFilterOnHide]="true" filterBy="displayName" formControlName="projectId"
-                        placeholder="Please select project" class="form-select custom-select"
-                        (onChange)="onProjectChange($event)">
-                    </p-select> -->
-                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
+                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId" [filter]="true"
+                        [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
                         defaultLabel="Please select project/phase" class="form-select custom-select"
-                        (onChange)="onProjectChange($event)">
-                    </p-multiSelect>
-
+                        (onChange)="onProjectChange($event)" />
                 </div>
 
                 <!-- Resource MultiSelect Dropdown -->
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
-                        defaultLabel="Please select resource"[resetFilterOnHide]="true" formControlName="resourceId"
-                        class="form-select custom-select "  (onChange)="onresourceChange($event)"></p-multiSelect>
+                        defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId"
+                        class="form-select custom-select " (onChange)="onresourceChange($event)" />
                 </div>
+                
                 <div>
-                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' |
-                        translate}}</button>
+                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' | translate}}</button>
                 </div>
             </div>
         </form>
@@ -71,11 +70,20 @@
     </div>
 
     <div class="d-flex gap-3 w-100">
-        @if (router.url != '/time-off/pending-approvals/assessmentform') {
+        @if (router.url != '/time-off/pending-approvals/assessmentform' && (isTimeOffRoute() || isContractRoute() || isOffboardingRoute())) {
         <div class="component-left-tabs-container">
-            <app-pending-approvals-tabs />
+            @if(isTimeOffRoute()){
+            <app-timeoff-approval-tabs />
+            }
+            @else if (isContractRoute()) {
+            <app-contractor-approval-tabs />
+            }
+            @else if(isOffboardingRoute()) {
+            <app-separation-approval-tabs />
+            }
         </div>
         }
+
         <div class="component-right-content">
             <router-outlet />
         </div>

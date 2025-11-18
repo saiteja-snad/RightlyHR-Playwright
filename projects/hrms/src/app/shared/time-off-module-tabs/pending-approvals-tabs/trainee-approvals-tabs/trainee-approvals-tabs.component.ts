@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, Signal, signal } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subject } from 'rxjs';
@@ -7,7 +7,6 @@ import { environment } from '../../../../../environments/environment';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { SignalsService } from '../../../../services/signals.service';
-
 @Component({
   selector: 'app-trainee-approvals-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -20,21 +19,19 @@ export class TraineeApprovalsTabsComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   navTabs = computed(() => {
-    const moduleId=environment.traineeoffboardingModuleId
+    const moduleId = environment.traineeoffboardingModuleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count:data?.forYou ?? 0,permission: { feature: 'Trainee Details', action: 'view' }}
+      { label: 'Trainee Details', link: '/pending-approvals/trainee-approvals', count: data?.forYou ?? 0, 
+        permission: { feature: 'Trainee Details', action: 'view' } }
     ];
   });
-  // navTabs: any[] = [
-  //   { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals' },
-  // ];
 
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) { 
+  constructor(public readonly router: Router, private http: HttpService, private signalService: SignalsService) {
     effect(() => {
       if (this.signalService.traineeDetailsTriggerSignal()) {
         this.getAllTraineePendingApprovalsCount();
-       this.signalService.traineeDetailsTriggerSignal.set(false);
+        this.signalService.traineeDetailsTriggerSignal.set(false);
       }
     });
   }

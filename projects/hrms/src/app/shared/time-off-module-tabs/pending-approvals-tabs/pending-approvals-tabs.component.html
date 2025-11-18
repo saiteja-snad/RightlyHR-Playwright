@@ -1,22 +1,11 @@
-@if(!loading){
-  <div class="custom-sub-tabs-container">
-  <ul class="nav flex-column">
-    <li class="nav-item" *ngFor="let tab of navLinks">
-      <div class="nav-link" (click)="navigateToAccessedRoute(tab.route)"
-        [class.active-nav-link]="isActiveRoute(tab.route)">
-        <img [src]="tab.icon" alt="Icon" class="icon mb-2">
-        <div>{{ tab.label }}</div>
-        <div class="count">
-          @if(tab.count && tab.count > 0) {({{ tab.count }})}
-          @else if(tab.label=='No Due Clearance Requests'){({{nodue_Request_data.length}})}
-          @else {(0)}
+<div class="grid-container">
+    <div class="grid-item" *ngFor="let tab of filteredTabs; let i = index" [ngClass]="{'border-right-top': isInTopRow(i) && !isLastColumn(i),
+            'border-right-middle': isInMiddleRow(i) && !isLastColumn(i),'border-right-bottom': isInLastRow(i) && !isLastColumn(i),
+            'border-bottom-left': isFirstColumn(i) && !isInLastRow(i),'border-bottom-middle': isMiddleColumn(i) && !isInLastRow(i),
+            'border-bottom-right': isLastColumn(i) && !isInLastRow(i)}" (click)="navigateToAccessedRoute(tab.link)" [class.active-nav-link]="isActiveRoute(tab.link)">
+        <div class="d-flex flex-column align-items-center">
+            <img [src]="tab.icon" alt="{{ tab.label }}" class="dropdown-menu-icon mb-2" />
+            <span class="dropdown-menu-text">{{ tab.label }}</span>
         </div>
-      </div>
-      <div class="tabs-border-bottom"></div>
-    </li>
-  </ul>
+    </div>
 </div>
-}
-@else {
-<app-sidetabsloaders/>
-}

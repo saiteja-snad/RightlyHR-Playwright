@@ -11,7 +11,6 @@ import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SignalsService } from '../../../../services/signals.service';
 import { SidetabsloadersComponent } from '../../../sidetabsloaders/sidetabsloaders.component';
-
 interface NavLink {
   label: string;
   route: string;
@@ -20,7 +19,6 @@ interface NavLink {
   permission?: { feature: string; action: string };
   icon: string;
 }
-
 @Component({
   selector: 'app-timeoff-approval-tabs',
   imports: [CommonModule, RouterModule, SidetabsloadersComponent],
@@ -42,62 +40,57 @@ export class TimeoffApprovalTabsComponent {
   navLinks: NavLink[] = [
     {
       label: 'Leaves',
-      route: '/time-off/pending-approvals/time-off-request',
+      route: '/pending-approvals/time-off/leaves',
       moduleId: environment.leavesModuleId,
       permission: { feature: 'Time Off Tab', action: 'view' },
       icon: '/time-off-icon/leaves-icon.png',
     },
     {
-      label: 'Regularizations',
-      route: '/time-off/pending-approvals/regularization-request',
-      moduleId: environment.attendanceRegularizationModuleId,
-      icon: '/time-off-icon/regularization-icon.png',
-      permission: { feature: 'Regularization Tab', action: 'view' },
-    },
-    {
-      label: 'Extra Hours',
-      route: '/time-off/pending-approvals/extra-hours-request',
-      moduleId: environment.extraHoursModuleId,
-      icon: '/time-off-icon/extra-logs.png',
-      permission: { feature: 'Extra Hours Tab', action: 'view' },
-    },
-    {
-      label: 'Permissions',
-      route: '/time-off/pending-approvals/permissions',
-      moduleId: environment.permissionsModuleId,
-      icon: '/time-off-icon/permissions-icon.png',
-      permission: { feature: 'Permissions Tab', action: 'view' },
-    },
-    {
       label: 'WFH',
-      route: '/time-off/pending-approvals/wfh',
+      route: '/pending-approvals/time-off/wfh',
       moduleId: environment.wfhModuleId,
       icon: '/time-off-icon/WFH-icon.png',
       permission: { feature: 'WFH Tab', action: 'view' },
     },
     {
       label: 'Remote Login',
-      route: '/time-off/pending-approvals/remote',
+      route: '/pending-approvals/time-off/remote',
       moduleId: environment.remoteLoginModuleId,
       icon: '/time-off-icon/remote-login-icon.png',
       permission: { feature: 'Remote Login Tab', action: 'view' },
     },
     {
       label: 'Comp-Off',
-      route: '/time-off/pending-approvals/comp-off',
+      route: '/pending-approvals/time-off/comp-off',
       moduleId: environment.compoffModuleId,
       icon: '/time-off-icon/comp-off.png',
       permission: { feature: 'Comp Off Tab', action: 'view' },
-    }
+    },
+    {
+      label: 'Permissions',
+      route: '/pending-approvals/time-off/permissions',
+      moduleId: environment.permissionsModuleId,
+      icon: '/time-off-icon/permissions-icon.png',
+      permission: { feature: 'Permissions Tab', action: 'view' },
+    },
+    {
+      label: 'Extra Hours',
+      route: '/pending-approvals/time-off/extra-hours-request',
+      moduleId: environment.extraHoursModuleId,
+      icon: '/time-off-icon/extra-logs.png',
+      permission: { feature: 'Extra Hours Tab', action: 'view' },
+    },
+    {
+      label: 'Regularizations',
+      route: '/pending-approvals/time-off/regularization-request',
+      moduleId: environment.attendanceRegularizationModuleId,
+      icon: '/time-off-icon/regularization-icon.png',
+      permission: { feature: 'Regularization Tab', action: 'view' },
+    },
   ];
 
-  constructor(
-    public readonly router: Router,
-    private http: HttpService,
-    public rbac: RbacService,
-    private signalService: SignalsService,
-    private accessNav: AccessNavigationService
-  ) {
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
+    private signalService: SignalsService, private accessNav: AccessNavigationService) {
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().wfh) {
         this.getAllPendingApprovalsCount();

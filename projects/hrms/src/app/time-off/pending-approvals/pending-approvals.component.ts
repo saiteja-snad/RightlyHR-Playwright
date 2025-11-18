@@ -1,22 +1,23 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { PendingApprovalsTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePicker } from 'primeng/datepicker';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { Select } from 'primeng/select';
 import dayjs, { Dayjs } from 'dayjs';
 import { HttpService } from '../../services/http.service';
 import { IResourceDetail } from '../../timesheetmodel';
+import { TimeoffApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/timeoff-approval-tabs/timeoff-approval-tabs.component";
+import { ContractorApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/contractor-approval-tabs/contractor-approval-tabs.component";
+import { SeparationApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/separation-approval-tabs/separation-approval-tabs.component";
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent,
-    NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
+  imports: [RouterModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule, MultiSelectModule, ReactiveFormsModule,
+    DatePicker, TranslateModule, TimeoffApprovalTabsComponent, ContractorApprovalTabsComponent, SeparationApprovalTabsComponent],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -24,7 +25,6 @@ import { IResourceDetail } from '../../timesheetmodel';
 
 export class PendingApprovalsComponent implements OnInit {
   moduleinfo = '';
-
   employeeData: any[] = [];
   dataload = false;
   subscription!: Subscription;
@@ -39,11 +39,11 @@ export class PendingApprovalsComponent implements OnInit {
   isSubmitEnabled = false;
   isDistinct = true;
   today: Date = new Date();
+
   constructor(public router: Router, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-
     this.createDatepickerForm();
     this.updateModuleInfo();
     this.setupNavigationReset();
@@ -51,7 +51,6 @@ export class PendingApprovalsComponent implements OnInit {
     this.initiateUpdateModuleInfo();
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
-
     this.datepickerForm.valueChanges.subscribe(() => {
       this.isSubmitEnabled = this.isAnyFieldSelected();
     });
@@ -66,16 +65,15 @@ export class PendingApprovalsComponent implements OnInit {
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/pending-approvals': MODULE_INFOS.TIME_OFF_PENDING_APPROVAL_MODULE_INFO
+      '/pending-approvals': MODULE_INFOS.TIME_OFF_PENDING_APPROVAL_MODULE_INFO
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   navigate() {
-    this.router.navigate(['/time-off/pending-approvals/probation-request']);
+    this.router.navigate(['/pending-approvals/probation-request']);
   }
-
 
   /** Create form and keep Phase & Resource disabled initially */
   createDatepickerForm() {
@@ -85,7 +83,6 @@ export class PendingApprovalsComponent implements OnInit {
       resourceId: ['']
     });
   }
-
 
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
@@ -111,50 +108,41 @@ export class PendingApprovalsComponent implements OnInit {
     this.selectedResourceIds = selectedResourceIds;
     this.getAllActiveProjects();
   }
+
   /** Get all phases for the current employee */
   getAllActiveProjects() {
     let url = `Project/authorities/${this.empinfo.employeeId}/projects`;
-
     if (this.selectedResourceIds?.length > 0) {
       const resourceIds = this.selectedResourceIds.join(',');
       url += `?resourceIds=${resourceIds}`;
     }
-
-    this.http.getData(url)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const projects = res?.data || [];
-          this.projectsData = projects.map((p: any) => ({
-            ...p,
-            displayName: `${p.clientName } - ${p.projectName } - ${p.phaseName }`
-          }));
-
-          this.projectsData.unshift({
-            phaseId: 0,
-            displayName: 'No Client - No Project'
-          });
-
-          // ✅ FIX: Prevent null values from appearing in dropdown
-          let selectedPhases = this.datepickerForm.get('phaseId')?.value;
-
-          if (Array.isArray(selectedPhases)) {
-            // Remove nulls
-            selectedPhases = selectedPhases.filter((x: any) => x !== null);
-
-            // Keep only valid phaseIds
-            selectedPhases = selectedPhases.filter((id: number) =>
-              this.projectsData.some(p => p.phaseId === id)
-            );
-
-            // ✅ Set cleaned value back
-            this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
-          }
-        },
-        error: () => this.projectsData = []
-      });
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const projects = res?.data || [];
+        this.projectsData = projects.map((p: any) => ({
+          ...p,
+          displayName: `${p.clientName} - ${p.projectName} - ${p.phaseName}`
+        }));
+        this.projectsData.unshift({
+          phaseId: 0,
+          displayName: 'No Client - No Project'
+        });
+        // FIX: Prevent null values from appearing in dropdown
+        let selectedPhases = this.datepickerForm.get('phaseId')?.value;
+        if (Array.isArray(selectedPhases)) {
+          // Remove nulls
+          selectedPhases = selectedPhases.filter((x: any) => x !== null);
+          // Keep only valid phaseIds
+          selectedPhases = selectedPhases.filter((id: number) =>
+            this.projectsData.some(p => p.phaseId === id)
+          );
+          // Set cleaned value back
+          this.datepickerForm.get('phaseId')?.setValue(selectedPhases);
+        }
+      },
+      error: () => this.projectsData = []
+    });
   }
-
 
   /** When phase selected */
   onProjectChange(event: any) {
@@ -166,12 +154,10 @@ export class PendingApprovalsComponent implements OnInit {
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empinfo?.employeeId;
     let url = `Timesheet/authority/${EmployeeId}/employees`;
-
     if (this.phaseIds?.length > 0) {
       const phaseIds = this.phaseIds.join(',');
       url += `?phaseIds=${phaseIds}`;
     }
-
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
         if (res?.success) {
@@ -179,19 +165,15 @@ export class PendingApprovalsComponent implements OnInit {
             ...emp,
             fullName: emp?.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp?.name
           }));
-
-          // ✅ Check if selected resource is still valid and remove nulls
+          // Check if selected resource is still valid and remove nulls
           let selectedResources = this.datepickerForm.get('resourceId')?.value || [];
-          
           if (Array.isArray(selectedResources)) {
             // Remove nulls
             selectedResources = selectedResources.filter((x: any) => x !== null);
-            
             // Keep only valid resource IDs
             selectedResources = selectedResources.filter((id: number) =>
               this.resourcesList.some(r => r.id === id)
             );
-            
             // Set cleaned value back
             this.datepickerForm.get('resourceId')?.setValue(selectedResources);
             // Update component property to match form
@@ -211,35 +193,27 @@ export class PendingApprovalsComponent implements OnInit {
     });
   }
 
-
   /** Reset form when navigating to another component */
   setupNavigationReset() {
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
-      if (!this.router.url.includes('time-off/pending-approvals/time-sheets')) {
+      if (!this.router.url.includes('/pending-approvals/time-sheets')) {
         this.resetForm();
       }
     });
   }
 
-  
-
   /** On form submit */
   onSubmit() {
-    console.log('Form submitted with values:', this.datepickerForm.value);
     const formValue = this.datepickerForm.value;
     const dateRange = formValue.dateRange;
     const phaseIds = formValue.phaseId || [];
     const resourceIds = formValue.resourceId || [];
-    
     const phaseId = phaseIds.length > 0 ? phaseIds.join(',') : null;
     const resourceId = resourceIds.length > 0 ? resourceIds.join(',') : null;
-    
     const request: any = {
       phaseId,
       resourceId,
     };
-    console.log(request);
-
     // Add dateRange only if selected
     if (dateRange && dateRange.length === 2) {
       request.dateRange = {
@@ -250,8 +224,6 @@ export class PendingApprovalsComponent implements OnInit {
     // Pass the request data to the timesheet component
     this.http.setEmployeeIdTimesheet(this.employeeid, phaseId || 0, request);
   }
-    
-    
 
   /** Reset dependent fields */
   resetDependentFields() {
@@ -266,9 +238,7 @@ export class PendingApprovalsComponent implements OnInit {
 
   /** Clear everything */
   resetForm() {
-
     this.datepickerForm.reset();
-
     this.datepickerForm.reset({
       dateRange: null,
       phaseId: '',
@@ -284,6 +254,32 @@ export class PendingApprovalsComponent implements OnInit {
     this.http.setEmployeeIdTimesheet(null, 0, null);
     this.getResourceDetailsByManagerId();
     this.getAllActiveProjects();
+  }
+
+  // route based hide of content
+  isTimeOffRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/time-off');
+  }
+
+  isContractRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/contractors');
+  }
+
+  isOffboardingRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/off-boarding');
+  }
+
+  isDeskRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/desk-approval');
+  }
+
+  isExpensesRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/claimsandexpenses-request');
   }
 
   ngOnDestroy(): void {

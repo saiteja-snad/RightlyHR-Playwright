@@ -22,7 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 
 export class AssessmentformComponent {
-   subscription!: Subscription;
+  subscription!: Subscription;
   dynamicformSubmit = {} as IFormDetails;
   dynamicFormDetails = {} as IFormDetails;
   dynamicFormQuestions = [] as ISection[];
@@ -56,22 +56,16 @@ export class AssessmentformComponent {
   @ViewChild('formsavepopup') formsavepopup!: any;
   @ViewChild('cancelmodal') cancelmodal!: any;
   Status: any;
-  employeedata ={} as any;
+  employeedata = {} as any;
   selectedLeaveStatus: any;
-  constructor(
-    private router: Router,
-    private http: HttpService,
-    private authService: AuthService,
-    config: NgbModalConfig,
-    private modalService: NgbModal,
-    private openModalService: OpenModalService,
-    public rbac: RbacService,
-  ) {
+
+  constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig, 
+    private modalService: NgbModal, private openModalService: OpenModalService, public rbac: RbacService,) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.loggedindata = this.authService.getToken();
     this.getProbationExtendDays();
     let data = localStorage.getItem('formdata');
@@ -82,26 +76,28 @@ export class AssessmentformComponent {
       this.selected_approve = this.formemployeedetails.entity;
     }
   }
-onStatusApproveSelect(status: string) {
-  this.selectedLeaveStatus = status;
-  if (status === 'approved') {
-    this.selected_approve.comments = 'Approved';
 
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+      this.selected_approve.comments = 'Approved';
+    }
   }
-}
-onStatusExtendSelect(status: string) {
-  this.selectedLeaveStatus = status;
-  if (status === 'approved') {
-     this.selected_approve.reasonForExtend ='Approved'
+
+  onStatusExtendSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+      this.selected_approve.reasonForExtend = 'Approved'
+    }
   }
-}
 
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'approved') {
-         this.selected_approve.rejectedReason = 'Approved';
+      this.selected_approve.rejectedReason = 'Approved';
     }
   }
+
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -110,17 +106,16 @@ onStatusExtendSelect(status: string) {
   getProbationExtendDaysconfig() {
     let moduleId = environment.SeparationrequestmoduleId;
     this.subscription = this.http.getData(`ProbationFlow/settingsconfigvalue/${moduleId}`).subscribe({
-        next: (data: any) => {
-          this.probationExtensiondays = data;
-        },
-      });
+      next: (data: any) => {
+        this.probationExtensiondays = data;
+      },
+    });
   }
 
-getEmployeeId(EmployeeId:number): void {
+  getEmployeeId(EmployeeId: number): void {
     const employeeId = EmployeeId;
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.employeedata = data;
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
@@ -130,43 +125,33 @@ getEmployeeId(EmployeeId:number): void {
   getProbationExtendDays() {
     let extensionId = environment.ProbationExtensionId;
     let extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
-    this.subscription = this.http
-      .getData(`ProbationFlow/settingsprobationconfiggetall`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          
-          let duration = data.find((ele: any) => {
-            return ele.configValueId === extensionId;
-          });
-          console.log(duration);
-          this.probationExtensionDuration = duration.noOfDays;
-          console.log(this.probationExtensionDuration);
-            let extendTimes = data.find((ele: any) => {
-            return ele.configValueId === extensionPeriodTimes;
-          });
-          this.probationExtensionTimes = extendTimes.noOfDays;
-          console.log(this.probationExtensionTimes);
-        },
-      });
+    this.subscription = this.http.getData(`ProbationFlow/settingsprobationconfiggetall`).subscribe({
+      next: (data: any) => {
+        let duration = data.find((ele: any) => {
+          return ele.configValueId === extensionId;
+        });
+        this.probationExtensionDuration = duration.noOfDays;
+        let extendTimes = data.find((ele: any) => {
+          return ele.configValueId === extensionPeriodTimes;
+        });
+        this.probationExtensionTimes = extendTimes.noOfDays;
+      },
+    });
   }
 
   //function when they enter nulls in start
   ifreasonnull(Value: any) {
-    //console.log(Value);
     const trimmedValue = Value?.trim();
-  const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
-
-  if (!trimmedValue || startsWithSpecialChar) {
-    this.issubmitdiable = true;
-  } else {
-    this.issubmitdiable = false;
+    const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+    if (!trimmedValue || startsWithSpecialChar) {
+      this.issubmitdiable = true;
+    } else {
+      this.issubmitdiable = false;
+    }
+    if (!trimmedValue) {
+      this.selectedLeaveStatus = null;
+    }
   }
-     if (!trimmedValue) {
-    this.selectedLeaveStatus = null;
-  }
-  }
-
 
   onCommentChange() {
     const reject = this.selected_approve?.rejectedReason?.trim();
@@ -221,17 +206,8 @@ getEmployeeId(EmployeeId:number): void {
     }
   }
 
-  //function get selected question details
-
-  onCheckboxChange(
-    questions: any,
-    rating: string,
-    optionId: number,
-    section: any,
-    sectionId: number,
-    quetsionId: number,
-    meta: any
-  ): void {
+  // function get selected question details
+  onCheckboxChange(questions: any, rating: string, optionId: number, section: any, sectionId: number, quetsionId: number, meta: any): void {
     // Initialize section rating for the current section if it's not set
     if (!this.sectionRatings[sectionId]) {
       this.sectionRatings[sectionId] = 0;
@@ -317,15 +293,7 @@ getEmployeeId(EmployeeId:number): void {
   }
 
   //function to get the footer values
-  onCheckboxforfootertext(
-    questions: any,
-    rating: string,
-    optionId: number,
-    section: any,
-    sectionId: number,
-    quetsionId: number,
-    meta: any
-  ): void {
+  onCheckboxforfootertext(questions: any, rating: string, optionId: number, section: any, sectionId: number, quetsionId: number, meta: any): void {
     const hasdata = this.selected_questions.filter(
       (t: any) => t.data.questionId === quetsionId
     );
@@ -337,9 +305,7 @@ getEmployeeId(EmployeeId:number): void {
           ele.data.meta = meta;
         }
       });
-
     } else {
-
       this.selected_questions.push({
         id: sectionId,
         data: {
@@ -349,19 +315,15 @@ getEmployeeId(EmployeeId:number): void {
           sectionId: sectionId,
         },
       });
-
     }
-
   }
 
   onCheckboxChangefooter(questions: any, rating: string, optionId: number, section: any, sectionId: number, quetsionId: number, meta: any): void {
-
     if (!this.sectionRatings[sectionId]) {
       this.sectionRatings[sectionId] = 0;
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
-
     questions.forEach((optionsarray: any) => {
       optionsarray.options.forEach((element: any) => {
         if (element.optionId === optionId) {
@@ -406,7 +368,6 @@ getEmployeeId(EmployeeId:number): void {
           ele.data.meta = meta;
         }
       });
-
     } else {
       // questions.forEach((ele:any)=>{
       this.selected_questions.push({
@@ -536,8 +497,7 @@ getEmployeeId(EmployeeId:number): void {
       );
     }
     this.displayTextArea = !this.displayTextArea;
-    this.indexspace = 25
-
+    this.indexspace = 25;
   }
 
   //to store file to the azure and return to the url
@@ -546,7 +506,6 @@ getEmployeeId(EmployeeId:number): void {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-
           console.log(data);
         }
       },
@@ -562,10 +521,10 @@ getEmployeeId(EmployeeId:number): void {
 
   close() {
     this.closeModal()
-    this.router.navigate(['/time-off/pending-approvals/probation-request']);
+    this.router.navigate(['/pending-approvals/probation-request']);
   }
 
-  reset(content:any) {
+  reset(content: any) {
     this.modalService.open(content, { centered: true })
     this.clearApproveData();
     this.clearExtendData();
@@ -623,7 +582,6 @@ getEmployeeId(EmployeeId:number): void {
     });
   }
 
-
   handleAccept(f: NgForm) {
     this.isSubmitted = false;
     this.openModalService.openLoaderModal('Requesting....')
@@ -674,30 +632,24 @@ getEmployeeId(EmployeeId:number): void {
       requestBody.comments = this.selected_approve.reasonForExtend;
       requestBody.status = 'Approved';
     }
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/${this.formemployeedetails.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
+    this.subscription = this.http.putData(`PendingApproval/${this.formemployeedetails.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.openModalService.openSuccessModal(successMessage);
+        setTimeout(() => {
           this.modalService.dismissAll();
-          this.openModalService.openSuccessModal(successMessage);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-            this.router.navigate(['/time-off/pending-approvals/probation-request']);
-          }, 2000);
-        },
-        error: (reason: any) => {
-          this.openModalService.openErrorModal(reason.error.message);
-
-        },
-        complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        },
-      });
+          this.router.navigate(['/pending-approvals/probation-request']);
+        }, 2000);
+      },
+      error: (reason: any) => {
+        this.openModalService.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      },
+    });
   }
 
   //function to handle the process request
@@ -727,7 +679,7 @@ getEmployeeId(EmployeeId:number): void {
       extendedDate: this.selected_approve.extenddate,
       meta: this.jsonData,
       responseId: this.responseId,
-      currentStage:parseInt(this.formemployeedetails.approvalHeader?.currentapprovalStage)
+      currentStage: parseInt(this.formemployeedetails.approvalHeader?.currentapprovalStage)
     };
     if (this.selected_approve.requestSelectedType == 'Approve') {
       requestBody.status = 'Processed';
@@ -739,102 +691,71 @@ getEmployeeId(EmployeeId:number): void {
       requestBody.extendedDate = this.selected_approve.extenddate;
       requestBody.status = 'Processed';
     }
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/process/${this.formemployeedetails.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.openModalService.openSuccessModal('Probation request processed successfully');
-
-        },
-        error: (reason: any) => {
-          // this.dataFailureMsg(reason.error.message)
-          this.openModalService.openErrorModal(reason.error.message);
-
-        },
-        complete: () => {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/process/${this.formemployeedetails.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.openModalService.openSuccessModal('Probation request processed successfully');
+      },
+      error: (reason: any) => {
+        // this.dataFailureMsg(reason.error.message)
+        this.openModalService.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      },
+    });
   }
 
   //function to get the form answers
   getFormDetails(Value: any) {
-    this.subscription = this.http
-      .getData(`ProbationFlow/getFormResponseByFormId/0?employeeId=${Value}`)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.dynamicFormDetails = response;
-          this.dynamicFormQuestions = response.sectionDetails
-            .filter(
-              (ele: any) =>
-                ele.sectionName !== 'Header' &&
-                ele.sectionName !== 'Overall Rating'
-            )
-            .map((section: any) => ({
-              ...section,
-              questions: section.questions.map((question: any) => ({
-                ...question,
-                options: question.options.map((option: any) => ({
-                  ...option,
-                  checked: false,
-                })),
+    this.subscription = this.http.getData(`ProbationFlow/getFormResponseByFormId/0?employeeId=${Value}`).subscribe({
+      next: (response: any) => {
+        this.dynamicFormDetails = response;
+        this.dynamicFormQuestions = response.sectionDetails.filter(
+          (ele: any) => ele.sectionName !== 'Header' && ele.sectionName !== 'Overall Rating').map((section: any) => ({
+            ...section,
+            questions: section.questions.map((question: any) => ({
+              ...question,
+              options: question.options.map((option: any) => ({
+                ...option,
+                checked: false,
               })),
-            }));
-          this.dynamicFormHeader = response.sectionDetails.filter(
-            (ele: any) => {
-              return ele.sectionName === 'Header';
+            })),
+          }));
+        this.dynamicFormHeader = response.sectionDetails.filter(
+          (ele: any) => {
+            return ele.sectionName === 'Header';
+          }
+        );
+        this.dynamicFormFooter = response.sectionDetails.filter((ele: any) => ele.sectionName === 'Overall Rating').map((section: any) => ({
+          ...section,
+          questions: section.questions.map((question: any) => ({
+            ...question,
+            options: question.options.map((option: any) => ({
+              ...option,
+              checked: false,
+            })),
+          })),
+        }));
+        this.dynamicFormHeader.forEach((ele: any) => {
+          ele.questions.forEach((question: any) => {
+            if (question.options.length > 0) {
+              question.options.forEach((option: any) => {
+                this.defaultaddingforvalues(ele.questions, ele.rating, option.optionId,
+                  this.dynamicFormHeader, ele.id, question.quetsionId, question.meta);
+              });
+            } else {
+              this.defaultaddingforvalues(ele.questions, ele.rating, 0, this.dynamicFormHeader, 
+                ele.id, question.quetsionId, question.meta);
             }
-          );
-          this.dynamicFormFooter = response.sectionDetails
-            .filter((ele: any) => ele.sectionName === 'Overall Rating')
-            .map((section: any) => ({
-              ...section,
-              questions: section.questions.map((question: any) => ({
-                ...question,
-                options: question.options.map((option: any) => ({
-                  ...option,
-                  checked: false,
-                })),
-              })),
-            }));
-          this.dynamicFormHeader.forEach((ele: any) => {
-            ele.questions.forEach((question: any) => {
-              if (question.options.length > 0) {
-                question.options.forEach((option: any) => {
-                  this.defaultaddingforvalues(
-                    ele.questions,
-                    ele.rating,
-                    option.optionId,
-                    this.dynamicFormHeader,
-                    ele.id,
-                    question.quetsionId,
-                    question.meta
-                  );
-                });
-              } else {
-                this.defaultaddingforvalues(
-                  ele.questions,
-                  ele.rating,
-                  0,
-                  this.dynamicFormHeader,
-                  ele.id,
-                  question.quetsionId,
-                  question.meta
-                );
-              }
-            });
           });
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
+        });
+      },
+      error: (err: any) => {
+        console.log(err);
+      },
+    });
   }
 
   // Function to handle toggling Early Relieving option
@@ -849,7 +770,7 @@ getEmployeeId(EmployeeId:number): void {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-    this.selectedLeaveStatus = null; 
+    this.selectedLeaveStatus = null;
   }
 
   // Function to handle toggling Extend option
@@ -862,7 +783,7 @@ getEmployeeId(EmployeeId:number): void {
     // Clear data related to approve Relieving and Discontinue
     this.clearApproveData();
     this.clearDiscontinueData();
-    this.selectedLeaveStatus = null; 
+    this.selectedLeaveStatus = null;
   }
 
   // Function to handle toggling Discontinue option
@@ -875,7 +796,7 @@ getEmployeeId(EmployeeId:number): void {
     // Clear data related to Early Relieving and Extend
     this.clearApproveData();
     this.clearExtendData();
-    this.selectedLeaveStatus = null; 
+    this.selectedLeaveStatus = null;
   }
 
   // Function to clear data related to Early Relieving
@@ -894,8 +815,8 @@ getEmployeeId(EmployeeId:number): void {
     this.selected_approve.rejectedReason = '';
   }
 
-  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextendedcount:number): string {
-     if(extendedDate && probationextendedcount>=0){
+  getBlockedFutureDate(lastWorkingDate: string, extendedDate: string, probationextendedcount: number): string {
+    if (extendedDate && probationextendedcount >= 0) {
       lastWorkingDate = extendedDate;
     }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day'); // Set time to start of day (midnight)
@@ -903,10 +824,9 @@ getEmployeeId(EmployeeId:number): void {
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
-  
-  getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
-    console.log("probation: ",startDate, duration);
-     if(extendedDate){
+
+  getBlockedFutureDateupto(startDate: string, duration: number, extendedDate: string): string {
+    if (extendedDate) {
       startDate = extendedDate;
     }
     const startDateObj = moment(startDate).startOf('day').add(1, 'day'); // Set time to start of day (midnight)
@@ -926,11 +846,7 @@ getEmployeeId(EmployeeId:number): void {
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;

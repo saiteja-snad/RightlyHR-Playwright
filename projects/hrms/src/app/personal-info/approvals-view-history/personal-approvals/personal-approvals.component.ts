@@ -53,7 +53,6 @@ export class PersonalApprovalsComponent implements OnInit {
   private empdata: any = {};
   cameFromPersonalInfo = false;
 
-
   @ViewChild('cancelModal') cancelModal!: TemplateRef<any>;
   @ViewChild('confirmationModal') confirmationModal!: TemplateRef<any>;
 

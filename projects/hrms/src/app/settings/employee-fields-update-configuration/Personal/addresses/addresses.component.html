@@ -21,47 +21,46 @@
         </thead>
 
         <tbody>
-  @if (addressesFieldsConfigList.length > 0) {
-    @for (configItem of addressesFieldsConfigList; track configItem.id) {
-      <tr>
-        <td>{{configItem.columnName || 'N/A'}}</td>
-        <td class="text-center">{{configItem.requiresApproval ? 'Yes' : 'No'}}</td>
-        <td class="text-center">{{configItem.approvalType || 'N/A'}}</td>
+          @if (addressesFieldsConfigList.length > 0) {
+          @for (configItem of addressesFieldsConfigList; track configItem.id) {
+          <tr>
+            <td>{{configItem.columnName || 'N/A'}}</td>
+            <td class="text-center">{{configItem.requiresApproval ? 'Yes' : 'No'}}</td>
+            <td class="text-center">{{configItem.approvalType || 'N/A'}}</td>
 
-        <td class="text-center"
-          *ngIf="rbac.allowedToAccess('Addresses.update') || rbac.allowedToAccess('Addresses.delete')">
-          <div class="dropdown">
-            <span type="button" data-bs-toggle="dropdown">
-              <i class="bi bi-three-dots-vertical"></i>
-            </span>
-            <ul class="dropdown-menu custom-dropdown-menu">
-              <li (click)="openUpdateFieldConfigDialog(configItem)"
-                  *ngIf="rbac.allowedToAccess('Addresses.update')">
-                <a class="dropdown-item">
-                  <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
-                </a>
-              </li>
+            <td class="text-center"
+              *ngIf="rbac.allowedToAccess('Addresses.update') || rbac.allowedToAccess('Addresses.delete')">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openUpdateFieldConfigDialog(configItem)"
+                    *ngIf="rbac.allowedToAccess('Addresses.update')">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
+                    </a>
+                  </li>
 
-              <li (click)="opendelete(configItem)"
-                  *ngIf="rbac.allowedToAccess('Addresses.delete')">
-                <a class="dropdown-item">
-                  <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </td>
-      </tr>
-    }
-  }
-  @else {
-    <tr>
-      <td colspan="4">
-        <app-no-data-found></app-no-data-found>
-      </td>
-    </tr>
-  }
-</tbody>
+                  <li (click)="opendelete(configItem)" *ngIf="rbac.allowedToAccess('Addresses.delete')">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          }
+          }
+          @else {
+          <tr>
+            <td colspan="4">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+          }
+        </tbody>
 
       </table>
       }
@@ -90,6 +89,26 @@
       </div>
 
       <div class="custom-main-popup-content">
+        <!-- Address Type -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Address Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="addressTypeOptions" optionLabel="label"
+              optionValue="value" formControlName="addressType"
+              placeholder="{{'Please select address type' | translate}}">
+            </p-select>
+          </div>
+
+          <div *ngIf="fieldConfigForm.get('addressType')?.touched &&
+              fieldConfigForm.get('addressType')?.invalid" class="error-msg">
+            <div *ngIf="fieldConfigForm.get('addressType')?.errors?.['required']">
+              {{ 'Address Type is required' | translate }}
+            </div>
+          </div>
+        </div>
+
         <!-- Field Name -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">
@@ -97,8 +116,8 @@
           </label>
           <!-- Multi-select for create mode -->
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
-             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
-              optionValue="fieldName"  optionDisabled="optionDisabled" formControlName="fieldNames"
+            <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
+              optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames"
               placeholder="{{'Please select field names' | translate}}" [filter]="true">
             </p-multiSelect>
           </div>
@@ -116,7 +135,7 @@
 
 
         <!-- Approval Type -->
-        <div class="mb-3" >
+        <div class="mb-3">
           <label class="form-label custom-label mb-2">
             {{ 'Approval Type' | translate }} <span class="error-msg">*</span>
           </label>
@@ -135,8 +154,7 @@
         </div>
 
         <!-- Role Selection (when approval type is role) -->
-        <div
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' ">
+        <div *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Role' | translate }} <span class="error-msg">*</span>
           </label>
@@ -153,9 +171,8 @@
           </div>
         </div>
 
-     <!-- Role Selection (when approval type is employee) -->
-        <div class="mb-3"
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
+        <!-- Role Selection (when approval type is employee) -->
+        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Employee' | translate }} <span class="error-msg">*</span>
           </label>
@@ -174,14 +191,14 @@
         </div>
 
         <!-- Manager Selection (when approval type is manager) -->
-        <div class="mb-3"
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'MANAGER' ">
+        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalType')?.value === 'MANAGER' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Manager Type' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select class="form-select custom-input" [options]="managerOptions" optionLabel="label" optionValue="value"
-              formControlName="selectedManager" placeholder="{{'Please select manager' | translate}}" >
+            <p-select class="form-select custom-input" [options]="managerOptions" optionLabel="label"
+              optionValue="value" formControlName="selectedManager"
+              placeholder="{{'Please select manager' | translate}}">
             </p-select>
           </div>
           <div

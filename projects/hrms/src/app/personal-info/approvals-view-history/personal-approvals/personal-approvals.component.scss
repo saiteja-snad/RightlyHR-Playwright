@@ -18,12 +18,6 @@
   }
 }
 
-/* Ensure dropdown doesn't get clipped */
-.popup-table-wrapper,
-.popup-table-scroll-container {
-  overflow: visible !important;
-}
-
 .dropdown-menu {
   z-index: 1055 !important; /* Above modals (1050) */
   min-width: 160px !important;
@@ -42,15 +36,21 @@
 
 .popup-table-wrapper {
   width: 100%;
-  overflow: hidden;
+  overflow: visible !important;
+
   background-color: #fff;
   border-radius: 0rem;
 
   .popup-table-scroll-container {
-    max-height: 30vh;
-    overflow-y: auto;
+    max-height: 30vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
     border: 1px solid #d1d8e3;
     border-bottom: 0rem !important;
+  }
+
+  th {
+    position: sticky !important;
   }
 
   .popup-table {

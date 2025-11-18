@@ -45,6 +45,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   mobileNumberData: IphoneNumberData | null = null;
+  isMyInfoRoute = false;
+
 
    selectedworkcoutrycode = signal<any>('');
    selectedpersonalnumbercode = signal<any>('');
@@ -71,9 +73,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
+      this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+      this.isMyInfoRoute = true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
 
       this.getEmployeeId();
@@ -173,6 +177,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       contactnumbercountryflag:this.selectedCountryCodephoneflag  || this.employedata.contactnumbercountryflag,
       workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag || null,
       linkedinUrl: formValue.linkedinurl || null,
+
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
+      displayName: this.isMyInfoRoute ? 'Personal' : undefined,
      };
 
 

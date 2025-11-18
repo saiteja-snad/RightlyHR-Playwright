@@ -50,9 +50,11 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   mobileNumberData: IphoneNumberData | null = null;
   empinfo: any
   employedata = {} as any;
-  constructor(private modalService: NgbModal, 
-    private fb: FormBuilder, public formValidation: FormValidationService, 
-    private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { 
+  isMyInfoRoute = false;
+
+  constructor(private modalService: NgbModal,
+    private fb: FormBuilder, public formValidation: FormValidationService,
+    private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedemergencycoutrycode.set(this.selectedDialCode);
       this.selectedemergency1coutrycode.set(this.selectedDialCode1);
@@ -68,7 +70,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   showButtons() {
     this.buttons = !this.buttons
   }
- 
+
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
@@ -78,9 +80,11 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
+       this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+       this.isMyInfoRoute = true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
     }
@@ -114,20 +118,20 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
         this.selectedemergencycoutrycode.set(data.emergencyNumberCountryFlag);
         this.selectedemergency1coutrycode.set(data.emergencyPhoneCountryFlag);
         if (this.familyRelations.length) {
-        this.patchForm(data); 
+        this.patchForm(data);
       }
       },
       error: (reason) =>{ console.error('Error fetching employee data:', reason)
         this.dataloader = false
       },
       complete: () => {
-        
+
         this.dataloader = false;
       }
     });
   }
   patchForm(data: any): void {
-    
+
     const contact1Relationship = this.familyRelations.find(
       (relation) => relation.relationship1 === data.relationShip
     ) || null;
@@ -138,7 +142,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
 
     this.emergencyContactForm.patchValue({
-      
+
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
       contact1Phone: data.emergencynumber || '', // Bind first emergency contact phone
@@ -160,9 +164,9 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.buttons = false;
     this.buttons2 = false;
     this.emergencyContactForm.disable();
-    this.emergencyContactForm.markAsUntouched(); 
-    this.emergencyContactForm.reset(); 
-    this.getEmployeeId(); 
+    this.emergencyContactForm.markAsUntouched();
+    this.emergencyContactForm.reset();
+    this.getEmployeeId();
   }
 
 
@@ -190,6 +194,10 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.employedata.relationship1,
       emergencyphonecountryflag: this.selectedCountryflag,
       emergencynumbercountryflag: this.selectedCountryCodegflag,
+
+       selfUpdate: this.isMyInfoRoute,
+  moduleName: this.isMyInfoRoute ? 'Emergency Contact Details' : undefined,
+  displayName: this.isMyInfoRoute ? 'Personal' : undefined,
     };
 
 
@@ -200,17 +208,17 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
           if (data.statusCode === 200) {
             this.conformationPopup.openSuccessModal('Emergency contact information updated successfully');
             this.emergencyContactForm.disable();
-            this.buttons = false; 
+            this.buttons = false;
             this.buttons2 = false;
-            this.getEmployeeId(); 
+            this.getEmployeeId();
           }
           else if (data.statusCode === 409) {
             console.log('Conflict:', data.message);
             this.conformationPopup.openErrorModal(data.message);
-            this.patchForm(data); 
+            this.patchForm(data);
           }
 
-        
+
         },
         error: (reason: any) => {
           console.log(reason);
@@ -234,7 +242,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
- 
+
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;

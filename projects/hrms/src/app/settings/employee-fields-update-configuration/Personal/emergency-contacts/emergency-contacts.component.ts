@@ -65,6 +65,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
     { label: 'Reporting Manager', value: 'RM' },
     { label: 'Team Manager', value: 'TM' },
   ];
+
   roles = [] as any;
 
   constructor(
@@ -202,6 +203,10 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
         // Update operation
         const request = {
           columnName: this.selectedFieldConfig.columnName,
+          sourceFieldName: this.fieldOptions.find(
+            (x: any) => x.fieldName === this.selectedFieldConfig.columnName
+          )?.actualFieldName,
+
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
@@ -237,6 +242,10 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
         const selectedFields = formValue.fieldNames || [];
         const request = {
           columnNames: selectedFields,
+          sourceFieldName: this.fieldOptions.find(
+            (x: any) => x.fieldName === selectedFields[0]
+          )?.actualFieldName,
+
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName

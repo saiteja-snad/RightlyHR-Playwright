@@ -59,6 +59,11 @@ export class AddressesComponent {
     { label: 'Reporting Manager', value: 'RM' },
     { label: 'Team Manager', value: 'TM' },
   ];
+  addressTypeOptions = [
+    { label: 'Current Address', value: 'CURRENT' },
+    { label: 'Permanent Address', value: 'PERMANENT' },
+  ];
+
   roles = [] as any;
 
   constructor(
@@ -72,6 +77,7 @@ export class AddressesComponent {
   ) {}
   ngOnInit(): void {
     this.fieldConfigForm = this.fb.group({
+      addressType: ['', Validators.required],
       fieldNames: [[], Validators.required],
       approvalRequired: [true],
       approvalType: ['', Validators.required],
@@ -172,6 +178,12 @@ export class AddressesComponent {
       const formValue = this.isEditMode
         ? this.fieldConfigForm.getRawValue()
         : this.fieldConfigForm.value;
+
+      const referenceCategory =
+  formValue.addressType === 'CURRENT' ? 'C' :
+  formValue.addressType === 'PERMANENT' ? 'P' :
+  '';
+
       let loggedInUser = this.authService.getToken();
       let approvalTypeToSend = formValue.approvalType;
       let approvalAuthority = '';
@@ -196,11 +208,16 @@ export class AddressesComponent {
         // Update operation
         const request = {
           columnName: this.selectedFieldConfig.columnName,
+          sourceFieldName: this.fieldOptions.find(
+            (x: any) => x.fieldName === this.selectedFieldConfig.columnName
+          )?.actualFieldName,
+
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          referenceCategory: referenceCategory,
           updatedBy: loggedInUser.employeeId,
         };
 
@@ -231,6 +248,10 @@ export class AddressesComponent {
         const selectedFields = formValue.fieldNames || [];
         const request = {
           columnNames: selectedFields,
+          sourceFieldName: this.fieldOptions.find(
+            (x: any) => x.fieldName === selectedFields[0]
+          )?.actualFieldName,
+
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName
@@ -242,6 +263,7 @@ export class AddressesComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+            referenceCategory: referenceCategory,
           createdBy: loggedInUser.employeeId,
         };
 
@@ -345,6 +367,7 @@ export class AddressesComponent {
         fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
           ? fieldConfig.approvalType
           : '',
+      addressType: fieldConfig.addressType || '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();

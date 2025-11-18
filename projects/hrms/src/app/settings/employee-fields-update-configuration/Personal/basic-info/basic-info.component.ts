@@ -197,6 +197,10 @@ export class BasicInfoComponent {
         // Update operation
         const request = {
           columnName: this.selectedFieldConfig.columnName,
+          sourceFieldName: this.fieldOptions.find(
+            (x: any) => x.fieldName === this.selectedFieldConfig.columnName
+          )?.actualFieldName,
+
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
@@ -232,6 +236,10 @@ export class BasicInfoComponent {
         const selectedFields = formValue.fieldNames || [];
         const request = {
           columnNames: selectedFields,
+          sourceFieldName: this.fieldOptions.find(
+            (x: any) => x.fieldName === selectedFields[0]
+          )?.actualFieldName,
+
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName

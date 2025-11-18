@@ -53,7 +53,12 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
   @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
   fieldConfigForm!: FormGroup;
   // Static data for the popup fields
-  fieldOptions = [] as any;
+  fieldOptions = [
+    { label: 'Add', value: 'Add' },
+    { label: 'Update', value: 'Update' },
+    { label: 'Delete', value: 'Delete' },
+  ];
+
   identityInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
     // { label: 'Employee', value: 'EMP' },
@@ -85,7 +90,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
       selectedRole: [''],
       selectedManager: [''],
     });
-    this.getIdentityInfoFields();
+    // this.getIdentityInfoFields();
     this.setupFormSubscriptions();
     this.getAllEmployeeDetails();
     this.getAllRoles();
@@ -202,6 +207,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
         // Update operation
         const request = {
           columnName: this.selectedFieldConfig.columnName,
+          approvalEntity: this.selectedFieldConfig.approvalEntity,
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
@@ -223,7 +229,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
               );
               this.loader = false;
               this.resetFieldConfigForm();
-              this.getIdentityInfoFields();
+              // this.getIdentityInfoFields();
               this.getIdentityInfoFieldsConfigList();
             },
             error: (error: any) => {
@@ -236,15 +242,9 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
         const request = {
-          columnNames: selectedFields,
-          moduleName:
-            this.fieldOptions.length > 0
-              ? this.fieldOptions[0]?.moduleName
-              : 'Identity Info',
-          displayName:
-            this.fieldOptions.length > 0
-              ? this.fieldOptions[0]?.tabName
-              : 'Personal',
+          approvalEntity: selectedFields[0], // Add / Update / Delete
+          moduleName: 'Identity Info',
+          displayName: 'Personal',
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
@@ -261,7 +261,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
               );
               this.loader = false;
               this.resetFieldConfigForm();
-              this.getIdentityInfoFields();
+              // this.getIdentityInfoFields();
               this.getIdentityInfoFieldsConfigList();
             },
             error: (error: any) => {
@@ -298,7 +298,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           modal.close();
-          this.getIdentityInfoFields();
+          // this.getIdentityInfoFields();
           this.getIdentityInfoFieldsConfigList();
           this.conformationPopup.openSuccessModal(
             'Field configuration deleted successfully'
@@ -333,7 +333,7 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
-      fieldNames: [fieldConfig.columnName],
+      fieldNames: [fieldConfig.approvalEntity],
       approvalRequired: true,
       approvalType:
         fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'

@@ -27,6 +27,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   empinfo: any
   loading: boolean = false;
   employedata={} as any;
+  isMyInfoRoute = false;
+
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
      private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService,private router: Router,public permissionRouteService: AccessForEmployeeinfoService, ) { }
@@ -49,9 +51,11 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
+      this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+      this.isMyInfoRoute = true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
     }
@@ -213,6 +217,10 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       ...this.employedata,
       currentAddress: this.currentAddress,
       permanentAddress: this.permanentAddress,
+
+      selfUpdate: this.isMyInfoRoute,
+  moduleName: this.isMyInfoRoute ? 'Address Info' : undefined,
+  displayName: this.isMyInfoRoute ? 'Personal' : undefined,
     };
 
     // Send employee basic details update

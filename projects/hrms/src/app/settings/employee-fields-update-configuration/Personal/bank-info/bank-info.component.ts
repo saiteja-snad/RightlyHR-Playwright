@@ -48,7 +48,11 @@ export class BankInfoComponent {
   @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
   fieldConfigForm!: FormGroup;
   // Static data for the popup fields
-  fieldOptions = [] as any;
+  fieldOptions = [
+    { label: 'Add', value: 'Add' },
+    { label: 'Update', value: 'Update' },
+    { label: 'Delete', value: 'Delete' },
+  ];
   bankInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
     // { label: 'Employee', value: 'EMP' },
@@ -81,7 +85,7 @@ export class BankInfoComponent {
       selectedManager: [''],
     });
     this.setupFormSubscriptions();
-    this.getBankInfoFields();
+    // this.getBankInfoFields();
     this.getAllEmployeeDetails();
     this.getAllRoles();
     this.getBankInfoFieldsConfigList();
@@ -196,7 +200,7 @@ export class BankInfoComponent {
       if (this.isEditMode) {
         // Update operation
         const request = {
-          columnName: this.selectedFieldConfig.columnName,
+          approvalEntity: this.selectedFieldConfig.approvalEntity, // keep existing
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
@@ -230,15 +234,9 @@ export class BankInfoComponent {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
         const request = {
-          columnNames: selectedFields,
-          moduleName:
-            this.fieldOptions.length > 0
-              ? this.fieldOptions[0]?.moduleName
-              : 'Bank Info',
-          displayName:
-            this.fieldOptions.length > 0
-              ? this.fieldOptions[0]?.tabName
-              : 'Personal',
+          approvalEntity: selectedFields[0], // Add / Update / Delete
+          moduleName: 'Bank Info',
+          displayName: 'Personal',
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
@@ -326,7 +324,7 @@ export class BankInfoComponent {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
-      fieldNames: [fieldConfig.columnName],
+      fieldNames: [fieldConfig.approvalEntity],
       approvalRequired: true,
       approvalType:
         fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'

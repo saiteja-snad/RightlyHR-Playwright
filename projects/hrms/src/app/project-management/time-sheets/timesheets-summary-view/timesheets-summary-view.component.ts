@@ -375,61 +375,70 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   // Project Type (Pie)
   projectWiseChart() {
-    if (!this.projectTypeData || this.projectTypeData?.length === 0) return;
-    // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item?.projectName);
-    // Convert "HH:mm" string → numeric hours for plotting
-    const data = this.projectTypeData.map((item: any) => {
-      const [hours, minutes] = item.hours.split(':').map(Number);
-      return hours + minutes / 60;
-    });
-    // Keep original HH:mm values for display
-    const originalTimes = this.projectTypeData.map((item: any) => item?.hours);
-    // Chart colors
-    const backgroundColors = [
-      '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
-      '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
-    ].slice(0, labels.length);
-    // Store for legend display (outside chart)
-    this.projectTypeLabelData = labels.map((label: string, index: number) => ({
-      label,
-      color: backgroundColors[index],
-      hours: originalTimes[index],
-    }));
-    // Chart data
-    this.projectTypeGraphData = {
-      labels,
-      datasets: [
-        {
-          label: 'Project Hours (in Hrs)',
-          data,
-          backgroundColor: backgroundColors,
+  if (!this.projectTypeData || this.projectTypeData.length === 0) return;
+
+  // Labels
+  const labels = this.projectTypeData.map((item: any) =>
+    item.meta?.graphData?.code ? item.meta.graphData.code : item.projectName
+  );
+
+  // Convert HH:MM → number (for chart)
+  const data = this.projectTypeData.map((item: any) => {
+    const [hours, minutes] = item.hoursHHMM.split(':').map(Number);
+    return hours + minutes / 60;  // numeric only for graph
+  });
+
+  // Use correct HH:MM display value
+  const originalTimesHHMM = this.projectTypeData.map((item: any) => item.hoursHHMM);
+
+  // Colors
+  const backgroundColors = [
+    '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
+    '#81C784', '#3F51B5', '#FF8A65', '#BA68C8'
+  ].slice(0, labels.length);
+
+  // Legend (outside chart)
+  this.projectTypeLabelData = labels.map((label: string, index: number) => ({
+    label,
+    color: backgroundColors[index],
+    hours: originalTimesHHMM[index],  // <-- FIXED (HH:MM)
+  }));
+
+  // Chart data
+  this.projectTypeGraphData = {
+    labels,
+    datasets: [
+      {
+        label: 'Project Hours (in Hrs)',
+        data,
+        backgroundColor: backgroundColors,
+      },
+    ],
+  };
+
+  // Chart options
+  this.projectTypeGraphOptions = {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        titleFont: { size: 11 },
+        bodyFont: { size: 10 },
+        callbacks: {
+          title: (tooltipItems: any) => {
+            const index = tooltipItems[0]?.dataIndex;
+            const name = this.projectTypeData[index]?.projectName;
+            return name.match(/.{1,20}/g); // wrap lines
+          },
+          label: (tooltipItem: any) => {
+            const originalHHMM = originalTimesHHMM[tooltipItem.dataIndex];
+            return `Project Hours (in Hrs) : ${originalHHMM}`; // <-- FIXED tooltip to show HH:MM
+          },
         },
-      ],
-    };
-    // Chart options
-    this.projectTypeGraphOptions = {
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          titleFont: { size: 11 },
-          bodyFont: { size: 10 },
-          callbacks: {
-            title: (tooltipItems: any) => {
-              const index = tooltipItems[0]?.dataIndex;
-              const name = this.projectTypeData[index]?.projectName;
-              // Wrap long names (max 20 chars per line)
-              return name.match(/.{1,20}/g);
-            },
-            label: (tooltipItem: any) => {
-              const value = Number(tooltipItem?.raw).toFixed(2);
-              return `Project Hours (in Hrs): ${value}`;
-            }
-          }
-        }
-      }
-    };
-  }
+      },
+    },
+  };
+}
+
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {

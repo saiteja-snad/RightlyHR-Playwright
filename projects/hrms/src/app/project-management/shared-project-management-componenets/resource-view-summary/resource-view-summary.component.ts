@@ -256,16 +256,20 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
           this.estimatedVsActualGraphData = { labels: [], datasets: [] };
           return;
         }
+        const convertHHMMToNumber = (hhmm: string): number => {
+          if (!hhmm) return 0;
+          const [h, m] = hhmm.split(':').map(Number);
+          return Number((h + m / 60).toFixed(2));
+        };
         // Only show Allocated and Actual Hours
         const labels = ['Allocated', 'Actual'];
-        const hours = [chart.allocated, chart.actual];
+        const hours = [chart.allocated, convertHHMMToNumber(chart.actualHoursHHMM)];
         const colors = ['#EE7956', '#5A00D8'];
-        // Store legend data in the same variable you already use
-        this.estimatedVsActualData = labels.map((label, index) => ({
-          label: label,
-          value: hours[index],
-          color: colors[index]
-        }));
+        // Store legend data with actualHoursHHMM for display
+        this.estimatedVsActualData = [
+          { label: 'Allocated', value: chart.allocated, color: colors[0] },
+          { label: 'Actual', value: chart.actualHoursHHMM, color: colors[1] }
+        ];
         // Assign Pie Chart Data
         this.estimatedVsActualGraphData = {
           labels,
@@ -304,22 +308,29 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];
+
+          const convertHHMMToNumber = (hhmm: string): number => {
+          if (!hhmm) return 0;
+          const [h, m] = hhmm.split(':').map(Number);
+          return Number((h + m / 60).toFixed(2));
+        };
         // Extract labels and data
         const labels = chartData.map((item: any) => item.label);
-        const hours = chartData.map((item: any) => item.hours);
+        const hoursHHMM = chartData.map((item: any) => item.hoursHHMM);
+        const numericHours = chartData.map((item: any) => convertHHMMToNumber(item.hoursHHMM));
         const colors = ['#0F358A', '#A2B5E2'];
-        // Store legend data in the same variable you already use
+        // Store legend data with hoursHHMM for display
         this.billableVsNonBillableData = labels.map((label: string, index: number) => ({
           label: label,
-          value: hours[index],
+          value: hoursHHMM[index],
           color: colors[index]
         }));
-        // Assign Pie Chart Data
+        // Assign Pie Chart Data with numeric values
         this.billableVsNonBillableGraphData = {
           labels: labels,
           datasets: [
             {
-              data: hours,
+              data: numericHours,
               backgroundColor: colors,
             }
           ]
@@ -341,12 +352,13 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
       }
     });
   }
-
   convertTimeToHours(time: string): number {
     if (!time) return 0;
     const [hours, minutes] = time.split(':').map(Number);
     return hours + (minutes / 60);
   }
+
+  
 
   formatHoursToHHMM(hours: number): string {
     const h = Math.floor(hours);

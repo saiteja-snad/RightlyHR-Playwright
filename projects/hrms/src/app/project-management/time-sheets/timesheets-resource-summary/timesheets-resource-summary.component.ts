@@ -502,6 +502,9 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
             },
           },
           plugins: {
+             legend: {
+              display: false,
+            },
             tooltip: {
               callbacks: {
                 label: (context: any) => {

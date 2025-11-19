@@ -132,7 +132,7 @@
                                             <td>{{item?.phaseName?item?.phaseName:'-'}}</td>
                                             <td>{{item?.role?item?.role:'-'}}</td>
                                             <td><span class="logged-hrs">{{item.loggedHoursHHMM?item.loggedHoursHHMM:'0'}}</span>
-                                                /{{item.allocatedHours?item.allocatedHours:''}}hrs
+                                                /{{item.allocatedHours?item.allocatedHours:'0'}}hrs
                                             </td>
                                             <td class="text-center">
                                                 <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{item.status}}</span>

@@ -74,7 +74,8 @@ export class PendingApprovalsComponent implements OnInit {
       '/pending-approvals/off-boarding': MODULE_INFOS.PENDING_APPROVALS_OFFBOARDING_MODULE_INFO,
       '/pending-approvals/desk-approval': MODULE_INFOS.PENDING_APPROVALS_DESK_MODULE_INFO,
       '/pending-approvals/claimsandexpenses-request': MODULE_INFOS.PENDING_APPROVALS_EXPENSES_MODULE_INFO,
-      '/pending-approvals/time-sheets': MODULE_INFOS.PENDING_APPROVALS_TIMESHEET_MODULE_INFO
+      '/pending-approvals/time-sheets': MODULE_INFOS.PENDING_APPROVALS_TIMESHEET_MODULE_INFO,
+      '/pending-approvals/assessmentform': MODULE_INFOS.PENDING_APPROVALS_ASSESSMENT_FORM_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';

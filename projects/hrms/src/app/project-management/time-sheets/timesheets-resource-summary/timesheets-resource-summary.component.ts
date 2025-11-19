@@ -454,15 +454,18 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         const labels = chartData.map((item: any) =>
           item?.projectColor?.graphData.code ? item?.projectColor.graphData.code : item.name
         );
+            // Store Actual Project Names for tooltips
+        const actualNames = chartData.map((item: any) => item?.name);
+
         const billable = chartData.map((item: any) =>
-          convertHHMMToNumber(item.billableHoursHHMM)
+          convertHHMMToNumber(item?.billableHoursHHMM)
         );
         const nonBillable = chartData.map((item: any) =>
-          convertHHMMToNumber(item.nonBillableHoursHHMM)
+          convertHHMMToNumber(item?.nonBillableHoursHHMM)
         );
 
-        const billableDisplay = chartData.map((i: any) => i.billableHoursHHMM);
-        const nonBillableDisplay = chartData.map((i: any) => i.nonBillableHoursHHMM);
+        const billableDisplay = chartData.map((i: any) => i?.billableHoursHHMM);
+        const nonBillableDisplay = chartData.map((i: any) => i?.nonBillableHoursHHMM);
 
         // Assign dynamic chart data
         this.billableData = {
@@ -507,6 +510,11 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
             },
             tooltip: {
               callbacks: {
+                     // Show Project Name instead of Code
+                title: (tooltip: any) => {
+                  const idx = tooltip[0].dataIndex;
+                  return actualNames[idx];  // <-- Full project name
+                },
                 label: (context: any) => {
                   const idx = context.dataIndex;
 
@@ -755,29 +763,33 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map(
-      (item: any) => Number(item.estimatedHours) || 0
+      (item: any) => Number(item?.estimatedHours) || 0
     );
     // Convert overdue (may come as string)
     const overdueData = this.estimatedVsActualData.map(
-      (item: any) => Number(item.overDue) || 0
+      (item: any) => Number(item?.overDue) || 0
     );
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHoursHHMM.split(':').map(Number);
+      const [h, m] = item?.actualHoursHHMM.split(':').map(Number);
       return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
     });
     // Keep original HH:mm format for display
     const actualDisplay = this.estimatedVsActualData.map(
-      (item: any) => item.actualHoursHHMM   // already HH:MM from backend
+      (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
     );
 
     const estimatedDisplay = this.estimatedVsActualData.map(
-      (item: any) => toHHMM(item.estimatedHours)
+      (item: any) => toHHMM(item?.estimatedHours)
     );
 
     const overdueDisplay = this.estimatedVsActualData.map(
-      (item: any) => toHHMM(item.overDue)
+      (item: any) => toHHMM(item?.overDue)
     );
+    const fullProjectNames = this.estimatedVsActualData?.map(
+  (item: any) => item?.projectName
+);
+
 
     // Chart datasets
     this.estimatedVsActualGraphData = {
@@ -811,6 +823,10 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         legend: { display: false },
         tooltip: {
           callbacks: {
+            title: (tooltipItems: any) => {
+            const index = tooltipItems[0].dataIndex;
+            return fullProjectNames[index];  // show real project name
+           },
             label: (context: any) => {
               const idx = context.dataIndex;
 

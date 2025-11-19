@@ -1748,6 +1748,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
     const { description, duration,  } = form.value;

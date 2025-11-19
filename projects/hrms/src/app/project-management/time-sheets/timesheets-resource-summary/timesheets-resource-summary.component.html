@@ -127,11 +127,11 @@
                                     <tbody>
                                         <tr *ngFor="let item of projectSummeryData">
                                             <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
-                                            <td class="text-center">{{item.projectColor.graphData.code?item.projectColor.graphData.code:'-'}}</td>
-                                            <td class="text-center">{{item.department?item.department:'-'}}</td>
-                                            <td class="text-center">{{item.phaseName?item.phaseName:'-'}}</td>
-                                            <td class="text-center">{{item.role?item.role:'-'}}</td>
-                                            <td class="text-center"><span class="logged-hrs">{{item.loggedHours?item.loggedHours:'0'}}</span>
+                                            <td>{{item?.projectColor?.graphData?.code?item.projectColor?.graphData?.code:'-'}}</td>
+                                            <td>{{item?.department?item?.department:'-'}}</td>
+                                            <td>{{item?.phaseName?item?.phaseName:'-'}}</td>
+                                            <td>{{item?.role?item?.role:'-'}}</td>
+                                            <td><span class="logged-hrs">{{item.loggedHours?item.loggedHours:'0'}}</span>
                                                 /{{item.allocatedHours?item.allocatedHours:''}}hrs
                                             </td>
                                             <td class="text-center">

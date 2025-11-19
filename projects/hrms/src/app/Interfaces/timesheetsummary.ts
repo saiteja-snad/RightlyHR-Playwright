@@ -70,6 +70,9 @@ export interface DailySummary {
   loggedHHMM: string;
   weekday: string;
   holiday: string;
+  textColor?: string;
+  legendCode?: any;
+
 }
 
 

@@ -35,7 +35,7 @@ export class PendingApprovalsTabsComponent {
       { label: 'Probation', link: '/pending-approvals/probation-request', icon: '/time-off-icon/Probation-icon.png', permission: { feature: 'Probation Details Tab', action: 'view' } },
       { label: 'Trainees', link: '/pending-approvals/trainee-approvals', icon: '/time-off-icon/trainee-icon.png', permission: { feature: 'Trainee Details Tab', action: 'view' } },
       { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/time-off-icon/trainee-icon.png', permission: { feature: 'Contractors main Tab', action: 'view' } },
-      { label: 'Off Boarding', link: '/pending-approvals/off-boarding', icon: '/time-off-icon/seperation-icon.png', permission: { feature: 'Offboarding main Tab', action: 'view' } },
+      { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/time-off-icon/seperation-icon.png', permission: { feature: 'Offboarding main Tab', action: 'view' } },
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' } },
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' } },
       { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' } }

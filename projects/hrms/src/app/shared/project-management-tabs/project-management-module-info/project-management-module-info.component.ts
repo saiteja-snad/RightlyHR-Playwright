@@ -89,12 +89,14 @@ projectId:any;
       }
     });
   }
+
   getProjects(projectId: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDetails = res?.data ?? [];
-          this.projectname= this.projectsDetails[0]?.projectName;
-            this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
+        this.projectname = this.projectsDetails[0]?.projectName;
+        console.log("project" ,this.projectname);
+        this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -336,6 +338,7 @@ projectId:any;
   navigateClient() {
     this.router.navigate(['project-management/clients/active']);
     localStorage.removeItem('clientProjectId');
+    localStorage.removeItem('projectProjectId');
   }
 
   navigatetoteam() {
@@ -350,10 +353,12 @@ projectId:any;
     const clientProjectId = localStorage.getItem('clientProjectId');
     this.router.navigate(['project-management/clients/details/timesheet/detailed'], { queryParams: { id: clientProjectId } });
     localStorage.removeItem('clientProjectId');
+    localStorage.removeItem('projectProjectId');
   }
 
   navigatetodetaliedtoproject() {
     this.router.navigate(['/project-management/projects/details/timesheet/detailed'], { queryParams: { id: this.resourceDataids?.projectId } });
+    localStorage.removeItem('projectProjectId');
   }
 
   navigateProject() {
@@ -365,6 +370,7 @@ projectId:any;
     } else {
       // Default navigation
       this.router.navigate(['project-management/projects/active']);
+      localStorage.removeItem('projectProjectId');
     }
   }
 }

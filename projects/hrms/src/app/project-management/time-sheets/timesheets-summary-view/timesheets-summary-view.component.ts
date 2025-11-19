@@ -37,7 +37,7 @@ import { TimesheetsResourceTabsComponent } from "../timesheets-resource-tabs/tim
   encapsulation: ViewEncapsulation.None
 })
 
-export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
+export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
@@ -102,7 +102,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo()
     this.createDatepickerForm();
-     this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
@@ -433,85 +433,122 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    if (!this.estimatedVsActualData || this.estimatedVsActualData?.length === 0) return;
+    if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)
+      return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName);
+    const labels = this.estimatedVsActualData.map((item: any) =>
+      item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName
+    );
+    const color = this.estimatedVsActualData.map((item: any) =>
+      item?.meta?.graphData.color ? item?.meta?.graphData?.color : '#1A237E'
+    );
+    const toHHMM = (value: string | number): string => {
+      if (!value) return "0:00";
+
+      const num = Number(value);
+      const hours = Math.floor(num);
+      const minutes = Math.round((num - hours) * 60);
+
+      return `${hours}:${minutes.toString().padStart(2, '0')}`;
+    };
+
     // Convert estimated hours to numbers (already numeric strings)
-    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item?.estimatedHours) || 0);
+    const estimatedData = this.estimatedVsActualData.map(
+      (item: any) => Number(item.estimatedHours) || 0
+    );
+    // Convert overdue (may come as string)
+    const overdueData = this.estimatedVsActualData.map(
+      (item: any) => Number(item.overDue) || 0
+    );
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item?.actualHours.split(':').map(Number);
-      const actualDecimal = h + (m / 60);   // convert HH:mm → decimal
-      const overdue = Number(item?.overDue || 0);  // overdue already decimal
-      return actualDecimal - overdue;   // REMOVE overdue from actual
+      const [h, m] = item.actualHoursHHMM.split(':').map(Number);
+      return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
     });
-    // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item?.overDue) || 0);
+    // Keep original HH:mm format for display
+    const actualDisplay = this.estimatedVsActualData.map(
+      (item: any) => item.actualHoursHHMM   // already HH:MM from backend
+    );
+
+    const estimatedDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item.estimatedHours)
+    );
+
+    const overdueDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item.overDue)
+    );
+
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
       datasets: [
         {
           label: 'Estimated Hours',
-          backgroundColor: '#1A237E',
+          backgroundColor: color,
           data: estimatedData,
-          stack: 'Estimated'
+          stack: 'Estimated',
         },
         {
           label: 'Actual Hours',
           backgroundColor: '#90CAF9',
           data: actualData,
-          stack: 'ActualOverdue'
+          stack: 'ActualOverdue',
         },
         {
           label: 'Over Due',
           backgroundColor: '#FF5252',
           data: overdueData,
-          stack: 'ActualOverdue'
-        }
-      ]
+          stack: 'ActualOverdue',
+        },
+      ],
     };
     // Chart options
-   this.estimatedVsActualGraphOptions = {
+    this.estimatedVsActualGraphOptions = {
       responsive: true,
       barThickness: 30,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const idx = context.dataIndex;
+
+              if (context.dataset.label === 'Estimated Hours') {
+                return `Estimated: ${estimatedDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Actual Hours') {
+                return `Actual: ${actualDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Over Due') {
+                return `Over Due: ${overdueDisplay[idx]} hrs`;
+              }
+
+              return `${context.dataset.label}: ${context.raw}`;
+            }
+          }
+        }
+
+
+      },
       scales: {
         x: {
           stacked: false,
-          grid: { display: false, },
-          ticks: { color: '#141414' },
+          grid: { display: false },
+          ticks: { color: '#141414', font: { size: 11 } },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: { display: true, text: 'Hours', color: '#505050',  },
-          ticks: { color: '#72777B', },
+          title: {
+            display: true,
+            text: 'Hours',
+            color: '#505050',
+            font: { size: 12 },
+          },
+          ticks: { color: '#72777B', font: { size: 11 } },
         },
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          titleFont: { size: 11 },
-          bodyFont: { size: 10 },
-          callbacks: {
-            title: (tooltipItems: any) => {
-              if (!tooltipItems || !tooltipItems?.length) return '';
-              const ti = tooltipItems[0];
-              let index = ti.dataIndex;
-              if (index === undefined || index === null) {
-                const label = ti.label ?? ti.title ?? '';
-                index = this.estimatedVsActualGraphData?.labels?.indexOf(label);
-              }
-              const project = (typeof index === 'number' && index >= 0) ? this.estimatedVsActualData?.[index]?.projectName : (ti.label ?? '');
-              return project || '';
-            },
-            label: (tooltipItem: any) => {
-              const datasetLabel = tooltipItem?.dataset?.label || '';
-              const value = tooltipItem?.raw;
-              return `${datasetLabel}: ${value}`;
-            }
-          }
-        }
       },
     };
   }

@@ -326,11 +326,25 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
             this.billableData = [];
             return;
           }
+          const convertHHMMToNumber = (hhmm: string): number => {
+            if (!hhmm) return 0;
+            const [h, m] = hhmm.split(':').map(Number);
+            return Number((h + m / 60).toFixed(2));
+          };
+
           // Extract data safely
           const labels = apiData.map((item: any) => item.name || 'N/A');
-          const billable = apiData.map((item: any) => item.billableHours || 0);
-          const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
-          
+
+          const billable = apiData.map((item: any) =>
+            convertHHMMToNumber(item?.billableHoursHHMM)
+          );
+          const nonBillable = apiData.map((item: any) =>
+            convertHHMMToNumber(item?.nonBillableHoursHHMM)
+          );
+
+          const billableDisplay = apiData.map((i: any) => i?.billableHoursHHMM);
+          const nonBillableDisplay = apiData.map((i: any) => i?.nonBillableHoursHHMM);
+
           // Chart data
           this.billableData = {
             labels,
@@ -355,7 +369,30 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
             barThickness: 30,
             plugins: {
               legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  //      // Show Project Name instead of Code
+                  // title: (tooltip: any) => {
+                  //   const idx = tooltip[0].dataIndex;
+                  //   return actualNames[idx];  // <-- Full project name
+                  // },
+                  label: (context: any) => {
+                    const idx = context.dataIndex;
+
+                    if (context.dataset.label === 'Billable') {
+                      return `Billable: ${billableDisplay[idx]} hrs`;  // <-- HH:MM
+                    }
+
+                    if (context.dataset.label === 'Non-Billable') {
+                      return `Non-Billable: ${nonBillableDisplay[idx]} hrs`; // <-- HH:MM
+                    }
+
+                    return `${context.dataset.label}: ${context.raw} hrs`;
+                  }
+                }
+              }
             },
+
             scales: {
               x: {
                 stacked: false,

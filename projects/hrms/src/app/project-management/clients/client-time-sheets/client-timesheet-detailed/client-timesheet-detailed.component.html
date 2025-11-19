@@ -8,7 +8,7 @@
                     <p-accordion-header>
                         <div class="accordian-header-text text-truncate" >{{ project?.project?.projectName }}</div>
                         <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
-                            <span class="hrs-text">{{project?.project?.spentHours }} Hrs</span>
+                            <span class="hrs-text">{{project?.project?.spentHoursHHMM }} Hrs</span>
                         </div>
                        
                     </p-accordion-header>
@@ -39,7 +39,7 @@
                                         <td class="text-center">
                                             @if(entry?.roles) {
                                                 <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                                                    <p-chip *ngFor="let role of entry.roles.split(',')" [label]="role.trim()" />
+                                                    <p-chip *ngFor="let role of entry?.roles.split(',')" [label]="role.trim()" />
                                                 </div>
                                 
                                             } @else {
@@ -49,7 +49,7 @@
                                         <td class="text-center">
                                             @if(entry?.departments) {
                                                 <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                                                    <p-chip *ngFor="let dept of entry.departments.split(',')" [label]="dept.trim()"/>
+                                                    <p-chip *ngFor="let dept of entry?.departments.split(',')" [label]="dept.trim()"/>
                                                  </div>
                                             } @else {
                                                 -
@@ -58,7 +58,7 @@
                                        <td class="text-center"><a class="project-name cursor" 
                                         (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">
                                         {{ entry?.phasesCount ?? 0 }}</a></td>
-                                        <td class="text-center">{{ entry?.totalLoggedHours ?? '-' }}</td>
+                                        <td class="text-center">{{ entry?.totalLoggedHoursHHMM ?? '-' }}</td>
 
                                     </tr>
                                 </ng-template>
@@ -132,13 +132,13 @@
                                 </td>
                                 <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
 
-                                <td><b>{{ entry?.loggedHours ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
+                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
 
                                 <td [ngClass]="{
-                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
-                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
-                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
-                }">
+                                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
+                                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
+                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
+                                }">
                                    <b> {{
                                     entry?.resourceStatus ?? '-' }}</b>
                                 </td>

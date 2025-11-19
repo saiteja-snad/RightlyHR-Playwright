@@ -17,7 +17,7 @@
                 @if(projectEmployeeDetails?.length > 0){
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
                     <td>
-                        <a class="project-name cursor" (click)="navigateView(project.employee.id)">
+                        <a class="project-name cursor" (click)="navigateView(project?.employee?.id)">
                             {{ project?.employee?.name }}
                         </a>
                     </td>
@@ -25,7 +25,7 @@
                     <td class="text-center">
                         @if(project?.roles) {
                         <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                            <p-chip *ngFor="let role of project.roles.split(',')" [label]="role.trim()" />
+                            <p-chip *ngFor="let role of project?.roles.split(',')" [label]="role.trim()" />
                         </div>
 
                         } @else {
@@ -35,7 +35,7 @@
                     <td class="text-center">
                         @if(project?.departments) {
                         <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
-                            <p-chip *ngFor="let dept of project.departments.split(',')" [label]="dept.trim()" />
+                            <p-chip *ngFor="let dept of project?.departments.split(',')" [label]="dept.trim()" />
                         </div>
                         } @else {
                         -
@@ -45,7 +45,7 @@
                     <td class="text-center"><a class="project-name cursor"
                             (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">{{
                             project?.phasesCount ?? 0 }}</a></td>
-                    <td class="text-center">{{ project?.totalLoggedHours ?? '-' }}</td>
+                    <td class="text-center">{{ project?.totalLoggedHoursHHMM ?? '-' }}</td>
 
                 </tr>
                 }@else {
@@ -92,19 +92,18 @@
                                 <td>{{ entry?.phaseName ?? '-' }}</td>
                                 <td>{{entry?.resourceRole ?? '-'}}</td>
                                 <td>
-                                    {{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}
+                                    {{ entry?.resourceStartDate ? (entry?.resourceStartDate | dateformat) : '-' }}
                                 </td>
-                                <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
+                                <td>{{ entry?.resourceEndDate ? (entry?.resourceEndDate | dateformat) : '-' }}</td>
 
-                                <td><b>{{ entry?.loggedHours ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
+                                <td><b>{{ entry?.loggedHoursHHMM ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
 
                                 <td [ngClass]="{
-                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
-                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
-                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
-                }">
-                                <b>    {{
-                                    entry?.resourceStatus ?? '-' }}</b>
+                                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
+                                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
+                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
+                                }">
+                                    <b> {{entry?.resourceStatus ?? '-' }}</b>
                                 </td>
                             </tr>
                         </tbody>

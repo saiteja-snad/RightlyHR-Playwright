@@ -397,6 +397,7 @@ export class FamilyMembersComponent {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
+    this.fieldConfigForm.get('selectedManager')?.clearValidators();
 
     // Set validators based on approval type
     if (approvalType === 'EMP') {

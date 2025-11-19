@@ -26,7 +26,7 @@
           <tr>
             <td>{{configItem.columnName || 'N/A'}}</td>
             <td class="text-center">{{configItem.requiresApproval ? 'Yes' : 'No'}}</td>
-            <td class="text-center">{{configItem.approvalType || 'N/A'}}</td>
+            <td class="text-center">{{ getApprovalTypeDisplay(configItem) }}</td>
 
             <td class="text-center"
               *ngIf="rbac.allowedToAccess('Addresses.update') || rbac.allowedToAccess('Addresses.delete')">

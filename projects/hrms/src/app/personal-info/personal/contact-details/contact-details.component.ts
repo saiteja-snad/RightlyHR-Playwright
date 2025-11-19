@@ -75,7 +75,7 @@ getFieldsApprovalStatusList: any[] = [];
   getBasicInfoFields() {
     const params = 'Personal';
     const param = 'Contact Info';
-    this.http
+    this.subscription = this.http
       .getDatabyentityvalueForFieldUpdate(
         `EmployeeInfoApprovalFields/getApprovalFields`,
         params,
@@ -101,7 +101,7 @@ getFieldsApprovalStatusList: any[] = [];
       moduleName: 'Contact Info',
       employeeId: parseInt(this.empinfo.employeeId),
     };
-    this.http
+    this.subscription = this.http
       .getDataIncludeParams(
         `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
         params

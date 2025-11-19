@@ -687,7 +687,6 @@ export const permissionsData = [
   { fields: 'Employee Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Reset Password Button', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'View History Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Generate Credentials Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Project Details', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
@@ -737,6 +736,11 @@ export const permissionsData = [
   { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Managers Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
+
+  //View History Buttons
+  { fields: 'My Info View History Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info View History Button', View: false, Update: false, Create: false, Delete: false },
+
 
   //Employee Info Onboard Request Sub Tabs Section
   { fields: 'Request for Onboard Button', View: false, Update: false, Create: false, Delete: false },

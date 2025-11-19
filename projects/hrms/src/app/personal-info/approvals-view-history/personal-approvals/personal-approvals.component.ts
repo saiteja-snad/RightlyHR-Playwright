@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { Subscription } from 'rxjs';
+
 
 interface ApprovalItem {
   fieldName: string;
@@ -45,6 +47,8 @@ interface ModuleData {
   styleUrls: ['./personal-approvals.component.scss'],
 })
 export class PersonalApprovalsComponent implements OnInit {
+    subscription!: Subscription;
+
   moduleData: ModuleData[] = [];
   loading = true;
   cancelForm!: FormGroup;
@@ -111,7 +115,7 @@ export class PersonalApprovalsComponent implements OnInit {
 
   fetchApprovalHistory(): void {
     this.loading = true;
-    this.http
+    this.subscription = this.http
       .getData(
         `EmployeeInfoFieldUpdate/employeeInfoFieldsHistory/${this.employeeId}`
       )
@@ -221,7 +225,7 @@ export class PersonalApprovalsComponent implements OnInit {
       comments: this.cancelForm.get('cancelReason')?.value.trim(),
     };
 
-    this.http
+    this.subscription = this.http
       .putData(`EmployeeInfoFieldUpdate/cancelEmployeeFieldItem`, payload)
       .subscribe({
         next: (res: any) => {
@@ -275,6 +279,12 @@ export class PersonalApprovalsComponent implements OnInit {
         return 'status-pending';
       default:
         return '';
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

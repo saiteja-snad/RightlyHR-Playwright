@@ -99,7 +99,7 @@ getPendingApprovalMessage(fieldName: string): string {
 getEmergencyApprovalFields() {
   const params = 'Personal';
   const param = 'Emergency Contacts';
-  this.http
+  this.subscription = this.http
     .getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param)
     .subscribe({
       next: (data: any) => {
@@ -118,7 +118,7 @@ getEmergencyFieldsApprovalStatus() {
     moduleName: 'Emergency Contacts',
     employeeId: parseInt(this.empinfo.employeeId)
   };
-  this.http
+  this.subscription = this.http
     .getDataIncludeParams(`EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`, params)
     .subscribe({
       next: (data: any) => {

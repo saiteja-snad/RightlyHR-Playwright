@@ -346,10 +346,10 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
     this.fieldConfigForm.patchValue({
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
-      approvalType:
-        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
-          ? 'MANAGER'
-          : fieldConfig.approvalType,
+     approvalType:
+    fieldConfig.approvalEntity === 'TM' || fieldConfig.approvalEntity === 'RM'
+      ? 'MANAGER'
+      : fieldConfig.approvalType,
       selectedEmployee:
         fieldConfig.approvalType === 'EMP'
           ? Number(fieldConfig.approvalAuthority)
@@ -358,10 +358,10 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
         fieldConfig.approvalType === 'ROLE'
           ? fieldConfig.approvalAuthority
           : '',
-      selectedManager:
-        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
-          ? fieldConfig.approvalType
-          : '',
+       selectedManager:
+  fieldConfig.approvalEntity === 'TM' || fieldConfig.approvalEntity === 'RM'
+    ? fieldConfig.approvalEntity
+    : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
@@ -412,6 +412,7 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
+    this.fieldConfigForm.get('selectedManager')?.clearValidators();
 
     // Set validators based on approval type
     if (approvalType === 'EMP') {
@@ -440,6 +441,24 @@ export class EmergencyContactsComponent implements OnInit, OnDestroy {
     this.isEditMode = false;
     this.selectedFieldConfig = null;
   }
+
+   getApprovalTypeDisplay(config: any): string {
+  if (config.approvalType === 'ROLE') {
+    return 'ROLE';
+  }
+
+  if (config.approvalType === 'EMP') {
+    if (config.approvalEntity === 'RM') {
+      return 'RM';
+    } else if (config.approvalEntity === 'TM') {
+      return 'TM';
+    } else {
+      return 'N/A';
+    }
+  }
+
+  return 'N/A';
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

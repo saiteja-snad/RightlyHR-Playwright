@@ -27,7 +27,7 @@
 
         <div class="col-lg-4 col-md-6 mb-3">
           <label for="location" class="form-label custom-label mb-2">Work Number@if(isFieldPendingApproval('Work Number')) {
-    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+    <i class="bi bi-info-circle-fill info-pending"
        [pTooltip]="getPendingApprovalMessage('Work Number')" tooltipPosition="top"></i>
   }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
@@ -61,7 +61,7 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span>@if(isFieldPendingApproval('Phone Number')) {
-    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+    <i class="bi bi-info-circle-fill info-pending"
        [pTooltip]="getPendingApprovalMessage('Phone Number')" tooltipPosition="top"></i>
   }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
@@ -105,7 +105,7 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Personal Email')) {
-    <i class="bi bi-info-circle-fill" style="color: #0b3a83; font-size: 1rem;"
+    <i class="bi bi-info-circle-fill info-pending"
        [pTooltip]="getPendingApprovalMessage('Personal Email')" tooltipPosition="top"></i>
   }</label>
           <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"

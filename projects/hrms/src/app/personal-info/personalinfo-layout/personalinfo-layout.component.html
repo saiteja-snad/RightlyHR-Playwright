@@ -49,11 +49,11 @@
         {{'Archive'|translate}}
       </button>
 
-      @if(rbac.allowedToAccess('View History Button.view') && isActive('/myinfo')){
+      @if(rbac.allowedToAccess('My Info View History Button.view') && isActive('/myinfo')){
       <button class="custom-btn btn-primary" (click)="navigateMyInfo()">{{'View History'|translate}}</button>
       }
 
-      @if(rbac.allowedToAccess('View History Button.view') && isActive('/personalinfo')){
+      @if(rbac.allowedToAccess('Employee Info View History Button.view') && isActive('/personalinfo')){
       <button class="custom-btn btn-primary" (click)="navigatePersonal()">{{'View History'|translate}}</button>
       }
       <!-- <div *ngIf=""> -->

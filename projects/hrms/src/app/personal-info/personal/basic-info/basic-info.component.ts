@@ -65,7 +65,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public permission: AccessForEmployeeinfoService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -86,7 +86,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   getBasicInfoFields() {
     const params = 'Personal';
     const param = 'Basic Info';
-    this.http
+    this.subscription = this.http
       .getDatabyentityvalueForFieldUpdate(
         `EmployeeInfoApprovalFields/getApprovalFields`,
         params,
@@ -112,7 +112,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       moduleName: 'Basic Info',
       employeeId: parseInt(this.empinfo.employeeId),
     };
-    this.http
+    this.subscription = this.http
       .getDataIncludeParams(
         `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
         params
@@ -131,7 +131,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Add this method in your BasicInfoComponent
+
   isFieldPendingApproval(fieldName: string): boolean {
     return this.getFieldsApprovalStatusList.some(
       (item: any) =>
@@ -356,17 +356,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         const currentValue = formValue[controlName];
         const originalValue =
           this.empyployeedata[
-            controlName === 'salutation'
-              ? 'title'
-              : controlName === 'bloodGroup'
+          controlName === 'salutation'
+            ? 'title'
+            : controlName === 'bloodGroup'
               ? 'bloodGroup'
               : controlName === 'maritalStatus'
-              ? 'maritalStatus'
-              : controlName === 'marriageDate'
-              ? 'marriedDate'
-              : controlName === 'dob'
-              ? 'dob'
-              : controlName
+                ? 'maritalStatus'
+                : controlName === 'marriageDate'
+                  ? 'marriedDate'
+                  : controlName === 'dob'
+                    ? 'dob'
+                    : controlName
           ];
 
         // Optional: only send if changed

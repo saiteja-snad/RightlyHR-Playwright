@@ -180,9 +180,11 @@ export class AddressesComponent {
         : this.fieldConfigForm.value;
 
       const referenceCategory =
-  formValue.addressType === 'CURRENT' ? 'C' :
-  formValue.addressType === 'PERMANENT' ? 'P' :
-  '';
+        formValue.addressType === 'CURRENT'
+          ? 'C'
+          : formValue.addressType === 'PERMANENT'
+          ? 'P'
+          : '';
 
       let loggedInUser = this.authService.getToken();
       let approvalTypeToSend = formValue.approvalType;
@@ -217,7 +219,10 @@ export class AddressesComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
-          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
+          approvalEntity:
+            formValue.approvalType === 'MANAGER'
+              ? formValue.selectedManager
+              : '',
           referenceCategory: referenceCategory,
           updatedBy: loggedInUser.employeeId,
         };
@@ -264,8 +269,11 @@ export class AddressesComponent {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
-          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
-            referenceCategory: referenceCategory,
+          approvalEntity:
+            formValue.approvalType === 'MANAGER'
+              ? formValue.selectedManager
+              : '',
+          referenceCategory: referenceCategory,
           createdBy: loggedInUser.employeeId,
         };
 
@@ -354,9 +362,11 @@ export class AddressesComponent {
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
       approvalType:
-        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
+        fieldConfig.approvalEntity === 'TM' ||
+        fieldConfig.approvalEntity === 'RM'
           ? 'MANAGER'
           : fieldConfig.approvalType,
+
       selectedEmployee:
         fieldConfig.approvalType === 'EMP'
           ? Number(fieldConfig.approvalAuthority)
@@ -366,10 +376,16 @@ export class AddressesComponent {
           ? fieldConfig.approvalAuthority
           : '',
       selectedManager:
-        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
-          ? fieldConfig.approvalType
+        fieldConfig.approvalEntity === 'TM' ||
+        fieldConfig.approvalEntity === 'RM'
+          ? fieldConfig.approvalEntity
           : '',
-      addressType: fieldConfig.addressType || '',
+      addressType:
+        fieldConfig.referenceCategory === 'C'
+          ? 'CURRENT'
+          : fieldConfig.referenceCategory === 'P'
+          ? 'PERMANENT'
+          : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
@@ -420,6 +436,7 @@ export class AddressesComponent {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
+    this.fieldConfigForm.get('selectedManager')?.clearValidators();
 
     // Set validators based on approval type
     if (approvalType === 'EMP') {
@@ -447,6 +464,24 @@ export class AddressesComponent {
     this.clearApprovalValidators();
     this.isEditMode = false;
     this.selectedFieldConfig = null;
+  }
+
+  getApprovalTypeDisplay(config: any): string {
+    if (config.approvalType === 'ROLE') {
+      return 'ROLE';
+    }
+
+    if (config.approvalType === 'EMP') {
+      if (config.approvalEntity === 'RM') {
+        return 'RM';
+      } else if (config.approvalEntity === 'TM') {
+        return 'TM';
+      } else {
+        return 'N/A';
+      }
+    }
+
+    return 'N/A';
   }
 
   ngOnDestroy(): void {

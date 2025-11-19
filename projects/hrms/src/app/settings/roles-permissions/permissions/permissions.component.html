@@ -2960,7 +2960,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'My Info Personal Tab' || per.fields === 'My Info Job Tab' ||
 
-                            per.fields === 'My Info Documents Tab' || per.fields === 'My Info Team Members Tab' || per.fields === 'My Info Onboard Request Tab'">
+                            per.fields === 'My Info Documents Tab' || per.fields === 'My Info Team Members Tab' || per.fields === 'My Info Onboard Request Tab' || per.fields === 'My Info View History Button'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -3312,8 +3312,8 @@
                             <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Personal Tab' ||
                             per.fields === 'Employee Info Job Tab' || per.fields === 'Employee Info Documents Tab'
 
-                            ||  per.fields === 'Employee Info Team Members Tab' || per.fields === 'Reset Password Button' || per.fields === 'View History Button'||
-                            per.fields === 'Generate Credentials Button' || per.fields === 'Employee Personal Approval History' || per.fields === 'Employee Job Approval History' || per.fields === 'Employee Documents Approval History'">
+                            ||  per.fields === 'Employee Info Team Members Tab' || per.fields === 'Reset Password Button' || per.fields === 'Employee Info View History Button'||
+                            per.fields === 'Generate Credentials Button'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

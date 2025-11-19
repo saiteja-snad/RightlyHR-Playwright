@@ -48,11 +48,7 @@ export class BankInfoComponent {
   @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
   fieldConfigForm!: FormGroup;
   // Static data for the popup fields
-  fieldOptions = [
-    { label: 'Add', value: 'Add' },
-    { label: 'Update', value: 'Update' },
-    { label: 'Delete', value: 'Delete' },
-  ];
+  fieldOptions = [] as any;
   bankInfoFieldsConfigList = [] as any;
   approvalTypeOptions = [
     // { label: 'Employee', value: 'EMP' },
@@ -85,7 +81,7 @@ export class BankInfoComponent {
       selectedManager: [''],
     });
     this.setupFormSubscriptions();
-    // this.getBankInfoFields();
+    this.getBankInfoFields();
     this.getAllEmployeeDetails();
     this.getAllRoles();
     this.getBankInfoFieldsConfigList();
@@ -193,19 +189,20 @@ export class BankInfoComponent {
 
       // MANAGER
       else if (formValue.approvalType === 'MANAGER') {
-        approvalTypeToSend = formValue.selectedManager; // TM / RM
+        approvalTypeToSend = 'EMP'; // TM / RM
         approvalAuthority = ''; // always empty
       }
 
       if (this.isEditMode) {
         // Update operation
         const request = {
-          approvalEntity: this.selectedFieldConfig.approvalEntity, // keep existing
+          columnName: this.selectedFieldConfig.columnName,
           moduleName: this.selectedFieldConfig.moduleName,
           displayName: this.selectedFieldConfig.displayName,
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
         };
 
@@ -234,12 +231,19 @@ export class BankInfoComponent {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
         const request = {
-          approvalEntity: selectedFields[0], // Add / Update / Delete
-          moduleName: 'Bank Info',
-          displayName: 'Personal',
+          columnNames: selectedFields,
+          moduleName:
+            this.fieldOptions.length > 0
+              ? this.fieldOptions[0]?.moduleName
+              : 'Bank Info',
+          displayName:
+            this.fieldOptions.length > 0
+              ? this.fieldOptions[0]?.tabName
+              : 'Personal',
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           createdBy: loggedInUser.employeeId,
         };
 
@@ -324,12 +328,12 @@ export class BankInfoComponent {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
-      fieldNames: [fieldConfig.approvalEntity],
+      fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
       approvalType:
-        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
-          ? 'MANAGER'
-          : fieldConfig.approvalType,
+    fieldConfig.approvalEntity === 'TM' || fieldConfig.approvalEntity === 'RM'
+      ? 'MANAGER'
+      : fieldConfig.approvalType,
       selectedEmployee:
         fieldConfig.approvalType === 'EMP'
           ? Number(fieldConfig.approvalAuthority)
@@ -339,9 +343,9 @@ export class BankInfoComponent {
           ? fieldConfig.approvalAuthority
           : '',
       selectedManager:
-        fieldConfig.approvalType === 'TM' || fieldConfig.approvalType === 'RM'
-          ? fieldConfig.approvalType
-          : '',
+  fieldConfig.approvalEntity === 'TM' || fieldConfig.approvalEntity === 'RM'
+    ? fieldConfig.approvalEntity
+    : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
@@ -406,6 +410,7 @@ export class BankInfoComponent {
     // Clear existing validators
     this.fieldConfigForm.get('selectedEmployee')?.clearValidators();
     this.fieldConfigForm.get('selectedRole')?.clearValidators();
+    this.fieldConfigForm.get('selectedManager')?.clearValidators();
 
     // Set validators based on approval type
     if (approvalType === 'EMP') {
@@ -434,6 +439,24 @@ export class BankInfoComponent {
     this.isEditMode = false;
     this.selectedFieldConfig = null;
   }
+
+    getApprovalTypeDisplay(config: any): string {
+  if (config.approvalType === 'ROLE') {
+    return 'ROLE';
+  }
+
+  if (config.approvalType === 'EMP') {
+    if (config.approvalEntity === 'RM') {
+      return 'RM';
+    } else if (config.approvalEntity === 'TM') {
+      return 'TM';
+    } else {
+      return 'N/A';
+    }
+  }
+
+  return 'N/A';
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

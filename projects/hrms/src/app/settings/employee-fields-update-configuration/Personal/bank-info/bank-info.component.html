@@ -26,7 +26,7 @@
       <tr>
         <td>{{ configItem.columnName || 'N/A' }}</td>
         <td class="text-center">{{ configItem.requiresApproval ? 'Yes' : 'No' }}</td>
-        <td class="text-center">{{ configItem.approvalType || 'N/A' }}</td>
+        <td class="text-center">{{ getApprovalTypeDisplay(configItem) }}</td>
 
         <td class="text-center"
           *ngIf="rbac.allowedToAccess('Bank Info.update') || rbac.allowedToAccess('Bank Info.delete')">
@@ -100,16 +100,10 @@
           </label>
           <!-- Multi-select for create mode -->
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
-             <p-multiSelect class="form-select custom-input"
-    [options]="fieldOptions"
-    optionLabel="label"
-    optionValue="value"
-    optionDisabled="optionDisabled"
-    formControlName="fieldNames"
-    placeholder="{{'Please select field names' | translate}}"
-    [filter]="true">
-</p-multiSelect>
-
+             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
+              optionValue="fieldName"  optionDisabled="optionDisabled" formControlName="fieldNames"
+              placeholder="{{'Please select field names' | translate}}" [filter]="true">
+            </p-multiSelect>
           </div>
           <!-- Read-only input for update mode -->
           <input type="text" class="form-control custom-input" [value]="selectedFieldConfig?.columnName" readonly

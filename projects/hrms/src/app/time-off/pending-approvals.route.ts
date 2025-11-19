@@ -135,8 +135,6 @@ export default [
             },
         ],
     },
-    // probation
-    { path: 'probation-request', component: ProbationPendingApprovalsComponent, data: { permission: 'Probation Details.view' } },
     // Assessment Form
     { path: 'assessmentform', component: AssessmentformComponent, data: { permission: 'Probation Assessment Form.view' } },
     // Seperation
@@ -168,8 +166,15 @@ export default [
             { path: 'for-your-role', component: DeskForYourRoleRequestComponent, data: { permission: 'For Role (Desk Requests).view' } },
         ],
     },
-    // Trainee
-    { path: 'trainee-approvals', component: TraineeApprovalsComponent, data: { permission: 'Trainee Details.view' } },
-    // Time Sheets
+    // onboarding
+    {
+        path: 'on-boarding',
+        children: [
+            // probation
+            { path: 'probation-request', component: ProbationPendingApprovalsComponent, data: { permission: 'Probation Details.view' } },
+            // Trainee
+            { path: 'trainee-approvals', component: TraineeApprovalsComponent, data: { permission: 'Trainee Details.view' } },
+        ]
+    },
     { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
 ] as Route[];

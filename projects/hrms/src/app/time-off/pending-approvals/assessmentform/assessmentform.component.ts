@@ -521,7 +521,7 @@ export class AssessmentformComponent {
 
   close() {
     this.closeModal()
-    this.router.navigate(['/pending-approvals/probation-request']);
+    this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
   }
 
   reset(content: any) {
@@ -638,7 +638,7 @@ export class AssessmentformComponent {
         this.openModalService.openSuccessModal(successMessage);
         setTimeout(() => {
           this.modalService.dismissAll();
-          this.router.navigate(['/pending-approvals/probation-request']);
+          this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
         }, 2000);
       },
       error: (reason: any) => {

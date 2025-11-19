@@ -292,7 +292,12 @@ export const PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS = [
   { route: '/pending-approvals/time-off/extra-hours-request/for-your-role', permission: 'For Role (Extra Hours).view' },
 ]
 
-export const SEPARATION_APPROVALS_TABS = [
+export const ONBOARDING_APPROVALS_TABS = [
+  { route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view' },
+  { route: '/pending-approvals/on-boarding/trainee-approvals', permission: 'Trainee Details Tab.view' },
+]
+
+export const OFFBOARDING_APPROVALS_TABS = [
   { route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view' },
   { route: '/pending-approvals/off-boarding/recall-request', permission: 'Recall Request Tab.view' },
   { route: '/pending-approvals/off-boarding/nodue-request', permission: 'No Due Clearence Requests Tab.view' },

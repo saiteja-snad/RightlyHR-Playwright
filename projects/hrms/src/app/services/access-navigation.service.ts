@@ -74,7 +74,8 @@ import {
   SETTINGS_TIMESHEET_LOCKING_TABS,
   TIMEOFF_APPROVALS_TABS,
   CONTRACT_APPROVALS_TABS,
-  SEPARATION_APPROVALS_TABS
+  OFFBOARDING_APPROVALS_TABS,
+  ONBOARDING_APPROVALS_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -1605,16 +1606,40 @@ export class AccessNavigationService {
           }
         }
         break;
+      
+      case '/pending-approvals/on-boarding':
+        if (this.rbac.allowedToAccess('Onboarding main Tab.view')) {
+          for (const item of ONBOARDING_APPROVALS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Probation Details Tab.view') {
+              if (item.route === '/pending-approvals/on-boarding/probation-request') {
+                return (route = '/pending-approvals/on-boarding/probation-request');
+              }
+            }
 
-      case '/pending-approvals/trainee-approvals':
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Trainee Details Tab.view') {
+              if (item.route === '/pending-approvals/on-boarding/trainee-approvals') {
+                return (route = '/pending-approvals/on-boarding/trainee-approvals');
+              }
+            }
+          }
+        }
+        break;
+      
+      case '/pending-approvals/on-boarding/probation-request':
+        if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
+          return (route = '/pending-approvals/on-boarding/probation-request');
+        }
+        break;
+
+      case '/pending-approvals/on-boarding/trainee-approvals':
         if (this.rbac.allowedToAccess('Trainee Details Tab.view')) {
-          return (route = '/pending-approvals/trainee-approvals');
+          return (route = '/pending-approvals/on-boarding/trainee-approvals');
         }
         break;
 
       case '/pending-approvals/off-boarding':
         if (this.rbac.allowedToAccess('Offboarding main Tab.view')) {
-          for (const item of SEPARATION_APPROVALS_TABS) {
+          for (const item of OFFBOARDING_APPROVALS_TABS) {
             if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Separation Request Tab.view') {
               if (item.route === '/pending-approvals/off-boarding/separation-request') {
                 for (const item of SEPARATION_REQUEST_SUB_TABS) {
@@ -1675,12 +1700,6 @@ export class AccessNavigationService {
               return item.route;
             }
           }
-        }
-        break;
-
-      case '/pending-approvals/probation-request':
-        if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
-          return (route = '/pending-approvals/probation-request');
         }
         break;
 

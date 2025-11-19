@@ -14,10 +14,13 @@ import { IResourceDetail } from '../../timesheetmodel';
 import { TimeoffApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/timeoff-approval-tabs/timeoff-approval-tabs.component";
 import { ContractorApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/contractor-approval-tabs/contractor-approval-tabs.component";
 import { SeparationApprovalTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/separation-approval-tabs/separation-approval-tabs.component";
+import { OnboardingApprovalTabsComponent } from '../../shared/time-off-module-tabs/pending-approvals-tabs/onboarding-approval-tabs/onboarding-approval-tabs.component';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-pending-approvals',
   imports: [RouterModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule, MultiSelectModule, ReactiveFormsModule,
-    DatePicker, TranslateModule, TimeoffApprovalTabsComponent, ContractorApprovalTabsComponent, SeparationApprovalTabsComponent],
+    DatePicker, TranslateModule, TimeoffApprovalTabsComponent, ContractorApprovalTabsComponent, SeparationApprovalTabsComponent,
+    OnboardingApprovalTabsComponent, CommonModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -65,14 +68,20 @@ export class PendingApprovalsComponent implements OnInit {
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/pending-approvals': MODULE_INFOS.TIME_OFF_PENDING_APPROVAL_MODULE_INFO
+      '/pending-approvals/time-off': MODULE_INFOS.PENDING_APPROVALS_TIMEOFF_MODULE_INFO,
+      '/pending-approvals/on-boarding': MODULE_INFOS.PENDING_APPROVALS_ONBOARDING_MODULE_INFO,
+      '/pending-approvals/contractors': MODULE_INFOS.PENDING_APPROVALS_CONTRACTOR_MODULE_INFO,
+      '/pending-approvals/off-boarding': MODULE_INFOS.PENDING_APPROVALS_OFFBOARDING_MODULE_INFO,
+      '/pending-approvals/desk-approval': MODULE_INFOS.PENDING_APPROVALS_DESK_MODULE_INFO,
+      '/pending-approvals/claimsandexpenses-request': MODULE_INFOS.PENDING_APPROVALS_EXPENSES_MODULE_INFO,
+      '/pending-approvals/time-sheets': MODULE_INFOS.PENDING_APPROVALS_TIMESHEET_MODULE_INFO
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   navigate() {
-    this.router.navigate(['/pending-approvals/probation-request']);
+    this.router.navigate(['/pending-approvals/on-boarding/probation-request']);
   }
 
   /** Create form and keep Phase & Resource disabled initially */
@@ -280,6 +289,11 @@ export class PendingApprovalsComponent implements OnInit {
   isExpensesRoute(): boolean {
     const currentUrl = this.router.url;
     return currentUrl.startsWith('/pending-approvals/claimsandexpenses-request');
+  }
+
+  isOnboardingRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/on-boarding');
   }
 
   ngOnDestroy(): void {

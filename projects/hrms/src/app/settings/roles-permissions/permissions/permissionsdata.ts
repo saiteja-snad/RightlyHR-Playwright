@@ -344,6 +344,7 @@ export const permissionsData = [
 
   //Pending Approvals Sub Tabs Section
   { fields: 'Time Off main Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Onboarding main Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contractors main Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Offboarding main Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Off Tab', View: false, Update: false, Create: false, Delete: false },
@@ -623,6 +624,7 @@ export const permissionsData = [
   //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+  
   // { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },

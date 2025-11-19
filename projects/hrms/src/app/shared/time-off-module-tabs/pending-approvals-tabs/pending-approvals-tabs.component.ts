@@ -32,8 +32,7 @@ export class PendingApprovalsTabsComponent {
     this.allowRemoteLogin = this.empinfo.allowRemoteLogin;
     this.navTabs = [
       { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/time-off-icon/leaves-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' } },
-      { label: 'Probation', link: '/pending-approvals/probation-request', icon: '/time-off-icon/Probation-icon.png', permission: { feature: 'Probation Details Tab', action: 'view' } },
-      { label: 'Trainees', link: '/pending-approvals/trainee-approvals', icon: '/time-off-icon/trainee-icon.png', permission: { feature: 'Trainee Details Tab', action: 'view' } },
+      { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/time-off-icon/Probation-icon.png', permission: { feature: 'Onboarding main Tab', action: 'view' } },
       { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/time-off-icon/trainee-icon.png', permission: { feature: 'Contractors main Tab', action: 'view' } },
       { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/time-off-icon/seperation-icon.png', permission: { feature: 'Offboarding main Tab', action: 'view' } },
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' } },

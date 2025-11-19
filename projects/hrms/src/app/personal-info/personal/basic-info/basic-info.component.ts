@@ -342,6 +342,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     // Build payload — only include fields that are NOT pending
     const updatePayload: any = {
       ...this.empyployeedata,
+      updatedby: this.empinfo.employeeId.toString(),
       employeeId: this.empinfo.employeeId,
       selfUpdate: this.isMyInfoRoute,
       moduleName: this.isMyInfoRoute ? 'Basic Info' : undefined,

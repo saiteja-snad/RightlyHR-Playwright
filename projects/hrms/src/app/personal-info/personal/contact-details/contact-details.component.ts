@@ -268,6 +268,7 @@ getFieldsApprovalStatusList: any[] = [];
 
   const updatePayload: any = {
     ...this.employedata,
+    updatedby: this.empinfo.employeeId.toString(),
     selfUpdate: this.isMyInfoRoute,
     moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
     displayName: this.isMyInfoRoute ? 'Personal' : undefined,

@@ -437,6 +437,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Signature Authority',
     'Settings Job Probation Details',
     'Signature Authority',
+    'SkillSet'
   ];
   settingsEmployeePersonalFields = [
     'Salutation',

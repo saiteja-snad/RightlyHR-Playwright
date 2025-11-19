@@ -14,7 +14,7 @@ export class SettingsJobTabsComponent implements OnInit {
   public navLinks: any[] = [];
 
   allNavLinks = [
-    { label: 'Job Role', route: '/settings/employee-fields/job/jobrole' , permission: { feature: 'Job Role', action: 'view' }},
+    { label: 'Job Role', route: '/settings/employee-fields/job/jobrole', permission: { feature: 'Job Role', action: 'view' } },
     { label: 'Job Type', route: '/settings/employee-fields/job/jobtype', permission: { feature: 'Job Type', action: 'view' } },
     { label: 'Probation Status', route: '/settings/employee-fields/job/probationstatus', permission: { feature: 'Probation Status', action: 'view' } },
     { label: 'Background Check Status', route: '/settings/employee-fields/job/backgroundcheck', permission: { feature: 'Background check Status', action: 'view' } },
@@ -34,18 +34,20 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: { feature: 'Pre Onboard Documents', action: 'view' } },
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period', permission: { feature: 'Serving Period', action: 'view' } },
     { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Settings Job Probation Details', action: 'view' } },
-    { label: 'Signature Authority', route: '/settings/employee-fields/job/signature-authority', permission: { feature: 'Signature Authority', action: 'view' }},
-    { label: 'Interview Round', route: '/settings/employee-fields/job/interview-round', permission: { feature: 'Interview Round', action: 'view' }},
+    { label: 'Signature Authority', route: '/settings/employee-fields/job/signature-authority', permission: { feature: 'Signature Authority', action: 'view' } },
+    { label: 'Interview Round', route: '/settings/employee-fields/job/interview-round', permission: { feature: 'Interview Round', action: 'view' } },
     // { label: 'Appointment Details', route: '/settings/employee-fields/job/appointment-details', permission: { feature: 'Signature Authority', action: 'view' }},
-    { label: 'Probation Frequency', route: '/settings/employee-fields/job/probation-frequency', permission: { feature: 'Signature Authority', action: 'view' }},
-    { label: 'Roles and Responsibilities', route: '/settings/employee-fields/job/roles-and-responsibilities', permission: { feature: 'Signature Authority', action: 'view' }},
-    {label: 'Letter Acknowledgement',route: '/settings/employee-fields/job/letter-acknowledgement',permission: { feature: 'Letter Acknowledgment Configuration', action: 'view' }},
+    { label: 'Probation Frequency', route: '/settings/employee-fields/job/probation-frequency', permission: { feature: 'Signature Authority', action: 'view' } },
+    { label: 'Roles and Responsibilities', route: '/settings/employee-fields/job/roles-and-responsibilities', permission: { feature: 'Signature Authority', action: 'view' } },
+    { label: 'Letter Acknowledgement', route: '/settings/employee-fields/job/letter-acknowledgement', permission: { feature: 'Letter Acknowledgment Configuration', action: 'view' } },
+    { label: 'Skill Set', route: '/settings/employee-fields/job/skills', permission: { feature: 'SkillSet', action: 'view' } },
+
   ];
 
   constructor(
     public rbac: RbacService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Step 1: Filter based on access

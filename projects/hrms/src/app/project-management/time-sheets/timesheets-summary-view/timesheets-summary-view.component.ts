@@ -462,31 +462,34 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
     };
 
     // Convert estimated hours to numbers (already numeric strings)
-    const estimatedData = this.estimatedVsActualData.map(
-      (item: any) => Number(item.estimatedHours) || 0
+    const estimatedData = this.estimatedVsActualData?.map(
+      (item: any) => Number(item?.estimatedHours) || 0
     );
     // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map(
-      (item: any) => Number(item.overDue) || 0
+    const overdueData = this.estimatedVsActualData?.map(
+      (item: any) => Number(item?.overDue) || 0
     );
     // Convert "HH:mm" to numeric hours for actualHours
-    const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHoursHHMM.split(':').map(Number);
+    const actualData = this.estimatedVsActualData?.map((item: any) => {
+      const [h, m] = item?.actualHoursHHMM.split(':').map(Number);
       return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
     });
     // Keep original HH:mm format for display
-    const actualDisplay = this.estimatedVsActualData.map(
-      (item: any) => item.actualHoursHHMM   // already HH:MM from backend
+    const actualDisplay = this.estimatedVsActualData?.map(
+      (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
     );
 
-    const estimatedDisplay = this.estimatedVsActualData.map(
-      (item: any) => toHHMM(item.estimatedHours)
+    const estimatedDisplay = this.estimatedVsActualData?.map(
+      (item: any) => toHHMM(item?.estimatedHours)
     );
 
-    const overdueDisplay = this.estimatedVsActualData.map(
-      (item: any) => toHHMM(item.overDue)
+    const overdueDisplay = this.estimatedVsActualData?.map(
+      (item: any) => toHHMM(item?.overDue)
     );
 
+        const fullProjectNames = this.estimatedVsActualData?.map(
+  (item: any) => item?.projectName
+);
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -519,6 +522,10 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
         legend: { display: false },
         tooltip: {
           callbacks: {
+             title: (tooltipItems: any) => {
+            const index = tooltipItems[0].dataIndex;
+            return fullProjectNames[index];  // show real project name
+           },
             label: (context: any) => {
               const idx = context.dataIndex;
 

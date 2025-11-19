@@ -192,12 +192,25 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/dashboard']);
   }
 
+
   navigateMyInfo() {
+    if(this.rbac.allowedToAccess('My Info Personal Approval History.view')){
     this.router.navigate(['/myinfo/approvals/personal']);
+    } else if(this.rbac.allowedToAccess('My Info Job Approval History.view')){
+      this.router.navigate(['/myinfo/approvals/job']);
+    }else if(this.rbac.allowedToAccess('My Info Documents Approval History.view')){
+      this.router.navigate(['/myinfo/approvals/documents']);
+    }
   }
 
   navigatePersonal() {
+     if(this.rbac.allowedToAccess('Employee Personal Approval History.view')){
     this.router.navigate(['/personalinfo/approvals/personal']);
+    } else if(this.rbac.allowedToAccess('Employee Job Approval History.view')){
+      this.router.navigate(['/personalinfo/approvals/job']);
+    }else if(this.rbac.allowedToAccess('Employee Documents Approval History.view')){
+      this.router.navigate(['/personalinfo/approvals/documents']);
+    }
   }
 
   getEmployee() {

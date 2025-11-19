@@ -302,10 +302,12 @@
                         </ng-template>
                     </div>
                     @if(selectedleave && selectedleave.category){
+                    <div class="form-label custom-label">
                     <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
                     @if(selectedleave.category?.noticeperiodAllowedType && selectedleave?.noticePeriodLeaves > 0){
                     <p>Notice Period Allowed Leaves: {{ selectedleave?.category?.noticePeriodAllowedValue }}</p>
                     }
+                    </div>
                     }
                 </div>
                 <div class="custom-modal-footer">

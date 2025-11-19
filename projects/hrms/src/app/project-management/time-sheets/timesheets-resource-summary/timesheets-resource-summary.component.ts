@@ -144,7 +144,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       if (data && (data.startDate || data.endDate || data.employeeId)) {
 
 
-        this.employeeId = data.employeeId ||  this.employeeId
+        this.employeeId = data.employeeId || this.employeeId
         this.startDate = data.startDate;
         this.endDate = data.endDate;
         this.setDefaultmounth();
@@ -418,13 +418,14 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   billableChart(employeeId?: any) {
     this.BillablevsNonBillableHoursLoader = true;
     // Base URL
-    let apiUrl = `ProjectManagementGraph/employee/billable-non-billable/${employeeId}?groupBy=project`;
+    let apiUrl = `ProjectManagementGraph/employee/billable-non-billable/${employeeId}`;
     // Prepare query parameters if BehaviorSubject data exists
     const queryParams: string[] = [];
     const dateRange = this.datepickerForm.get('dateRange')?.value;
     if (dateRange && dateRange[0] && dateRange[1]) {
       const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
       const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
+      queryParams.push(`?groupBy=project`)
       queryParams.push(`startDate=${startDate}`);
       queryParams.push(`endDate=${endDate}`);
     }
@@ -440,26 +441,29 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
           return;
         }
         // Utility to handle both "HH:mm" and decimal string formats
-        const convertToHours = (timeStr: string | number): number => {
-          if (!timeStr) return 0;
-          const str = timeStr.toString();
-          if (str.includes(':')) {
-            const [hours, minutes] = str.split(':').map(Number);
-            return hours + minutes / 60;
-          }
-          return parseFloat(str); // directly convert decimal string to number
-        };
+      
+
+        const convertHHMMToNumber = (hhmm: string): number => {
+          if (!hhmm) return 0;
+          const [h, m] = hhmm.split(':').map(Number);
+          return Number((h + m / 60).toFixed(2));
+        }
+
         // Example usage
         // const chartData = response.data.data;
         const labels = chartData.map((item: any) =>
-          item.projectColor.graphData.code ? item.projectColor.graphData.code : item.name
+          item?.projectColor?.graphData.code ? item?.projectColor.graphData.code : item.name
         );
         const billable = chartData.map((item: any) =>
-          convertToHours(item.billableHours)
+          convertHHMMToNumber(item.billableHoursHHMM)
         );
         const nonBillable = chartData.map((item: any) =>
-          convertToHours(item.nonBillableHours)
+          convertHHMMToNumber(item.nonBillableHoursHHMM)
         );
+
+        const billableDisplay = chartData.map((i: any) => i.billableHoursHHMM);
+        const nonBillableDisplay = chartData.map((i: any) => i.nonBillableHoursHHMM);
+
         // Assign dynamic chart data
         this.billableData = {
           labels: labels,
@@ -498,18 +502,25 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
             },
           },
           plugins: {
-            legend: {
-              display: false,
-            },
             tooltip: {
               callbacks: {
                 label: (context: any) => {
-                  const value = context.parsed.y;
-                  return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
-                },
-              },
-            },
+                  const idx = context.dataIndex;
+
+                  if (context.dataset.label === 'Billable') {
+                    return `Billable: ${billableDisplay[idx]} hrs`;  // <-- HH:MM
+                  }
+
+                  if (context.dataset.label === 'Non-Billable') {
+                    return `Non-Billable: ${nonBillableDisplay[idx]} hrs`; // <-- HH:MM
+                  }
+
+                  return `${context.dataset.label}: ${context.raw} hrs`;
+                }
+              }
+            }
           },
+
           maintainAspectRatio: false,
         };
       },
@@ -724,19 +735,21 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       return;
     // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) =>
-      item.meta.graphData.code ? item.meta.graphData.code : item.projectName
+      item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName
     );
     const color = this.estimatedVsActualData.map((item: any) =>
-      item.meta.graphData.color ? item.meta.graphData.color : '#1A237E'
+      item?.meta?.graphData.color ? item?.meta?.graphData?.color : '#1A237E'
     );
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map(
       (item: any) => Number(item.estimatedHours) || 0
     );
+
+
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHours.split(':').map(Number);
-      return h + m / 60;
+      const [h, m] = item.actualHoursHHMM.split(':').map(Number);
+      return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
     });
     // Keep original HH:mm format for display
     const actualDisplay = this.estimatedVsActualData.map(
@@ -814,6 +827,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        console.log(res);
+
         this.timeAllocatedLoader = false;
         const apiData = res?.data?.projectAllocations || [];
         if (!apiData.length) {

@@ -18,7 +18,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
+export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
   // Project Resource Data variable
   projectResourceSummaryData: any;
   // Department wise Contribution variables
@@ -122,7 +122,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
         error: (err) => {
           this.resourceSummaryLoader = false;
           console.error('Error fetching clients:', err);
-            this.projectResourceSummaryData = [];
+          this.projectResourceSummaryData = [];
         }
       });
     });
@@ -174,6 +174,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
           this.roleWiseHoursOptions = {
             cutout: '60%',
             plugins: { legend: { display: false } },
+
           };
         },
         error: (err) => {
@@ -212,6 +213,10 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
             const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
             const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
+            const actualDisplay = chartData.map(
+              (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+            );
+
             this.estimatedVsActualData = {
               labels: labels,
               datasets: [
@@ -242,6 +247,31 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
                 legend: {
                   display: false,
                 },
+                tooltip: {
+                  callbacks: {
+                    title: (tooltipItems: any) => {
+                      const index = tooltipItems[0].dataIndex;
+                      return labels[index];  // show real project name
+                    },
+                    label: (context: any) => {
+                      const idx = context.dataIndex;
+
+                      if (context.dataset.label === 'Estimated Hours') {
+                        return `Estimated: ${estimatedHours[idx]} hrs`;
+                      }
+
+                      if (context.dataset.label === 'Actual Hours') {
+                        return `Actual: ${actualDisplay[idx]} hrs`;
+                      }
+
+                      if (context.dataset.label === 'Over Due') {
+                        return `Over Due: ${overdueHours[idx]} hrs`;
+                      }
+
+                      return `${context.dataset.label}: ${context.raw}`;
+                    }
+                  }
+                }
               },
               scales: {
                 x: {
@@ -300,6 +330,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
           const labels = apiData.map((item: any) => item.name || 'N/A');
           const billable = apiData.map((item: any) => item.billableHours || 0);
           const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
+          
           // Chart data
           this.billableData = {
             labels,
@@ -548,7 +579,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
     return Array.isArray(data) && data.some(value => value > 0);
   }
 
-    ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
 

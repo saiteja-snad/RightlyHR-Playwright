@@ -381,6 +381,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   const labels = this.projectTypeData.map((item: any) =>
     item.meta?.graphData?.code ? item.meta.graphData.code : item.projectName
   );
+  const backgroundColor=this.projectTypeData.map((item: any) => item.meta?.graphData?.color);
 
   // Convert HH:MM → number (for chart)
   const data = this.projectTypeData.map((item: any) => {
@@ -392,15 +393,11 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   const originalTimesHHMM = this.projectTypeData.map((item: any) => item.hoursHHMM);
 
   // Colors
-  const backgroundColors = [
-    '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
-    '#81C784', '#3F51B5', '#FF8A65', '#BA68C8'
-  ].slice(0, labels.length);
 
   // Legend (outside chart)
   this.projectTypeLabelData = labels.map((label: string, index: number) => ({
     label,
-    color: backgroundColors[index],
+    color: backgroundColor[index],
     hours: originalTimesHHMM[index],  // <-- FIXED (HH:MM)
   }));
 
@@ -411,7 +408,7 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
       {
         label: 'Project Hours (in Hrs)',
         data,
-        backgroundColor: backgroundColors,
+        backgroundColor: backgroundColor,
       },
     ],
   };

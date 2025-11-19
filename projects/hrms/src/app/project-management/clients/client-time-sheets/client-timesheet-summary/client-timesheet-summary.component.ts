@@ -477,6 +477,9 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           const estimatedHours = chartData.map((item: any) => item.allocateHours);
           const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
           const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
+            const actualDisplay = chartData.map(
+              (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+            );
           this.estimatedVsActualData = {
             labels: labels,
             datasets: [

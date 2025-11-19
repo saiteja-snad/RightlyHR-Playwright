@@ -31,10 +31,10 @@ export class PendingApprovalsTabsComponent {
     this.allowedWfh = this.empinfo.allowWFH;
     this.allowRemoteLogin = this.empinfo.allowRemoteLogin;
     this.navTabs = [
-      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/time-off-icon/leaves-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' } },
-      { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/time-off-icon/Probation-icon.png', permission: { feature: 'Onboarding main Tab', action: 'view' } },
-      { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/time-off-icon/trainee-icon.png', permission: { feature: 'Contractors main Tab', action: 'view' } },
-      { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/time-off-icon/seperation-icon.png', permission: { feature: 'Offboarding main Tab', action: 'view' } },
+      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' } },
+      { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/images/onboarding.png', permission: { feature: 'Onboarding main Tab', action: 'view' } },
+      { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/my-info-icons/contractor.png', permission: { feature: 'Contractors main Tab', action: 'view' } },
+      { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' } },
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' } },
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' } },
       { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' } }

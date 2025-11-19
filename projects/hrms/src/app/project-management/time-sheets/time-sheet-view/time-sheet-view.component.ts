@@ -19,6 +19,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { Router } from '@angular/router';
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
@@ -82,7 +83,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
    errorOccurred = false; 
   errormodaldata: any;
     lockMessages: any;
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationsService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {

@@ -433,7 +433,7 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Description<span class="text-danger">*</span></label>
-                        <textarea formControlName="description" [maxlength]="500" class="form-control custom-input"
+                        <textarea formControlName="description" [maxlength]="500" (keydown)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
                             placeholder="Please enter description" rows="5"></textarea>
                         <div class="error-msg" *ngIf="dayForm.get('description')?.touched && dayForm.get('description')?.hasError('required')">
                             Description is required

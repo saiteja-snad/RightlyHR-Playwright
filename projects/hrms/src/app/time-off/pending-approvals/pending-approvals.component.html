@@ -6,11 +6,11 @@
             <div class="component-header">
                 @if (isTimeOffRoute()) {Time Off}
                 @else if (isOnboardingRoute()) {Onboarding}
-                @else if (isContractRoute()) {Contractor}
+                @else if (isContractRoute()) {Contractors}
                 @else if (isOffboardingRoute()) {Offboarding}
-                @else if (isDeskRoute()) {Desk}
+                @else if (isDeskRoute()) {Desks}
                 @else if (isExpensesRoute()) {Expenses}
-                @else if (router.url === '/pending-approvals/time-sheets') {Timesheet}
+                @else if (router.url === '/pending-approvals/time-sheets') {Timesheets}
             </div>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">

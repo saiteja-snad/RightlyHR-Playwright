@@ -408,7 +408,7 @@
         <div class="component-sub-header mb-3">Probation Period</div>
 
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gender">Allow Leaves<span
+          <label class="form-label custom-label mb-2" for="gender">Probation Period Rules Applicable?<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -417,7 +417,7 @@
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('isProbationAllowed')?.invalid && 
           (leavePolicyForm.get('isProbationAllowed')?.touched)">
-            Allow Leaves is required
+            Probation Period Rules Applicable is required
           </div>
         </div>
         <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true">
@@ -436,7 +436,7 @@
         </div>
 
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gender">Maximum Leaves Allowed Per Month<span
+          <label class="form-label custom-label mb-2" for="gender">Leaves Allowed<span
               class="text-danger">*</span></label>
           <input type="number" formControlName="probationDays" class="form-control custom-input"
             id="ProbationPeriodUnits" placeholder="No. of days" autocomplete="off" min="1">
@@ -444,10 +444,10 @@
                                           leavePolicyForm.get('probationDays')?.invalid && 
                                           (leavePolicyForm.get('probationDays')?.touched   )">
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['required']">
-              Maximum Leaves Allowed Per Month is required
+              Leaves Allowed is required
             </span>
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['min']">
-              Maximum Leaves Allowed Per Month must be at least 1
+              Leaves Allowed must be at least 1
             </span>
             <span  *ngIf="leavePolicyForm.get('probationDays')?.errors?.['maxExceeded']">
              Value cannot exceed the Valid Days limit
@@ -458,7 +458,7 @@
         <div class="component-sub-header mb-3">Notice Period</div>
 
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gender">Allow Leaves<span
+          <label class="form-label custom-label mb-2" for="gender">Notice Period Rules Applicable?<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
@@ -467,7 +467,7 @@
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.invalid && 
           (leavePolicyForm.get('noticeperiodAllowedType')?.touched   )">
-            Allow Leaves is required
+            Notice Period Rules Applicable is required
           </div>
         </div>
 
@@ -487,7 +487,7 @@
         </div>
 
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gender">Maximum Leaves Allowed Per Month<span
+          <label class="form-label custom-label mb-2" for="gender">Leaves Allowed<span
               class="text-danger">*</span></label>
           <input type="number" formControlName="noticePeriodAllowedValue" class="form-control custom-input"
             id="NoticePeriodUnits" placeholder="No. of days" autocomplete="off" min="1">
@@ -495,10 +495,10 @@
                                           leavePolicyForm.get('noticePeriodAllowedValue')?.invalid && 
                                           (leavePolicyForm.get('noticePeriodAllowedValue')?.touched   )">
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['required']">
-              Maximum Leaves Allowed Per Month is required
+              Leaves Allowed is required
             </span>
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['min']">
-              Maximum Leaves Allowed Per Month must be at least 1
+              Leaves Allowed must be at least 1
             </span>
             <span  *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['maxExceeded']">
              Value cannot exceed the Valid Days limit

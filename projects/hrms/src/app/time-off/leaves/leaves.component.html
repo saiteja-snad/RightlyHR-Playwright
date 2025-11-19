@@ -287,9 +287,11 @@
                     <div *ngIf="dateDifference && isDayTypeselected">
                         <div *ngIf="dateDifference && isDayTypeselected">
                             <ng-container *ngIf="leaveFormData.isDaytype ? (dateDifference / 2) <= remainingLeaves : dateDifference <= remainingLeaves; else error">
+                                <div class="form-label custom-label">
                                 Booked {{ selectedleave?.category?.name }} : {{ leaveFormData.isDaytype ?
                                 (dateDifference / 2) : dateDifference }} {{ leaveFormData.isDaytype ? (dateDifference / 2) === 1 ||
                                 (dateDifference / 2) === 0.5 ? 'Day' : 'Days' : dateDifference === 1 ? 'Day' : 'Days' }}
+                                </div>
                             </ng-container>
                         </div>
                         <ng-template #error>
@@ -303,10 +305,7 @@
                     </div>
                     @if(selectedleave && selectedleave.category){
                     <div class="form-label custom-label">
-                    <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
-                    @if(selectedleave.category?.noticeperiodAllowedType && selectedleave?.noticePeriodLeaves > 0){
-                    <p>Notice Period Allowed Leaves: {{ selectedleave?.category?.noticePeriodAllowedValue }}</p>
-                    }
+                    <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p>
                     </div>
                     }
                 </div>

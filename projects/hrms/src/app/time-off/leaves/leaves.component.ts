@@ -615,12 +615,7 @@ getTeamManagersDetails() {
     const booked = this.selectedleave?.booked;
     const expired = this.selectedleave.expiryDaysLeaves;
     this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.noticeperiodAllowedType) {
-      const noticePeriodLeavesTaken = this.selectedleave.noticePeriodLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
-      if (noticePeriodLeavesTaken >= 0) {
-        this.remainingLeaves = noticePeriodLeavesTaken;
-      }
-    } else if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
+    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
       const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {
         this.remainingLeaves = probationLeavesTaken;
@@ -1311,6 +1306,22 @@ getTeamManagersDetails() {
     this.isLoading = true;
     if (!this.leaveForm.invalid) {
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
+
+      if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.noticeperiodAllowedType) {
+        const utilized = this.selectedleave?.utilizedDays ?? 0;
+        const booked = this.selectedleave?.booked ?? 0;
+        const allowed = this.selectedleave.noticePeriodLeaves ?? 0;
+
+        const alreadyUsed = utilized + booked;
+        const afterApplying = alreadyUsed + this.dateDiff;
+
+        if (afterApplying > allowed) {
+          this.conformationPopup.openErrorModal(`You are allowed a maximum of ${allowed} leave(s) during the notice period.`);
+          this.isLoading = false;
+          return;
+        }
+      }
+
       let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       this.leaveFormData.status = "Waiting for Approval";
       this.leaveFormData.requestType = "TimeOff";

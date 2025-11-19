@@ -201,7 +201,7 @@ export class ProjectViewComponent implements OnInit {
   }
 
   getAllresourcesData() {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=true`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.resourcesData = res?.data?.map((x: any) => x.employee) ?? []; // Extract "data" array
       },

@@ -78,6 +78,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
    @ViewChild('errormodal') errormodal!: TemplateRef<any>;
+   @ViewChild('addtask') addtask!: TemplateRef<any>;
    errorOccurred = false; 
   errormodaldata: any;
     lockMessages: any;
@@ -359,7 +360,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }],
       endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }],
       duration: durationControl,
-      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
+      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable },[Validators.required]],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
       isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
@@ -888,7 +889,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private isDeleteModalOpen = false;
   private userClickedNo = false;
   private isModalOpen = false;
-  private autoSaveTimeout: any = null;
+  private autoSaveTimeouts = new Map<string, any>();
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -917,7 +918,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //TIME ENTERIY FOR TABLE
-  formatTime(event: any, dayName: string, rowIndex: number, duration: string) {
+  formatTime(event: any, dayName: string, rowIndex: number, duration: string,dayFormNew: AbstractControl | null) {
+    // project.get('sun')
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
@@ -933,16 +935,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
     // Auto-save only on blur to prevent duplicate calls
     if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
-      // Clear any existing timeout
-      if (this.autoSaveTimeout) {
-        clearTimeout(this.autoSaveTimeout);
+      const timeoutKey = `${rowIndex}-${dayName}`;
+      // Clear any existing timeout for this specific field
+      if (this.autoSaveTimeouts.has(timeoutKey)) {
+        clearTimeout(this.autoSaveTimeouts.get(timeoutKey));
       }
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         // Add small delay to prevent rapid successive calls
-        this.autoSaveTimeout = setTimeout(() => {
-          this.autoSaveTableEntry(rowIndex, dayName);
+        const timeout = setTimeout(() => {
+          this.openModal(this.addtask,dayFormNew,rowIndex,dayName);
+          // this.autoSaveTableEntry(rowIndex, dayName,dayFormNew);
+          // this.autoSaveTimeouts.delete(timeoutKey);
         }, 300);
+        this.autoSaveTimeouts.set(timeoutKey, timeout);
       }
     }
     // Reset userClickedNo flag after processing
@@ -952,63 +958,67 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //AUTO SAVE TABLE ENTRY
-  autoSaveTableEntry(rowIndex: number, dayName: string) {
-    const projectForm = this.projects.at(rowIndex);
-    const dayForm = projectForm.get(dayName) as FormGroup;
-    if (!dayForm || !dayForm.get('duration')?.value) return;
-    const formValue = dayForm.value;
-    const projectValue = projectForm.value;
-    // Get the correct date based on dayName
-    const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
-    const entryDate = this.weekDates && this.weekDates[dayIndex]
-      ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
-      : moment().format('YYYY-MM-DD');
-    // Determine billable status
-    const selectedResource = this.resourcesArrayList.find(
-      (res: any) => res.project?.projectId === formValue.projectId &&
-        res.client?.clientId === formValue.clientId &&
-        res.phase?.phaseId === formValue.phaseId
-    );
-    const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
-    const payload = {
-      entryId: formValue.entryId || null,
-      employeeId: this.employeeId || null,
-      entryDate: entryDate,
-      startTime: formValue.startTime || null,
-      endTime: formValue.endTime || null,
-      description: formValue.description || null,
-      approvalStatus: 'draft',
-      clientId: projectValue.selectedProject?.clientId || null,
-      projectId: projectValue.selectedProject?.projectId || null,
-      phaseId: projectValue.selectedProject?.phaseId || null,
-      timesheetId: this.timesheetdata?.timesheetId || null,
-      isOverride: formValue.isBlocked || false,
-      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: isBillable,
-       moduleId: 30,
-    };
-    this.http.postdata('Timesheet/save-or-update', payload).subscribe({
-      next: (res) => {
-        this.conformationPopup.openSuccessModal('Time Entry Draft successfully');
-        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-      },
-      error: (err) => {
-        console.error('Auto-save failed', err);
-        // this.conformationPopup.openErrorModal(err.error.message);
-        this.errormodaldata = err.error.message;
-        const modalRef = this.modalService.open(this.errormodal, { centered: true });
-        // Auto close the error modal after 3 seconds
-        setTimeout(() => {
-          modalRef.close();
-        }, 3000);
-        this.errorOccurred = true;
-        dayForm.reset();
-        // this.conformationPopup.openErrorModal(err.error.message);
-        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-      },
-    });
-  }
+  // autoSaveTableEntry(rowIndex: number, dayName: string,dayFormNew: AbstractControl | null) {
+  //   const projectForm = this.projects.at(rowIndex);
+  //   const dayForm = projectForm.get(dayName) as FormGroup;
+  //   if (!dayForm || !dayForm.get('duration')?.value) return;
+  //   const formValue = dayForm.value;
+  //   const projectValue = projectForm.value;
+  //   // Get the correct date based on dayName
+  //   const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
+  //   const entryDate = this.weekDates && this.weekDates[dayIndex]
+  //     ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
+  //     : moment().format('YYYY-MM-DD');
+  //   // Determine billable status
+  //   const selectedResource = this.resourcesArrayList.find(
+  //     (res: any) => res.project?.projectId === formValue.projectId &&
+  //       res.client?.clientId === formValue.clientId &&
+  //       res.phase?.phaseId === formValue.phaseId
+  //   );
+  //   const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
+  //   const payload = {
+  //     entryId: formValue.entryId || null,
+  //     employeeId: this.employeeId || null,
+  //     entryDate: entryDate,
+  //     startTime: formValue.startTime || null,
+  //     endTime: formValue.endTime || null,
+  //     description: formValue.description || null,
+  //     approvalStatus: 'draft',
+  //     clientId: projectValue.selectedProject?.clientId || null,
+  //     projectId: projectValue.selectedProject?.projectId || null,
+  //     phaseId: projectValue.selectedProject?.phaseId || null,
+  //     timesheetId: this.timesheetdata?.timesheetId || null,
+  //     isOverride: formValue.isBlocked || false,
+  //     totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+  //     isBillable: isBillable,
+  //      moduleId: 30,
+  //   };
+  //   this.http.postdata('Timesheet/save-or-update', payload).subscribe({
+  //     next: (res) => {
+  //       this.conformationPopup.openSuccessModal('Time Entry Draft successfully');
+  //       this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+  //         setTimeout(() => {
+        
+  //       }, 3000);
+  //       // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+      
+  //     },
+  //     error: (err) => {
+  //       console.error('Auto-save failed', err);
+  //       // this.conformationPopup.openErrorModal(err.error.message);
+  //       this.errormodaldata = err.error.message;
+  //       const modalRef = this.modalService.open(this.errormodal, { centered: true });
+  //       // Auto close the error modal after 3 seconds
+  //       setTimeout(() => {
+  //         modalRef.close();
+  //       }, 3000);
+  //       this.errorOccurred = true;
+  //       dayForm.reset();
+  //       // this.conformationPopup.openErrorModal(err.error.message);
+  //       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+  //     },
+  //   });
+  // }
 
   //TIME FORMAT FOR MODAL
   formatModalTime(event: any) {
@@ -1738,12 +1748,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const duration = form.get('duration')?.value;
-    return !!duration; // Only checks duration now
+    const { description, duration,  } = form.value;
+    return !!(description && duration );
   }
-
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
     const status = control?.getRawValue()?.approvalStatus;

@@ -221,14 +221,14 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   get hasprojectWiseHoursData(): boolean {
     return !!(
       this.projectTypeGraphData?.datasets?.length &&
-      this.projectTypeGraphData.datasets[0]?.data?.length
+      this.projectTypeGraphData?.datasets[0]?.data?.length
     );
   }
 
   get hasallocatedvsactualData(): boolean {
     return !!(
       this.estimatedVsActualGraphData?.datasets?.length &&
-      this.estimatedVsActualGraphData.datasets[0]?.data?.length
+      this.estimatedVsActualGraphData?.datasets[0]?.data?.length
     );
   }
 
@@ -375,16 +375,16 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   // Project Type (Pie)
   projectWiseChart() {
-    if (!this.projectTypeData || this.projectTypeData.length === 0) return;
+    if (!this.projectTypeData || this.projectTypeData?.length === 0) return;
     // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item.projectName);
+    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item?.projectName);
     // Convert "HH:mm" string → numeric hours for plotting
     const data = this.projectTypeData.map((item: any) => {
       const [hours, minutes] = item.hours.split(':').map(Number);
       return hours + minutes / 60;
     });
     // Keep original HH:mm values for display
-    const originalTimes = this.projectTypeData.map((item: any) => item.hours);
+    const originalTimes = this.projectTypeData.map((item: any) => item?.hours);
     // Chart colors
     const backgroundColors = [
       '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
@@ -416,13 +416,13 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
           bodyFont: { size: 10 },
           callbacks: {
             title: (tooltipItems: any) => {
-              const index = tooltipItems[0].dataIndex;
-              const name = this.projectTypeData[index].projectName;
+              const index = tooltipItems[0]?.dataIndex;
+              const name = this.projectTypeData[index]?.projectName;
               // Wrap long names (max 20 chars per line)
               return name.match(/.{1,20}/g);
             },
             label: (tooltipItem: any) => {
-              const value = Number(tooltipItem.raw).toFixed(2);
+              const value = Number(tooltipItem?.raw).toFixed(2);
               return `Project Hours (in Hrs): ${value}`;
             }
           }
@@ -433,20 +433,20 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
+    if (!this.estimatedVsActualData || this.estimatedVsActualData?.length === 0) return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.meta.graphData.code ? item.meta.graphData.code : item.projectName);
+    const labels = this.estimatedVsActualData.map((item: any) => item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName);
     // Convert estimated hours to numbers (already numeric strings)
-    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
+    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item?.estimatedHours) || 0);
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHours.split(':').map(Number);
+      const [h, m] = item?.actualHours.split(':').map(Number);
       const actualDecimal = h + (m / 60);   // convert HH:mm → decimal
-      const overdue = Number(item.overDue || 0);  // overdue already decimal
+      const overdue = Number(item?.overDue || 0);  // overdue already decimal
       return actualDecimal - overdue;   // REMOVE overdue from actual
     });
     // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
+    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item?.overDue) || 0);
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -472,33 +472,42 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       ]
     };
     // Chart options
-    this.estimatedVsActualGraphOptions = {
+   this.estimatedVsActualGraphOptions = {
       responsive: true,
       barThickness: 30,
       scales: {
         x: {
           stacked: false,
           grid: { display: false, },
-          ticks: { color: '#141414', font: { size: 11 } },
+          ticks: { color: '#141414' },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
-          ticks: { color: '#72777B', font: { size: 11 } },
+          title: { display: true, text: 'Hours', color: '#505050',  },
+          ticks: { color: '#72777B', },
         },
       },
       plugins: {
         legend: { display: false },
         tooltip: {
+          titleFont: { size: 11 },
+          bodyFont: { size: 10 },
           callbacks: {
             title: (tooltipItems: any) => {
-              const index = tooltipItems[0].dataIndex;
-              return this.estimatedVsActualData[index].projectName;
+              if (!tooltipItems || !tooltipItems?.length) return '';
+              const ti = tooltipItems[0];
+              let index = ti.dataIndex;
+              if (index === undefined || index === null) {
+                const label = ti.label ?? ti.title ?? '';
+                index = this.estimatedVsActualGraphData?.labels?.indexOf(label);
+              }
+              const project = (typeof index === 'number' && index >= 0) ? this.estimatedVsActualData?.[index]?.projectName : (ti.label ?? '');
+              return project || '';
             },
             label: (tooltipItem: any) => {
-              const datasetLabel = tooltipItem.dataset.label || '';
-              const value = tooltipItem.raw;
+              const datasetLabel = tooltipItem?.dataset?.label || '';
+              const value = tooltipItem?.raw;
               return `${datasetLabel}: ${value}`;
             }
           }

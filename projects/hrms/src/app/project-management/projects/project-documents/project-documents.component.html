@@ -14,8 +14,8 @@
                         <!-- <th>File Name</th> -->
                         <th>Attachment</th>
                         <th class="text-center">Download</th>
-                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents
-                        Tab.delete')) && inactiveStatus !== 'inactive' ){
+                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
+                        && inactiveStatus !== 'inactive' ){
                         <th class="text-center">{{"Action" | translate}}</th>
                         }
                     </thead>
@@ -112,9 +112,8 @@
                         <label for="documentType" class="form-label custom-label mb-2">Document Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
-                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
-                                formControlName="documentType" placeholder="Please select project type"
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true" optionLabel="value"
+                                optionValue="value" formControlName="documentType" placeholder="Please select project type"
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -127,8 +126,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
                                 class="text-danger">*</span></label>
-                        <input type="file" id="documentAttachment"
-                            accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
+                        <input type="file" id="documentAttachment" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                             (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
                         <div class="custom-file-name text-wrap">{{ displayClientAttachment}}</div>
                         <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
@@ -139,10 +137,8 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateDocumentForm.invalid || spinnerLoader ">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid || spinnerLoader ">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

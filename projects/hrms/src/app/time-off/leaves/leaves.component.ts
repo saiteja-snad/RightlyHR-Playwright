@@ -477,9 +477,7 @@ getTeamManagersDetails() {
   }
 
   getAvailableLeaves(item: any): number {
-    if (item.category?.noticeperiodAllowedType && item.noticePeriodLeaves > 0) {
-      return item.noticePeriodLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
-    } else if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
+    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
       return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0); 
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);

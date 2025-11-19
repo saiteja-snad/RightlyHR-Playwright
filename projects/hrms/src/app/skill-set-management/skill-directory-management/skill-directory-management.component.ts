@@ -73,7 +73,7 @@ export class SkillDirectoryManagementComponent {
   empinfo: any = {};
   categoryList: any
   selectedSkills: string[] = [];
-  selectedDepartment:string[] = [];
+  selectedDepartment: string[] = [];
   EmpStatus = [
     { label: 'All Status', value: 'All Status' },
     { label: 'Committed', value: 'Committed' },
@@ -308,7 +308,7 @@ export class SkillDirectoryManagementComponent {
     if (this.selectedSkills?.length > 0) {
       params.skillSearch = this.selectedSkills.join(',');
     }
-    if(this.selectedDepartment?.length > 0){
+    if (this.selectedDepartment?.length > 0) {
       params.departmentSearch = this.selectedDepartment.join(',');
     }
     if (this.searchQuery?.trim()) {
@@ -367,29 +367,18 @@ export class SkillDirectoryManagementComponent {
       }
     });
   }
- getDepartments() {
-  this.loader = true;
-  this.subscription = this.http.getData(`Department`).subscribe({
-    next: (response: any) => {
-      console.log( response);
-      const deptList = response?.data;
-      if (Array.isArray(deptList)) {
-        this.departmentOptions = deptList.map((department: any) => ({
-          label: department.departmentName,
-          value: department.departmentName   
+
+  getDepartments() {
+    this.subscription = this.http.getData("Department").subscribe({
+      next: (res: any) => {
+        const list = Array.isArray(res) ? res : res?.data ?? res?.result ?? [];
+        this.departmentOptions = list.map((d: any) => ({
+          label: d.departmentName,
+          value: d.departmentName
         }));
-      } else {
-        this.departmentOptions = [];
       }
-      console.log(this.departmentOptions);
-      this.loader = false;
-    },
-    error: (reason: any) => {
-      console.error('Error fetching departments:', reason);
-      this.loader = false;
-    }
-  });
-}
+    });
+  }
 
   getCategory() {
     const params = {
@@ -415,7 +404,7 @@ export class SkillDirectoryManagementComponent {
     const skillSearch = this.selectedSkills?.length ? this.selectedSkills.join(',') : '';
     const fromDate = this.monthStartDate ? this.monthStartDate.toISOString() : '';
     const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';
-    const departmentSearch = this.selectedDepartment ?.length ? this.selectedDepartment.join(',') :'';
+    const departmentSearch = this.selectedDepartment?.length ? this.selectedDepartment.join(',') : '';
     this.http.downloadEmployeeSkillsReport('EmployeeSkills/exportEmployeeSkillSet',
       isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch).subscribe({
         next: (response: any) => {

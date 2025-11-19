@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
@@ -22,7 +22,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
   encapsulation: ViewEncapsulation.None
 })
 
-export class MySkillsComponent {
+export class MySkillsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   AddForm!: FormGroup;
   isremove: boolean = false;
@@ -111,28 +111,105 @@ export class MySkillsComponent {
     this.modalService.open(this.Confirmation, { centered: true });
   }
 
+  // getSkills(): void {
+  //   const params = {
+  //     employeeId: this.empinfo.employeeId,
+  //     isActive: true
+  //   };
+  //   this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).pipe(takeUntil(this.destroy$),
+  //     map((res: any) => {
+  //       if (res?.data?.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
+  //         return res.data.items[0].skills || [];
+  //       }
+  //       return [];
+  //     })
+  //   ).subscribe({
+  //     next: (skills: any[]) => {
+  //       this.technicalSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('technical') && s.isActive);
+  //       this.softSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('soft') && s.isActive);
+  //     },
+  //     error: (err) => {
+  //       console.error(' Error fetching skills:', err);
+  //     }
+  //   });
+  // }
+
+  private categoryIcons: Record<string, string> = {
+    "Technical Skill": "/icons/technical-skills-icon.png",
+    "Soft Skill": "/icons/soft-skills-icon.png",
+    "Leadership Skills": "/icons/leadership-skills.png",
+    "Functional Skill": "/icons/functional-skills.png"
+  };
+
+  private fallbackIconPool: string[] = [
+    "/icons/intelligence.png",
+    "/icons/logical-thinking.png",
+    "/icons/technique.png"
+  ];
+
+  private usedFallbackIcons = new Set<string>();
+
+  skillCategories: any[] = [];
   getSkills(): void {
     const params = {
       employeeId: this.empinfo.employeeId,
       isActive: true
     };
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).pipe(takeUntil(this.destroy$),
-      map((res: any) => {
-        if (res?.data?.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
-          return res.data.items[0].skills || [];
-        }
-        return [];
-      })
-    ).subscribe({
-      next: (skills: any[]) => {
-        this.technicalSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('technical') && s.isActive);
-        this.softSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('soft') && s.isActive);
-      },
-      error: (err) => {
-        console.error(' Error fetching skills:', err);
-      }
-    });
+
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params)
+      .pipe(
+        takeUntil(this.destroy$),
+        map((res: any) => {
+          if (res?.data?.items && res.data.items.length > 0) {
+            return res.data.items[0].skills || [];
+          }
+          return [];
+        })
+      )
+      .subscribe({
+        next: (skills: any[]) => {
+          const activeSkills = skills.filter(s => s.isActive);
+
+          const grouped: any = {};
+
+          activeSkills.forEach(skill => {
+            const category = skill.skillCategory?.trim();
+            if (!grouped[category]) grouped[category] = [];
+            grouped[category].push(skill);
+          });
+
+          this.skillCategories = Object.keys(grouped).map(category => ({
+            category,
+            icon: this.getCategoryIcon(category),
+            skills: grouped[category]
+          }));
+
+
+          console.log("Grouped Skills by Category:", this.skillCategories);
+        },
+        error: (err) => console.error("Error fetching skills:", err)
+      });
   }
+
+  private getCategoryIcon(category: string): string {
+    if (this.categoryIcons[category]) {
+      return this.categoryIcons[category];
+    }
+
+    const availableIcon = this.fallbackIconPool.find(
+      icon => !this.usedFallbackIcons.has(icon)
+    );
+
+    const finalIcon =
+      availableIcon || this.fallbackIconPool[this.fallbackIconPool.length - 1];
+
+    this.categoryIcons[category] = finalIcon;
+
+    this.usedFallbackIcons.add(finalIcon);
+
+    return finalIcon;
+  }
+
 
   getCategory() {
     const params = {
@@ -229,12 +306,18 @@ export class MySkillsComponent {
         modal.close();
         this.conformationPopup.openSuccessModal('Skill removed successfully');
         // Remove only after success
-        this.technicalSkills = this.technicalSkills.filter(
-          (s: any) => s.skillId !== this.selectedSkill.skillId
-        );
-        this.softSkills = this.softSkills.filter(
-          (s: any) => s.skillId !== this.selectedSkill.skillId
-        );
+        // this.technicalSkills = this.technicalSkills.filter(
+        //   (s: any) => s.skillId !== this.selectedSkill.skillId
+        // );
+        // this.softSkills = this.softSkills.filter(
+        //   (s: any) => s.skillId !== this.selectedSkill.skillId
+        // );
+        this.skillCategories = this.skillCategories
+          .map(group => ({
+            ...group,
+            skills: group.skills.filter((s: any) => s.skillId !== this.selectedSkill.skillId)
+          }))
+          .filter(group => group.skills.length > 0);
       },
       error: (err: any) => {
         this.spinnerLoader = false;
@@ -253,16 +336,22 @@ export class MySkillsComponent {
 
   addSkill(event: any): void {
     const input = event.target as HTMLInputElement;
-    const value = input.value.trim();
-    const control = this.AddForm.get('skills');
+    let value = input.value.trim();
+
     if (value) {
+      value = this.toSmartCase(value);
+
+      const control = this.AddForm.get('skills');
       const skills = control?.value || [];
+
       if (!skills.includes(value)) {
         skills.push(value);
         control?.setValue(skills);
       }
+
       control?.setErrors(null);
     }
+
     this.typedSkill = '';
     input.value = "";
     event.preventDefault();
@@ -274,47 +363,85 @@ export class MySkillsComponent {
     this.AddForm.get('skills')?.setValue(updatedSkills);
     this.AddForm.get('skills')?.updateValueAndValidity();
     const control = this.AddForm.get('skills');
-    control?.markAsTouched(); 
+    control?.markAsTouched();
     control?.updateValueAndValidity();
   }
 
- onSkillBlur(): void {
-  const control = this.AddForm.get('skills');
-  const skills = control?.value || [];
+  onSkillBlur(): void {
+    const control = this.AddForm.get('skills');
+    const skills = control?.value || [];
 
-  if (this.typedSkill.length > 0) {
-    control?.setErrors({ pendingSkill: true });
-  } 
-  else {
-    if (skills.length === 0) {
-      control?.setErrors({ required: true });
-    } else {
-      control?.setErrors(null);
+    if (this.typedSkill.length > 0) {
+      control?.setErrors({ pendingSkill: true });
     }
-  }
+    else {
+      if (skills.length === 0) {
+        control?.setErrors({ required: true });
+      } else {
+        control?.setErrors(null);
+      }
+    }
 
-  control?.markAsTouched();
-}
+    control?.markAsTouched();
+  }
 
   getSkillsByLevel(level: string, skills: any[]) {
     return skills.filter(skill => skill.proficiencyLevel === level);
   }
 
- onSkillInput(event: any): void {
-  this.typedSkill = event.target.value.trim();
-  const control = this.AddForm.get('skills');
-  const skills = control?.value || [];
-  if (this.typedSkill.length > 0) {
-    control?.setErrors({ pendingSkill: true });
-  } 
-  else {
-    if (skills.length === 0) {
-      control?.setErrors({ required: true });
-    } else {
-      control?.setErrors(null);
+  onSkillInput(event: any): void {
+    this.typedSkill = event.target.value.trim();
+    const control = this.AddForm.get('skills');
+    const skills = control?.value || [];
+    if (this.typedSkill.length > 0) {
+      control?.setErrors({ pendingSkill: true });
     }
+    else {
+      if (skills.length === 0) {
+        control?.setErrors({ required: true });
+      } else {
+        control?.setErrors(null);
+      }
+    }
+    control?.markAsTouched();
   }
-  control?.markAsTouched();
-}
+
+  private toSmartCase(value: string): string {
+    return value
+      .split(' ')
+      .filter(word => word.trim().length > 0)
+      .map(word => {
+        // Preserve fully uppercase tech names (SQL, HTML, CSS, etc.)
+        if (/^[A-Z0-9]+$/.test(word)) {
+          return word; // keep as is (SQL, HTML)
+        }
+
+        // Preserve words starting with special characters (.NET, C#, C++)
+        if (/^[^a-zA-Z0-9]/.test(word)) {
+          return word.charAt(0) + this.capitalize(word.slice(1));
+        }
+
+        // Preserve mixed-case acronyms (Node.js, Vue.js)
+        if (word.includes('.')) {
+          return word
+            .split('.')
+            .map(w => this.capitalize(w))
+            .join('.');
+        }
+
+        return this.capitalize(word);
+      })
+      .join(' ');
+  }
+
+  private capitalize(word: string): string {
+    if (!word.length) return word;
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
 }

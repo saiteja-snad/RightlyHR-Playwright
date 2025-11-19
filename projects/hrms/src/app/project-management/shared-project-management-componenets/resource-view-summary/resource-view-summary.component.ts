@@ -191,9 +191,9 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
         this.submittedPercent = (this.submitted / total) * 100;
         this.rejectedPercent = (this.rejected / total) * 100;
         // Convert back for display labels (HH:mm)
-        this.displayApproved = this.formatHoursToHHMM(this.approved);
-        this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
-        this.displayRejected = this.formatHoursToHHMM(this.rejected);
+        this.displayApproved = tsSummary?.approvedHoursHHMM;
+        this.displaySubmitted = tsSummary?.waitingForApprovalHHMM;
+        this.displayRejected = tsSummary?.rejectedHoursHHMM;
         // Colors (use whatever palette you prefer)
         this.approvedColor = '#00A912';   // green
         this.submittedColor = '#FFC107';  // blue

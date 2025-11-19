@@ -49,13 +49,27 @@
         {{'Archive'|translate}}
       </button>
 
-      @if(rbac.allowedToAccess('My Info View History Button.view') && isActive('/myinfo')){
-      <button class="custom-btn btn-primary" (click)="navigateMyInfo()">{{'View History'|translate}}</button>
+      @if (
+      rbac.allowedToAccess('My Info View History Button.view')
+      && hasMyInfoHistoryAccess()
+      && isActive('/myinfo')
+      ){
+      <button class="custom-btn btn-primary" (click)="navigateMyInfo()">
+        {{ 'View History' | translate }}
+      </button>
       }
 
-      @if(rbac.allowedToAccess('Employee Info View History Button.view') && isActive('/personalinfo')){
-      <button class="custom-btn btn-primary" (click)="navigatePersonal()">{{'View History'|translate}}</button>
+
+      @if (
+      rbac.allowedToAccess('Employee Info View History Button.view')
+      && hasEmployeeHistoryAccess()
+      && isActive('/personalinfo')
+      ){
+      <button class="custom-btn btn-primary" (click)="navigatePersonal()">
+        {{ 'View History' | translate }}
+      </button>
       }
+
       <!-- <div *ngIf=""> -->
       <!-- @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
              || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && getOfferDetails?.letterType?.toLowerCase() === 'offer letter' && emppersonalinfo.empType !== 'Contract')

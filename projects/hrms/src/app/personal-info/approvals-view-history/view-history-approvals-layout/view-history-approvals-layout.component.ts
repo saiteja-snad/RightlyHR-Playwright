@@ -15,12 +15,28 @@ import { RbacService } from '../../../services/rbac.service';
 export class ViewHistoryApprovalsLayoutComponent {
   navTabsViewHistory: any[] = [];
 
+  permissionKeys = {
+  myinfo: {
+    personal: 'My Info Personal Approval History.view',
+    job: 'My Info Job Approval History.view',
+    documents: 'My Info Documents Approval History.view'
+  },
+  personalinfo: {
+    personal: 'Employee Personal Approval History.view',
+    job: 'Employee Job Approval History.view',
+    documents: 'Employee Documents Approval History.view'
+  }
+};
+
   constructor(public router: Router, public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.setBasePath();
     this.viewHistoryTabItems();
   }
+
+
+
 
   basePath = '/myinfo';
 
@@ -34,34 +50,27 @@ export class ViewHistoryApprovalsLayoutComponent {
   }
 
   viewHistoryTabItems() {
-    this.navTabsViewHistory = [
-      {
-        label: 'Personal',
-        link: `${this.basePath}/approvals/personal`,
-        permission: {
-          feature: 'My Info Personal Approval History',
-          action: 'view',
-        },
-      },
-      {
-        label: 'Job',
-        link: `${this.basePath}/approvals/job`,
-        permission: { feature: 'My Info Job Approval History', action: 'view' },
-      },
-      {
-        label: 'Documents',
-        link: `${this.basePath}/approvals/documents`,
-        permission: {
-          feature: 'My Info Documents Approval History',
-          action: 'view',
-        },
-      },
-    ].filter((tab) =>
-      this.rbac.allowedToAccess(
-        `${tab.permission.feature}.${tab.permission.action}`
-      )
-    );
-  }
+  const key = this.basePath === '/personalinfo' ? 'personalinfo' : 'myinfo';
+
+  this.navTabsViewHistory = [
+    {
+      label: 'Personal',
+      link: `${this.basePath}/approvals/personal`,
+      permission: this.permissionKeys[key].personal
+    },
+    {
+      label: 'Job',
+      link: `${this.basePath}/approvals/job`,
+      permission: this.permissionKeys[key].job
+    },
+    {
+      label: 'Documents',
+      link: `${this.basePath}/approvals/documents`,
+      permission: this.permissionKeys[key].documents
+    }
+  ].filter(tab => this.rbac.allowedToAccess(tab.permission));
+}
+
 
   isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;

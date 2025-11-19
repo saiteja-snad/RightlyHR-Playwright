@@ -192,25 +192,46 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/dashboard']);
   }
 
-
   navigateMyInfo() {
-    if(this.rbac.allowedToAccess('My Info Personal Approval History.view')){
-    this.router.navigate(['/myinfo/approvals/personal']);
-    } else if(this.rbac.allowedToAccess('My Info Job Approval History.view')){
+    if (this.rbac.allowedToAccess('My Info Personal Approval History.view')) {
+      this.router.navigate(['/myinfo/approvals/personal']);
+    } else if (this.rbac.allowedToAccess('My Info Job Approval History.view')) {
       this.router.navigate(['/myinfo/approvals/job']);
-    }else if(this.rbac.allowedToAccess('My Info Documents Approval History.view')){
+    } else if (
+      this.rbac.allowedToAccess('My Info Documents Approval History.view')
+    ) {
       this.router.navigate(['/myinfo/approvals/documents']);
     }
   }
 
   navigatePersonal() {
-     if(this.rbac.allowedToAccess('Employee Personal Approval History.view')){
-    this.router.navigate(['/personalinfo/approvals/personal']);
-    } else if(this.rbac.allowedToAccess('Employee Job Approval History.view')){
+    if (this.rbac.allowedToAccess('Employee Personal Approval History.view')) {
+      this.router.navigate(['/personalinfo/approvals/personal']);
+    } else if (
+      this.rbac.allowedToAccess('Employee Job Approval History.view')
+    ) {
       this.router.navigate(['/personalinfo/approvals/job']);
-    }else if(this.rbac.allowedToAccess('Employee Documents Approval History.view')){
+    } else if (
+      this.rbac.allowedToAccess('Employee Documents Approval History.view')
+    ) {
       this.router.navigate(['/personalinfo/approvals/documents']);
     }
+  }
+
+  hasMyInfoHistoryAccess(): boolean {
+    return (
+      this.rbac.allowedToAccess('My Info Personal Approval History.view') ||
+      this.rbac.allowedToAccess('My Info Job Approval History.view') ||
+      this.rbac.allowedToAccess('My Info Documents Approval History.view')
+    );
+  }
+
+  hasEmployeeHistoryAccess(): boolean {
+    return (
+      this.rbac.allowedToAccess('Employee Personal Approval History.view') ||
+      this.rbac.allowedToAccess('Employee Job Approval History.view') ||
+      this.rbac.allowedToAccess('Employee Documents Approval History.view')
+    );
   }
 
   getEmployee() {
@@ -781,9 +802,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'separation-details': 'Separation Request',
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
-    'contactor-info': "Contractor Info",
-    'project-info': "Assigned Projects",
-    'cards': 'Cards',
+    'contactor-info': 'Contractor Info',
+    'project-info': 'Assigned Projects',
+    cards: 'Cards',
 
     // Documents
     'general-documents': 'Documents',
@@ -878,9 +899,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
 
       // My Info Approvals
-      '/myinfo/approvals/personal': MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
-      '/myinfo/approvals/job': MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
-      '/myinfo/approvals/documents': MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/personal':
+        MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/job':
+        MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/documents':
+        MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
 
       // Personal Info perosnal
       '/personalinfo/personal/basic-info':
@@ -933,7 +957,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/trainee-onboarding-requests':
         MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
       '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-      '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/personalinfo/job/contactor-info':
+        MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
       // Personal Info documents
@@ -942,9 +967,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
 
       // Personal Info Approvals
-      '/personalinfo/approvals/personal': MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
-      '/personalinfo/approvals/job': MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
-      '/personalinfo/approvals/documents': MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/personal':
+        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/job':
+        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/documents':
+        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)

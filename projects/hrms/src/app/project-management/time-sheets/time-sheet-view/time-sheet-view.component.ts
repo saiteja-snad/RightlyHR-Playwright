@@ -1606,9 +1606,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.spinnerLoader = false;
         this.conformationPopup.openErrorModal(err.error.message);
-        console.error('Error saving entry', err);
-        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        // console.error('Error saving entry', err);
+        // this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });
   }

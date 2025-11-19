@@ -777,8 +777,9 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
   get hasbillableData(): boolean {
     const datasets = this.billableData?.datasets;
     if (!datasets?.length) return false;
-    const data = datasets[0]?.data;
-    return Array.isArray(data) && data.some(value => value > 0);
+    return datasets.some((ds: { data: number[] }) =>
+      Array.isArray(ds.data) && ds.data.some(value => Number(value) > 0)
+    );
   }
 
   get hasburndownData(): boolean {

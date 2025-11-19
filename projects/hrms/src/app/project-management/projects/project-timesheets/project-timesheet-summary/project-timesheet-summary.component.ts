@@ -18,7 +18,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
+export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
   // Project Resource Data variable
   projectResourceSummaryData: any;
   // Department wise Contribution variables
@@ -122,7 +122,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
         error: (err) => {
           this.resourceSummaryLoader = false;
           console.error('Error fetching clients:', err);
-            this.projectResourceSummaryData = [];
+          this.projectResourceSummaryData = [];
         }
       });
     });
@@ -537,8 +537,9 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
   get hasbillableData(): boolean {
     const datasets = this.billableData?.datasets;
     if (!datasets?.length) return false;
-    const data = datasets[0]?.data;
-    return Array.isArray(data) && data.some(value => value > 0);
+    return datasets.some((ds: { data: number[] }) =>
+      Array.isArray(ds.data) && ds.data.some(value => Number(value) > 0)
+    );
   }
 
   get hasburndownData(): boolean {
@@ -548,9 +549,8 @@ export class ProjectTimesheetSummaryComponent implements OnInit ,OnDestroy {
     return Array.isArray(data) && data.some(value => value > 0);
   }
 
-    ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
-
   }
 }

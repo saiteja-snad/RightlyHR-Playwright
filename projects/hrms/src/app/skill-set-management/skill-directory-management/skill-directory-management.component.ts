@@ -74,6 +74,7 @@ export class SkillDirectoryManagementComponent {
   categoryList: any
   selectedSkills: string[] = [];
   selectedDepartment: string[] = [];
+  selectedProjects: string[] = [];
   EmpStatus = [
     { label: 'All Status', value: 'All Status' },
     { label: 'Committed', value: 'Committed' },
@@ -83,6 +84,7 @@ export class SkillDirectoryManagementComponent {
   displayLabel!: string;
   multiSkillOptions: any[] = [];
   departmentOptions: any[] = [];
+  projectOptions: any[] = [];
   isloading: boolean = false;
   componentname: string = '';
   moduleinfo: string = '';
@@ -118,6 +120,7 @@ export class SkillDirectoryManagementComponent {
     this.getEmployeeSkills();
     this.getMultiskills()
     this.getDepartments()
+    this.getProjects();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.navTabs = [
@@ -309,7 +312,10 @@ export class SkillDirectoryManagementComponent {
       params.skillSearch = this.selectedSkills.join(',');
     }
     if (this.selectedDepartment?.length > 0) {
-      params.departmentSearch = this.selectedDepartment.join(',');
+      params.departmentNames = this.selectedDepartment.join(',');
+    }
+    if (this.selectedProjects?.length > 0) {
+      params.projectNames = this.selectedProjects.join(',');
     }
     if (this.searchQuery?.trim()) {
       params.searchQuery = this.searchQuery.trim();
@@ -380,6 +386,18 @@ export class SkillDirectoryManagementComponent {
     });
   }
 
+  getProjects() {
+    this.subscription = this.http.getData("Project").subscribe({
+      next: (res: any) => {
+        const list = Array.isArray(res) ? res : res?.data ?? res?.result ?? [];
+        this.projectOptions = list.map((d: any) => ({
+          label: d.projectName,
+          value: d.projectName
+        }));
+      }
+    });
+  }
+
   getCategory() {
     const params = {
       entity: "employee",
@@ -404,9 +422,11 @@ export class SkillDirectoryManagementComponent {
     const skillSearch = this.selectedSkills?.length ? this.selectedSkills.join(',') : '';
     const fromDate = this.monthStartDate ? this.monthStartDate.toISOString() : '';
     const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';
-    const departmentSearch = this.selectedDepartment?.length ? this.selectedDepartment.join(',') : '';
+    const departmentNames = this.selectedDepartment?.length ? this.selectedDepartment.join(',') : '';
+    const projectNames = this.selectedProjects?.length ? this.selectedProjects.join(',') : '';
+
     this.http.downloadEmployeeSkillsReport('EmployeeSkills/exportEmployeeSkillSet',
-      isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch).subscribe({
+      isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch, departmentNames, projectNames).subscribe({
         next: (response: any) => {
           const blob = new Blob([response], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -573,8 +593,8 @@ export class SkillDirectoryManagementComponent {
   clearAllFilters(): void {
     const isFilterApplied =
       (this.selectedStatus && this.selectedStatus !== 'All Status') ||
-      (this.selectedSkills && this.selectedSkills.length > 0) ||
-      (this.resourceSearchQuery && this.resourceSearchQuery.trim() !== '') ||
+      (this.selectedSkills && this.selectedSkills.length > 0) || (this.selectedProjects && this.selectedProjects.length > 0) ||
+      (this.resourceSearchQuery && this.resourceSearchQuery.trim() !== '') || (this.selectedDepartment && this.selectedDepartment.length > 0) ||
       (this.searchQuery && this.searchQuery.trim() !== '') ||
       (this.displayLabel && this.displayLabel.trim() !== '') ||
       (this.date && this.date.length > 0);
@@ -584,6 +604,8 @@ export class SkillDirectoryManagementComponent {
       this.resourceSearchQuery = '';
       this.searchQuery = '';
       this.displayLabel = '';
+      this.selectedDepartment = [];
+      this.selectedProjects = [];
       this.date = [];
       this.page = 1;
       this.first = 0;
@@ -593,6 +615,8 @@ export class SkillDirectoryManagementComponent {
       this.selectedSkills = [];
       this.resourceSearchQuery = '';
       this.searchQuery = '';
+      this.selectedDepartment = [];
+      this.selectedProjects = [];
       this.displayLabel = '';
       this.date = [];
       this.page = 1;
@@ -605,6 +629,8 @@ export class SkillDirectoryManagementComponent {
     return (
       (this.selectedStatus && this.selectedStatus !== 'All Status') ||
       (this.selectedSkills && this.selectedSkills.length > 0) ||
+      (this.selectedDepartment && this.selectedDepartment.length > 0) ||
+      (this.selectedProjects && this.selectedProjects.length > 0) ||
       (this.resourceSearchQuery && this.resourceSearchQuery.trim() !== '') ||
       (this.searchQuery && this.searchQuery.trim() !== '') ||
       (this.displayLabel && this.displayLabel.trim() !== '') ||

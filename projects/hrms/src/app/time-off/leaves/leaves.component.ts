@@ -1306,22 +1306,6 @@ getTeamManagersDetails() {
     this.isLoading = true;
     if (!this.leaveForm.invalid) {
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
-
-      if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.noticeperiodAllowedType) {
-        const utilized = this.selectedleave?.utilizedDays ?? 0;
-        const booked = this.selectedleave?.booked ?? 0;
-        const allowed = this.selectedleave.noticePeriodLeaves ?? 0;
-
-        const alreadyUsed = utilized + booked;
-        const afterApplying = alreadyUsed + this.dateDiff;
-
-        if (afterApplying > allowed) {
-          this.conformationPopup.openErrorModal(`You are allowed a maximum of ${allowed} leave(s) during the notice period.`);
-          this.isLoading = false;
-          return;
-        }
-      }
-
       let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       this.leaveFormData.status = "Waiting for Approval";
       this.leaveFormData.requestType = "TimeOff";

@@ -441,13 +441,13 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
           return;
         }
         // Utility to handle both "HH:mm" and decimal string formats
-      
+
 
         const convertHHMMToNumber = (hhmm: string): number => {
           if (!hhmm) return 0;
           const [h, m] = hhmm.split(':').map(Number);
           return Number((h + m / 60).toFixed(2));
-        }
+        };
 
         // Example usage
         // const chartData = response.data.data;
@@ -507,11 +507,11 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
                 label: (context: any) => {
                   const idx = context.dataIndex;
 
-                  if (context.dataset.label === 'Billable') {
+                  if (context.dataset.label === 'Billable Hours') {
                     return `Billable: ${billableDisplay[idx]} hrs`;  // <-- HH:MM
                   }
 
-                  if (context.dataset.label === 'Non-Billable') {
+                  if (context.dataset.label === 'Non-Billable Hours') {
                     return `Non-Billable: ${nonBillableDisplay[idx]} hrs`; // <-- HH:MM
                   }
 
@@ -674,7 +674,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
+    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}&isGraph=${true}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;

@@ -740,12 +740,24 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const color = this.estimatedVsActualData.map((item: any) =>
       item?.meta?.graphData.color ? item?.meta?.graphData?.color : '#1A237E'
     );
+    const toHHMM = (value: string | number): string => {
+      if (!value) return "0:00";
+
+      const num = Number(value);
+      const hours = Math.floor(num);
+      const minutes = Math.round((num - hours) * 60);
+
+      return `${hours}:${minutes.toString().padStart(2, '0')}`;
+    };
+
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map(
       (item: any) => Number(item.estimatedHours) || 0
     );
-
-
+    // Convert overdue (may come as string)
+    const overdueData = this.estimatedVsActualData.map(
+      (item: any) => Number(item.overDue) || 0
+    );
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
       const [h, m] = item.actualHoursHHMM.split(':').map(Number);
@@ -753,12 +765,17 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     });
     // Keep original HH:mm format for display
     const actualDisplay = this.estimatedVsActualData.map(
-      (item: any) => (item.actualHours - item.overDueHours)
+      (item: any) => item.actualHoursHHMM   // already HH:MM from backend
     );
-    // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map(
-      (item: any) => Number(item.overDue) || 0
+
+    const estimatedDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item.estimatedHours)
     );
+
+    const overdueDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item.overDue)
+    );
+
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -788,9 +805,30 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       responsive: true,
       barThickness: 30,
       plugins: {
-        legend: {
-          display: false,
-        },
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const idx = context.dataIndex;
+
+              if (context.dataset.label === 'Estimated Hours') {
+                return `Estimated: ${estimatedDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Actual Hours') {
+                return `Actual: ${actualDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Over Due') {
+                return `Over Due: ${overdueDisplay[idx]} hrs`;
+              }
+
+              return `${context.dataset.label}: ${context.raw}`;
+            }
+          }
+        }
+
+
       },
       scales: {
         x: {

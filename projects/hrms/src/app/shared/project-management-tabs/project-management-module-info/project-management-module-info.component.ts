@@ -29,7 +29,10 @@ export class ProjectManagementModuleInfoComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourceDataids = {} as any;
   clientColor: any;
-
+projectsDetails :any;
+projectname:any;
+projectColor:any;
+projectId:any;
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -37,9 +40,14 @@ export class ProjectManagementModuleInfoComponent {
     this.initiateUpdateModuleInfo();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     const clientProjectId = localStorage.getItem('clientProjectId');
+    const projectProjectId = localStorage.getItem('projectProjectId');
     if (clientProjectId) {
       this.getClientsData(clientProjectId);
       this.clientID = clientProjectId;
+    }
+    if (projectProjectId) {
+      this.getProjects(projectProjectId)
+      this.projectId = projectProjectId;
     }
     this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
       const currentUrl = this.router.url.split('?')[0];
@@ -79,6 +87,19 @@ export class ProjectManagementModuleInfoComponent {
         this.clients = {};
         console.error('Error fetching clients:', err);
       }
+    });
+  }
+  getProjects(projectId: any) {
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDetails = res?.data ?? [];
+          this.projectname= this.projectsDetails[0]?.projectName;
+            this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectname = [];
+      },
     });
   }
 

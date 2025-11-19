@@ -76,9 +76,8 @@ import {
   CARDS_SUB_TABS,
   SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS,
   SETTINGS_TIMESHEET_LOCKING_TABS,
-
-  MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES
-
+  MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES,
+  EMPLOYEINFO_REQUEST_SUB_TABS,
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -576,6 +575,21 @@ export class AccessNavigationService {
                 '/time-off/pending-approvals/claimsandexpenses-request'
               ) {
                 for (const item of EXPENSES_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+              if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'EmployeeInfo Tab.view'
+            ) {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/employeeinfo-request'
+              ) {
+                for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -1749,6 +1763,21 @@ export class AccessNavigationService {
             }
             if (
               this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'EmployeeInfo Tab.view'
+            ) {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/employeeinfo-request'
+              ) {
+                for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
               item.permission === 'Desk Requests Tab.view'
             ) {
               if (item.route === '/time-off/pending-approvals/desk-approval') {
@@ -1919,6 +1948,15 @@ export class AccessNavigationService {
           }
         }
         break;
+         case '/time-off/pending-approvals/employeeinfo-request':
+        if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
+          for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
 
       case '/time-off/pending-approvals/claimsandexpenses-request':
         if (this.rbac.allowedToAccess('Claims and Expenses Tab.view')) {
@@ -1929,6 +1967,15 @@ export class AccessNavigationService {
           }
         }
         break;
+  //  case '/time-off/pending-approvals/employeeinfo-request':
+  //       if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
+  //         for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
+  //           if (this.rbac.allowedToAccess(item.permission)) {
+  //             return item.route;
+  //           }
+  //         }
+  //       }
+  //       break;
 
       case '/time-off/pending-approvals/trainee-approvals':
         if (this.rbac.allowedToAccess('Trainee Details Tab.view')) {

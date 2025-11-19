@@ -755,6 +755,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Probation Details Tab',
     'Contractor Details Tab',
     'Contract-Conversion Tab',
+    'EmployeeInfo Tab'
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
@@ -786,6 +787,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'For You (Claims and Expenses)',
     'For Role (Claims and Expenses)',
   ];
+  pendingApprovalEmployeinfoSubTabs = [
+  'For You (Employee Info)',
+  'For Role (Employee Info)',
+];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',
     'For Role (Desk Requests)',
@@ -1817,7 +1822,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isonlyempinfofunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Create') {
+      return true;
+    }
+    if (action === 'Update' || action === 'View' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+ isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'Create') {
       return true;
     }

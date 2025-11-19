@@ -4,8 +4,9 @@ export interface SummaryCard {
   value: number | string;
   subtext?: string;
   subtextClass?: string;
-   icons?: string; 
-     key: string;
+  icons?: string;
+  key: string;
+  popover?: string;
 }
 
 // Skill Summary Totals
@@ -47,7 +48,7 @@ export interface SkillProficiencyCounts {
 export interface TopSkill {
   skillName: string;
   employeeCount: number;
-   colorCode?: string;
+  colorCode?: string;
 }
 
 // Skill summary for table or skill count chart
@@ -63,7 +64,7 @@ export interface ChartDataset {
   data: number[];
   backgroundColor: string[];
   barThickness?: number;
-  borderRadius?:number
+  borderRadius?: number
 }
 
 // Chart data wrapper
@@ -83,8 +84,8 @@ export interface EmployeeSkill {
   proficiencyLevel: string;
   profileImage?: string;
   imageUrl?: string;
-  projectStatus:string;
-  jobRole?:string;
-  
+  projectStatus: string;
+  jobRole?: string;
+
 }
 

@@ -11,14 +11,27 @@
 
     <div class="d-flex align-items-center gap-3">
       <!-- Status Filter -->
-      <button type="button" *ngIf="isAnyFilterApplied()" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
+      <button type="button" *ngIf="isAnyFilterApplied()" class="clear-all-btn" (click)="clearAllFilters()">Clear
+        All</button>
 
       <!-- Skills Multi select -->
       <div class="custom-p-multiSelect-content">
         <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
           selectedItemsLabel="{3} items selected" [maxSelectedLabels]="3" resetFilterOnHide="true" optionLabel="label"
-          optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()"/>
+          optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()" />
       </div>
+      <div class="custom-p-multiSelect-content">
+        <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
+          placeholder="Please Select Department" selectedItemsLabel="{3} items selected" [maxSelectedLabels]="3"
+          resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
+          (onChange)="onSkillSelectionChange()"/>
+      </div>
+      <div class="custom-p-multiSelect-content">
+        <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Project"
+          selectedItemsLabel="{3} items selected" [maxSelectedLabels]="3" resetFilterOnHide="true" optionLabel="label"
+          optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()" />
+      </div>
+
 
       <!-- Date Range -->
       <!-- <div class="custom-date-range-picker me-2">
@@ -30,8 +43,8 @@
       <!-- Export Button -->
       <div>
         <button type="button" class="custom-btn btn-primary px-4" (click)="submitExport()"
-          [disabled]="spinnerLoaderforallrecoders || MySkills.length === 0">
-          @if (spinnerLoaderforallrecoders) {
+          [disabled]="spinnerLoaderforallrecodersforbutton || MySkills.length === 0">
+          @if (spinnerLoaderforallrecodersforbutton) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           } @else {
           <span>Export</span>
@@ -47,9 +60,9 @@
     </div>
 
     <div class="skill-set-dashboard-container">
-      @if(chartLoader){
+      <!-- @if(chartLoader){ -->
       <!--Summary cards-->
-      <div class="cards-grid-container mb-3">
+      <!-- <div class="cards-grid-container mb-3">
         <div *ngFor="let card of summaryCards" class="summary-card">
           <div>
             <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
@@ -64,7 +77,7 @@
       </div>
       }@else {
       <p-skeleton height="11rem" />
-      }
+      } -->
       <div class="w-100">
         <!-- Search -->
         <div class="input-group custom-search mb-3">
@@ -155,7 +168,7 @@
 <!-- Employee Details Modal -->
 <ng-template #employeeDetailOffcanvas let-offcanvas>
   <div class="custom-offcanvas-skill">
-    <div class="d-flex justify-content-end w-100 pt-2 px-2" >
+    <div class="d-flex justify-content-end w-100 pt-2 px-2">
       <a (click)="close(offcanvas)">
         <img src="icons/close.png" alt="Close Icon" class="close-icon">
       </a>

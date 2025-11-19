@@ -45,7 +45,17 @@
                         <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
                     </div>
                     <div>
-                        <div class="summary-title mb-1">{{ card.title }}</div>
+                        <div class="summary-title mb-1 d-flex align-items-center gap-1">
+                            <div>{{ card.title }}</div>
+                            <!-- INFO ICON -->
+                            <div class="module-info-content">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="card.popover"
+                                    class="module-icon" />
+                                <ng-template #popoverTemplate let-text="text">
+                                    <div class="module-info-text">{{text}}</div>
+                                </ng-template>
+                            </div>
+                        </div>
                         <div class="summary-value">
                             <u class="view-link"><a (click)="openEnd2(contentResourceList, card)">{{card.value}}</a></u>
                         </div>
@@ -57,8 +67,6 @@
             }
 
             <!--Charts content-->
-
-
             <div class="row">
                 <!-- Top Skiils Chart -->
                 <div class="col-xl-7 col-lg-6 mb-3">
@@ -66,7 +74,7 @@
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Top 5 Trending skills</div>
 
-                            <div>
+                            <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="topTrendingContent"
                                     class="module-icon" />
                                 <ng-template #topTrendingContent>
@@ -134,7 +142,7 @@
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Department Wise Skills</div>
-                            <div>
+                            <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="departmentWiseContent"
                                     class="module-icon" />
                                 <ng-template #departmentWiseContent>
@@ -173,7 +181,7 @@
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Skill Overview</div>
-                            <div>
+                            <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="skillOverviewContent"
                                     class="module-icon" />
                                 <ng-template #skillOverviewContent>
@@ -346,7 +354,7 @@
             </div>
 
             <div class="profile-info w-100">
-                <div class="name">
+                <div class="name" (click)="openModal(contentEmployeeInfodetails, emp)">
                     {{ emp.employeeName }} - ({{ emp.fusionEmployeeId }})
                 </div>
                 <div class="d-flex justify-content-between flex-wrap w-100">
@@ -359,6 +367,128 @@
 
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center custom-no-data-found text-muted py-3">
             <app-no-data-found />
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #contentEmployeeInfodetails let-modal ngbAutofocus>
+    <div class="custom-main-popup-container resources-list-model" ngbAutofocus>
+        <div class="custom-main-popup-content">
+            <div class="cross-btn d-flex justify-content-end">
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+            <div class="d-flex  flex-column">
+                <div class="profile-content-details">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <!-- Profile Image -->
+                            <ng-container *ngIf="imageUrl; else defaultIcon">
+                                <img [src]="imageUrl" alt="Profile Image" class="profile-image" />
+                            </ng-container>
+
+                            <ng-template #defaultIcon>
+                                <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'"></app-profile-icon>
+                            </ng-template>
+                        </div>
+                        <div>
+                            <!-- Name and ID -->
+                            <p class="name mt-2 mb-1"> Mounika </p>
+
+                            <!-- Designation -->
+                            <p class="designation mb-2">Front End Developer - SDA</p>
+
+                            <!-- Status -->
+                            <div class="status-badge">• Commited Until March 31,2026</div>
+                        </div>
+                    </div>
+                    <div class="popup-header-border my-3"></div>
+
+                    <!-- Tabs -->
+                    <div class="custom-skill-set-tabs">
+                        <p-tabs value="0" [lazy]="false">
+                            <p-tablist>
+                                <p-tab value="0">Skills</p-tab>
+                                <p-tab value="1">Projects</p-tab>
+                            </p-tablist>
+                            <!-- Skills -->
+                            <p-tabpanel value="0">
+                                <div class="skills-container custom-offcanvas-content pt-3 pe-2">
+                                    <!-- @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) { -->
+                                    <!-- Technical Skills -->
+                                    <!-- @if (selectedEmployee?.techSkills?.length) { -->
+                                    <div class="skills-group mb-4" *ngIf="selectedEmployee?.techSkills?.length">
+                                        <div class="section-title d-flex align-items-center mb-2"><img
+                                                src="/icons/technical-skills-icon.png" alt="Skills-icon"
+                                                class="skill-icon me-1">Technical Skills</div>
+                                        <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
+                                            <div *ngIf="getSkillsByLevel(level, selectedEmployee.techSkills).length"
+                                                class="mb-3">
+                                                <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level
+                                                    }}</p>
+                                                <div class="skill-set-display-card">
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <p-chip
+                                                            *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.techSkills)"
+                                                            [label]="skill.skillName"
+                                                            [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                                                        </p-chip>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    <!-- } -->
+                                    <div class="popup-header-border my-3"></div>
+
+                                    <!-- Soft Skills -->
+                                    <!-- @if (selectedEmployee?.softSkills?.length) { -->
+                                    <div class="skills-group">
+                                        <p class="section-title d-flex align-items-center mb-2"><img
+                                                src="/icons/soft-skills-icon.png" alt="Skills-icon"
+                                                class="skill-icon me-1">Soft Skills</p>
+                                        <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
+                                            <div *ngIf="getSkillsByLevel(level, selectedEmployee.softSkills).length"
+                                                class="mb-3">
+                                                <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level
+                                                    }}</p>
+                                                <div class="skill-set-display-card">
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <p-chip
+                                                            *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.softSkills)"
+                                                            [label]="skill.skillName"
+                                                            [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                                                        </p-chip>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    <!-- }
+                                    } @else {
+                                    <app-no-data-found />
+                                    } -->
+                                </div>
+                            </p-tabpanel>
+
+                            <!-- Projects -->
+                            <p-tabpanel value="1">
+                                <div class="projects-container custom-offcanvas-content pt-3 pe-2">
+                                    <!-- @if (selectedEmployee?.projects?.length) { -->
+                                    <div class="project-card mb-3">
+                                        <p class="project-name mb-1">SNAD Project</p>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <p class="project-role mb-0">Project Role</p>
+                                        </div>
+                                    </div>
+                                    <!-- } @else {
+                                    <app-no-data-found />
+                                    } -->
+                                </div>
+                            </p-tabpanel>
+                        </p-tabs>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </ng-template>

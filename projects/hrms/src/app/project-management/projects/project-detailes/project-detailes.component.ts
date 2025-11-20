@@ -29,6 +29,7 @@ export class ProjectDetailesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.getProjects(projectId);
         console.log("Project ID:", projectId);
+         //  localStorage.setItem('projectProjectId', projectId.toString());
       }
     });
   }

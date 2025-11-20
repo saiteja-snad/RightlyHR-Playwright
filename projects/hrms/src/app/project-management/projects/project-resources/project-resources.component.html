@@ -18,7 +18,7 @@
                 <div class="custom-table-content">
                     <table class="w-100">
                         <thead>
-                            <th>Employee ID</th>
+                            <!-- <th>Employee ID</th> -->
                             <th>Name</th>
                             <th class="text-center">Phases / Milestones</th>
                             <th class="text-center">Role</th>
@@ -35,7 +35,7 @@
                         <tbody>
                             <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                                 <tr *ngFor="let data of resourcesData">
-                                    <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
+                                    <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
                                     <td>{{ data?.employee?.name || '-' }}</td>
                                     <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
                                     <td class="text-center">{{ data?.role || '-' }}</td>

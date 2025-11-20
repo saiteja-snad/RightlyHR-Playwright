@@ -452,7 +452,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
+      localStorage.setItem('projectProjectId', projectId.toString());
     this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
+    
   }
 
   isActive(route: string): boolean {

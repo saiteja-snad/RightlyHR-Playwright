@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
@@ -14,14 +14,15 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
+import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 
 
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton, TooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
-  encapsulation: ViewEncapsulation.None,
 })
 export class ContactDetailsComponent implements OnInit, OnDestroy {
 
@@ -49,6 +50,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   isMyInfoRoute = false;
   fieldOptions = [] as any;                    // From approval fields API
 getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
+
 
 
    selectedworkcoutrycode = signal<any>('');
@@ -137,6 +140,10 @@ getFieldsApprovalStatusList: any[] = [];
       pendingItem?.message || 'This field change request is awaiting approval.'
     );
   }
+
+    setActiveMessage(fieldName: string) {
+  this.activeMessage = this.getPendingApprovalMessage(fieldName);
+}
 
   // Add this method
   isFieldDisabledDueToPending(fieldName: string): boolean {

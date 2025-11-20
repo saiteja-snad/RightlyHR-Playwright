@@ -4,7 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validator
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IRelation } from '../../../Interfaces/personal-modal';
 import { Select } from 'primeng/select';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
@@ -16,13 +16,13 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
+import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule,Skeleton, TooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule,Skeleton, TooltipModule, NgbPopoverModule,ModuleInformationComponent],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss',
-  encapsulation: ViewEncapsulation.None,
 })
 export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
@@ -54,6 +54,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   isMyInfoRoute = false;
   fieldOptions: any[] = [];
 getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
+
 
   constructor(private modalService: NgbModal,
     private fb: FormBuilder, public formValidation: FormValidationService,
@@ -93,6 +95,10 @@ getPendingApprovalMessage(fieldName: string): string {
     (item: any) => item.fieldName === fieldName && item.approvalStatus === 'Pending'
   );
   return item?.message || 'This field change request is awaiting approval.';
+}
+
+  setActiveMessage(fieldName: string) {
+  this.activeMessage = this.getPendingApprovalMessage(fieldName);
 }
 
 // Fetch approval fields for Emergency Contact

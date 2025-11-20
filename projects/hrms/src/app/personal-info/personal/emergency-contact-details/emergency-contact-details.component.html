@@ -30,7 +30,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>@if(isFieldPendingApproval('Primary Name')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Primary Name')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Name')"></i>
   }</label>
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
@@ -43,7 +44,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Primary Email Id')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Primary Email Id')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Email Id')"></i>
   }</label>
           <input type="email" class="form-control custom-input" id="contact1Email" formControlName="contact1Email"
             placeholder="Please enter email">
@@ -58,7 +60,8 @@
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Primary Phone Number')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Primary Phone Number')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Phone Number')"></i>
   }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -92,7 +95,8 @@
           <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Primary Relationship')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Primary Relationship')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Relationship')"></i>
   }</label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact1Relationship"
@@ -120,7 +124,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Name')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Secondary Name')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Name')"></i>
   }</label>
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
@@ -133,7 +138,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Secondary Email Id')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Secondary Email Id')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Email Id')"></i>
   }</label>
           <input type="email" class="form-control custom-input" id="contact2Email" formControlName="contact2Email"
             placeholder="Please enter email">
@@ -148,7 +154,8 @@
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Phone Number')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Secondary Phone Number')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Phone Number')"></i>
   }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -182,7 +189,8 @@
           <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Relationship')) {
     <i class="bi bi-info-circle-fill info-pending"
-       [pTooltip]="getPendingApprovalMessage('Secondary Relationship')" tooltipPosition="top"></i>
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Relationship')"></i>
   }</label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact2Relationship"
@@ -234,4 +242,12 @@
     </form>
   </div>
 }
+</div>
+
+
+
+<div class="employee-label-info">
+  <ng-template #pendingPopover>
+    <div class="module-info-text">{{activeMessage}}</div>
+  </ng-template>
 </div>

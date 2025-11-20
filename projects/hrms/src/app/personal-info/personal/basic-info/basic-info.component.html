@@ -53,8 +53,9 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Salutation')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('Salutation')" tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Salutation')"
+              popoverClass="pending-popover"></i>
             }</label>
           <div class="custom-p-select-content">
             <p-select [options]="titledetails" optionLabel="titlename" placeholder="Please select salutation"
@@ -72,8 +73,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="firstName" class="form-label custom-label mb-2">First Name<span
               class="text-danger">*</span>@if(isFieldPendingApproval('First Name')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('First Name')" tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="my-info-popover"
+               (click)="setActiveMessage('First Name')"></i>
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="firstName"
             formControlName="firstName" placeholder="Please enter first name"
@@ -87,8 +88,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="middleName" class="form-label custom-label mb-2">Middle Name@if(isFieldPendingApproval('Middle
             Name')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('Middle Name')" tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Middle Name')"></i>
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="middleName"
             formControlName="middleName" placeholder="Please enter middle name"
@@ -98,8 +99,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="lastName" class="form-label custom-label mb-2">Last Name<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Last Name')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('Last Name')" tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Last Name')"></i>
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="lastName"
             formControlName="lastName" placeholder="Please enter last name"
@@ -113,8 +114,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="gender" class="form-label custom-label mb-2">Gender<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Gender')) {
-            <i class="bi bi-info-circle-fill info-pending" [pTooltip]="getPendingApprovalMessage('Gender')"
-              tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Gender')"></i>
             }</label>
           <div class="custom-p-select-content">
             <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName"
@@ -129,8 +130,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="dob" class="form-label custom-label mb-2">Date Of Birth<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Date of Birth')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('Date of Birth')" tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Date of Birth')"></i>
             }</label>
           <input type="date" class="form-control custom-input" id="dob" formControlName="dob"
             onkeypress="return false" />
@@ -144,10 +145,9 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group@if(isFieldPendingApproval('Blood
-            Group')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('Blood Group')" tooltipPosition="top"></i>
+          <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group@if(isFieldPendingApproval('Blood Group')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('BloodGroup')"></i>
             }
           </label>
           <div class="custom-p-select-content">
@@ -163,8 +163,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Marital Status')) {
-            <i class="bi bi-info-circle-fill info-pending"
-              [pTooltip]="getPendingApprovalMessage('Marital Status')" tooltipPosition="top"></i>
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Marital Status')"></i>
             }</label>
           <div class="custom-p-select-content">
             <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" (onChange)="changemaritalstatus()"
@@ -211,3 +211,12 @@
   </div>
   }
 </div>
+
+
+<div class="employee-label-info">
+  <ng-template #pendingPopover>
+    <div class="module-info-text">{{activeMessage}}</div>
+  </ng-template>
+</div>
+
+

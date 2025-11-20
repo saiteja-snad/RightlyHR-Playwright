@@ -2008,6 +2008,50 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+    isMyInfoViewHistoryActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Update' || action === 'Create') {
+      return true;
+    }
+    if (action === 'View') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Personal Approval History',
+          'My Info Job Approval History',
+          'My Info Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Delete') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Personal Approval History',
+          'My Info Job Approval History',
+          'My Info Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
+
+      isPersonalViewHistoryActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true;
+    }
+    if (action === 'View') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'Employee Personal Approval History',
+          'Employee Job Approval History',
+          'Employee Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
+
   isMyInfoJobActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
@@ -2169,7 +2213,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  
+
   isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected

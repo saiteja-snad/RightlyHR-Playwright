@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
@@ -20,10 +20,11 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss',
 })
@@ -54,6 +55,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   isMyInfoRoute = false;
   fieldOptions = [] as any;
   getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
+
 
   constructor(
     private modalService: NgbModal,
@@ -148,6 +151,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       pendingItem?.message || 'This field change request is awaiting approval.'
     );
   }
+
+  setActiveMessage(fieldName: string) {
+  this.activeMessage = this.getPendingApprovalMessage(fieldName);
+}
 
   // Add this method
   isFieldDisabledDueToPending(fieldName: string): boolean {

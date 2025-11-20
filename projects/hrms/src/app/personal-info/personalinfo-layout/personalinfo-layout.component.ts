@@ -28,25 +28,16 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
 import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-personalinfo-layout',
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    ProfileInfoDetailsComponent,
-    FormsModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    MultiSelectModule,
-    ModuleInformationComponent,
-    NgbPopoverModule,
-    ConfirmationIconComponent,
-    RouterModule
-  ],
+  imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent, FormsModule, ReactiveFormsModule,
+    TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule, ConfirmationIconComponent, RouterModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   teamForm!: FormGroup;
@@ -76,37 +67,25 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   subHeader: string = '';
   loginEmployee = {} as any;
   basePath = '/myinfo';
-
   permissionKeys = {
-  myinfo: {
-    personal: 'My Info Personal Approval History.view',
-    job: 'My Info Job Approval History.view',
-    documents: 'My Info Documents Approval History.view'
-  },
-  personalinfo: {
-    personal: 'Employee Personal Approval History.view',
-    job: 'Employee Job Approval History.view',
-    documents: 'Employee Documents Approval History.view'
-  }
-};
+    myinfo: {
+      personal: 'My Info Personal Approval History.view',
+      job: 'My Info Job Approval History.view',
+      documents: 'My Info Documents Approval History.view',
+    },
+    personalinfo: {
+      personal: 'Employee Personal Approval History.view',
+      job: 'Employee Job Approval History.view',
+      documents: 'Employee Documents Approval History.view',
+    },
+  };
+  navTabs: any[] = [];
+  approvalHistoryData: any = null;
 
-navTabs: any[] = [];
-
-approvalHistoryData: any = null;
-
-
-
-  constructor(
-    private http: HttpService,
-    private authService: AuthService,
-    private router: Router,
-    public rbac: RbacService,
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private conformationPopup: OpenModalService,
-    private route: ActivatedRoute,
-    public fieldpremission: AccessForEmployeeinfoService
-  ) {}
+  constructor(private http: HttpService, private authService: AuthService, private router: Router,
+    public rbac: RbacService, private modalService: NgbModal, private fb: FormBuilder,
+    private conformationPopup: OpenModalService, private route: ActivatedRoute,
+    public fieldpremission: AccessForEmployeeinfoService, private accessNav: AccessNavigationService) {}
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
@@ -121,17 +100,13 @@ approvalHistoryData: any = null;
     } else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     }
-    this.loginEmployee = JSON.parse(
-      localStorage.getItem('rightlyHrUser') || '{}'
-    );
+    this.loginEmployee = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.initialzerevoke();
     this.getEmployeeId();
     this.getAllTeammembersList();
     this.getEmployee();
-    this.emppersonalinfo = JSON.parse(
-      localStorage.getItem('personaldata') || '{}'
-    );
+    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.getTraineeofferdetails();
     this.assignHeading();
     this.updateModuleInfo();
@@ -139,66 +114,77 @@ approvalHistoryData: any = null;
     this.getofferdetails();
     this.getTraineeofferdetails();
     this.setBasePath();
-  this.buildTabs();
-  this.fetchApprovalHistory()
+    this.buildTabs();
+    this.fetchApprovalHistory();
   }
 
   fetchApprovalHistory() {
-  this.http
-    .getData(`EmployeeInfoFieldUpdate/employeeInfoFieldsHistory/${this.empinfo.employeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (response.success && response.data && response.data.length > 0) {
-          this.approvalHistoryData = response.data;
-        } else {
+    this.http
+      .getData(
+        `EmployeeInfoFieldUpdate/employeeInfoFieldsHistory/${this.empinfo.employeeId}`
+      )
+      .subscribe({
+        next: (response: any) => {
+          if (response.success && response.data && response.data.length > 0) {
+            this.approvalHistoryData = response.data;
+          } else {
+            this.approvalHistoryData = [];
+          }
+        },
+        error: () => {
           this.approvalHistoryData = [];
-        }
-      },
-      error: () => {
-        this.approvalHistoryData = [];
-      }
-    });
+        },
+      });
+  }
+
+  get fullName(): string {
+  return [
+    this.emppersonalinfo.firstName,
+    this.emppersonalinfo.middleName,
+    this.emppersonalinfo.lastName
+  ]
+    .filter(n => n)
+    .join(' ');
 }
 
-hasHistory(): boolean {
-  return this.approvalHistoryData && this.approvalHistoryData.length > 0;
-}
 
+  hasHistory(): boolean {
+    return this.approvalHistoryData && this.approvalHistoryData.length > 0;
+  }
 
   buildTabs() {
-  const key = this.basePath === '/personalinfo' ? 'personalinfo' : 'myinfo';
+    const key = this.basePath === '/personalinfo' ? 'personalinfo' : 'myinfo';
 
-  this.navTabs = [
-    {
-      label: 'Personal',
-      link: `${this.basePath}/approvals/personal`,
-      icon: 'bi bi-person-fill',
-      permission: this.permissionKeys[key].personal
-    },
-    {
-      label: 'Job',
-      link: `${this.basePath}/approvals/job`,
-      icon: 'bi bi-briefcase-fill',
-      permission: this.permissionKeys[key].job
-    },
-    {
-      label: 'Documents',
-      link: `${this.basePath}/approvals/documents`,
-      icon: 'bi bi-file-earmark-check-fill',
-      permission: this.permissionKeys[key].documents
-    }
-  ].filter(t => this.rbac.allowedToAccess(t.permission));
-}
-
+    this.navTabs = [
+      {
+        label: 'Personal',
+        link: `${this.basePath}/approvals/personal`,
+        img: '/my-info-icons/view-history-personal.png',
+        permission: this.permissionKeys[key].personal,
+      },
+      {
+        label: 'Job',
+        link: `${this.basePath}/approvals/job`,
+        img: '/my-info-icons/view-history-job.png',
+        permission: this.permissionKeys[key].job,
+      },
+      {
+        label: 'Documents',
+        link: `${this.basePath}/approvals/documents`,
+        img: '/my-info-icons/view-history-documents.png',
+        permission: this.permissionKeys[key].documents,
+      },
+    ].filter((t) => this.rbac.allowedToAccess(t.permission));
+  }
 
   setBasePath() {
-  const url = this.router.url;
-  if (url.startsWith('/personalinfo')) {
-    this.basePath = '/personalinfo';
-  } else if (url.startsWith('/myinfo')) {
-    this.basePath = '/myinfo';
+    const url = this.router.url;
+    if (url.startsWith('/personalinfo')) {
+      this.basePath = '/personalinfo';
+    } else if (url.startsWith('/myinfo')) {
+      this.basePath = '/myinfo';
+    }
   }
-}
 
   isInApprovalsRoute(): boolean {
     return this.router.url.includes('/approvals');
@@ -210,11 +196,19 @@ hasHistory(): boolean {
       : '/myinfo/approvals';
   }
 
-
   isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }
+
+  isInsideApprovals(): boolean {
+  const url = this.router.url.toLowerCase();
+  return url.includes('/approvals/personal') ||
+         url.includes('/approvals/job') ||
+         url.includes('/approvals/documents');
+}
+
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
@@ -1230,6 +1224,15 @@ hasHistory(): boolean {
           }
         },
       });
+  }
+
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   ngOnDestroy(): void {

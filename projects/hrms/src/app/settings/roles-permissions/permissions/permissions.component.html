@@ -1788,10 +1788,10 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Time Off Tab' || per.fields === 'WFH Tab' || per.fields === 'Comp Off Tab' || 
-                                per.fields === 'Permissions Tab' || per.fields === 'Regularization Tab' || per.fields === 'Separation Request Tab' || per.fields === 'Extra Hours Tab' || 
-                                per.fields === 'Recall Request Tab' || per.fields === 'Trainee Details Tab' || per.fields === 'Contractor Details Tab'|| per.fields === 'Contract-Conversion Tab'|| per.fields === 'No Due Clearence Requests Tab' 
-                                || per.fields === 'Claims and Expenses Tab'  || per.fields === 'Desk Requests Tab' || per.fields === 'Probation Details Tab' 
+                            <tr class="text-align-center" *ngIf="per.fields === 'Time Off Tab' || per.fields === 'WFH Tab' || per.fields === 'Comp Off Tab' ||
+                                per.fields === 'Permissions Tab' || per.fields === 'Regularization Tab' || per.fields === 'Separation Request Tab' || per.fields === 'Extra Hours Tab' ||
+                                per.fields === 'Recall Request Tab' || per.fields === 'Trainee Details Tab' || per.fields === 'Contractor Details Tab'|| per.fields === 'Contract-Conversion Tab'|| per.fields === 'No Due Clearence Requests Tab'
+                                || per.fields === 'Claims and Expenses Tab'  || per.fields === 'Desk Requests Tab' || per.fields === 'Probation Details Tab'
                                 || per.fields === 'Remote Login Tab' || per.fields === 'Time Sheet approval Tab' || per.fields === 'EmployeeInfo Tab' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -2290,11 +2290,11 @@
                             </tr>
                         </ng-container>
                         <!-- employee info Pending Approvals Module Tabs -->
-                       
+
                         <!-- <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="checkbox" #selectallpremissionsforemployeeinfo (change)="toggleSelectAll(pendingApprovalEmployeinfoSubTabs, 
+                                    <input type="checkbox" #selectallpremissionsforemployeeinfo (change)="toggleSelectAll(pendingApprovalEmployeinfoSubTabs,
                                         selectallpremissionsforemployeeinfo?.checked, isonlycreatfunction.bind(this))"
                                         [checked]="isAllSelected(pendingApprovalEmployeinfoSubTabs)"
                                         [indeterminate]="isSomeSelected(pendingApprovalEmployeinfoSubTabs)"
@@ -2330,7 +2330,7 @@
                          <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="checkbox" #selectallpremissionsforempinfo (change)="toggleSelectAll(pendingApprovalEmployeinfoSubTabs, 
+                                    <input type="checkbox" #selectallpremissionsforempinfo (change)="toggleSelectAll(pendingApprovalEmployeinfoSubTabs,
                                         selectallpremissionsforempinfo?.checked, isonlyempinfofunction.bind(this))"
                                         [checked]="isAllSelected(pendingApprovalEmployeinfoSubTabs)"
                                         [indeterminate]="isSomeSelected(pendingApprovalEmployeinfoSubTabs)"
@@ -3273,13 +3273,11 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="checkbox" #selectAllMyInfoPersonalSubTabs
-                                        (change)="toggleSelectAll(myInfoApprovalFields,
-                                    selectAllMyInfoPersonalSubTabs?.checked, isMyInfoPersonalActionDisabled.bind(this))"
-                                        [checked]="isAllSelected(myInfoApprovalFields)"
-                                        [indeterminate]="isSomeSelected(myInfoApprovalFields)"
-                                        [disabled]="!roleToFilter?.id">
-                                    <div>my Info Approvals</div>
+                                  <input type="checkbox" #selectAllMyInfoApprovalFields (change)="toggleSelectAll(myInfoApprovalFields,
+                                    selectAllMyInfoApprovalFields?.checked, isMyInfoViewHistoryActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(myInfoApprovalFields)" [indeterminate]="isSomeSelected(myInfoApprovalFields)"
+                                    [disabled]="!roleToFilter?.id">
+                                  <div>my Info Approvals</div>
                                 </div>
                             </th>
                         </tr>
@@ -3297,16 +3295,14 @@
                                 <!-- Update -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
-                                        (change)="onCheckboxChange(per, 'Update')"
-                                        [disabled]="!roleToFilter?.id || !['My Info Personal Approval History','My Info Job Approval History',
-                                    'My Info Documents Approval History'].includes(per.fields)">
+
+                                         [disabled]="true">
                                 </td>
                                 <!-- Create -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
-                                        (change)="onCheckboxChange(per, 'Create')"
-                                        [disabled]="!roleToFilter?.id || !['My Info Personal Approval History','My Info Job Approval History',
-                                    'My Info Documents Approval History'].includes(per.fields)">
+
+                                        [disabled]="true">
                                 </td>
                                 <!-- Delete -->
                                 <td>
@@ -3315,13 +3311,13 @@
                                 </td>
                             </tr>
                         </ng-container>
-<!-- Employee View History tabs -->
+                       <!-- Employee View History tabs -->
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="checkbox" #selectAllMyInfoPersonalSubTabs
+                                    <input type="checkbox" #selectAllPersonalInfoApprovalFields
                                         (change)="toggleSelectAll(employeeApprovalFields,
-                                    selectAllMyInfoPersonalSubTabs?.checked, isMyInfoPersonalActionDisabled.bind(this))"
+                                    selectAllPersonalInfoApprovalFields?.checked, isPersonalViewHistoryActionDisabled.bind(this))"
                                         [checked]="isAllSelected(employeeApprovalFields)"
                                         [indeterminate]="isSomeSelected(employeeApprovalFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -3345,19 +3341,19 @@
                                     <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
                                         (change)="onCheckboxChange(per, 'Update')"
                                         [disabled]="!roleToFilter?.id || !['Employee Personal Approval History','Employee Job Approval History',
-                                    'Employee Documents Approval History'].includes(per.fields)">
+                                    'Employee Documents Approval History'].includes(per.fields)" [disabled]="true">
                                 </td>
                                 <!-- Create -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
                                         (change)="onCheckboxChange(per, 'Create')"
                                         [disabled]="!roleToFilter?.id || !['Employee Personal Approval History','Employee Job Approval History',
-                                    'Employee Documents Approval History'].includes(per.fields)">
+                                    'Employee Documents Approval History'].includes(per.fields)" [disabled]="true">
                                 </td>
                                 <!-- Delete -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
-                                        (change)="onCheckboxChange(per, 'Delete')">
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
                                 </td>
                             </tr>
                         </ng-container>

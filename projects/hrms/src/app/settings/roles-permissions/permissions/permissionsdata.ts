@@ -737,10 +737,6 @@ export const permissionsData = [
   { fields: 'Employee Info Team Managers Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
 
-  //View History Buttons
-  { fields: 'My Info View History Button', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Employee Info View History Button', View: false, Update: false, Create: false, Delete: false },
-
 
   //Employee Info Onboard Request Sub Tabs Section
   { fields: 'Request for Onboard Button', View: false, Update: false, Create: false, Delete: false },

@@ -49,10 +49,9 @@
         {{'Archive'|translate}}
       </button>
 
-      @if (
-      rbac.allowedToAccess('My Info View History Button.view')
-      && hasMyInfoHistoryAccess()
+     @if (hasMyInfoHistoryAccess()
       && isActive('/myinfo')
+      && hasHistory()
       ){
       <button class="custom-btn btn-primary" (click)="navigateMyInfo()">
         {{ 'View History' | translate }}
@@ -60,10 +59,9 @@
       }
 
 
-      @if (
-      rbac.allowedToAccess('Employee Info View History Button.view')
-      && hasEmployeeHistoryAccess()
+      @if (hasEmployeeHistoryAccess()
       && isActive('/personalinfo')
+      && hasHistory()
       ){
       <button class="custom-btn btn-primary" (click)="navigatePersonal()">
         {{ 'View History' | translate }}
@@ -84,11 +82,8 @@
 
             <! <div *ngIf=""> -->
       @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
-      getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter
-      Released') && emppersonalinfo.empType !== 'Contract' ){
-      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective'
-            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
+      getOfferDetails.candidateStatus == 'Offer Letter Accepted'|| getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract' ){
+      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective'|| emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
         (click)="openModal(revokeoffer)">
         {{' Revoke Offer'|translate}}
       </button>
@@ -97,8 +92,7 @@
 
       @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
       getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter
-      Released') && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType
+      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType
       ==='Contract')
       {
       <button class="custom-btn btn-secondary"
@@ -135,13 +129,35 @@
   </div>
 
   <div class="d-flex gap-3">
-    <!--User profile content-->
-    <div class="user-profile-content">
+    <div class="user-profile-content" *ngIf="!isInApprovalsRoute()">
       <app-profile-info-details />
     </div>
 
-    <!--main content-->
-    <div class="myinfo-main-content">
+    <!-- Approval History Tabs -->
+<div *ngIf="isInApprovalsRoute()">
+  <div class="component-left-tabs-container">
+    <div class="custom-sub-tabs-container">
+      <ul class="nav flex-column">
+
+        <li class="nav-item" *ngFor="let tab of navTabs">
+          <div
+            class="nav-link"
+            [routerLink]="tab.link"
+            routerLinkActive="active-nav-link"
+          >
+            <i [class]="tab.icon + ' fs-3 mb-2'"></i>
+            <div class="fw-medium">{{ tab.label | translate }}</div>
+          </div>
+          <div class="tabs-border-bottom"></div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+    <div class="myinfo-main-content" [ngClass]="{ 'view-history-container': isInApprovalsRoute() }">
       <router-outlet />
     </div>
   </div>

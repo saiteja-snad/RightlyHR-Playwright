@@ -13,6 +13,7 @@ import {
   ActivatedRoute,
   NavigationEnd,
   Router,
+  RouterModule,
   RouterOutlet,
 } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -40,6 +41,7 @@ import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirm
     ModuleInformationComponent,
     NgbPopoverModule,
     ConfirmationIconComponent,
+    RouterModule
   ],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss',
@@ -73,6 +75,26 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   subHeader: string = '';
   loginEmployee = {} as any;
+  basePath = '/myinfo';
+
+  permissionKeys = {
+  myinfo: {
+    personal: 'My Info Personal Approval History.view',
+    job: 'My Info Job Approval History.view',
+    documents: 'My Info Documents Approval History.view'
+  },
+  personalinfo: {
+    personal: 'Employee Personal Approval History.view',
+    job: 'Employee Job Approval History.view',
+    documents: 'Employee Documents Approval History.view'
+  }
+};
+
+navTabs: any[] = [];
+
+approvalHistoryData: any = null;
+
+
 
   constructor(
     private http: HttpService,
@@ -116,7 +138,79 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.initiateUpdateModuleInfo();
     this.getofferdetails();
     this.getTraineeofferdetails();
+    this.setBasePath();
+  this.buildTabs();
+  this.fetchApprovalHistory()
   }
+
+  fetchApprovalHistory() {
+  this.http
+    .getData(`EmployeeInfoFieldUpdate/employeeInfoFieldsHistory/${this.empinfo.employeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        if (response.success && response.data && response.data.length > 0) {
+          this.approvalHistoryData = response.data;
+        } else {
+          this.approvalHistoryData = [];
+        }
+      },
+      error: () => {
+        this.approvalHistoryData = [];
+      }
+    });
+}
+
+hasHistory(): boolean {
+  return this.approvalHistoryData && this.approvalHistoryData.length > 0;
+}
+
+
+  buildTabs() {
+  const key = this.basePath === '/personalinfo' ? 'personalinfo' : 'myinfo';
+
+  this.navTabs = [
+    {
+      label: 'Personal',
+      link: `${this.basePath}/approvals/personal`,
+      icon: 'bi bi-person-fill',
+      permission: this.permissionKeys[key].personal
+    },
+    {
+      label: 'Job',
+      link: `${this.basePath}/approvals/job`,
+      icon: 'bi bi-briefcase-fill',
+      permission: this.permissionKeys[key].job
+    },
+    {
+      label: 'Documents',
+      link: `${this.basePath}/approvals/documents`,
+      icon: 'bi bi-file-earmark-check-fill',
+      permission: this.permissionKeys[key].documents
+    }
+  ].filter(t => this.rbac.allowedToAccess(t.permission));
+}
+
+
+  setBasePath() {
+  const url = this.router.url;
+  if (url.startsWith('/personalinfo')) {
+    this.basePath = '/personalinfo';
+  } else if (url.startsWith('/myinfo')) {
+    this.basePath = '/myinfo';
+  }
+}
+
+  isInApprovalsRoute(): boolean {
+    return this.router.url.includes('/approvals');
+  }
+
+  get approvalsBasePath(): string {
+    return this.router.url.includes('/personalinfo')
+      ? '/personalinfo/approvals'
+      : '/myinfo/approvals';
+  }
+
+
   isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;
     return currentUrl === link || currentUrl.startsWith(link + '/');

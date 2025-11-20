@@ -91,8 +91,8 @@ export class SkillsetDashboardComponent {
   resourceSearchQuery: string = '';
   departmentOptions: any[] = [];
   selectedDepartment: string[] = [];
-   selectedProject: any = null;
-    selectedPhases: any[] = [];
+  selectedProject: any = null;
+  selectedPhases: any[] = [];
   // contentInfo
   topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
   skillProficiencyContentInfo = 'Presents a consolidated view of employee skill levels—categorized as Beginner, Intermediate, and Expert. This chart enables HR and leadership teams to evaluate overall workforce competency and pinpoint areas requiring skill enhancement or upskilling.';
@@ -675,12 +675,10 @@ export class SkillsetDashboardComponent {
       (this.selectedStatus && this.selectedStatus.length && this.selectedStatus[0] !== 'All Proficiencies') ||
       (this.selectedSkills && this.selectedSkills.length && this.selectedSkills[0] !== 'All Skills') ||
       (this.searchQuery && this.searchQuery.trim() !== '');
-
     if (isFilterApplied) {
       this.selectedStatus = ['All Proficiencies'];
       this.selectedSkills = ['All Skills'];
       this.searchQuery = '';
-
       this.skilllevelGraph();
       this.skillByDepartmentGraph();
       this.getSkillSetTableData();
@@ -784,7 +782,6 @@ export class SkillsetDashboardComponent {
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
-
         if (res?.success && res.data) {
           const summary = res.data;
           // Helper to add proper image URLs
@@ -798,7 +795,6 @@ export class SkillsetDashboardComponent {
               };
             });
           };
-
           // Store employee summary with categorized lists
           this.employeeSummary = {
             allEmployeesList: addProfileImage(summary.allEmployeesList || []),
@@ -819,7 +815,6 @@ export class SkillsetDashboardComponent {
               });
             }
           });
-
           // Assign the proper list based on selected key
           switch (this.selectedSkillKey) {
             case 'totalEmployees':
@@ -886,7 +881,6 @@ export class SkillsetDashboardComponent {
   }
 
   loadingEmployeeData: boolean = false;
-
   private categoryIcons: Record<string, string> = {
     "Technical Skill": "/icons/technical-skills-icon.png",
     "Soft Skill": "/icons/soft-skills-icon.png",
@@ -903,23 +897,17 @@ export class SkillsetDashboardComponent {
   private usedFallbackIcons = new Set<string>();
   skillCategories: any[] = [];
   getEmployeeSkillProjectDetails() {
-  this.loadingEmployeeData = true;
-
-  const empId = this.selectedEmployee?.employeeId;
-  if (!empId) return;
-
-  this.http
-    .getDataIncludeParams(`EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`)
-    .subscribe({
+    this.loadingEmployeeData = true;
+    const empId = this.selectedEmployee?.employeeId;
+    if (!empId) return;
+    this.http.getDataIncludeParams(`EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`).subscribe({
       next: (res: any) => {
         this.loadingEmployeeData = false;
-
         if (res?.success && res?.data) {
           const allSkills = res.data.skills || [];
           const grouped: any = {};
           allSkills.forEach((skill: any) => {
             if (!skill.isActive) return;
-
             const category = skill.skillCategory?.trim() || "Others";
             if (!grouped[category]) grouped[category] = [];
             grouped[category].push(skill);
@@ -934,7 +922,6 @@ export class SkillsetDashboardComponent {
               ...project,
               phasesCount: project?.phases?.length || 0
             })) || [];
-
           this.selectedEmployee = {
             ...this.selectedEmployee,
             ...res.data,
@@ -942,19 +929,16 @@ export class SkillsetDashboardComponent {
             allSkills,
             skillCategories: this.skillCategories
           };
-
         } else {
           this.selectedEmployee = null;
         }
       },
-
       error: () => {
         this.loadingEmployeeData = false;
         this.selectedEmployee = null;
       }
     });
-}
-
+  }
 
   private getCategoryIcon(category: string): string {
     if (this.categoryIcons[category]) {
@@ -981,15 +965,18 @@ export class SkillsetDashboardComponent {
       }
     });
   }
+
   trackByIndex(index: number) {
     return index;
   }
+
   openModal2(content: any, project: any) {
     this.selectedProject = project;
     this.selectedPhases = project?.phases || [];
     this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
   }
-    getStatusClassforPhase(status: string): string {
+
+  getStatusClassforPhase(status: string): string {
     if (!status) return '';
     const normalized = status.toLowerCase();
     if (normalized === 'yet to start') return 'status-yet-to-start';

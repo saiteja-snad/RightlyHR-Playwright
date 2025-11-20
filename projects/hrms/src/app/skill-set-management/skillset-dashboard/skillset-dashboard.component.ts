@@ -91,6 +91,8 @@ export class SkillsetDashboardComponent {
   resourceSearchQuery: string = '';
   departmentOptions: any[] = [];
   selectedDepartment: string[] = [];
+   selectedProject: any = null;
+    selectedPhases: any[] = [];
   // contentInfo
   topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
   skillProficiencyContentInfo = 'Presents a consolidated view of employee skill levels—categorized as Beginner, Intermediate, and Expert. This chart enables HR and leadership teams to evaluate overall workforce competency and pinpoint areas requiring skill enhancement or upskilling.';
@@ -726,21 +728,21 @@ export class SkillsetDashboardComponent {
               title: 'Total Resources',
               value: summary.totalEmployees ?? 0,
               icons: './icons/Total Employee Count.png',
-              popover: 'Total number of employees in the directory.'
+              popover: 'The tab displays the total number of employees available in the organization. Helps understand the overall workforce strength. Used as the base count to analyse skills and proficiency distribution.'
             },
             {
               key: 'skilledEmployees',
               title: 'Resources with Updated Skills',
               value: summary.skilledEmployees ?? 0,
               icons: './icons/Available Employees Count.png',
-              popover: 'Total number of employees in the directory.'
+              popover: 'The tab displays how many employees have recently updated their skill details. Helps track how many profiles hold the latest, accurate skill information. Useful for managers to identify employees ready for allocation based on updated skills.'
             },
             {
               key: 'unSkilledEmployees',
               title: 'Skill Updates Pending',
               value: summary.unSkilledEmployees ?? 0,
               icons: './icons/Not Updated.png',
-              popover: 'Total number of employees in the directory.'
+              popover: 'The tab displays the number of employees who still need to update their skills. Helps identify pending updates required to maintain a complete skill database. Useful for HR/managers to follow up and ensure accurate skill mapping.'
             }
           ];
         }
@@ -901,17 +903,23 @@ export class SkillsetDashboardComponent {
   private usedFallbackIcons = new Set<string>();
   skillCategories: any[] = [];
   getEmployeeSkillProjectDetails() {
-    this.loadingEmployeeData = true;
-    const empId = this.selectedEmployee?.employeeId;
-    if (!empId) return;
-    this.http.getDataIncludeParams(`EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`).subscribe({
+  this.loadingEmployeeData = true;
+
+  const empId = this.selectedEmployee?.employeeId;
+  if (!empId) return;
+
+  this.http
+    .getDataIncludeParams(`EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`)
+    .subscribe({
       next: (res: any) => {
         this.loadingEmployeeData = false;
+
         if (res?.success && res?.data) {
           const allSkills = res.data.skills || [];
           const grouped: any = {};
           allSkills.forEach((skill: any) => {
             if (!skill.isActive) return;
+
             const category = skill.skillCategory?.trim() || "Others";
             if (!grouped[category]) grouped[category] = [];
             grouped[category].push(skill);
@@ -921,22 +929,32 @@ export class SkillsetDashboardComponent {
             icon: this.getCategoryIcon(category),
             skills: grouped[category]
           }));
+          const updatedProjects =
+            res.data.projects?.map((project: any) => ({
+              ...project,
+              phasesCount: project?.phases?.length || 0
+            })) || [];
+
           this.selectedEmployee = {
             ...this.selectedEmployee,
             ...res.data,
+            projects: updatedProjects,
             allSkills,
             skillCategories: this.skillCategories
           };
+
         } else {
           this.selectedEmployee = null;
         }
       },
+
       error: () => {
         this.loadingEmployeeData = false;
         this.selectedEmployee = null;
       }
     });
-  }
+}
+
 
   private getCategoryIcon(category: string): string {
     if (this.categoryIcons[category]) {
@@ -962,5 +980,25 @@ export class SkillsetDashboardComponent {
         }));
       }
     });
+  }
+  trackByIndex(index: number) {
+    return index;
+  }
+  openModal2(content: any, project: any) {
+    this.selectedProject = project;
+    this.selectedPhases = project?.phases || [];
+    this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
+  }
+    getStatusClassforPhase(status: string): string {
+    if (!status) return '';
+    const normalized = status.toLowerCase();
+    if (normalized === 'yet to start') return 'status-yet-to-start';
+    if (normalized === 'in progress') return 'status-in-progress';
+    if (normalized === 'extended') return 'status-extended';
+    if (normalized === 'hold') return 'status-hold';
+    if (normalized === 'completed') return 'status-completed';
+    if (normalized === 'closed') return 'status-closed';
+    if (normalized === 'active') return 'status-active';
+    return '';
   }
 }

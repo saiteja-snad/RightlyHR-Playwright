@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Skill Set<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name">Skill Set<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
             <div class="component-header">{{componentname | translate}}</div>
             <div>
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
@@ -12,18 +13,18 @@
             <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
 
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
-                    placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
+                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
+                    optionValue="value" placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
                     selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
                     (onChange)="onCheckemployeeProficiency($event)" />
             </div>
 
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
-                    optionLabel="label" optionValue="value" [maxSelectedLabels]="3" selectedItemsLabel="{3} items selected"
-                    [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                    (onChange)="onSkillSelectionChange($event)" />
+                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills"
+                    placeholder="Please Select Skills" optionLabel="label" optionValue="value" [maxSelectedLabels]="3"
+                    selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
+                    class="form-select custom-select" (onChange)="onSkillSelectionChange($event)" />
             </div>
         </div>
     </div>
@@ -76,7 +77,8 @@
                         @if(!isLoadingGraphTopSkills){
                         <ng-container *ngIf="hasTopSkillGraphData; else noData">
                             <div class="bar-chart">
-                                <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData" [options]="topSkillsOptions" />
+                                <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData"
+                                    [options]="topSkillsOptions" />
                             </div>
                         </ng-container>
                         }@else {
@@ -139,7 +141,8 @@
                         @if(!isLoadingGraphDepartment){
                         <ng-container *ngIf="hasDepartmentwiseGraphData; else noData">
                             <div class="skill-chart-horizontal">
-                                <p-chart type="doughnut" [data]="skillByDepartmentData" [options]="skillByDepartmentOptions" />
+                                <p-chart type="doughnut" [data]="skillByDepartmentData"
+                                    [options]="skillByDepartmentOptions" />
                                 <div class="d-flex gap-3 flex-wrap pt-3">
                                     <div *ngFor="let dept of deptCounts" class="legend-item">
                                         <span class="legend-dot" [ngStyle]="{ backgroundColor: dept.color }"></span>
@@ -192,10 +195,12 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                    <p-chip *ngFor="let key of getProficiencyKeys(skill.proficiencyCounts)">
+                                                    <p-chip
+                                                        *ngFor="let key of getProficiencyKeys(skill.proficiencyCounts)">
                                                         <div class="custom-chip-content">
                                                             <span class="skill-name me-1">{{ key }}</span>
-                                                            <span class="count">({{ skill.proficiencyCounts[key] }})</span>
+                                                            <span class="count">({{ skill.proficiencyCounts[key]
+                                                                }})</span>
                                                         </div>
                                                     </p-chip>
                                                     <ng-container *ngIf="!skill.proficiencyCounts || getProficiencyKeys(skill.proficiencyCounts).length === 0">
@@ -302,9 +307,10 @@
 
     <div class="custom-offcanvas-body p-3">
         <div class="custom-p-multiSelect-content custom-select-width mb-3">
-            <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment" placeholder="Please Select Department"
-                selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2" resetFilterOnHide="true" optionLabel="label"
-                optionValue="value" class="form-select custom-select" (onChange)="ondepSelectionChange()" />
+            <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
+                placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
+                resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
+                (onChange)="ondepSelectionChange()" />
         </div>
 
         <!-- Search -->
@@ -356,14 +362,14 @@
             <div class="cross-btn d-flex justify-content-end mb-3">
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
-    
+
             <div class="profile-view-content text-center">
                 <div class="mb-2">
                     <!-- Profile Image -->
                     <ng-container *ngIf="imageUrl; else defaultIcon">
                         <img [src]="imageUrl" alt="Profile Image" class="profile-image" />
                     </ng-container>
-    
+
                     <ng-template #defaultIcon>
                         <app-profile-icon [iconWidth]="'48'" [iconHeight]="'48'"></app-profile-icon>
                     </ng-template>
@@ -392,7 +398,7 @@
                     <p-tabpanel value="0">
                         <div class="skills-container custom-offcanvas-content pt-3 pe-2">
                             @if (skillCategories?.length) {
-                            <ng-container *ngFor="let cat of skillCategories">
+                            <ng-container *ngFor="let cat of skillCategories  let i = index">
                                 <!-- Category Title -->
                                 <div class="skills-group mb-4">
                                     <div class="section-title d-flex align-items-center mb-2">
@@ -415,14 +421,14 @@
                                         </div>
                                     </ng-container>
                                 </div>
-                                <div class="popup-header-border my-3"></div>
+                                <div class="popup-header-border my-3" *ngIf="i < skillCategories.length - 1"></div>
                             </ng-container>
                             } @else {
                             <app-no-data-found />
                             }
                         </div>
                     </p-tabpanel>
-    
+
                     <!-- Projects -->
                     <p-tabpanel value="1">
                         <div class="projects-container custom-offcanvas-content pt-3 pe-2">
@@ -430,8 +436,17 @@
                             <div class="project-card mb-3" *ngFor="let proj of selectedEmployee.projects">
                                 <p class="project-name mb-1">{{ proj.projectName }}</p>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <p class="project-role mb-0">{{ proj.projectDesignation }}</p>
-                                </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="project-role mb-0">{{ proj.projectDesignation }}</p>
+                                    </div>
+                                    <div class="offcanvas-chips">
+                                        <p-chip class="mb-0">
+                                            <a class="Phase-link" *ngIf="proj.phasesCount > 0" (click)="openModal2(projectDisplay, proj)">
+                                                Phases ({{ proj.phasesCount }})
+                                            </a>
+                                        </p-chip>
+                                    </div>
+                                </div>                   
                             </div>
                             } @else {
                             <app-no-data-found />
@@ -442,4 +457,45 @@
             </div>
         </div>
     </div>
-    </ng-template>
+</ng-template>
+
+<ng-template #projectDisplay let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{ selectedProject.projectName }}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Phase Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th class="text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let phase of selectedPhases; trackBy: trackByIndex">
+                <td>{{ phase.name }}</td>
+                <td>{{ phase.startDate | date:'MMM dd, yyyy' }}</td>
+                <td>{{ phase.endDate | date:'MMM dd, yyyy' }}</td>
+                <td class="text-center">
+                  <span class="status-text text-capitalize" [ngClass]="getStatusClassforPhase(phase.status)">
+                    {{ phase.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

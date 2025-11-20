@@ -47,9 +47,7 @@
                             <!-- INFO ICON -->
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="card.popover" class="module-icon" />
-                                <ng-template #popoverTemplate let-text="text">
-                                    <div class="module-info-text">{{text}}</div>
-                                </ng-template>
+                                <ng-template #popoverTemplate let-text="text">{{text}}</ng-template>
                             </div>
                         </div>
                         <div class="summary-value">
@@ -71,11 +69,10 @@
                             <div class="graph-header">Top 5 Trending skills</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="topTrendingContent" class="module-icon" />
-                                <ng-template #topTrendingContent>
-                                    <div class="module-info-text">{{topTrendingContentInfo}}</div>
-                                </ng-template>
+                                <ng-template #topTrendingContent>{{topTrendingContentInfo}}</ng-template>
                             </div>
                         </div>
+                        <!--Graph-->
                         @if(!isLoadingGraphTopSkills){
                         <ng-container *ngIf="hasTopSkillGraphData; else noData">
                             <div class="bar-chart">
@@ -98,13 +95,12 @@
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Skill Proficiency</div>
-                            <div>
+                            <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="skillProficiencyContent" class="module-icon" />
-                                <ng-template #skillProficiencyContent>
-                                    <div class="module-info-text">{{skillProficiencyContentInfo}}</div>
-                                </ng-template>
+                                <ng-template #skillProficiencyContent>{{skillProficiencyContentInfo}}</ng-template>
                             </div>
                         </div>
+                        <!--Graph-->
                         @if(!isLoadingGraphSkillProficiency){
                         <ng-container *ngIf="!hasnodata; else noData">
                             <div class="skill-chart-horizontal">
@@ -136,11 +132,10 @@
                             <div class="graph-header">Department Wise Skills</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="departmentWiseContent" class="module-icon" />
-                                <ng-template #departmentWiseContent>
-                                    <div class="module-info-text">{{departmentWiseContentInfo}}</div>
-                                </ng-template>
+                                <ng-template #departmentWiseContent>{{departmentWiseContentInfo}}</ng-template>
                             </div>
                         </div>
+                        <!--Graph-->
                         @if(!isLoadingGraphDepartment){
                         <ng-container *ngIf="hasDepartmentwiseGraphData; else noData">
                             <div class="skill-chart-horizontal">
@@ -172,12 +167,9 @@
                             <div class="graph-header">Skill Overview</div>
                             <div class="module-info-content">
                                 <app-module-info-icon placement="bottom" [ngbPopover]="skillOverviewContent" class="module-icon" />
-                                <ng-template #skillOverviewContent>
-                                    <div class="module-info-text">{{skillOverviewContentInfo}}</div>
-                                </ng-template>
+                                <ng-template #skillOverviewContent>{{skillOverviewContentInfo}}</ng-template>
                             </div>
                         </div>
-
                         <!--table content-->
                         @if (!noDataFound) {
                         <div class="custom-table-content w-100 skill-overview-table">
@@ -206,7 +198,6 @@
                                                             <span class="count">({{ skill.proficiencyCounts[key] }})</span>
                                                         </div>
                                                     </p-chip>
-
                                                     <ng-container *ngIf="!skill.proficiencyCounts || getProficiencyKeys(skill.proficiencyCounts).length === 0">
                                                         <span>-</span>
                                                     </ng-container>
@@ -223,7 +214,6 @@
                                     </ng-template>
                                 </tbody>
                             </table>
-
                         </div>
                         } @else {
                         <ng-template #noData>

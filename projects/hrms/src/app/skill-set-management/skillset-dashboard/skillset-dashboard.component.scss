@@ -118,7 +118,7 @@
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 90dvh;
+  height: 90dvh;
 }
 
 .profile-content {
@@ -363,7 +363,7 @@
 }
 
 .resources-list-model {
-  /* Profile Section */
+
   .profile-view-content {
     color: var(--primary-color);
     padding: 0.5rem 1rem !important;

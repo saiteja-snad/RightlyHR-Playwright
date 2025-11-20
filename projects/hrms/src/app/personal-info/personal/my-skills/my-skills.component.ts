@@ -279,6 +279,7 @@ export class MySkillsComponent {
       next: (res: any) => {
         this.spinnerLoader = false;
         modal.close();
+        this.getSkills()
         this.conformationPopup.openSuccessModal('Skill removed successfully');
         // Remove only after success
         this.technicalSkills = this.technicalSkills.filter(

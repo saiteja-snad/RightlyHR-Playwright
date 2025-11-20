@@ -360,13 +360,13 @@
     <div class="custom-main-popup-container resources-list-model" ngbAutofocus>
         <div class="custom-main-popup-content">
             <div class="cross-btn d-flex justify-content-end mb-3">
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="closep(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
 
             <div class="profile-view-content text-center">
                 <div class="mb-2">
                     <!-- Profile Image -->
-                    <ng-container *ngIf="selectedEmployee.profileImage; else defaultIcon">
+                    <ng-container *ngIf="selectedEmployee?.profileImage; else defaultIcon">
                         <img [src]="selectedEmployee.profileImage" alt="Profile Image" class="profile-image" />
                     </ng-container>
 

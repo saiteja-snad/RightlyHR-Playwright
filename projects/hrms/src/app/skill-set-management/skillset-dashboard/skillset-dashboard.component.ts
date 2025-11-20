@@ -215,13 +215,20 @@ export class SkillsetDashboardComponent {
   close(modal: any) {
     modal.close();
     this.searchQuery = '';
+    this.selectedDepartment =[]
   }
 
   private searchTimer: any;
   onSearch(): void {
     clearTimeout(this.searchTimer);
     this.searchTimer = setTimeout(() => {
-      this.getResourcesSummary();
+      this.getResourcesSummary(() => {
+        if (this.employeeList?.length > 0) {
+          console.log(this.employeeList);
+          
+          this.getEmployeeSkillProjectDetails();
+        }
+      });
     }, 400);
   }
 
@@ -231,42 +238,52 @@ export class SkillsetDashboardComponent {
       params.searchQuery = this.searchQuery.trim();
     }
     this.isloading = true;
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSummary', params).subscribe({
-      next: (res: any) => {
-        this.isloading = false;
-        if (res?.success && res.data) {
-          const summary = res.data;
-          const addProfileImage = (list: any[] = []) =>
-            list.map(emp => ({
-              ...emp,
-              profileImage: 'images/alternate.png',
-              originalProfileUrl: emp.profileImage || emp.profileUrl || ''
-            }));
-          this.employeeSummary = {
-            allEmployeesList: addProfileImage(summary.allEmployeesList || []),
-            allocatedEmployeesList: addProfileImage(summary.allocatedEmployeesList || []),
-            availableEmployeesList: addProfileImage(summary.availableEmployeesList || []),
-            nextMonthAvailableEmployeesList: addProfileImage(summary.nextMonthAvailableEmployeesList || [])
-          };
-          Object.values(this.employeeSummary).forEach((list: any) => {
-            if (Array.isArray(list)) {
-              list.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSummary', params)
+      .subscribe({
+        next: (res: any) => {
+          this.isloading = false;
+
+          if (res?.success && res.data) {
+            const summary = res.data;
+
+            const addProfileImage = (list: any[] = []) =>
+              list.map(emp => ({
+                ...emp,
+                employeeId: emp.employeeId,
+                profileImage: 'images/alternate.png',
+                originalProfileUrl: emp.profileImage || emp.profileUrl || ''
+              }));
+
+            this.employeeSummary = {
+              allEmployeesList: addProfileImage(summary.allEmployeesList || []),
+              allocatedEmployeesList: addProfileImage(summary.allocatedEmployeesList || []),
+              availableEmployeesList: addProfileImage(summary.availableEmployeesList || []),
+              nextMonthAvailableEmployeesList: addProfileImage(summary.nextMonthAvailableEmployeesList || [])
+            };
+
+            Object.values(this.employeeSummary).forEach((list: any) => {
+              if (Array.isArray(list)) {
+                list.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+              }
+            });
+
+            switch (this.selectedSkillKey) {
+              case 'total': this.employeeList = this.employeeSummary.allEmployeesList; break;
+              case 'committed': this.employeeList = this.employeeSummary.allocatedEmployeesList; break;
+              case 'available': this.employeeList = this.employeeSummary.availableEmployeesList; break;
+              case 'upcoming': this.employeeList = this.employeeSummary.nextMonthAvailableEmployeesList; break;
+              default: this.employeeList = this.employeeSummary.allEmployeesList;
             }
-          });
-          switch (this.selectedSkillKey) {
-            case 'total': this.employeeList = this.employeeSummary.allEmployeesList; break;
-            case 'committed': this.employeeList = this.employeeSummary.allocatedEmployeesList; break;
-            case 'available': this.employeeList = this.employeeSummary.availableEmployeesList; break;
-            case 'upcoming': this.employeeList = this.employeeSummary.nextMonthAvailableEmployeesList; break;
-            default: this.employeeList = this.employeeSummary.allEmployeesList;
+
+          } else {
+            this.resetSummaryData();
           }
-        } else {
-          this.resetSummaryData();
+          if (callback) callback();
         }
-        if (callback) callback();
-      }
-    })
+      });
   }
+
 
   resetSummaryData(): void {
     this.employeeSummary = null;
@@ -305,7 +322,7 @@ export class SkillsetDashboardComponent {
       this.skillLevelData.datasets[0]?.data?.length
     );
   }
-  
+
   get hasDepartmentwiseGraphData(): boolean {
     return !!(
       this.skillByDepartmentData?.datasets?.length &&
@@ -844,10 +861,11 @@ export class SkillsetDashboardComponent {
   }
 
   openModal(content: TemplateRef<any>, emp: any) {
-    this.selectedEmployee = emp;
-    this.getEmployeeSkillProjectDetails();
+    this.selectedEmployee = emp;     // set selected employee
+    this.getEmployeeSkillProjectDetails();   // API triggers correctly
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
 
   ondepSelectionChange(): void {
     this.getEmployeeDirectorySummary();
@@ -870,7 +888,7 @@ export class SkillsetDashboardComponent {
     const emp = this.selectedEmployee;
     if (!emp) return '-';
     if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
-      const lastProject = emp.projects.filter((p: any) => p.endDate).sort((a: any, b: any) => 
+      const lastProject = emp.projects.filter((p: any) => p.endDate).sort((a: any, b: any) =>
         new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
       if (lastProject?.endDate) {
         const formattedDate = moment(lastProject.endDate).format('MMM DD, YYYY');
@@ -899,7 +917,6 @@ export class SkillsetDashboardComponent {
   getEmployeeSkillProjectDetails() {
     this.loadingEmployeeData = true;
     const empId = this.selectedEmployee?.employeeId;
-    if (!empId) return;
     this.http.getDataIncludeParams(`EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`).subscribe({
       next: (res: any) => {
         this.loadingEmployeeData = false;
@@ -987,5 +1004,9 @@ export class SkillsetDashboardComponent {
     if (normalized === 'closed') return 'status-closed';
     if (normalized === 'active') return 'status-active';
     return '';
+  }
+  closep(modal: any) {
+    modal.close();
+    this.selectedDepartment = []
   }
 }

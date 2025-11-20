@@ -478,7 +478,7 @@ export class SkillDirectoryManagementComponent {
           link.href = url;
           link.download = `Employee_Skill_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
           link.click();
-          this.openmodalservice.openSuccessModal('Employee Skill Report Generated Successfully');
+          this.openmodalservice.openSuccessModal('Employee Skill Report Exported Successfully');
         },
         error: () => {
           this.spinnerLoaderforallrecoders = false;

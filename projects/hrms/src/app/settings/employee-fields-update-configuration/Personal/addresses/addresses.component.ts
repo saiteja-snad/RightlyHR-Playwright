@@ -252,12 +252,17 @@ export class AddressesComponent {
       } else {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
+        const items = selectedFields.map((fieldName: string) => {
+          const field = this.fieldOptions.find(
+            (x: any) => x.fieldName === fieldName
+          );
+          return {
+            ColumnName: fieldName,
+            SourceFieldName: field?.actualFieldName ?? '',
+          };
+        });
         const request = {
-          columnNames: selectedFields,
-          sourceFieldName: this.fieldOptions.find(
-            (x: any) => x.fieldName === selectedFields[0]
-          )?.actualFieldName,
-
+         Items:items,
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName

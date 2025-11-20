@@ -232,8 +232,17 @@ export class AcademicsComponent {
       } else {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
+        const items = selectedFields.map((fieldName: string) => {
+          const field = this.fieldOptions.find(
+            (x: any) => x.fieldName === fieldName
+          );
+          return {
+            ColumnName: fieldName,
+            SourceFieldName: field?.actualFieldName ?? '',
+          };
+        });
         const request = {
-          columnNames: selectedFields,
+          Items:items,
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName

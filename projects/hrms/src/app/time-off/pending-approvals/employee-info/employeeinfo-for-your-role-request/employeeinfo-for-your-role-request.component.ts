@@ -115,7 +115,7 @@ export class EmployeeinfoForYourRoleRequestComponent {
     });
   }
 
-  // called for pagination 
+  // called for pagination
   onRowsChange() {
     this.page = 1;
     this.first = 0;

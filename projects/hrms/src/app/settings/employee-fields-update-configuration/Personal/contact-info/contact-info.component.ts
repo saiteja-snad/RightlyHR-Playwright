@@ -167,6 +167,7 @@ export class ContactInfoComponent {
 
   // Method to save field configuration (handles both create and update)
   saveFieldConfig(modal: any) {
+
     if (this.fieldConfigForm.valid) {
       this.loader = true;
       const formValue = this.isEditMode
@@ -234,12 +235,18 @@ export class ContactInfoComponent {
       } else {
         // Create operation
         const selectedFields = formValue.fieldNames || [];
-        const request = {
-          columnNames: selectedFields,
-          sourceFieldName: this.fieldOptions.find(
-            (x: any) => x.fieldName === selectedFields[0]
-          )?.actualFieldName,
+        const items = selectedFields.map((fieldName: string) => {
+          const field = this.fieldOptions.find(
+            (x: any) => x.fieldName === fieldName
+          );
+          return {
+            ColumnName: fieldName,
+            SourceFieldName: field?.actualFieldName ?? '',
+          };
+        });
 
+        const request = {
+          Items: items,
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName

@@ -3,7 +3,7 @@
     <div class="heading-content">
       <app-project-management-module-info />
     </div>
-
+  
     @if(rbac.allowedToAccess('Project Details Tab.create')){
     <div class="d-flex gap-3 align-items-center">
       <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
@@ -17,8 +17,7 @@
       <app-projects-side-tabs />
     </div>
 
-    <div class="main-content"
-      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+    <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
       <div *ngIf="isActive('/project-management/clients')" class="mb-3">
         <app-projects-side-tabs-for-clients />
       </div>
@@ -26,29 +25,28 @@
       <!--Input search-->
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
-          <i class="bi bi-search"></i>
-        </span>
+          <i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
           placeholder="Search by client name / project name / project type" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
 
-
-
       <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
         @if (!loading) {
         <table class="w-100">
           <thead>
+            @if(!isActive('/project-management/clients')){
             <th>Client Name</th>
+            }
             <th>Project Name</th>
-            <th>Project Code</th>
+            <th class="text-center">Project Code</th>
             <!-- <th>Start Date</th>
               <th>End Date</th>
               <th>Effective Date</th>
               <th>Kickoff Date</th> -->
-            <th>Project Type</th>
+            <th class="text-center">Project Type</th>
             <th>Department</th>
-            <th>Status</th>
+            <!-- <th>Status</th> -->
             @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
@@ -58,17 +56,18 @@
             <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
               <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
                 <tr *ngFor="let project of filteredProjects; let i = index">
+                  @if(!isActive('/project-management/clients')){
                   <td>{{ project.client.clientName }}</td>
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{
-                      project.projectName}}</a></td>
-                  <td>{{ project?.meta?.graphData?.code || '-' }}</td>
+                  }
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
+                  <td class="text-center">{{ project?.meta?.graphData?.code || '-' }}</td>
                   <!-- <td>{{ project.startDate | dateformat }}</td>
                     <td>{{ project.endDate | dateformat }}</td>
                     <td>{{ project.effectiveDate | dateformat }}</td>
                     <td>{{ project.kickoffDate | dateformat }}</td> -->
-                  <td>{{ project.projectType }}</td>
+                  <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
-                  <td>{{ project.status }}</td>
+                  <!-- <td>{{ project.status }}</td> -->
                   @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
                   <td class="text-center">
@@ -119,7 +118,6 @@
         }
       </div>
     </div>
-
   </div>
 </div>
 
@@ -147,19 +145,23 @@
                 placeholder="Please select client name" class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched && 
-            updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
+              updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
           </div>
 
           <!-- Project Code -->
           <div class="col-md-6 mb-3">
             <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="updatecode" maxlength="20"
+            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"  formControlName="updatecode" maxlength="6"
               placeholder="Please enter project code">
             <div class="error-msg"
-              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.invalid">
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['required']">
               Project Code is required
             </div>
+            <div class="error-msg"
+            *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
+            Project Code cannot exceed 5 characters
+          </div>
           </div>
 
           <!-- Project Name -->
@@ -204,18 +206,15 @@
             </div>
             <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
               class="error-msg">
-              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is
-                required'|translate}}
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is required'|translate}}
               </div>
             </div>
           </div>
 
           <!-- Start Date -->
           <div class="col-md-6 mb-3">
-            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span
-                class="text-danger">*</span></label>
-            <input type="date" id="updatestartDate" formControlName="updatestartDate"
-              class="form-control custom-input" />
+            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
+            <input type="date" id="updatestartDate" formControlName="updatestartDate" class="form-control custom-input" />
             <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched && 
             updateprojectform.get('updatestartDate')?.invalid">Start Date is required</div>
             <div *ngIf="!startndEndDateValid">
@@ -225,12 +224,9 @@
 
           <!-- End Date -->
           <div class="col-md-6 mb-3">
-            <label for="updateendDate" class="form-label custom-label mb-2">End Date<span
-                class="text-danger">*</span></label>
-            <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate"
-              class="form-control custom-input" />
-            <div class="error-msg"
-              *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
+            <label for="updateendDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
+            <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate" class="form-control custom-input" />
+            <div class="error-msg" *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
               End Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
@@ -375,8 +371,7 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
-        translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
     </div>
   </div>
 </ng-template>

@@ -2,7 +2,7 @@
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name">Project Management<span class="ms-1">
-                    <i class="bi bi-chevron-double-right"></i></span></div>
+                <i class="bi bi-chevron-double-right"></i></span></div>
             @if(isShowtimesheetforteamRoute()){
             <div class="commpoment-name">
                 <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
@@ -103,8 +103,7 @@
                                     <div class="summary-header d-inline-flex gap-2">
                                         <div>Projects Summary</div>
                                         <div>
-                                            <img src="\icons\moduelicon.png" alt="Icon"
-                                                [ngbPopover]="resourceSummaryContent" class="module-icon">
+                                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
                                             <ng-template #resourceSummaryContent>
                                                 <div class="module-info-text">{{projectsummaryinfo}}</div>
                                             </ng-template>
@@ -118,20 +117,20 @@
                                 <table class="w-100">
                                     <thead>
                                         <th>{{'Project Name'|translate}}</th>
-                                        <th>{{'Project Code'|translate}}</th>
-                                        <th>{{'Department'|translate}}</th>
-                                        <th>{{'Phase'|translate}}</th>
-                                        <th>{{'Role'|translate}}</th>
-                                        <th>{{'Total Hours'|translate}}</th>
+                                        <th class="text-center">{{'Project Code'|translate}}</th>
+                                        <th class="text-center">{{'Department'|translate}}</th>
+                                        <th class="text-center">{{'Phase'|translate}}</th>
+                                        <th class="text-center">{{'Role'|translate}}</th>
+                                        <th class="text-center">{{'Total Hours'|translate}}</th>
                                         <th class="text-center">{{'Status'|translate}}</th>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let item of projectSummeryData">
                                             <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
-                                            <td>{{item.projectColor.graphData.code?item.projectColor.graphData.code:'-'}}</td>
-                                            <td>{{item.department?item.department:'-'}}</td>
-                                            <td>{{item.phaseName?item.phaseName:'-'}}</td>
-                                            <td>{{item.role?item.role:'-'}}</td>
+                                            <td>{{item?.projectColor?.graphData?.code?item.projectColor?.graphData?.code:'-'}}</td>
+                                            <td>{{item?.department?item?.department:'-'}}</td>
+                                            <td>{{item?.phaseName?item?.phaseName:'-'}}</td>
+                                            <td>{{item?.role?item?.role:'-'}}</td>
                                             <td><span class="logged-hrs">{{item.loggedHours?item.loggedHours:'0'}}</span>
                                                 /{{item.allocatedHours?item.allocatedHours:''}}hrs
                                             </td>

@@ -12,7 +12,7 @@
 
     td {
         border: 1px solid #CCDAEC !important;
-        background-color: #FFFFFF !important;
+        font-weight: 600 !important;
     }
 
     th {
@@ -32,6 +32,7 @@
 
     td:first-child {
         border-left: 0px !important;
+        background-color: #FFF !important;
     }
 
     td:last-child {
@@ -40,12 +41,25 @@
 }
 
 .project-name {
-    font-weight: 700;
-    font-style: Bold;
+    // font-weight: 700;
+    // font-style: Bold;
     font-size: 14px;
     text-decoration: none;
     color: var(--primary-color);
     text-decoration: underline;
+}
+.project-name-nopermission {
+    // font-weight: 700;
+    // font-style: Bold;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
+    // text-decoration: underline;
+}
+.project-legendCode{
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
 }
 
 .circular-dot {
@@ -78,8 +92,12 @@
     background-color: #EA362C;
 }
 
+.circle-pending{
+    background-color: #565557;
+}
+
 .circle-yellow {
-    background-color: #FCB910;
+    background-color: #FFEA00;
 }
 
 .status-text {
@@ -228,4 +246,8 @@
     .p-select {
         width: 240px !important;
     }
+}
+
+.custom-text {
+  font-size: var(--fontsize10) !important;
 }

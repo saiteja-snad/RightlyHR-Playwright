@@ -30,7 +30,6 @@ export class ProjectManagementMainTabsComponent implements OnInit {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-
     this.filterTabsByRbac();
   }
 
@@ -38,6 +37,7 @@ export class ProjectManagementMainTabsComponent implements OnInit {
     if (link) {
       this.router.navigate([link]);
       localStorage.removeItem('clientProjectId');
+      localStorage.removeItem('projectProjectId');
     }
   }
 

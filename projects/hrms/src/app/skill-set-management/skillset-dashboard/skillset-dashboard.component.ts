@@ -11,7 +11,6 @@ import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.comp
 import { debounceTime, filter, Subject, Subscription } from 'rxjs';
 import { ChartData, DepartmentCount, SkillProficiencyCount, SummaryCard, SkillSummary, EmployeeSkill, TopSkill } from '../../Interfaces/skill-dashboard.model';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
-import { environment } from '../../../environments/environment';
 import { Chip } from 'primeng/chip';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -22,15 +21,13 @@ import { SkillSetMainTabsComponent } from "../../shared/skill-set/skill-set-main
 import { DomSanitizer } from '@angular/platform-browser';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { SkeletonModule } from 'primeng/skeleton';
-import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { TabsModule } from 'primeng/tabs';
 import moment from 'moment';
-
 @Component({
   selector: 'app-skillset-dashboard',
   imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent, ModuleInfoIconComponent,
     NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, NgbPopoverModule, ModuleInformationComponent, SkeletonModule,
-    TranslateModule, SkillSetMainTabsComponent, DataLoaderContentComponent, TabsModule],
+    TranslateModule, SkillSetMainTabsComponent, TabsModule],
   templateUrl: './skillset-dashboard.component.html',
   styleUrl: './skillset-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -120,12 +117,14 @@ export class SkillsetDashboardComponent {
       this.getViewSkillDetails(skillName);
     });
   }
+
   isOptionDisabled(option: any): boolean {
     return (
       this.selectedStatus.includes('All Proficiencies') &&
       option.value !== 'All Proficiencies'
     );
   }
+
   updateModuleInfo() {
     const url = this.router.url;
     this.ComponentnameDisplay();
@@ -149,6 +148,7 @@ export class SkillsetDashboardComponent {
     if (normalized === 'committed') return 'status-committed';
     return '';
   }
+
   trackBySkillName(index: number, item: any): string {
     return item?.skillName ?? index;
   }
@@ -161,18 +161,14 @@ export class SkillsetDashboardComponent {
 
   openEnd(content: TemplateRef<any>, skillName: string): void {
     this.selectedSkillName = skillName;
-    this.offcanvasService.open(content, {
-      position: 'end',
-      backdrop: 'static',
-      keyboard: false
-    });
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
     this.getViewSkillDetails(skillName);
   }
+
   // openEnd2(content: TemplateRef<any>, card: any): void {
   //   this.selectedSkillName = card.title;
   //   this.selectedSkillKey = card.key; // frontend only
   //   this.isloading = true;
-
   //   this.getResourcesSummary(() => {
   //     this.isloading = false;
   //     this.offcanvasService.open(content, {
@@ -183,7 +179,6 @@ export class SkillsetDashboardComponent {
   //   });
   // }
 
-
   prevSelectedProficiency: string[] = ['All Proficiencies'];
   onCheckemployeeProficiency(event: any): void {
     const newValues: string[] = Array.isArray(event?.value) ? event.value : (this.selectedStatus || []);
@@ -193,7 +188,6 @@ export class SkillsetDashboardComponent {
       this.selectedStatus = ['All Proficiencies'];
     }
     else {
-
       if (newValues.includes('All Proficiencies') && newValues.length > 1) {
         this.selectedStatus = newValues.filter(v => v !== 'All Proficiencies');
       }
@@ -205,14 +199,12 @@ export class SkillsetDashboardComponent {
       }
     }
     this.prevSelectedProficiency = [...this.selectedStatus];
-
     // Your existing graph calls
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.getSkillSetTableData();
     this.topSkillsGraph();
   }
-
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -222,6 +214,7 @@ export class SkillsetDashboardComponent {
     modal.close();
     this.searchQuery = '';
   }
+
   private searchTimer: any;
   onSearch(): void {
     clearTimeout(this.searchTimer);
@@ -247,7 +240,6 @@ export class SkillsetDashboardComponent {
               profileImage: 'images/alternate.png',
               originalProfileUrl: emp.profileImage || emp.profileUrl || ''
             }));
-
           this.employeeSummary = {
             allEmployeesList: addProfileImage(summary.allEmployeesList || []),
             allocatedEmployeesList: addProfileImage(summary.allocatedEmployeesList || []),
@@ -311,18 +303,21 @@ export class SkillsetDashboardComponent {
       this.skillLevelData.datasets[0]?.data?.length
     );
   }
+  
   get hasDepartmentwiseGraphData(): boolean {
     return !!(
       this.skillByDepartmentData?.datasets?.length &&
       this.skillByDepartmentData.datasets[0]?.data?.length
     );
   }
+
   get hasTopSkillGraphData(): boolean {
     return !!(
       this.topSkillsData?.datasets?.length &&
       this.topSkillsData.datasets[0]?.data?.length
     );
   }
+
   hasnodata = false;
   skilllevelGraph(): void {
     this.isLoadingGraphSkillProficiency = true;
@@ -484,7 +479,6 @@ export class SkillsetDashboardComponent {
           const counts = top5.map(s => s.employeeCount);
           const staticColors = ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'];
           const colors = staticColors.slice(0, top5.length);
-
           this.topSkillsData = {
             labels: labels as any,
             datasets: [
@@ -638,7 +632,6 @@ export class SkillsetDashboardComponent {
 
   downloadAndSetProfileImage(emp: any): void {
     if (!emp || !emp.originalProfileUrl) return;
-
     this.http.DownloadDataWithQuery('FileSystem/Downloadfile', emp.originalProfileUrl).subscribe({
       next: (res: any) => {
         const blob = new Blob([res['body']], { type: 'image/png' });
@@ -696,6 +689,7 @@ export class SkillsetDashboardComponent {
       this.searchQuery = '';
     }
   }
+
   prevSelected: string[] = ['All Skills'];
   onSkillSelectionChange(event: any): void {
     const newValue: string[] = Array.isArray(event?.value) ? event.value : (this.selectedSkills || []);
@@ -772,13 +766,10 @@ export class SkillsetDashboardComponent {
     this.getDepartments()
     this.getEmployeeDirectorySummary(() => {
       this.isloading = false;
-      this.offcanvasService.open(content, {
-        position: 'end',
-        backdrop: 'static',
-        keyboard: false
-      });
+      this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
     });
   }
+
   getEmployeeDirectorySummary(callback?: () => void): void {
     const params: any = {};
     if (this.resourceSearchQuery?.trim()) {
@@ -855,21 +846,20 @@ export class SkillsetDashboardComponent {
     });
   }
 
-
   openModal(content: TemplateRef<any>, emp: any) {
     this.selectedEmployee = emp;
     this.getEmployeeSkillProjectDetails();
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   ondepSelectionChange(): void {
     this.getEmployeeDirectorySummary();
   }
 
-
   getSkillsByLevel(level: string, skills: any[]) {
     return skills.filter(s => s.proficiencyLevel?.toLowerCase() === level.toLowerCase());
   }
+
   getProficiencyClass(level: string): string {
     switch (level?.toLowerCase()) {
       case 'beginner': return 'chip-beginner';
@@ -878,13 +868,13 @@ export class SkillsetDashboardComponent {
       default: return 'chip-default';
     }
   }
+
   get employeeStatusDisplay(): string {
     const emp = this.selectedEmployee;
     if (!emp) return '-';
     if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
-      const lastProject = emp.projects
-        .filter((p: any) => p.endDate)
-        .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
+      const lastProject = emp.projects.filter((p: any) => p.endDate).sort((a: any, b: any) => 
+        new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
       if (lastProject?.endDate) {
         const formattedDate = moment(lastProject.endDate).format('MMM DD, YYYY');
         return `Committed until ${formattedDate}`;
@@ -907,15 +897,14 @@ export class SkillsetDashboardComponent {
     "/icons/logical-thinking.png",
     "/icons/technique.png"
   ];
+
   private usedFallbackIcons = new Set<string>();
   skillCategories: any[] = [];
   getEmployeeSkillProjectDetails() {
     this.loadingEmployeeData = true;
     const empId = this.selectedEmployee?.employeeId;
     if (!empId) return;
-    this.http.getDataIncludeParams(
-      `EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`
-    ).subscribe({
+    this.http.getDataIncludeParams(`EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`).subscribe({
       next: (res: any) => {
         this.loadingEmployeeData = false;
         if (res?.success && res?.data) {
@@ -932,7 +921,6 @@ export class SkillsetDashboardComponent {
             icon: this.getCategoryIcon(category),
             skills: grouped[category]
           }));
-
           this.selectedEmployee = {
             ...this.selectedEmployee,
             ...res.data,
@@ -975,5 +963,4 @@ export class SkillsetDashboardComponent {
       }
     });
   }
-
 }

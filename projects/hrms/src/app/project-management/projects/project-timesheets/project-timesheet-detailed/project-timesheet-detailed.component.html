@@ -90,7 +90,7 @@
                             <tr *ngFor="let entry of selectedEntries">
 
                                 <td>{{ entry?.phaseName ?? '-' }}</td>
-                                <td>{{entry?.resourceRole ?? '-'}}</td>
+                                <td class="resoure-role-text" >{{entry?.resourceRole ?? '-'}}</td>
                                 <td>
                                     {{ entry?.resourceStartDate ? (entry?.resourceStartDate | dateformat) : '-' }}
                                 </td>

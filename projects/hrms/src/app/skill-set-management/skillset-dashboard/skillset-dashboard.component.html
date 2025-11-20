@@ -335,11 +335,16 @@
             <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchQuery"
                 (input)="onSearch()" />
         </div>
-
         <div *ngIf="isloading" class="text-center py-3">
             <div class="popup-loader">
                 <p-skeleton width="100%" height="100%" borderRadius="12px" />
             </div>
+        </div>
+        <div class="custom-p-multiSelect-content">
+            <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
+                placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
+                resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
+                (onChange)="ondepSelectionChange()" />
         </div>
 
         <!-- Employee Cards -->
@@ -364,7 +369,6 @@
                 </div>
             </div>
         </div>
-
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center custom-no-data-found text-muted py-3">
             <app-no-data-found />
         </div>
@@ -392,17 +396,16 @@
                         </div>
                         <div>
                             <!-- Name and ID -->
-                            <p class="name mt-2 mb-1"> Mounika </p>
-
+                            <p class="name mt-2 mb-1"> {{ selectedEmployee?.employee?.name }}
+                                ({{selectedEmployee?.employee?.snadEmployeeId}}) </p>
                             <!-- Designation -->
-                            <p class="designation mb-2">Front End Developer - SDA</p>
-
+                            <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }} -
+                                {{selectedEmployee?.departmentDetails?.departmentName }}</p>
                             <!-- Status -->
-                            <div class="status-badge">• Commited Until March 31,2026</div>
+                            <div class="status-badge">• {{ employeeStatusDisplay }}</div>
                         </div>
                     </div>
                     <div class="popup-header-border my-3"></div>
-
                     <!-- Tabs -->
                     <div class="custom-skill-set-tabs">
                         <p-tabs value="0" [lazy]="false">
@@ -413,76 +416,52 @@
                             <!-- Skills -->
                             <p-tabpanel value="0">
                                 <div class="skills-container custom-offcanvas-content pt-3 pe-2">
-                                    <!-- @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) { -->
-                                    <!-- Technical Skills -->
-                                    <!-- @if (selectedEmployee?.techSkills?.length) { -->
-                                    <div class="skills-group mb-4" *ngIf="selectedEmployee?.techSkills?.length">
-                                        <div class="section-title d-flex align-items-center mb-2"><img
-                                                src="/icons/technical-skills-icon.png" alt="Skills-icon"
-                                                class="skill-icon me-1">Technical Skills</div>
-                                        <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
-                                            <div *ngIf="getSkillsByLevel(level, selectedEmployee.techSkills).length"
-                                                class="mb-3">
-                                                <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level
-                                                    }}</p>
-                                                <div class="skill-set-display-card">
-                                                    <div class="d-flex flex-wrap gap-2">
-                                                        <p-chip
-                                                            *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.techSkills)"
-                                                            [label]="skill.skillName"
-                                                            [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
-                                                        </p-chip>
+                                    @if (skillCategories?.length) {
+                                    <ng-container *ngFor="let cat of skillCategories">
+                                        <!-- Category Title -->
+                                        <div class="skills-group mb-4">
+                                            <div class="section-title d-flex align-items-center mb-2">
+                                                <img [src]="cat.icon" class="skill-icon me-1">
+                                                {{ cat.category }}
+                                            </div>
+                                            <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
+                                                <div *ngIf="getSkillsByLevel(level, cat.skills).length" class="mb-3">
+                                                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">
+                                                        {{ level }}
+                                                    </p>
+                                                    <div class="skill-set-display-card">
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            <p-chip
+                                                                *ngFor="let skill of getSkillsByLevel(level, cat.skills)"
+                                                                [label]="skill.skillName"
+                                                                [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                                                            </p-chip>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </ng-container>
-                                    </div>
-                                    <!-- } -->
-                                    <div class="popup-header-border my-3"></div>
-
-                                    <!-- Soft Skills -->
-                                    <!-- @if (selectedEmployee?.softSkills?.length) { -->
-                                    <div class="skills-group">
-                                        <p class="section-title d-flex align-items-center mb-2"><img
-                                                src="/icons/soft-skills-icon.png" alt="Skills-icon"
-                                                class="skill-icon me-1">Soft Skills</p>
-                                        <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
-                                            <div *ngIf="getSkillsByLevel(level, selectedEmployee.softSkills).length"
-                                                class="mb-3">
-                                                <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level
-                                                    }}</p>
-                                                <div class="skill-set-display-card">
-                                                    <div class="d-flex flex-wrap gap-2">
-                                                        <p-chip
-                                                            *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.softSkills)"
-                                                            [label]="skill.skillName"
-                                                            [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
-                                                        </p-chip>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </ng-container>
-                                    </div>
-                                    <!-- }
+                                            </ng-container>
+                                        </div>
+                                        <div class="popup-header-border my-3"></div>
+                                    </ng-container>
                                     } @else {
                                     <app-no-data-found />
-                                    } -->
+                                    }
                                 </div>
                             </p-tabpanel>
 
                             <!-- Projects -->
                             <p-tabpanel value="1">
                                 <div class="projects-container custom-offcanvas-content pt-3 pe-2">
-                                    <!-- @if (selectedEmployee?.projects?.length) { -->
-                                    <div class="project-card mb-3">
-                                        <p class="project-name mb-1">SNAD Project</p>
+                                    @if (selectedEmployee?.projects?.length) {
+                                    <div class="project-card mb-3" *ngFor="let proj of selectedEmployee.projects">
+                                        <p class="project-name mb-1">{{ proj.projectName }}</p>
                                         <div class="d-flex align-items-center justify-content-between">
-                                            <p class="project-role mb-0">Project Role</p>
+                                            <p class="project-role mb-0">{{ proj.projectDesignation }}</p>
                                         </div>
                                     </div>
-                                    <!-- } @else {
+                                    } @else {
                                     <app-no-data-found />
-                                    } -->
+                                    }
                                 </div>
                             </p-tabpanel>
                         </p-tabs>

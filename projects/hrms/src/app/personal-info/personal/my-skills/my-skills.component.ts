@@ -30,6 +30,7 @@ export class MySkillsComponent {
   empinfo: any = {};
   MySkills: any[] = [];
   categoryList: any
+   skillCategories: any[] = [];
   spinnerLoader = false;
   subscription!: Subscription;
   spinnerLoaderforallrecoders = false;
@@ -110,28 +111,79 @@ export class MySkillsComponent {
   openmodelforConfirm(content: any) {
     this.modalService.open(this.Confirmation, { centered: true });
   }
+ private categoryIcons: Record<string, string> = {
+    "Technical Skill": "/icons/technical-skills-icon.png",
+    "Soft Skill": "/icons/soft-skills-icon.png",
+    "Leadership Skills": "/icons/leadership-skills.png",
+    "Functional Skill": "/icons/functional-skills.png"
+  };
+
+  private fallbackIconPool: string[] = [
+    "/icons/intelligence.png",
+    "/icons/logical-thinking.png",
+    "/icons/technique.png"
+  ];
+
+  private usedFallbackIcons = new Set<string>();
 
   getSkills(): void {
     const params = {
       employeeId: this.empinfo.employeeId,
       isActive: true
     };
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).pipe(takeUntil(this.destroy$),
-      map((res: any) => {
-        if (res?.data?.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
-          return res.data.items[0].skills || [];
-        }
-        return [];
-      })
-    ).subscribe({
-      next: (skills: any[]) => {
-        this.technicalSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('technical') && s.isActive);
-        this.softSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('soft') && s.isActive);
-      },
-      error: (err) => {
-        console.error(' Error fetching skills:', err);
-      }
-    });
+
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params)
+      .pipe(
+        takeUntil(this.destroy$),
+        map((res: any) => {
+          if (res?.data?.items && res.data.items.length > 0) {
+            return res.data.items[0].skills || [];
+          }
+          return [];
+        })
+      )
+      .subscribe({
+        next: (skills: any[]) => {
+          const activeSkills = skills.filter(s => s.isActive);
+
+          const grouped: any = {};
+
+          activeSkills.forEach(skill => {
+            const category = skill.skillCategory?.trim();
+            if (!grouped[category]) grouped[category] = [];
+            grouped[category].push(skill);
+          });
+
+          this.skillCategories = Object.keys(grouped).map(category => ({
+            category,
+            icon: this.getCategoryIcon(category),
+            skills: grouped[category]
+          }));
+
+
+          console.log("Grouped Skills by Category:", this.skillCategories);
+        },
+        error: (err) => console.error("Error fetching skills:", err)
+      });
+  }
+
+  private getCategoryIcon(category: string): string {
+    if (this.categoryIcons[category]) {
+      return this.categoryIcons[category];
+    }
+
+    const availableIcon = this.fallbackIconPool.find(
+      icon => !this.usedFallbackIcons.has(icon)
+    );
+
+    const finalIcon =
+      availableIcon || this.fallbackIconPool[this.fallbackIconPool.length - 1];
+
+    this.categoryIcons[category] = finalIcon;
+
+    this.usedFallbackIcons.add(finalIcon);
+
+    return finalIcon;
   }
 
   getCategory() {

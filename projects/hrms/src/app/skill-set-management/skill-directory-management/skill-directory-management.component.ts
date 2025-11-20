@@ -293,7 +293,22 @@ export class SkillDirectoryManagementComponent {
       error: (reason) => console.error('Error downloading image:', reason),
     });
   }
+  // Category-specific icons
+  private categoryIcons: Record<string, string> = {
+    "Technical Skill": "/icons/technical-skills-icon.png",
+    "Soft Skill": "/icons/soft-skills-icon.png",
+    "Leadership Skills": "/icons/leadership-skills.png",
+    "Functional Skill": "/icons/functional-skills.png"
+  };
 
+  // Default fallback icon rotation
+  private fallbackIconPool: string[] = [
+    "/icons/intelligence.png",
+    "/icons/logical-thinking.png",
+    "/icons/technique.png"
+  ];
+  private usedFallbackIcons = new Set<string>();
+  skillCategories: any[] = [];
   getEmployeeSkills(): void {
     this.isloading = true;
     this.noDataFound = false;
@@ -331,8 +346,22 @@ export class SkillDirectoryManagementComponent {
               ...project,
               phasesCount: project?.phases?.length || 0
             })) || [];
+            const grouped: any = {};
+            const skills = emp.skills || [];
+            skills.forEach((skill: { isActive: any; skillCategory: string; }) => {
+              if (!skill.isActive) return;
+              const category = skill.skillCategory?.trim() || "Others";
+              if (!grouped[category]) grouped[category] = [];
+              grouped[category].push(skill);
+            });
+            emp.skillCategories = Object.keys(grouped).map(category => ({
+              category,
+              icon: this.getCategoryIcon(category),
+              skills: grouped[category]
+            }));
             return emp;
           });
+
           this.totalCount = res.data.totalCount || this.MySkills.length;
           this.noDataFound = false;
 
@@ -351,6 +380,19 @@ export class SkillDirectoryManagementComponent {
         this.noDataFound = true;
       },
     });
+  }
+  private getCategoryIcon(category: string): string {
+    if (this.categoryIcons[category]) {
+      return this.categoryIcons[category];
+    }
+    const availableIcon = this.fallbackIconPool.find(
+      icon => !this.usedFallbackIcons.has(icon)
+    );
+    const finalIcon =
+      availableIcon || this.fallbackIconPool[this.fallbackIconPool.length - 1];
+    this.categoryIcons[category] = finalIcon;
+    this.usedFallbackIcons.add(finalIcon);
+    return finalIcon;
   }
 
   getMultiskills() {

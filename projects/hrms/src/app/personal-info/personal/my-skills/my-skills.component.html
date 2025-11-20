@@ -11,137 +11,90 @@
         }
     </div>
 
-    <div class="skill-container">
-        @if (!spinnerLoaderforallrecoders) {
-        @if (technicalSkills.length || softSkills.length) {
-        <!-- ===== TECHNICAL SKILLS ===== -->
-        <div class="skills-group" *ngIf="technicalSkills.length">
-            <div class="skill-section-title mb-3"><img src="/icons/technical-skills-icon.png" alt="Skills-icon" class="skill-icon me-1"> Technical Skills</div>
-            <!-- Expert -->
-            <div *ngIf="getSkillsByLevel('Expert', technicalSkills).length" class="mb-4">
-                <label class="custom-label chip expert mb-2">Expert</label>
-                <div class="skill-set-display-card">
-                    <div class="d-flex flex-wrap gap-2">
-                        <div *ngFor="let skill of getSkillsByLevel('Expert', technicalSkills)" class="custom-chip-card">
-                            <div class="me-2">{{ skill.skillName }}</div>
-                            @if (canAccess('delete', 'myskills')) {
-                            <div>
-                                <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+  
+<div class="skill-container">
+    @if (!spinnerLoaderforallrecoders) {
+        @if (skillCategories.length) {
+            <!-- LOOP OVER DYNAMIC CATEGORIES -->
+           <div class="skills-group" *ngFor="let group of skillCategories; let i = index; let last = last">
+
+                <!-- Category Title + Dynamic Icon -->
+                <div class="skill-section-title mb-3">
+                    <img [src]="group.icon" alt="cat-icon" class="skill-icon me-1">
+                    {{ group.category }}
+                </div>
+
+                <!-- EXPERT -->
+                <div *ngIf="getSkillsByLevel('Expert', group.skills).length" class="mb-4">
+                    <label class="custom-label chip expert mb-2">Expert</label>
+                    <div class="skill-set-display-card">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div *ngFor="let skill of getSkillsByLevel('Expert', group.skills)" class="custom-chip-card">
+                                <div class="me-2">{{ skill.skillName }}</div>
+
+                                @if (canAccess('delete', 'myskills')) {
+                                <div>
+                                    <img class="custom-delete-img"
+                                         src="/icons/cross-chip.png"
+                                         (click)="openDeletePopup(deletepopup, skill, $event)">
+                                </div>
+                                }
                             </div>
-                            }
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Intermediate -->
-            <div *ngIf="getSkillsByLevel('Intermediate', technicalSkills).length" class="mb-4">
-                <label class="custom-label chip intermediate mb-2">Intermediate</label>
-                <div class="skill-set-display-card">
-                    <div class="d-flex flex-wrap gap-2">
-                        <div *ngFor="let skill of getSkillsByLevel('Intermediate', technicalSkills)"
-                            class="custom-chip-card">
-                            <div class="me-2">{{ skill.skillName }}</div>
-                            @if (canAccess('delete', 'myskills')) {
-                            <div>
-                                <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                <!-- INTERMEDIATE -->
+                <div *ngIf="getSkillsByLevel('Intermediate', group.skills).length" class="mb-4">
+                    <label class="custom-label chip intermediate mb-2">Intermediate</label>
+                    <div class="skill-set-display-card">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div *ngFor="let skill of getSkillsByLevel('Intermediate', group.skills)"
+                                 class="custom-chip-card">
+                                <div class="me-2">{{ skill.skillName }}</div>
+                                @if (canAccess('delete', 'myskills')) {
+                                <div>
+                                    <img class="custom-delete-img"
+                                         src="/icons/cross-chip.png"
+                                         (click)="openDeletePopup(deletepopup, skill, $event)">
+                                </div>
+                                }
                             </div>
-                            }
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Beginner -->
-            <div *ngIf="getSkillsByLevel('Beginner', technicalSkills).length" class="mb-4">
-                <label class="custom-label chip beginner mb-2">Beginner</label>
-                <div class="skill-set-display-card">
-                    <div class="d-flex flex-wrap gap-2">
-                        <div *ngFor="let skill of getSkillsByLevel('Beginner', technicalSkills)"
-                            class="custom-chip-card">
-                            <div class="me-2">{{ skill.skillName }}</div>
-                            @if (canAccess('delete', 'myskills')) {
-                            <div>
-                                <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
+                <!-- BEGINNER -->
+                <div *ngIf="getSkillsByLevel('Beginner', group.skills).length" class="mb-4">
+                    <label class="custom-label chip beginner mb-2">Beginner</label>
+                    <div class="skill-set-display-card">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div *ngFor="let skill of getSkillsByLevel('Beginner', group.skills)"
+                                 class="custom-chip-card">
+                                <div class="me-2">{{ skill.skillName }}</div>
+                                @if (canAccess('delete', 'myskills')) {
+                                <div>
+                                    <img class="custom-delete-img"
+                                         src="/icons/cross-chip.png"
+                                         (click)="openDeletePopup(deletepopup, skill, $event)">
+                                </div>
+                                }
                             </div>
-                            }
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div *ngIf="softSkills.length" class="dashed-border my-3"></div>
+                <div class="dashed-border my-3" *ngIf="!last"></div>
 
-        <!-- ===== SOFT SKILLS ===== -->
-        <div class="skills-group mt-2" *ngIf="softSkills.length">
-            <div class="skill-section-title mb-3"><img src="/icons/soft-skills-icon.png" alt="Skills-icon" class="skill-icon me-1">  Soft Skills</div>
-
-            <!-- Expert -->
-            <div *ngIf="getSkillsByLevel('Expert', softSkills).length" class="mb-4">
-                <label class="custom-label chip expert mb-2">Expert</label>
-                <div class="skill-set-display-card">
-                    <div class="d-flex flex-wrap gap-2">
-                        <div *ngFor="let skill of getSkillsByLevel('Expert', softSkills)" class="custom-chip-card">
-                            <div class="me-2">{{ skill.skillName }}</div>
-                            @if (canAccess('delete', 'myskills')) {
-                            <div>
-                                <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Intermediate -->
-            <div *ngIf="getSkillsByLevel('Intermediate', softSkills).length" class="mb-4">
-                <label class="custom-label chip intermediate mb-2">Intermediate</label>
-                <div class="skill-set-display-card">
-                    <div class="d-flex flex-wrap gap-2">
-                        <div *ngFor="let skill of getSkillsByLevel('Intermediate', softSkills)"
-                            class="custom-chip-card">
-                            <div class="me-2">{{ skill.skillName }}</div>
-                            @if (canAccess('delete', 'myskills')) {
-                            <div>
-                                <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Beginner -->
-            <div *ngIf="getSkillsByLevel('Beginner', softSkills).length" class="mb-4">
-                <label class="custom-label chip beginner mb-2">Beginner</label>
-                <div class="skill-set-display-card">
-                    <div class="d-flex flex-wrap gap-2">
-                        <div *ngFor="let skill of getSkillsByLevel('Beginner', softSkills)" class="custom-chip-card">
-                            <div class="me-2">{{ skill.skillName }}</div>
-                            @if (canAccess('delete', 'myskills')) {
-                            <div>
-                                <img class="custom-delete-img" src="/icons/cross-chip.png"
-                                    (click)="openDeletePopup(deletepopup, skill, $event)" />
-                            </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         } @else {
-        <app-no-data-found />
+            <app-no-data-found />
         }
-        } @else {
+    } @else {
         <app-data-loader-content />
-        }
-    </div>
+    }
+</div>
 </div>
 
 <!--Add New Skill-->

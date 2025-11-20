@@ -92,6 +92,8 @@ export class SkillsetDashboardComponent {
   isLoadingGraphTopSkills = false;
   chartLoader = false
   resourceSearchQuery: string = '';
+  departmentOptions: any[] = [];
+  selectedDepartment: string[] = [];
   // contentInfo
   topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
   skillProficiencyContentInfo = 'Presents a consolidated view of employee skill levels—categorized as Beginner, Intermediate, and Expert. This chart enables HR and leadership teams to evaluate overall workforce competency and pinpoint areas requiring skill enhancement or upskilling.';
@@ -183,13 +185,10 @@ export class SkillsetDashboardComponent {
 
 
   prevSelectedProficiency: string[] = ['All Proficiencies'];
-
   onCheckemployeeProficiency(event: any): void {
     const newValues: string[] = Array.isArray(event?.value) ? event.value : (this.selectedStatus || []);
-
     const wasAllPreviously = this.prevSelectedProficiency.includes('All Proficiencies');
     const isAllNow = newValues.includes('All Proficiencies');
-
     if (isAllNow && !wasAllPreviously) {
       this.selectedStatus = ['All Proficiencies'];
     }
@@ -198,7 +197,6 @@ export class SkillsetDashboardComponent {
       if (newValues.includes('All Proficiencies') && newValues.length > 1) {
         this.selectedStatus = newValues.filter(v => v !== 'All Proficiencies');
       }
-
       else if (newValues.length === 0) {
         this.selectedStatus = ['All Proficiencies'];
       }
@@ -206,7 +204,6 @@ export class SkillsetDashboardComponent {
         this.selectedStatus = newValues;
       }
     }
-
     this.prevSelectedProficiency = [...this.selectedStatus];
 
     // Your existing graph calls
@@ -639,7 +636,6 @@ export class SkillsetDashboardComponent {
     });
   }
 
-
   downloadAndSetProfileImage(emp: any): void {
     if (!emp || !emp.originalProfileUrl) return;
 
@@ -700,9 +696,6 @@ export class SkillsetDashboardComponent {
       this.searchQuery = '';
     }
   }
-
-
-
   prevSelected: string[] = ['All Skills'];
   onSkillSelectionChange(event: any): void {
     const newValue: string[] = Array.isArray(event?.value) ? event.value : (this.selectedSkills || []);
@@ -776,7 +769,7 @@ export class SkillsetDashboardComponent {
     this.selectedSkillName = card.title;
     this.selectedSkillKey = card.key;
     this.isloading = true;
-
+    this.getDepartments()
     this.getEmployeeDirectorySummary(() => {
       this.isloading = false;
       this.offcanvasService.open(content, {
@@ -790,6 +783,9 @@ export class SkillsetDashboardComponent {
     const params: any = {};
     if (this.resourceSearchQuery?.trim()) {
       params.searchQuery = this.resourceSearchQuery.trim();
+    }
+    if (this.selectedDepartment?.length > 0) {
+      params.departmentNames = this.selectedDepartment.join(',');
     }
     this.isloading = true;
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params).subscribe({
@@ -859,11 +855,17 @@ export class SkillsetDashboardComponent {
     });
   }
 
+
   openModal(content: TemplateRef<any>, emp: any) {
     this.selectedEmployee = emp;
     this.getEmployeeSkillProjectDetails();
-    this.modalService.open(content, { centered: true,size:'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
+  ondepSelectionChange(): void {
+    this.getEmployeeDirectorySummary();
+  }
+
 
   getSkillsByLevel(level: string, skills: any[]) {
     return skills.filter(s => s.proficiencyLevel?.toLowerCase() === level.toLowerCase());
@@ -891,27 +893,87 @@ export class SkillsetDashboardComponent {
     return emp.employeeProjectStatus || '-';
   }
 
-loadingEmployeeData: boolean = false;
-getEmployeeSkillProjectDetails() {
-  this.loadingEmployeeData = true;
-  setTimeout(() => {
-    this.selectedEmployee = {
-      techSkills: [
-        { skillName: 'Angular', proficiencyLevel: 'Expert' },
-        { skillName: 'TypeScript', proficiencyLevel: 'Intermediate' },
-        { skillName: 'HTML', proficiencyLevel: 'Beginner' }
-      ],
-      softSkills: [
-        { skillName: 'Communication', proficiencyLevel: 'Expert' },
-        { skillName: 'Teamwork', proficiencyLevel: 'Intermediate' }
-      ],
-      projects: [
-        { projectName: 'SNAD Project', role: 'Developer' }
-      ]
-    };
+  loadingEmployeeData: boolean = false;
 
-    this.loadingEmployeeData = false;
-  }, 1000); 
-}
+  private categoryIcons: Record<string, string> = {
+    "Technical Skill": "/icons/technical-skills-icon.png",
+    "Soft Skill": "/icons/soft-skills-icon.png",
+    "Leadership Skills": "/icons/leadership-skills.png",
+    "Functional Skill": "/icons/functional-skills.png"
+  };
+
+  private fallbackIconPool: string[] = [
+    "/icons/intelligence.png",
+    "/icons/logical-thinking.png",
+    "/icons/technique.png"
+  ];
+  private usedFallbackIcons = new Set<string>();
+  skillCategories: any[] = [];
+  getEmployeeSkillProjectDetails() {
+    this.loadingEmployeeData = true;
+    const empId = this.selectedEmployee?.employeeId;
+    if (!empId) return;
+    this.http.getDataIncludeParams(
+      `EmployeeSkills/getEmployeeSkillsAndProjectsById?employeeId=${empId}`
+    ).subscribe({
+      next: (res: any) => {
+        this.loadingEmployeeData = false;
+        if (res?.success && res?.data) {
+          const allSkills = res.data.skills || [];
+          const grouped: any = {};
+          allSkills.forEach((skill: any) => {
+            if (!skill.isActive) return;
+            const category = skill.skillCategory?.trim() || "Others";
+            if (!grouped[category]) grouped[category] = [];
+            grouped[category].push(skill);
+          });
+          this.skillCategories = Object.keys(grouped).map(category => ({
+            category,
+            icon: this.getCategoryIcon(category),
+            skills: grouped[category]
+          }));
+
+          this.selectedEmployee = {
+            ...this.selectedEmployee,
+            ...res.data,
+            allSkills,
+            skillCategories: this.skillCategories
+          };
+        } else {
+          this.selectedEmployee = null;
+        }
+      },
+      error: () => {
+        this.loadingEmployeeData = false;
+        this.selectedEmployee = null;
+      }
+    });
+  }
+
+  private getCategoryIcon(category: string): string {
+    if (this.categoryIcons[category]) {
+      return this.categoryIcons[category];
+    }
+    const availableIcon = this.fallbackIconPool.find(
+      icon => !this.usedFallbackIcons.has(icon)
+    );
+    const finalIcon =
+      availableIcon || this.fallbackIconPool[this.fallbackIconPool.length - 1];
+    this.categoryIcons[category] = finalIcon;
+    this.usedFallbackIcons.add(finalIcon);
+    return finalIcon;
+  }
+
+  getDepartments() {
+    this.subscription = this.http.getData("Department").subscribe({
+      next: (res: any) => {
+        const list = Array.isArray(res) ? res : res?.data ?? res?.result ?? [];
+        this.departmentOptions = list.map((d: any) => ({
+          label: d.departmentName,
+          value: d.departmentName
+        }));
+      }
+    });
+  }
 
 }

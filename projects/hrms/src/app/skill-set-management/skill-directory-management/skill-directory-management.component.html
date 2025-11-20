@@ -24,7 +24,7 @@
         <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
           placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
           resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
-          (onChange)="onSkillSelectionChange()"/>
+          (onChange)="onSkillSelectionChange()" />
       </div>
       <div class="custom-p-multiSelect-content">
         <p-multiselect [options]="projectOptions" [(ngModel)]="selectedProjects" placeholder="Please Select Project"
@@ -212,54 +212,36 @@
           <!-- Skills -->
           <p-tabpanel value="0">
             <div class="skills-container custom-offcanvas-content pt-3 pe-2">
-              @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) {
-              <!-- Technical Skills -->
-              @if (selectedEmployee?.techSkills?.length) {
-              <div class="skills-group mb-4" *ngIf="selectedEmployee?.techSkills?.length">
-                <div class="section-title d-flex align-items-center mb-2"><img src="/icons/technical-skills-icon.png"
-                    alt="Skills-icon" class="skill-icon me-1">Technical Skills</div>
+              @if (selectedEmployee?.skillCategories?.length) {
+              <div *ngFor="let cat of selectedEmployee.skillCategories" class="skills-group mb-4">
+                <div class="section-title d-flex align-items-center mb-2">
+                  <img [src]="cat.icon" alt="skill-icon" class="skill-icon me-1">
+                  {{ cat.category }}
+                </div>
                 <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
-                  <div *ngIf="getSkillsByLevel(level, selectedEmployee.techSkills).length" class="mb-3">
-                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level }}</p>
+                  <div *ngIf="getSkillsByLevel(level, cat.skills).length" class="mb-3">
+                    <!-- Level Heading -->
+                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">
+                      {{ level }}
+                    </p>
+                    <!-- Skill Cards -->
                     <div class="skill-set-display-card">
                       <div class="d-flex flex-wrap gap-2">
-                        <p-chip *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.techSkills)"
-                          [label]="skill.skillName" [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                        <p-chip *ngFor="let skill of getSkillsByLevel(level, cat.skills)" [label]="skill.skillName"
+                          [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
                         </p-chip>
                       </div>
                     </div>
                   </div>
                 </ng-container>
+                <!-- Divider Between Categories -->
+                <div class="popup-header-border my-3"></div>
               </div>
-              }
-
-              <div class="popup-header-border my-3"></div>
-
-              <!-- Soft Skills -->
-              @if (selectedEmployee?.softSkills?.length) {
-              <div class="skills-group" *ngIf="selectedEmployee?.softSkills?.length">
-                <p class="section-title d-flex align-items-center mb-2"><img src="/icons/soft-skills-icon.png"
-                    alt="Skills-icon" class="skill-icon me-1">Soft Skills</p>
-                <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
-                  <div *ngIf="getSkillsByLevel(level, selectedEmployee.softSkills).length" class="mb-3">
-                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level }}</p>
-                    <div class="skill-set-display-card">
-                      <div class="d-flex flex-wrap gap-2">
-                        <p-chip *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.softSkills)"
-                          [label]="skill.skillName" [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
-                        </p-chip>
-                      </div>
-                    </div>
-                  </div>
-                </ng-container>
-              </div>
-              }
               } @else {
               <app-no-data-found />
               }
             </div>
           </p-tabpanel>
-
           <!-- Projects -->
           <p-tabpanel value="1">
             <div class="projects-container custom-offcanvas-content pt-3 pe-2">

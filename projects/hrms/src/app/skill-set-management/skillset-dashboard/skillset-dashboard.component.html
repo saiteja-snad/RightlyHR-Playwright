@@ -366,8 +366,8 @@
             <div class="profile-view-content text-center">
                 <div class="mb-2">
                     <!-- Profile Image -->
-                    <ng-container *ngIf="imageUrl; else defaultIcon">
-                        <img [src]="imageUrl" alt="Profile Image" class="profile-image" />
+                    <ng-container *ngIf="selectedEmployee.profileImage; else defaultIcon">
+                        <img [src]="selectedEmployee.profileImage" alt="Profile Image" class="profile-image" />
                     </ng-container>
 
                     <ng-template #defaultIcon>

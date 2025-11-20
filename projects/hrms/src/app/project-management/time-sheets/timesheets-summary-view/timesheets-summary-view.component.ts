@@ -109,7 +109,6 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
       }
     })
     this.http.getteamDateRangeObservable().subscribe((data) => {
-      console.log('Received BehaviorSubject data:', data);
       // Optional check to avoid running on empty initial values
       if (data && (data.startDate || data.endDate || data.employeeId)) {
         this.employeeId = data.employeeId || this.employeeId;
@@ -215,7 +214,6 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   //     this.getEmployeeId(this.employeeId);
   //   }
   // }
-
 
   //graphs no data found conditions
   get hasprojectWiseHoursData(): boolean {
@@ -375,67 +373,58 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
 
   // Project Type (Pie)
   projectWiseChart() {
-  if (!this.projectTypeData || this.projectTypeData.length === 0) return;
-
-  // Labels
-  const labels = this.projectTypeData.map((item: any) =>
-    item.meta?.graphData?.code ? item.meta.graphData.code : item.projectName
-  );
-  const backgroundColor=this.projectTypeData.map((item: any) => item.meta?.graphData?.color);
-
-  // Convert HH:MM → number (for chart)
-  const data = this.projectTypeData.map((item: any) => {
-    const [hours, minutes] = item.hoursHHMM.split(':').map(Number);
-    return hours + minutes / 60;  // numeric only for graph
-  });
-
-  // Use correct HH:MM display value
-  const originalTimesHHMM = this.projectTypeData.map((item: any) => item.hoursHHMM);
-
-  // Colors
-
-  // Legend (outside chart)
-  this.projectTypeLabelData = labels.map((label: string, index: number) => ({
-    label,
-    color: backgroundColor[index],
-    hours: originalTimesHHMM[index],  // <-- FIXED (HH:MM)
-  }));
-
-  // Chart data
-  this.projectTypeGraphData = {
-    labels,
-    datasets: [
-      {
-        label: 'Project Hours (in Hrs)',
-        data,
-        backgroundColor: backgroundColor,
-      },
-    ],
-  };
-
-  // Chart options
-  this.projectTypeGraphOptions = {
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        titleFont: { size: 11 },
-        bodyFont: { size: 10 },
-        callbacks: {
-          title: (tooltipItems: any) => {
-            const index = tooltipItems[0]?.dataIndex;
-            const name = this.projectTypeData[index]?.projectName;
-            return name.match(/.{1,20}/g); // wrap lines
-          },
-          label: (tooltipItem: any) => {
-            const originalHHMM = originalTimesHHMM[tooltipItem.dataIndex];
-            return `Project Hours (in Hrs) : ${originalHHMM}`; // <-- FIXED tooltip to show HH:MM
+    if (!this.projectTypeData || this.projectTypeData.length === 0) return;
+    // Labels
+    const labels = this.projectTypeData.map((item: any) =>
+      item.meta?.graphData?.code ? item.meta.graphData.code : item.projectName
+    );
+    const backgroundColor = this.projectTypeData.map((item: any) => item.meta?.graphData?.color);
+    // Convert HH:MM → number (for chart)
+    const data = this.projectTypeData.map((item: any) => {
+      const [hours, minutes] = item.hoursHHMM.split(':').map(Number);
+      return hours + minutes / 60;  // numeric only for graph
+    });
+    // Use correct HH:MM display value
+    const originalTimesHHMM = this.projectTypeData.map((item: any) => item.hoursHHMM);
+    // Legend (outside chart)
+    this.projectTypeLabelData = labels.map((label: string, index: number) => ({
+      label,
+      color: backgroundColor[index],
+      hours: originalTimesHHMM[index],  // <-- FIXED (HH:MM)
+    }));
+    // Chart data
+    this.projectTypeGraphData = {
+      labels,
+      datasets: [
+        {
+          label: 'Project Hours (in Hrs)',
+          data,
+          backgroundColor: backgroundColor,
+        },
+      ],
+    };
+    // Chart options
+    this.projectTypeGraphOptions = {
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          titleFont: { size: 11 },
+          bodyFont: { size: 10 },
+          callbacks: {
+            title: (tooltipItems: any) => {
+              const index = tooltipItems[0]?.dataIndex;
+              const name = this.projectTypeData[index]?.projectName;
+              return name.match(/.{1,20}/g); // wrap lines
+            },
+            label: (tooltipItem: any) => {
+              const originalHHMM = originalTimesHHMM[tooltipItem.dataIndex];
+              return `Project Hours (in Hrs) : ${originalHHMM}`; // <-- FIXED tooltip to show HH:MM
+            },
           },
         },
       },
-    },
-  };
-}
-
+    };
+  }
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
@@ -450,14 +439,11 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
     );
     const toHHMM = (value: string | number): string => {
       if (!value) return "0:00";
-
       const num = Number(value);
       const hours = Math.floor(num);
       const minutes = Math.round((num - hours) * 60);
-
       return `${hours}:${minutes.toString().padStart(2, '0')}`;
     };
-
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData?.map(
       (item: any) => Number(item?.estimatedHours) || 0
@@ -471,22 +457,20 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
       const [h, m] = item?.actualHoursHHMM.split(':').map(Number);
       return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
     });
-    // Keep original HH:mm format for display
-    const actualDisplay = this.estimatedVsActualData?.map(
+        const actualDisplay = this.estimatedVsActualData.map(
       (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
     );
 
-    const estimatedDisplay = this.estimatedVsActualData?.map(
+    const estimatedDisplay = this.estimatedVsActualData.map(
       (item: any) => toHHMM(item?.estimatedHours)
     );
 
-    const overdueDisplay = this.estimatedVsActualData?.map(
+    const overdueDisplay = this.estimatedVsActualData.map(
       (item: any) => toHHMM(item?.overDue)
     );
-
-        const fullProjectNames = this.estimatedVsActualData?.map(
-  (item: any) => item?.projectName
-);
+    const fullProjectNames = this.estimatedVsActualData?.map(
+      (item: any) => item?.projectName
+    );
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -514,16 +498,15 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
     // Chart options
     this.estimatedVsActualGraphOptions = {
       responsive: true,
-      barThickness: 30,
+      barThickness: 18,
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: {
-             title: (tooltipItems: any) => {
+        callbacks: {
+          title: (tooltipItems: any) => {
             const index = tooltipItems[0].dataIndex;
-            return fullProjectNames[index];  // show real project name
-           },
-            label: (context: any) => {
+            return fullProjectNames[index];
+          },
+          label: (context: any) => {
               const idx = context.dataIndex;
 
               if (context.dataset.label === 'Estimated Hours') {
@@ -540,30 +523,31 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
 
               return `${context.dataset.label}: ${context.raw}`;
             }
-          }
         }
-
-
       },
       scales: {
         x: {
           stacked: false,
           grid: { display: false },
-          ticks: { color: '#141414', font: { size: 11 } },
+          ticks: {
+            color: '#141414', font: { size: 9 },
+            callback: (value: any, index: number) => {
+              return this.truncateLabel(labels[index], 12);
+            }
+          },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Hours',
-            color: '#505050',
-            font: { size: 12 },
-          },
-          ticks: { color: '#72777B', font: { size: 11 } },
-        },
-      },
+          title: { display: true, text: 'Hours', color: '#505050', font: { size: 9 } },
+          ticks: { color: '#72777B', font: { size: 10 } },
+        }
+      }
     };
+  }
+
+  truncateLabel(label: string, maxLength: number = 12): string {
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
   }
 
   navigatetoteam() {

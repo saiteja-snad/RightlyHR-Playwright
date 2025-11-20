@@ -118,13 +118,10 @@
                                         <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ?
                                             '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                                         <td>
-                                            <div
-                                                class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
-                                                <ng-container
-                                                    *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                            <div class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
+                                                <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
                                                     <a>
-                                                        <app-info-icon class="cursor"
-                                                            (click)="openModal(row.entries, summaryforlogs)" />
+                                                        <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
                                                     </a>
                                                     @if(row.dailySummary.legendCode != null){
                                                     <!-- <div class="data-chip"> -->
@@ -158,7 +155,6 @@
                         @else {
                         <app-data-loader-content />
                         }
-
                     </div>
                     <div class="downdisplay-content d-flex justify-content-end align-items-center py-2 px-3">
                         <div class="d-flex align-items-center gap-3">
@@ -171,6 +167,7 @@
                                 <div class="circular-dot circle-holiday "></div>
                                 <div class="status-text">Holidays(H)</div>
                             </div>
+
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-red"></div>
                                 <div class="status-text">Absent(AB)</div>
@@ -185,7 +182,6 @@
                                 <div class="circular-dot circle-pending"></div>
                                 <div class="status-text">Pending(P)</div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -196,8 +192,7 @@
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Timesheet Summary</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
-                                class="module-icon">
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent" class="module-icon">
                             <ng-template #timesheetSummaryContent>
                                 <div class="module-info-text">{{TimesheetSummary}}</div>
                             </ng-template>
@@ -212,14 +207,13 @@
                                             + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
                                             + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
                                             + rejectedColor + ' 100%)'"></div>
-
                                 <div class="progress-labels">
-                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
-                                            displayApproved }} Hrs</span></div>
-                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{
-                                            displaySubmitted }} Hrs</span></div>
-                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{
-                                            displayRejected }} Hrs</span></div>
+                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">
+                                        {{ displayApproved }} Hrs</span></div>
+                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">
+                                        {{ displaySubmitted }} Hrs</span></div>
+                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">
+                                        {{ displayRejected }} Hrs</span></div>
                                 </div>
                             </div>
                         </ng-container>
@@ -246,16 +240,16 @@
                         <ng-container *ngIf="hasprojectWiseHoursData; else noData">
                             <div class="projectwise-chart-grid justify-content-between gap-3">
                                 <div>
-                                    <p-chart type="pie" [data]="projectTypeGraphData"
-                                        [options]="projectTypeGraphOptions" />
+                                    <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
                                 </div>
                                 <div class="legends-view custom-legend-width">
                                     <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
                                         <div class="col-md-8">
                                             <div class="d-flex align-items-center gap-1">
-                                                <div class="legend-circle"
-                                                    [ngStyle]="{ 'background-color': item.color }"></div>
-                                                <div class="legend-name">{{ item.label }}</div>
+                                                <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                                <div class="legend-name text-truncate" [ngbPopover]="labelName" 
+                                                triggers="mouseenter:mouseleave">{{ item.label }}</div>
+                                            <ng-template #labelName>{{ item.label }}</ng-template>
                                             </div>
                                         </div>
                                         <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>

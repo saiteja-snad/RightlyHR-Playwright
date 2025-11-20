@@ -30,6 +30,12 @@
             <app-wfh-allocation-tabs />
         </div>
         }
+        @if(isActive('/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation') ||
+        isActive('/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view')) {
+        <div class="component-left-tabs-container">
+           <app-hours-allocation-tabs/>
+        </div>
+        }
 
         <div class="custom-setting-right-content">
             <router-outlet />

@@ -90,7 +90,7 @@ export const SETTINGS_AttendanceLock_TABS = [
 ];
 // Timesheet Locking Tabs
 export const SETTINGS_TIMESHEET_LOCKING_TABS = [
-  
+
   { route: '/settings/timesheet-locking-configuration/pending-for-submission', permission: 'Timesheet Locking Pending Tab.view' },
   { route: '/settings/timesheet-locking-configuration/published', permission: 'Timesheet Locking Published Tab.view' }
 ];
@@ -128,7 +128,10 @@ export const FLEXIBLE_WFH_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation', permission: 'Active Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view', permission: 'Allocation History Tab.view' },
 ]
-
+export const FLEXIBLE_WORKHOURS_ALLOCATION_TABS = [
+  { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation', permission: 'Work Hours Allocations Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view', permission: 'Work Hours Allocation History Tab.view' },
+]
 export const TIME_OFF_SUB_TABS = [
   { route: '/time-off/leaves/waiting-for-approval', permission: 'Waiting For Approval (Time Off).view' },
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },
@@ -355,8 +358,8 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' },
-  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view'},
-  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view'}
+  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view' },
+  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view' }
 ]
 
 export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
@@ -367,8 +370,8 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
   { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
-  { route: '/settings/project-management-config/project-role', permission: 'Project Role.view'},
-  { route: '/settings/project-management-config/task', permission: 'Task.view'},
+  { route: '/settings/project-management-config/project-role', permission: 'Project Role.view' },
+  { route: '/settings/project-management-config/task', permission: 'Task.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -392,6 +395,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: 'Pre Onboard Documents.view' },
   { route: '/settings/employee-fields/job/serving-period', permission: 'Serving Period.view' },
   { route: '/settings/employee-fields/job/probation-details', permission: 'Settings Job Probation Details.view' },
+  { route: '/settings/employee-fields/job/skills', permission: 'SkillSet.view' },
   { route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' }
 ]
 
@@ -419,7 +423,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS = [
   { route: '/settings/employee-fields/expenes/configuartion', permission: 'Expenes Configuartion.view' },
   { route: '/settings/employee-fields/expenes/allowed-days', permission: 'Expense Allowed Days.view' },
   { route: '/settings/employee-fields/expenes/expenses-limit', permission: 'Expense Threshold Validation.view' },
-  { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view'},
+  { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS = [

@@ -60,4 +60,5 @@ export interface DailySummary {
   holiday?: string | null; // e.g., "National Holiday" or null
   textColor?: string; // "#000000"
   backgroundColor?: string; // "#F0F0F0"
+  legendCode?: string; // e.g., "WH" for Weekend Holiday
 }

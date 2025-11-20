@@ -150,6 +150,18 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       extendReason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
     });
   }
+  
+  updateStatusEffectiveDateValidation() {
+    const statusEffectiveDateControl = this.reasonForm.get('statusEffectiveDate');
+    if (this.modalData?.title?.includes('release')) {
+      statusEffectiveDateControl?.setValidators([Validators.required]);
+    } else {
+      statusEffectiveDateControl?.clearValidators();
+    }
+    statusEffectiveDateControl?.updateValueAndValidity();
+  }
+
+  
 
   getResourceData(id: any) {
     this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
@@ -601,6 +613,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.projectId = data?.project?.projectId;
     this.modalData = { title, data };
     this.reasonForm.reset();
+    this.updateStatusEffectiveDateValidation();
     this.modalService.open(this.reasonModal, { centered: true, backdrop: 'static' });
   }
 

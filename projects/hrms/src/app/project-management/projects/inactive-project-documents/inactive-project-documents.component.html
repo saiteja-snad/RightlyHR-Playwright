@@ -9,7 +9,7 @@
                 <table class="w-100">
                     <thead>
                         <th>Document Type</th>
-                        <th>Created Date</th>
+                        <th class="text-center">Created Date</th>
                         <!-- <th>File Name</th> -->
                         <th>Attachment</th>
                         <th class="text-center">Download</th>
@@ -23,7 +23,7 @@
                         <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let data of documentdata">
                                 <td>{{data.documentType}}</td>
-                                <td>{{data.createdAt | dateformat}}</td>
+                                <td class="text-center">{{data.createdAt | dateformat}}</td>
                                 <!-- <td>{{data.documentName}}</td> -->
                                 <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                                 <td class="text-center">

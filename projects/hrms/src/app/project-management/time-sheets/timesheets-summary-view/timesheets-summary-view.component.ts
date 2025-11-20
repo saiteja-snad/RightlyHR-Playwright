@@ -457,6 +457,17 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
       const [h, m] = item?.actualHoursHHMM.split(':').map(Number);
       return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
     });
+        const actualDisplay = this.estimatedVsActualData.map(
+      (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+    );
+
+    const estimatedDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item?.estimatedHours)
+    );
+
+    const overdueDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item?.overDue)
+    );
     const fullProjectNames = this.estimatedVsActualData?.map(
       (item: any) => item?.projectName
     );
@@ -495,6 +506,23 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
             const index = tooltipItems[0].dataIndex;
             return fullProjectNames[index];
           },
+          label: (context: any) => {
+              const idx = context.dataIndex;
+
+              if (context.dataset.label === 'Estimated Hours') {
+                return `Estimated: ${estimatedDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Actual Hours') {
+                return `Actual: ${actualDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Over Due') {
+                return `Over Due: ${overdueDisplay[idx]} hrs`;
+              }
+
+              return `${context.dataset.label}: ${context.raw}`;
+            }
         }
       },
       scales: {

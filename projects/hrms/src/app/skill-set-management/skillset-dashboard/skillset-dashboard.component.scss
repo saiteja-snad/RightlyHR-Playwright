@@ -600,3 +600,48 @@
 .cursor{
   cursor: pointer;
 }
+
+.offcanvas-chips {
+  .p-chip {
+    border: 0.5px solid;
+    font-weight: 500;
+    font-size: var(--fontsize10);
+    color: #305889;
+    border-radius: 0.25rem;
+    line-height: 100%;
+    padding: 0.25rem;
+    text-decoration: underline;
+  }
+
+  .Phase-link {
+    color: var(--primary-color);
+  }
+}
+.status-closed {
+  color: #9AA2A7;
+}
+
+.status-extended {
+  color: #0056E6;
+}
+
+.status-yet-to-start {
+  color: #08B1FA;
+}
+
+.status-hold {
+  color: #EA362C;
+}
+
+.status-completed {
+  color: #00D520;
+}
+
+.status-active {
+  color: #00a912;
+}
+
+
+.status-in-progress {
+  color: #FF9500;
+}

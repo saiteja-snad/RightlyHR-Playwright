@@ -9,19 +9,16 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th>Phases / Milestones</th>
                         <th>Employee ID</th>
                         <th>Name</th>
-                        <th>Designation</th>
-                        <th>Role</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Allocated Hours</th>
+                        <th>Phases / Milestones</th>
+                        <th class="text-center">Role</th>
+                        <th class="text-center">Start Date</th>
+                        <th class="text-center">End Date</th>
+                        <th class="text-center">Allocated Hours</th>
                         <th>Timesheet Approval Authority</th>
-                        <th>Status</th>
-                        <th>Effective Date</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Effective Date</th>
                         <!-- @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                         && inactiveStatus !== 'inactive'){
                         <th class="text-center">{{"Action" | translate}}</th>
@@ -30,37 +27,30 @@
                     <tbody>
                         <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let data of resourcesData">
-                                <td>{{ data?.phase?.phaseName || '-'}}</td>
                                 <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                                 <td>{{ data?.employee?.name || '-' }}</td>
-                                <td>{{ data?.employee?.designation || '-' }}</td>
-                                <td>{{ data?.role || '-' }}</td>
-                                <td>{{ data?.employee?.workMail || '-' }}</td>
-                                <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{
-                                    data?.employee?.mobilePhoneNumber ||'' }}</td>
-                                <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
-                                <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                                <td>{{ data?.allocatedHours || '-' }}</td>
+                                <td>{{ data?.phase?.phaseName || '-'}}</td>
+                                <td class="text-center">{{ data?.role || '-' }}</td>
+                                <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
+                                <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                                <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
                                 <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
-                                <td>
+                                <td class="text-center">
                                     <div>
                                         <span>{{ (data?.status | titlecase) || '-' }}</span>
-
                                         <ng-container
                                             *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
                                             <span type="button" [ngbPopover]="statusReasonPopover">
                                                 <app-info-icon />
                                             </span>
                                         </ng-container>
-
                                         <ng-template #noStatusReason></ng-template>
                                     </div>
-
                                     <ng-template #statusReasonPopover>
                                         <p class="mb-0">{{ data.reason }}</p>
                                     </ng-template>
                                 </td>
-                                <td>{{ data?.statusEffectiveDate ? (data.statusEffectiveDate | dateformat) : '-' }}</td>
+                                <td class="text-center">{{ data?.statusEffectiveDate ? (data.statusEffectiveDate | dateformat) : '-' }}</td>
                                 <!-- @if((rbac.allowedToAccess('Resources Tab.update'))
                                 && inactiveStatus !== 'inactive'){
                                 <td class="text-center"

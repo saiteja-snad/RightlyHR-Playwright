@@ -209,7 +209,7 @@ onDepartmentChangelist(event: any) {
 
   // Update this method to accept both clientId and projectId
   getResourcesByClient(projectId: any,) {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}`)
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}&isDistinct=true`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {

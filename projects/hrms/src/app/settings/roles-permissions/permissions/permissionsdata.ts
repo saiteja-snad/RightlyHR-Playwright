@@ -383,6 +383,7 @@ export const permissionsData = [
   { fields: 'Time Sheet approval Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contractor Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contract-Conversion Tab', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'EmployeeInfo Tab', View: false, Update: false, Create: false, Delete: false },
   //Pending Approval Time Off Tabs Section
   { fields: 'For You (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Time Off)', View: false, Update: false, Create: false, Delete: false },
@@ -436,6 +437,9 @@ export const permissionsData = [
   //Pending Approval Claims and Expenses Tabs Section
   { fields: 'For You (Claims and Expenses)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Claims and Expenses)', View: false, Update: false, Create: false, Delete: false },
+  //Pending Approval employeeinfoTabs Section
+  { fields: 'For You (Employee Info)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'For Role (Employee Info)', View: false, Update: false, Create: false, Delete: false },
 
   //Pending Approval Desk Requests Tabs Section
   { fields: 'For You (Desk Requests)', View: false, Update: false, Create: false, Delete: false },

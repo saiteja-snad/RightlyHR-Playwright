@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MODULE_INFOS } from '../../modules-info';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../module-information/module-information.component";
@@ -28,6 +28,7 @@ export class ProjectManagementModuleInfoComponent {
   routeToInfoMap!: { [key: string]: string };
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourceDataids = {} as any;
+  clientColor: any;
 
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
@@ -72,6 +73,7 @@ export class ProjectManagementModuleInfoComponent {
       next: (res: any) => {
         this.clients = res?.data || {};
         this.clientName = this.clients.clientName;
+        this.clientColor = this.clients?.meta?.graphData?.color;
       },
       error: (err) => {
         this.clients = {};

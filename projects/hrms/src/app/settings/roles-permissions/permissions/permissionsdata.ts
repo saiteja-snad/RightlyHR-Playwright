@@ -427,6 +427,9 @@ export const permissionsData = [
   { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Assessment Form', View: false, Update: false, Create: false, Delete: false },
 
+  //Pending Approval Timesheet Section
+  { fields: 'Timesheet Approvals', View: false, Update: false, Create: false, Delete: false },
+
   //On Behalf Of  Approvals Sub Tabs Section
   { fields: 'Time Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Comp Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },

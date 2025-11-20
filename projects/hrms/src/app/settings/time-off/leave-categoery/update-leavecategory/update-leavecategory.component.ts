@@ -126,14 +126,14 @@ export class UpdateLeavecategoryComponent {
         { value: null, disabled: true },
         [this.dependentRequiredValidator('noticeperiodAllowedType')],
       ],
-      noticePeriodFrequencyType: [{ value: null, disabled: true }],
+      noticePeriodFrequencyType: [{ value: null }],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
       probationDays: [
         { value: null, disabled: true },
         [this.dependentRequiredValidator('isProbationAllowed')],
       ],
-      probationFrequencyType: [{ value: null, disabled: true }],
+      probationFrequencyType: [{ value: null }],
     });
   }
 

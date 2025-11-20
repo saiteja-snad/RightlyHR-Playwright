@@ -57,12 +57,15 @@ export class SignalsService {
 
   clamisandexpensesForYouTriggerSignal = signal<boolean>(false);
   claimsandexpensesForRoleTriggerSignal = signal<boolean>(false);
-
+// employeinfo for you,for your role
+  employeinfoDetailsForYouTriggerSignal = signal<boolean>(false);
+  employeinfoDetailsForRoleTriggerSignal = signal<boolean>(false);
   //trainee details trigger signals
   traineeDetailsTriggerSignal = signal<boolean>(false);
   // probation deatils
   probationDetailsTriggerSignal = signal<boolean>(false);
-
+// employeinfo
+  employeinfoDetailsTriggerSignal = signal<boolean>(false);
   contractForyouTriggerSignal = signal<boolean>(false);
 
   contractConversionForYouTriggerSignal = signal<boolean>(false);

@@ -105,7 +105,7 @@ export class TeamTimesheetsComponent {
   }
 
   openModal(entries: any, content?: any) {
-    this.selectedEntries = entries?.filter((ele:any)=>ele?.status!=='Not Entered');;
+    this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -151,7 +151,7 @@ export class TeamTimesheetsComponent {
       error: (err: any) => console.error(err)
     });
   }
-  
+
   // getAllEmployeeDetails() {
   //   const EmployeeId = this.empdata?.employeeId;
   //   const satus = ['Active', 'Trainee Active', 'Active Contract'];
@@ -240,43 +240,12 @@ export class TeamTimesheetsComponent {
     //  Store it in BehaviorSubject (inside HttpService)
     this.http.setteamDateRange(start, end, empId, empName);
     // Trigger your existing API call
-    this.page = 1; // Reset to first page on new filter apply
+    this.page = 1;
+    this.first = 0;
     this.getteamsummary();
   }
 
-  // getteamsummary() {
-  //   const formValue = this.datepickerForm.value;
-  //   const [startDate, endDate] = formValue.dateRange || [];
-  //   const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
-  //   const start = startDate
-  //     ? dayjs(startDate).format('YYYY-MM-DD')
-  //     : dayjs().startOf('month').format('YYYY-MM-DD');
-  //   const end = endDate
-  //     ? dayjs(endDate).format('YYYY-MM-DD')
-  //     : dayjs().endOf('month').format('YYYY-MM-DD');
-  //   const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
-  //   this.loading = true
-  //   this.subscription = this.http.getData(url).subscribe({
-  //     next: (res: any) => {
-  //       this.loading = false
-  //       if (res?.success) {
-  //         this.teamSummaryData = res.data;
-  //         this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
-  //         console.log(this.totalhrs);
-  //         this.collectionSize = res.pagination.totalRecords;
-  //         // Extract dates for header dynamically (use first record)
-  //         if (this.teamSummaryData.length > 0) {
-  //           this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
-  //             dayjs(d.date).format('ddd<br>MMM D')
-  //           );
-  //         }
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.loading = false
-  //     }
-  //   });
-  // }
+
 
   getteamsummary() {
     const formValue = this.datepickerForm.value;

@@ -8,20 +8,19 @@
             @if (!loading) {
             <table class="w-100">
                 <thead>
-       
                     <th>Employee ID</th>
                     <th>Name</th>
-                    <th>Designation</th>
-                    <th>Role</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Phases / Milestones</th>
+                    <th class="text-center">Phases / Milestones</th>
+                    <!-- <th>Designation</th> -->
+                    <th class="text-center">Role</th>
+                    <!-- <th>Email</th>
+                    <th>Phone Number</th> -->
                     <th>Project Assigned</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Allocated Hours</th>
+                    <th class="text-center">Start Date</th>
+                    <th class="text-center">End Date</th>
+                    <th class="text-center">Allocated Hours</th>
                     <th>Timesheet Approval Authority</th>
-                    <th>Status</th>
+                    <th class="text-center">Status</th>
                     @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete'))
                     && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -30,20 +29,19 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
-                        
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
-                            <td>{{ data?.employee?.designation || '-' }}</td>
-                            <td>{{ data?.role || '-' }}</td>
-                            <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
-                                <td>{{ data?.phase?.phaseName || '-'}}</td>
+                            <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
+                            <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
+                            <td class="text-center">{{ data?.role || '-' }}</td>
+                            <!-- <td>{{ data?.employee?.workMail || '-' }}</td>
+                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td> -->
                             <td>{{ data?.project?.projectName || '-' }}</td>
-                            <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
-                            <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            <td>{{ data?.allocatedHours || '-' }}</td>
+                            <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
+                            <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                            <td class="text-center">{{ data?.allocatedHours || '-' }}</td>
                             <td>{{ data?.pendingApprovalAuthority?.name || '-' }}</td>
-                            <td>
+                            <td class="text-center">
                                 <div>
                                     <span>{{ (data?.status | titlecase) || '-' }}</span>
                                     <ng-container

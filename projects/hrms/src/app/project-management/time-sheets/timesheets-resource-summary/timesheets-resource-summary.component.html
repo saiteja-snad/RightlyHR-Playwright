@@ -175,7 +175,8 @@
                                     <div class="legends-view">
                                         <div class="d-flex align-items-center gap-1" *ngFor="let item of timeAllocatedlist">
                                             <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
-                                            <div class="legend-name">{{ item.projectName }}</div>
+                                            <div class="legend-name text-truncate" [ngbPopover]="projectName" triggers="mouseenter:mouseleave">{{ item.projectName }}</div>
+                                            <ng-template #projectName>{{ item.projectName }}</ng-template>
                                         </div>
                                     </div>
                                 </ng-container>

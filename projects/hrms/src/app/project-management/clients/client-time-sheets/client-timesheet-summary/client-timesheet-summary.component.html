@@ -122,7 +122,8 @@
                         <div class="legends-view">
                             <div class="d-flex align-items-center gap-1" *ngFor="let item of projectResourcesLableData">
                                 <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
-                                <div class="legend-name">{{ item.name }}</div>
+                                <div class="legend-name text-truncate" [ngbPopover]="itemName" triggers="mouseenter:mouseleave">{{ item.name }}</div>
+                                <ng-template #itemName>{{ item.name }}</ng-template>
                             </div>
                         </div>
                     </ng-container>
@@ -158,7 +159,8 @@
                         <div class="legends-view">
                             <div class="d-flex align-items-center gap-1" *ngFor="let item of projectTypeLableData">
                                 <div class="legend-circle" [ngStyle]="{ 'background-color': item.projectTypeColor?.graphData?.color }"></div>
-                                <div class="legend-name">{{ item.projectType }}</div>
+                                <div class="legend-name text-truncate" [ngbPopover]="projectType" triggers="mouseenter:mouseleave">{{ item.projectType }}</div>
+                                <ng-template #projectType>{{ item.projectType }}</ng-template>
                             </div>
                         </div>
                     </ng-container>

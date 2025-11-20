@@ -563,7 +563,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
   }
 
   truncateLabel(label: string, maxLength: number = 12): string {
-    return label.length > maxLength ? label.substring(0, maxLength) + '...' : label;
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)

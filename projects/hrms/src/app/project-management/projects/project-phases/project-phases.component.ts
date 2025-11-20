@@ -107,14 +107,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      reason: ['', [Validators.required, Validators.maxLength(250),]],
       statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
       newStartDate: ['', Validators.required],
       newEndDate: ['', Validators.required],
-      extendReason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      extendReason: ['', [Validators.required, Validators.maxLength(250)]]
     });
 
     // ✅ subscribe to correct controls

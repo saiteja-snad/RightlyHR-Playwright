@@ -486,9 +486,7 @@
                             Description is required
                         </div>
                         
-                        <div *ngIf="dayForm.get('description')?.errors?.['pattern']" class="error-msg">
-                            {{ 'Description cannot start with a space' | translate }}
-                        </div>
+                       
                         <div class="textarea-count-text">{{ dayForm.get("description")?.value?.length || 0 }}/500</div>
 
                     </div>

@@ -14,7 +14,7 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAddress, IGender, ITitle } from '../../models/personal-details.model';
-import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 import { HttpService } from '../../http-services/http.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { DateFormatPipe } from '../../Pipes/date-format.pipe';

@@ -11,7 +11,7 @@ import moment from 'moment';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { HttpService } from '../../http-services/http.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';

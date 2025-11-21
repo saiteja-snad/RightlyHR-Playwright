@@ -6,7 +6,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";

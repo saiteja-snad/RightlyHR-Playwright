@@ -39,7 +39,8 @@ timeOffTotalCount: number = 0;
       { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' },moduleIds: [13,14] },
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' },moduleIds: [23]  },
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' } ,moduleIds: [19] },
-      { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' },moduleIds: [30]  }
+      { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' },moduleIds: [30]  },
+       { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  }
     ];
     
   this.getApprovalStatusCounts();

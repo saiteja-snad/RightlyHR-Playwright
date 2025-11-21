@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
 
-  ApiUrl:'https://snadqaapi.onpremise.snadhr.com/api/',
+  ApiUrl:'https://api.qa.snad.onpremise.cluster.rightlyhr.com/api/',
 
   webSocketUrl: 'ws://rightlyhrnewversionapi.rightlyhr.com',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
@@ -29,6 +29,7 @@ export const environment = {
       clientId: '9a09dcfb-a22f-4fdf-a014-38990e558d80',
       tenant: '0cc1bac4-bd4f-4994-8cf9-2d544c09d781',
       redirectUri: window.location.origin + '/uservalidation',
+      postLogoutRedirectUri: window.location.origin + '/login',
       authority: 'https://login.microsoftonline.com',
       scope: 'openid profile email',
     }
@@ -59,6 +60,9 @@ export const environment = {
   expensesModuleId:19,
   remoteLoginModuleId:11,
   globalPermissionsModuleID:18,
+  contractorModuleId:25,
+  contractEmployeeConversionModuleId:26,
+  extraHoursModuleId: 31,
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
 
 };

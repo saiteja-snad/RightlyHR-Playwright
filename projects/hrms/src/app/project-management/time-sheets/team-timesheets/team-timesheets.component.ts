@@ -106,9 +106,15 @@ getprojectData(): void {
   }
   //get all TM and RM list
   getTmandRMData(): void {
-   this.subscription =  this.http.getData(`Project`).subscribe({
+   this.subscription =  this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
       next: (res: any) => {
-        this.tmandRmDetails = res.data;
+        this.tmandRmDetails = [
+          ...res.map((emp: any) => ({
+            ...emp,
+            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
+              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+          })),
+        ];
       },
       error: (err) => {
         console.error('Error fetching clients:', err);

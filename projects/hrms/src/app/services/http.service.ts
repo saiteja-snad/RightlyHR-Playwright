@@ -894,7 +894,7 @@ clearTeamDateRange() {
     params = params.set('departmentIds', departmentId);
   }
   if (reportingManagerId) {
-    params = params.set('reportingManagerIds', reportingManagerId);
+    params = params.set('managerIds', reportingManagerId);
   }
   return this.http.get<any>(`${this.ApiUrl}${url}`,{ params });
 }

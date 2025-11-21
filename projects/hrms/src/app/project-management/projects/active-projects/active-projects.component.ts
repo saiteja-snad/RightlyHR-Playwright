@@ -1,13 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
+import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Project } from '../../../Interfaces/projects.model';
@@ -16,21 +22,34 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { ProjcetCreationComponent } from '../../shared-project-management-componenets/projcet-creation/projcet-creation.component';
 import { RbacService } from '../../../services/rbac.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
-import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
+import { ActiveprojectsPipe } from '../../../Pipes/activeprojects.pipe';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { ProjectsSideTabsComponent } from "../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component";
+import { ProjectsSideTabsComponent } from '../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component";
+import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, 
-    ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent],
+  imports: [
+    NoDataFoundComponent,
+    MultiSelectModule,
+    CommonModule,
+    FormsModule,
+    DataLoaderContentComponent,
+    TranslateModule,
+    RouterModule,
+    ConfirmationIconComponent,
+    ReactiveFormsModule,
+    Select,
+    ProjectManagementModuleInfoComponent,
+    ProjcetCreationComponent,
+    ActiveprojectsPipe,
+    ProjectsSideTabsForClientsComponent,
+    ProjectsSideTabsComponent,
+  ],
   templateUrl: './active-projects.component.html',
-  styleUrl: './active-projects.component.scss'
+  styleUrl: './active-projects.component.scss',
 })
-
 export class ActiveProjectsComponent implements OnInit, OnDestroy {
   selectedProject: any;
   searchValue: any;
@@ -61,25 +80,44 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   inactiveClientStatus: any;
   selectedDepartmentIds: any;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
-    public formValidation: FormValidationsService, private http: HttpService,
-    private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
+  selectedProjectTypes: any[] = [];
+
+  selectedClients: any[] = [];
+  clientDetails: any[] = [];
+  constructor(
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private router: Router,
+    public formValidation: FormValidationsService,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
+    private route: ActivatedRoute,
+    public rbac: RbacService
+  ) {}
 
   ngOnInit() {
+    this.http.setDepartmentIds([]);
+    this.selectedDepartmentIds = [];
+    this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.http.selectedDepartmentIds$.pipe(takeUntil(this.destroy$)).subscribe((deptIds) => {
-      this.selectedDepartmentIds = deptIds || [];
-      this.getProjectsBasedOnRoute();
-    });
+    this.http.selectedDepartmentIds$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((deptIds) => {
+        this.selectedDepartmentIds = deptIds || [];
+        this.getProjectsBasedOnRoute();
+      });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
     this.getProjectsBasedOnRoute();
     this.DepartmentList();
+    this.clientList();
     // this.getAuthorityList();
-    this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
-      this.StartndendDateValidation();
-    });
+    this.updateprojectform
+      .get('updatestartDate')
+      ?.valueChanges.subscribe(() => {
+        this.StartndendDateValidation();
+      });
     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
     });
@@ -96,6 +134,24 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
+  //get clients
+  clientList() {
+    this.http.getData('Client/GetAll').subscribe({
+      next: (res: any) => {
+        const data = res?.data || res || [];
+        this.clientDetails = data
+          .map((client: any) => ({
+            clientId: client.clientId,
+            clientName: client.clientName,
+          }))
+          .sort((a: any, b: any) => a.clientName.localeCompare(b.clientName));
+      },
+      error: () => {
+        this.clientDetails = [];
+      },
+    });
+  }
+
   onDepartmentChangelist(event: any) {
     const selectedIds = event.value; // This gives an array when multiple departments selected
     if (Array.isArray(selectedIds)) {
@@ -104,21 +160,35 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.http.setDepartmentIds([selectedIds]);
     }
   }
+
+  onProjectTypeChange() {
+    this.getProjectsBasedOnRoute(); // Re-fetch projects with new filters
+  }
+
+  // Optional: Clear project type filter when needed
+  clearProjectTypeFilter() {
+    this.selectedProjectTypes = [];
+    this.onProjectTypeChange();
+  }
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
       this.getAllActiveProjects();
-      this.http.projectDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-        this.getAllActiveProjects();
-      });
+      this.http.projectDetailesadded$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.getAllActiveProjects();
+        });
     } else if (fullPath.startsWith('/project-management/clients')) {
-      this.route.queryParams.subscribe(params => {
+      this.route.queryParams.subscribe((params) => {
         const clientID = params['id'];
         if (clientID) {
           this.getprojectbyid(parseInt(clientID));
-          this.http.projectDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            this.getprojectbyid(parseInt(clientID));
-          });
+          this.http.projectDetailesadded$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+              this.getprojectbyid(parseInt(clientID));
+            });
           this.updateprojectform?.get('updateclientName')?.disable();
         }
       });
@@ -129,24 +199,29 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     if (!project.departments || project.departments.length === 0) {
       return '-';
     }
-    return project.departments.map(d => d.departmentName).join(', ');
+    return project.departments.map((d) => d.departmentName).join(', ');
   }
 
   getAuthorityList() {
-    this.http.getData(`ProjectManagementAuthority?status=active&entity=Project`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.authorityList = (res?.data || []).map((item: any) => ({
-          value: item.authority.id,
-          name: `${item.authority.fusionEmployeeId ?? ''} - ${item.authority.name}`.trim(),
-          email: item.authority.workMail,
-          recordId: item.id
-        }));
-      },
-      error: (err) => {
-        console.error('Error fetching authorities:', err);
-        this.authorityList = [];
-      }
-    });
+    this.http
+      .getData(`ProjectManagementAuthority?status=active&entity=Project`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.authorityList = (res?.data || []).map((item: any) => ({
+            value: item.authority.id,
+            name: `${item.authority.fusionEmployeeId ?? ''} - ${
+              item.authority.name
+            }`.trim(),
+            email: item.authority.workMail,
+            recordId: item.id,
+          }));
+        },
+        error: (err) => {
+          console.error('Error fetching authorities:', err);
+          this.authorityList = [];
+        },
+      });
   }
 
   getResourceData(id: any, project: Project) {
@@ -155,41 +230,56 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       status: 'Active',
       entityType: 'project',
       entityRefId: projectId,
-      isDistinct: true
+      isDistinct: true,
     };
-    this.http.getDataIncludeParams('ProjectResource', params).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.resourcesData = res.data;
-        this.loading = false;
-        if (this.resourcesData?.length > 0) {
-          this.authorityList = (res?.data || []).map((item: IResource) => ({
-            value: item.employee?.id ?? 0,
-            name: `${item.employee?.fusionEmployeeId ?? ''} - ${item.employee?.name ?? ''}`.trim(),
-            email: item.employee?.workMail ?? '',
-            recordId: item.resourceId ?? 0
-          }));
-          if (this.authorityList?.length > 0) {
-            this.updateprojectform.get('approvalidAuthority')?.enable();
-            this.updateprojectform.get('approvalidAuthority')?.setValidators([Validators.required]);
-            this.updateprojectform.patchValue({
-              approvalidAuthority: project.pendingApprovalAuthority?.id ?? null
-            });
+    this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.resourcesData = res.data;
+          this.loading = false;
+          if (this.resourcesData?.length > 0) {
+            this.authorityList = (res?.data || []).map((item: IResource) => ({
+              value: item.employee?.id ?? 0,
+              name: `${item.employee?.fusionEmployeeId ?? ''} - ${
+                item.employee?.name ?? ''
+              }`.trim(),
+              email: item.employee?.workMail ?? '',
+              recordId: item.resourceId ?? 0,
+            }));
+            if (this.authorityList?.length > 0) {
+              this.updateprojectform.get('approvalidAuthority')?.enable();
+              this.updateprojectform
+                .get('approvalidAuthority')
+                ?.setValidators([Validators.required]);
+              this.updateprojectform.patchValue({
+                approvalidAuthority:
+                  project.pendingApprovalAuthority?.id ?? null,
+              });
+            }
+          } else {
+            this.authorityList = [];
           }
-        } else {
-          this.authorityList = [];
-        }
-      },
-      error: (reason: any) => {
-        this.loading = false;
-      }
-    });
+        },
+        error: (reason: any) => {
+          this.loading = false;
+        },
+      });
   }
 
   editProjectForm() {
     this.updateprojectform = this.fb.group({
-      updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
+      updateprojectName: [
+        null,
+        [
+          Validators.required,
+          this.formValidation.minCharactersValidator(2),
+          this.formValidation.maxCharactersValidator(100),
+        ],
+      ],
       updateclientName: [null, Validators.required],
-      updatecode: [null, [Validators.required,  Validators.maxLength(5)]],
+      updatecode: [null, [Validators.required, Validators.maxLength(5)]],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],
@@ -202,7 +292,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateallowweekendWork: [false],
       // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
       // approvalidAuthority: [{value:null,disabled:true}],
-      updatecolor: ['', Validators.required]
+      updatecolor: ['', Validators.required],
     });
     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -212,12 +302,20 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.StartndendDateValidation();
       this.validateUpdateDateRange();
     });
-    this.updateprojectform.get('updatekickoffDate')?.valueChanges.subscribe(() => this.validateUpdateDateRange());
-    this.updateprojectform.get('updatekickoffDate')?.valueChanges.subscribe(() => this.validateUpdateDateRange());
+    this.updateprojectform
+      .get('updatekickoffDate')
+      ?.valueChanges.subscribe(() => this.validateUpdateDateRange());
+    this.updateprojectform
+      .get('updatekickoffDate')
+      ?.valueChanges.subscribe(() => this.validateUpdateDateRange());
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
 
   getAllActiveProjects() {
@@ -226,50 +324,83 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.projectsData = res?.data ?? []; // Extract "data" array
-      },
-      error: (err) => {
-        console.error('Error fetching projects data:', err);
-        this.loading = false;
-        this.projectsData = [];
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
+
+    if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+      url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+    }
+
+    const clientIds = this.selectedClients
+      .map((c: any) => c?.clientId)
+      .filter((id): id is number => id != null);
+
+    if (clientIds.length > 0) {
+      url += `&clientIds=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+    }
+
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.projectsData = res?.data ?? []; // Extract "data" array
+        },
+        error: (err) => {
+          console.error('Error fetching projects data:', err);
+          this.loading = false;
+          this.projectsData = [];
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
   }
 
   getprojectbyid(clientID: any): void {
-    this.loading = true
+    this.loading = true;
     let url = `Project?clientId=${clientID}&status=Active`;
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.loading = false
-        this.projectsData = res?.data ?? [];
-        this.inactiveClientStatus = res?.data?.[0]?.client?.status.toLowerCase();
-      },
-      error: (err) => {
-        this.loading = false
-        console.error('Error fetching clients:', err);
-      }
-    });
+    if (this.selectedProjectTypes && this.selectedProjectTypes.length > 0) {
+      url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
+    }
+    const clientIds = this.selectedClients
+      .map((c: any) => c?.clientId)
+      .filter((id): id is number => id != null);
+
+    if (clientIds.length > 0) {
+      url += `&clientIds=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+    }
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          this.projectsData = res?.data ?? [];
+          this.inactiveClientStatus =
+            res?.data?.[0]?.client?.status.toLowerCase();
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('Error fetching clients:', err);
+        },
+      });
   }
 
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.clients = Array.isArray(res?.data) ? res.data : [];
-      },
-      error: (err) => {
-        console.error('Error fetching clients:', err);
-        this.clients = []
-      }
-    });
+    this.http
+      .getData(`Client/GetAll?status=Active`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.clients = Array.isArray(res?.data) ? res.data : [];
+        },
+        error: (err) => {
+          console.error('Error fetching clients:', err);
+          this.clients = [];
+        },
+      });
   }
 
   formatDateToLocal(dateString: string) {
@@ -286,11 +417,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   openUpdateModal(modal: any, project: Project) {
     // this.getAuthorityList();
     // this.getResourceData(project.projectId,project);
-    const selectedDepartmentIds = project.departments?.map((d: any) => d.departmentId) || [];
+    const selectedDepartmentIds =
+      project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
-      updateclientName: project.client?.clientId,  // ensure p-select has clientId
+      updateclientName: project.client?.clientId, // ensure p-select has clientId
       updatecode: project?.meta?.graphData?.code,
       updatestartDate: this.formatDateToLocal(project.startDate),
       updateendDate: this.formatDateToLocal(project.endDate),
@@ -303,11 +435,15 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       // updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds,
-      updatecolor: project?.meta?.graphData?.color
+      updatecolor: project?.meta?.graphData?.color,
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
-    this.modalService.open(modal, { size: 'lg', centered: true, backdrop: 'static' });
+    this.modalService.open(modal, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
   }
 
   saveUpdatedProject() {
@@ -318,7 +454,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     const formValue = this.updateprojectform.value;
     const departmentIds = Array.isArray(formValue.updatedepartment)
-      ? formValue.updatedepartment.join(',') : formValue.updatedepartment;
+      ? formValue.updatedepartment.join(',')
+      : formValue.updatedepartment;
     const payload = {
       projectId: this.selectedProjectId,
       clientId: formValue.updateclientName,
@@ -340,9 +477,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       meta: {
         graphData: {
           color: formValue?.updatecolor,
-          code: formValue?.updatecode
-        }
-      }
+          code: formValue?.updatecode,
+        },
+      },
     };
     this.loading = true;
     this.http.putData(`Project/${this.selectedProjectId}`, payload).subscribe({
@@ -360,35 +497,40 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           }
         }
         this.conformationPopup.openSuccessModal('Project updated successfully');
-        this.http.setnewcountDetailsfornewprojectcount()
+        this.http.setnewcountDetailsfornewprojectcount();
       },
       error: (err) => {
         this.loading = false;
         this.spinnerLoader = false;
         console.error('Error updating project:', err);
-        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update project');
-      }
+        this.conformationPopup.openErrorModal(
+          err?.error?.message || 'Failed to update project'
+        );
+      },
     });
   }
 
   getprojecttypesData(): void {
-    this.http.getData(`entityAttributeValues?entity=Project&attribute=Project Type`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.projecttypes = Array.isArray(res) ? res : [];
-      },
-      error: (err) => {
-        console.error('Error fetching clients:', err);
-      }
-    });
+    this.http
+      .getData(`entityAttributeValues?entity=Project&attribute=Project Type`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.projecttypes = Array.isArray(res) ? res : [];
+        },
+        error: (err) => {
+          console.error('Error fetching clients:', err);
+        },
+      });
   }
 
   openModalstatus(modal: any, project: Project) {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
     this.selectedProject = { ...project }; // store project details
   }
-  
-  closeall(){
-    this.modalService.dismissAll()
+
+  closeall() {
+    this.modalService.dismissAll();
   }
 
   confirmStatusChange(modal: any) {
@@ -396,29 +538,35 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     const updatedProject = {
       ...this.selectedProject,
       status: 'Inactive',
-      updatedBy: parseInt(this.empinfo?.employeeId)
+      updatedBy: parseInt(this.empinfo?.employeeId),
     };
-    this.http.putData(`Project/${this.selectedProject?.projectId}`, updatedProject).subscribe({
-      next: (res) => {
-        this.http.setnewcountDetailsfornewprojectcount()
-        this.conformationPopup.openSuccessModal('Project marked as Inactive successfully');
-        modal.close();
-        const fullPath = this.router.url;
-        if (fullPath.startsWith('/project-management/projects')) {
-          this.getAllActiveProjects();
-        } else if (fullPath.startsWith('/project-management/clients')) {
-          const clientID = this.route.snapshot.queryParams['id'];
-          if (clientID) {
-            this.getprojectbyid(parseInt(clientID));
+    this.http
+      .putData(`Project/${this.selectedProject?.projectId}`, updatedProject)
+      .subscribe({
+        next: (res) => {
+          this.http.setnewcountDetailsfornewprojectcount();
+          this.conformationPopup.openSuccessModal(
+            'Project marked as Inactive successfully'
+          );
+          modal.close();
+          const fullPath = this.router.url;
+          if (fullPath.startsWith('/project-management/projects')) {
+            this.getAllActiveProjects();
+          } else if (fullPath.startsWith('/project-management/clients')) {
+            const clientID = this.route.snapshot.queryParams['id'];
+            if (clientID) {
+              this.getprojectbyid(parseInt(clientID));
+            }
           }
-        }
-        this.close();
-      },
-      error: (err) => {
-        console.error('Error updating project status:', err);
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
-      }
-    });
+          this.close();
+        },
+        error: (err) => {
+          console.error('Error updating project status:', err);
+          this.conformationPopup.openErrorModal(
+            err.error?.message || 'Failed to update status'
+          );
+        },
+      });
   }
 
   confirmStatusChangetohold(modal: any) {
@@ -426,35 +574,42 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     const updatedProject = {
       ...this.selectedProject,
       status: 'hold',
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
     };
-    this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
-      next: (res) => {
-        this.http.setnewcountDetailsfornewprojectcount()
-        this.conformationPopup.openSuccessModal('Project marked as hold successfully');
-        modal.close();
-        const fullPath = this.router.url;
-        if (fullPath.startsWith('/project-management/projects')) {
-          this.getAllActiveProjects();
-        } else if (fullPath.startsWith('/project-management/clients')) {
-          const clientID = this.route.snapshot.queryParams['id'];
-          if (clientID) {
-            this.getprojectbyid(parseInt(clientID));
+    this.http
+      .putData(`Project/${this.selectedProject.projectId}`, updatedProject)
+      .subscribe({
+        next: (res) => {
+          this.http.setnewcountDetailsfornewprojectcount();
+          this.conformationPopup.openSuccessModal(
+            'Project marked as hold successfully'
+          );
+          modal.close();
+          const fullPath = this.router.url;
+          if (fullPath.startsWith('/project-management/projects')) {
+            this.getAllActiveProjects();
+          } else if (fullPath.startsWith('/project-management/clients')) {
+            const clientID = this.route.snapshot.queryParams['id'];
+            if (clientID) {
+              this.getprojectbyid(parseInt(clientID));
+            }
           }
-        }
-        this.close();
-      },
-      error: (err) => {
-        console.error('Error updating project status:', err);
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
-      }
-    });
+          this.close();
+        },
+        error: (err) => {
+          console.error('Error updating project status:', err);
+          this.conformationPopup.openErrorModal(
+            err.error?.message || 'Failed to update status'
+          );
+        },
+      });
   }
 
   navigateView(projectId: number) {
-      localStorage.setItem('projectProjectId', projectId.toString());
-    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
-    
+    localStorage.setItem('projectProjectId', projectId.toString());
+    this.router.navigate(['project-management/projects/details'], {
+      queryParams: { id: projectId },
+    });
   }
 
   isActive(route: string): boolean {
@@ -477,7 +632,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     const startDate = this.updateprojectform.get('updatestartDate')?.value;
     const endDate = this.updateprojectform.get('updateendDate')?.value;
     const kickoffDate = this.updateprojectform.get('updatekickoffDate')?.value;
-    const effectiveDate = this.updateprojectform.get('updateeffectiveDate')?.value;
+    const effectiveDate = this.updateprojectform.get(
+      'updateeffectiveDate'
+    )?.value;
 
     this.kickoffDateValid = true;
     this.kickoffBeforeEffectiveValid = true;
@@ -498,7 +655,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
           this.kickoffBeforeEffectiveValid = kickoff <= effective;
         }
       }
-      
+
       if (effectiveDate) {
         const effective = new Date(effectiveDate);
         //  Effective must be within Start and End
@@ -513,8 +670,15 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   get isFormInvalid(): boolean {
-    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid ||
-      !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
+    return (
+      this.updateprojectform.invalid ||
+      !this.startndEndDateValid ||
+      !this.kickoffDateValid ||
+      !this.kickoffBeforeEffectiveValid ||
+      !this.effectiveDateValidRange ||
+      !this.effectiveAfterKickoffValid ||
+      this.loading
+    );
   }
 
   closepopup(content: any) {
@@ -548,6 +712,23 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       return date.toISOString().split('T')[0]; // format YYYY-MM-DD
     }
     return null;
+  }
+
+  clearAllFilters() {
+    this.selectedDepartmentIds = [];
+    this.selectedProjectTypes = [];
+    this.selectedClients = [];
+
+    // Force UI update
+    this.selectedDepartmentIds = [...this.selectedDepartmentIds];
+    this.selectedProjectTypes = [...this.selectedProjectTypes];
+    this.selectedClients = [...this.selectedClients];
+
+    this.getProjectsBasedOnRoute();
+  }
+
+  onClientChange() {
+    this.getProjectsBasedOnRoute();
   }
 
   ngOnDestroy() {

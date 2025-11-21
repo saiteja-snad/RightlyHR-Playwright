@@ -1,127 +1,178 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content" *ngIf="isActive('/project-management/projects/hold')">
-        <div class="heading-content">
-            <app-project-management-module-info />
+  <div class="component-header-content" *ngIf="isActive('/project-management/projects/hold')">
+    <div class="heading-content">
+      <app-project-management-module-info />
+    </div>
+    <!-- FILTERS ROW (NEW) -->
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <!-- Reset Filters -->
+      <div class="d-flex gap-2 align-items-center"
+        *ngIf="selectedDepartmentIds.length > 0 || selectedProjectTypes.length > 0 || selectedClients.length > 0">
+        <button type="button" class="clear-all-button" (click)="clearAllFilters()">
+          {{ 'Clear All' | translate }}
+        </button>
+      </div>
+
+      <!-- Client Name Filter -->
+      <div class="d-flex gap-2 align-items-center">
+        <label class="form-label filter-labels mt-2">{{ 'Client Name' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
+            placeholder="Select Client" [filter]="true" filterBy="clientName" display="chip"
+            class="form-select custom-select" (onChange)="onClientChange()"
+            (onClear)="selectedClients = []; getdatabaedonRoute()">
+          </p-multiSelect>
         </div>
+      </div>
+
+
+      <!-- Department Name -->
+      <div class="d-flex gap-2 align-items-center">
+        <label class="form-label filter-labels mt-2">{{ 'Department Name' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+            defaultLabel="Select Department" [filter]="true" filterBy="departmentName" display="chip"
+            class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
+            [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getdatabaedonRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Project Type -->
+      <div class="d-flex gap-2 align-items-center">
+        <label class="form-label filter-labels mt-2">{{ 'Project Type' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
+            placeholder="Select Project Type" [filter]="true" display="chip" class="form-select custom-select"
+            [(ngModel)]="selectedProjectTypes" (onChange)="onProjectTypeChange()"
+            (onClear)="selectedProjectTypes = []; getdatabaedonRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex w-100 gap-3">
+    <div class="component-left-tabs-container" *ngIf="isActive('/project-management/projects/hold')">
+      <app-projects-side-tabs />
     </div>
 
-    <div class="d-flex w-100 gap-3">
-        <div class="component-left-tabs-container" *ngIf="isActive('/project-management/projects/hold')">
-            <app-projects-side-tabs />
-        </div>
+    <div class="main-content"
+      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+      <div *ngIf="isActive('/project-management/clients')" class="mb-3">
+        <app-projects-side-tabs-for-clients />
+      </div>
 
-        <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
-            <div *ngIf="isActive('/project-management/clients')" class="mb-3">
-                <app-projects-side-tabs-for-clients />
-            </div>
+      <!--Input search-->
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+          placeholder="Search by client name / project name / project type" aria-label="Search"
+          aria-describedby="basic-addon1">
+      </div>
 
-            <!--Input search-->
-            <div class="input-group custom-search mb-3">
-                <span class="input-group-text custom-input-group-search" id="basic-addon1">
-                    <i class="bi bi-search"></i>
-                </span>
-                <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                    placeholder="Search by client name / project name / project type" aria-label="Search" aria-describedby="basic-addon1">
-            </div>
+      <ng-container *ngIf="loading; else maincontent">
+        <ng-template #loadingSpinner>
+          <div>
+            <app-data-loader-content />
+          </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+      </ng-container>
 
-            <ng-container *ngIf="loading; else maincontent">
-                <ng-template #loadingSpinner>
-                    <div>
-                        <app-data-loader-content />
-                    </div>
-                </ng-template>
-                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-            </ng-container>
-
-            <ng-template #maincontent>
-                <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
-                    <table class="w-100">
-                        <thead>
-                            @if(!isActive('/project-management/clients')){
-                            <th>Client Name</th>
-                            }
-                            <th>Project Name</th>
-                            <th class="text-center">Project Code</th>
-                            <!-- <th>Start Date</th>
+      <ng-template #maincontent>
+        <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
+          <table class="w-100">
+            <thead>
+              @if(!isActive('/project-management/clients')){
+              <th>Client Name</th>
+              }
+              <th>Project Name</th>
+              <th class="text-center">Project Code</th>
+              <!-- <th>Start Date</th>
                             <th>End Date</th>
                             <th>Effective Date</th>
                             <th>Kickoff Date</th> -->
-                            <th class="text-center">Project Type</th>
-                            <th>Department</th>
-                            <!-- <th>Status</th> -->
-                            @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
-                            inactiveClientStatus!=='inactive'){
-                            <th class="text-center">{{"Action" | translate}}</th>
-                            }
-                        </thead>
-                        <tbody>
-                            <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
-                                <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
-                                    <tr *ngFor="let project of filteredProjects; let i = index">
-                                        @if(!isActive('/project-management/clients')){
-                                        <td>{{ project.client.clientName }}</td>
-                                        }
-                                        <td>
-                                            <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
-                                        </td>
-                                        <td class="text-center">{{ project?.meta?.graphData?.code || '-' }}</td>
-                                        <!-- <td>{{ project.startDate | dateformat }}</td>
+              <th class="text-center">Project Type</th>
+              <th>Department</th>
+              <!-- <th>Status</th> -->
+              @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
+              inactiveClientStatus!=='inactive'){
+              <th class="text-center">{{"Action" | translate}}</th>
+              }
+            </thead>
+            <tbody>
+              <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
+                <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
+                  <tr *ngFor="let project of filteredProjects; let i = index">
+                    @if(!isActive('/project-management/clients')){
+                    <td>{{ project.client.clientName }}</td>
+                    }
+                    <td>
+                      <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName
+                        }}</a>
+                    </td>
+                    <td class="text-center">{{ project?.meta?.graphData?.code || '-' }}</td>
+                    <!-- <td>{{ project.startDate | dateformat }}</td>
                                         <td>{{ project.endDate | dateformat }}</td>
                                         <td>{{ project.effectiveDate | dateformat }}</td>
                                         <td>{{ project.kickoffDate | dateformat }}</td> -->
-                                        <td class="text-center">{{ project.projectType }}</td>
-                                        <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
-                                        <!-- <td class="text-capitalize">{{ project.status }}</td> -->
-                                        @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
-                                        inactiveClientStatus!=='inactive'){
-                                        <td class="text-center">
-                                            <div class="dropdown">
-                                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </a>
-                                                <ul class="dropdown-menu custom-dropdown-menu">
-                                                    <li (click)="openModalstatus(statuschanges,project)">
-                                                        <a class="dropdown-item">
-                                                            <i class="bi bi-check-circle me-2"></i>Active
-                                                        </a>
-                                                    </li>
-                                                    <li (click)="openModalstatus(statuschangeshold,project)">
-                                                        <a class="dropdown-item">
-                                                            <i class="bi bi-slash-circle  me-2"></i>Inactive
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                        }
-                                    </tr>
-                                </ng-container>
-                            </ng-container>
-                            <ng-template #noDataTemplate>
-                                <tr>
-                                    <app-no-data-found />
-                                </tr>
-                            </ng-template>
-                        </tbody>
-                    </table>
-                </div>
-            </ng-template>
+                    <td class="text-center">{{ project.projectType }}</td>
+                    <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
+                    <!-- <td class="text-capitalize">{{ project.status }}</td> -->
+                    @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
+                    inactiveClientStatus!=='inactive'){
+                    <td class="text-center">
+                      <div class="dropdown">
+                        <a data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </a>
+                        <ul class="dropdown-menu custom-dropdown-menu">
+                          <li (click)="openModalstatus(statuschanges,project)">
+                            <a class="dropdown-item">
+                              <i class="bi bi-check-circle me-2"></i>Active
+                            </a>
+                          </li>
+                          <li (click)="openModalstatus(statuschangeshold,project)">
+                            <a class="dropdown-item">
+                              <i class="bi bi-slash-circle  me-2"></i>Inactive
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                    }
+                  </tr>
+                </ng-container>
+              </ng-container>
+              <ng-template #noDataTemplate>
+                <tr>
+                  <app-no-data-found />
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
         </div>
+      </ng-template>
     </div>
+  </div>
 </div>
 
 <!--confirmation-->
 <ng-template #statuschanges let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <app-confirmation-icon />
-            <p class="confirmation-text pt-3">{{'Are you sure you want to Active this project?' | translate}}</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
-        </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <app-confirmation-icon />
+      <p class="confirmation-text pt-3">{{'Are you sure you want to Active this project?' | translate}}</p>
     </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
+        translate}}</button>
+    </div>
+  </div>
 </ng-template>
 
 <ng-template #statuschangeshold let-modal>

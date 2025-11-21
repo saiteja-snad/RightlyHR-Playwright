@@ -3,13 +3,62 @@
     <div class="heading-content">
       <app-project-management-module-info />
     </div>
-  
-    @if(rbac.allowedToAccess('Project Details Tab.create')){
-    <div class="d-flex gap-3 align-items-center">
-      <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
-        {{'Add Project' | translate }}</button>
+
+    <div class="d-flex align-items-center gap-3">
+
+      <!-- Reset Filters -->
+      <div class="d-flex gap-2 align-items-center"
+        *ngIf="selectedDepartmentIds.length > 0 || selectedProjectTypes.length > 0 || selectedClients.length > 0">
+        <button type="button" class="clear-all-button" (click)="clearAllFilters()">
+          {{ 'Clear All' | translate }}
+        </button>
+      </div>
+
+      <!-- Client Name Filter -->
+      <div class="d-flex gap-2 align-items-center">
+        <label class="form-label filter-labels mt-2">{{ 'Client Name' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
+            placeholder="Select Client" [filter]="true" filterBy="clientName" display="chip"
+            class="form-select custom-select" (onChange)="onClientChange()"
+            (onClear)="selectedClients = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Department Name -->
+      <div class="d-flex gap-2 align-items-center">
+        <label class="form-label filter-labels mt-2">{{ 'Department Name' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+            defaultLabel="Select Department" [filter]="true" filterBy="departmentName" display="chip"
+            class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
+            [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Project Type -->
+      <div class="d-flex gap-2 align-items-center">
+        <label class="form-label filter-labels mt-2">{{ 'Project Type' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
+            [(ngModel)]="selectedProjectTypes" placeholder="Select Project Type" [filter]="true" display="chip"
+            class="form-select custom-select" (onChange)="onProjectTypeChange()"
+            (onClear)="selectedProjectTypes = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+
+      <!-- Add Project -->
+      @if(rbac.allowedToAccess('Project Details Tab.create')){
+      <div class="d-flex gap-2 align-items-center">
+        <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
+          {{'Add Project' | translate }}</button>
+      </div>
+      }
     </div>
-    }
   </div>
 
   <div class="d-flex w-100 gap-3">
@@ -17,7 +66,8 @@
       <app-projects-side-tabs />
     </div>
 
-    <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+    <div class="main-content"
+      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
       <div *ngIf="isActive('/project-management/clients')" class="mb-3">
         <app-projects-side-tabs-for-clients />
       </div>
@@ -47,7 +97,8 @@
             <th class="text-center">Project Type</th>
             <th>Department</th>
             <!-- <th>Status</th> -->
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
+            Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
@@ -59,7 +110,8 @@
                   @if(!isActive('/project-management/clients')){
                   <td>{{ project.client.clientName }}</td>
                   }
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                      project.projectName}}</a></td>
                   <td class="text-center">{{ project?.meta?.graphData?.code || '-' }}</td>
                   <!-- <td>{{ project.startDate | dateformat }}</td>
                     <td>{{ project.endDate | dateformat }}</td>
@@ -68,7 +120,8 @@
                   <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                   <!-- <td>{{ project.status }}</td> -->
-                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
+                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
+                  Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
                   <td class="text-center">
                     <div class="dropdown">
@@ -144,7 +197,7 @@
                 optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
                 placeholder="Please select client name" class="form-select custom-select"></p-select>
             </div>
-            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched &&
               updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
           </div>
 
@@ -152,16 +205,16 @@
           <div class="col-md-6 mb-3">
             <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"  formControlName="updatecode" maxlength="6"
-              placeholder="Please enter project code">
+            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+              formControlName="updatecode" maxlength="6" placeholder="Please enter project code">
             <div class="error-msg"
               *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['required']">
               Project Code is required
             </div>
             <div class="error-msg"
-            *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
-            Project Code cannot exceed 5 characters
-          </div>
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
+              Project Code cannot exceed 5 characters
+            </div>
           </div>
 
           <!-- Project Name -->
@@ -175,7 +228,7 @@
             <div class="error-msg" *ngIf="updateprojectform.get('updateprojectName')?.touched">
               <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['required']">Project Name is required
               </div>
-              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['maxCharacters'] || 
+              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['maxCharacters'] ||
               updateprojectform.get('updateprojectName')?.errors?.['minCharacters']" class="error-msg">
                 {{ 'Project Name must be between 2-100 characters' | translate }}
               </div>
@@ -191,7 +244,7 @@
                 optionLabel="value" optionValue="value" formControlName="updateprojectType"
                 placeholder="Please select project type" class="form-select custom-select"></p-select>
             </div>
-            <div class="error-msg" *ngIf="updateprojectform.get('updateprojectType')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updateprojectType')?.touched &&
             updateprojectform.get('updateprojectType')?.invalid">Project Type is required</div>
           </div>
 
@@ -204,18 +257,22 @@
                 defaultLabel="Please select department name" formControlName="updatedepartment"
                 class="form-select custom-select"></p-multiSelect>
             </div>
-            <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
+            <div
+              *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
               class="error-msg">
-              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is required'|translate}}
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is
+                required'|translate}}
               </div>
             </div>
           </div>
 
           <!-- Start Date -->
           <div class="col-md-6 mb-3">
-            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
-            <input type="date" id="updatestartDate" formControlName="updatestartDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched && 
+            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span
+                class="text-danger">*</span></label>
+            <input type="date" id="updatestartDate" formControlName="updatestartDate"
+              class="form-control custom-input" />
+            <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched &&
             updateprojectform.get('updatestartDate')?.invalid">Start Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> Start Date must be before end Date</div>
@@ -224,9 +281,12 @@
 
           <!-- End Date -->
           <div class="col-md-6 mb-3">
-            <label for="updateendDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
-            <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
+            <label for="updateendDate" class="form-label custom-label mb-2">End Date<span
+                class="text-danger">*</span></label>
+            <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate"
+              class="form-control custom-input" />
+            <div class="error-msg"
+              *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
               End Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
@@ -239,7 +299,7 @@
                 class="text-danger">*</span></label>
             <input type="date" id="updatekickoffDate" formControlName="updatekickoffDate" [min]="minEffectiveDate"
               [max]="maxEffectiveDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updatekickoffDate')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updatekickoffDate')?.touched &&
             updateprojectform.get('updatekickoffDate')?.invalid">Kickoff Date is required</div>
             <div class="error-msg" *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
             <div class="error-msg" *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective
@@ -252,7 +312,7 @@
                 class="text-danger">*</span></label>
             <input type="date" id="updateeffectiveDate" formControlName="updateeffectiveDate" [min]="minEffectiveDate"
               [max]="maxEffectiveDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updateeffectiveDate')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updateeffectiveDate')?.touched &&
             updateprojectform.get('updateeffectiveDate')?.invalid">Effective Date is required</div>
             <div class="error-msg" *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End
               Date</div>
@@ -306,7 +366,8 @@
 
           <!-- Project Color -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span class="text-danger">*</span></label>
+            <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span
+                class="text-danger">*</span></label>
             <input type="color" class="form-control custom-color" formControlName="updatecolor" />
           </div>
 
@@ -371,7 +432,8 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
+        translate}}</button>
     </div>
   </div>
 </ng-template>

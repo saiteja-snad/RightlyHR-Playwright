@@ -18,28 +18,46 @@
                                 selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                         </div>
                     </div>
-
-                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view') ) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                            {{'Select Employee'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
-                                formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)" 
-                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                            {{'Select Project'| translate}}</label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="projectName" optionValue="projectId"
+                                formControlName="projectId" (onChange)="getAllEmployeeDetails()"
+                                placeholder="Please select project" class="form-select custom-select"></p-multiSelect>
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
-                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
-                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
-                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" >
-                            </p-select>
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Client'| translate}}</label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="clientDetails" [filter]="true" filterBy="clientName"
+                                [resetFilterOnHide]="true" optionLabel="clientName" optionValue="clientId"
+                                formControlName="clientId" (onChange)="getAllEmployeeDetails()"
+                                placeholder="Please select client" class="form-select custom-select"></p-multiSelect>
                         </div>
                     </div>
-                    } -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Department'| translate}}</label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
+                                [resetFilterOnHide]="true" optionLabel="departmentName" optionValue="sno"
+                                formControlName="departmentId" (onChange)="getAllEmployeeDetails()"
+                                placeholder="Please select department" class="form-select custom-select"></p-multiSelect>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select RM/TM'| translate}}</label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
+                                formControlName="tmorrmId" (onChange)="getAllEmployeeDetails()"
+                                placeholder="Please select rm/tm" class="form-select custom-select"></p-multiSelect>
+                        </div>
+                    </div>
                     @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">

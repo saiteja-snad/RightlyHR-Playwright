@@ -882,4 +882,20 @@ clearTeamDateRange() {
   setDepartmentIds(ids: number[]) {
     this.departmentIdsSource.next(ids);
   }
+  getProjectResources(url: string,clientId?: number,projectId?: number,departmentId?: number,reportingManagerId?: number) {
+  let params = new HttpParams();
+  if (clientId) {
+    params = params.set('clientIds', clientId);
+  }
+  if (projectId) {
+    params = params.set('projectIds', projectId);
+  }
+  if (departmentId) {
+    params = params.set('departmentIds', departmentId);
+  }
+  if (reportingManagerId) {
+    params = params.set('reportingManagerIds', reportingManagerId);
+  }
+  return this.http.get<any>(`${this.ApiUrl}${url}`,{ params });
+}
 }

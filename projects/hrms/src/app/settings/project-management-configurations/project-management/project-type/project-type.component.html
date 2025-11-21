@@ -24,7 +24,7 @@
                         <tr *ngFor="let project of projectTypes">
                             <td class="w-60">{{project.value}}</td>
                             <td>
-                                <input type="color" [value]="project?.meta?.graphData?.color" disabled
+                                <input type="color" [value]="project?.meta?.graphData?.color || '#000000'" disabled
                                     class="form-control custom-color w-20">
                             </td>
                             <td class="text-center"

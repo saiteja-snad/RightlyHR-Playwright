@@ -24,11 +24,13 @@ import { TimesheetsTabsComponent } from '../../../shared/project-management-tabs
 import { IResourceDetail } from '../../../timesheetmodel';
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-timesheets-resource-summary',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule,
     TranslateModule, CommonModule, Select, NgbPopoverModule, NoDataFoundComponent, ProgressBarModule,
-    ModuleInfoIconComponent, ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,
+    ModuleInfoIconComponent, ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,MultiSelectModule
   ],
   templateUrl: './timesheets-resource-summary.component.html',
   styleUrl: './timesheets-resource-summary.component.scss',
@@ -124,54 +126,75 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   timeAllocatedlist: any;
   startDate: any;
   endDate: any;
-
+  projectDetails=[] as any;
+  clientDetails=[] as any;
+  departmentDetails=[] as any;
+  tmandRmDetails=[]as any;
+  filterData={} as any;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute) { }
+    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getprojectData();
+    this.getclientData();
+    this.getdepartmentData();
+    this.getTmandRMData();
     this.route.queryParams.subscribe(params => {
-      const resoureID = params['id'];
+      if (params['data']) {
+      const decrypted = this.encryptionService.decrypt(params['data']);
+      // console.log('Decrypted Data:', decrypted);
+       const resoureID = decrypted?.resourceId;
+       this.filterData=decrypted
+       if(this.filterData.clientId||this.filterData.projectId||this.filterData.departmentId||this.filterData.tmorrmId){
+        this.showFilters=true;
+       }
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
       }
+    }
+      
     })
     this.updateModuleInfo();
     this.createDatepickerForm();
-    this.http.getteamDateRangeObservable().subscribe((data) => {
-      console.log('Received BehaviorSubject data:', data);
-      // Optional check to avoid running on empty initial values
-      if (data && (data.startDate || data.endDate || data.employeeId)) {
+    // this.http.getteamDateRangeObservable().subscribe((data) => {
+    //   console.log('Received BehaviorSubject data:', data);
+    //   // Optional check to avoid running on empty initial values
+    //   if (data && (data.startDate || data.endDate || data.employeeId)) {
 
 
-        this.employeeId = data.employeeId ||  this.employeeId
-        this.startDate = data.startDate;
-        this.endDate = data.endDate;
-        this.setDefaultmounth();
-        // You can trigger your logic with these updated values
-        // this.getProjectSummary(this.employeeId);
-        this.projectSummery(this.employeeId);
-        this.getallocatedSummary(this.employeeId);
-        this.getEmployeeId(this.employeeId);
-        this.billableChart(this.employeeId);
-        // this.burnDownChart(resoureID);
-        this.timeAllocatedacrossGraph(this.employeeId);
-      } else {
-        this.route.queryParams.subscribe(params => {
-          const resoureID = params['id'];
-          if (resoureID) {
-            this.employeeId = parseInt(resoureID)
-            this.setDefaultmounth();
-            this.projectSummery(resoureID);
-            this.getallocatedSummary(resoureID);
-            this.getEmployeeId(resoureID);
-            this.billableChart(resoureID);
-            // this.burnDownChart(resoureID);
-            this.timeAllocatedacrossGraph(resoureID);
-          }
-        });
-      }
-    });
+    //     this.employeeId = data.employeeId ||  this.employeeId
+    //     this.startDate = data.startDate;
+    //     this.endDate = data.endDate;
+    //     this.setDefaultmounth();
+    //     // You can trigger your logic with these updated values
+    //     // this.getProjectSummary(this.employeeId);
+    //     this.projectSummery(this.employeeId);
+    //     this.getallocatedSummary(this.employeeId);
+    //     this.getEmployeeId(this.employeeId);
+    //     this.billableChart(this.employeeId);
+    //     // this.burnDownChart(resoureID);
+    //     this.timeAllocatedacrossGraph(this.employeeId);
+    //   } else {
+    //     this.route.queryParams.subscribe(params => {
+    //       if (params['data']) {
+    //   const decrypted = this.encryptionService.decrypt(params['data']);
+    //   console.log('Decrypted Data:', decrypted);
+    //    const resoureID = decrypted?.resourceId;
+    //       if (resoureID) {
+    //         this.employeeId = parseInt(resoureID)
+    //         this.setDefaultmounth();
+    //         this.projectSummery(resoureID,decrypted);
+    //         this.getallocatedSummary(resoureID);
+    //         this.getEmployeeId(resoureID);
+    //         this.billableChart(resoureID);
+    //         // this.burnDownChart(resoureID);
+    //         this.timeAllocatedacrossGraph(resoureID);
+    //       }
+    //        }
+    //     });
+    //   }
+    // });
 
     // const startOfMonth = dayjs().startOf('month').toDate();
     // const endOfMonth = dayjs().endOf('month').toDate();
@@ -194,25 +217,94 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     //   }
     // });
     //  this.setDefaultmounth();
+    this.route.queryParams.subscribe(params => {
+          if (params['data']) {
+      const decrypted = this.encryptionService.decrypt(params['data']);
+       const resoureID = decrypted?.resourceId;
+          if (resoureID) {
+            this.employeeId = parseInt(resoureID)
+            this.setDefaultmounth();
+            this.projectSummery(resoureID,decrypted);
+            this.getallocatedSummary(resoureID,decrypted);
+            this.getEmployeeId(resoureID);
+            this.billableChart(resoureID,decrypted);
+            // this.burnDownChart(resoureID);
+            this.timeAllocatedacrossGraph(resoureID,decrypted);
+          }
+           }
+        });
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
   }
-
+//get all projects list
+  getprojectData(): void {
+    this.subscription = this.http.getData(`Project`).subscribe({
+      next: (res: any) => {
+        this.projectDetails = res.data;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+  //get all clients list
+  getclientData(): void {
+    this.subscription = this.http.getData(`Client/GetAll`).subscribe({
+      next: (res: any) => {
+        this.clientDetails = res.data;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+  //get all departments list
+  getdepartmentData(): void {
+    this.subscription = this.http.getData(`Department`).subscribe({
+      next: (res: any) => {
+        this.departmentDetails = res;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+  //get all TM and RM list
+  getTmandRMData(): void {
+    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
+      next: (res: any) => {
+        this.tmandRmDetails = [
+          ...res.map((emp: any) => ({
+            ...emp,
+            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
+              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+          })),
+        ];
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
   onSubmit() {
     // Check if form is valid (optional)
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
-    this.projectSummery(resoureID);
-    this.getallocatedSummary(resoureID);
+    this.projectSummery(resoureID,this.filterData);
+    this.getallocatedSummary(resoureID,this.filterData);
     this.getEmployeeId(resoureID);
-    this.billableChart(resoureID);
+    this.billableChart(resoureID,this.filterData);
     // this.burnDownChart(resoureID);
-    this.timeAllocatedacrossGraph(resoureID);
+    this.timeAllocatedacrossGraph(resoureID,this.filterData);
   }
 
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
       resourceId: [null],
+      projectId: [null],
+      clientId: [null],
+      departmentId: [null],
+      tmorrmId: [null]
     });
   }
 
@@ -238,17 +330,21 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.updateModuleInfo();
     this.createDatepickerForm();
     this.route.queryParams.subscribe((params) => {
-      const resoureID = params['id'];
+      if (params['data']) {
+      const decrypted = this.encryptionService.decrypt(params['data']);
+       const resoureID = decrypted?.resourceId;
       if (resoureID) {
         this.employeeId = parseInt(resoureID);
-        this.projectSummery(resoureID);
-        this.getallocatedSummary(resoureID);
+        this.projectSummery(resoureID,decrypted);
+        this.getallocatedSummary(resoureID,decrypted);
         this.getEmployeeId(resoureID);
-        this.billableChart(resoureID);
+        this.billableChart(resoureID,decrypted);
         // this.burnDownChart(resoureID);
-        this.timeAllocatedacrossGraph(resoureID);
+        this.timeAllocatedacrossGraph(resoureID,decrypted);
         this.getEmployeeId(resoureID);
       }
+    }
+    
     });
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
@@ -274,9 +370,12 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     // Patch form values
     this.datepickerForm.patchValue({
       dateRange: [start, end],
-      resourceId: this.employeeId || null
+      resourceId: this.employeeId || null,
+      projectId: this.filterData.projectId,
+      clientId: this.filterData.clientId,
+      departmentId: this.filterData.departmentId,
+      tmorrmId: this.filterData.tmorrmId
     });
-    console.log('📅 Date Range set:', start, end);
   }
 
   isShowtimesheetforteamRoute(): boolean {
@@ -369,22 +468,24 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   // Project wise Resource Count
-  projectSummery(employeeId?: any) {
+  projectSummery(employeeId?: any,data?:any) {
     this.projectsummaryLoader = true;
     // Base URL
     let apiUrl = `ProjectManagementGraph/employee/resource-summary/${employeeId}`;
-    const queryParams: string[] = [];
-    const dateRange = this.datepickerForm.get('dateRange')?.value;
-    if (dateRange && dateRange[0] && dateRange[1]) {
-      const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
-      const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
-      queryParams.push(`startDate=${startDate}`);
-      queryParams.push(`endDate=${endDate}`);
-    }
-    if (queryParams.length > 0) {
-      apiUrl += `?${queryParams.join('&')}`;
-    }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+    // const queryParams: string[] = [];
+    // const dateRange = this.datepickerForm.get('dateRange')?.value;
+    // if (dateRange && dateRange[0] && dateRange[1]) {
+    //   const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
+    //   const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
+    //   queryParams.push(`startDate=${startDate}`);
+    //   queryParams.push(`endDate=${endDate}`);
+    // }
+    // if (queryParams.length > 0) {
+    //   apiUrl += `?${queryParams.join('&')}`;
+    // }
+
+    const  payload = data;
+    this.http.getProjectSummary(apiUrl,payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsummaryLoader = false;
         this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
@@ -415,23 +516,23 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
-  billableChart(employeeId?: any) {
+  billableChart(employeeId?: any, payload?:any) {
     this.BillablevsNonBillableHoursLoader = true;
     // Base URL
     let apiUrl = `ProjectManagementGraph/employee/billable-non-billable/${employeeId}?groupBy=project`;
     // Prepare query parameters if BehaviorSubject data exists
-    const queryParams: string[] = [];
-    const dateRange = this.datepickerForm.get('dateRange')?.value;
-    if (dateRange && dateRange[0] && dateRange[1]) {
-      const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
-      const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
-      queryParams.push(`startDate=${startDate}`);
-      queryParams.push(`endDate=${endDate}`);
-    }
-    if (queryParams.length > 0) {
-      apiUrl += `?${queryParams.join('&')}`;
-    }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+    // const queryParams: string[] = [];
+    // const dateRange = this.datepickerForm.get('dateRange')?.value;
+    // if (dateRange && dateRange[0] && dateRange[1]) {
+    //   const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
+    //   const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
+    //   queryParams.push(`startDate=${startDate}`);
+    //   queryParams.push(`endDate=${endDate}`);
+    // }
+    // if (queryParams.length > 0) {
+    //   apiUrl += `?${queryParams.join('&')}`;
+    // }
+    this.http.getProjectSummary(apiUrl,payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.BillablevsNonBillableHoursLoader = false;
         const chartData = res?.data?.data || [];
@@ -657,14 +758,14 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     );
   }
 
-  getallocatedSummary(resoureID: any) {
+  getallocatedSummary(resoureID: any,payload:any) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
     const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}`;
+    this.http.getProjectSummary(url,payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         const data: TimesheetSummaryResponse = res?.data || {};
@@ -801,7 +902,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   //time allocated across project
-  timeAllocatedacrossGraph(employeeId: any) {
+  timeAllocatedacrossGraph(employeeId: any,payload:any) {
     this.timeAllocatedLoader = true;
     //  Get stored date range from HttpService
     const dateRange = this.datepickerForm.get('dateRange')?.value;
@@ -809,10 +910,10 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const endDate = dateRange?.endDate ?? null;
     // Build the API URL conditionally
     let url = `ProjectManagementGraph/employee/time-allocation/${employeeId}`;
-    if (startDate && endDate) {
-      url += `?startDate=${startDate}&endDate=${endDate}`;
-    }
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+    // if (startDate && endDate) {
+    //   url += `?startDate=${startDate}&endDate=${endDate}`;
+    // }
+    this.http.getProjectSummary(url,payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.timeAllocatedLoader = false;
         const apiData = res?.data?.projectAllocations || [];
@@ -899,9 +1000,15 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     return Array.isArray(data) && data?.some((value) => value > 0);
   }
 
-  // ngOnDestroy() {
-  //   this.destroy$.next(true);
-  //   this.destroy$.complete();
-  //   this.http.clearTeamDateRange();
-  // }
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+    this.http.clearTeamDateRange();
+    this.showFilters=false;
+  }
+  showFilters: boolean = false;
+
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+  }
 }

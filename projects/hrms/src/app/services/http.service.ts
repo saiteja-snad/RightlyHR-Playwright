@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
+import moment from 'moment';
 @Injectable({
   providedIn: 'root',
 })
@@ -882,4 +883,51 @@ clearTeamDateRange() {
   setDepartmentIds(ids: number[]) {
     this.departmentIdsSource.next(ids);
   }
+  getProjectResources(url: string,clientId?: number,projectId?: number,departmentId?: number,reportingManagerId?: number) {
+  let params = new HttpParams();
+  if (clientId) {
+    params = params.set('clientIds', clientId);
+  }
+  if (projectId) {
+    params = params.set('projectIds', projectId);
+  }
+  if (departmentId) {
+    params = params.set('departmentIds', departmentId);
+  }
+  if (reportingManagerId) {
+    params = params.set('managerIds', reportingManagerId);
+  }
+  return this.http.get<any>(`${this.ApiUrl}${url}`,{ params });
+}
+getProjectSummary(apiUrl: string, payload: any) {
+  let params = new HttpParams();
+
+  // Handle Date Range
+  if (payload.dateRange && payload.dateRange[0] && payload.dateRange[1]) {
+    const startDate = moment(payload.dateRange[0]).format('YYYY-MM-DD');
+    const endDate = moment(payload.dateRange[1]).format('YYYY-MM-DD');
+
+    params = params.set('startDate', startDate);
+    params = params.set('endDate', endDate);
+  }
+
+  // Multi-values (comma separated)
+  if (payload.clientId?.length) {
+    params = params.set('clientIds', payload.clientId.join(','));
+  }
+
+  if (payload.projectId?.length) {
+    params = params.set('projectIds', payload.projectId.join(','));
+  }
+
+  if (payload.departmentId?.length) {
+    params = params.set('departmentIds', payload.departmentId.join(','));
+  }
+
+  if (payload.tmorrmId?.length) {
+    params = params.set('managerIds', payload.tmorrmId.join(','));
+  }
+
+  return this.http.get<any>(`${this.ApiUrl}${apiUrl}`, { params });
+}
 }

@@ -411,21 +411,20 @@ export class HttpService {
       responseType: 'blob',
     });
   }
-  downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string ,departmentNames?:string ,projectNames?:string): Observable<Blob> {
+   downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string ,departmentIds?:string ,projectIds?:string): Observable<Blob> {
     let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
 
     if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
     if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
     if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
     if (skillSearch) apiUrl += `&skillSearch=${encodeURIComponent(skillSearch)}`;
-    if (departmentNames) apiUrl += `&departmentNames=${encodeURIComponent(departmentNames)}`;
-    if (projectNames) apiUrl += `&projectNames=${encodeURIComponent(projectNames)}`;
+    if (departmentIds) apiUrl += `&departmentIds=${encodeURIComponent(departmentIds)}`;
+    if (projectIds) apiUrl += `&projectIds=${encodeURIComponent(projectIds)}`;
 
     return this.http.get(apiUrl, {
       responseType: 'blob',
     });
   }
-
 
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);

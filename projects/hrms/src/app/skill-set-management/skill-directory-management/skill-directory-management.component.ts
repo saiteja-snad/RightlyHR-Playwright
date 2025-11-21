@@ -327,10 +327,10 @@ export class SkillDirectoryManagementComponent {
       params.skillSearch = this.selectedSkills.join(',');
     }
     if (this.selectedDepartment?.length > 0) {
-      params.departmentNames = this.selectedDepartment.join(',');
+      params.departmentIds = this.selectedDepartment.join(',');
     }
     if (this.selectedProjects?.length > 0) {
-      params.projectNames = this.selectedProjects.join(',');
+      params.projectIds = this.selectedProjects.join(',');
     }
     if (this.searchQuery?.trim()) {
       params.searchQuery = this.searchQuery.trim();
@@ -422,7 +422,7 @@ export class SkillDirectoryManagementComponent {
         const list = Array.isArray(res) ? res : res?.data ?? res?.result ?? [];
         this.departmentOptions = list.map((d: any) => ({
           label: d.departmentName,
-          value: d.departmentName
+          value: d.sno
         }));
       }
     });
@@ -434,7 +434,7 @@ export class SkillDirectoryManagementComponent {
         const list = Array.isArray(res) ? res : res?.data ?? res?.result ?? [];
         this.projectOptions = list.map((d: any) => ({
           label: d.projectName,
-          value: d.projectName
+          value: d.projectId
         }));
       }
     });
@@ -443,7 +443,7 @@ export class SkillDirectoryManagementComponent {
   getCategory() {
     const params = {
       entity: "employee",
-      attribute: "skillset"
+      attribute: "Skill Category"
     }
     this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
       next: (data: any) => {
@@ -464,11 +464,11 @@ export class SkillDirectoryManagementComponent {
     const skillSearch = this.selectedSkills?.length ? this.selectedSkills.join(',') : '';
     const fromDate = this.monthStartDate ? this.monthStartDate.toISOString() : '';
     const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';
-    const departmentNames = this.selectedDepartment?.length ? this.selectedDepartment.join(',') : '';
-    const projectNames = this.selectedProjects?.length ? this.selectedProjects.join(',') : '';
+    const departmentIds = this.selectedDepartment?.length ? this.selectedDepartment.join(',') : '';
+    const projectIds = this.selectedProjects?.length ? this.selectedProjects.join(',') : '';
 
     this.http.downloadEmployeeSkillsReport('EmployeeSkills/exportEmployeeSkillSet',
-      isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch, departmentNames, projectNames).subscribe({
+      isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch, departmentIds, projectIds).subscribe({
         next: (response: any) => {
           const blob = new Blob([response], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

@@ -189,7 +189,7 @@ export class MySkillsComponent {
   getCategory() {
     const params = {
       entity: "employee",
-      attribute: "skillset"
+      attribute: "Skill Category"
     }
     this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
       next: (data: any) => {

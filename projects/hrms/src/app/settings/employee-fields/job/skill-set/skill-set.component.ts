@@ -44,7 +44,7 @@ export class SkillSetComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      skilltype: ['', [Validators.required, this.formValidations.maxCharactersValidator(41), Validators.pattern(/^[^\s].*$/)]],
+      skilltype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
       logo: [null],
     });
     this.updateForm = this.fb.group({

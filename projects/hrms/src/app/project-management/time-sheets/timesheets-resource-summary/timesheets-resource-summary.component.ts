@@ -24,6 +24,7 @@ import { TimesheetsTabsComponent } from '../../../shared/project-management-tabs
 import { IResourceDetail } from '../../../timesheetmodel';
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 @Component({
   selector: 'app-timesheets-resource-summary',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule,
@@ -126,52 +127,61 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   endDate: any;
 
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute) { }
+    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.route.queryParams.subscribe(params => {
-      const resoureID = params['id'];
+      if (params['data']) {
+      const decrypted = this.encryptionService.decrypt(params['data']);
+      console.log('Decrypted Data:', decrypted);
+       const resoureID = decrypted?.resourceId;
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
       }
+    }
+      
     })
     this.updateModuleInfo();
     this.createDatepickerForm();
-    this.http.getteamDateRangeObservable().subscribe((data) => {
-      console.log('Received BehaviorSubject data:', data);
-      // Optional check to avoid running on empty initial values
-      if (data && (data.startDate || data.endDate || data.employeeId)) {
+    // this.http.getteamDateRangeObservable().subscribe((data) => {
+    //   console.log('Received BehaviorSubject data:', data);
+    //   // Optional check to avoid running on empty initial values
+    //   if (data && (data.startDate || data.endDate || data.employeeId)) {
 
 
-        this.employeeId = data.employeeId ||  this.employeeId
-        this.startDate = data.startDate;
-        this.endDate = data.endDate;
-        this.setDefaultmounth();
-        // You can trigger your logic with these updated values
-        // this.getProjectSummary(this.employeeId);
-        this.projectSummery(this.employeeId);
-        this.getallocatedSummary(this.employeeId);
-        this.getEmployeeId(this.employeeId);
-        this.billableChart(this.employeeId);
-        // this.burnDownChart(resoureID);
-        this.timeAllocatedacrossGraph(this.employeeId);
-      } else {
-        this.route.queryParams.subscribe(params => {
-          const resoureID = params['id'];
-          if (resoureID) {
-            this.employeeId = parseInt(resoureID)
-            this.setDefaultmounth();
-            this.projectSummery(resoureID);
-            this.getallocatedSummary(resoureID);
-            this.getEmployeeId(resoureID);
-            this.billableChart(resoureID);
-            // this.burnDownChart(resoureID);
-            this.timeAllocatedacrossGraph(resoureID);
-          }
-        });
-      }
-    });
+    //     this.employeeId = data.employeeId ||  this.employeeId
+    //     this.startDate = data.startDate;
+    //     this.endDate = data.endDate;
+    //     this.setDefaultmounth();
+    //     // You can trigger your logic with these updated values
+    //     // this.getProjectSummary(this.employeeId);
+    //     this.projectSummery(this.employeeId);
+    //     this.getallocatedSummary(this.employeeId);
+    //     this.getEmployeeId(this.employeeId);
+    //     this.billableChart(this.employeeId);
+    //     // this.burnDownChart(resoureID);
+    //     this.timeAllocatedacrossGraph(this.employeeId);
+    //   } else {
+    //     this.route.queryParams.subscribe(params => {
+    //       if (params['data']) {
+    //   const decrypted = this.encryptionService.decrypt(params['data']);
+    //   console.log('Decrypted Data:', decrypted);
+    //    const resoureID = decrypted?.resourceId;
+    //       if (resoureID) {
+    //         this.employeeId = parseInt(resoureID)
+    //         this.setDefaultmounth();
+    //         this.projectSummery(resoureID,decrypted);
+    //         this.getallocatedSummary(resoureID);
+    //         this.getEmployeeId(resoureID);
+    //         this.billableChart(resoureID);
+    //         // this.burnDownChart(resoureID);
+    //         this.timeAllocatedacrossGraph(resoureID);
+    //       }
+    //        }
+    //     });
+    //   }
+    // });
 
     // const startOfMonth = dayjs().startOf('month').toDate();
     // const endOfMonth = dayjs().endOf('month').toDate();
@@ -194,6 +204,23 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     //   }
     // });
     //  this.setDefaultmounth();
+    this.route.queryParams.subscribe(params => {
+          if (params['data']) {
+      const decrypted = this.encryptionService.decrypt(params['data']);
+      console.log('Decrypted Data:', decrypted);
+       const resoureID = decrypted?.resourceId;
+          if (resoureID) {
+            this.employeeId = parseInt(resoureID)
+            this.setDefaultmounth();
+            this.projectSummery(resoureID,decrypted);
+            this.getallocatedSummary(resoureID);
+            this.getEmployeeId(resoureID);
+            this.billableChart(resoureID);
+            // this.burnDownChart(resoureID);
+            this.timeAllocatedacrossGraph(resoureID);
+          }
+           }
+        });
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
   }
@@ -238,10 +265,13 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.updateModuleInfo();
     this.createDatepickerForm();
     this.route.queryParams.subscribe((params) => {
-      const resoureID = params['id'];
+      if (params['data']) {
+      const decrypted = this.encryptionService.decrypt(params['data']);
+      console.log('Decrypted Data:', decrypted);
+       const resoureID = decrypted?.resourceId;
       if (resoureID) {
         this.employeeId = parseInt(resoureID);
-        this.projectSummery(resoureID);
+        this.projectSummery(resoureID,decrypted);
         this.getallocatedSummary(resoureID);
         this.getEmployeeId(resoureID);
         this.billableChart(resoureID);
@@ -249,6 +279,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
         this.timeAllocatedacrossGraph(resoureID);
         this.getEmployeeId(resoureID);
       }
+    }
+    
     });
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
@@ -369,22 +401,25 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   // Project wise Resource Count
-  projectSummery(employeeId?: any) {
+  projectSummery(employeeId?: any,data?:any) {
     this.projectsummaryLoader = true;
     // Base URL
     let apiUrl = `ProjectManagementGraph/employee/resource-summary/${employeeId}`;
-    const queryParams: string[] = [];
-    const dateRange = this.datepickerForm.get('dateRange')?.value;
-    if (dateRange && dateRange[0] && dateRange[1]) {
-      const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
-      const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
-      queryParams.push(`startDate=${startDate}`);
-      queryParams.push(`endDate=${endDate}`);
-    }
-    if (queryParams.length > 0) {
-      apiUrl += `?${queryParams.join('&')}`;
-    }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+    // const queryParams: string[] = [];
+    // const dateRange = this.datepickerForm.get('dateRange')?.value;
+    // if (dateRange && dateRange[0] && dateRange[1]) {
+    //   const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
+    //   const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
+    //   queryParams.push(`startDate=${startDate}`);
+    //   queryParams.push(`endDate=${endDate}`);
+    // }
+    // if (queryParams.length > 0) {
+    //   apiUrl += `?${queryParams.join('&')}`;
+    // }
+
+    const  payload = data;
+    console.log(payload)
+    this.http.getProjectSummary(apiUrl,payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsummaryLoader = false;
         this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];

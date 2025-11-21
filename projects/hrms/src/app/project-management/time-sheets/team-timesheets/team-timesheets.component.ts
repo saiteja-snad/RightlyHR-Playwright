@@ -21,6 +21,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { MultiSelectModule } from 'primeng/multiselect';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
@@ -58,7 +59,8 @@ export class TeamTimesheetsComponent {
   clientDetails=[] as any;
   departmentDetails=[] as any;
   tmandRmDetails=[]as any;
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, 
+    private router: Router, private modalService: NgbModal,private encryptionService:EncriptdecriptService) { }
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
@@ -372,11 +374,13 @@ getprojectData(): void {
   }
 
   navigateView(employeeId: any) {
+    //console.log(this.datepickerForm.value);
+    const encryptedData =  this.encryptionService.encrypt(this.datepickerForm.value);
     if(this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')){
-    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
+    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { data: encryptedData } });
     }
     else if(this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
-    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { data: encryptedData } });
     }
   }
 }

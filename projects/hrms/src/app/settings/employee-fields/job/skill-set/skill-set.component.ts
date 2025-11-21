@@ -9,10 +9,12 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { Subscription } from 'rxjs';
+import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-skill-set',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './skill-set.component.html',
   styleUrl: './skill-set.component.scss'
 })
@@ -57,7 +59,7 @@ export class SkillSetComponent {
   getskilltype() {
     const params = {
       entity: "Employee",
-      attribute: "SkillSet",
+      attribute: "Skill Category",
     };
 
     this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
@@ -84,7 +86,7 @@ export class SkillSetComponent {
     }
     const params = {
       entity: "Employee",
-      attribute: "SkillSet",
+      attribute: "Skill Category",
       value: this.AddForm.value.skilltype,
       meta: metaValue
     };
@@ -95,9 +97,10 @@ export class SkillSetComponent {
         this.conformationPopup.openSuccessModal('Skill Category added successfully');
         this.resetForm();
       },
-      error: (err: any) => {
-        console.error("Failed to save skill type", err);
-      }
+      error: (reason: any) => {
+        const errorMessage = reason.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+      },
     });
   }
   openDialog() {
@@ -183,10 +186,10 @@ export class SkillSetComponent {
       }
       const params = {
         entity: "Employee",
-        attribute: "SkillSet",
+        attribute: "Skill Category",
         value: this.updateForm.value.skilltype,
         meta: metaValue,
-        id:this.selectedId
+        id: this.selectedId
       };
 
       this.subscription = this.http.postdata('entityAttributeValues/update', params).subscribe({

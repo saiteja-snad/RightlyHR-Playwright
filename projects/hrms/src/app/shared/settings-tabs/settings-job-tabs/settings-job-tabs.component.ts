@@ -40,7 +40,6 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Probation Frequency', route: '/settings/employee-fields/job/probation-frequency', permission: { feature: 'Signature Authority', action: 'view' } },
     { label: 'Roles and Responsibilities', route: '/settings/employee-fields/job/roles-and-responsibilities', permission: { feature: 'Signature Authority', action: 'view' } },
     { label: 'Letter Acknowledgement', route: '/settings/employee-fields/job/letter-acknowledgement', permission: { feature: 'Letter Acknowledgment Configuration', action: 'view' } },
-    { label: 'Skill Set', route: '/settings/employee-fields/job/skills', permission: { feature: 'SkillSet', action: 'view' } },
 
   ];
 

@@ -151,6 +151,7 @@
   .designation {
     color: #6b7280;
     font-size: var(--fontsize12);
+    width: 175px;
   }
 }
 
@@ -180,6 +181,7 @@
   border: 1px solid #000;
   font-weight: 500;
   border-radius: 0.325rem;
+  height: max-content;
 }
 
 .beginner-text {
@@ -594,7 +596,7 @@
   max-width: 100% !important;
 }
 
-.cursor{
+.cursor {
   cursor: pointer;
 }
 
@@ -614,6 +616,7 @@
     color: var(--primary-color);
   }
 }
+
 .status-closed {
   color: #9AA2A7;
 }
@@ -642,4 +645,3 @@
 .status-in-progress {
   color: #FF9500;
 }
-

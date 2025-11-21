@@ -34,6 +34,7 @@ export const permissionsData = [
   { fields: 'Identity Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Relationship', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bank Names', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
 
   // Attendance Locking
   { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
@@ -65,7 +66,7 @@ export const permissionsData = [
   { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Signature Authority', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Letter Acknowledgment Configuration', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
+ 
 
   //Manage Shifts tab
   { fields: 'Shifts Pending Tab', View: false, Update: false, Create: false, Delete: false },

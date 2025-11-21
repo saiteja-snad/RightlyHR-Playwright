@@ -112,6 +112,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/identitytype', permission: 'Identity Type.view' },
   { route: '/settings/employee-fields/personal/relationship', permission: 'Relationship.view' },
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
+  {route: '/settings/employee-fields/personal/skills',permission: 'SkillSet.view'}
 ]
 
 export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [

@@ -22,13 +22,13 @@
                             <!--Update-->
                             <div>
                                 <a (click)="openupdate(skill)" *ngIf="rbac.allowedToAccess('SkillSet.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                      <app-settings-update-icon />
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
                                  <a (click)="opendelete(skill)" *ngIf="rbac.allowedToAccess('SkillSet.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                  <app-settings-delete-icon />
                                 </a> 
                             </div>
                         </div>
@@ -85,13 +85,13 @@
                 </div>
 
                 <!-- Logo Field -->
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="gradeId" class="form-label custom-label mb-2">
                         {{ 'Logo' | translate }}
                     </label>
                     <input type="file" formControlName="logo" accept=".png, .jpg, .jpeg"
                         (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0">
-                </div>
+                </div> -->
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
@@ -147,13 +147,13 @@
                 </div>
 
                 <!-- Logo Field -->
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="gradeId" class="form-label custom-label mb-2">
                         {{ 'Logo' | translate }}
                     </label>
                     <input type="file" formControlName="logo" accept=".png, .jpg, .jpeg"
                         (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0">
-                </div>
+                </div> -->
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">

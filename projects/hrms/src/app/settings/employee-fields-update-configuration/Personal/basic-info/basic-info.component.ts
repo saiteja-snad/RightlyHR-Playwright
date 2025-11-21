@@ -128,11 +128,15 @@ export class BasicInfoComponent {
           if (data.data.length > 0) {
             this.basicInfoFieldsConfigList = data.data;
           } else {
+            this.basicInfoFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+          if (err.status === 404) {
+          this.basicInfoFieldsConfigList = [];
+        }
           console.error('Error fetching data:', err);
           this.loader = false;
         },

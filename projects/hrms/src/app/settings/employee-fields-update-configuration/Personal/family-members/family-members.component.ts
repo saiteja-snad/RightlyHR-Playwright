@@ -129,11 +129,15 @@ export class FamilyMembersComponent {
           if (data.data.length > 0) {
             this.familyMembersFieldsConfigList = data.data;
           } else {
+             this.familyMembersFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+            if (err.status === 404) {
+          this.familyMembersFieldsConfigList = [];
+        }
           console.error('Error fetching data:', err);
           this.loader = false;
         },

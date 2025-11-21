@@ -128,11 +128,15 @@ export class AcademicsComponent {
           if (data.data.length > 0) {
             this.academicsFieldsConfigList = data.data;
           } else {
+            this.academicsFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+           if (err.status === 404) {
+          this.academicsFieldsConfigList = [];
+        }
           console.error('Error fetching data:', err);
           this.loader = false;
         },

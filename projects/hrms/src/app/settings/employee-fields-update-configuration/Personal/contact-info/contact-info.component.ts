@@ -127,11 +127,15 @@ export class ContactInfoComponent {
           if (data.data.length > 0) {
             this.contactInfoFieldsConfigList = data.data;
           } else {
+            this.contactInfoFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+          if (err.status === 404) {
+          this.contactInfoFieldsConfigList = [];
+        }
           console.error('Error fetching data:', err);
           this.loader = false;
         },

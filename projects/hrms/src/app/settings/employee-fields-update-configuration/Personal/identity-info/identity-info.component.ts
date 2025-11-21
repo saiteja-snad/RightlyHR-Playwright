@@ -133,11 +133,15 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
           if (data.data.length > 0) {
             this.identityInfoFieldsConfigList = data.data;
           } else {
+            this.identityInfoFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+          if (err.status === 404) {
+          this.identityInfoFieldsConfigList = [];
+        }
           console.error('Error fetching data:', err);
           this.loader = false;
         },

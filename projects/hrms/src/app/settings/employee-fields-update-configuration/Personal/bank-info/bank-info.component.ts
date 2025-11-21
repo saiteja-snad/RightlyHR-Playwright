@@ -128,11 +128,15 @@ export class BankInfoComponent {
           if (data.data.length > 0) {
             this.bankInfoFieldsConfigList = data.data;
           } else {
+            this.bankInfoFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+          if (err.status === 404) {
+          this.bankInfoFieldsConfigList = [];
+        }
           console.error('Error fetching data:', err);
           this.loader = false;
         },

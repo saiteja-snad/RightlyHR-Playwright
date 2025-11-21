@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ChartModule } from 'primeng/chart';
 import { CardModule } from 'primeng/card';
 import { SidebarModule } from 'primeng/sidebar';
-import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
@@ -88,10 +88,10 @@ export class SkillsetDashboardComponent {
   isLoadingGraphSkillProficiency = false;
   isLoadingGraphTopSkills = false;
   chartLoader = false
-  resourceSearchQuery: string = '';
+  resourceSearchQuery: any = null;
   departmentOptions: any[] = [];
-  selectedDepartment: string[] = [];
   selectedProject: any = null;
+  selectedDepartment: any = null;
   selectedPhases: any[] = [];
   // contentInfo
   topTrendingContentInfo = 'Highlights the five most in-demand skills within the organization based on employee proficiency data. This visualization helps management identify emerging skill trends, align training initiatives, and support strategic workforce planning.';
@@ -215,76 +215,20 @@ export class SkillsetDashboardComponent {
   close(modal: any) {
     modal.close();
     this.searchQuery = '';
-    this.selectedDepartment =[]
+    this.selectedDepartment = []
   }
 
   private searchTimer: any;
   onSearch(): void {
     clearTimeout(this.searchTimer);
     this.searchTimer = setTimeout(() => {
-      this.getResourcesSummary(() => {
+      this.getEmployeeDirectorySummary(() => {
         if (this.employeeList?.length > 0) {
-          console.log(this.employeeList);
-          
           this.getEmployeeSkillProjectDetails();
         }
       });
     }, 400);
   }
-
-  getResourcesSummary(callback?: () => void): void {
-    const params: any = {};
-    if (this.searchQuery?.trim()) {
-      params.searchQuery = this.searchQuery.trim();
-    }
-    this.isloading = true;
-
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSummary', params)
-      .subscribe({
-        next: (res: any) => {
-          this.isloading = false;
-
-          if (res?.success && res.data) {
-            const summary = res.data;
-
-            const addProfileImage = (list: any[] = []) =>
-              list.map(emp => ({
-                ...emp,
-                employeeId: emp.employeeId,
-                profileImage: 'images/alternate.png',
-                originalProfileUrl: emp.profileImage || emp.profileUrl || ''
-              }));
-
-            this.employeeSummary = {
-              allEmployeesList: addProfileImage(summary.allEmployeesList || []),
-              allocatedEmployeesList: addProfileImage(summary.allocatedEmployeesList || []),
-              availableEmployeesList: addProfileImage(summary.availableEmployeesList || []),
-              nextMonthAvailableEmployeesList: addProfileImage(summary.nextMonthAvailableEmployeesList || [])
-            };
-
-            Object.values(this.employeeSummary).forEach((list: any) => {
-              if (Array.isArray(list)) {
-                list.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
-              }
-            });
-
-            switch (this.selectedSkillKey) {
-              case 'total': this.employeeList = this.employeeSummary.allEmployeesList; break;
-              case 'committed': this.employeeList = this.employeeSummary.allocatedEmployeesList; break;
-              case 'available': this.employeeList = this.employeeSummary.availableEmployeesList; break;
-              case 'upcoming': this.employeeList = this.employeeSummary.nextMonthAvailableEmployeesList; break;
-              default: this.employeeList = this.employeeSummary.allEmployeesList;
-            }
-
-          } else {
-            this.resetSummaryData();
-          }
-          if (callback) callback();
-        }
-      });
-  }
-
-
   resetSummaryData(): void {
     this.employeeSummary = null;
     this.allEmployeesList = [];
@@ -294,27 +238,6 @@ export class SkillsetDashboardComponent {
     this.employeeList = [];
   }
 
-  // getSkillSummary() {
-  //   this.subscription = this.http.getData('EmployeeSkills/getEmployeeSummaryCount').subscribe({
-  //     next: (res: any) => {
-  //       this.chartLoader = true;
-  //       if (res?.data) {
-  //         const summary = res.data;
-  //         this.summaryCards = [
-  //           { key: 'total', title: 'Total Resources', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
-  //           { key: 'committed', title: 'Committed Resources', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
-  //           { key: 'available', title: 'Available Resources', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
-  //           { key: 'upcoming', title: 'Releasing in 30 Days', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
-  //         ];
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.isloading = false;
-  //       this.chartLoader = false;
-  //       console.error('Error fetching summary counts:', err);
-  //     }
-  //   });
-  // }
 
   get hasskilllevelGraphData(): boolean {
     return !!(
@@ -789,80 +712,55 @@ export class SkillsetDashboardComponent {
 
   getEmployeeDirectorySummary(callback?: () => void): void {
     const params: any = {};
-    if (this.resourceSearchQuery?.trim()) {
-      params.searchQuery = this.resourceSearchQuery.trim();
+    if (this.searchQuery?.trim()) {
+      params.searchQuery = this.searchQuery.trim();
     }
     if (this.selectedDepartment?.length > 0) {
       params.departmentNames = this.selectedDepartment.join(',');
     }
     this.isloading = true;
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params).subscribe({
-      next: (res: any) => {
-        this.isloading = false;
-        if (res?.success && res.data) {
-          const summary = res.data;
-          // Helper to add proper image URLs
-          const addProfileImage = (list: any[] = []) => {
-            return list.map(emp => {
-              const profilePath = emp.profileImage || emp.profileUrl || '';
-              return {
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeDirectorySummary', params)
+      .subscribe({
+        next: (res: any) => {
+          this.isloading = false;
+          if (res?.success && res.data) {
+            const summary = res.data;
+            const addProfileImage = (list: any[] = []) =>
+              list.map(emp => ({
                 ...emp,
-                profileImage: 'images/alternate.png', // default placeholder
-                originalProfileUrl: profilePath
-              };
+                profileImage: 'images/alternate.png',
+                originalProfileUrl: emp.profileImage || emp.profileUrl || ''
+              }));
+
+            this.employeeSummary = {
+              allEmployeesList: addProfileImage(summary.allEmployeesList || []),
+              skilledEmployeesList: addProfileImage(summary.skilledEmployeesList || []),
+              unSkilledEmployeesList: addProfileImage(summary.unSkilledEmployeesList || [])
+            };
+            Object.values(this.employeeSummary).forEach((list: any) => {
+              if (Array.isArray(list)) {
+                list.forEach((emp: any) => this.downloadAndSetProfileImage(emp));
+              }
             });
-          };
-          // Store employee summary with categorized lists
-          this.employeeSummary = {
-            allEmployeesList: addProfileImage(summary.allEmployeesList || []),
-            skilledEmployeesList: addProfileImage(summary.skilledEmployeesList || []),
-            unSkilledEmployeesList: addProfileImage(summary.unSkilledEmployeesList || []),
-            totalEmployees: summary.totalEmployees ?? 0,
-            skilledEmployees: summary.skilledEmployees ?? 0,
-            unSkilledEmployees: summary.unSkilledEmployees ?? 0
-          };
-          // Step 2: After assigning employeeSummary
-          ['allEmployeesList', 'skilledEmployeesList', 'unSkilledEmployeesList'].forEach(listKey => {
-            const list = this.employeeSummary[listKey];
-            if (Array.isArray(list)) {
-              list.forEach(emp => {
-                if (emp.originalProfileUrl) {
-                  this.downloadAndSetProfileImage(emp);
-                }
-              });
+
+            // Decide which list to show based on selected card key
+            switch (this.selectedSkillKey) {
+              case 'totalEmployees': this.employeeList = this.employeeSummary.allEmployeesList; break;
+              case 'skilledEmployees': this.employeeList = this.employeeSummary.skilledEmployeesList; break;
+              case 'unSkilledEmployees': this.employeeList = this.employeeSummary.unSkilledEmployeesList; break;
             }
-          });
-          // Assign the proper list based on selected key
-          switch (this.selectedSkillKey) {
-            case 'totalEmployees':
-              this.employeeList = this.employeeSummary.allEmployeesList;
-              break;
-            case 'skilledEmployees':
-              this.employeeList = this.employeeSummary.skilledEmployeesList;
-              break;
-            case 'unSkilledEmployees':
-              this.employeeList = this.employeeSummary.unSkilledEmployeesList;
-              break;
-            default:
-              this.employeeList = this.employeeSummary.allEmployeesList;
           }
-        } else {
-          this.resetEmployeeSummaryData();
+          if (callback) callback();
         }
-        if (callback) callback();
-      },
-      error: (err) => {
-        this.isloading = false;
-        console.error('Error fetching employee directory summary:', err);
-        this.resetEmployeeSummaryData();
-        if (callback) callback();
-      }
-    });
+      });
   }
 
+
+
+
   openModal(content: TemplateRef<any>, emp: any) {
-    this.selectedEmployee = emp;     // set selected employee
-    this.getEmployeeSkillProjectDetails();   // API triggers correctly
+    this.selectedEmployee = emp;
+    this.getEmployeeSkillProjectDetails();
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -1007,6 +905,9 @@ export class SkillsetDashboardComponent {
   }
   closep(modal: any) {
     modal.close();
-    this.selectedDepartment = []
+
+  }
+  closePr(modal: NgbModalRef) {
+    modal.close();
   }
 }

@@ -59,6 +59,7 @@ export const environment = {
   expensesModuleId:19,
   remoteLoginModuleId:11,
   globalPermissionsModuleID:18,
-  oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
+  oldVersionUrl:'https://snad.rightlyhr.com/uservalidation',
+  secretKey:'A8fD@9!sLm#Qz7PpXv3$wK2*R9bT6yN!'
 
 };

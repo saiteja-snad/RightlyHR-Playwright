@@ -20,10 +20,13 @@ import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { MultiSelectModule } from 'primeng/multiselect';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, InfoIconComponent, DateformatPipe],
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent,
+    NgbPopoverModule, InfoIconComponent, DateformatPipe, MultiSelectModule,],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })
@@ -52,8 +55,12 @@ export class TeamTimesheetsComponent {
   ];
   resourcesList: IResourceDetail[] = [];
   selectedEntries: TimesheetEntry[] = [];
-
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, private modalService: NgbModal) { }
+  projectDetails=[] as any;
+  clientDetails=[] as any;
+  departmentDetails=[] as any;
+  tmandRmDetails=[]as any;
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, 
+    private router: Router, private modalService: NgbModal,private encryptionService:EncriptdecriptService) { }
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
@@ -61,8 +68,61 @@ export class TeamTimesheetsComponent {
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.getteamsummary(); // always call once
+    this.getprojectData();
+    this.getclientData();
+    this.getdepartmentData();
+    this.getTmandRMData();
   }
-
+  //get all projects list
+  getprojectData(): void {
+    this.subscription = this.http.getData(`Project`).subscribe({
+      next: (res: any) => {
+        this.projectDetails = res.data;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+  //get all clients list
+  getclientData(): void {
+    this.subscription = this.http.getData(`Client/GetAll`).subscribe({
+      next: (res: any) => {
+        this.clientDetails = res.data;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+  //get all departments list
+  getdepartmentData(): void {
+    this.subscription = this.http.getData(`Department`).subscribe({
+      next: (res: any) => {
+        this.departmentDetails = res;
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+  //get all TM and RM list
+  getTmandRMData(): void {
+    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
+      next: (res: any) => {
+        this.tmandRmDetails = [
+          ...res.map((emp: any) => ({
+            ...emp,
+            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
+              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+          })),
+        ];
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
     // Check if any field has value
@@ -70,7 +130,11 @@ export class TeamTimesheetsComponent {
       (formValue?.dateRange && formValue?.dateRange?.length > 0)
     );
   }
+  showFilters: boolean = false;
 
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+  }
   resetForm() {
     // Reset other form fields
     this.datepickerForm.reset({
@@ -90,7 +154,11 @@ export class TeamTimesheetsComponent {
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
-      resourceId: [null]
+      resourceId: [null],
+      projectId: [null],
+      clientId: [null],
+      departmentId: [null],
+      tmorrmId: [null]
     });
   }
 
@@ -102,8 +170,10 @@ export class TeamTimesheetsComponent {
     });
     // return [startOfMonth, endOfMonth];
   }
-
-  openModal(entries: any, content?: any) {
+  employeeDetails:any;
+  openModal(entries: any,employeedetails?:any, content?: any) {
+    console.log(entries)
+    this.employeeDetails=employeedetails;
     this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -166,13 +236,16 @@ export class TeamTimesheetsComponent {
 
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
-    const statuses = ['Active', 'Trainee Active', 'Active Contract'];
-
+    const formdata = this.datepickerForm.value;
+    const clientId = formdata.clientId;
+    const projectId = formdata.projectId;
+    const departmentId = formdata.departmentId;
+    const reportingId = formdata.tmorrmId
     this.subscription = this.http
-      .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
+      .getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId)
       .subscribe({
         next: (res: any) => {
-          if (Array.isArray(res)) {
+          if (Array.isArray(res.data)) {
             // ✅ Add "All Employees" option first
             const allEmployeesOption = {
               value: null,
@@ -181,7 +254,7 @@ export class TeamTimesheetsComponent {
             };
 
             // ✅ Filter out logged-in user and map employee details
-            const employeeList = res
+            const employeeList = res.data
               .filter((emp: any) => emp.employeeId !== EmployeeId)
               .map((emp: any) => ({
                 value: emp.employeeId,
@@ -307,11 +380,13 @@ export class TeamTimesheetsComponent {
   }
 
   navigateView(employeeId: any) {
+    //console.log(this.datepickerForm.value);
+    const encryptedData =  this.encryptionService.encrypt(this.datepickerForm.value);
     if(this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')){
-    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
+    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { data: encryptedData } });
     }
     else if(this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
-    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { data: encryptedData } });
     }
   }
 }

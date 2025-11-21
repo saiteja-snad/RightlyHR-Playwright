@@ -6,6 +6,11 @@
         <div class="d-flex flex-column align-items-center">
             <img [src]="tab.icon" alt="{{ tab.label }}" class="dropdown-menu-icon mb-2" />
             <span class="dropdown-menu-text">{{ tab.label }}</span>
+        @if(tab.totalCount && tab.totalCount > 0) {
+        <span class="dropdown-menu-text">({{tab.totalCount }})</span>
+        }@else {
+        <span class="dropdown-menu-text">(0)</span>
+        }
         </div>
     </div>
 </div>

@@ -90,7 +90,34 @@ export class AddressesComponent {
     this.getAllEmployeeDetails();
     this.getAllRoles();
     this.getAddressesFieldsConfigList();
+
+//     this.fieldConfigForm.get('addressType')?.valueChanges.subscribe(() => {
+//   this.updateFieldOptionsDisableStatus();
+// });
+
   }
+
+//   isFieldAlreadyUsedForSelectedAddressType(fieldName: string): boolean {
+//   const selectedAddressType = this.fieldConfigForm.get('addressType')?.value;
+
+//   return this.addressesFieldsConfigList.some((item: any) =>
+//     item.displayName === 'Personal' &&
+//     item.moduleName === 'Address' &&
+//     item.referenceCategory === (selectedAddressType === 'CURRENT' ? 'C' : 'P') &&
+//     item.columnName === fieldName
+//   );
+// }
+
+// updateFieldOptionsDisableStatus() {
+//   const addressType = this.fieldConfigForm.get('addressType')?.value;
+
+//   this.fieldOptions = this.fieldOptions.map((option: any) => ({
+//     ...option,
+//     optionDisabled: this.isFieldAlreadyUsedForSelectedAddressType(option.fieldName)
+//   }));
+// }
+
+
 
   getAddressesFields() {
     const params = 'Personal';

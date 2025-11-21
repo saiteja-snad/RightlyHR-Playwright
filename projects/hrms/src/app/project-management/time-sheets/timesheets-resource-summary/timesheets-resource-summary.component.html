@@ -74,7 +74,7 @@
                     </div>
                     }
                 </div>
-                <div>
+                <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                     <button type="button" class="custom-btn btn-secondary" (click)="toggleFilters()"><i
                             class="bi bi-funnel me-2"></i>Fliters</button>
                 </div>
@@ -85,7 +85,7 @@
                 </div>
 
         </div>
-        <div *ngIf="showFilters" class="d-flex justify-content-end gap-3 align-items-center mt-1 mb-2">
+        <div *ngIf="showFilters && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')" class="d-flex justify-content-end gap-3 align-items-center mt-1 mb-2">
 
             <div class="d-flex  align-items-center gap-2">
                 <label class="form-label custom-label text-nowrap filter-labels m-0">

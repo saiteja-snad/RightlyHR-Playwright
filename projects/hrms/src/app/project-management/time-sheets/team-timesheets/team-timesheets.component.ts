@@ -170,8 +170,10 @@ export class TeamTimesheetsComponent {
     });
     // return [startOfMonth, endOfMonth];
   }
-
-  openModal(entries: any, content?: any) {
+  employeeDetails:any;
+  openModal(entries: any,employeedetails?:any, content?: any) {
+    console.log(entries)
+    this.employeeDetails=employeedetails;
     this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }

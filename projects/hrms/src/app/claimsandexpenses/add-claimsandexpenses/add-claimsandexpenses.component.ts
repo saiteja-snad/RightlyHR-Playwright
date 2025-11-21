@@ -558,7 +558,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         expenseId: this.selectedexpensesid,
         // approverEmail: form.value.approvalemail.value,
         additional_details: form.value.additional_details,
-        status: 'Waiting for Approval',
+        status: 'Approved',
         employeeId: this.selectedEmpId,
         requestedBy: this.empinfo.employeeId,
         expenseItem: form.value.expenseItems.map((item: any) => ({
@@ -568,7 +568,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
           expense_Date: item.expense_Date,
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
-          status: 'Waiting for Approval',
+          status: 'Approved',
           attachment_url: item.attachment_url,
         })),
         attachment_url: undefined

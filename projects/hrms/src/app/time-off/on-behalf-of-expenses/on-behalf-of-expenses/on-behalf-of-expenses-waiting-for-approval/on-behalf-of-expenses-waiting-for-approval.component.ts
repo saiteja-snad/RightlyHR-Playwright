@@ -77,7 +77,7 @@ export class OnBehalfOfExpensesWaitingForApprovalComponent {
   }
 
   getExpensesHeaderByEmployeeId(): void {
-    const empId = this.selectemp ?? this.empinfo?.employeeId;
+    const empId = this.selectemp
     const status = 'Waiting for Approval';
     const searchQuery = this.searchTerm?.trim() || '';
     this.loading = true;

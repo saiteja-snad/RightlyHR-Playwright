@@ -122,7 +122,7 @@ export class OnBehalfOfExpensesTabsComponent {
 
   getexpensesheaderbyemployeeid(): void {
     
-    const empId = this.selectemp ?? this.empdata?.employeeId;
+    const empId = this.selectemp;
     const year = this.selectedYear ?? new Date().getFullYear();
     const month = this.seletedMouthly ?? new Date().getMonth() + 1;
     this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}`,).subscribe({

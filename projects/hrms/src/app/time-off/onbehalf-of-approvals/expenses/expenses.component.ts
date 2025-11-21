@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { SearchfordeskPipe } from '../../../Pipes/searchfordesk.pipe';
@@ -25,6 +25,7 @@ import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
+import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 
 @Component({
   selector: 'app-expenses',
@@ -42,6 +43,7 @@ import { environment } from '../../../../environments/environment';
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
+    ConfirmationIconComponent
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.scss'
@@ -66,6 +68,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  verifyForm!: FormGroup;
 
   expenseImageUrl: any;
   expenseViewURL: any;
@@ -76,6 +79,8 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   subscription!: Subscription;
   LOGIN: any;
+  verifiedExpenseIds: number[] = [];
+  verifyModalRef: NgbModalRef | null = null;
 
   constructor(
     private modalService: NgbModal,
@@ -126,6 +131,14 @@ export class ExpensesComponent implements OnInit, OnDestroy {
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250)],
+      ],
+    });
+  }
+  intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
       comments: [
         '',
         [Validators.required, Validators.maxLength(250)],
@@ -440,7 +453,51 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       lowerUrl.endsWith('.png')
     );
   }
+  openVerifyModal(content: any, request: ExpenseApprovalResponse) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedLeaveData = request;
+  }
 
+  handleVerify(verifyForm: FormGroup): void {
+    if (verifyForm.valid && this.expenseheaderiteams?.expenseitem?.length) {
+      const formData = verifyForm.value;
+      const verifiedItem = this.expenseheaderiteams.expenseitem[0];
+      const requestBody = {
+        isVerified: true,
+        verifiedBy: this.empinfo.employeeId,
+        verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+        comments: formData.comments
+      };
+
+      this.http
+        .putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.verifyModalRef?.close();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal('Expense item verified successfully');
+            this.verifyForm.reset();
+            this.http.setnewcountDetails();
+            // this.verifiedExpenseIds.push(this.selectedLeaveData.entity.expenses_ID);
+            this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.verifyModalRef?.close();
+            this.sharedModalService.openErrorModal(reason.error?.Message || 'Failed to verify expense');
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

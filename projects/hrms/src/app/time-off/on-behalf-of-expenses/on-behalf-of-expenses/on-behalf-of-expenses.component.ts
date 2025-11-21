@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, 
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { ChartModule } from 'primeng/chart';
 import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';

@@ -71,7 +71,7 @@ export class OnBehalfOfExpensesProcessedComponent {
   }
 
   getexpensesheaderbyemployeeid(): void {
-    const empId = this.selectemp ?? this.empinfo?.employeeId;
+    const empId = this.selectemp 
     const year = this.selectedYear ?? new Date().getFullYear();
     const month = this.seletedMouthly ?? new Date().getMonth() + 1;
     const status = 'Processed';

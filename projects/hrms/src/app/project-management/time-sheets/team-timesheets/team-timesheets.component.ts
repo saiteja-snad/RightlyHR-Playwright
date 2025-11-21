@@ -24,8 +24,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-team-timesheets',
   imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, 
-    NgbPopoverModule, InfoIconComponent, DateformatPipe,MultiSelectModule,],
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent,
+    NgbPopoverModule, InfoIconComponent, DateformatPipe, MultiSelectModule,],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })
@@ -54,10 +54,11 @@ export class TeamTimesheetsComponent {
   ];
   resourcesList: IResourceDetail[] = [];
   selectedEntries: TimesheetEntry[] = [];
-  projectDetails=[] as any;
-  clientDetails=[] as any;
-  departmentDetails=[] as any;
-  tmandRmDetails=[]as any;
+  projectDetails = [] as any;
+  clientDetails = [] as any;
+  departmentDetails = [] as any;
+  tmandRmDetails = [] as any;
+
   constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, private modalService: NgbModal) { }
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -71,9 +72,9 @@ export class TeamTimesheetsComponent {
     this.getdepartmentData();
     this.getTmandRMData();
   }
-//get all projects list
-getprojectData(): void {
-   this.subscription =  this.http.getData(`Project`).subscribe({
+  //get all projects list
+  getprojectData(): void {
+    this.subscription = this.http.getData(`Project`).subscribe({
       next: (res: any) => {
         this.projectDetails = res.data;
       },
@@ -84,7 +85,7 @@ getprojectData(): void {
   }
   //get all clients list
   getclientData(): void {
-   this.subscription =  this.http.getData(`Client/GetAll`).subscribe({
+    this.subscription = this.http.getData(`Client/GetAll`).subscribe({
       next: (res: any) => {
         this.clientDetails = res.data;
       },
@@ -95,7 +96,7 @@ getprojectData(): void {
   }
   //get all departments list
   getdepartmentData(): void {
-   this.subscription =  this.http.getData(`Department`).subscribe({
+    this.subscription = this.http.getData(`Department`).subscribe({
       next: (res: any) => {
         this.departmentDetails = res;
       },
@@ -106,7 +107,7 @@ getprojectData(): void {
   }
   //get all TM and RM list
   getTmandRMData(): void {
-   this.subscription =  this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
+    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
       next: (res: any) => {
         this.tmandRmDetails = [
           ...res.map((emp: any) => ({
@@ -128,7 +129,11 @@ getprojectData(): void {
       (formValue?.dateRange && formValue?.dateRange?.length > 0)
     );
   }
+  showFilters: boolean = false;
 
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+  }
   resetForm() {
     // Reset other form fields
     this.datepickerForm.reset({
@@ -149,10 +154,10 @@ getprojectData(): void {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
       resourceId: [null],
-      projectId:[null],
-      clientId:[null],
-      departmentId:[null],
-      tmorrmId:[null]
+      projectId: [null],
+      clientId: [null],
+      departmentId: [null],
+      tmorrmId: [null]
     });
   }
 
@@ -228,13 +233,13 @@ getprojectData(): void {
 
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
-    const formdata=this.datepickerForm.value;
-    const clientId=formdata.clientId;
-    const projectId=formdata.projectId;
-    const departmentId=formdata.departmentId;
-    const reportingId=formdata.tmorrmId
+    const formdata = this.datepickerForm.value;
+    const clientId = formdata.clientId;
+    const projectId = formdata.projectId;
+    const departmentId = formdata.departmentId;
+    const reportingId = formdata.tmorrmId
     this.subscription = this.http
-      .getProjectResources(`ProjectResource/employees`,clientId,projectId,departmentId,reportingId)
+      .getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId)
       .subscribe({
         next: (res: any) => {
           if (Array.isArray(res.data)) {
@@ -372,11 +377,11 @@ getprojectData(): void {
   }
 
   navigateView(employeeId: any) {
-    if(this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')){
-    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
+    if (this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')) {
+      this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
     }
-    else if(this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
-    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    else if (this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')) {
+      this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
     }
   }
 }

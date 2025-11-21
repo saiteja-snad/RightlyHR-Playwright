@@ -36,3 +36,17 @@
 .department-list-view {
     width: 250px !important;
 }
+
+.clear-all-button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-button:focus {
+    outline: none;
+}

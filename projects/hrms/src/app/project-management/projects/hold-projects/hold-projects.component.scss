@@ -40,3 +40,17 @@
 .custom-color {
     width: 60px !important;
 }
+
+.clear-all-button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-button:focus {
+    outline: none;
+}

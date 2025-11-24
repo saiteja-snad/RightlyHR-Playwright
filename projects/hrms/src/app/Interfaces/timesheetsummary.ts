@@ -60,6 +60,8 @@ export interface TimesheetEntry {
   loggedHHMM: string;
   summary: string;
   allocatedHours: number;
+  finalApproverName?: string;
+  approverDesignation?: string;
 }
 
 export interface DailySummary {
@@ -72,7 +74,6 @@ export interface DailySummary {
   holiday: string;
   textColor?: string;
   legendCode?: any;
-
 }
 
 

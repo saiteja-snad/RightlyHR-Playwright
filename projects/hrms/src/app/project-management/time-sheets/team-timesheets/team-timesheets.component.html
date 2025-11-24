@@ -229,6 +229,8 @@
                                 <th>Project Name</th>
                                 <th>Phase/Milestone</th>
                                 <th>Logged Hours</th>
+                                <th>Approver Name</th>
+                                <!-- <th>Approver Designation</th> -->
                                 <th>Description</th>
                                 <th>Status</th>
                             </tr>
@@ -239,6 +241,8 @@
                                 <td>{{ entry.projectName }}</td>
                                 <td>{{ entry?.phaseName || '-' }}</td>
                                 <td>{{ entry.loggedHHMM }} Hrs</td>
+                                <td>{{ entry.finalApproverName || '-' }}</td>
+                                <!-- <td>{{ entry.approverDesignation || '-' }}</td> -->
                                 <td class="text-center">
                                     <div>
                                         <div *ngIf="entry.summary; else noRequestedComments" type="button"

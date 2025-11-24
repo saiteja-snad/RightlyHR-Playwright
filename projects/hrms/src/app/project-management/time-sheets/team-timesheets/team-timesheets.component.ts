@@ -59,7 +59,7 @@ export class TeamTimesheetsComponent {
   clientDetails=[] as any;
   departmentDetails=[] as any;
   tmandRmDetails=[]as any;
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, 
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService,
     private router: Router, private modalService: NgbModal,private encryptionService:EncriptdecriptService) { }
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -297,29 +297,40 @@ export class TeamTimesheetsComponent {
     }
   }
 
-  onSubmit() {
-    // Check if form is valid (optional)
-    if (this.datepickerForm.invalid) {
-      return;
-    }
-    const formValue = this.datepickerForm.value;
-    const [startDate, endDate] = formValue.dateRange || [];
-    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
-    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
-    const empId = formValue.resourceId ?? null;
-    const selectedEmployee = this.activeEmplist.find((emp: any) => emp.value === empId);
-    const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
-    //  Store it in BehaviorSubject (inside HttpService)
-    this.http.setteamDateRange(start, end, empId, empName);
-    // Trigger your existing API call
-    this.page = 1;
-    this.first = 0;
-    this.getteamsummary();
+onSubmit() {
+  if (this.datepickerForm.invalid) {
+    return;
   }
 
+  const formValue = this.datepickerForm.value;
+
+  let employeeIds: string | null = null;
+
+  // CASE 1: All Employees (resourceId = null)
+  if (formValue.resourceId === null) {
+    const allIds = this.activeEmplist
+      .filter((emp: any) => emp.value !== null) // skip the All Employees option
+      .map((emp: any) => emp.value);
+
+    employeeIds = allIds.join(',');
+  }
+  // CASE 2: Single employee
+  else {
+    employeeIds = formValue.resourceId.toString();
+  }
+
+  // Reset pagination
+  this.page = 1;
+  this.first = 0;
+
+  // API call with employeeIds
+  this.getteamsummary(employeeIds);
+}
 
 
-  getteamsummary() {
+
+
+  getteamsummary(employeeIds?: string | null) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
     const start = startDate
@@ -332,17 +343,22 @@ export class TeamTimesheetsComponent {
     const hasMyTeam = this.rbac.allowedToAccess('My Team (Timesheet).view');
     const hasAllEmployees = this.rbac.allowedToAccess('All Employees (Timesheet).view');
     // Case 1: Only "My Team (Timesheet).view" — include resourceId
-    if (hasMyTeam && !hasAllEmployees) {
-      url += `&resourceId=${this.empdata?.employeeId}`;
-      // Include selected subordinate if chosen
-      if (formValue.resourceId) {
-        url += `&employeeId=${formValue.resourceId}`;
-      }
-    }
-    // Case 2: "All Employees" or both claims — only send employeeId if present
-    else if (formValue.resourceId) {
-      url += `&employeeId=${formValue.resourceId}`;
-    }
+    // if (hasMyTeam && !hasAllEmployees) {
+    //   url += `&resourceId=${this.empdata?.employeeId}`;
+    //   // Include selected subordinate if chosen
+    //   if (formValue.resourceId) {
+    //     url += `&employeeId=${formValue.resourceId}`;
+    //   }
+    // }
+    // // Case 2: "All Employees" or both claims — only send employeeId if present
+    // else if (formValue.resourceId) {
+    //   url += `&employeeId=${formValue.resourceId}`;
+    // }
+
+      if (employeeIds) {
+    url += `&employeeIds=${employeeIds}`;
+  }
+
     this.loading = true;
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {

@@ -97,8 +97,7 @@
             <th class="text-center">Project Type</th>
             <th>Department</th>
             <!-- <th>Status</th> -->
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-            Tab.delete'))
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
@@ -120,8 +119,7 @@
                   <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                   <!-- <td>{{ project.status }}</td> -->
-                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-                  Tab.delete'))
+                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
                   <td class="text-center">
                     <div class="dropdown">

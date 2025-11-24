@@ -106,6 +106,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         this.selectedDepartmentIds = deptIds || [];
         this.getProjectsBasedOnRoute();
       });
+
+    this.http.projectTypeFilter$
+  .pipe(takeUntil(this.destroy$))
+  .subscribe((projectTypes) => {
+    this.selectedProjectTypes = projectTypes || [];
+    this.getProjectsBasedOnRoute();
+  });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();

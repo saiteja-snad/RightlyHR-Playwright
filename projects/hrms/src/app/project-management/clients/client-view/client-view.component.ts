@@ -61,6 +61,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   inactiveClientStatus: any;
   datepickerFormDataforsummary!: FormGroup;
   resourceDataids = {} as any;
+  projectTypes: any[] = [];
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
@@ -99,6 +100,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         this.resetForm();
       }
     });
+    this.loadProjectTypes();
   }
 
   datepickerforsummaryview() {
@@ -124,6 +126,25 @@ onDepartmentChangelist(event: any) {
   } else {
     this.http.setDepartmentIds([selectedIds]);
   }
+}
+
+// Load project types
+private loadProjectTypes() {
+  this.http.getData('entityAttributeValues?entity=Project&attribute=Project Type')
+    .subscribe((res: any) => {
+      this.projectTypes = res?.data || res || [];
+    });
+}
+
+onProjectTypeChange(event: any) {
+  const selectedTypes = event.value || []; // This will be string[] or null
+  this.http.setProjectTypeFilter(selectedTypes); // Now sends array or empty array
+}
+
+// Clear All (enhanced — clears both filters)
+clearAllFilters() {
+  this.http.setDepartmentIds([]);
+  this.http.clearProjectTypeFilter();
 }
 
   // Create reactive form
@@ -196,7 +217,7 @@ onDepartmentChangelist(event: any) {
           return {
             ...employee,
             id: employee.employeeId,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -269,8 +290,8 @@ onDepartmentChangelist(event: any) {
     const formValue = this.datepickerFormDataforsummary?.value;
     // Check if any field has value
     return (
-      (formValue?.dateRange && formValue?.dateRange?.length > 0) 
-    
+      (formValue?.dateRange && formValue?.dateRange?.length > 0)
+
     );
   }
   opencontactModal(content: any) {

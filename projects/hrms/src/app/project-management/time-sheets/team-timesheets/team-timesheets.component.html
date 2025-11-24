@@ -34,7 +34,8 @@
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
                                 [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
                                 formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
-                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'" 
+                                class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -44,7 +45,8 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="resourcesList" optionLabel="fullName" optionValue="id"
                                 name="myteamemployees" (onChange)="onCheckemployee($event.value)"
-                                placeholder="Please select employee" formControlName="resourceId" [filter]="true"
+                                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'" 
+                                formControlName="resourceId" [filter]="true"
                                 resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false">
                             </p-select>
                         </div>
@@ -58,7 +60,7 @@
                     </div>
                     <div>
                         <button class="custom-btn btn-primary" type="submit" (mousedown)="$event.preventDefault()"
-                            [disabled]="datepickerForm.invalid">Apply</button>
+                            [disabled]="datepickerForm.invalid || (rbac.allowedToAccess('All Employees (Timesheet).view') && activeEmplist.length === 0) || (rbac.allowedToAccess('My Team (Timesheet).view') && !rbac.allowedToAccess('All Employees (Timesheet).view') && resourcesList.length === 0)">Apply</button>
                     </div>
                 </div>
             </div>

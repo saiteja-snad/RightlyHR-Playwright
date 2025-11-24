@@ -334,7 +334,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientIds=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
     }
 
     this.http
@@ -369,7 +369,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientIds=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
     }
     this.http
       .getData(url)

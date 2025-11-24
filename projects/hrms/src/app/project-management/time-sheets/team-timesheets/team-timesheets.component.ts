@@ -244,7 +244,6 @@ export class TeamTimesheetsComponent {
       .subscribe({
         next: (res: any) => {
           if (Array.isArray(res.data)) {
-            // ✅ Filter out logged-in user and map employee details
             const employeeList = res.data
               .filter((emp: any) => emp.employeeId !== EmployeeId)
               .map((emp: any) => ({
@@ -255,7 +254,6 @@ export class TeamTimesheetsComponent {
                 key: 'all'
               }));
 
-            // ✅ Only add "All Employees" if there are actual employees
             if (employeeList.length > 0) {
               const allEmployeesOption = {
                 value: null,

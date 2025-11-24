@@ -295,10 +295,10 @@ export class SkillDirectoryManagementComponent {
   }
   // Category-specific icons
   private categoryIcons: Record<string, string> = {
-    "Technical Skill": "/icons/technical-skills-icon.png",
-    "Soft Skill": "/icons/soft-skills-icon.png",
-    "Leadership Skills": "/icons/leadership-skills.png",
-    "Functional Skill": "/icons/functional-skills.png"
+    technicalskill: "/icons/technical-skills-icon.png",
+    softskill: "/icons/soft-skills-icon.png",
+    leadershipskill: "/icons/leadership-skills.png",
+    functionalskill: "/icons/functional-skills.png"
   };
 
   // Default fallback icon rotation
@@ -381,19 +381,55 @@ export class SkillDirectoryManagementComponent {
       },
     });
   }
-  private getCategoryIcon(category: string): string {
-    if (this.categoryIcons[category]) {
-      return this.categoryIcons[category];
-    }
-    const availableIcon = this.fallbackIconPool.find(
-      icon => !this.usedFallbackIcons.has(icon)
-    );
-    const finalIcon =
-      availableIcon || this.fallbackIconPool[this.fallbackIconPool.length - 1];
-    this.categoryIcons[category] = finalIcon;
-    this.usedFallbackIcons.add(finalIcon);
-    return finalIcon;
+  private normalizeCategory(key: string): string {
+    return key.replace(/\s+/g, '').toLowerCase();
   }
+  private categoryAliases: Record<string, string> = {
+    technicalskill: "technicalskill",
+    technicalskills: "technicalskill",
+
+    softskill: "softskill",
+    softskills: "softskill",
+
+    leadershipskill: "leadershipskill",
+    leadershipskills: "leadershipskill",
+
+    functionalskill: "functionalskill",
+    functionalskills: "functionalskill"
+  };
+  private fallbackMap: Record<string, string> = {};
+  getCategoryIcon(category: string): string {
+    // Normalize
+    let normalized = this.normalizeCategory(category || "");
+    normalized = this.categoryAliases[normalized] || normalized;
+
+    // If category has known icon
+    if (this.categoryIcons[normalized]) {
+      return this.categoryIcons[normalized];
+    }
+
+    // If fallback icon already assigned for this unknown category → reuse it
+    if (this.fallbackMap[normalized]) {
+      return this.fallbackMap[normalized];
+    }
+
+    // Assign next available fallback icon uniquely
+    for (const icon of this.fallbackIconPool) {
+      const alreadyUsed = Object.values(this.fallbackMap).includes(icon);
+      if (!alreadyUsed) {
+        this.fallbackMap[normalized] = icon;
+        return icon;
+      }
+    }
+
+    // If all fallback icons are used, start cycling
+    const cycleIndex = Object.keys(this.fallbackMap).length % this.fallbackIconPool.length;
+    const fallback = this.fallbackIconPool[cycleIndex];
+
+    this.fallbackMap[normalized] = fallback;
+    return fallback;
+  }
+
 
   getMultiskills() {
     this.loader = true;

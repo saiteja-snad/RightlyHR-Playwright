@@ -67,7 +67,7 @@
                         {{ 'Skill Category' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="skilltype"
-                        placeholder="Please enter Skill Category"
+                        placeholder="Please enter Skill category"
                         (keydown)="formValidations.restrictInitialSpace($event)" maxlength="101" />
                     <div *ngIf="AddForm.get('skilltype')?.touched && AddForm.get('skilltype')?.invalid"
                         class="error-msg">
@@ -129,7 +129,7 @@
                         {{ 'Skill Category' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="skilltype"
-                        placeholder="Please enter Skill Category"
+                        placeholder="Please enter Skill category"
                         (keydown)="formValidations.restrictInitialSpace($event)" maxlength="101" />
                     <div *ngIf="updateForm.get('skilltype')?.touched && updateForm.get('skilltype')?.invalid"
                         class="error-msg">

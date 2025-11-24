@@ -4,13 +4,97 @@
       <app-project-management-module-info />
     </div>
 
+    <!-- Active Phases -->
+    <div class="d-flex gap-4 align-items-center" *ngIf="isActive('/project-management/projects/details/phases')">
+
+      <button type="button" class="clear-all-btn" (click)="clearPhaseFilters()">
+        Clear All
+      </button>
+
+      <div class="custom-p-multiSelect-content">
+        <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value"
+          placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
+          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedPhaseStatuses" class="form-select custom-select">
+        </p-multiSelect>
+      </div>
+
+      <div class="custom-date-range-picker">
+        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+        </p-datepicker>
+      </div>
+
+      <!-- <div class="custom-p-multiSelect-content">
+        <p-multiSelect [options]="authorityOptions" [(ngModel)]="selectedAuthorities" optionLabel="label"
+          optionValue="value" placeholder="Approval Authority" [filter]="true" [showClear]="true"
+          [loading]="authorityLoading" (onChange)="onAuthorityChange()" (onClear)="onAuthorityChange()"
+          class="form-select custom-select">
+        </p-multiSelect>
+      </div> -->
+
+    </div>
+
+    <!--In Active Phases -->
+    <div class="d-flex gap-4 align-items-center"
+      *ngIf="isActive('/project-management/projects/details/inactive-phases')">
+
+      <button type="button" class="clear-all-btn" (click)="clearPhaseFilters()">
+        Clear All
+      </button>
+
+      <div class="custom-p-multiSelect-content">
+        <p-multiSelect [options]="inactivePhaseStatusOptions" optionLabel="label" optionValue="value"
+          placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
+          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedPhaseStatuses" class="form-select custom-select">
+        </p-multiSelect>
+      </div>
+
+      <div class="custom-date-range-picker">
+        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+        </p-datepicker>
+      </div>
+
+      <!-- <div class="custom-p-multiSelect-content">
+        <p-multiSelect [options]="authorityOptions" [(ngModel)]="selectedAuthorities" optionLabel="label"
+          optionValue="value" placeholder="Approval Authority" [filter]="true" [showClear]="true"
+          [loading]="authorityLoading" (onChange)="onAuthorityChange()" (onClear)="onAuthorityChange()"
+          class="form-select custom-select">
+        </p-multiSelect>
+      </div> -->
+    </div>
+
+
+    <!--Hold Phases -->
+    <div class="d-flex gap-4 align-items-center" *ngIf="isActive('/project-management/projects/details/hold-phases')">
+
+      <button type="button" class="clear-all-btn" (click)="clearPhaseFilters()">
+        Clear All
+      </button>
+
+      <div class="custom-date-range-picker">
+        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+        </p-datepicker>
+      </div>
+<!--
+      <div class="custom-p-multiSelect-content">
+        <p-multiSelect [options]="authorityOptions" [(ngModel)]="selectedAuthorities" optionLabel="label"
+          optionValue="value" placeholder="Approval Authority" [filter]="true" [showClear]="true"
+          [loading]="authorityLoading" (onChange)="onAuthorityChange()" (onClear)="onAuthorityChange()"
+          class="form-select custom-select">
+        </p-multiSelect>
+      </div> -->
+    </div>
+
+
     @if(rbac.allowedToAccess('Project Phases Tab.create') && inactiveStatus !== 'inactive'){
     <div *ngIf="isActive('/project-management/projects/details/phases')" (click)="openPhaseModal()">
       <button type="button" class="custom-btn btn-primary">
         {{ "Add Phase / Milestone" }}
       </button>
     </div>
-    } 
+    }
 
     @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !=='inactive'){
     <div *ngIf="isActive('/project-management/projects/details/contact-info')">
@@ -21,7 +105,7 @@
     }
 
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/projects/details/documents')">
-     
+
       @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'inactive'){
       <div>
         <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">
@@ -31,7 +115,8 @@
       }
     </div>
 
-   
+
+
 
     @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'inactive'){
     <div *ngIf="isActive('/project-management/projects/details/resources')" (click)="openResourceModal()">
@@ -60,7 +145,7 @@
         <div class="custom-p-select-content">
           <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
             filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
-             class="form-select custom-select">
+            class="form-select custom-select">
           </p-select>
         </div>
 
@@ -108,5 +193,5 @@
 </ng-template>
 
 <ng-template #addPhaseModal let-modal>
-  <app-phases-creation/>
+  <app-phases-creation />
 </ng-template>

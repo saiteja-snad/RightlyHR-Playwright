@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { from, Subject, Subscription, takeUntil } from 'rxjs';
@@ -22,13 +22,14 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { ProjectResourceTabComponent } from "../../../shared/project-management-tabs/project-resource-tab/project-resource-tab.component";
 @Component({
   selector: 'app-project-resources',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
+  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, FormsModule, DateformatPipe,
     Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, NgbPopover, ProjectResourceTabComponent],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
 
 export class ProjectResourcesComponent implements OnInit, OnDestroy {
+  searchValue: string = '';
   resourcesData = [] as IResource[];
   resourcestartdate:any
   subscription!: Subscription;
@@ -85,12 +86,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       if (projectId) {
         this.projectId = parseInt(projectId);
         this.getProjects(this.projectId)
-        this.getResourceData(this.projectId);
+        this.getResourceData(this.projectId, undefined, false, this.searchValue);
       }
     });
     this.getPhaseData();
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.projectId));
+      this.getResourceData(parseInt(this.projectId), undefined, false, this.searchValue);
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -100,6 +101,15 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     });
     this.ExtendDateForm();
   }
+
+  onSearchChange() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.getResourceData(this.projectId, undefined, false, this.searchValue);
+    }, 300);
+  }
+
+  private searchTimeout: any;
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
 
@@ -267,7 +277,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     return workingDays;
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
+  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string) {
   
     const params: any = {
       entityType: 'project',
@@ -277,6 +287,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
     if (phaseId) {
       params.phaseId = phaseId;
+    }
+
+    if (searchTerm) {
+      params.searchTerm = searchTerm;
     }
 
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({

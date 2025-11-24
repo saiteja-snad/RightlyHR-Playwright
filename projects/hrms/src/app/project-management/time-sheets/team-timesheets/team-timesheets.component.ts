@@ -100,7 +100,7 @@ export class TeamTimesheetsComponent {
   }
   //get all projects list
   getprojectData(): void {
-    this.subscription = this.http.getData(`Project`).subscribe({
+    this.subscription = this.http.getData(`Project?status=active`).subscribe({
       next: (res: any) => {
         this.projectDetails = res.data;
       },
@@ -111,14 +111,16 @@ export class TeamTimesheetsComponent {
   }
   //get all clients list
   getclientData(): void {
-    this.subscription = this.http.getData(`Client/GetAll`).subscribe({
-      next: (res: any) => {
-        this.clientDetails = res.data;
-      },
-      error: (err) => {
-        console.error('Error fetching clients:', err);
-      },
-    });
+    this.subscription = this.http
+      .getData(`Client/GetAll?status=active`)
+      .subscribe({
+        next: (res: any) => {
+          this.clientDetails = res.data;
+        },
+        error: (err) => {
+          console.error('Error fetching clients:', err);
+        },
+      });
   }
   //get all departments list
   getdepartmentData(): void {
@@ -166,18 +168,25 @@ export class TeamTimesheetsComponent {
     this.showFilters = !this.showFilters;
   }
   resetForm() {
-    // Reset other form fields
     this.datepickerForm.reset({
       resourceId: null,
       dateRange: null,
+      projectId: null,
+      clientId: null,
+      departmentId: null,
+      tmorrmId: null,
     });
-    // Now manually set the default month range
-    // const defaultRange = this.setDefaultmounth();
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
     });
+    // Reload original dropdown values
+    if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
+      this.getAllEmployeeDetails();
+    } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
+      this.getResourceDetailsByManagerId();
+    }
     this.getteamsummary();
   }
 
@@ -221,13 +230,11 @@ export class TeamTimesheetsComponent {
       .subscribe({
         next: (res: any) => {
           if (res?.success) {
-            this.resourcesList = res.data
-              // Remove employee by ID
+            const employeeList = res.data
               .filter(
                 (emp: IResourceDetail) =>
                   emp.id !== EmployeeId && emp.isReportee == true
               )
-              // Add fullName for dropdown
               .map((emp: IResourceDetail) => ({
                 ...emp,
                 fullName: emp.fusionEmpId
@@ -235,34 +242,21 @@ export class TeamTimesheetsComponent {
                   : emp.name,
                 key: 'team',
               }));
-            // Add "All Employees" option at the beginning
-            const allEmployeesOption = {
-              id: null,
-              name: 'All Employees',
-              fullName: 'All Employees',
-              key: 'team',
-            };
 
-            this.resourcesList = [
-              allEmployeesOption,
-              ...res.data
-                .filter(
-                  (emp: IResourceDetail) =>
-                    emp.id !== EmployeeId && emp.isReportee == true
-                )
-                .map((emp: IResourceDetail) => ({
-                  ...emp,
-                  fullName: emp.fusionEmpId
-                    ? `${emp.fusionEmpId} - ${emp.name}`
-                    : emp.name,
-                  key: 'team',
-                })),
-            ];
-
-            // Set default selection to "All Employees"
-            this.datepickerForm.patchValue({
-              resourceId: null,
-            });
+            // Only add "All Employees" if there are actual employees
+            if (employeeList.length > 0) {
+              const allEmployeesOption = {
+                id: null,
+                name: 'All Employees',
+                fullName: 'All Employees',
+                key: 'team',
+              };
+              this.resourcesList = [allEmployeesOption, ...employeeList];
+              this.datepickerForm.patchValue({ resourceId: null });
+            } else {
+              this.resourcesList = [];
+              this.datepickerForm.patchValue({ resourceId: null });
+            }
           }
         },
         error: (err: any) => console.error(err),
@@ -289,25 +283,19 @@ export class TeamTimesheetsComponent {
     const projectId = formdata.projectId;
     const departmentId = formdata.departmentId;
     const reportingId = formdata.tmorrmId;
+    const statuses = 'Active, Trainee Active, Active Contract';
     this.subscription = this.http
       .getProjectResources(
         `ProjectResource/employees`,
         clientId,
         projectId,
         departmentId,
-        reportingId
+        reportingId,
+        statuses
       )
       .subscribe({
         next: (res: any) => {
           if (Array.isArray(res.data)) {
-            // ✅ Add "All Employees" option first
-            const allEmployeesOption = {
-              value: null,
-              label: 'All Employees',
-              key: 'all',
-            };
-
-            // ✅ Filter out logged-in user and map employee details
             const employeeList = res.data
               .filter((emp: any) => emp.employeeId !== EmployeeId)
               .map((emp: any) => ({
@@ -322,31 +310,27 @@ export class TeamTimesheetsComponent {
                 key: 'all',
               }));
 
-            // ✅ Merge lists (All Employees first)
-            this.activeEmplist = [allEmployeesOption, ...employeeList];
-
-            // ✅ Default selection — "All Employees"
-            this.datepickerForm.patchValue({
-              resourceId: null,
-            });
+            if (employeeList.length > 0) {
+              const allEmployeesOption = {
+                value: null,
+                label: 'All Employees',
+                key: 'all',
+              };
+              this.activeEmplist = [allEmployeesOption, ...employeeList];
+              this.datepickerForm.patchValue({ resourceId: null });
+            } else {
+              this.activeEmplist = [];
+              this.datepickerForm.patchValue({ resourceId: null });
+            }
           } else {
-            // fallback
-            this.activeEmplist = [
-              { label: 'All Employees', value: null, key: 'all' },
-            ];
-            this.datepickerForm.patchValue({
-              resourceId: null,
-            });
+            this.activeEmplist = [];
+            this.datepickerForm.patchValue({ resourceId: null });
           }
         },
         error: (err) => {
           console.error('Error fetching employees:', err);
-          this.activeEmplist = [
-            { label: 'All Employees', value: null, key: 'all' },
-          ];
-          this.datepickerForm.patchValue({
-            resourceId: null,
-          });
+          this.activeEmplist = [];
+          this.datepickerForm.patchValue({ resourceId: null });
         },
       });
   }
@@ -358,25 +342,6 @@ export class TeamTimesheetsComponent {
       this.getteamsummary();
     }
   }
-
-  // onSubmit() {
-  //   if (this.datepickerForm.invalid) {
-  //     return;
-  //   }
-  //   const formValue = this.datepickerForm.value;
-  //   const [startDate, endDate] = formValue.dateRange || [];
-  //   const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
-  //   const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
-  //   const empId = formValue.resourceId ?? null;
-  //   const selectedEmployee = this.activeEmplist.find(
-  //     (emp: any) => emp.value === empId
-  //   );
-  //   const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
-  //   this.http.setteamDateRange(start, end, empId, empName);
-  //   this.page = 1;
-  //   this.first = 0;
-  //   this.getteamsummary();
-  // }
 
   onSubmit() {
     if (this.datepickerForm.invalid) {
@@ -397,10 +362,10 @@ export class TeamTimesheetsComponent {
     );
     const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
 
-    //  KEEP OLD FUNCTIONALITY (IMPORTANT)
+    // KEEP OLD FUNCTIONALITY (IMPORTANT)
     this.http.setteamDateRange(start, end, empId, empName);
 
-    //  NEW LOGIC (All employee IDs comma-separated)
+    // NEW LOGIC (All employee IDs comma-separated)
     let employeeIds: string | null = null;
 
     if (formValue.resourceId === null) {

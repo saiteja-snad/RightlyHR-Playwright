@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, Subject, takeUntil } from 'rxjs';
@@ -22,13 +22,14 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 @Component({
   selector: 'app-client-resource-inactive',
-  imports: [CommonModule, ReactiveFormsModule,ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent,
      Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resource-inactive.component.html',
   styleUrl: './client-resource-inactive.component.scss'
 })
 
 export class ClientResourceInactiveComponent {
+  searchValue: string = '';
   resourcesData = [] as IResource[];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
@@ -91,7 +92,7 @@ export class ClientResourceInactiveComponent {
       }
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.clientID));
+      this.getResourceData(parseInt(this.clientID), this.searchValue);
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -147,8 +148,12 @@ export class ClientResourceInactiveComponent {
     });
   }
 
-  getResourceData(id: any) {
-    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
+  getResourceData(id: any, searchTerm?: string) {
+    let url = `ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    if (searchTerm) {
+      url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
           this.resourcesData = data.data;
@@ -509,7 +514,7 @@ onPhaseChange(event: any) {
         this.loader = false;
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         this.loader = false;
@@ -538,7 +543,7 @@ onPhaseChange(event: any) {
       next: (res) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Resource deleted successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         console.error('Error occurred:', err);
@@ -782,6 +787,15 @@ onPhaseChange(event: any) {
     this.modalService.dismissAll();
     this.updateResourceForm.reset();
   }
+
+  onSearchChange() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.getResourceData(this.clientID, this.searchValue);
+    }, 300);
+  }
+
+  private searchTimeout: any;
 
   isActive(route: string): boolean {
     return this.router.url.includes(route);

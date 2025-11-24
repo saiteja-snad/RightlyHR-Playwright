@@ -975,6 +975,7 @@ export class HttpService {
   setProjectTypeFilter(types: string[]) {
     this.projectTypeFilterSource.next(types || []);
   }
+
   clearProjectTypeFilter() {
     this.projectTypeFilterSource.next([]);
   }
@@ -984,7 +985,8 @@ export class HttpService {
     clientId?: number,
     projectId?: number,
     departmentId?: number,
-    reportingManagerId?: number
+    reportingManagerId?: number,
+    statuses?: string
   ) {
     let params = new HttpParams();
     if (clientId) {
@@ -999,6 +1001,9 @@ export class HttpService {
     if (reportingManagerId) {
       params = params.set('managerIds', reportingManagerId);
     }
+    if (statuses) {
+    params = params.set('statuses', statuses);
+  }
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
   getProjectSummary(apiUrl: string, payload: any) {

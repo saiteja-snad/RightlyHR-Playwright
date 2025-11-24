@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,15 +22,17 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
     DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
 })
 
 export class ClientResourcesComponent implements OnInit, OnDestroy {
+  searchValue: string = '';
   resourcestartdate: any
   resourcesData = [] as IResource[];
+  filteredResourcesData = [] as IResource[];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -89,13 +91,13 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       const clientID = params['id'];
       if (clientID) {
         this.clientID = parseInt(clientID);
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
         this.getclientProjects(this.clientID);
         this.getClientsData(clientID);
       }
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.clientID));
+      this.getResourceData(parseInt(this.clientID), this.searchValue);
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -163,13 +165,19 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
   
 
-  getResourceData(id: any) {
-    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
+  getResourceData(id: any, searchTerm?: string) {
+    let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    if (searchTerm) {
+      url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
           this.resourcesData = data.data;
+          this.filteredResourcesData = data.data;
         } else {
           this.resourcesData = [];
+          this.filteredResourcesData = [];
         }
         this.loading = false;
       },
@@ -513,7 +521,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.http.setnewcountfornewresourcecount()
         this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         this.loader = false;
@@ -542,7 +550,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Resource deleted successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         console.error('Error occurred:', err);
@@ -780,6 +788,35 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
     this.updateResourceForm.reset();
   }
+
+  watchSearchValue() {
+    let timeout: any;
+    const originalSearchValue = this.searchValue;
+    
+    const checkSearch = () => {
+      if (this.searchValue !== originalSearchValue) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          this.getResourceData(this.clientID, this.searchValue);
+        }, 300);
+      }
+    };
+    
+    setInterval(() => {
+      if (this.searchValue !== originalSearchValue) {
+        checkSearch();
+      }
+    }, 100);
+  }
+
+  onSearchChange() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.getResourceData(this.clientID, this.searchValue);
+    }, 300);
+  }
+
+  private searchTimeout: any;
 
   isActive(route: string): boolean {
     return this.router.url.includes(route);

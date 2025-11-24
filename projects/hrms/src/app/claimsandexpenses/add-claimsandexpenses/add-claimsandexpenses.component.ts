@@ -4,7 +4,7 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { IExpense, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
-import { filter, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TabsModule } from 'primeng/tabs';
@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-add-claimsandexpenses',
   imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
@@ -48,12 +49,14 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   selectedEmpName: string | null = null;
   selectedEmpFusionId: string | null = null;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
+  employeeiddetails = [] as any;
   navTabs: any[] = [
     { label: 'Create Expenses', link: '/claimsandexpenses/addexpense' },
   ];
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
-    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService,) {
+    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService, private authService: AuthService,) {
     effect(() => {
       if (this.http.onBehlafOfExpensesSignal()) {
         console.log('Expenses signal triggered');
@@ -64,7 +67,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-   
+
     this.getEmployeeId()
     this.initiateForm();
     this.getExpensetype();
@@ -73,17 +76,30 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     this.updateModuleInfoOnBehalfof()
     this.getexpensesheaderbyid(this.empinfo.employeeid)
     this.setDate()
+    this.getAllEmployeeId()
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
     });
-   this.http.onBehalfOfExpensesSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp) => {
-    if (emp) {
+    const savedEmp = localStorage.getItem('selectedEmployee');
+    if (savedEmp) {
+      const emp = JSON.parse(savedEmp);
       this.selectedEmpId = emp.employeeId;
       this.selectedEmpName = emp.employeeName;
       this.selectedEmpFusionId = emp.fusionEmpId;
-       console.log(this.empinfo.employeeId)
+
+      // Also update service observable if needed
+
+      this.http.setOnBehalfOfExpensesSelectedEmp(emp);
+      this.getExpensesHeaderByEmployeeId(emp.employeeId);
     }
-  });
+    this.http.onBehalfOfExpensesSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp) => {
+      if (emp) {
+        this.selectedEmpId = emp.employeeId;
+        this.selectedEmpName = emp.employeeName;
+        this.selectedEmpFusionId = emp.fusionEmpId;
+        console.log(this.empinfo.employeeId)
+      }
+    });
   }
 
 
@@ -133,7 +149,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         this.updateModuleInfo();
       });
   }
-   initiateUpdateModuleInfoOnbehlafof() {
+  initiateUpdateModuleInfoOnbehlafof() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -149,7 +165,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-   updateModuleInfoOnBehalfof() {
+  updateModuleInfoOnBehalfof() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
       '/on-behalf-of/on-behalf-of-expenses/add': MODULE_INFOS.ONBEHALF_OF_ADD_EXPENSES_MODULE_INFO
@@ -570,6 +586,8 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
           receipt_Number: item.receipt_Number,
           status: 'Approved',
           attachment_url: item.attachment_url,
+          isVerified: true,
+          verifiedBy: this.empinfo.employeeId?.toString(),
         })),
         attachment_url: undefined
       };
@@ -664,6 +682,58 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
           //this.filterAllExpenses();
         }, error(err) {
           console.log("expensesheadererror", err)
+        },
+      });
+  }
+
+  getAllEmployeeId() {
+    let loggedInUser = this.authService.getToken();
+    this.http
+      .getData('Employeedata/ActiveEmployees')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.employeeiddetails = data
+            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
+            .map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''
+                }${emp.lastName ?? ''}`.trim();
+              const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''
+                }${emp.lastName ?? ''} ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
+                }`.trim();
+              return {
+                ...emp,
+                fullName,
+                leaveRequestName,
+              };
+            })
+            // Alphabetical sorting by firstName
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', {
+                sensitivity: 'base',
+              })
+            );
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
+  }
+  getExpensesHeaderByEmployeeId(empId: any): void {
+    const year = new Date().getFullYear();
+    console.log('Employee ID passed:', empId);
+
+    this.http
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log('Expenses Header Response:', response);
+          this.expenesEmplyeedata = response;
+        },
+        error: (error: any) => {
+          console.error('Error fetching expense header by employee ID:', error);
         },
       });
   }

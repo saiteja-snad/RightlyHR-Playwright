@@ -217,6 +217,7 @@ export interface IExpenseItems {
   receipt_Number: string;
   status: string;
   attachment_url: string;
+  isVerified :boolean;
 }
 export interface IExpenseHeaders {
   expenses_ID: number;

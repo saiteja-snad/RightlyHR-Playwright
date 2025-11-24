@@ -280,6 +280,7 @@ export interface ExpenseEntity {
   expenseType: string;
   pendingheaderId: number;
   expenseApproverComments: any[]; // Replace `any` with specific type if available
+   expenseitem?: ExpenseItem[];
 }
 export interface IEligibilityCriteria {
   id: number;
@@ -293,6 +294,19 @@ export interface IPermissionType {
   isDeleted: boolean,
   createdAt: any,
   updatedAt: any
+}
+export interface ExpenseItem {
+  expenseitem_id: number;
+  expenses_ID: number;
+  item_Name: string;
+  expense_Date: string;
+  expense_Amount: number;
+  receipt_Number: string;
+  status: string;
+  attachment_url?: string;
+  expenseId: number;
+  expenseType: string;
+  isVerified: boolean;
 }
 export interface Ipermissions {
   name: string;

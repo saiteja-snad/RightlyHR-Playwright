@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { HttpService } from '../../../../services/http.service';
@@ -23,6 +23,7 @@ import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -39,7 +40,8 @@ import { FormValidationsService } from '../../../../services/form-validations.se
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
-  ],
+    ConfirmationIconComponent
+],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })
@@ -72,6 +74,10 @@ export class ClaimsandexpensesForYouRequestComponent
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
+  verifiedExpenseIds: number[] = [];
+    verifyModalRef: NgbModalRef | null = null;
+    isVerified: boolean = false;
+    verifyForm!: FormGroup;
 
   constructor(
     private modalService: NgbModal,
@@ -404,6 +410,68 @@ export class ClaimsandexpensesForYouRequestComponent
       lowerUrl.endsWith('.png')
     );
   }
+     selectedItem: any = null;
+  openVerifyModal(item: any, content: any) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedItem = item; // store clicked item
+  }
+    intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250)],
+      ],
+    });
+  }
+ handleVerify(verifyForm: FormGroup): void {
+  if (!verifyForm.valid || !this.selectedItem) return;
+
+  const formData = verifyForm.value;
+  const verifiedItem = this.selectedItem;
+
+  const requestBody = {
+    isVerified: true,
+    verifiedBy: this.empinfo.employeeId?.toString(),
+    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+    comments: formData.comments
+  };
+
+  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        // Close only the Verify modal
+        this.verifyModalRef?.close();
+
+        // Show success popup
+        this.sharedModalService.openSuccessModal('Expense item verified successfully');
+
+        // Update local UI immediately
+        if (this.expenseheaderiteams?.expenseitem?.length) {
+          const idx = this.expenseheaderiteams.expenseitem.findIndex(
+            it => it.expenseitem_id === verifiedItem.expenseitem_id
+          );
+          if (idx > -1) {
+            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+          }
+        }
+
+        this.selectedItem = null;
+
+        // Update verified IDs for template checks
+        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+        // Refresh headers in background, but the modal stays open
+        this.getAllPendingApprovals();
+      },
+      error: (err: any) => {
+        this.verifyModalRef?.close();
+        this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
+      }
+    });
+}
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

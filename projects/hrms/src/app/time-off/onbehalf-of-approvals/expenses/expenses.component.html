@@ -56,21 +56,25 @@
           <td>{{ leave.entity.employeeName }}</td>
           <td>{{ leave.entity.expenses_Title }}</td>
           <td>{{ leave.entity.applied_date | dateformat }}</td>
-          <td>{{ leave.entity.totalExpenseAmount }}</td>
+          <td>₹ {{ leave.entity.totalExpenseAmount }}</td>
           <td>{{ leave.entity.status }}</td>
           <td class="text-center">
-            <div class="dropdown">
-              <a data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical"></i>
-              </a>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <a class="dropdown-item"
-                  (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID); selectedLeaveData = leave">
-                  <i class="bi bi-eye-fill me-2"></i>View
-                </a>
-              </ul>
-            </div>
+            <!-- If expenseitem is empty -->
+            <ng-container *ngIf="leave.entity.expenseitem?.length === 0; else showActions">
+              -
+            </ng-container>
+
+            <!-- If expenseitem has values (Show actions) -->
+            <ng-template #showActions>
+              <div class="dropdown">
+                       <a class="dropdown-item"
+                    (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID); selectedLeaveData = leave">
+                    <i class="bi bi-eye-fill me-2"></i>
+                  </a>
+              </div>
+            </ng-template>
           </td>
+
           <td class="text-center">
             <div>
               <span *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
@@ -270,10 +274,10 @@
             <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
               <td>{{ item?.expenseType }}</td>
               <td>{{ item?.item_Name }}</td>
-              <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
-              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td class="text-center">{{ item?.expense_Date | dateformat }}</td>
+              <td class="text-center">₹ {{ item?.expense_Amount | number: '1.2-2' }}</td>
               <td>{{ item?.status }}</td>
-              <td>{{ item?.receipt_Number }}</td>
+              <td class="text-center">{{ item?.receipt_Number }}</td>
               <td class="text-center">
                 <a type="button" class="view-btn text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
                   <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
@@ -291,17 +295,15 @@
                         <i class="bi bi-download me-2"></i>Download
                       </a>
                     </li>
-                    <a class="dropdown-item"  *ngIf="!verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0)"
-                      (click)="selectedLeaveData?.entity?.expenses_ID && viewItem(selectedLeaveData.entity.expenses_ID);  openVerifyModal(Verify, selectedLeaveData)">
-                      <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
-                    </a>
-                    <span class="dropdown-item"
-                      *ngIf="verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0)">
-                      <i class="bi bi-check2-circle me-2"></i> {{ 'Verified' | translate }}
-                    </span>
-
-                    <li (click)="openRejectModal(rejectmodal, selectedLeaveData)">
-                      <a class="dropdown-item">
+                    <!-- Only show Verify if item is NOT verified (local flag OR verifiedExpenseIds) -->
+                    <li *ngIf="!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
+                      <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
+                        <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
+                      </a>
+                    </li>
+                    <!-- Only show Reject if not verified (hide after verification) -->
+                    <li *ngIf="!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
+                      <a class="dropdown-item" (click)="openRejectModal(rejectmodal, selectedLeaveData)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
                       </a>
                     </li>
@@ -312,7 +314,7 @@
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>Total Amount : ₹ {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>

@@ -81,6 +81,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   LOGIN: any;
   verifiedExpenseIds: number[] = [];
   verifyModalRef: NgbModalRef | null = null;
+  isVerified: boolean = false;
 
   constructor(
     private modalService: NgbModal,
@@ -348,18 +349,26 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     });
     this.approverComments = value;
   }
+  loadingDetails = false;
 
   viewItem(expid: number) {
     this.updataid = expid;
+    this.loadingDetails = true;
+    const queryParams = { Expenses_ID: expid };
     this.http
-      .getitembyid(`Expenses_Header/getby_Expense_ID`, expid)
+      .getItembyid(`Expenses_Header/getby_Expense_ID`, queryParams)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          this.expenseheaderiteams = data;
+          // ensure expense items array exists
+          this.expenseheaderiteams = data || ({} as IExpenseHeaders);
+          // normalize item fields if necessary
+          this.expenseheaderiteams.expenseitem = this.expenseheaderiteams.expenseitem || [];
+          this.loadingDetails = false;
         },
-        error(err) {
+        error: (err) => {
           console.log('expensesheadererror', err);
+          this.loadingDetails = false;
         },
       });
   }
@@ -453,51 +462,65 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       lowerUrl.endsWith('.png')
     );
   }
-  openVerifyModal(content: any, request: ExpenseApprovalResponse) {
+
+  selectedItem: any = null;
+  openVerifyModal(item: any, content: any) {
     this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeVerifyForm();
-    this.selectedLeaveData = request;
+    this.selectedItem = item; // store clicked item
   }
 
-  handleVerify(verifyForm: FormGroup): void {
-    if (verifyForm.valid && this.expenseheaderiteams?.expenseitem?.length) {
-      const formData = verifyForm.value;
-      const verifiedItem = this.expenseheaderiteams.expenseitem[0];
-      const requestBody = {
-        isVerified: true,
-        verifiedBy: this.empinfo.employeeId,
-        verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-        comments: formData.comments
-      };
+ handleVerify(verifyForm: FormGroup): void {
+  if (!verifyForm.valid || !this.selectedItem) return;
 
-      this.http
-        .putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.verifyModalRef?.close();
-            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
-            this.sharedModalService.openSuccessModal('Expense item verified successfully');
-            this.verifyForm.reset();
-            this.http.setnewcountDetails();
-            // this.verifiedExpenseIds.push(this.selectedLeaveData.entity.expenses_ID);
-            this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
-            this.selectedLeaveData = {} as ExpenseApprovalResponse;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              expenses: true,
-            }));
-          },
-          error: (reason: any) => {
-            this.verifyModalRef?.close();
-            this.sharedModalService.openErrorModal(reason.error?.Message || 'Failed to verify expense');
-          },
-          complete: () => {
-            this.getAllPendingApprovals();
-          },
-        });
-    }
-  }
+  const formData = verifyForm.value;
+  const verifiedItem = this.selectedItem;
+
+  const requestBody = {
+    isVerified: true,
+    verifiedBy: this.empinfo.employeeId?.toString(),
+    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+    comments: formData.comments
+  };
+
+  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        // Close only the Verify modal
+        this.verifyModalRef?.close();
+
+        // Show success popup
+        this.sharedModalService.openSuccessModal('Expense item verified successfully');
+
+        // Update local UI immediately
+        if (this.expenseheaderiteams?.expenseitem?.length) {
+          const idx = this.expenseheaderiteams.expenseitem.findIndex(
+            it => it.expenseitem_id === verifiedItem.expenseitem_id
+          );
+          if (idx > -1) {
+            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+          }
+        }
+
+        this.selectedItem = null;
+
+        // Update verified IDs for template checks
+        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+        // Refresh headers in background, but the modal stays open
+        this.getAllPendingApprovals();
+      },
+      error: (err: any) => {
+        this.verifyModalRef?.close();
+        this.sharedModalService.openErrorModal(err?.error?.message || 'Verification failed');
+
+      }
+    });
+}
+
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

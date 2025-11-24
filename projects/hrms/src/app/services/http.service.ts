@@ -327,6 +327,9 @@ export class HttpService {
     const item_url = `${this.ApiUrl}${url}?Expenses_ID=${_params}`;
     return this.http.get(item_url);
   }
+  getItembyid(url: string, params?: any) {
+    return this.http.get(`${this.ApiUrl}${url}`, { params });
+  }
 
   getData(url: string) {
     return this.http.get(`${this.ApiUrl}${url}`);

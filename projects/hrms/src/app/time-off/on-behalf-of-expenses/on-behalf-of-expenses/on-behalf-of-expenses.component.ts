@@ -65,20 +65,20 @@ export class OnBehalfOfExpensesComponent {
         this.updateModuleInfo();
       });
   }
-onClearEmployee(): void {
-  this.selectedOtherEmployee = null;
-  this.selectedEmpName = '';
-  this.selectedEmpFusionId = '';
-  this.http.setOnBehalfOfExpensesSelectedEmp(null);
-  this.http.onBehlafOfExpensesSignal.set(false);
-  this.http.setEmployeeIdExpensesforonbehalf(null)
-  const loggedInEmpId = this.empinfo?.employeeId || this.empinfo?.employeeId;
-  if (loggedInEmpId) {
-    console.log('Reset to logged-in employee:', loggedInEmpId);
-    this.getExpensesHeaderByEmployeeId(loggedInEmpId);
+  onClearEmployee(): void {
+    this.selectedOtherEmployee = null;
+    this.selectedEmpName = '';
+    this.selectedEmpFusionId = '';
+    this.http.setOnBehalfOfExpensesSelectedEmp(null);
+    this.http.onBehlafOfExpensesSignal.set(false);
+    this.http.setEmployeeIdExpensesforonbehalf(null)
+    const loggedInEmpId = this.empinfo?.employeeId || this.empinfo?.employeeId;
+    if (loggedInEmpId) {
+      console.log('Reset to logged-in employee:', loggedInEmpId);
+      this.getExpensesHeaderByEmployeeId(loggedInEmpId);
+    }
+
   }
-  
-}
   onEmployeeChange(event: any): void {
     const selectedEmp = event.employeeId || 0;
     this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName ? this.selectedOtherEmployee?.middleName + ' ' : ''}${this.selectedOtherEmployee?.lastName ?? ''}`;
@@ -93,6 +93,11 @@ onClearEmployee(): void {
         employeeName: this.selectedEmpName,
         fusionEmpId: this.selectedEmpFusionId,
       });
+      localStorage.setItem('selectedEmployee', JSON.stringify({
+        employeeId: selectedEmp,
+        employeeName: this.selectedEmpName,
+        fusionEmpId: this.selectedEmpFusionId,
+      }));
 
       this.getExpensesHeaderByEmployeeId(selectedEmp);
     } else {
@@ -118,6 +123,7 @@ onClearEmployee(): void {
         },
       });
   }
+
   getEmployeeId() {
     let loggedInUser = this.authService.getToken();
     this.http
@@ -140,7 +146,6 @@ onClearEmployee(): void {
                 leaveRequestName,
               };
             })
-
             // Alphabetical sorting by firstName
             .sort((a: any, b: any) =>
               a.firstName.localeCompare(b.firstName, 'en', {

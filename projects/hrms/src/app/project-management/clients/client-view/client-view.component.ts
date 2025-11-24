@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { ClientTabsComponent } from "../../../shared/project-management-tabs/client-tabs/client-tabs.component";
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProjcetCreationComponent } from '../../shared-project-management-componenets/projcet-creation/projcet-creation.component';
@@ -25,7 +25,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
   selector: 'app-client-view',
   imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ClientTabsComponent,
     RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent,MultiSelectModule,
-    ResourceCreationComponent, Select],
+    ResourceCreationComponent, Select, FormsModule, MultiSelectModule],
   templateUrl: './client-view.component.html',
   styleUrl: './client-view.component.scss'
 })
@@ -62,6 +62,10 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   datepickerFormDataforsummary!: FormGroup;
   resourceDataids = {} as any;
   projectTypes: any[] = [];
+
+
+  selectedDepartments: any[] = [];
+selectedProjectTypes: any[] = [];
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
@@ -143,6 +147,9 @@ onProjectTypeChange(event: any) {
 
 // Clear All (enhanced — clears both filters)
 clearAllFilters() {
+
+    this.selectedDepartments = [];   // ✅ Clear UI selected values
+  this.selectedProjectTypes = [];
   this.http.setDepartmentIds([]);
   this.http.clearProjectTypeFilter();
 }

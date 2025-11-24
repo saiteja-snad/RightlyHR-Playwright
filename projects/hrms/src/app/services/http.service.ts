@@ -1,4 +1,9 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpResponse,
+} from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -980,6 +985,54 @@ export class HttpService {
     this.projectTypeFilterSource.next([]);
   }
 
+  // store phases statuses
+  private phaseStatusFilterSource = new BehaviorSubject<string[]>([]);
+
+  phaseStatusFilter$ = this.phaseStatusFilterSource.asObservable();
+
+  setPhaseStatusFilter(statuses: string[]) {
+    this.phaseStatusFilterSource.next(statuses || []);
+  }
+
+  clearPhaseStatusFilter() {
+    this.phaseStatusFilterSource.next([]);
+  }
+
+  // store date time statuses
+  private phaseDateFilterSource = new BehaviorSubject<{
+    startDate: string | null;
+    endDate: string | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+
+  phaseDateFilter$ = this.phaseDateFilterSource.asObservable();
+
+  setPhaseDateFilter(filter: {
+    startDate: string | null;
+    endDate: string | null;
+  }) {
+    this.phaseDateFilterSource.next(filter);
+  }
+
+  clearPhaseDateFilter() {
+    this.phaseDateFilterSource.next({ startDate: null, endDate: null });
+  }
+
+  // store Timesheet Approval Authority
+  private phaseAuthorityFilterSource = new BehaviorSubject<number[]>([]);
+
+  phaseAuthorityFilter$ = this.phaseAuthorityFilterSource.asObservable();
+
+  setPhaseAuthorityFilter(authorityIds: number[]) {
+    this.phaseAuthorityFilterSource.next(authorityIds || []);
+  }
+
+  clearPhaseAuthorityFilter() {
+    this.phaseAuthorityFilterSource.next([]);
+  }
+
   getProjectResources(
     url: string,
     clientId?: number,
@@ -1002,8 +1055,8 @@ export class HttpService {
       params = params.set('managerIds', reportingManagerId);
     }
     if (statuses) {
-    params = params.set('statuses', statuses);
-  }
+      params = params.set('statuses', statuses);
+    }
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
   getProjectSummary(apiUrl: string, payload: any) {

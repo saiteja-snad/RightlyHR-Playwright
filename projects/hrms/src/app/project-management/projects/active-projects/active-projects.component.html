@@ -19,7 +19,7 @@
         <label class="form-label filter-labels mt-2">{{ 'Client Name' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
-            placeholder="Select Client" [filter]="true" filterBy="clientName" display="chip"
+            defaultLabel="Select Client" [filter]="true" filterBy="clientName"
             class="form-select custom-select" (onChange)="onClientChange()"
             (onClear)="selectedClients = []; getProjectsBasedOnRoute()">
           </p-multiSelect>
@@ -31,7 +31,7 @@
         <label class="form-label filter-labels mt-2">{{ 'Department Name' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            defaultLabel="Select Department" [filter]="true" filterBy="departmentName" display="chip"
+            defaultLabel="Select Department" [filter]="true" filterBy="departmentName"
             class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
             [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getProjectsBasedOnRoute()">
           </p-multiSelect>
@@ -43,7 +43,7 @@
         <label class="form-label filter-labels mt-2">{{ 'Project Type' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
-            [(ngModel)]="selectedProjectTypes" placeholder="Select Project Type" [filter]="true" display="chip"
+            [(ngModel)]="selectedProjectTypes" defaultLabel="Select Project Type" [filter]="true"
             class="form-select custom-select" (onChange)="onProjectTypeChange()"
             (onClear)="selectedProjectTypes = []; getProjectsBasedOnRoute()">
           </p-multiSelect>
@@ -97,8 +97,7 @@
             <th class="text-center">Project Type</th>
             <th>Department</th>
             <!-- <th>Status</th> -->
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-            Tab.delete'))
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
@@ -120,8 +119,7 @@
                   <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                   <!-- <td>{{ project.status }}</td> -->
-                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-                  Tab.delete'))
+                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
                   <td class="text-center">
                     <div class="dropdown">

@@ -211,7 +211,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true;
-    let url = `Project?clientIds=${clientID}&status=Inactive`;
+    let url = `Project?clientId=${clientID}&status=Inactive`;
 
     if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;

@@ -209,7 +209,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true;
-    let url = `Project?clientIds=${clientID}&status=hold`;
+    let url = `Project?clientId=${clientID}&status=hold`;
 
     if (this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;

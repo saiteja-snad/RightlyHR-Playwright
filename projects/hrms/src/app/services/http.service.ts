@@ -886,7 +886,7 @@ clearTeamDateRange() {
   getProjectResources(url: string,clientId?: number,projectId?: number,departmentId?: number,reportingManagerId?: number) {
   let params = new HttpParams();
   if (clientId) {
-    params = params.set('clientIds', clientId);
+    params = params.set('clientId', clientId);
   }
   if (projectId) {
     params = params.set('projectIds', projectId);
@@ -913,7 +913,7 @@ getProjectSummary(apiUrl: string, payload: any) {
 
   // Multi-values (comma separated)
   if (payload.clientId?.length) {
-    params = params.set('clientIds', payload.clientId.join(','));
+    params = params.set('clientId', payload.clientId.join(','));
   }
 
   if (payload.projectId?.length) {

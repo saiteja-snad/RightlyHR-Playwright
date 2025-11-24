@@ -357,7 +357,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true;
-    let url = `Project?clientId=${clientID}&status=Active`;
+    let url = `Project?clientIds=${clientID}&status=Active`;
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }

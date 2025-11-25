@@ -52,13 +52,13 @@ export class ProjectRoleComponent {
     this.AddForm = this.fb.group({
       Addprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       department: ['', Validators.required],
-      color: [''],
+      color: ['#000000'],
     });
 
     this.updateForm = this.fb.group({
       Updateprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       Updatedepartment: [{value: '', disabled: true}, Validators.required],
-      UpdateColor: [''],
+      UpdateColor: ['#000000'],
     });
     this.DepartmentList();
     this.getJobrole();
@@ -76,7 +76,7 @@ export class ProjectRoleComponent {
             entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
             entityType: item.entityType || 'department',    // Entity type
             isActive: item.isActive,
-            color: item.meta?.graphData?.color ?? ''
+            color: item.meta?.graphData?.color || '#000000'
           }));
           this.sortDesignations();
         } else {
@@ -126,7 +126,7 @@ export class ProjectRoleComponent {
       createdBy: this.empinfo?.employeeId || 0, // fallback if user not found
       meta: {
       graphData: {
-        color : this.AddForm.value.color
+        color : this.AddForm.value.color || '#000000'
       }
       }     
     };
@@ -196,7 +196,7 @@ export class ProjectRoleComponent {
     this.updateForm.patchValue({
       Updateprojectrole: jobrole.projectrole,
       Updatedepartment: jobrole.entityReferenceId,
-      UpdateColor : jobrole.color
+      UpdateColor : jobrole.color || '#000000'
     });
     console.log(this.updateForm.value);
     
@@ -217,7 +217,7 @@ export class ProjectRoleComponent {
       updatedBy: this.loggedinuser.employeeId || 0,
       meta: {
       graphData: {
-        color : this.updateForm.value.UpdateColor
+        color : this.updateForm.value.UpdateColor || '#000000'
       }
       }   
     };

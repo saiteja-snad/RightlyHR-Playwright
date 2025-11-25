@@ -207,7 +207,6 @@ private refreshData() {
   }
 
   getProjectSummary() {
-    debugger
     this.tableLoader = true;
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');

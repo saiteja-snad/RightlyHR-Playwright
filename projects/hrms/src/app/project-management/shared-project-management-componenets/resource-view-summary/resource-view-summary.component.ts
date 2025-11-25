@@ -133,7 +133,7 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
   //   });
   // }
 
-  // called for pagination 
+  // called for pagination
   onRowsChange() {
     this.page = 1;
     this.first = 0;

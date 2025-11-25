@@ -72,6 +72,7 @@ export class OnBehalfOfExpensesComponent {
     this.http.setOnBehalfOfExpensesSelectedEmp(null);
     this.http.onBehlafOfExpensesSignal.set(false);
     this.http.setEmployeeIdExpensesforonbehalf(null)
+    this.http.setnewcountDetailsforonBehalfof()
     const loggedInEmpId = this.empinfo?.employeeId || this.empinfo?.employeeId;
     if (loggedInEmpId) {
       console.log('Reset to logged-in employee:', loggedInEmpId);

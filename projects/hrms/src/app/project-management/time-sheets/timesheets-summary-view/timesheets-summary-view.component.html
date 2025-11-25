@@ -351,7 +351,7 @@
                                                 entry.clientName }}</div>
 
 
-                                            <div class="timesheet-chip chip-truncate  text-truncate"
+                                            <div *ngIf="entry?.phaseName" class="timesheet-chip chip-truncate  text-truncate"
                                                 [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
                                                 [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
                                                 {{ entry?.phaseName }}

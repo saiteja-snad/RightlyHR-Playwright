@@ -103,7 +103,9 @@ export class TeamTimesheetsComponent {
     // return [startOfMonth, endOfMonth];
   }
 
-  openModal(entries: any, content?: any) {
+  selectedEmployeeName!: string;
+  openModal(entries: any, content?: any, empName?: string) {
+    this.selectedEmployeeName = empName || '';
     this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }

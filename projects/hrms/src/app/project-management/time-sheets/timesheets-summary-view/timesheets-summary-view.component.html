@@ -300,8 +300,8 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Logged Hours BreakDown' | translate}} ({{
-                    selectedEntries[0]?.entryDate | dateformat }})</p>
+                <p class="popup-heading mb-0">{{'Timesheet BreakDown' | translate}} - {{employename?.firstName}} {{employename?.middleName || ''}}
+                {{employename?.lastName}} ({{selectedEntries[0]?.entryDate | dateformat }})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -317,8 +317,7 @@
                                 <th>Project Name</th>
                                 <th>Phase/Milestone</th>
                                 <th>Logged Hours</th>
-                                <th>Approver Name</th>
-                                <!-- <th>Approver Designation</th> -->
+                                <th>Approver</th>
                                 <th>Description</th>
                                 <th>Status</th>
                             </tr>
@@ -329,8 +328,12 @@
                                 <td>{{ entry.projectName }}</td>
                                 <td>{{ entry?.phaseName || '-' }}</td>
                                 <td>{{ entry.loggedHours }} hrs</td>
-                                <td>{{ entry.finalApproverName || '-' }}</td>
-                                <!-- <td>{{ entry.approverDesignation || '-' }}</td> -->
+                                <td>
+                                <ng-container *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
+                                    {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
+                                </ng-container>
+                                <ng-template #noValue>-</ng-template>
+                                </td>
                                 <td class="text-center">
                                     <div *ngIf="entry.summary; else noRequestedComments" type="button"
                                         [ngbPopover]="requestedComments">

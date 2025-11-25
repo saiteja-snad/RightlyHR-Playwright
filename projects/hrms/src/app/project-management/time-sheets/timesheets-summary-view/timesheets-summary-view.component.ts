@@ -105,7 +105,8 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
      this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
-        this.employeeId = parseInt(resoureID)
+        this.employeeId = parseInt(resoureID);
+         this.getEmployeeId(this.employeeId);
       }
     })
     this.http.getteamDateRangeObservable().subscribe((data) => {

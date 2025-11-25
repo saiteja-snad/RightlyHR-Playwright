@@ -117,7 +117,7 @@
                                         </div> -->
                                         <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
-                                        <div class="cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                        <div class="cursor" (click)="openModal(day.entries, summaryforlogs, emp.employee.name)">
                                             <u>{{ day.dailySummary.loggedHHMM }}</u>
                                         </div>
                                         <div class="d-flex custom-text">
@@ -212,7 +212,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Logged Hrs BreakDown' | translate}} ({{ selectedEntries[0]?.entryDate |
+                <p class="popup-heading mb-0">{{'Timesheet BreakDown' | translate}} - {{selectedEmployeeName}} ({{ selectedEntries[0]?.entryDate |
                     dateformat }})</p>
             </div>
             <div>
@@ -229,8 +229,7 @@
                                 <th>Project Name</th>
                                 <th>Phase/Milestone</th>
                                 <th>Logged Hours</th>
-                                <th>Approver Name</th>
-                                <!-- <th>Approver Designation</th> -->
+                                <th>Approver</th>
                                 <th>Description</th>
                                 <th>Status</th>
                             </tr>
@@ -241,8 +240,12 @@
                                 <td>{{ entry.projectName }}</td>
                                 <td>{{ entry?.phaseName || '-' }}</td>
                                 <td>{{ entry.loggedHHMM }} Hrs</td>
-                                <td>{{ entry.finalApproverName || '-' }}</td>
-                                <!-- <td>{{ entry.approverDesignation || '-' }}</td> -->
+                                <td>
+                                <ng-container *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
+                                    {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
+                                </ng-container>
+                                <ng-template #noValue>-</ng-template>
+                                </td>
                                 <td class="text-center">
                                     <div>
                                         <div *ngIf="entry.summary; else noRequestedComments" type="button"

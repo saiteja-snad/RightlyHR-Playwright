@@ -229,21 +229,23 @@
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center flex-column">
 
-                                        <div class="project-name-chip text-truncate"><b [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
+                                        <div class="project-name-chip text-truncate"><b  [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
                                                 entry.projectName }}</b></div>
                                         <div class="d-flex flex-wrap align-items-center  justify-content-center gap-2">
 
 
                                             <div class="timesheet-chip chip-truncate  text-truncate"
-                                                [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"
-                                                [style.border-color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                             [style.background]="getLighterColor(entry?.meta?.graphData?.color) "
+                                              [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"  
+                                                [style.border-color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">
                                                 {{
                                                 entry.clientName }}</div>
 
 
                                             <div *ngIf="entry?.phaseName"  class="timesheet-chip chip-truncate  text-truncate"
+                                             [style.background]="getLighterColor(entry?.meta?.graphData?.color) "
                                                 [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
-                                                [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
+                                                [style.border-color]="entry?.meta?.graphData?.color ?? '#0B3A83'">
                                                 {{ entry?.phaseName }}
                                             </div>
                                         </div>

@@ -1033,6 +1033,33 @@ export class HttpService {
     this.phaseAuthorityFilterSource.next([]);
   }
 
+
+ //store role in timesheet summary
+private clientTimesheetRoleFilterSource = new BehaviorSubject<number[]>([]);
+
+clientTimesheetRoleFilter$ = this.clientTimesheetRoleFilterSource.asObservable();
+
+setClientTimesheetRoleFilter(roleIds: number[]) {
+  this.clientTimesheetRoleFilterSource.next(roleIds || []);
+}
+
+clearClientTimesheetRoleFilter() {
+  this.clientTimesheetRoleFilterSource.next([]);
+}
+
+
+// store phase in timsheet sunnary
+private clientTimesheetPhaseFilterSource = new BehaviorSubject<number[]>([]);
+
+clientTimesheetPhaseFilter$ = this.clientTimesheetPhaseFilterSource.asObservable();
+
+setClientTimesheetPhaseFilter(phaseIds: number[]) {
+  this.clientTimesheetPhaseFilterSource.next(phaseIds || []);
+}
+
+clearClientTimesheetPhaseFilter() {
+  this.clientTimesheetPhaseFilterSource.next([]);
+}
   getProjectResources(
     url: string,
     clientId?: number,

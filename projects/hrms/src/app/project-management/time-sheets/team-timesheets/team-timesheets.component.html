@@ -34,7 +34,7 @@
                             <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
                                 [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
                                 formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
-                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'" 
+                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
                                 class="form-select custom-select"></p-select>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="resourcesList" optionLabel="fullName" optionValue="id"
                                 name="myteamemployees" (onChange)="onCheckemployee($event.value)"
-                                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'" 
+                                [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
                                 formControlName="resourceId" [filter]="true"
                                 resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false">
                             </p-select>

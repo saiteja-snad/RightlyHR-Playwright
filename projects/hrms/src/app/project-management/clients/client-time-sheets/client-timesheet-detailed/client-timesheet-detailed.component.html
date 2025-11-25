@@ -10,7 +10,7 @@
                         <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
                             <span class="hrs-text">{{project?.project?.spentHours }} Hrs</span>
                         </div>
-                       
+
                     </p-accordion-header>
 
                     <p-accordion-content>
@@ -41,7 +41,7 @@
                                                 <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
                                                     <p-chip *ngFor="let role of entry.roles.split(',')" [label]="role.trim()" />
                                                 </div>
-                                
+
                                             } @else {
                                                 -
                                             }
@@ -55,7 +55,7 @@
                                                 -
                                             }
                                         </td>
-                                       <td class="text-center"><a class="project-name cursor" 
+                                       <td class="text-center"><a class="project-name cursor"
                                         (click)="entry?.phasesCount !== 0 && openModal(entry, project, summaryforlogs)">
                                         {{ entry?.phasesCount ?? 0 }}</a></td>
                                         <td class="text-center">{{ entry?.totalLoggedHours ?? '-' }}</td>

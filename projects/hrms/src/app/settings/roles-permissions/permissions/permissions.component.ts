@@ -283,6 +283,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Leave Allocation Tab',
       'Flexible Leave Allocation Tab',
       'Flexible WFH Allocation Tab',
+      'Flexible Work Hours Allocation Tab',
       'Load Entitlements Tab',
       'Attendance Eligibility Criteria Tab',
       'Comp Off Entitlement Tab',
@@ -304,7 +305,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Create',
       'Team Tickets Tab',
       'Late Login Alert Configuration Tab',
-      'Extra Hours Configuration Tab'
+      'Extra Hours Configuration Tab',
+      'Flexible Work Hours Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&
@@ -331,7 +333,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Certification Details',
       'Employee Info Compensation Details',
       'Draft Tab',
-      "Letter Acknowledgment Configuration"
+      "Letter Acknowledgment Configuration",
+      "Timesheet Locking Configuration Module"
     ];
     return (
       enabledTabs.includes(field) &&
@@ -395,6 +398,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Settings Timeoff Module',
     'Assets Management Configuration Module',
     'Dynamic Forms Module',
+    "Timesheet Locking Configuration Module"
   ];
   employeeFields = [
     'Personal Tab',
@@ -410,8 +414,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsEmployeeJobFields = [
     'Job Role',
-    'IT Support Category',
-    'IT Support Sub-Category',
     'Job Type',
     'Probation Status',
     'Background check Status',
@@ -490,6 +492,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
+  flexibleWorkHoursTabsFields=[
+    'Work Hours Allocation History Tab',
+    'Work Hours Allocations Tab'
+  ]
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',
@@ -499,7 +505,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
-    'Extra Hours Configuration Tab'
+    'Extra Hours Configuration Tab',
+    'Flexible Work Hours Configuration Tab'
   ];
   settingsAssetConfigurationFields = [
     'Vendor Details',
@@ -516,6 +523,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   AttendanceTypeFields = [
     'Attendance Pending Tab',
     'Attendance Published Tab'
+  ];
+   Lockingsystemtabs = [
+    'Attendance Configuration Module',
+    'Timesheet Configuration Module'
+  ];
+    TymesheetTypeFields = [
+    'Timesheet Locking Pending Tab',
+    'Timesheet Locking Published Tab'
   ];
   sidebarTabsFields = [
     'Dashboard',
@@ -1219,6 +1234,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Letter Configurations',
     'Project Management Authority',
     'Project Role',
+    'Task',
     'Letter Frequency Configurations'
   ];
   selectAllLettersTabs = [
@@ -1245,6 +1261,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ]
 
   SkillSetManagementModule = ['Skills Dashboard', 'Skills Directory'];
+  itSupportFields = [
+    'IT Support Configuration ',
+  ];
+   settingsItSupportFields = [
+    'IT Support Category',
+    'IT Support Sub-Category',
+
+  ];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -2061,6 +2085,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
   isOnBehalfOfExpensesTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
@@ -2070,6 +2095,32 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  
+  isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+    isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  // Disable Create/Delete for 'Timesheet Locking Published Tab'
+  if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
+    return true;
+  }
+
+  // Existing logic: disable all if role is not selected
+  return !this.roleToFilter?.id;
+}
+
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

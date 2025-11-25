@@ -122,6 +122,9 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerFormData.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
+    this.datepickerFormDataforsummary?.patchValue({
+       dateRange: [startOfMonth, endOfMonth]
+    })
   }
 
   // Create a single contact form group
@@ -188,8 +191,17 @@ export class ProjectViewComponent implements OnInit {
     );
   }
 
+  isFilterAppliedforsummary(): boolean {
+    const formValue = this.datepickerFormDataforsummary?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) 
+    
+    );
+  }
+
   getAllresourcesData() {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=true`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.resourcesData = res?.data?.map((x: any) => x.employee) ?? []; // Extract "data" array
       },
@@ -218,6 +230,8 @@ export class ProjectViewComponent implements OnInit {
           this.inactiveStatus = (res?.data ?? []).some((p: any) =>
             p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
           ) ? 'inactive' : 'active';
+          console.log(this.inactiveStatus);
+          
         } else {
           this.clientsId = null; // No projects returned
         }

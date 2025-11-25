@@ -27,6 +27,7 @@ export const MY_INFO_JOB_ROUTES = [
   { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' },
   { permission: 'My Info Contract Details.view', route: '/myinfo/job/contactor-info' },
+  { permission: 'My Info Project Details.view', route: '/myinfo/job/project-info' },
 ];
 
 export const MY_INFO_DOCUMENTS_ROUTES = [
@@ -87,6 +88,12 @@ export const SETTINGS_AttendanceLock_TABS = [
   { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
   { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
 ];
+// Timesheet Locking Tabs
+export const SETTINGS_TIMESHEET_LOCKING_TABS = [
+  
+  { route: '/settings/timesheet-locking-configuration/pending-for-submission', permission: 'Timesheet Locking Pending Tab.view' },
+  { route: '/settings/timesheet-locking-configuration/published', permission: 'Timesheet Locking Published Tab.view' }
+];
 
 export const SETTINGS_DYNAMIC_FORMS_TABS = [
   { route: '/settings/dynamic-forms/active-forms', permission: 'Active Forms.view' },
@@ -107,6 +114,11 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
 ]
 
+export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
+  { route: '/settings/it-configuration/itsupport-category', permission: 'IT Support Category.view' },
+  { route: '/settings/it-configuration/itsupport-sub-category', permission: 'IT Support Sub-Category.view' },
+]
+
 export const TIME_OFF_TABS = [
   { route: '/time-off/leaves', permission: 'Time Off Tab.view' },
   { route: '/time-off/remote', permission: 'Remote Login Tab.view' },
@@ -116,7 +128,10 @@ export const FLEXIBLE_WFH_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation', permission: 'Active Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view', permission: 'Allocation History Tab.view' },
 ]
-
+export const FLEXIBLE_WORKHOURS_ALLOCATION_TABS = [
+  { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation', permission: 'Work Hours Allocations Tab.view' },
+  { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view', permission: 'Work Hours Allocation History Tab.view' },
+]
 export const TIME_OFF_SUB_TABS = [
   { route: '/time-off/leaves/waiting-for-approval', permission: 'Waiting For Approval (Time Off).view' },
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },
@@ -356,6 +371,7 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
   { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
   { route: '/settings/project-management-config/project-role', permission: 'Project Role.view'},
+  { route: '/settings/project-management-config/task', permission: 'Task.view'},
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -469,6 +485,7 @@ export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
   { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' },
   { permission: 'Employee My Skills.view', route: '/personalinfo/personal/my-skills' },
+  { permission: 'Employee Info Project Details.view', route: '/myinfo/personal/project-info' },
 ];
 
 export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [

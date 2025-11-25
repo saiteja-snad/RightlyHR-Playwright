@@ -62,6 +62,7 @@ import {
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
   FLEXIBLE_WFH_ALLOCATION_TABS,
+  FLEXIBLE_WORKHOURS_ALLOCATION_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
@@ -70,7 +71,9 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
-  ON_BEHALF_OF_EXPENSES_TABS
+  ON_BEHALF_OF_EXPENSES_TABS,
+  SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS,
+  SETTINGS_TIMESHEET_LOCKING_TABS,
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -200,7 +203,6 @@ export class AccessNavigationService {
             }
           }
         }
-
         // if (this.rbac.allowedToAccess('Roles Module.view')) {
         for (const item of SETTINGS_ROLES_TABS) {
           if ('permission' in item && item.permission) {
@@ -273,10 +275,17 @@ export class AccessNavigationService {
             }
           }
         }
+        
+        if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
+          return '/settings/timesheet-locking-configuration';
+        }
+
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
         }
-        break;
+         break;
+
+
 
       case '/policies':
         if (this.rbac.allowedToAccess('Policies.view')) {
@@ -990,6 +999,19 @@ export class AccessNavigationService {
         }
         break;
 
+
+
+        case '/settings/it-configuration':
+        if (this.rbac.allowedToAccess('IT Support Configuration.view')) {
+          for (const item of SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+
+          }
+        }
+        break;
+
       case '/settings/roles-permissions':
         for (const item of SETTINGS_ROLES_TABS) {
           return item.route;
@@ -1173,6 +1195,16 @@ export class AccessNavigationService {
       //     }
       //   }
       //   break;
+       case '/settings/locking-configuration':
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view' )) {
+
+          for (const item of SETTINGS_AttendanceLock_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       //Attendance locking
       case '/settings/attendance-configuration':
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
@@ -1194,6 +1226,29 @@ export class AccessNavigationService {
           return (route = '/settings/attendance-configuration/published');
         }
         break;
+
+         //timesheet locking
+      case '/settings/timesheet-locking-configuration':
+        if (this.rbac.allowedToAccess('Timesheet Configuration Module.view' )) {
+
+          for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+         case '/settings/timesheet-locking-configuration/pending-for-submission':
+        if (this.rbac.allowedToAccess('Timesheet Locking Pending Tab.view')) {
+          return (route = '/settings/timesheet-locking-configuration/pending-for-submission');
+        }
+        break;
+      case '/settings/timesheet-locking-configuration/published':
+        if (this.rbac.allowedToAccess('Timesheet Locking Published Tab.view')) {
+          return (route = '/settings/timesheet-locking-configuration/published');
+        }
+        break;
+        // assets
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {
           return '/settings/assets-configuration/vendor-detiles';
@@ -1255,7 +1310,15 @@ export class AccessNavigationService {
           }
         }
         break;
-
+        case '/settings/timeoff-configurations/flexible-workhours-allocation':
+        if (this.rbac.allowedToAccess('Flexible Work Hours Allocation Tab.view')) {
+          for (const item of FLEXIBLE_WORKHOURS_ALLOCATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/settings/timeoff-configurations/load-entitlements':
         if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
           return (route = '/settings/timeoff-configurations/load-entitlements');

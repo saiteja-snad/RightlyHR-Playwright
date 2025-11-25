@@ -1,5 +1,13 @@
-.result-popup-content .mb-3 {
-  text-align: left !important;
+.component-left-tabs-container {
+  height: calc(100vh - 12rem) !important;
+}
+
+.custom-table-content {
+  height: calc(100vh - 12rem) !important;
+}
+
+.phase-right-content {
+  width: calc(100% - 8.5rem);
 }
 
 .custom-color {

@@ -8,12 +8,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
+import { ChipModule } from 'primeng/chip';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, 
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, ChipModule,
     DateformatPipe, NoDataFoundComponent, SkeletonModule],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',
@@ -28,37 +29,71 @@ export class ClientTimesheetDetailedComponent {
   projectId: any;
   contentLoader = false;
 
+  employeeName: any
+  selectedEntries: any
+  selectedProject: any
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.getResourceDetails();
-  }
-
-  getResourceDetails(): void {
-    this.contentLoader = true;
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+    this.route.queryParams.subscribe(params => {
       const clientID = params['id'];
-      this.clientId = clientID;
-      if (!clientID) {
-        this.projectDetails = [];
-        return;
+      if (clientID) {
+        this.getResourceDetails(clientID);
+        this.clientId = clientID;
       }
-      // Build the API URL conditionally
-      let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
-      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          this.projectDetails = res?.data;
-          this.contentLoader = false;
-        },
-        error: (err) => {
-          console.error('Error fetching clients:', err);
-          this.contentLoader = false;
-        }
-      });
+    });
+
+  }
+  getResourceDetails(clientID: any): void {
+    let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const rawProjects = res?.data || [];
+
+        this.projectDetails = rawProjects.map((item: any) => ({
+          ...item,
+          groupedResources: item.project.resources   // ⬅ DIRECTLY USE BACKEND DATA
+        }));
+
+        this.contentLoader = false;
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        this.contentLoader = false;
+        this.projectDetails = [];
+      }
     });
   }
 
+
+
+  openModal(entry: any, project: any, content: any) {
+    this.employeeName = {
+      id: entry.employee.id,
+      fusionEmployeeId: entry.employee.fusionEmployeeId,
+      name: entry.employee.name,
+      workMail: entry.employee.workMail
+    };
+    this.selectedProject = {
+      projectName: project.project.projectName
+    };
+    // Convert the entry.phases into popup format
+    this.selectedEntries = entry.phases.map((phase: any) => ({
+
+      phaseName: phase.phaseName,
+      resourceStartDate: phase.resourceStartDate,
+      resourceEndDate: phase.resourceEndDate,
+      resourceRole: phase.resourceRole,
+      loggedHours: phase.loggedHours,
+      resourceStatus: phase.resourceStatus,
+          allocatedHours:phase.allocatedHours
+    }));
+
+    this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
+  }
   navigateView(projectdata: any, employeeId: any): void {
+    console.log(projectdata);
     const resourceData = {
       employeeId: employeeId,
       clientId: parseInt(this.clientId),

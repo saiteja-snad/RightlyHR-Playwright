@@ -65,6 +65,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
@@ -115,7 +116,27 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
 
+    if (status === 'approved') {
+      this.selectedLeaveData.comments = 'Approved';
+    } else if (status === 'planned') {
+      this.selectedLeaveData.comments = 'Planned Leave';
+    } else if (status === 'unplanned') {
+      this.selectedLeaveData.comments = 'Unplanned Leave';
+    }
+  }
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedLeaveData.comments = 'Rejected';
+    } else if (status === 'planned') {
+      this.selectedLeaveData.comments = 'Planned Leave';
+    } else if (status === 'unplanned') {
+      this.selectedLeaveData.comments = 'Unplanned Leave';
+    }
+  }
   checkLeaveBalance(Value: any, checkbalancepopup: any) {
     this.modalService.open(checkbalancepopup, {
       centered: true,
@@ -188,6 +209,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   ifreasonnull(Value: any) {
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
+       this.selectedLeaveStatus = null;
     } else {
       this.issubmitdiable = false;
     }

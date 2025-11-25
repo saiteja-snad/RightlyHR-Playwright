@@ -20,10 +20,11 @@ import dayjs, { Dayjs } from 'dayjs';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { DatePicker } from 'primeng/datepicker';
 import { Project } from '../../../Interfaces/projects.model';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-client-view',
   imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ClientTabsComponent,
-    RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent,
+    RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent,MultiSelectModule,
     ResourceCreationComponent, Select],
   templateUrl: './client-view.component.html',
   styleUrl: './client-view.component.scss'
@@ -47,6 +48,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     { key: 'Yes', value: 'yes' },
     { key: 'No', value: 'no' },
   ];
+   departmentlist = [] as any;
   documentTypes: IEAV[] = [];
   datepickerForm!: FormGroup;
   projectsDataDrown: Project[] = [];
@@ -65,6 +67,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const now = new Date();
+    this.DepartmentList();
     this.createDatepickerForm();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     this.setDefaultmounth();
@@ -106,6 +109,22 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     // detect when user selects date range
 
   }
+ DepartmentList() {
+    this.subscription = this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.departmentlist = data;
+      },
+    });
+  }
+onDepartmentChangelist(event: any) {
+  const selectedIds = event.value; // This gives an array when multiple departments selected
+  if (Array.isArray(selectedIds)) {
+    this.http.setDepartmentIds(selectedIds);
+  } else {
+    this.http.setDepartmentIds([selectedIds]);
+  }
+}
 
   // Create reactive form
   createDatepickerForm() {
@@ -122,6 +141,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
+    this.datepickerFormDataforsummary?.patchValue({
+       dateRange: [startOfMonth, endOfMonth]
+    })
   }
 
   getClientsData(clientID: any): void {
@@ -187,7 +209,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   // Update this method to accept both clientId and projectId
   getResourcesByClient(projectId: any,) {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}`)
+    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${projectId}&isDistinct=true`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -243,7 +265,14 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
-
+  isFilterAppliedforsummary(): boolean {
+    const formValue = this.datepickerFormDataforsummary?.value;
+    // Check if any field has value
+    return (
+      (formValue?.dateRange && formValue?.dateRange?.length > 0) 
+    
+    );
+  }
   opencontactModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
@@ -399,6 +428,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         this.addDocumentForm.reset();
         this.modalService.dismissAll();
         this.http.setnewdocumentsDetails();
+         this.http.setnewcountfornewdocumentscount();
         this.conformationPopup.openSuccessModal('Document added successfully');
       },
       error: (err: any) => {

@@ -8,11 +8,42 @@
   <div class="custom-main-popup-content">
     <form [formGroup]="addprojectform" autocomplete="off" (ngSubmit)="saveProject()">
       <div class="row">
+        <!-- Client Name -->
+        <div class="col-md-6 mb-3">
+          <label for="clientName" class="form-label custom-label mb-2">Client Name<span
+              class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="clients" optionLabel="clientName" [filter]="true" [resetFilterOnHide]="true"
+              filterBy="clientName" optionValue="clientId" formControlName="clientName"
+              placeholder="Please select client name" class="form-select custom-select"></p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
+            Client Name is required
+          </div>
+        </div>
+
+        <!-- Project Code -->
+        <div class="col-md-6 mb-3">
+          <label for="code" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="code" maxlength="6"
+            placeholder="Please enter project code" (keydown)="formValidation.restrictInitialSpace($event)">
+          <div class="error-msg"
+            *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['required']">
+            Project Code is required
+          </div>
+          <div class="error-msg"
+            *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['maxlength']">
+            Project Code cannot exceed 5 characters
+          </div>
+        </div>
+
         <!-- Project Name -->
         <div class="col-md-6 mb-3">
-          <label for="projectName" class="form-label custom-label mb-2">Project Name<span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" formControlName="projectName" minlength="2" maxlength="101"
-            placeholder="Please enter project name"
+          <label for="projectName" class="form-label custom-label mb-2">Project Name<span
+              class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="projectName" minlength="2"
+            maxlength="101" placeholder="Please enter project name"
             (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
           <div class="error-msg" *ngIf="addprojectform.get('projectName')?.touched">
             <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">Project Name is required</div>
@@ -23,33 +54,23 @@
           </div>
         </div>
 
-        <!-- Client Name -->
-        <div class="col-md-6 mb-3">
-          <label for="clientName" class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
-          <div class="custom-p-select-content">
-            <p-select [options]="clients" optionLabel="clientName" [filter]="true" [resetFilterOnHide]="true"
-              filterBy="clientName" optionValue="clientId" formControlName="clientName" placeholder="Please select client name"
-              class="form-select custom-select"></p-select>
-          </div>
-          <div class="error-msg" *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
-            Client Name is required
-          </div>
-        </div>
-
         <!-- Project Type -->
         <div class="col-md-6 mb-3">
-          <label for="projectType" class="form-label custom-label mb-2">Project Type<span class="text-danger">*</span></label>
+          <label for="projectType" class="form-label custom-label mb-2">Project Type<span
+              class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="projecttypes" optionLabel="value" [filter]="true" [resetFilterOnHide]="true" filterBy="value"
-              formControlName="projectType" placeholder="Please select project type" class="form-select custom-select"></p-select>
+            <p-select [options]="projecttypes" optionLabel="value" [filter]="true" [resetFilterOnHide]="true"
+              filterBy="value" formControlName="projectType" placeholder="Please select project type"
+              class="form-select custom-select"></p-select>
           </div>
-          <div class="error-msg" *ngIf="addprojectform.get('projectType')?.touched && addprojectform.get('projectType')?.invalid">
+          <div class="error-msg"
+            *ngIf="addprojectform.get('projectType')?.touched && addprojectform.get('projectType')?.invalid">
             Project Type is required
           </div>
         </div>
 
-         <!-- Department Name Field -->
-         <div class="col-md-6 mb-3">
+        <!-- Department Name Field -->
+        <div class="col-md-6 mb-3">
           <label for="department" class="form-label custom-label mb-2">
             {{ 'Department' | translate }} <span class="error-msg">*</span>
           </label>
@@ -57,19 +78,23 @@
             <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
               defaultLabel="Please select department name" formControlName="department"
               class="form-select custom-select"></p-multiSelect>
-        </div>
-          <div *ngIf="addprojectform.get('department')?.touched && addprojectform.get('department')?.invalid" class="error-msg">
-            <div *ngIf="addprojectform.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
+          </div>
+          <div *ngIf="addprojectform.get('department')?.touched && addprojectform.get('department')?.invalid"
+            class="error-msg">
+            <div *ngIf="addprojectform.get('department')?.errors?.['required']">{{'Department name is
+              required'|translate}}
             </div>
           </div>
         </div>
 
         <!-- Start Date -->
         <div class="col-md-6 mb-3">
-          <label for="startDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
+          <label for="startDate" class="form-label custom-label mb-2">Start Date<span
+              class="text-danger">*</span></label>
           <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
             class="form-control custom-input" />
-          <div class="error-msg" *ngIf="addprojectform.get('startDate')?.touched && addprojectform.get('startDate')?.invalid">
+          <div class="error-msg"
+            *ngIf="addprojectform.get('startDate')?.touched && addprojectform.get('startDate')?.invalid">
             Start Date is required
           </div>
           <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
@@ -80,7 +105,8 @@
           <label for="endDate" class="form-label custom-label mb-2">End Date <span class="text-danger">*</span></label>
           <input type="date" id="endDate" formControlName="endDate" onkeypress="return false" [min]="minEffectiveDate"
             class="form-control custom-input" />
-          <div class="error-msg" *ngIf="addprojectform.get('endDate')?.touched && addprojectform.get('endDate')?.invalid">
+          <div class="error-msg"
+            *ngIf="addprojectform.get('endDate')?.touched && addprojectform.get('endDate')?.invalid">
             End Date is required
           </div>
           <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
@@ -123,9 +149,9 @@
           <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.invalid">
             Allocated Hours is required</div>
          Error Messages -->
-          <!-- <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.errors?.['positiveInteger']">
+        <!-- <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.errors?.['positiveInteger']">
             Allocated Hours must be a valid number</div> -->
-          <!-- <div *ngIf="addprojectform.get('allocatedHours')?.errors?.['minCharacters']" class="error-msg">
+        <!-- <div *ngIf="addprojectform.get('allocatedHours')?.errors?.['minCharacters']" class="error-msg">
                 {{ 'Allocated Hours must be between 2–100 characters' | translate }}
               </div> 
         </div>-->
@@ -158,38 +184,42 @@
           </div>
         </div> -->
 
-         <!-- Project Description -->
+        <!-- Project Color -->
         <div class="col-md-6 mb-3">
+          <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span
+              class="text-danger">*</span></label>
+          <input type="color" class="form-control custom-color" formControlName="color" />
+        </div>
+
+        <!-- Project Description -->
+        <div class="col-md-12 mb-3">
           <label for="projectDescription" class="form-label custom-label mb-2">Project Description</label>
-          <textarea id="projectDescription" (input)="formValidation.validateInput(addprojectform.get('projectDescription'))"
-            maxlength="500" formControlName="projectDescription" class="form-control custom-input"
+          <textarea id="projectDescription"
+            (input)="formValidation.validateInput(addprojectform.get('projectDescription'))" maxlength="500"
+            formControlName="projectDescription" class="form-control custom-input"
             placeholder="Please enter project description"></textarea>
           <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
         </div>
-
-        <!--Color Picker-->
-        <div class="col-md-6 mb-3">
-          <label class="form-label custom-label">{{'Color' | translate}}</label>
-          <input type="color" class="form-control custom-color" formControlName="color" />
-        </div>
-          
 
         <!-- Switches -->
         <div class="col-md-12 mb-3">
           <div class="d-flex gap-3 align-items-center">
             <div class="form-check form-switch">
-              <input id="project-overtime-eligibility" class="form-check-input" type="checkbox" formControlName="overtimeEligible">
-              <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Overtime Eligibility</label>
+              <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
+                formControlName="overtimeEligible">
+              <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Overtime
+                Eligibility</label>
             </div>
-        
+
             <div class="form-check form-switch">
               <input id="project-client-billable" class="form-check-input" type="checkbox" formControlName="billable">
               <label for="project-client-billable" class="form-label custom-toggle-label">Billable</label>
             </div>
-        
+
             <div class="form-check form-switch">
               <label for="project-allow-weekend-works" class="form-label custom-toggle-label">Allow Weekend Work</label>
-              <input id="project-allow-weekend-works" class="form-check-input" type="checkbox" formControlName="allowweekendWork">
+              <input id="project-allow-weekend-works" class="form-check-input" type="checkbox"
+                formControlName="allowweekendWork">
             </div>
           </div>
         </div>
@@ -197,7 +227,8 @@
 
       <!-- Form Buttons -->
       <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+        <button type="button" class="custom-btn btn-secondary"
+          (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid || loading">
           @if (loading) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

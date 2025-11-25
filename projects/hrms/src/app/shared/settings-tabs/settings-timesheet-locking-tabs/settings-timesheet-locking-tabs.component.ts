@@ -1,0 +1,126 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { RbacService } from '../../../services/rbac.service';
+import { count, Subject, Subscription, takeUntil } from 'rxjs';
+import { HttpService } from '../../../services/http.service';
+
+@Component({
+  selector: 'app-settings-timesheet-locking-tabs',
+  imports: [CommonModule, RouterModule],
+  templateUrl: './settings-timesheet-locking-tabs.component.html',
+  styleUrl: './settings-timesheet-locking-tabs.component.scss'
+})
+export class SettingsTimesheetLockingTabsComponent {
+  subscription!: Subscription;
+  allHolidaysPending: any[] = [];
+  allHolidaysPublished: any[] = [];
+  pendingcount = 0;
+  publishedcount = 0;
+  page = 1;
+  pageSize = 10;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  public navLinks: any[] = [];
+  allLinks = [
+    {
+      label: 'Pending For Submission',
+      route: '/settings/timesheet-locking-configuration/pending-for-submission',
+      permission: { feature: 'Timesheet Locking Pending Tab', action: 'view' }, count: 0
+    },
+    {
+      label: 'Published',
+      route: '/settings/timesheet-locking-configuration/published',
+      // ensure this feature string matches permission-route.constants.ts
+      permission: { feature: 'Timesheet Locking Published Tab', action: 'view' }, count: 0
+    }
+  ];
+  constructor(
+    public router: Router,
+    private http: HttpService,
+    public rbac: RbacService
+  ) { }
+
+  ngOnInit() {
+    this.http.refresh$.subscribe(() => {
+      this.getAttendanceLocks(this.page, this.pageSize);
+    });
+
+    this.filterbyRbac();
+  }
+
+  filterbyRbac(): void {
+    // Filter links based on permission
+    this.navLinks = this.allLinks.filter(
+      (link) =>
+        link.permission &&
+        link.permission.feature &&
+        link.permission.action &&
+        this.rbac.allowedToAccess(
+          `${link.permission.feature}.${link.permission.action}`
+        )
+    );
+    // Redirect to first allowed tab if at base or unauthorized route
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/timesheet-locking-configuration';
+
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+    // Check if current URL is allowed
+    const isAllowed = this.navLinks.some((link) =>
+      currentUrl.startsWith(link.route)
+    );
+    // If not allowed, redirect to first allowed tab
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
+  }
+  searchText = '';
+  dataLoad: any;
+  getAttendanceLocks(pagenum: number, pagesize: number, year?: number) {
+    const categoryIds = '30';
+    const params: any = {
+      pageNumber: pagenum,
+      pageSize: pagesize,
+      categoryIds: categoryIds,
+    };
+    // if (this.searchText) {
+    //   params.search = this.searchText;
+    // }
+
+    // if (year) {
+    //   params.year = year;
+    // }
+
+    this.dataLoad = true;
+    const queryString = `?pageNumber=${params.pageNumber}&pageSize=${params.pageSize}&categoryIds=${encodeURIComponent(params.categoryIds)}`;
+    this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$)).subscribe({
+        next: (data: any) => {
+          this.pendingcount = data.statusCounts?.PendingforSubmission || 0;
+          this.publishedcount = data.statusCounts?.Published || 0;
+
+          this.navLinks = this.navLinks.map(link => {
+            if (link.label === 'Pending For Submission') {
+              return { ...link, count: this.pendingcount || 0 };
+            } else if (link.label === 'Published') {
+              return { ...link, count: this.publishedcount || 0 };
+            }
+            return link;
+          });
+        },
+        error: () => {
+          this.dataLoad = false;
+        },
+        complete: () => {
+          this.dataLoad = false;
+        }
+      });
+  }
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+}

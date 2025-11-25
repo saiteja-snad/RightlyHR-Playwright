@@ -8,6 +8,8 @@ import { SettingsOverviewComponent } from "../../settings/settings-overview/sett
 import { authGuard } from "../../auth/auth-guard/auth.guard";
 import { ProjectManagementConfigLayoutComponent } from "../../settings/project-management-configurations/project-management-config-layout/project-management-config-layout.component";
 import { AttendanceLockLayoutComponent } from "../../settings/attendance-configurations/attendance-lock-layout/attendance-lock-layout.component";
+import { ItConfigurationLayoutComponent } from "../../settings/it-configuration/it-configuration-layout/it-configuration-layout.component";
+import { TimesheetLockLayoutComponent } from "../../settings/timesheet-locking-configuration/timesheet-lock-layout/timesheet-lock-layout.component";
 
 export default [
     { path: '', redirectTo: '/settings/overview', pathMatch: 'full' },
@@ -19,4 +21,6 @@ export default [
     { path: 'assets-configuration', component: AssetConfigurationLayOutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/assets-configurations/assets-configuration.router') },
     { path: 'project-management-config', component: ProjectManagementConfigLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/project-management-configurations/project-management.route')},
     { path: 'attendance-configuration', component: AttendanceLockLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/attendance-configurations/attendance-configuration.route')   },
+    { path: 'it-configuration', component: ItConfigurationLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/it-configuration/it-configuration.router')   },
+    { path: 'timesheet-locking-configuration', component: TimesheetLockLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/timesheet-locking-configuration/timesheet-lock-configuration.route')   },
 ] as Route[];

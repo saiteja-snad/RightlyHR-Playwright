@@ -64,6 +64,7 @@ isLoading = false;
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedLeaveStatus: any;
 
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
     private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
@@ -81,13 +82,41 @@ isLoading = false;
       trcomments: ['', Validators.required],
       rejectedReason: ['', Validators.required]
     });
+    this.rejectForm.get('trcomments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; 
+      this.selectedContractData.trcomments = null;
+       this.selectedContractData.rejectedReason = null;// remove chip highlight if cleared
+    }
+     });
     this.rejectForm.valueChanges.subscribe((val) => {
       this.selectedContractData.extenddate = val.extenddate;
       this.selectedContractData.trcomments = val.trcomments;
       this.selectedContractData.rejectedReason = val.rejectedReason;
     });
   }
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+    this.selectedContractData.trcomments = null;
+    this.selectedContractData.rejectedReason = null;
+  }
+}
+ onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+     this.selectedContractData.trcomments = 'Approved';
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedContractData.rejectedReason = 'Rejected';
+    }
+  }
   blockLeadingSpace(event: Event, value: string) {
     const inputElement = event.target as HTMLTextAreaElement;
     if (inputElement.value.startsWith(' ')) {

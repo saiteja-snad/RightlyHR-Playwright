@@ -129,6 +129,12 @@
         </div>
 
       </div>
+         <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+            <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+              (click)="onStatusApproveSelect('approved')">
+              Approved
+            </button>
+          </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
           translate}}</button>
@@ -159,6 +165,12 @@
         <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
 
       </div>
+         <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button"class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
           translate}}</button>

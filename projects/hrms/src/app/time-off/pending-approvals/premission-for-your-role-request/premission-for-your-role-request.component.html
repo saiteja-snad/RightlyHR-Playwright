@@ -155,6 +155,51 @@
                         characters</div>
                 </div>
             </div>
+            <ng-template #approval let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to proceed with the approval?' | translate}}</p>
+        </div>
+        <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
+            <div class="custom-main-popup-content">
+                <label for="comments" class="form-label custom-label mb-2">{{'Approver Comments' | translate}}<span
+                        class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="comments" placeholder="Please provide approver comments"
+                    formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                <!-- Character counter -->
+                <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
+                <div class="error-msg"
+                    *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed 250
+                        characters</div>
+                </div>
+            </div>
+             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
+                    (click)="onStatusApproveSelect('approved')">
+                    Approved
+                </button>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...' | translate}}</span>
+                    </div>
+                    }@else {
+                    <span>{{'Approve'| translate }}</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
@@ -193,6 +238,12 @@
                     <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reject Reason cannot exceed 250 characters
                     </div>
                 </div>
+            </div>
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
+                    (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel' |

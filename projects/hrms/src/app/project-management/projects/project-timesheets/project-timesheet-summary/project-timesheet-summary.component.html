@@ -1,9 +1,9 @@
 <div class="custom-main-component-container time-sheet-summary-container">
     <div class="row">
-        <div class="col-lg-7 mb-3">
+        <div class="col-xxl-8 col-xl-6 mb-3">
             @if (!resourceSummaryLoader) {
             <div class="time-sheet-graph-card">
-                <div class="summary-header d-flex gap-2 mb-2">
+                <div class="summary-header d-flex flex-nowrap gap-2 mb-2">
                     <div>Resource Summary</div>
                     <div>
                         <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
@@ -19,23 +19,23 @@
                             <th>{{'Phase/Milestone'|translate}}</th>
                             <th>{{'Resource Name'|translate}}</th>
                             <th>{{'Role'|translate}}</th>
-                            <th>{{'Hours Utilized'|translate}}</th>
-                            <th>{{'total Hours'|translate}}</th>
-                            <th>{{'Utilization (%)'|translate}}</th>
+                            <th class="text-center">{{'Hours Utilized'|translate}}</th>
+                            <th class="text-center">{{'total Hours'|translate}}</th>
+                            <th class="text-center">{{'Utilization (%)'|translate}}</th>
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectResourceSummaryData">
-                                 <td>{{roles?.phase || "-"}}</td>
+                                <td>{{roles?.phase || "-"}}</td>
                                 <td>{{roles?.employeeName}}</td>
                                 <td>{{roles?.projectRole}}</td>
-                                <td>
+                                <td class="text-center">
                                     <div class="progress-wrapper">
                                         <div class="progress-bar" [ngStyle]="{width: roles?.utilizationPercent + '%', 
                                             backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
                                     </div>
                                 </td>
-                                <td><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
-                                <td class="logged-hrs">{{roles.utilizationPercent}} %</td>
+                                <td class="text-center"><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
+                                <td class="logged-hrs text-center">{{roles.utilizationPercent}} %</td>
                             </tr>
                         </tbody>
                     </table>
@@ -53,7 +53,7 @@
             }
         </div>
 
-        <div class="col-lg-5 mb-3">
+        <div class="col-xxl-4 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project Completion Rate</div>
@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <div class="col-lg-5 mb-3">
+        <div class="col-xxl-5 col-xl-6 mb-3">
             @if (!roleWiseHoursLoader) {
             <div class="time-sheet-graph-card">
                 <div class="summary-header d-flex gap-2 mb-2">
@@ -102,15 +102,15 @@
 
                         <div class="legends-view">
                             <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     <div class="d-flex align-items-center gap-1">
                                         <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                         <div class="legend-name">{{ item.name }}</div>
                                     </div>
                                 </div>
-                                <div class="hrs-display text-nowrap col-md-4">
+                                <div class="hrs-display col-md-5">
                                     <span class="actual">{{item.actualHours}}</span>/
-                                    <span>{{item.allocateHours}} hrs</span>
+                                    <span>{{item.allocateHours}} Hrs</span>
                                 </div>
                             </div>
                         </div>
@@ -125,10 +125,10 @@
             }
         </div>
 
-        <div class="col-lg-7 mb-3">
+        <div class="col-xxl-7 col-xl-6 mb-3">
             @if (!estimatedvsActualHoursLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Estimated vs Actual Hours</div>
                         <div>
@@ -162,10 +162,10 @@
             }
         </div>
 
-        <div class="col-lg-6 mb-3">
+        <div class="col-xxl-6 col-xl-6 mb-3">
             @if (!billablevsNonBillableHoursLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Billable vs Non-Billable Hours</div>
                         <div>
@@ -197,10 +197,10 @@
             }
         </div>
 
-        <div class="col-lg-6 mb-3">
+        <div class="col-xxl-6 col-xl-6 mb-3">
             @if (!projectBurndownLoader) {
             <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Project Burndown Chart</div>
                         <div>

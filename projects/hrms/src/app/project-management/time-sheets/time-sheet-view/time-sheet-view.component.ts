@@ -77,7 +77,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
-
+   @ViewChild('errormodal') errormodal!: TemplateRef<any>;
+   @ViewChild('addtask') addtask!: TemplateRef<any>;
+   errorOccurred = false; 
+  errormodaldata: any;
+    lockMessages: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
@@ -90,7 +94,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({projects: this.fb.array([])});
     this.getResourceDetailsByManagerId();
-    this.getResourceData()
+    this.getResourceData();
+    this.getTimesheetLocks();
     this.getJobDetails()
     this.getTeamManagersDetails();
     this.getAllEmployeeDetails();
@@ -107,7 +112,159 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const m = Math.floor((seconds % 3600) / 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
+  TimesheetLockData: any;
+  getTimesheetLocks() {
+    const categoryIds = '30';
+    const params: any = {};
+    if (categoryIds) {
+      params.categoryId = categoryIds;
+    }
+    const queryString = `?categoryIds=${encodeURIComponent(params.categoryId)}`;
+    this.http.getpagentiontData(`AttendanceLockConfigurations/getall${queryString}`, '').pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.TimesheetLockData = response.items;
+          this.checkTimesheetLock(this.TimesheetLockData);
+        },
+        error: (err: any) => {
+        },
+        complete: () => {
+        }
+      });
+  }
+  lockMessage: string | null = null;
+  lockextendMessage:string | null = null;
 
+ checkTimesheetLock(apiResponse: any, selectedStart?: Date, selectedEnd?: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Default to the component's current week if not provided; otherwise fall back to current month range
+  if (!selectedStart || !selectedEnd) {
+    if (this.start && this.end) {
+      selectedStart = new Date(this.start);
+      selectedEnd = new Date(this.end);
+    } else {
+      selectedStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      selectedEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    }
+  }
+
+  // Normalize incoming dates
+  selectedStart.setHours(0, 0, 0, 0);
+  selectedEnd.setHours(0, 0, 0, 0);
+
+  this.lockMessages = [];
+
+  if (!apiResponse || apiResponse.length === 0) return;
+
+  // Filter only records where end >= selectedStart (period not fully past)
+  const relevantRecords = apiResponse.filter((item: any) => {
+    const end = new Date(item.endDate);
+    end.setHours(0, 0, 0, 0);
+    return end >= selectedStart!;
+  });
+
+  // Sort by start date
+  relevantRecords.sort((a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+  relevantRecords.forEach((item: any) => {
+    const start = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    const effective = new Date(item.effectiveDate);
+
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    effective.setHours(0, 0, 0, 0);
+
+    // Only show if overlaps selected week
+    if (selectedEnd! < start || selectedStart! > end) return;
+
+    const startStr = start.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const endStr = end.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const effStr = effective.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+    if (effective > today) {
+      // Future effective date
+      this.lockMessages.push({
+        type: 'upcoming',
+        text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+      });
+    } else if (effective < today) {
+      // Past effective date
+      this.lockMessages.push({
+        type: 'locked',
+        text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. Please contact HR/Admin for assistance.`
+      });
+    } else if (effective.getTime() === today.getTime()) {
+      // Effective today
+      this.lockMessages.push({
+        type: 'locked-today',
+        text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. Please contact HR/Admin for assistance.`
+      });
+    }
+  });
+
+  console.log(this.lockMessages);
+}
+  checkTimesheetLockByMonth(selectedStart: Date, selectedEnd: Date) {
+    const lockedItems = this.TimesheetLockData || [];
+    this.lockMessages = []; //  reset array each time
+    const today = new Date();
+
+    // Sort locks for consistent order
+    const sortedLocks = lockedItems.sort(
+      (a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
+
+    sortedLocks.forEach((item: any) => {
+      const lockStart = new Date(item.startDate);
+      const lockEnd = new Date(item.endDate);
+      const effective = new Date(item.effectiveDate);
+
+      // check overlap between selected date range and locked range
+      const overlaps =
+        (selectedStart <= lockEnd && selectedEnd >= lockStart) ||
+        (selectedStart >= lockStart && selectedStart <= lockEnd);
+
+      if (overlaps) {
+        const startStr = lockStart.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        });
+        const endStr = lockEnd.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        });
+        const effStr = effective.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric'
+        });
+
+        if (effective >= today) {
+          //  Future or current effective date
+          this.lockMessages.push({
+            type: 'upcoming',
+            text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. 
+                 Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
+          });
+        } else {
+          // Past effective date (already locked)
+          this.lockMessages.push({
+            type: 'locked',
+            text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. 
+                 Please contact HR/Admin for assistance.`
+          });
+        }
+      }
+    });
+
+    // Optional: If you still want combined HTML message string for modal usage
+    this.errormodaldata = this.lockMessages.length > 0 ? this.lockMessages.map((m: { text: any; }) => m.text).join('<br><br>') : '';
+  }
   createDayEntry(day?: any, entryDate?: any, isProjectSelected: boolean = false): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
@@ -134,7 +291,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         r.client?.clientId === day?.clientId &&
         r?.phase?.phaseId === (day?.phaseId ? day.phaseId : null
     ));
-     
     const resourcestartdate = matchedResource?.startDate ? new Date(matchedResource.startDate) : null;
     const resourceenddate = matchedResource?.endDate ? new Date(matchedResource.endDate) : null;
     // const resourceenddate = matchedResource?.endDate
@@ -157,7 +313,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
       const resourceEndValid = resourceenddate && entryDateObj
         ? entryDateObj.getTime() <= resourceenddate.getTime() : true;
-
       // Check phase date range if phase exists
       let phaseDateValid = true;
       if (matchedResource.phase && entryDateObj) {
@@ -179,8 +334,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
-      isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && 
+    (this.employeeId === this.empdata?.employeeId) ? isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
     const billablecheck = !!(matchedResource?.billable || this.selectedProjectResource?.billable);
     const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
@@ -205,7 +360,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }],
       endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }],
       duration: durationControl,
-      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
+      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable },[Validators.required]],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
       isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
@@ -229,6 +384,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.date = [this.start, this.end];
     // Update the week range visually / in state
     this.setWeekRange(monday, sunday);
+    this.checkTimesheetLockByMonth(monday.toDate(), sunday.toDate()); // 🔹 check locks by mont
     // Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
     this.loadTimeSheetByResource(formattedStart);
@@ -392,9 +548,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           // No filter
           this.getEmployeeInfo = response.map((employee: any) => ({
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           }));
         }
       },
@@ -403,11 +558,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
-
     if (!project || !project.days) return [];
-
-    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' || day.approvalStatus?.toLowerCase() === 'not entered') &&
-      !!day.entryId).map((day: any) => day.entryId);
+    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' || day.approvalStatus?.toLowerCase() === 'not entered') 
+    && !!day.entryId).map((day: any) => day.entryId);
   }
 
   openModalforsubmit(content: any) {
@@ -478,6 +631,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakstartdate = this.start;
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
+      this.checkTimesheetLockByMonth(prevStart.toDate(), prevEnd.toDate()); //
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -493,6 +647,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakstartdate = this.start;
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
+      this.checkTimesheetLockByMonth(nextStart.toDate(), nextEnd.toDate()); 
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.loadTimeSheetByResource(formattedStart);
     }
@@ -734,7 +889,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private isDeleteModalOpen = false;
   private userClickedNo = false;
   private isModalOpen = false;
-  private autoSaveTimeout: any = null;
+  private autoSaveTimeouts = new Map<string, any>();
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -763,7 +918,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //TIME ENTERIY FOR TABLE
-  formatTime(event: any, dayName: string, rowIndex: number, duration: string) {
+  formatTime(event: any, dayName: string, rowIndex: number, duration: string,dayFormNew: AbstractControl | null) {
+    // project.get('sun')
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
@@ -779,16 +935,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
     // Auto-save only on blur to prevent duplicate calls
     if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
-      // Clear any existing timeout
-      if (this.autoSaveTimeout) {
-        clearTimeout(this.autoSaveTimeout);
+      const timeoutKey = `${rowIndex}-${dayName}`;
+      // Clear any existing timeout for this specific field
+      if (this.autoSaveTimeouts.has(timeoutKey)) {
+        clearTimeout(this.autoSaveTimeouts.get(timeoutKey));
       }
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         // Add small delay to prevent rapid successive calls
-        this.autoSaveTimeout = setTimeout(() => {
-          this.autoSaveTableEntry(rowIndex, dayName);
+        const timeout = setTimeout(() => {
+          this.openModal(this.addtask,dayFormNew,rowIndex,dayName);
+          // this.autoSaveTableEntry(rowIndex, dayName,dayFormNew);
+          // this.autoSaveTimeouts.delete(timeoutKey);
         }, 300);
+        this.autoSaveTimeouts.set(timeoutKey, timeout);
       }
     }
     // Reset userClickedNo flag after processing
@@ -798,53 +958,67 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //AUTO SAVE TABLE ENTRY
-  autoSaveTableEntry(rowIndex: number, dayName: string) {
-    const projectForm = this.projects.at(rowIndex);
-    const dayForm = projectForm.get(dayName) as FormGroup;
-    if (!dayForm || !dayForm.get('duration')?.value) return;
-    const formValue = dayForm.value;
-    const projectValue = projectForm.value;
-    // Get the correct date based on dayName
-    const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
-    const entryDate = this.weekDates && this.weekDates[dayIndex]
-      ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
-      : moment().format('YYYY-MM-DD');
-    // Determine billable status
-    const selectedResource = this.resourcesArrayList.find(
-      (res: any) => res.project?.projectId === formValue.projectId &&
-        res.client?.clientId === formValue.clientId &&
-        res.phase?.phaseId === formValue.phaseId
-    );
-    const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
-    const payload = {
-      entryId: formValue.entryId || null,
-      employeeId: this.employeeId || null,
-      entryDate: entryDate,
-      startTime: formValue.startTime || null,
-      endTime: formValue.endTime || null,
-      description: formValue.description || null,
-      approvalStatus: 'draft',
-      clientId: projectValue.selectedProject?.clientId || null,
-      projectId: projectValue.selectedProject?.projectId || null,
-      phaseId: projectValue.selectedProject?.phaseId || null,
-      timesheetId: this.timesheetdata?.timesheetId || null,
-      isOverride: formValue.isBlocked || false,
-      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: isBillable
-    };
-    this.http.postdata('Timesheet/save-or-update', payload).subscribe({
-      next: (res) => {
-        this.conformationPopup.openSuccessModal('Time Entry Draft successfully');
-        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-      },
-      error: (err) => {
-        console.error('Auto-save failed', err);
-        this.conformationPopup.openErrorModal(err.error.message);
-        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-      },
-    });
-  }
+  // autoSaveTableEntry(rowIndex: number, dayName: string,dayFormNew: AbstractControl | null) {
+  //   const projectForm = this.projects.at(rowIndex);
+  //   const dayForm = projectForm.get(dayName) as FormGroup;
+  //   if (!dayForm || !dayForm.get('duration')?.value) return;
+  //   const formValue = dayForm.value;
+  //   const projectValue = projectForm.value;
+  //   // Get the correct date based on dayName
+  //   const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
+  //   const entryDate = this.weekDates && this.weekDates[dayIndex]
+  //     ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
+  //     : moment().format('YYYY-MM-DD');
+  //   // Determine billable status
+  //   const selectedResource = this.resourcesArrayList.find(
+  //     (res: any) => res.project?.projectId === formValue.projectId &&
+  //       res.client?.clientId === formValue.clientId &&
+  //       res.phase?.phaseId === formValue.phaseId
+  //   );
+  //   const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
+  //   const payload = {
+  //     entryId: formValue.entryId || null,
+  //     employeeId: this.employeeId || null,
+  //     entryDate: entryDate,
+  //     startTime: formValue.startTime || null,
+  //     endTime: formValue.endTime || null,
+  //     description: formValue.description || null,
+  //     approvalStatus: 'draft',
+  //     clientId: projectValue.selectedProject?.clientId || null,
+  //     projectId: projectValue.selectedProject?.projectId || null,
+  //     phaseId: projectValue.selectedProject?.phaseId || null,
+  //     timesheetId: this.timesheetdata?.timesheetId || null,
+  //     isOverride: formValue.isBlocked || false,
+  //     totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+  //     isBillable: isBillable,
+  //      moduleId: 30,
+  //   };
+  //   this.http.postdata('Timesheet/save-or-update', payload).subscribe({
+  //     next: (res) => {
+  //       this.conformationPopup.openSuccessModal('Time Entry Draft successfully');
+  //       this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+  //         setTimeout(() => {
+        
+  //       }, 3000);
+  //       // this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+      
+  //     },
+  //     error: (err) => {
+  //       console.error('Auto-save failed', err);
+  //       // this.conformationPopup.openErrorModal(err.error.message);
+  //       this.errormodaldata = err.error.message;
+  //       const modalRef = this.modalService.open(this.errormodal, { centered: true });
+  //       // Auto close the error modal after 3 seconds
+  //       setTimeout(() => {
+  //         modalRef.close();
+  //       }, 3000);
+  //       this.errorOccurred = true;
+  //       dayForm.reset();
+  //       // this.conformationPopup.openErrorModal(err.error.message);
+  //       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+  //     },
+  //   });
+  // }
 
   //TIME FORMAT FOR MODAL
   formatModalTime(event: any) {
@@ -940,39 +1114,32 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getFilteredClientsForRow(project: AbstractControl): any[] {
     const term = (project.get('searchTerm')?.value || '').trim().toLowerCase();
     if (!term) return this.clients;
-
     return this.clients.map((client) => {
-        // If client name matches
-        if (client.clientName.toLowerCase().includes(term)) {
-          return client;
+      // If client name matches
+      if (client.clientName.toLowerCase().includes(term)) {
+        return client;
+      }
+      // Filter projects inside client
+      const filteredProjects = client.projects.map((proj: any) => {
+        // If project name matches
+        if (proj.projectName.toLowerCase().includes(term)) {
+          return proj;
         }
-
-        // Filter projects inside client
-        const filteredProjects = client.projects.map((proj: any) => {
-            // If project name matches
-            if (proj.projectName.toLowerCase().includes(term)) {
-              return proj;
-            }
-
-            // Otherwise filter by phase name
-            const filteredPhases = proj.phases?.filter((ph: any) =>
-              ph.phaseName?.toLowerCase().includes(term)
-            );
-
-            if (filteredPhases && filteredPhases.length > 0) {
-              return { ...proj, phases: filteredPhases };
-            }
-
-            return null;
-          })
-          .filter((p: any) => p !== null);
-
-        if (filteredProjects.length > 0) {
-          return { ...client, projects: filteredProjects };
+        // Otherwise filter by phase name
+        const filteredPhases = proj.phases?.filter((ph: any) =>
+          ph.phaseName?.toLowerCase().includes(term)
+        );
+        if (filteredPhases && filteredPhases.length > 0) {
+          return { ...proj, phases: filteredPhases };
         }
-
         return null;
-      })
+      }).filter((p: any) => p !== null);
+      if (filteredProjects.length > 0) {
+        return { ...client, projects: filteredProjects };
+      }
+
+      return null;
+    })
       .filter((c: any) => c && c.projects.length > 0);
   }
 
@@ -1415,7 +1582,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: formValue.isBillable || false
+      isBillable: formValue.isBillable || false,
+       moduleId: 30,
     };
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -1494,6 +1662,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: formValue.timesheetId || this.timesheetdata.timesheetId,
       weekStart: this.formattedweakendStart,
       employeeId: this.employeeId,
+      moduleId: 30,
       entries,
     };
   }
@@ -1520,7 +1689,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
-        this.conformationPopup.openSuccessModal(err.error.message);
+       // this.conformationPopup.openSuccessModal(err.error.message);
+         this.errormodaldata = err.error.message;
+        // this.modalService.open(this.errormodal,{ centered: true });
+          const modalRef = this.modalService.open(this.errormodal, { centered: true });
+         // Auto close the error modal after 3 seconds
+          setTimeout(() => {
+            modalRef.close();
+          }, 3000);
       },
     });
   }
@@ -1572,12 +1748,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  
   // Check if any of the fields in the day form are filled
   isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const duration = form.get('duration')?.value;
-    return !!duration; // Only checks duration now
+    const { description, duration,  } = form.value;
+    return !!(description && duration );
   }
-
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
     const status = control?.getRawValue()?.approvalStatus;

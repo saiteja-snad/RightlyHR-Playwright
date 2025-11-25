@@ -11,13 +11,11 @@
         }
     </div>
 
-    <div class="skill-container">
+    <!-- <div class="skill-container">
         @if (!spinnerLoaderforallrecoders) {
         @if (technicalSkills.length || softSkills.length) {
-        <!-- ===== TECHNICAL SKILLS ===== -->
         <div class="skills-group" *ngIf="technicalSkills.length">
-            <div class="skill-section-title mb-3"><img src="/icons/technical-skills-icon.png" alt="Skills-icon" class="skill-icon me-1"> Technical Skills</div>
-            <!-- Expert -->
+            <div class="skill-section-title mb-3"><img src="/icons/technical-skills-icon.png" alt="Skills-icon" class="skill-icon me-1">Technical Skills</div>
             <div *ngIf="getSkillsByLevel('Expert', technicalSkills).length" class="mb-4">
                 <label class="custom-label chip expert mb-2">Expert</label>
                 <div class="skill-set-display-card">
@@ -35,7 +33,6 @@
                 </div>
             </div>
 
-            <!-- Intermediate -->
             <div *ngIf="getSkillsByLevel('Intermediate', technicalSkills).length" class="mb-4">
                 <label class="custom-label chip intermediate mb-2">Intermediate</label>
                 <div class="skill-set-display-card">
@@ -54,7 +51,6 @@
                 </div>
             </div>
 
-            <!-- Beginner -->
             <div *ngIf="getSkillsByLevel('Beginner', technicalSkills).length" class="mb-4">
                 <label class="custom-label chip beginner mb-2">Beginner</label>
                 <div class="skill-set-display-card">
@@ -76,11 +72,9 @@
 
         <div *ngIf="softSkills.length" class="dashed-border my-3"></div>
 
-        <!-- ===== SOFT SKILLS ===== -->
         <div class="skills-group mt-2" *ngIf="softSkills.length">
-            <div class="skill-section-title mb-3"><img src="/icons/soft-skills-icon.png" alt="Skills-icon" class="skill-icon me-1">  Soft Skills</div>
+            <div class="skill-section-title mb-3"><img src="/icons/soft-skills-icon.png" alt="Skills-icon" class="skill-icon me-1">Soft Skills</div>
 
-            <!-- Expert -->
             <div *ngIf="getSkillsByLevel('Expert', softSkills).length" class="mb-4">
                 <label class="custom-label chip expert mb-2">Expert</label>
                 <div class="skill-set-display-card">
@@ -98,7 +92,6 @@
                 </div>
             </div>
 
-            <!-- Intermediate -->
             <div *ngIf="getSkillsByLevel('Intermediate', softSkills).length" class="mb-4">
                 <label class="custom-label chip intermediate mb-2">Intermediate</label>
                 <div class="skill-set-display-card">
@@ -117,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Beginner -->
             <div *ngIf="getSkillsByLevel('Beginner', softSkills).length" class="mb-4">
                 <label class="custom-label chip beginner mb-2">Beginner</label>
                 <div class="skill-set-display-card">
@@ -142,6 +134,90 @@
         <app-data-loader-content />
         }
     </div>
+</div> -->
+
+<div class="skill-container">
+    @if (!spinnerLoaderforallrecoders) {
+        @if (skillCategories.length) {
+            <!-- LOOP OVER DYNAMIC CATEGORIES -->
+           <div class="skills-group" *ngFor="let group of skillCategories; let i = index; let last = last">
+
+                <!-- Category Title + Dynamic Icon -->
+                <div class="skill-section-title mb-3">
+                    <img [src]="group.icon" alt="cat-icon" class="skill-icon me-1">
+                    {{ group.category }}
+                </div>
+
+                <!-- EXPERT -->
+                <div *ngIf="getSkillsByLevel('Expert', group.skills).length" class="mb-4">
+                    <label class="custom-label chip expert mb-2">Expert</label>
+                    <div class="skill-set-display-card">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div *ngFor="let skill of getSkillsByLevel('Expert', group.skills)" class="custom-chip-card">
+                                <div class="me-2">{{ skill.skillName }}</div>
+
+                                @if (canAccess('delete', 'myskills')) {
+                                <div>
+                                    <img class="custom-delete-img"
+                                         src="/icons/cross-chip.png"
+                                         (click)="openDeletePopup(deletepopup, skill, $event)">
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INTERMEDIATE -->
+                <div *ngIf="getSkillsByLevel('Intermediate', group.skills).length" class="mb-4">
+                    <label class="custom-label chip intermediate mb-2">Intermediate</label>
+                    <div class="skill-set-display-card">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div *ngFor="let skill of getSkillsByLevel('Intermediate', group.skills)"
+                                 class="custom-chip-card">
+                                <div class="me-2">{{ skill.skillName }}</div>
+                                @if (canAccess('delete', 'myskills')) {
+                                <div>
+                                    <img class="custom-delete-img"
+                                         src="/icons/cross-chip.png"
+                                         (click)="openDeletePopup(deletepopup, skill, $event)">
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BEGINNER -->
+                <div *ngIf="getSkillsByLevel('Beginner', group.skills).length" class="mb-4">
+                    <label class="custom-label chip beginner mb-2">Beginner</label>
+                    <div class="skill-set-display-card">
+                        <div class="d-flex flex-wrap gap-2">
+                            <div *ngFor="let skill of getSkillsByLevel('Beginner', group.skills)"
+                                 class="custom-chip-card">
+                                <div class="me-2">{{ skill.skillName }}</div>
+                                @if (canAccess('delete', 'myskills')) {
+                                <div>
+                                    <img class="custom-delete-img"
+                                         src="/icons/cross-chip.png"
+                                         (click)="openDeletePopup(deletepopup, skill, $event)">
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashed-border my-3" *ngIf="!last"></div>
+
+            </div>
+
+        } @else {
+            <app-no-data-found />
+        }
+    } @else {
+        <app-data-loader-content />
+    }
 </div>
 
 <!--Add New Skill-->
@@ -172,7 +248,9 @@
                 <!-- Skills Field -->
                 <div class="mb-3">
                     <label for="skills" class="form-label custom-label mb-2">{{'Skill(s)'}}
-                        <span class="error-msg">*</span></label>
+                        <span class="error-msg">*</span>
+                    </label>
+                
                     <div class="custom-input d-flex flex-wrap custom-chip-input" (click)="skillInput.focus()">
                         <div class="d-flex flex-wrap gap-2">
                             <div *ngFor="let skill of AddForm.get('skills')?.value"
@@ -185,13 +263,14 @@
                         </div>
                         <!-- Input field for new skills -->
                         <input #skillInput type="text" class="border-0 flex-grow-1 inside-input" maxlength="41"
-                            (keydown)="formValidation.restrictInitialSpace($event)"
+                            (keydown)="formValidation.restrictInitialSpace($event)" (input)="onSkillInput($event)"
                             [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Please type a skill and press enter to add'"
                             (blur)="onSkillBlur()" (keydown.enter)="addSkill($event)" />
                     </div>
                     <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">At least one skill is required.</div>
+                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">At least one skill is required</div>
                         <div *ngIf="AddForm.get('skills')?.errors?.['maxCharacters']">Invalid Skill</div>
+                        <div *ngIf="AddForm.get('skills')?.errors?.['pendingSkill']">Press enter after typing to add skil</div>            
                     </div>
                 </div>
 

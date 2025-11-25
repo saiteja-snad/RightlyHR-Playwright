@@ -78,11 +78,11 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
        this.getWFHBal();
-        this.http.tirggerCountSignal.update((status) => ({
-          ...status,
-          wfh: false,
-        }));
-        this.http.wfhTriggerSignal.set(false);
+        // this.http.tirggerCountSignal.update((status) => ({
+        //   ...status,
+        //   wfh: false,
+        // }));
+        // this.http.wfhTriggerSignal.set(false);
       } else {
         this.getWFHBal();
       }
@@ -498,11 +498,13 @@ wfhBalancesdetails=[] as any;
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal('Request submitted successfully');
           this.getWFHBal();
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            wfh: true,
-          }));
           this.http.wfhTriggerSignal.set(true);
+          // this.http.tirggerCountSignal.update((status) => ({
+          //   ...status,
+          //   wfh: true,
+          // }));
+      
+          this.getWorkfromhomeRequest(this.empinfo?.employeeId);
         },
         error: (err: any) => {
           this.spinnerLoader = false;

@@ -13,10 +13,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { ProjectDocumentsSideTabsComponent } from "../../../shared/project-management-tabs/project-documents-side-tabs/project-documents-side-tabs.component";
 @Component({
   selector: 'app-inactive-project-documents',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, DateformatPipe,
-    TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent],
+    TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent, ProjectDocumentsSideTabsComponent],
   templateUrl: './inactive-project-documents.component.html',
   styleUrl: './inactive-project-documents.component.scss'
 })
@@ -118,6 +119,7 @@ export class InactiveProjectDocumentsComponent {
       next: (res) => {
         this.getDocumentDetails(projectId);
         this.modalService.dismissAll();
+        this.http.setnewcountfornewdocumentscount()
         this.conformationPopup.openSuccessModal('Document restored successfully');
       },
       error: (err) => {

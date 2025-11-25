@@ -63,6 +63,7 @@ isLoading = false;
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedLeaveStatus: any;
 
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
     private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
@@ -73,7 +74,19 @@ isLoading = false;
   ngOnInit(): void {
     this.getAllPendingApprovals();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'approved') {   
+    this.selectedContractData.trcomments = 'Approved';
+  }
+}
 
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+    this.selectedContractData.rejectedReason = 'Rejected';
+    }
+  }
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
@@ -203,7 +216,12 @@ isLoading = false;
       },
     });
   }
-
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+  }
+}
   //function to send the rejected status and comments
   handleReject(f: NgForm) {
     let loggedInUser = this.authService.getToken();

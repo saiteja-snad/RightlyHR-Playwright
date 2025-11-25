@@ -34,7 +34,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
   ],
   templateUrl: './timesheets-resource-summary.component.html',
   styleUrl: './timesheets-resource-summary.component.scss',
-  encapsulation: ViewEncapsulation.None,
+ 
 })
 
 export class TimesheetsResourceSummaryComponent implements OnInit {

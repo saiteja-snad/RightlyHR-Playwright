@@ -317,7 +317,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
     
     if (this.selectedRoleIds.length > 0 && !isPopupCall) {
-      params.projectRoleIds = this.selectedRoleIds.join(',');
+      params.roleIds = this.selectedRoleIds.join(',');
     }
     if (this.selectedPhaseIds.length > 0 && !isPopupCall) {
       params.phaseIds = this.selectedPhaseIds.join(',');

@@ -317,9 +317,9 @@
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
             <div class="mb-3">
                 <label class="form-label custom-label filter-labels mb-3">{{'Select Date Range'| translate}}</label>
-                <div class="custom-date-range-picker w-100">
+                <div class="custom-date-range-picker w-100 ">
                     <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'" selectionMode="range"
-                        [showIcon]="true" [readonlyInput]="true" [appendTo]="'body'" />
+                        [showIcon]="true" [readonlyInput]="true"  />
                 </div>
             </div>
 

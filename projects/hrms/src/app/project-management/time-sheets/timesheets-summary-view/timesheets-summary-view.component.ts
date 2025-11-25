@@ -36,7 +36,7 @@ import { EncriptdecriptService } from '../../../services/encriptdecript.service'
     ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,MultiSelectModule],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
-  encapsulation: ViewEncapsulation.None
+  
 })
 
 export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {

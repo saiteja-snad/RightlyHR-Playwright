@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
@@ -21,7 +21,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ClientTimesheetDetailedComponent {
+export class ClientTimesheetDetailedComponent implements OnInit {
   projectDetails: any;
   resourceDetails: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -32,20 +32,45 @@ export class ClientTimesheetDetailedComponent {
   employeeName: any
   selectedEntries: any
   selectedProject: any
+  
+  private currentFilters: any = {};
+  
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const clientID = params['id'];
       if (clientID) {
-        this.getResourceDetails(clientID);
         this.clientId = clientID;
+        this.getResourceDetails(clientID);
       }
     });
 
+    this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe(request => {
+      if (request) {
+        this.currentFilters = request;
+        this.getResourceDetails(this.clientId, request);
+      }
+    });
   }
-  getResourceDetails(clientID: any): void {
+  getResourceDetails(clientID: any, filters?: any): void {
+    this.contentLoader = true;
     let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
+    
+    if (filters) {
+      if (filters.dateRange?.startDate && filters.dateRange?.endDate) {
+        url += `&startDate=${filters.dateRange.startDate}&endDate=${filters.dateRange.endDate}`;
+      }
+      if (filters.departmentIds?.length > 0) {
+        url += `&departmentIds=${filters.departmentIds.join(',')}`;
+      }
+      if (filters.roleIds?.length > 0) {
+        url += `&roleIds=${filters.roleIds.join(',')}`;
+      }
+      if (filters.phaseIds?.length > 0) {
+        url += `&phaseIds=${filters.phaseIds.join(',')}`;
+      }
+    }
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -53,7 +78,7 @@ export class ClientTimesheetDetailedComponent {
 
         this.projectDetails = rawProjects.map((item: any) => ({
           ...item,
-          groupedResources: item.project.resources   // ⬅ DIRECTLY USE BACKEND DATA
+          groupedResources: item.project.resources
         }));
 
         this.contentLoader = false;

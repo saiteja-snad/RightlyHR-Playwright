@@ -105,6 +105,7 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+    
     this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
       if (request) {
         if (request.resetPagination) {
@@ -112,9 +113,12 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
           this.first = 0;
         }
         this.resourceDataids = {
-          ...this.resourceDataids, // keep clientId & projectId from localStorage
-          employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
-          dateRange: request.dateRange
+          ...this.resourceDataids,
+          employeeId: request.resourceId || this.resourceDataids.employeeId,
+          dateRange: request.dateRange,
+          departmentIds: request.departmentIds,
+          roleIds: request.roleIds,
+          phaseIds: request.phaseIds
         };
          this.getProjectSummary();
       } else {
@@ -161,17 +165,22 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const { clientId, projectId, employeeId } = this.resourceDataids;
-    // Reset pagination if filters exist
-    // if (this.resourceDataids?.dateRange  && Object.keys(this.resourceDataids?.dateRange ).length > 0) {
-    //   var page  = 1;
-    //   var pagesize = 10; // or whatever your default size is
-    // }else{
+    const { clientId, projectId, employeeId, departmentIds, roleIds, phaseIds } = this.resourceDataids;
+    
     var page = this.page;
     var pagesize = this.pageSize;
-    // }
-    // Reset pagination if filters exist
-    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=${page}&pageSize=${pagesize}`;
+    
+    let url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=${page}&pageSize=${pagesize}`;
+    
+    if (departmentIds?.length > 0) {
+      url += `&departmentIds=${departmentIds.join(',')}`;
+    }
+    if (roleIds?.length > 0) {
+      url += `&roleIds=${roleIds.join(',')}`;
+    }
+    if (phaseIds?.length > 0) {
+      url += `&phaseIds=${phaseIds.join(',')}`;
+    }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -240,17 +249,26 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     this.allocatedVsActualLoader = true;
-    // const dateRange = this.resourceDataids?.dateRange || [];
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    // const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
-    // const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
-    // const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const { projectId, employeeId } = this.resourceDataids;
-    const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+    const { projectId, employeeId, departmentIds, roleIds, phaseIds } = this.resourceDataids;
+    
+    let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+    
+    if (departmentIds?.length > 0) {
+      url += `&departmentIds=${departmentIds.join(',')}`;
+    }
+    if (roleIds?.length > 0) {
+      url += `&roleIds=${roleIds.join(',')}`;
+    }
+    if (phaseIds?.length > 0) {
+      url += `&phaseIds=${phaseIds.join(',')}`;
+    }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        this.loading = false;
+        this.allocatedVsActualLoader = false;
         const chart = res?.data?.chart;
         if (!chart) {
           this.estimatedVsActualGraphData = { labels: [], datasets: [] };
@@ -283,7 +301,6 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
             legend: { display: false },
           }
         };
-        this.allocatedVsActualLoader = false;
       },
       error: (err) => {
         this.loading = false;
@@ -299,8 +316,19 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const { clientId, projectId, employeeId } = this.resourceDataids;
-    const url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=emp`;
+    const { clientId, projectId, employeeId, departmentIds, roleIds, phaseIds } = this.resourceDataids;
+    
+    let url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=emp`;
+    
+    if (departmentIds?.length > 0) {
+      url += `&departmentIds=${departmentIds.join(',')}`;
+    }
+    if (roleIds?.length > 0) {
+      url += `&roleIds=${roleIds.join(',')}`;
+    }
+    if (phaseIds?.length > 0) {
+      url += `&phaseIds=${phaseIds.join(',')}`;
+    }
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];

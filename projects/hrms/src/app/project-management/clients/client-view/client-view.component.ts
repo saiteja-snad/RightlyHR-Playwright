@@ -166,6 +166,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       this.loadPhases(this.resourceDataids.projectId);
     }
     this.loadResourceFilters();
+    this.loadPhases(this.clientid);
   }
 
   loadResourceFilters() {
@@ -247,12 +248,8 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   datepickerforsummaryview() {
     this.datepickerFormDataforsummary = this.fb.group({
-      dateRange: [null],
-      department: null,
-      roles: [[]],
-      phaseIds: [[]],
+      dateRange: [null]
     });
-    // detect when user selects date range
   }
   DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
@@ -306,14 +303,16 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-  loadPhases(projectId: number) {
-    if (!projectId) {
+  loadPhases(clientId?: number) {
+    if (!clientId && !this.clientid) {
       this.phasesList = [];
       return;
     }
 
+    const id = clientId || this.clientid;
     this.loading = true;
-    this.http.getData(`ProjectPhases/list?projectId=${projectId}`).subscribe({
+    const params = { clientId: id };
+    this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (res: any) => {
         this.phasesList = res?.data || [];
         this.loading = false;
@@ -416,13 +415,10 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   // initialization of form
   resetForm() {
     this.datepickerForm.reset();
-    //this.datepickerForm.get('projectId')?.disable();
-    //this.datepickerForm.get('resourceId')?.disable();
     this.selectedDepartmentIds = [];
-  this.selectedRoleIds = [];
-  this.selectedPhaseIds = [];
-    this.http.clearRequestclienttimesheet();
-    this.http.setRequestclienttimesheet(null);
+    this.selectedRoleIds = [];
+    this.selectedPhaseIds = [];
+    this.http.setRequest(null);
     this.setDefaultmounth();
   }
 
@@ -540,10 +536,22 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
-  isFilterAppliedforsummary(): boolean {
-    const formValue = this.datepickerFormDataforsummary?.value;
-    // Check if any field has value
-    return formValue?.dateRange && formValue?.dateRange?.length > 0;
+  isTimesheetFilterApplied(): boolean {
+    return (
+      (this.datepickerFormDataforsummary?.value?.dateRange?.length > 0) ||
+      this.selectedDepartmentIds.length > 0 ||
+      this.selectedRoleIds.length > 0 ||
+      this.selectedPhaseIds.length > 0
+    );
+  }
+
+  clearTimesheetFilters() {
+    this.datepickerFormDataforsummary.patchValue({ dateRange: null });
+    this.selectedDepartmentIds = [];
+    this.selectedRoleIds = [];
+    this.selectedPhaseIds = [];
+    this.http.clearRequestclienttimesheet();
+    this.http.setRequestclienttimesheet(null);
   }
   opencontactModal(content: any) {
     this.modalService.open(content, {
@@ -802,9 +810,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const request = {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerForm.value.resourceId,
+      departmentIds: this.selectedDepartmentIds.length > 0 ? this.selectedDepartmentIds : undefined,
+      roleIds: this.selectedRoleIds.length > 0 ? this.selectedRoleIds : undefined,
+      phaseIds: this.selectedPhaseIds.length > 0 ? this.selectedPhaseIds : undefined
     };
     this.http.setRequest({ ...request, resetPagination: true });
-    // Send `request` to API if needed
   }
 
   onSubmitforsummary() {

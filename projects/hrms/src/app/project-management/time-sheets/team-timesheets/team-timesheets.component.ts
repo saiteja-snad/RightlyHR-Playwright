@@ -158,7 +158,6 @@ export class TeamTimesheetsComponent {
     return formValue?.dateRange && formValue?.dateRange?.length > 0;
   }
 
-  showFilters: boolean = false;
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
@@ -181,7 +180,6 @@ export class TeamTimesheetsComponent {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
     });
-    // Reload original dropdown values
     if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
       this.getAllEmployeeDetails();
     } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
@@ -314,11 +312,10 @@ export class TeamTimesheetsComponent {
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
     const selectedIds = formValue.resourceId || [];
     const employeeIds = selectedIds.length > 0 ? selectedIds.join(',') : null;
-    // Reset pagination
     this.page = 1;
     this.first = 0;
-    // Call summary API with employeeIds
     this.getteamsummary(employeeIds);
+    this.closeCanvas();
   }
 
   getteamsummary(employeeIds?: string | null) {

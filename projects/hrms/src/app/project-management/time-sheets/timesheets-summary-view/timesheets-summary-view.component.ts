@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Subscription } from 'rxjs/internal/Subscription';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 import { IResourceDetail } from '../../../timesheetmodel';
-import { NgbModal, NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import dayjs from 'dayjs';
@@ -99,17 +99,15 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   projectDetails=[] as any;
   clientDetails=[] as any;
   departmentDetails=[] as any;
-  tmandRmDetails=[]as any;
   filterData={} as any;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService) { }
+    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getprojectData();
     this.getclientData();
     this.getdepartmentData();
-    this.getTmandRMData();
     this.updateModuleInfo()
     this.createDatepickerForm();
      this.route.queryParams.subscribe(params => {
@@ -118,9 +116,6 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       // console.log('Decrypted Data:', decrypted);
        const resoureID = decrypted?.resourceId;
        this.filterData=decrypted
-        if(this.filterData.clientId||this.filterData.projectId||this.filterData.departmentId||this.filterData.tmorrmId){
-        this.showFilters=true;
-       }
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
       }
@@ -193,31 +188,14 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       }
     });
   }
-  //get all TM and RM list
-  getTmandRMData(): void {
-    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
-      next: (res: any) => {
-        this.tmandRmDetails = [
-          ...res.map((emp: any) => ({
-            ...emp,
-            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
-              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-          })),
-        ];
-      },
-      error: (err) => {
-        console.error('Error fetching clients:', err);
-      }
-    });
-  }
+
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
       resourceId: [null],
       projectId: [null],
       clientId: [null],
-      departmentId: [null],
-      tmorrmId: [null]
+      departmentId: [null]
     });
   }
 
@@ -230,37 +208,29 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
 
   resetForm() {
-    this.http.clearTeamDateRange()
-    // Reset other form fields
-    this.datepickerForm?.get('resourceId')?.reset()
-    // Now manually set the default month range
-    // const defaultRange = this.setDefaultmounth();
-    this.updateModuleInfo()
-    this.createDatepickerForm();
-    this.route.queryParams.subscribe(params => {
-      if (params['data']) {
-      const decrypted = this.encryptionService.decrypt(params['data']);
-      // console.log('Decrypted Data:', decrypted);
-       const resoureID = decrypted?.resourceId;
-       this.filterData=decrypted
-       if(this.filterData){
-        this.showFilters=true;
-       }
-       if (resoureID) {
-        this.employeeId = parseInt(resoureID)
-        this.getProjectSummary(resoureID);
-        this.getEmployeeId(resoureID);
-      }
-      }
-      // const resoureID = params['id'];
-      
+    this.datepickerForm.reset({
+      resourceId: null,
+      dateRange: null,
+      projectId: null,
+      clientId: null,
+      departmentId: null
     });
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth]
     });
-    this.setDefaultmounth();
+    this.route.queryParams.subscribe(params => {
+      if (params['data']) {
+        const decrypted = this.encryptionService.decrypt(params['data']);
+        const resoureID = decrypted?.resourceId;
+        if (resoureID) {
+          this.employeeId = parseInt(resoureID);
+          this.getProjectSummary(resoureID);
+          this.getEmployeeId(resoureID);
+        }
+      }
+    });
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
@@ -282,8 +252,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
       resourceId: this.employeeId || null,
       projectId: this.filterData.projectId,
       clientId: this.filterData.clientId,
-      departmentId: this.filterData.departmentId,
-      tmorrmId: this.filterData.tmorrmId
+      departmentId: this.filterData.departmentId
     });
   }
 
@@ -362,13 +331,27 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
-    const satus = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+    const formdata = this.datepickerForm.value;
+    const clientId = formdata.clientId;
+    const projectId = formdata.projectId;
+    const departmentId = formdata.departmentId;
+    const reportingId = formdata.tmorrmId;
+    const statuses = 'Active, Trainee Active, Active Contract';
+    this.subscription = this.http.getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId, statuses).subscribe({
       next: (res: any) => {
-        this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
+        const employees = res.data || res || [];
+        if (Array.isArray(employees)) {
+          this.activeEmplist = employees.filter((emp: any) => emp.employeeId !== EmployeeId).map((emp: any) => ({
+            value: emp.employeeId,
+            label: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}` : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+          }));
+        } else {
+          this.activeEmplist = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching employees:', err);
+        this.activeEmplist = [];
       },
     });
   }
@@ -378,10 +361,10 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
 
   onSubmit() {
-    // Check if form is valid (optional)
-    const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId
+    const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
     this.getProjectSummary(resoureID);
     this.getEmployeeId(resoureID);
+    this.closeCanvas();
   }
 
   convertTimeToHours(time: string): number {
@@ -616,11 +599,12 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.destroy$.next(true);
     this.destroy$.complete();
     this.http.clearTeamDateRange();
-    this.showFilters=false;
   }
-   showFilters: boolean = false;
+  toggleFilters(content: any) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
 
-  toggleFilters() {
-    this.showFilters = !this.showFilters;
+  closeCanvas() {
+    this.offcanvasService.dismiss();
   }
 }

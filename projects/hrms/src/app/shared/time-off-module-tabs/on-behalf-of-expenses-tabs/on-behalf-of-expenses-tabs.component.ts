@@ -131,6 +131,18 @@ export class OnBehalfOfExpensesTabsComponent {
       }, error: (err: any) => {
         this.loading = false;
         this.expenesEmplyeedata.next([]);
+        // Ensure counts become 0
+        this.flitredapproved.next([]);
+        this.flitredpending.next([]);
+        this.processedExpenses.next([]);
+        this.flitredrejected.next([]);
+
+        this.ApprovedCount = 0;
+        this.pendingCount = 0;
+        this.processedCount = 0;
+        this.rejectedCount = 0;
+
+        this.updateNavTabs();
       },
       complete: () => {
         this.loading = false;

@@ -1060,6 +1060,40 @@ setClientTimesheetPhaseFilter(phaseIds: number[]) {
 clearClientTimesheetPhaseFilter() {
   this.clientTimesheetPhaseFilterSource.next([]);
 }
+  // Resource filters
+  private resourceRoleFilterSource = new BehaviorSubject<number[]>([]);
+  resourceRoleFilter$ = this.resourceRoleFilterSource.asObservable();
+
+  setResourceRoleFilter(roleIds: number[]) {
+    this.resourceRoleFilterSource.next(roleIds || []);
+  }
+
+  clearResourceRoleFilter() {
+    this.resourceRoleFilterSource.next([]);
+  }
+
+  private resourcePhaseFilterSource = new BehaviorSubject<number[]>([]);
+  resourcePhaseFilter$ = this.resourcePhaseFilterSource.asObservable();
+
+  setResourcePhaseFilter(phaseIds: number[]) {
+    this.resourcePhaseFilterSource.next(phaseIds || []);
+  }
+
+  clearResourcePhaseFilter() {
+    this.resourcePhaseFilterSource.next([]);
+  }
+
+  private resourceAuthorityFilterSource = new BehaviorSubject<number[]>([]);
+  resourceAuthorityFilter$ = this.resourceAuthorityFilterSource.asObservable();
+
+  setResourceAuthorityFilter(authorityIds: number[]) {
+    this.resourceAuthorityFilterSource.next(authorityIds || []);
+  }
+
+  clearResourceAuthorityFilter() {
+    this.resourceAuthorityFilterSource.next([]);
+  }
+
   getProjectResources(
     url: string,
     clientId?: number,

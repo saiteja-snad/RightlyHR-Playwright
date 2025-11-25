@@ -20,6 +20,7 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
+
 @Component({
   selector: 'app-client-resources',
   imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
@@ -34,6 +35,8 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
   filteredResourcesData = [] as IResource[];
   resourcesDataByPhase = [] as IResource[];
+  
+
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -83,6 +86,10 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
 
+  selectedRoleIds: number[] = [];
+  selectedPhaseIds: number[] = [];
+  selectedAuthorityIds: number[] = [];
+
   ngOnInit() {
     this.initializeForms();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -95,6 +102,21 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         this.getclientProjects(this.clientID);
         this.getClientsData(clientID);
       }
+    });
+    
+    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
+      this.selectedRoleIds = roleIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    });
+    
+    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
+      this.selectedPhaseIds = phaseIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    });
+    
+    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
+      this.selectedAuthorityIds = authorityIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getResourceData(parseInt(this.clientID), this.searchValue);
@@ -169,6 +191,15 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
     if (searchTerm) {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    if (this.selectedRoleIds.length > 0) {
+      url += `&projectRoleIds=${this.selectedRoleIds.join(',')}`;
+    }
+    if (this.selectedPhaseIds.length > 0) {
+      url += `&phaseIds=${this.selectedPhaseIds.join(',')}`;
+    }
+    if (this.selectedAuthorityIds.length > 0) {
+      url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
     }
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {

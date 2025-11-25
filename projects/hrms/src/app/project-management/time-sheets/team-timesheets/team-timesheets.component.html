@@ -30,25 +30,25 @@
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label"
                                 [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
-                                formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
+                                formControlName="resourceId"
                                 [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
-                                class="form-select custom-select"></p-select>
+                                class="form-select custom-select"></p-multiSelect>
                         </div>
                     </div>
                     }
                     @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" optionValue="id"
-                                name="myteamemployees" (onChange)="onCheckemployee($event.value)"
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id"
+                                name="myteamemployees"
                                 [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
                                 formControlName="resourceId" [filter]="true"
-                                resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false">
-                            </p-select>
+                                resetFilterOnHide="true" class="form-select custom-select">
+                            </p-multiSelect>
                         </div>
                     </div>
 

@@ -97,6 +97,13 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   selectedDepartmentIds: number[] = [];
 
+    selectedResourceRoles: number[] = [];
+  selectedResourcePhases: number[] = [];
+  selectedResourceAuthorities: number[] = [];
+  resourceRoleOptions: any[] = [];
+  resourcePhaseOptions: any[] = [];
+  resourceAuthorityOptions: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -158,6 +165,84 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     if (this.resourceDataids?.projectId) {
       this.loadPhases(this.resourceDataids.projectId);
     }
+    this.loadResourceFilters();
+  }
+
+  loadResourceFilters() {
+    if (!this.clientid) return;
+    this.loadResourceRoles();
+    this.loadResourcePhases();
+    this.loadResourceAuthorities();
+  }
+
+  loadResourceRoles() {
+    this.http.getData('ProjectRoles?isActive=true').subscribe({
+      next: (res: any) => {
+        this.resourceRoleOptions = (res?.data || []).map((item: any) => ({
+          label: item.roleName,
+          value: item.id
+        }));
+      },
+      error: () => {
+        this.resourceRoleOptions = [];
+      }
+    });
+  }
+
+  loadResourcePhases() {
+    if (!this.clientid) return;
+    const params = { clientId: this.clientid };
+    this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (res: any) => {
+        this.resourcePhaseOptions = (res?.data || []).map((item: any) => ({
+          label: item.phaseName,
+          value: item.phaseId
+        }));
+      },
+      error: () => {
+        this.resourcePhaseOptions = [];
+      }
+    });
+  }
+
+  loadResourceAuthorities() {
+    if (!this.clientid) return;
+    this.http.getData(`ProjectResource/timesheet-approval-authorities?entityType=Client&entityRefId=${this.clientid}`).subscribe({
+      next: (res: any) => {
+        this.resourceAuthorityOptions = (res?.data || []).map((item: any) => ({
+          label: `${item.fusionEmployeeId} - ${item.name}`,
+          value: item.id
+        }));
+      },
+      error: () => {
+        this.resourceAuthorityOptions = [];
+      }
+    });
+  }
+
+  onResourceRoleChange() {
+    this.http.setResourceRoleFilter(this.selectedResourceRoles);
+  }
+
+  onResourcePhaseChange() {
+    this.http.setResourcePhaseFilter(this.selectedResourcePhases);
+  }
+
+  onResourceAuthorityChange() {
+    this.http.setResourceAuthorityFilter(this.selectedResourceAuthorities);
+  }
+
+  clearResourceFilters() {
+    this.selectedResourceRoles = [];
+    this.selectedResourcePhases = [];
+    this.selectedResourceAuthorities = [];
+    this.http.clearResourceRoleFilter();
+    this.http.clearResourcePhaseFilter();
+    this.http.clearResourceAuthorityFilter();
+  }
+
+  isResourceFilterApplied(): boolean {
+    return this.selectedResourceRoles.length > 0 || this.selectedResourcePhases.length > 0 || this.selectedResourceAuthorities.length > 0;
   }
 
   datepickerforsummaryview() {

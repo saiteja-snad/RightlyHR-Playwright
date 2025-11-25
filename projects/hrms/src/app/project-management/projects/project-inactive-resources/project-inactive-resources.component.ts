@@ -31,6 +31,10 @@ import { ProjectResourceTabComponent } from "../../../shared/project-management-
 export class ProjectInactiveResourcesComponent {
   searchValue: string = '';
   resourcesData = [] as IResource[];
+  
+  selectedRoleIds: number[] = [];
+  selectedPhaseIds: number[] = [];
+  selectedAuthorityIds: number[] = [];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -87,6 +91,21 @@ export class ProjectInactiveResourcesComponent {
       }
     });
     this.getPhaseData();
+    
+    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
+      this.selectedRoleIds = roleIds;
+      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
+    });
+    
+    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
+      this.selectedPhaseIds = phaseIds;
+      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
+    });
+    
+    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
+      this.selectedAuthorityIds = authorityIds;
+      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
+    });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getResourceData(parseInt(this.projectId), undefined, false, this.searchValue);
     });
@@ -260,6 +279,16 @@ export class ProjectInactiveResourcesComponent {
     }
     if (searchTerm) {
       params.searchTerm = searchTerm;
+    }
+    
+    if (this.selectedRoleIds.length > 0 && !isPopupCall) {
+      params.projectRoleIds = this.selectedRoleIds.join(',');
+    }
+    if (this.selectedPhaseIds.length > 0 && !isPopupCall) {
+      params.phaseIds = this.selectedPhaseIds.join(',');
+    }
+    if (this.selectedAuthorityIds.length > 0 && !isPopupCall) {
+      params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
     }
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {

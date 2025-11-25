@@ -29,10 +29,11 @@ export class ProjectManagementModuleInfoComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourceDataids = {} as any;
   clientColor: any;
-projectsDetails :any;
-projectname:any;
-projectColor:any;
-projectId:any;
+  projectsDetails: any;
+  projectname: any;
+  projectColor: any;
+  projectId: any;
+
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -95,7 +96,6 @@ projectId:any;
       next: (res: any) => {
         this.projectsDetails = res?.data ?? [];
         this.projectname = this.projectsDetails[0]?.projectName;
-        console.log("project" ,this.projectname);
         this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
       },
       error: (err) => {
@@ -157,7 +157,6 @@ projectId:any;
     else if (currentUrl === '/project-management/clients/inactive') {
       this.componentname = 'Inactive Clients';
     }
-
     else if (currentUrl === '/project-management/clients/add/info') {
       this.componentname = 'Add Client';
     }
@@ -189,11 +188,9 @@ projectId:any;
     else if (currentUrl === '/project-management/clients/details/hold') {
       this.componentname = 'On Hold Projects';
     }
-
     else if (currentUrl === '/project-management/clients/details/resources') {
       this.componentname = 'Active Resources';
     }
-
     else if (currentUrl === '/project-management/clients/details/inactive-resources') {
       this.componentname = 'Inactive Resources';
     }
@@ -257,8 +254,6 @@ projectId:any;
     else if (currentUrl === '/project-management/projects/details/hold-phases') {
       this.componentname = ' On Hold Phases / Milestones';
     }
-
-
     else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' ||
       '/project-management/projects/details/timesheet/resource-summary') {
       this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -28,7 +28,7 @@ import { EncriptdecriptService } from '../../../services/encriptdecript.service'
     CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent,
     NgbPopoverModule, InfoIconComponent, DateformatPipe, MultiSelectModule,],
   templateUrl: './team-timesheets.component.html',
-  styleUrl: './team-timesheets.component.scss'
+  styleUrl: './team-timesheets.component.scss',
 })
 
 export class TeamTimesheetsComponent {
@@ -55,12 +55,14 @@ export class TeamTimesheetsComponent {
   ];
   resourcesList: IResourceDetail[] = [];
   selectedEntries: TimesheetEntry[] = [];
-  projectDetails=[] as any;
-  clientDetails=[] as any;
-  departmentDetails=[] as any;
-  tmandRmDetails=[]as any;
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, 
-    private router: Router, private modalService: NgbModal,private encryptionService:EncriptdecriptService) { }
+  projectDetails = [] as any;
+  clientDetails = [] as any;
+  departmentDetails = [] as any;
+  tmandRmDetails = [] as any;
+
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, 
+    private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
+
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
@@ -73,6 +75,7 @@ export class TeamTimesheetsComponent {
     this.getdepartmentData();
     this.getTmandRMData();
   }
+
   //get all projects list
   getprojectData(): void {
     this.subscription = this.http.getData(`Project`).subscribe({
@@ -84,6 +87,7 @@ export class TeamTimesheetsComponent {
       }
     });
   }
+
   //get all clients list
   getclientData(): void {
     this.subscription = this.http.getData(`Client/GetAll`).subscribe({
@@ -95,6 +99,7 @@ export class TeamTimesheetsComponent {
       }
     });
   }
+
   //get all departments list
   getdepartmentData(): void {
     this.subscription = this.http.getData(`Department`).subscribe({
@@ -106,6 +111,7 @@ export class TeamTimesheetsComponent {
       }
     });
   }
+
   //get all TM and RM list
   getTmandRMData(): void {
     this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
@@ -123,6 +129,7 @@ export class TeamTimesheetsComponent {
       }
     });
   }
+
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
     // Check if any field has value
@@ -130,11 +137,16 @@ export class TeamTimesheetsComponent {
       (formValue?.dateRange && formValue?.dateRange?.length > 0)
     );
   }
-  showFilters: boolean = false;
 
-  toggleFilters() {
-    this.showFilters = !this.showFilters;
+  showFilters: boolean = false;
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
+
+  closeCanvas(){
+    this.offcanvasService.dismiss();
+  }
+
   resetForm() {
     // Reset other form fields
     this.datepickerForm.reset({
@@ -170,10 +182,10 @@ export class TeamTimesheetsComponent {
     });
     // return [startOfMonth, endOfMonth];
   }
-  employeeDetails:any;
-  openModal(entries: any,employeedetails?:any, content?: any) {
-    console.log(entries)
-    this.employeeDetails=employeedetails;
+
+  employeeDetails: any;
+  openModal(entries: any, employeedetails?: any, content?: any) {
+    this.employeeDetails = employeedetails;
     this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -199,7 +211,6 @@ export class TeamTimesheetsComponent {
             fullName: 'All Employees',
             key: 'team'
           };
-
           this.resourcesList = [
             allEmployeesOption,
             ...res.data
@@ -210,7 +221,6 @@ export class TeamTimesheetsComponent {
                 key: 'team'
               }))
           ];
-
           // Set default selection to "All Employees"
           this.datepickerForm.patchValue({
             resourceId: null
@@ -241,52 +251,45 @@ export class TeamTimesheetsComponent {
     const projectId = formdata.projectId;
     const departmentId = formdata.departmentId;
     const reportingId = formdata.tmorrmId
-    this.subscription = this.http
-      .getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId)
-      .subscribe({
-        next: (res: any) => {
-          if (Array.isArray(res.data)) {
-            // ✅ Add "All Employees" option first
-            const allEmployeesOption = {
-              value: null,
-              label: 'All Employees',
-              key: 'all'
-            };
-
-            // ✅ Filter out logged-in user and map employee details
-            const employeeList = res.data
-              .filter((emp: any) => emp.employeeId !== EmployeeId)
-              .map((emp: any) => ({
-                value: emp.employeeId,
-                label: emp.fusionEmpId
-                  ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
-                  : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-                key: 'all'
-              }));
-
-            // ✅ Merge lists (All Employees first)
-            this.activeEmplist = [allEmployeesOption, ...employeeList];
-
-            // ✅ Default selection — "All Employees"
-            this.datepickerForm.patchValue({
-              resourceId: null
-            });
-          } else {
-            // fallback
-            this.activeEmplist = [{ label: 'All Employees', value: null, key: 'all' }];
-            this.datepickerForm.patchValue({
-              resourceId: null
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching employees:', err);
+    this.subscription = this.http.getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId).subscribe({
+      next: (res: any) => {
+        if (Array.isArray(res.data)) {
+          // Add "All Employees" option first
+          const allEmployeesOption = {
+            value: null,
+            label: 'All Employees',
+            key: 'all'
+          };
+          // Filter out logged-in user and map employee details
+          const employeeList = res.data.filter((emp: any) => emp.employeeId !== EmployeeId).map((emp: any) => ({
+            value: emp.employeeId,
+            label: emp.fusionEmpId
+              ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
+              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+            key: 'all'
+          }));
+          // Merge lists (All Employees first)
+          this.activeEmplist = [allEmployeesOption, ...employeeList];
+          // Default selection — "All Employees"
+          this.datepickerForm.patchValue({
+            resourceId: null
+          });
+        } else {
+          // fallback
           this.activeEmplist = [{ label: 'All Employees', value: null, key: 'all' }];
           this.datepickerForm.patchValue({
             resourceId: null
           });
         }
-      });
+      },
+      error: (err) => {
+        console.error('Error fetching employees:', err);
+        this.activeEmplist = [{ label: 'All Employees', value: null, key: 'all' }];
+        this.datepickerForm.patchValue({
+          resourceId: null
+        });
+      }
+    });
   }
 
   onCheckemployee(employeed: any) {
@@ -315,9 +318,8 @@ export class TeamTimesheetsComponent {
     this.page = 1;
     this.first = 0;
     this.getteamsummary();
+    this.offcanvasService.dismiss();
   }
-
-
 
   getteamsummary() {
     const formValue = this.datepickerForm.value;
@@ -381,12 +383,12 @@ export class TeamTimesheetsComponent {
 
   navigateView(employeeId: any) {
     //console.log(this.datepickerForm.value);
-    const encryptedData =  this.encryptionService.encrypt(this.datepickerForm.value);
-    if(this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')){
-    this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { data: encryptedData } });
+    const encryptedData = this.encryptionService.encrypt(this.datepickerForm.value);
+    if (this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')) {
+      this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { data: encryptedData } });
     }
-    else if(this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
-    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { data: encryptedData } });
+    else if (this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')) {
+      this.router.navigate(['project-management/timesheet/summary'], { queryParams: { data: encryptedData } });
     }
   }
 }

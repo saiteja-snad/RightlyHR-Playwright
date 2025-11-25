@@ -97,8 +97,7 @@
             <th class="text-center">Project Type</th>
             <th>Department</th>
             <!-- <th>Status</th> -->
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-            Tab.delete'))
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
@@ -110,9 +109,8 @@
                   @if(!isActive('/project-management/clients')){
                   <td>{{ project.client.clientName }}</td>
                   }
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{
-                      project.projectName}}</a></td>
-                  <td class="text-center">{{ project?.meta?.graphData?.code || '-' }}</td>
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
+                  <td class="text-center" [style.color]="project?.meta?.graphData?.color"><b>{{project?.meta?.graphData?.code || '-' }}</b></td>
                   <!-- <td>{{ project.startDate | dateformat }}</td>
                     <td>{{ project.endDate | dateformat }}</td>
                     <td>{{ project.effectiveDate | dateformat }}</td>

@@ -230,7 +230,7 @@
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
                         optionLabel="label" optionValue="value" formControlName="resourceId"
-                        placeholder="Please select employee" class="form-select custom-select" />
+                         [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"  class="form-select custom-select" />
                 </div>
             </div>
             }
@@ -240,7 +240,7 @@
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                         optionLabel="fullName" optionValue="id" formControlName="resourceId"
-                        placeholder="Please select employee" class="form-select custom-select" />
+                         [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"  class="form-select custom-select" />
                 </div>
             </div>
             }
@@ -289,7 +289,8 @@
                 @if(isFilterApplied()) {
                 <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 }
-                <button class="custom-btn btn-primary w-100" type="submit">{{'Apply' | translate}}</button>
+                <button class="custom-btn btn-primary w-100" type="submit" 
+                     [disabled]="datepickerForm.invalid || (rbac.allowedToAccess('All Employees (Timesheet).view') && activeEmplist.length === 0) || (rbac.allowedToAccess('My Team (Timesheet).view') && !rbac.allowedToAccess('All Employees (Timesheet).view') && resourcesList.length === 0)">{{'Apply' | translate}}</button>
             </div>
         </form>
     </div>

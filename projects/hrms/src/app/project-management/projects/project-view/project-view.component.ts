@@ -173,8 +173,13 @@ export class ProjectViewComponent implements OnInit {
 
   onPhaseStatusChange(event: any) {
     const selected = event.value || [];
-    this.selectedInActivePhaseStatuses = selected;
-    this.selectedActivePhaseStatuses = selected;
+    if (this.isActive('/project-management/projects/details/inactive-phases')) {
+      this.selectedInActivePhaseStatuses = selected;
+      this.selectedActivePhaseStatuses = [];
+    } else {
+      this.selectedActivePhaseStatuses = selected;
+      this.selectedInActivePhaseStatuses = [];
+    }
     this.http.setPhaseStatusFilter(selected);
   }
 
@@ -203,9 +208,9 @@ onPhaseDateClear() {
     this.selectedActivePhaseStatuses = [];
     this.phaseDateRange = [];
     this.selectedAuthorities = [];
-    this.http.clearPhaseStatusFilter();
-    this.http.clearPhaseDateFilter();
-    this.http.clearPhaseAuthorityFilter();
+    this.http.setPhaseStatusFilter([]);
+    this.http.setPhaseDateFilter({ startDate: null, endDate: null });
+    this.http.setPhaseAuthorityFilter([]);
   }
 
   loadResourceFilters() {

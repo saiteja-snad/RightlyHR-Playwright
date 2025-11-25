@@ -48,7 +48,7 @@
                                     <div class="d-flex flex-column align-items-center gap-2">
                                         <!-- <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)" 
                                          [style.background]="day.dailySummary.backgroundColor">
-                                            {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged' 
+                                            {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged'
                                             && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status : day.dailySummary.loggedHHMM }}</a> -->
                                         <!-- Clickable only for loggedHHMM -->
                                         <!-- <div *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
@@ -56,7 +56,7 @@
                                             <a  class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
                                                 {{ day.dailySummary.loggedHHMM }}</a>
                                         </div>
-                                        <div *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
+                                        <div *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' &&
                                         day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
                                         <b>{{ day.dailySummary.status }}</b>
                                         </div> -->

@@ -300,7 +300,6 @@ private refreshData() {
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     this.allocatedVsActualLoader = true;
-    // const dateRange = this.resourceDataids?.dateRange || [];
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
@@ -320,6 +319,8 @@ private refreshData() {
   if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        this.loading = false;
+        this.allocatedVsActualLoader = false;
         const chart = res?.data?.chart;
         if (!chart) {
           this.estimatedVsActualGraphData = { labels: [], datasets: [] };
@@ -352,7 +353,6 @@ private refreshData() {
             legend: { display: false },
           }
         };
-        this.allocatedVsActualLoader = false;
       },
       error: (err) => {
         this.loading = false;

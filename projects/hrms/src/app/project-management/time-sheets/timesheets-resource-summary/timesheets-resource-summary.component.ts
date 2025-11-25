@@ -3,7 +3,7 @@ import { TimesheetsResourceTabsComponent } from '../timesheets-resource-tabs/tim
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NgbPopover, NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopover, NgbPopoverModule, NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { DatePicker } from 'primeng/datepicker';
@@ -129,26 +129,22 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   projectDetails=[] as any;
   clientDetails=[] as any;
   departmentDetails=[] as any;
-  tmandRmDetails=[]as any;
   filterData={} as any;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService) { }
+    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getprojectData();
     this.getclientData();
     this.getdepartmentData();
-    this.getTmandRMData();
     this.route.queryParams.subscribe(params => {
       if (params['data']) {
       const decrypted = this.encryptionService.decrypt(params['data']);
       // console.log('Decrypted Data:', decrypted);
        const resoureID = decrypted?.resourceId;
        this.filterData=decrypted
-       if(this.filterData.clientId||this.filterData.projectId||this.filterData.departmentId||this.filterData.tmorrmId){
-        this.showFilters=true;
-       }
+
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
       }
@@ -269,32 +265,15 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       }
     });
   }
-  //get all TM and RM list
-  getTmandRMData(): void {
-    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
-      next: (res: any) => {
-        this.tmandRmDetails = [
-          ...res.map((emp: any) => ({
-            ...emp,
-            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
-              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-          })),
-        ];
-      },
-      error: (err) => {
-        console.error('Error fetching clients:', err);
-      }
-    });
-  }
+
   onSubmit() {
-    // Check if form is valid (optional)
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
-    this.projectSummery(resoureID,this.filterData);
-    this.getallocatedSummary(resoureID,this.filterData);
+    this.projectSummery(resoureID,this.datepickerForm.value);
+    this.getallocatedSummary(resoureID,this.datepickerForm.value);
     this.getEmployeeId(resoureID);
-    this.billableChart(resoureID,this.filterData);
-    // this.burnDownChart(resoureID);
-    this.timeAllocatedacrossGraph(resoureID,this.filterData);
+    this.billableChart(resoureID,this.datepickerForm.value);
+    this.timeAllocatedacrossGraph(resoureID,this.datepickerForm.value);
+    this.closeCanvas();
   }
 
   createDatepickerForm() {
@@ -303,8 +282,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       resourceId: [null],
       projectId: [null],
       clientId: [null],
-      departmentId: [null],
-      tmorrmId: [null]
+      departmentId: [null]
     });
   }
 
@@ -315,38 +293,33 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   resetForm() {
-    // Reset other form fields
     this.datepickerForm.reset({
       resourceId: null,
       dateRange: null,
+      projectId: null,
+      clientId: null,
+      departmentId: null
     });
-    // Now manually set the default month range
-    // const defaultRange = this.setDefaultmounth();
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
     });
-    this.updateModuleInfo();
-    this.createDatepickerForm();
     this.route.queryParams.subscribe((params) => {
       if (params['data']) {
-      const decrypted = this.encryptionService.decrypt(params['data']);
-       const resoureID = decrypted?.resourceId;
-      if (resoureID) {
-        this.employeeId = parseInt(resoureID);
-        this.projectSummery(resoureID,decrypted);
-        this.getallocatedSummary(resoureID,decrypted);
-        this.getEmployeeId(resoureID);
-        this.billableChart(resoureID,decrypted);
-        // this.burnDownChart(resoureID);
-        this.timeAllocatedacrossGraph(resoureID,decrypted);
-        this.getEmployeeId(resoureID);
+        const decrypted = this.encryptionService.decrypt(params['data']);
+        const resoureID = decrypted?.resourceId;
+        if (resoureID) {
+          this.employeeId = parseInt(resoureID);
+          const resetPayload = { dateRange: [startOfMonth, endOfMonth] };
+          this.projectSummery(resoureID, resetPayload);
+          this.getallocatedSummary(resoureID, resetPayload);
+          this.getEmployeeId(resoureID);
+          this.billableChart(resoureID, resetPayload);
+          this.timeAllocatedacrossGraph(resoureID, resetPayload);
+        }
       }
-    }
-    
     });
-    this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
   }
@@ -373,8 +346,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       resourceId: this.employeeId || null,
       projectId: this.filterData.projectId,
       clientId: this.filterData.clientId,
-      departmentId: this.filterData.departmentId,
-      tmorrmId: this.filterData.tmorrmId
+      departmentId: this.filterData.departmentId
     });
   }
 
@@ -1000,15 +972,17 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     return Array.isArray(data) && data?.some((value) => value > 0);
   }
 
+  toggleFilters(content: any) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
     this.http.clearTeamDateRange();
-    this.showFilters=false;
-  }
-  showFilters: boolean = false;
-
-  toggleFilters() {
-    this.showFilters = !this.showFilters;
   }
 }

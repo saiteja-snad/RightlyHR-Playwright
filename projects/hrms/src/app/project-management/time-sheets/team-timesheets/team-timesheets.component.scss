@@ -251,3 +251,12 @@
 .custom-text {
   font-size: var(--fontsize10) !important;
 }
+
+.timesheet-chip {
+    font-size: var(--fontsize8) !important;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.25rem;
+    text-align: center;
+    border: 1px solid ;
+    background: #FFF;
+}

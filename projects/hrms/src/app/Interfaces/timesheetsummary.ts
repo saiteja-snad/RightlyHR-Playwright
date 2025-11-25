@@ -62,6 +62,10 @@ export interface TimesheetEntry {
   allocatedHours: number;
   finalApproverName?: string;
   approverDesignation?: string;
+  clientMeta?: any;
+  meta?: any;
+  phaseMeta?: any;
+
 }
 
 export interface DailySummary {

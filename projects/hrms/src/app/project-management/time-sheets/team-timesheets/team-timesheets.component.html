@@ -91,8 +91,9 @@
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let emp of teamSummaryData">
-                                <td> 
-                                    @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') || rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
+                                <td>
+                                    @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') ||
+                                    rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
                                     <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{
                                         emp.employee.name}}</a>
                                     }
@@ -117,7 +118,8 @@
                                         </div> -->
                                         <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
-                                        <div class="cursor" (click)="openModal(day.entries, summaryforlogs, emp.employee.name)">
+                                        <div class="cursor"
+                                            (click)="openModal(day.entries, summaryforlogs, emp.employee.name)">
                                             <u>{{ day.dailySummary.loggedHHMM }}</u>
                                         </div>
                                         <div class="d-flex custom-text">
@@ -159,7 +161,7 @@
                         <div class="circular-dot circle-holiday "></div>
                         <div class="status-text">Holidays(H)</div>
                     </div>
-                     <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-red"></div>
                         <div class="status-text">Absent(AB)</div>
                     </div>
@@ -170,7 +172,7 @@
                         <div class="status-text">Leaves</div>
                     </div>
 
-                    
+
 
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-pending"></div>
@@ -212,7 +214,8 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Timesheet BreakDown' | translate}} - {{selectedEmployeeName}} ({{ selectedEntries[0]?.entryDate |
+                <p class="popup-heading mb-0">{{'Timesheet BreakDown' | translate}} - {{selectedEmployeeName}} ({{
+                    selectedEntries[0]?.entryDate |
                     dateformat }})</p>
             </div>
             <div>
@@ -226,8 +229,7 @@
                         <thead>
                             <tr>
                                 <th>Client Name</th>
-                                <th>Project Name</th>
-                                <th>Phase/Milestone</th>
+
                                 <th>Logged Hours</th>
                                 <th>Approver</th>
                                 <th>Description</th>
@@ -236,15 +238,37 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of selectedEntries">
-                                <td>{{ entry.clientName }}</td>
-                                <td>{{ entry.projectName }}</td>
-                                <td>{{ entry?.phaseName || '-' }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center flex-column">
+
+                                        <div><b class="text-truncate" [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
+                                                entry.projectName }}</b></div>
+                                        <div class="d-flex flex-wrap align-items-center  justify-content-center gap-2">
+
+
+                                            <div class="timesheet-chip text-truncate"
+                                                [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"
+                                                [style.border-color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                {{
+                                                entry.clientName }}</div>
+
+
+                                            <div class="timesheet-chip text-truncate"
+                                                [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
+                                                [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
+                                                {{ entry?.phaseName || '-' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
                                 <td>{{ entry.loggedHHMM }} Hrs</td>
                                 <td>
-                                <ng-container *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
-                                    {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
-                                </ng-container>
-                                <ng-template #noValue>-</ng-template>
+                                    <ng-container
+                                        *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
+                                        {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
+                                    </ng-container>
+                                    <ng-template #noValue>-</ng-template>
                                 </td>
                                 <td class="text-center">
                                     <div>

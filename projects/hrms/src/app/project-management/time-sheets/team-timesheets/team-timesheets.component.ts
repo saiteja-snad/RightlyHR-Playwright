@@ -107,6 +107,8 @@ export class TeamTimesheetsComponent {
   openModal(entries: any, content?: any, empName?: string) {
     this.selectedEmployeeName = empName || '';
     this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
+    console.log(this.selectedEntries);
+    
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 

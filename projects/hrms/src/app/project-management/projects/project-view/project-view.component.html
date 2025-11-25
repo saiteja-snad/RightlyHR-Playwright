@@ -25,7 +25,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
         <div class="custom-date-range-picker">
           <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
-            placeholder="Please select date range" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+            placeholder="Please select date range" (onClose)="onPhaseDateChange()" (onClearClick)="onPhaseDateClear()">
           </p-datepicker>
         </div>
       </div>
@@ -62,7 +62,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
         <div class="custom-date-range-picker">
           <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-            placeholder="Please select date range" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+            placeholder="Please select date range" (onClose)="onPhaseDateChange()" (onClearClick)="onPhaseDateClear()">
           </p-datepicker>
         </div>
       </div>
@@ -88,7 +88,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
         <div class="custom-date-range-picker">
           <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
-            placeholder="Please select date range" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+            placeholder="Please select date range" (onClose)="onPhaseDateChange()" (onClearClick)="onPhaseDateClear()">
           </p-datepicker>
         </div>
       </div>
@@ -197,6 +197,33 @@
             class="form-select custom-select">
           </p-select>
         </div>
+
+         <!-- Department Multi-Select -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" defaultLabel="Please Select Department"
+            [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+
+        <!-- Role Multi-Select -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
+            defaultLabel="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
+            class="form-select custom-select" [ngModelOptions]="{standalone: true}">
+          </p-multiSelect>
+        </div>
+
+
+
+        <!-- Phase Multi-Select -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
+            defaultLabel="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
+            class="form-select custom-select" [ngModelOptions]="{standalone: true}">
+          </p-multiSelect>
+        </div>
+
 
         <div>
           <button class="custom-btn btn-primary" type="submit">Apply</button>

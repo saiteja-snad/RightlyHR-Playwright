@@ -376,6 +376,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.http.clearProjectTypeFilter();
     this.http.clearClientTimesheetRoleFilter();
     this.http.clearClientTimesheetPhaseFilter();
+    this.getAllActiveEmployees();
   }
 
   // Create reactive form

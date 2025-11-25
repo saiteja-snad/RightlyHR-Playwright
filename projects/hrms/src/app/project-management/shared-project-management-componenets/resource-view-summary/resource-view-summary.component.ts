@@ -100,34 +100,80 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
   allocatedVsActualLoader = false;
   billableVsNonbillableLoader = false;
 
+  selectedDepartmentIds: number[] = [];
+selectedResourceRoles: number[] = [];
+selectedResourcePhases: number[] = [];
+
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
-  ngOnInit() {
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
-    
-    this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
-      if (request) {
-        if (request.resetPagination) {
-          this.page = 1;
-          this.first = 0;
-        }
+ngOnInit() {
+  this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+
+  // Keep your existing request$ logic (resourceId + dateRange)
+  this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
+    if (request) {
+      if (request.resetPagination) {
+        this.page = 1;
+        this.first = 0;
+      }
+      this.resourceDataids = {
+        ...this.resourceDataids,
+        employeeId: request.resourceId || this.resourceDataids.employeeId,
+        dateRange: request.dateRange
+      };
+      this.refreshData();
+    } else {
+      this.refreshData();
+    }
+  });
+
+  // NEW: Listen to shared project timesheet filters (Department, Role, Phase, DateRange)
+  this.http.projectTimesheetDepartmentIds$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(ids => {
+      this.selectedDepartmentIds = ids;
+      this.refreshData();
+    });
+
+  this.http.projectTimesheetRoleFilter$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(ids => {
+      this.selectedResourceRoles = ids;
+      this.refreshData();
+    });
+
+  this.http.projectTimesheetPhaseFilter$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(ids => {
+      this.selectedResourcePhases = ids;
+      this.refreshData();
+    });
+
+  this.http.getDateRangeObservable()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(range => {
+      if (range) {
         this.resourceDataids = {
           ...this.resourceDataids,
-          employeeId: request.resourceId || this.resourceDataids.employeeId,
-          dateRange: request.dateRange,
-          departmentIds: request.departmentIds,
-          roleIds: request.roleIds,
-          phaseIds: request.phaseIds
+          dateRange: { startDate: range.startDate, endDate: range.endDate }
         };
-         this.getProjectSummary();
-      } else {
-        this.getProjectSummary();
       }
+      this.refreshData();
     });
-    //this.getProjectSummary();
-    // this.setDefaultmounth();
-  }
+
+  // Initial load
+  this.refreshData();
+}
+
+
+private refreshData() {
+  this.page = 1;
+  this.first = 0;
+  this.getProjectSummary();
+  this.estimatedActualChart();
+  this.billableVSNonBillable();
+}
 
   // setDefaultmounth() {
   //   const startOfMonth = dayjs().startOf('month').toDate();
@@ -165,22 +211,26 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const { clientId, projectId, employeeId, departmentIds, roleIds, phaseIds } = this.resourceDataids;
-    
+    const { clientId, projectId, employeeId } = this.resourceDataids;
+
+    const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
+    // Reset pagination if filters exist
+    // if (this.resourceDataids?.dateRange  && Object.keys(this.resourceDataids?.dateRange ).length > 0) {
+    //   var page  = 1;
+    //   var pagesize = 10; // or whatever your default size is
+    // }else{
     var page = this.page;
     var pagesize = this.pageSize;
-    
+    // }
+    // Reset pagination if filters exist
     let url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=${page}&pageSize=${pagesize}`;
-    
-    if (departmentIds?.length > 0) {
-      url += `&departmentIds=${departmentIds.join(',')}`;
-    }
-    if (roleIds?.length > 0) {
-      url += `&roleIds=${roleIds.join(',')}`;
-    }
-    if (phaseIds?.length > 0) {
-      url += `&phaseIds=${phaseIds.join(',')}`;
-    }
+
+    if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
+  if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
+
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -252,19 +302,20 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const { projectId, employeeId, departmentIds, roleIds, phaseIds } = this.resourceDataids;
-    
+    // const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    // const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+    // const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+
+    const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
+
+    const { projectId, employeeId } = this.resourceDataids;
     let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
-    
-    if (departmentIds?.length > 0) {
-      url += `&departmentIds=${departmentIds.join(',')}`;
-    }
-    if (roleIds?.length > 0) {
-      url += `&roleIds=${roleIds.join(',')}`;
-    }
-    if (phaseIds?.length > 0) {
-      url += `&phaseIds=${phaseIds.join(',')}`;
-    }
+
+    if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
+  if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -316,19 +367,17 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const { clientId, projectId, employeeId, departmentIds, roleIds, phaseIds } = this.resourceDataids;
-    
+    const { clientId, projectId, employeeId } = this.resourceDataids;
+
+    const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
+
     let url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=emp`;
-    
-    if (departmentIds?.length > 0) {
-      url += `&departmentIds=${departmentIds.join(',')}`;
-    }
-    if (roleIds?.length > 0) {
-      url += `&roleIds=${roleIds.join(',')}`;
-    }
-    if (phaseIds?.length > 0) {
-      url += `&phaseIds=${phaseIds.join(',')}`;
-    }
+
+    if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
+  if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];

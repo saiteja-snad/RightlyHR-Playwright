@@ -1094,6 +1094,59 @@ clearClientTimesheetPhaseFilter() {
     this.resourceAuthorityFilterSource.next([]);
   }
 
+
+  // Project Timesheet Summary Filters
+private projectTimesheetDepartmentIds = new BehaviorSubject<number[]>([]);
+projectTimesheetDepartmentIds$ = this.projectTimesheetDepartmentIds.asObservable();
+
+private projectTimesheetRoleFilter = new BehaviorSubject<number[]>([]);
+projectTimesheetRoleFilter$ = this.projectTimesheetRoleFilter.asObservable();
+
+private projectTimesheetPhaseFilter = new BehaviorSubject<number[]>([]);
+projectTimesheetPhaseFilter$ = this.projectTimesheetPhaseFilter.asObservable();
+
+private projectTimesheetFilterData = new BehaviorSubject<any>(null);
+projectTimesheetFilterData$ = this.projectTimesheetFilterData.asObservable();
+
+// Setters
+setProjectTimesheetDepartmentIds(ids: number[]) {
+  this.projectTimesheetDepartmentIds.next(ids);
+}
+
+setProjectTimesheetRoleFilter(ids: number[]) {
+  this.projectTimesheetRoleFilter.next(ids);
+}
+
+setProjectTimesheetPhaseFilter(ids: number[]) {
+  this.projectTimesheetPhaseFilter.next(ids);
+}
+
+setProjectTimesheetFilterData(data: any) {
+  this.projectTimesheetFilterData.next(data);
+}
+
+// Add these methods to your HttpService
+
+getCurrentProjectTimesheetDepartmentIds(): number[] {
+  return this.projectTimesheetDepartmentIds.getValue();
+}
+
+getCurrentProjectTimesheetRoleIds(): number[] {
+  return this.projectTimesheetRoleFilter.getValue();
+}
+
+getCurrentProjectTimesheetPhaseIds(): number[] {
+  return this.projectTimesheetPhaseFilter.getValue();
+}
+
+clearProjectTimesheetFilters() {
+  this.projectTimesheetDepartmentIds.next([]);
+  this.projectTimesheetRoleFilter.next([]);
+  this.projectTimesheetPhaseFilter.next([]);
+  this.projectTimesheetFilterData.next(null);
+}
+
+
   getProjectResources(
     url: string,
     clientId?: number,

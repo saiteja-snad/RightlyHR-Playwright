@@ -120,8 +120,7 @@ export class OnBehalfOfExpensesTabsComponent {
     });
   }
 
-  getexpensesheaderbyemployeeid(): void {
-    
+  getexpensesheaderbyemployeeid(): void {  
     const empId = this.selectemp;
     const year = this.selectedYear ?? new Date().getFullYear();
     const month = this.seletedMouthly ?? new Date().getMonth() + 1;
@@ -154,8 +153,6 @@ export class OnBehalfOfExpensesTabsComponent {
 
   updateAllFilteredExpenses() {
     const data = this.expenesEmplyeedata.value;
-
-
     const pending = data.filter(x => x.status === 'Waiting for Approval').reverse();
     const approved = data.filter(x => x.status === 'Approved').reverse();
     const processed = data.filter(x => x.status === 'Processed').reverse();

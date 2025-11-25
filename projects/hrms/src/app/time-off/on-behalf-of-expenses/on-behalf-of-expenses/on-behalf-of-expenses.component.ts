@@ -35,6 +35,8 @@ export class OnBehalfOfExpensesComponent {
   employeeiddetails = [] as any;
   myTeamData = [] as any;
   selectedOtherEmployee: any = null;
+  expenseChartData: any;
+  expenseChartDataOptions: any;
   selectedEmpName!: string;
   selectedEmpFusionId!: string;
   today: string = new Date().toISOString().split('T')[0];
@@ -42,7 +44,8 @@ export class OnBehalfOfExpensesComponent {
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   getExpenseSummaryDetails = {} as ISummary;
   subscription!: Subscription;
-
+  totalExpense: any;
+  expenseChartLegend: any;
   constructor(public router: Router, private authService: AuthService, public rbac: RbacService, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
@@ -72,14 +75,14 @@ export class OnBehalfOfExpensesComponent {
     this.http.setOnBehalfOfExpensesSelectedEmp(null);
     this.http.onBehlafOfExpensesSignal.set(false);
     this.http.setEmployeeIdExpensesforonbehalf(null)
-      this.http.setnewcountDetailsforonBehalfof()
+    this.http.setnewcountDetailsforonBehalfof()
     const loggedInEmpId = this.empinfo?.employeeId || this.empinfo?.employeeId;
     if (loggedInEmpId) {
       console.log('Reset to logged-in employee:', loggedInEmpId);
-      this.getExpensesHeaderByEmployeeId(loggedInEmpId);
+      this.getexpensesheaderbyemployeeid(loggedInEmpId);
     }
-
   }
+
   onEmployeeChange(event: any): void {
     const selectedEmp = event.employeeId || 0;
     this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName ? this.selectedOtherEmployee?.middleName + ' ' : ''}${this.selectedOtherEmployee?.lastName ?? ''}`;
@@ -100,31 +103,85 @@ export class OnBehalfOfExpensesComponent {
         fusionEmpId: this.selectedEmpFusionId,
       }));
 
-      this.getExpensesHeaderByEmployeeId(selectedEmp);
+      this.getexpensesheaderbyemployeeid(selectedEmp);
     } else {
       this.http.setEmployeeIdExpensesforonbehalf(null);
       this.http.setOnBehalfOfExpensesSelectedEmp(null);
     }
   }
 
-  getExpensesHeaderByEmployeeId(empId: any): void {
+  getexpensesheaderbyemployeeid(empId: any): void {
     const year = new Date().getFullYear();
-    console.log('Employee ID passed:', empId);
-
-    this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log('Expenses Header Response:', response);
-          this.expenesEmplyeedata = response;
-        },
-        error: (error: any) => {
-          console.error('Error fetching expense header by employee ID:', error);
-        },
-      });
+    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`).subscribe({
+      next: (data: any) => {
+        this.expenesEmplyeedatastatusfliter.next(data)
+        // this.updateAllFilteredExpenses();
+        // Extract expense items (filter out expenseSummary object)
+        this.expenesEmplyeedata = data.filter((item: any) => !item.expenseSummary);
+        // Extract and update expense summary
+        const summaryItem = data.find((item: any) => item.expenseSummary);
+        if (summaryItem?.expenseSummary) {
+          this.getExpenseSummaryDetails = summaryItem.expenseSummary as ISummary;
+          this.expenseSummaryTabs.forEach(tab => {
+            tab.value = this.getExpenseSummaryDetails[tab.key as keyof ISummary] ?? 0;
+          });
+          this.totalExpense = this.getExpenseSummaryDetails.totalReimbursementLimitFormatted;
+          this.initChart();
+        }
+      },
+      error: (err) => {
+        console.log("expensesheadererror", err);
+      }
+    });
   }
 
+  expenseSummaryTabs: any[] = [
+    { label: 'Total Expenses', icon: 'expenses-icons/total-expenes-icon.png', key: 'totalReimbursementLimitFormatted', value: 0, showFrequency: true },
+    { label: 'Available Limit', icon: 'expenses-icons/avaliable-icon.png', key: 'remainingReimbursementFormatted', value: 0 },
+    // { label: 'Frequency', icon: 'expenses-icons/frequency-icon.png', key: 'frequency', },
+    { label: 'Requested', icon: 'expenses-icons/requested-icon.png', key: 'requestedAmountFormatted', value: 0, count: 0 },
+    { label: 'Approved', icon: 'expenses-icons/approved-icon.png', key: 'approvedAmountFormatted', value: 0, count: 0 },
+    { label: 'Processed', icon: 'expenses-icons/processed-icon.png', key: 'processedAmountFormatted', value: 0, count: 0 },
+    { label: 'Rejected', icon: 'expenses-icons/reject-icon.png', key: 'rejectAmountFormatted', value: 0, count: 0 },
+
+  ];
+
+  initChart(): void {
+    if (!this.getExpenseSummaryDetails) return;
+    // Prepare chart values
+    const chartValues = [
+      Number(this.getExpenseSummaryDetails.remainingReimbursement) || 0,
+      Number(this.getExpenseSummaryDetails.requestedAmount) || 0,
+      Number(this.getExpenseSummaryDetails.approvedAmount) || 0,
+      Number(this.getExpenseSummaryDetails.processedAmount) || 0,
+    ];
+    // Define colors and labels in the same order
+    const chartLabels = ['Available Limit', 'Requested', 'Approved', 'Processed'];
+    const chartColors = ['#25BBFF', '#FF6A00', '#00A912', '#5D33DB'];
+    // Build chart data
+    this.expenseChartData = {
+      datasets: [
+        {
+          data: chartValues,
+          backgroundColor: chartColors,
+          borderWidth: 2,
+        },
+      ],
+    };
+    // Build legend data (for custom display beside chart)
+    this.expenseChartLegend = chartLabels.map((label, i) => ({
+      label,
+      color: chartColors[i],
+      value: chartValues[i],
+    }));
+    // Chart options
+    this.expenseChartDataOptions = {
+      cutout: '70%',
+      plugins: {
+        legend: { display: false },
+      },
+    };
+  }
   getEmployeeId() {
     let loggedInUser = this.authService.getToken();
     this.http

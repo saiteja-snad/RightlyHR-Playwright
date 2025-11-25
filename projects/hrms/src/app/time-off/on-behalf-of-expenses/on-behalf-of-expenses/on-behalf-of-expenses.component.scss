@@ -8,3 +8,67 @@
     background-color: var(--white-color);
     border: 1px solid #CCDAEC;
 }
+
+.graph-grid {
+  .total-leave-balance-graph-content {
+    width: 16rem !important;
+    justify-content: space-around !important;
+
+    .total-count-content {
+      text-align: center !important;
+      top: 45% !important;
+
+      .count {
+        font-size: var(--fontsize12) !important;
+      }
+
+      .text-context {
+        font-weight: 400;
+        font-size: 9px !important;
+        color: #999999;
+      }
+    }
+  }
+
+  .employee-category-container {
+    width: 100% !important;
+
+    .expense-grid-card {
+      display: flex;
+      align-items: center;
+      width: 16rem !important;
+      padding: 1rem 0.75rem;
+      border: 1px solid var(--content-border-color) !important;
+      background-color: #FFF !important;
+      border-radius: 0.625rem;
+      margin: 0.25rem;
+
+      .icon {
+        width: 3.5rem !important;
+        height: 3.5rem !important;
+      }
+
+      .content-text {
+        font-weight: 500 !important;
+        color: #8B8B8B !important;
+        font-size: var(--fontsize14) !important;
+      }
+
+      .amount-value {
+        font-weight: 600;
+        font-size: var(--fontsize16) !important;
+        color: #000000 !important;
+      }
+
+      .frequency-value {
+        font-weight: 500 !important;
+        font-size: var(--fontsize13) !important;
+        color: #8B8B8B !important;
+      }
+    }
+
+    .p-tab {
+      padding: 0rem !important;
+    }
+  }
+}

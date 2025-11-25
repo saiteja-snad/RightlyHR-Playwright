@@ -19,9 +19,9 @@
                 <label class="form-label filter-labels m-0">Select Employee</label>
                 <div class="custom-p-select-content">
                     <p-select [options]="employeeiddetails" optionLabel="fullName" [(ngModel)]="selectedOtherEmployee"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="fullName" [showClear]="true"   (onClear)="onClearEmployee()"
-                        placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
-                        class="form-select custom-select">
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="fullName" [showClear]="true"
+                        (onClear)="onClearEmployee()" placeholder="Please select employee"
+                        (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
                     </p-select>
                 </div>
             </div>
@@ -30,9 +30,9 @@
             <div class="d-flex align-items-center gap-2">
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="myTeamData" optionLabel="fullName" showClear="true"
-                        optionValue="employeeId" name="myteamemployees" placeholder="Select employee name"
-                        [filter]="true" resetFilterOnHide="true" class="form-select custom-select"   (onClear)="onClearEmployee()"
+                    <p-select [options]="myTeamData" optionLabel="fullName" showClear="true" optionValue="employeeId"
+                        name="myteamemployees" placeholder="Select employee name" [filter]="true"
+                        resetFilterOnHide="true" class="form-select custom-select" (onClear)="onClearEmployee()"
                         [autoDisplayFirst]="false" required (onChange)="onEmployeeChange($event.value)">
                     </p-select>
                 </div>
@@ -44,9 +44,36 @@
                 Of</button>
             }
         </div>
+        <div class="graph-grid w-100 mb-3">
+            <div class="employee-category-container">
+                <p-tabs scrollable>
+                    <p-tablist>
+                        @for (tab of expenseSummaryTabs; track $index) {
+                        <p-tab>
+                            <div class="expense-grid-card gap-3">
+                                <div>
+                                    <img [src]="tab.icon" alt="Icon" class="icon">
+                                </div>
+                                <div>
+                                    <p class="content-text m-0">{{ tab.label }}</p>
+                                    <p class="m-0">
+                                        <span class="amount-value me-2">{{ tab.count }}</span><span
+                                            class="frequency-value">₹ {{ tab.value }}</span>
+                                        <span class="frequency-value"
+                                            *ngIf="tab.showFrequency && getExpenseSummaryDetails?.frequency"> / <b> {{
+                                                getExpenseSummaryDetails.frequency }}</b></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </p-tab>
+                        }
+                    </p-tablist>
+                </p-tabs>
+            </div>
+        </div>
     </div>
     }
-    
+
     <!--Module Information-->
     <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />

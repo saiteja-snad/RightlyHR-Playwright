@@ -169,7 +169,7 @@ export class TeamTimesheetsComponent {
   }
   resetForm() {
     this.datepickerForm.reset({
-      resourceId: null,
+      resourceId: [],
       dateRange: null,
       projectId: null,
       clientId: null,
@@ -193,7 +193,7 @@ export class TeamTimesheetsComponent {
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
-      resourceId: [null],
+      resourceId: [[]],
       projectId: [null],
       clientId: [null],
       departmentId: [null],
@@ -245,17 +245,11 @@ export class TeamTimesheetsComponent {
 
             // Only add "All Employees" if there are actual employees
             if (employeeList.length > 0) {
-              const allEmployeesOption = {
-                id: null,
-                name: 'All Employees',
-                fullName: 'All Employees',
-                key: 'team',
-              };
-              this.resourcesList = [allEmployeesOption, ...employeeList];
-              this.datepickerForm.patchValue({ resourceId: null });
+              this.resourcesList = employeeList;
+              this.datepickerForm.patchValue({ resourceId: [] });
             } else {
               this.resourcesList = [];
-              this.datepickerForm.patchValue({ resourceId: null });
+              this.datepickerForm.patchValue({ resourceId: [] });
             }
           }
         },
@@ -311,36 +305,27 @@ export class TeamTimesheetsComponent {
               }));
 
             if (employeeList.length > 0) {
-              const allEmployeesOption = {
-                value: null,
-                label: 'All Employees',
-                key: 'all',
-              };
-              this.activeEmplist = [allEmployeesOption, ...employeeList];
-              this.datepickerForm.patchValue({ resourceId: null });
+              this.activeEmplist = employeeList;
+              this.datepickerForm.patchValue({ resourceId: [] });
             } else {
               this.activeEmplist = [];
-              this.datepickerForm.patchValue({ resourceId: null });
+              this.datepickerForm.patchValue({ resourceId: [] });
             }
           } else {
             this.activeEmplist = [];
-            this.datepickerForm.patchValue({ resourceId: null });
+            this.datepickerForm.patchValue({ resourceId: [] });
           }
         },
         error: (err) => {
           console.error('Error fetching employees:', err);
           this.activeEmplist = [];
-          this.datepickerForm.patchValue({ resourceId: null });
+          this.datepickerForm.patchValue({ resourceId: [] });
         },
       });
   }
 
   onCheckemployee(employeed: any) {
-    if (employeed === null) {
-      this.page = 1;
-      this.datepickerForm.get('resourceId')?.setValue(null);
-      this.getteamsummary();
-    }
+    // No longer needed for multiselect
   }
 
   onSubmit() {
@@ -354,30 +339,8 @@ export class TeamTimesheetsComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
 
-    const empId = formValue.resourceId ?? null;
-
-    // Find label for BehaviorSubject
-    const selectedEmployee = this.activeEmplist.find(
-      (emp: any) => emp.value === empId
-    );
-    const empName = selectedEmployee ? selectedEmployee.label : 'All Employees';
-
-    // KEEP OLD FUNCTIONALITY (IMPORTANT)
-    this.http.setteamDateRange(start, end, empId, empName);
-
-    // NEW LOGIC (All employee IDs comma-separated)
-    let employeeIds: string | null = null;
-
-    if (formValue.resourceId === null) {
-      // ALL EMPLOYEES SELECTED
-      const allIds = this.activeEmplist
-        .filter((emp: any) => emp.value !== null)
-        .map((emp: any) => emp.value);
-      employeeIds = allIds.join(',');
-    } else {
-      // SINGLE EMPLOYEE
-      employeeIds = formValue.resourceId.toString();
-    }
+    const selectedIds = formValue.resourceId || [];
+    const employeeIds = selectedIds.length > 0 ? selectedIds.join(',') : null;
 
     // Reset pagination
     this.page = 1;

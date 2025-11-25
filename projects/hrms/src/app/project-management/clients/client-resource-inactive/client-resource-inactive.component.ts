@@ -31,6 +31,10 @@ import { ClientResourceTabComponent } from '../../../shared/project-management-t
 export class ClientResourceInactiveComponent {
   searchValue: string = '';
   resourcesData = [] as IResource[];
+  
+  selectedRoleIds: number[] = [];
+  selectedPhaseIds: number[] = [];
+  selectedAuthorityIds: number[] = [];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -90,6 +94,21 @@ export class ClientResourceInactiveComponent {
         this.getclientProjects(this.clientID);
         this.getClientsData(clientID);
       }
+    });
+    
+    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
+      this.selectedRoleIds = roleIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    });
+    
+    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
+      this.selectedPhaseIds = phaseIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    });
+    
+    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
+      this.selectedAuthorityIds = authorityIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getResourceData(parseInt(this.clientID), this.searchValue);
@@ -152,6 +171,15 @@ export class ClientResourceInactiveComponent {
     let url = `ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
     if (searchTerm) {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    if (this.selectedRoleIds.length > 0) {
+      url += `&projectRoleIds=${this.selectedRoleIds.join(',')}`;
+    }
+    if (this.selectedPhaseIds.length > 0) {
+      url += `&phaseIds=${this.selectedPhaseIds.join(',')}`;
+    }
+    if (this.selectedAuthorityIds.length > 0) {
+      url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
     }
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {

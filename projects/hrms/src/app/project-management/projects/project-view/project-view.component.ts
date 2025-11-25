@@ -72,6 +72,13 @@ export class ProjectViewComponent implements OnInit {
   authorityOptions: { label: string; value: number }[] = [];
   authorityLoading = false;
 
+  selectedResourceRoles: number[] = [];
+  selectedResourcePhases: number[] = [];
+  selectedResourceAuthorities: number[] = [];
+  resourceRoleOptions: any[] = [];
+  resourcePhaseOptions: any[] = [];
+  resourceAuthorityOptions: any[] = [];
+
   activePhaseStatusOptions = [
     { label: 'Yet to Start', value: 'yet to start' },
     { label: 'In Progress', value: 'in progress' },
@@ -111,6 +118,7 @@ export class ProjectViewComponent implements OnInit {
         this.projectId = projectId;
         this.getProjects(projectId);
         this.getAllresourcesData();
+        this.loadResourceFilters();
       }
     });
 
@@ -176,10 +184,87 @@ export class ProjectViewComponent implements OnInit {
   clearPhaseFilters() {
     this.selectedPhaseStatuses = [];
     this.phaseDateRange = [];
-    this.selectedAuthorities = []; // ← Clear multi-select
+    this.selectedAuthorities = [];
     this.http.clearPhaseStatusFilter();
-    this.http.clearPhaseDateFilter(); // new
-    this.http.clearPhaseAuthorityFilter(); // ← Clear from service
+    this.http.clearPhaseDateFilter();
+    this.http.clearPhaseAuthorityFilter();
+  }
+
+  loadResourceFilters() {
+    if (!this.projectId) return;
+    this.loadResourceRoles();
+    this.loadResourcePhases();
+    this.loadResourceAuthorities();
+  }
+
+  loadResourceRoles() {
+    this.http.getData('ProjectRoles?isActive=true').subscribe({
+      next: (res: any) => {
+        this.resourceRoleOptions = (res?.data || []).map((item: any) => ({
+          label: item.roleName,
+          value: item.id
+        }));
+      },
+      error: () => {
+        this.resourceRoleOptions = [];
+      }
+    });
+  }
+
+  loadResourcePhases() {
+    if (!this.projectId) return;
+    const params = { projectId: this.projectId };
+    this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (res: any) => {
+        this.resourcePhaseOptions = (res?.data || []).map((item: any) => ({
+          label: item.phaseName,
+          value: item.phaseId
+        }));
+      },
+      error: () => {
+        this.resourcePhaseOptions = [];
+      }
+    });
+  }
+
+  loadResourceAuthorities() {
+    if (!this.projectId) return;
+    this.http.getData(`ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`).subscribe({
+      next: (res: any) => {
+        this.resourceAuthorityOptions = (res?.data || []).map((item: any) => ({
+          label: `${item.fusionEmployeeId} - ${item.name}`,
+          value: item.id
+        }));
+      },
+      error: () => {
+        this.resourceAuthorityOptions = [];
+      }
+    });
+  }
+
+  onResourceRoleChange() {
+    this.http.setResourceRoleFilter(this.selectedResourceRoles);
+  }
+
+  onResourcePhaseChange() {
+    this.http.setResourcePhaseFilter(this.selectedResourcePhases);
+  }
+
+  onResourceAuthorityChange() {
+    this.http.setResourceAuthorityFilter(this.selectedResourceAuthorities);
+  }
+
+  clearResourceFilters() {
+    this.selectedResourceRoles = [];
+    this.selectedResourcePhases = [];
+    this.selectedResourceAuthorities = [];
+    this.http.clearResourceRoleFilter();
+    this.http.clearResourcePhaseFilter();
+    this.http.clearResourceAuthorityFilter();
+  }
+
+  isResourceFilterApplied(): boolean {
+    return this.selectedResourceRoles.length > 0 || this.selectedResourcePhases.length > 0 || this.selectedResourceAuthorities.length > 0;
   }
 
   resetForm() {

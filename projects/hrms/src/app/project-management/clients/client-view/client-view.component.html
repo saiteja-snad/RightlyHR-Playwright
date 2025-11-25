@@ -4,6 +4,40 @@
       <app-project-management-module-info />
     </div>
 
+    <!-- Resource Filters -->
+    <div class="d-flex gap-4 align-items-center" *ngIf="isActive('/project-management/clients/details/resources') || isActive('/project-management/clients/details/inactive-resources')">
+      <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
+        Clear All
+      </button>
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Role</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
+            placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Phase</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
+            placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Authority</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value"
+            placeholder="Please select authority" (onChange)="onResourceAuthorityChange()" [(ngModel)]="selectedResourceAuthorities" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+    </div>
+
     @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
     <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
       <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>

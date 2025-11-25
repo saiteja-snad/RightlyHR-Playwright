@@ -26,7 +26,7 @@
         <!-- Project Code -->
         <div class="col-md-6 mb-3">
           <label for="code" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" formControlName="code" maxlength="6"
+          <input type="text" class="form-control custom-input" formControlName="code" maxlength="13"
             placeholder="Please enter project code" (keydown)="formValidation.restrictInitialSpace($event)">
           <div class="error-msg"
             *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['required']">
@@ -34,7 +34,7 @@
           </div>
           <div class="error-msg"
             *ngIf="addprojectform.get('code')?.touched && addprojectform.get('code')?.errors?.['maxlength']">
-            Project Code cannot exceed 5 characters
+            Project Code cannot exceed 12 characters
           </div>
         </div>
 

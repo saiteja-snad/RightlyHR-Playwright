@@ -728,6 +728,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             status: curr.phase.status,
             startDate: curr.phase.startDate,
             endDate: curr.phase.endDate,
+            meta: curr.phase.meta || null,
+            color: curr.phase.meta?.graphData?.color || null
           } : null;
           const projectObj = {
             projectId: curr?.project?.projectId,
@@ -740,6 +742,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             isOverTimeAllowed: curr?.project?.isOverTimeAllowed || curr?.client?.isOverTimeAllowed,
             isBillable: curr?.project?.isbillable || curr?.client?.isbillable,
             phases: phaseObj ? [phaseObj] : [],
+            meta: curr?.project?.meta || null,
+            color: curr?.project?.meta?.graphData?.color || null
           }
           if (!existingClient) {
             // Create new client
@@ -748,6 +752,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
               clientName: curr?.client?.clientName || 'No Client',
               projects: [],
               shift: curr?.shift,
+              meta: curr?.client?.meta || null,
+              color: curr?.client?.meta?.graphData?.color || null
             };
             acc.push(existingClient);
           }
@@ -1197,6 +1203,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any, phase: any = null) {
+    console.log(row,client,project,phase);
+    
     this.selectedProjectResource = null;
     const form = row as FormGroup;
     // Extract previous values (if user is switching projects)
@@ -1335,6 +1343,29 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       dropdownBtn.classList.remove('show');
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
+  }
+
+  getClientColor(clientId: number): string {
+    const client = this.clients.find(c => c.clientId === clientId);
+    return client?.color || '#0B3A83';
+  }
+
+  getPhaseColor(phaseId: number): string {
+    for (const client of this.clients) {
+      for (const project of client.projects) {
+        const phase = project.phases.find((p: any) => p.phaseId === phaseId);
+        if (phase) return phase.color || '#0B3A83';
+      }
+    }
+    return '#0B3A83';
+  }
+
+  getProjectColor(projectId: number): string {
+    for (const client of this.clients) {
+      const project = client.projects.find((p: any) => p.projectId === projectId);
+      if (project) return project.color || '#0B3A83';
+    }
+    return '#0B3A83';
   }
 
   hasUnselectedProjectPhases(client: any): boolean {

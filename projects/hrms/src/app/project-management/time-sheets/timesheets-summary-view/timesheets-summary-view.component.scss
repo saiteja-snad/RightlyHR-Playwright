@@ -322,3 +322,28 @@
 .circle-yellow {
     background-color: #FFEA00;
 }
+
+
+.timesheet-chip {
+    font-size: var(--fontsize8) !important;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.25rem;
+    text-align: center;
+    border: 1px solid ;
+    background: #FFF;
+}
+.project-name {
+  max-width: 160px;   // set width you want
+  display: inline-block; 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chip-truncate {
+  max-width: 140px;   // chip width
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

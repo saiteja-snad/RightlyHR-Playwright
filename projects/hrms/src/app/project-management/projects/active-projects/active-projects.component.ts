@@ -189,7 +189,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform = this.fb.group({
       updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
       updateclientName: [null, Validators.required],
-      updatecode: [null, [Validators.required,  Validators.maxLength(5)]],
+      updatecode: [null, [Validators.required,  Validators.maxLength(12)]],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],

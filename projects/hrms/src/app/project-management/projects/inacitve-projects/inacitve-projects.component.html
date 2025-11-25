@@ -56,7 +56,7 @@
                                     <td>
                                         <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
                                     </td>
-                                    <td class="text-center">{{ project?.meta?.graphData?.code || '-' }}</td>
+                                     <td class="text-center" [style.color]="project?.meta?.graphData?.color"><b>{{project?.meta?.graphData?.code || '-' }}</b></td>
                                     <!-- <td>{{ project.startDate | dateformat }}</td>
                                         <td>{{ project.endDate | dateformat }}</td>
                                         <td>{{ project.effectiveDate | dateformat }}</td>

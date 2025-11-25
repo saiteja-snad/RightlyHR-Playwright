@@ -11,17 +11,23 @@
         Clear All
       </button>
 
-      <div class="custom-p-multiSelect-content">
-        <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-          placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
-          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedActivePhaseStatuses" class="form-select custom-select">
-        </p-multiSelect>
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Status</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select status" [filter]="true" (onChange)="onPhaseStatusChange($event)"
+            (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedActivePhaseStatuses" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
       </div>
 
-      <div class="custom-date-range-picker">
-        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
-          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
-        </p-datepicker>
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
+        <div class="custom-date-range-picker">
+          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
+            placeholder="Please select date range" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+          </p-datepicker>
+        </div>
       </div>
 
       <!-- <div class="custom-p-multiSelect-content">
@@ -42,17 +48,23 @@
         Clear All
       </button>
 
-      <div class="custom-p-multiSelect-content">
-        <p-multiSelect [options]="inactivePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-          placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
-          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedInActivePhaseStatuses" class="form-select custom-select">
-        </p-multiSelect>
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Status</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="inactivePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select status" [filter]="true" (onChange)="onPhaseStatusChange($event)"
+            (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedInActivePhaseStatuses" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
       </div>
 
-      <div class="custom-date-range-picker">
-        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
-        </p-datepicker>
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
+        <div class="custom-date-range-picker">
+          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+            placeholder="Please select date range" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+          </p-datepicker>
+        </div>
       </div>
 
       <!-- <div class="custom-p-multiSelect-content">
@@ -72,10 +84,13 @@
         Clear All
       </button>
 
-      <div class="custom-date-range-picker">
-        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
-          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
-        </p-datepicker>
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
+        <div class="custom-date-range-picker">
+          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
+            placeholder="Please select date range" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+          </p-datepicker>
+        </div>
       </div>
 <!--
       <div class="custom-p-multiSelect-content">

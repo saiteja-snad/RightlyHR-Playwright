@@ -196,9 +196,9 @@ export class ProjectViewComponent implements OnInit {
     this.selectedActivePhaseStatuses = [];
     this.phaseDateRange = [];
     this.selectedAuthorities = [];
-    this.http.clearPhaseStatusFilter();
-    this.http.clearPhaseDateFilter();
-    this.http.clearPhaseAuthorityFilter();
+    this.http.setPhaseStatusFilter([]);
+    this.http.setPhaseDateFilter({ startDate: null, endDate: null });
+    this.http.setPhaseAuthorityFilter([]);
   }
 
   loadResourceFilters() {

@@ -1,3 +1,5 @@
+import { ApprovalHeader, Module } from "./timoff-model";
+
 export interface Iexpensetype {
   expenseId: any;
   expensesCode: number;
@@ -88,7 +90,7 @@ export interface IExpense {
   submissionDate: string;
   expense_Date: any,
   expenseitem?: IExpenseItem[];
-   pendingApprovalHeader: IPendingApprovalHeader;
+  pendingApprovalHeader: IPendingApprovalHeader;
 }
 
 export interface IPendingApprovalHeader {
@@ -217,7 +219,19 @@ export interface IExpenseItems {
   receipt_Number: string;
   status: string;
   attachment_url: string;
-  isVerified :boolean;
+  isVerified: boolean;
+  approvalHeader?: IApprovalHeader;
+  id: number;
+  moduleName: string;
+  approvalflowRequired: boolean;
+  categoryType: string,
+  moduleId: number;
+  referenceEntityId: number;
+  currentapprovalStage: string;
+  currentApproverId: string;
+  finalapprovalStage: string;
+  approvedType: string;
+  requestedBy: number;
 }
 export interface IExpenseHeaders {
   expenses_ID: number;
@@ -229,7 +243,20 @@ export interface IExpenseHeaders {
   expense_Amount: number;
   approverEmail: string;
   expenseitem: IExpenseItems[];
+  approvalHeader?: IApprovalHeader;
+  id: number;
+  moduleName: string;
+  approvalflowRequired: boolean;
+  categoryType: string,
+  moduleId: number;
+  referenceEntityId: number;
+  currentapprovalStage: string;
+  currentApproverId: string;
+  finalapprovalStage: string;
+  approvedType: string;
+  requestedBy: number;
 }
+
 export interface Event {
   name: string;
   date: string;
@@ -277,7 +304,15 @@ export interface IApprovalHeader {
   currentapprovalStage: string,
   currentApproverId: number,
   finalapprovalStage: string,
-  requestedBy: number
+  requestedBy: number,
+  entity: ExpenseEntity,
+  currentApprover: string;
+}
+export interface ExpenseApprovalResponse {
+  entity: ExpenseEntity;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+
 }
 export interface IGlobalExpenses {
   id?: number,
@@ -294,7 +329,7 @@ export interface IGlobalExpenses {
   emp_Type?: string,
   emp_Type_ReferenceId?: string,
   applicable_Year?: string,
-  budgetFormatted:any
+  budgetFormatted: any
 }
 export interface ISummary {
   frequency?: string,
@@ -307,12 +342,12 @@ export interface ISummary {
   utilisedPercentage?: any,
   resetOn?: any,
   utilisedReimbursement?: number,
-  remainingReimbursementFormatted:any,
-  requestedAmountFormatted:any,
-  processedAmountFormatted:any,
-  utilisedPercentageFormatted:any,
-  totalReimbursementLimitFormatted:any,
-  approvedAmountFormatted:any
+  remainingReimbursementFormatted: any,
+  requestedAmountFormatted: any,
+  processedAmountFormatted: any,
+  utilisedPercentageFormatted: any,
+  totalReimbursementLimitFormatted: any,
+  approvedAmountFormatted: any
 }
 export interface AttributeItem {
   id: number;

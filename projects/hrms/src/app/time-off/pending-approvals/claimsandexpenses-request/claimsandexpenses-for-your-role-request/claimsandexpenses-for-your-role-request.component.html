@@ -129,12 +129,12 @@
         </div>
 
       </div>
-         <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-            <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
-              (click)="onStatusApproveSelect('approved')">
-              Approved
-            </button>
-          </div>
+      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
+          Approved
+        </button>
+      </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
           translate}}</button>
@@ -165,12 +165,12 @@
         <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
 
       </div>
-         <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                <button type="button"class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
-                    (click)="onStatusRejectSelect('reject')">
-                    Rejected
-                </button>
-            </div>
+      <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button type="button" class="custom-btn btn-secondary chip-btn"
+          [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+          Rejected
+        </button>
+      </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
           translate}}</button>
@@ -264,22 +264,24 @@
                       </a>
                     </li>
                     @if(rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
+                    @if( item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage){
                     <!-- Only show Verify if item is NOT verified (local flag OR verifiedExpenseIds) -->
                     <li *ngIf="!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
                       <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
                         <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
                       </a>
                     </li>
-                    }
+                    }}
 
                     @if(rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
+                    @if( item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage){
                     <!-- Only show Reject if not verified (hide after verification) -->
                     <li *ngIf="!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
                       <a class="dropdown-item" (click)="openRejectModal(rejectmodal, selectedLeaveData)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
                       </a>
                     </li>
-                    }
+                    }}
                   </ul>
                 </div>
               </td>

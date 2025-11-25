@@ -66,7 +66,7 @@ export class ProjectViewComponent implements OnInit {
   datepickerFormDataforsummary!: FormGroup;
 
   selectedActivePhaseStatuses: string[] = [];
-    selectedInActivePhaseStatuses: string[] = [];
+  selectedInActivePhaseStatuses: string[] = [];
 
   phaseDateRange: Date[] = [];
 
@@ -92,6 +92,12 @@ export class ProjectViewComponent implements OnInit {
     { label: 'Closed', value: 'closed' },
   ];
 
+  departmentlist = [] as any;
+
+  selectedDepartmentIds: number[] = [];
+  selectedRoleIds: number[] = [];
+  selectedPhaseIds: number[] = [];
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -107,6 +113,7 @@ export class ProjectViewComponent implements OnInit {
 
     this.createContactForm();
     this.createDocumentForm();
+    this.DepartmentList();
 
     // this.setDefaultRanges();
     // this.setDefaultWeek();
@@ -166,8 +173,8 @@ export class ProjectViewComponent implements OnInit {
 
   onPhaseStatusChange(event: any) {
     const selected = event.value || [];
-    this.selectedInActivePhaseStatuses = selected
-    this.selectedActivePhaseStatuses = selected
+    this.selectedInActivePhaseStatuses = selected;
+    this.selectedActivePhaseStatuses = selected;
     this.http.setPhaseStatusFilter(selected);
   }
 
@@ -185,8 +192,8 @@ export class ProjectViewComponent implements OnInit {
   }
 
   clearPhaseFilters() {
-     this.selectedInActivePhaseStatuses =[]
-    this.selectedActivePhaseStatuses = []
+    this.selectedInActivePhaseStatuses = [];
+    this.selectedActivePhaseStatuses = [];
     this.phaseDateRange = [];
     this.selectedAuthorities = [];
     this.http.clearPhaseStatusFilter();
@@ -206,12 +213,12 @@ export class ProjectViewComponent implements OnInit {
       next: (res: any) => {
         this.resourceRoleOptions = (res?.data || []).map((item: any) => ({
           label: item.roleName,
-          value: item.id
+          value: item.id,
         }));
       },
       error: () => {
         this.resourceRoleOptions = [];
-      }
+      },
     });
   }
 
@@ -222,28 +229,43 @@ export class ProjectViewComponent implements OnInit {
       next: (res: any) => {
         this.resourcePhaseOptions = (res?.data || []).map((item: any) => ({
           label: item.phaseName,
-          value: item.phaseId
+          value: item.phaseId,
         }));
       },
       error: () => {
         this.resourcePhaseOptions = [];
-      }
+      },
+    });
+  }
+
+  DepartmentList() {
+    this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.departmentlist = data;
+      },
     });
   }
 
   loadResourceAuthorities() {
     if (!this.projectId) return;
-    this.http.getData(`ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`).subscribe({
-      next: (res: any) => {
-        this.resourceAuthorityOptions = (res?.data || []).map((item: any) => ({
-          label: `${item.fusionEmployeeId} - ${item.name}`,
-          value: item.id
-        }));
-      },
-      error: () => {
-        this.resourceAuthorityOptions = [];
-      }
-    });
+    this.http
+      .getData(
+        `ProjectResource/timesheet-approval-authorities?entityType=Project&entityRefId=${this.projectId}`
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.resourceAuthorityOptions = (res?.data || []).map(
+            (item: any) => ({
+              label: `${item.fusionEmployeeId} - ${item.name}`,
+              value: item.id,
+            })
+          );
+        },
+        error: () => {
+          this.resourceAuthorityOptions = [];
+        },
+      });
   }
 
   onResourceRoleChange() {
@@ -268,7 +290,11 @@ export class ProjectViewComponent implements OnInit {
   }
 
   isResourceFilterApplied(): boolean {
-    return this.selectedResourceRoles.length > 0 || this.selectedResourcePhases.length > 0 || this.selectedResourceAuthorities.length > 0;
+    return (
+      this.selectedResourceRoles.length > 0 ||
+      this.selectedResourcePhases.length > 0 ||
+      this.selectedResourceAuthorities.length > 0
+    );
   }
 
   resetForm() {

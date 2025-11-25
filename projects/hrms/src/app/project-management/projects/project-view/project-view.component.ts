@@ -139,7 +139,7 @@ export class ProjectViewComponent implements OnInit {
     });
     this.enableResourceOnDateChange();
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd), takeUntil(this.destroy$))
       .subscribe(() => {
         if (
           this.router.url.includes(
@@ -147,6 +147,12 @@ export class ProjectViewComponent implements OnInit {
           )
         ) {
           this.resetForm();
+        }
+        if (this.isActive('/project-management/projects/details/inactive-phases') || 
+            this.isActive('/project-management/projects/details/active-phases')) {
+          this.selectedActivePhaseStatuses = [];
+          this.selectedInActivePhaseStatuses = [];
+          this.http.setPhaseStatusFilter([]);
         }
       });
   }
@@ -175,10 +181,8 @@ export class ProjectViewComponent implements OnInit {
     const selected = event.value || [];
     if (this.isActive('/project-management/projects/details/inactive-phases')) {
       this.selectedInActivePhaseStatuses = selected;
-      this.selectedActivePhaseStatuses = [];
     } else {
       this.selectedActivePhaseStatuses = selected;
-      this.selectedInActivePhaseStatuses = [];
     }
     this.http.setPhaseStatusFilter(selected);
   }

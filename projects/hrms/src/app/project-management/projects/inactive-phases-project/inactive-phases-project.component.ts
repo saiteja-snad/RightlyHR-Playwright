@@ -207,11 +207,14 @@ export class InactivePhasesProjectComponent {
       projectId: this.projectId,
     };
 
-    // If user selected any status via filter → use it
-    if (this.selectedPhaseStatuses.length > 0) {
-      params.status = this.selectedPhaseStatuses.join(',');
+    const validStatuses = ['completed', 'closed'];
+    const filteredStatuses = this.selectedPhaseStatuses.filter(s => 
+      validStatuses.includes(s.toLowerCase())
+    );
+
+    if (filteredStatuses.length > 0) {
+      params.status = filteredStatuses.join(',');
     } else {
-      // Otherwise show only completed & closed for inactive projects
       params.status = 'completed,closed';
     }
 

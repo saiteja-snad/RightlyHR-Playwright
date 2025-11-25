@@ -320,7 +320,7 @@ export class TeamTimesheetsComponent {
   }
 
   getLighterColor(color: string, amount: number = 0.9): string {
-  if (!color) return color || '#DCE5F5'; // Default color if none provided;
+  if (!color) return color || '#d8d8daff'; // Default color if none provided;
   
   // Remove # if present
   const hex = color.replace('#', '');

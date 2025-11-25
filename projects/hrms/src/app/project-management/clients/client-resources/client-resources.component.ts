@@ -193,7 +193,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
     }
     if (this.selectedRoleIds.length > 0) {
-      url += `&projectRoleIds=${this.selectedRoleIds.join(',')}`;
+      url += `&roleIds=${this.selectedRoleIds.join(',')}`;
     }
     if (this.selectedPhaseIds.length > 0) {
       url += `&phaseIds=${this.selectedPhaseIds.join(',')}`;

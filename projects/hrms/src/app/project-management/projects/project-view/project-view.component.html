@@ -12,14 +12,14 @@
       </button>
 
       <div class="custom-p-multiSelect-content">
-        <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value"
+        <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
           placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
           (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedActivePhaseStatuses" class="form-select custom-select">
         </p-multiSelect>
       </div>
 
       <div class="custom-date-range-picker">
-        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
           placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
         </p-datepicker>
       </div>
@@ -43,7 +43,7 @@
       </button>
 
       <div class="custom-p-multiSelect-content">
-        <p-multiSelect [options]="inactivePhaseStatusOptions" optionLabel="label" optionValue="value"
+        <p-multiSelect [options]="inactivePhaseStatusOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
           placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
           (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedInActivePhaseStatuses" class="form-select custom-select">
         </p-multiSelect>
@@ -73,7 +73,7 @@
       </button>
 
       <div class="custom-date-range-picker">
-        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+        <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
           placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
         </p-datepicker>
       </div>
@@ -127,7 +127,7 @@
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Role</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
             placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -136,7 +136,7 @@
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Phase</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
             placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -145,7 +145,7 @@
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Authority</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value"
+          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
             placeholder="Please select authority" (onChange)="onResourceAuthorityChange()" [(ngModel)]="selectedResourceAuthorities" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -233,16 +233,16 @@
 
         <!-- Department Multi-Select -->
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" defaultLabel="Please Select Department"
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" resetFilterOnHide="true"
+            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Please Select Department"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <!-- Role Multi-Select -->
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
-            defaultLabel="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
             class="form-select custom-select" [ngModelOptions]="{standalone: true}">
           </p-multiSelect>
         </div>
@@ -251,8 +251,8 @@
 
         <!-- Phase Multi-Select -->
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
-            defaultLabel="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
             class="form-select custom-select" [ngModelOptions]="{standalone: true}">
           </p-multiSelect>
         </div>

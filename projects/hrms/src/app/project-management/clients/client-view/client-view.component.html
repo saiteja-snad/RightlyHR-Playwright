@@ -13,7 +13,7 @@
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Role</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
             placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -22,7 +22,7 @@
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Phase</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
             placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -31,7 +31,7 @@
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Authority</label>
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value"
+          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
             placeholder="Please select authority" (onChange)="onResourceAuthorityChange()" [(ngModel)]="selectedResourceAuthorities" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -70,7 +70,7 @@
       @if(rbac.allowedToAccess('Client Projects.view')){
       <!-- Department Name Field -->
       <div class="custom-p-multiSelect-content">
-        <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+        <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true" resetFilterOnHide="true"
           defaultLabel="Please select department name" class="form-select custom-select"
           (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
       </div>
@@ -78,7 +78,7 @@
 
       @if(rbac.allowedToAccess('Client Projects.view')) {
       <div class="custom-p-multiSelect-content">
-        <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value"
+        <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
           defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
           (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
         </p-multiSelect>
@@ -125,7 +125,7 @@
         </div>
 
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" resetFilterOnHide="true"
             [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Department"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" class="form-select custom-select">
           </p-multiSelect>
@@ -133,14 +133,14 @@
 
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Role" [filter]="true" [showToggleAll]="true"
+            [ngModelOptions]="{standalone: true}" placeholder="Role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
             selectedItemsLabel="{0} roles" class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId"
-            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Phase" [filter]="true"
+            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Phase" [filter]="true" resetFilterOnHide="true"
             [showToggleAll]="true" selectedItemsLabel="{0} phases" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -167,20 +167,20 @@
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
             [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Department"
-            [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts"
+            [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" resetFilterOnHide="true"
             class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Role" [filter]="true" [showToggleAll]="true"
+            [ngModelOptions]="{standalone: true}" placeholder="Role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
             selectedItemsLabel="{0} roles" class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId"
+          <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId" resetFilterOnHide="true"
             [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Phase"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
             class="form-select custom-select">

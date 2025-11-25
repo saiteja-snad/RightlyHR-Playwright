@@ -178,14 +178,21 @@ export class ProjectViewComponent implements OnInit {
     this.http.setPhaseStatusFilter(selected);
   }
 
-  onPhaseDateChange() {
-    const [start, end] = this.phaseDateRange || [];
-
-    const startDate = start ? dayjs(start).startOf('day').toISOString() : null;
-    const endDate = end ? dayjs(end).endOf('day').toISOString() : null;
-
+onPhaseDateChange() {
+  // Only apply filter if BOTH dates are selected
+  if (this.phaseDateRange && this.phaseDateRange.length === 2 && this.phaseDateRange[0] && this.phaseDateRange[1]) {
+    const [start, end] = this.phaseDateRange;
+    const startDate = dayjs(start).startOf('day').toISOString();
+    const endDate = dayjs(end).endOf('day').toISOString();
     this.http.setPhaseDateFilter({ startDate, endDate });
   }
+}
+
+onPhaseDateClear() {
+  this.phaseDateRange = [];
+  this.http.clearPhaseDateFilter();
+  this.http.setPhaseDateFilter({ startDate: null, endDate: null });
+}
 
   onAuthorityChange() {
     this.http.setPhaseAuthorityFilter(this.selectedAuthorities);

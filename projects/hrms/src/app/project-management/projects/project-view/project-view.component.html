@@ -20,7 +20,7 @@
 
       <div class="custom-date-range-picker">
         <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
-          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+          placeholder="Filter by Start/End Date" (onClose)="onPhaseDateChange()" (onClearClick)="onPhaseDateClear()">
         </p-datepicker>
       </div>
 
@@ -51,7 +51,7 @@
 
       <div class="custom-date-range-picker">
         <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+          placeholder="Filter by Start/End Date" (onClose)="onPhaseDateChange()" (onClearClick)="onPhaseDateClear()">
         </p-datepicker>
       </div>
 
@@ -74,7 +74,7 @@
 
       <div class="custom-date-range-picker">
         <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true" resetFilterOnHide="true"
-          placeholder="Filter by Start/End Date" (onSelect)="onPhaseDateChange()" (onClearClick)="onPhaseDateChange()">
+          placeholder="Filter by Start/End Date" (onClose)="onPhaseDateChange()" (onClearClick)="onPhaseDateClear()"  >
         </p-datepicker>
       </div>
 <!--

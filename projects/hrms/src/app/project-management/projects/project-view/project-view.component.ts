@@ -297,13 +297,24 @@ export class ProjectViewComponent implements OnInit {
     );
   }
 
-  resetForm() {
-    this.datepickerFormData.get('dateRange')?.reset();
-    this.datepickerFormData.get('resourceId')?.reset();
-    this.http.setRequest(null);
-    this.http.setDateRange(null, null);
-    this.setDefaultmounth();
-  }
+resetForm() {
+  this.datepickerFormData.get('dateRange')?.reset();
+  this.datepickerFormData.get('resourceId')?.reset();
+
+  this.selectedDepartmentIds = [];
+  this.selectedResourceRoles = [];
+  this.selectedResourcePhases = [];
+
+  this.http.setProjectTimesheetDepartmentIds([]);
+  this.http.setProjectTimesheetRoleFilter([]);
+  this.http.setProjectTimesheetPhaseFilter([]);
+  this.http.setDateRange(null, null);
+
+  this.setDefaultmounth();
+
+  // CORRECT — use setRequest
+  this.http.setRequest(null);
+}
 
   createContactForm() {
     this.addContactForm = this.fb.group({
@@ -544,34 +555,73 @@ export class ProjectViewComponent implements OnInit {
     }
   }
 
-  onSubmit() {
-    const dateRangeArray = this.datepickerFormData.value.dateRange || [];
-    // const resourceID=this.datepickerFormData.get('resourceId')?.value?.id
-    const startDate = dateRangeArray[0]
-      ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss')
-      : null;
-    const endDate = dateRangeArray[1]
-      ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss')
-      : null;
+onSubmit() {
+  const dateRangeArray = this.datepickerFormData.value.dateRange || [];
+  const startDate = dateRangeArray[0]
+    ? dayjs(dateRangeArray[0]).format('YYYY-MM-DD')
+    : null;
+  const endDate = dateRangeArray[1]
+    ? dayjs(dateRangeArray[1]).format('YYYY-MM-DD')
+    : null;
 
-    const request = {
-      dateRange: { startDate, endDate },
-      resourceId: this.datepickerFormData.value.resourceId,
-    };
-    this.http.setRequest(request);
+  const resourceId = this.datepickerFormData.value.resourceId;
+
+  const deptIds = this.selectedDepartmentIds || [];
+  const roleIds = this.selectedResourceRoles || [];
+  const phaseIds = this.selectedResourcePhases || [];
+
+  // Update shared filters
+  this.http.setProjectTimesheetDepartmentIds(deptIds);
+  this.http.setProjectTimesheetRoleFilter(roleIds);
+  this.http.setProjectTimesheetPhaseFilter(phaseIds);
+
+  if (startDate && endDate) {
+    this.http.setDateRange(startDate, endDate);
+  } else {
+    this.http.setDateRange(null, null);
   }
+
+  const request = {
+    dateRange: startDate && endDate ? { startDate, endDate } : undefined,
+    resourceId: resourceId || undefined,
+    resetPagination: true
+  };
+
+  // CORRECT WAY — use the setter method
+  this.http.setRequest(request);
+}
+
+  // onSubmitforsummary() {
+  //   const dateRangeArray =
+  //     this.datepickerFormDataforsummary.value.dateRange || [];
+  //   const startDate = dateRangeArray[0]
+  //     ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss')
+  //     : null;
+  //   const endDate = dateRangeArray[1]
+  //     ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss')
+  //     : null;
+  //   this.http.setDateRange(startDate, endDate);
+  // }
 
   onSubmitforsummary() {
-    const dateRangeArray =
-      this.datepickerFormDataforsummary.value.dateRange || [];
-    const startDate = dateRangeArray[0]
-      ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss')
-      : null;
-    const endDate = dateRangeArray[1]
-      ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss')
-      : null;
-    this.http.setDateRange(startDate, endDate);
-  }
+  const dateRangeArray = this.datepickerFormDataforsummary.value.dateRange || [];
+  const startDate = dateRangeArray[0]
+    ? dayjs(dateRangeArray[0]).format('YYYY-MM-DD')
+    : null;
+  const endDate = dateRangeArray[1]
+    ? dayjs(dateRangeArray[1]).format('YYYY-MM-DD')
+    : null;
+
+  const request = {
+    dateRange: { startDate, endDate },
+    departmentIds: this.selectedDepartmentIds.length > 0 ? this.selectedDepartmentIds : undefined,
+    roleIds: this.selectedResourceRoles.length > 0 ? this.selectedResourceRoles : undefined,
+    phaseIds: this.selectedResourcePhases.length > 0 ? this.selectedResourcePhases : undefined,
+  };
+
+  // This triggers all charts in Project Timesheet Summary
+  this.http.setProjectTimesheetFilterData(request);
+}
 
   navigationtoinactivedocuments() {
     this.router.navigate(

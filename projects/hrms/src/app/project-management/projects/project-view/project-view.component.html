@@ -183,6 +183,33 @@
           </p-select>
         </div>
 
+         <!-- Department Multi-Select -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" defaultLabel="Please Select Department"
+            [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+
+        <!-- Role Multi-Select -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
+            defaultLabel="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
+            class="form-select custom-select" [ngModelOptions]="{standalone: true}">
+          </p-multiSelect>
+        </div>
+
+
+
+        <!-- Phase Multi-Select -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
+            defaultLabel="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
+            class="form-select custom-select" [ngModelOptions]="{standalone: true}">
+          </p-multiSelect>
+        </div>
+
+
         <div>
           <button class="custom-btn btn-primary" type="submit">Apply</button>
         </div>
@@ -207,7 +234,7 @@
         <!-- Department Multi-Select -->
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Please Select Department"
+            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" defaultLabel="Please Select Department"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -215,7 +242,7 @@
         <!-- Role Multi-Select -->
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
-            placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
+            defaultLabel="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
             class="form-select custom-select" [ngModelOptions]="{standalone: true}">
           </p-multiSelect>
         </div>
@@ -225,7 +252,7 @@
         <!-- Phase Multi-Select -->
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
-            placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
+            defaultLabel="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
             class="form-select custom-select" [ngModelOptions]="{standalone: true}">
           </p-multiSelect>
         </div>

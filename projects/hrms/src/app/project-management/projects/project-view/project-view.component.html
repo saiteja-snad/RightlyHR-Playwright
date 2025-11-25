@@ -14,7 +14,7 @@
       <div class="custom-p-multiSelect-content">
         <p-multiSelect [options]="activePhaseStatusOptions" optionLabel="label" optionValue="value"
           placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
-          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedPhaseStatuses" class="form-select custom-select">
+          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedActivePhaseStatuses" class="form-select custom-select">
         </p-multiSelect>
       </div>
 
@@ -45,7 +45,7 @@
       <div class="custom-p-multiSelect-content">
         <p-multiSelect [options]="inactivePhaseStatusOptions" optionLabel="label" optionValue="value"
           placeholder="All Statuses" [filter]="true" (onChange)="onPhaseStatusChange($event)"
-          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedPhaseStatuses" class="form-select custom-select">
+          (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedInActivePhaseStatuses" class="form-select custom-select">
         </p-multiSelect>
       </div>
 

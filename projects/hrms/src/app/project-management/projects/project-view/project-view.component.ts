@@ -65,7 +65,9 @@ export class ProjectViewComponent implements OnInit {
   inactiveStatus: any;
   datepickerFormDataforsummary!: FormGroup;
 
-  selectedPhaseStatuses: string[] = [];
+  selectedActivePhaseStatuses: string[] = [];
+    selectedInActivePhaseStatuses: string[] = [];
+
   phaseDateRange: Date[] = [];
 
   selectedAuthorities: number[] = [];
@@ -164,7 +166,8 @@ export class ProjectViewComponent implements OnInit {
 
   onPhaseStatusChange(event: any) {
     const selected = event.value || [];
-    this.selectedPhaseStatuses = selected;
+    this.selectedInActivePhaseStatuses = selected
+    this.selectedActivePhaseStatuses = selected
     this.http.setPhaseStatusFilter(selected);
   }
 
@@ -182,7 +185,8 @@ export class ProjectViewComponent implements OnInit {
   }
 
   clearPhaseFilters() {
-    this.selectedPhaseStatuses = [];
+     this.selectedInActivePhaseStatuses =[]
+    this.selectedActivePhaseStatuses = []
     this.phaseDateRange = [];
     this.selectedAuthorities = [];
     this.http.clearPhaseStatusFilter();

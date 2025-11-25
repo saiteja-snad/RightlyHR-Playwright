@@ -209,11 +209,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
       projectId: this.projectId,
     };
 
-    // Use filtered statuses if user selected any
-    if (this.selectedPhaseStatuses.length > 0) {
-      params.status = this.selectedPhaseStatuses.join(',');
+    const validStatuses = ['yet to start', 'in progress', 'extended'];
+    const filteredStatuses = this.selectedPhaseStatuses.filter(s => 
+      validStatuses.includes(s.toLowerCase())
+    );
+
+    if (filteredStatuses.length > 0) {
+      params.status = filteredStatuses.join(',');
     } else {
-      // Default behavior — exactly same as before
       params.status = 'yet to start,in progress,extended';
     }
 

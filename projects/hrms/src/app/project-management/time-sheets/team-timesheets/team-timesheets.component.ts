@@ -77,7 +77,7 @@ export class TeamTimesheetsComponent {
   departmentDetails = [] as any;
   tmandRmDetails = [] as any;
 
-  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, 
+  constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,
     private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
     private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService) { }
 
@@ -165,7 +165,7 @@ export class TeamTimesheetsComponent {
     // Reset to current month
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
-    
+
     // Clear all form fields including date range and employee selection
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
@@ -175,22 +175,22 @@ export class TeamTimesheetsComponent {
       departmentId: null,
       tmorrmId: null
     });
-    
+
     // Clear filter service
     this.filterService.clearFilters();
-    
+
     // Reload employee lists
     if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
       this.getAllEmployeeDetails();
     } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
       this.getResourceDetailsByManagerId();
     }
-    
+
     // Reload table data with cleared filters
     this.page = 1;
     this.first = 0;
     this.getteamsummary();
-    
+
     this.closeCanvas();
   }
 
@@ -347,14 +347,7 @@ export class TeamTimesheetsComponent {
     // Case 1: Only "My Team" — include manager resourceId
     if (hasMyTeam && !hasAllEmployees) {
       url += `&resourceId=${this.empdata?.employeeId}`;
-      // Include selected subordinate if chosen
-      if (formValue.resourceId) {
-        url += `&employeeId=${formValue.resourceId}`;
-      }
-    }
-    // Case 2: All Employees OR having both permissions
-    else if (formValue.resourceId) {
-      url += `&employeeId=${formValue.resourceId}`;
+
     }
     // NEW LOGIC: employeeIds (single or comma separated)
     if (employeeIds) {

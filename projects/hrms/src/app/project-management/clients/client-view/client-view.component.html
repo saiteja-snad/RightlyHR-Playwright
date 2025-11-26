@@ -59,9 +59,6 @@
 
 
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')">
-
-
-
       <!-- Clear All Button -->
       <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
         Clear All
@@ -97,6 +94,57 @@
       }
     </div>
 
+        <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/inactiveprojects')">
+          <!-- Clear All Button -->
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+            Clear All
+          </button>
+
+          @if(rbac.allowedToAccess('Client Projects.view')){
+          <!-- Department Name Field -->
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+              resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
+              (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
+          </div>
+          }
+
+          @if(rbac.allowedToAccess('Client Projects.view')) {
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
+              defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
+              (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
+            </p-multiSelect>
+          </div>
+          }
+        </div>
+
+
+        <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/hold')">
+          <!-- Clear All Button -->
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+            Clear All
+          </button>
+
+          @if(rbac.allowedToAccess('Client Projects.view')){
+          <!-- Department Name Field -->
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+              resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
+              (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
+          </div>
+          }
+
+          @if(rbac.allowedToAccess('Client Projects.view')) {
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
+              defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
+              (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
+            </p-multiSelect>
+          </div>
+          }
+        </div>
+
     @if(rbac.allowedToAccess('Contact Information.create') && this.inactiveClientStatus !== 'Inactive'){
     <div *ngIf="isActive('/project-management/clients/details/contact-info')">
       <button type="button" class="custom-btn btn-primary" (click)="opencontactModal(addContactmodal)">
@@ -126,21 +174,21 @@
 
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" resetFilterOnHide="true"
-            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Department"
+            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Please select department"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
+            [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
             selectedItemsLabel="{0} roles" class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId"
-            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Phase" [filter]="true" resetFilterOnHide="true"
+            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase" [filter]="true" resetFilterOnHide="true"
             [showToggleAll]="true" selectedItemsLabel="{0} phases" class="form-select custom-select">
           </p-multiSelect>
         </div>
@@ -152,7 +200,7 @@
     </form>
     }
 
-    @if(isActive('/project-management/clients/details/timesheet/summary') || isActive('/project-management/clients/details/timesheet/detailed')){
+    @if(isActive('/project-management/clients/details/timesheet/summary')){
     <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
       <div class="d-flex gap-3 align-items-center">
         @if(isTimesheetFilterApplied()) {
@@ -165,23 +213,26 @@
         </div>
 
         <div class="custom-p-multiSelect-content">
+          <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Department"
+            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}" placeholder="Please select department"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts" resetFilterOnHide="true"
             class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
+          <label class="form-label custom-label text-nowrap filter-labels m-2">Select Role</label>
           <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
+            [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
             selectedItemsLabel="{0} roles" class="form-select custom-select">
           </p-multiSelect>
         </div>
 
         <div class="custom-p-multiSelect-content">
+          <label class="form-label custom-label text-nowrap filter-labels m-2">Select Phase</label>
           <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId" resetFilterOnHide="true"
-            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Phase"
+            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
             [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
             class="form-select custom-select">
           </p-multiSelect>

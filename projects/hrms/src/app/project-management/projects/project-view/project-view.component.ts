@@ -128,6 +128,7 @@ export class ProjectViewComponent implements OnInit {
         this.getProjects(projectId);
         this.getAllresourcesData();
         this.loadResourceFilters();
+        this.setDefaultmounth()
       }
     });
 
@@ -148,7 +149,7 @@ export class ProjectViewComponent implements OnInit {
         ) {
           this.resetForm();
         }
-        if (this.isActive('/project-management/projects/details/inactive-phases') || 
+        if (this.isActive('/project-management/projects/details/inactive-phases') ||
             this.isActive('/project-management/projects/details/active-phases')) {
           this.selectedActivePhaseStatuses = [];
           this.selectedInActivePhaseStatuses = [];
@@ -362,15 +363,17 @@ resetForm() {
     // detect when user selects date range
   }
 
-  setDefaultmounth() {
+setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
     this.datepickerFormData.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
+      dateRange: [startOfMonth, endOfMonth]
     });
+    const startOfMonths = dayjs().startOf('month').toDate();
+    const endOfMonths = dayjs().endOf('month').toDate();
     this.datepickerFormDataforsummary?.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
+      dateRange: [startOfMonths, endOfMonths]
+    })
   }
 
   // Create a single contact form group

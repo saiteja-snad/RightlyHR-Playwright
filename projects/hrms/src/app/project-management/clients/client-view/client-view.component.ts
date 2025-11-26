@@ -104,6 +104,8 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   resourcePhaseOptions: any[] = [];
   resourceAuthorityOptions: any[] = [];
 
+  previousTabUrl: string = '';
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -131,6 +133,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         this.clientid = clientID;
         this.getClientsData(clientID);
         this.getprojectbyid(clientID);
+        this.setDefaultmounth();
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
@@ -167,6 +170,30 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     }
     this.loadResourceFilters();
     this.loadPhases(this.clientid);
+     if (this.router.url.includes('/project-management/clients/details/timesheet/summary')) {
+        this.setDefaultmounth();
+      }
+      this.router.events
+  .pipe(
+    filter(event => event instanceof NavigationEnd),
+    takeUntil(this.destroy$)
+  )
+  .subscribe((event: NavigationEnd) => {
+    const url = event.urlAfterRedirects;
+
+    const projectTabs = [
+      '/clients/details/projects',
+      '/clients/details/inactiveprojects',
+      '/clients/details/hold'
+    ];
+
+    const currentTab = projectTabs.find(tab => url.includes(tab));
+
+    if (currentTab && currentTab !== this.previousTabUrl) {
+      this.clearAllFilters();  // ← Auto clear when switching tabs
+      this.previousTabUrl = currentTab;
+    }
+  });
   }
 
   loadResourceFilters() {
@@ -343,6 +370,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   onDepartmentChangelist(event: any) {
     const selectedIds = event.value; // This gives an array when multiple departments selected
+    this.selectedDepartments = selectedIds;
     if (Array.isArray(selectedIds)) {
       this.http.setDepartmentIds(selectedIds);
     } else {
@@ -361,6 +389,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   onProjectTypeChange(event: any) {
     const selectedTypes = event.value || []; // This will be string[] or null
+    this.selectedProjectTypes = selectedTypes;
     this.http.setProjectTypeFilter(selectedTypes); // Now sends array or empty array
   }
 
@@ -377,6 +406,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.http.clearClientTimesheetRoleFilter();
     this.http.clearClientTimesheetPhaseFilter();
     this.getAllActiveEmployees();
+
+    this.selectedDepartments = [...this.selectedDepartments];
+  this.selectedProjectTypes = [...this.selectedProjectTypes];
   }
 
   // Create reactive form
@@ -389,15 +421,17 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-    this.datepickerFormDataforsummary?.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-  }
+      const startOfMonth = dayjs().startOf('month').toDate();
+      const endOfMonth = dayjs().endOf('month').toDate();
+      this.datepickerForm.patchValue({
+        dateRange: [startOfMonth, endOfMonth]
+      });
+      const startOfMonths = dayjs().startOf('month').toDate();
+      const endOfMonths = dayjs().endOf('month').toDate();
+      this.datepickerFormDataforsummary?.patchValue({
+        dateRange: [startOfMonths, endOfMonths]
+      })
+    }
 
   getClientsData(clientID: any): void {
     this.http

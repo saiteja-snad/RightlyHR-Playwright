@@ -155,6 +155,16 @@ export class ProjectViewComponent implements OnInit {
           this.selectedInActivePhaseStatuses = [];
           this.http.setPhaseStatusFilter([]);
         }
+
+        const resourceTabs = [
+          '/projects/details/resources',
+          '/projects/details/inactive-resources'
+        ];
+
+        const currentResourceTab = resourceTabs.find(tab => this.router.url.includes(tab));
+        if (currentResourceTab) {
+          this.clearResourceFilters();
+        }
       });
   }
 

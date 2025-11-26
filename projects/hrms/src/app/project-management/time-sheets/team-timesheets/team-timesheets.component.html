@@ -87,7 +87,7 @@
                     <thead>
                         <th>Employee Name</th>
                         <th *ngFor="let date of dateHeaders" [innerHTML]="date" class="text-center th-date"></th>
-                        <th>Total hours</th>
+                        <!-- <th>Total hours</th> -->
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
@@ -121,7 +121,7 @@
                                         }
                                     </div>
                                 </td>
-                                <td>{{emp.totalLoggedHHMM}}</td>
+                                <!-- <td>{{emp.totalLoggedHHMM}}</td> -->
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>

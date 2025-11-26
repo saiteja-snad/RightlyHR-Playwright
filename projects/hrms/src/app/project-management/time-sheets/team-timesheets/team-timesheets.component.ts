@@ -54,7 +54,6 @@ export class TeamTimesheetsComponent {
   selectedEntries: TimesheetEntry[] = [];
 
   constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, private modalService: NgbModal) { }
-
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
@@ -308,6 +307,11 @@ export class TeamTimesheetsComponent {
   }
 
   navigateView(employeeId: any) {
+    if(this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')){
     this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
+    }
+    else if(this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
+    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    }
   }
 }

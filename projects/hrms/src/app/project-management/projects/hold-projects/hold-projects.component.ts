@@ -65,6 +65,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
+       localStorage.setItem('projectProjectId', projectId.toString());
     this.router.navigate(
       ['project-management/projects/details'],
       { queryParams: { id: projectId } } // using query params

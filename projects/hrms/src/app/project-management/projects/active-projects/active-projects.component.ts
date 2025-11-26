@@ -189,7 +189,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform = this.fb.group({
       updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
       updateclientName: [null, Validators.required],
-      updatecode: [null, [Validators.required,  Validators.maxLength(5)]],
+      updatecode: [null, [Validators.required,  Validators.maxLength(12)]],
       updatestartDate: [null, Validators.required],
       updateendDate: [null, Validators.required],
       // updateeffectiveDate: [null, Validators.required],
@@ -303,7 +303,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       // updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds,
-      updatecolor: project?.meta?.graphData?.color
+      updatecolor: project?.meta?.graphData?.color || '#000000'
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
@@ -339,7 +339,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatedBy: parseInt(this.empinfo.employeeId),
       meta: {
         graphData: {
-          color: formValue?.updatecolor,
+          color: formValue?.updatecolor || '#000000',
           code: formValue?.updatecode
         }
       }
@@ -452,7 +452,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
+      localStorage.setItem('projectProjectId', projectId.toString());
     this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
+    
   }
 
   isActive(route: string): boolean {

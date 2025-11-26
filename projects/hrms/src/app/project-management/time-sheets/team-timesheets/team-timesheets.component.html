@@ -91,9 +91,12 @@
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let emp of teamSummaryData">
-                                <td>
+                                <td> 
+                                    @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') || rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
                                     <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{
                                         emp.employee.name}}</a>
+                                    }
+                                    @else{ <span class="project-name-nopermission">{{emp.employee.name}}</span> }
                                 </td>
                                 <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{
                                     'color': day.dailySummary.colour, 'background': day.dailySummary.backgroundColor}">

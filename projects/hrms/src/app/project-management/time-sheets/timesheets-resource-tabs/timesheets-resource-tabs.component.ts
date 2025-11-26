@@ -17,11 +17,11 @@ export class TimesheetsResourceTabsComponent {
   navTabs = [
     {
       label: 'Summary', link: '/project-management/timesheet/resourcesummary', icon: '/icons/project-summary-icon.png',
-      permission: { feature: 'Project Timesheets Tab', action: 'view' }
+      permission: { feature: 'Team Time Sheet Summary Tab', action: 'view' }
     },
     {
       label: 'Detailed', link: '/project-management/timesheet/summary', icon: '/icons/project-detailed-icon.png',
-      permission: { feature: 'Project Detailed Tab', action: 'view' }
+      permission: { feature: 'Team Time Sheet Detailed Tab', action: 'view' }
     },
     
   ];

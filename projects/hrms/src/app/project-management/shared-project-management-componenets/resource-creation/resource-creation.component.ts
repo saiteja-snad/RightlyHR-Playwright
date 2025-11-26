@@ -199,7 +199,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      color: ['', Validators.required],
+      color: ['#000000', Validators.required],
       resourcePhase: [null, Validators.required],
       resourceAuthority: [{ value: null, disabled: true }]
     }, { validators: [this.DateValidator()] },);
@@ -409,7 +409,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       pendingApprovalAuthority: this.addResourceForm.get('resourceAuthority')?.value || this.resourceAuthorityid,
       meta: {
         graphData: {
-          color: formValue.color
+          color: formValue.color || '#000000'
         }
       }
     };

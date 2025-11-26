@@ -58,7 +58,7 @@ export default [
         ]
     },
 
-        { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
+        { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Reports.view' } },
 
 
 ] as Route[];

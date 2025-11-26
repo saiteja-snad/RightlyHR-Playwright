@@ -815,6 +815,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       roleIds: this.selectedRoleIds.length > 0 ? this.selectedRoleIds : undefined,
       phaseIds: this.selectedPhaseIds.length > 0 ? this.selectedPhaseIds : undefined
     };
+    this.http.setProjectTimesheetDepartmentIds(this.selectedDepartmentIds);
+    this.http.setProjectTimesheetRoleFilter(this.selectedRoleIds);
+    this.http.setProjectTimesheetPhaseFilter(this.selectedPhaseIds);
     this.http.setRequest({ ...request, resetPagination: true });
   }
 

@@ -1,0 +1,88 @@
+<div class="dashboard-container">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-display-section">
+        <div class="welcome-text d-flex align-items-center gap-1 mb-3">
+            <div>{{ greetingMessage }},</div>
+            <div class="name">
+                {{ employeedata.firstName }} {{ employeedata.middleName }} {{ employeedata.lastName }}!
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+
+            <!-- Team Availability -->
+            <div class="content-card">
+                <div class="section-title">My Team Availability</div>
+                <!-- Your chart here -->
+            </div>
+
+            <!-- Today's Time Entry -->
+            <div class="content-card">
+                <div class="section-title">Today's Time Entry</div>
+                <!-- Time chart -->
+            </div>
+
+            <!-- Consumed Leave Types -->
+            <div class="content-card">
+                <div class="section-title">Consumed Leave Types</div>
+                <!-- Leave graph -->
+            </div>
+
+          
+
+        </div>
+    </div>
+
+    <!-- Team Members Section -->
+    <div class="content-box">
+        <div class="section-header">
+            <div class="title">My Team Members</div>
+            <a class="view-all">View All</a>
+        </div>
+
+        <div class="members-list">
+            <div class="member-card" *ngFor="let emp of teamMembers">
+                <img [src]="emp.photo" class="member-photo" />
+                <div class="member-name">{{ emp.name }}</div>
+                <div class="member-role">{{ emp.role }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gender Diversity -->
+    <div class="content-box">
+        <div class="section-header">
+            <div class="title">Gender Diversity</div>
+            <div class="total">Total: {{ genderTotal }}</div>
+        </div>
+
+        <div class="gender-graph">
+            <div class="gender-item">
+                <label>Female</label>
+                <div class="bar pink" [style.width.%]="femaleCount"></div>
+            </div>
+
+            <div class="gender-item">
+                <label>Male</label>
+                <div class="bar blue" [style.width.%]="maleCount"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Work Logs -->
+    <div class="content-box">
+        <div class="section-header">
+            <div class="title">Weekly Work Logs</div>
+            <button class="view-btn">View Attendance</button>
+        </div>
+
+        <div class="week-grid">
+            <div class="day-card" *ngFor="let day of weeklyWorkLogs">
+                <div class="work-time">{{ day.time }}</div>
+                <div class="day-name">{{ day.day }}</div>
+            </div>
+        </div>
+    </div>
+
+</div>

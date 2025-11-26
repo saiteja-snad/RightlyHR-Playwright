@@ -1,0 +1,163 @@
+
+.custom-margin {
+    margin-top: 0.75rem;
+}
+.dashboard-container {
+    padding: 1rem;
+    background: #F5F7FA;
+    min-height: 100vh;
+}
+
+.dashboard-display-section {
+    width: 100%;
+    background: linear-gradient(139deg, #FFFFFF 3%, #E8EEF4 57%, #FAECE8 75%, #DAE9EF 87%, #F4DAF2 99%);
+    border: 2px solid #FFFFFF;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+
+    .welcome-text {
+        font-size: 20px;
+        color: #696969;
+        font-weight: 500;
+
+        .name {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+    }
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+.content-card {
+    background: linear-gradient(180deg, #FFFFFF, #ECF0F4);
+    border: 3px solid #FFFFFF;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    min-height: 12rem;
+
+    .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* Team Members */
+.content-box {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .view-all {
+            font-size: 14px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+    }
+}
+
+.members-list {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+}
+
+.member-card {
+    min-width: 7rem;
+    text-align: center;
+
+    .member-photo {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+    }
+
+    .member-name {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .member-role {
+        font-size: 12px;
+        color: #888;
+    }
+}
+
+/* Gender Diversity */
+.gender-graph {
+    padding: 1rem;
+
+    .gender-item {
+        margin-bottom: 0.75rem;
+
+        label {
+            font-size: 14px;
+            margin-right: 1rem;
+        }
+
+        .bar {
+            height: 0.8rem;
+            border-radius: 1rem;
+        }
+
+        .pink {
+            background: #E600A0;
+        }
+
+        .blue {
+            background: #004FC4;
+        }
+    }
+}
+
+/* Weekly Logs */
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+
+    .day-card {
+        text-align: center;
+        padding: 1rem;
+        background: #F2F4F8;
+        border-radius: 0.75rem;
+
+        .work-time {
+            font-size: 18px;
+            font-weight: 700;
+            color: #003B82;
+        }
+
+        .day-name {
+            font-size: 14px;
+            color: #555;
+        }
+    }
+}
+
+.view-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 0.5rem;
+}

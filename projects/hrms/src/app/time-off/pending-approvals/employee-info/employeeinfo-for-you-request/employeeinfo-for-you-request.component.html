@@ -48,6 +48,8 @@
                   [value]="day.entries"
                   dataKey="id"
                   [(selection)]="selectedMap[i]"
+                  [scrollable]="true"
+                  scrollHeight="300px"
                   (onRowSelect)="onRowSelect(i, $event)"
                   (onRowUnselect)="onRowUnselect(i, $event)"
                   [tableStyle]="{ 'min-width': '50rem' }">

@@ -116,6 +116,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.setBasePath();
     this.buildTabs();
     this.fetchApprovalHistory();
+     this.http.basicDetailesadded$.subscribe(() => {
+        this.fetchApprovalHistory();
+      });
   }
 
   fetchApprovalHistory() {

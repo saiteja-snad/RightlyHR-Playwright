@@ -329,9 +329,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const formValue = this.basicInfoForm.getRawValue();
 
     // Get list of pending field names
-    const pendingFieldNames = this.getFieldsApprovalStatusList
-      .filter((item) => item.approvalStatus === 'Pending')
-      .map((item) => item.fieldName);
+    // const pendingFieldNames = this.getFieldsApprovalStatusList
+    //   .filter((item) => item.approvalStatus === 'Pending')
+    //   .map((item) => item.fieldName);
+      const targetStatuses = ['Pending', 'Cancelled'];
+      const pendingFieldNames = this.getFieldsApprovalStatusList
+        .filter((item) => targetStatuses.includes(item.approvalStatus))
+        .map((item) => item.fieldName);
 
     // Map fieldName (display) → form control name
     const fieldToControlMap: { [key: string]: string } = {

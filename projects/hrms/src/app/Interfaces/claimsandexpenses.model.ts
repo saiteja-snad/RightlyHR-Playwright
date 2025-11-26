@@ -244,17 +244,6 @@ export interface IExpenseHeaders {
   approverEmail: string;
   expenseitem: IExpenseItems[];
   approvalHeader?: IApprovalHeader;
-  id: number;
-  moduleName: string;
-  approvalflowRequired: boolean;
-  categoryType: string,
-  moduleId: number;
-  referenceEntityId: number;
-  currentapprovalStage: string;
-  currentApproverId: string;
-  finalapprovalStage: string;
-  approvedType: string;
-  requestedBy: number;
 }
 
 export interface Event {

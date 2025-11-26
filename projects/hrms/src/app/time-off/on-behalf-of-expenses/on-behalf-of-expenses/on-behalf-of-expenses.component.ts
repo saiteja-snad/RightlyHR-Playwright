@@ -46,6 +46,17 @@ export class OnBehalfOfExpensesComponent {
   subscription!: Subscription;
   totalExpense: any;
   expenseChartLegend: any;
+  showDashboard = false
+  flitredapproved = new BehaviorSubject<any[]>([]);
+  flitredpending = new BehaviorSubject<any[]>([]);
+  flitredrejected = new BehaviorSubject<any[]>([]);
+  flitredDrafts = new BehaviorSubject<any[]>([]);
+  processedExpenses = new BehaviorSubject<any[]>([]);
+  ApprovedCount = 0;
+  processedCount = 0;
+  pendingCount = 0;
+  rejectedCount = 0;
+  draftsCount = 0;
   constructor(public router: Router, private authService: AuthService, public rbac: RbacService, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
@@ -55,6 +66,20 @@ export class OnBehalfOfExpensesComponent {
     this.initiateUpdateModuleInfo();
     this.getEmployeeId();
     this.getMyTeam();
+    // subscribe to on-behalf update signal
+    this.http.onBehalfExpensesUpdated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((empId) => {
+        if (empId !== null) {
+          // refresh the summary for the employee the submit code passed
+          this.getexpensesheaderbyemployeeid(empId);
+        } else {
+          // if null, refresh current selected or logged-in
+          const selected = JSON.parse(localStorage.getItem('selectedEmployee') || 'null');
+          const id = selected?.employeeId || this.empinfo.employeeId;
+          if (id) this.getexpensesheaderbyemployeeid(id);
+        }
+      });
   }
 
   navigatetoAddExpenses() {
@@ -69,6 +94,7 @@ export class OnBehalfOfExpensesComponent {
       });
   }
   onClearEmployee(): void {
+    this.showDashboard = false;
     this.selectedOtherEmployee = null;
     this.selectedEmpName = '';
     this.selectedEmpFusionId = '';
@@ -84,6 +110,7 @@ export class OnBehalfOfExpensesComponent {
   }
 
   onEmployeeChange(event: any): void {
+    this.showDashboard = true;
     const selectedEmp = event.employeeId || 0;
     this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName ? this.selectedOtherEmployee?.middleName + ' ' : ''}${this.selectedOtherEmployee?.lastName ?? ''}`;
     this.selectedEmpFusionId = this.selectedOtherEmployee?.fusionEmpId ?? '';
@@ -109,29 +136,88 @@ export class OnBehalfOfExpensesComponent {
       this.http.setOnBehalfOfExpensesSelectedEmp(null);
     }
   }
+getexpensesheaderbyemployeeid(empId: any): void {
+  if (!empId) return;
+  const year = new Date().getFullYear();
+  this.spinnerLoader = true;
 
-  getexpensesheaderbyemployeeid(empId: any): void {
-    const year = new Date().getFullYear();
-    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`).subscribe({
+  this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (data: any) => {
-        this.expenesEmplyeedatastatusfliter.next(data)
-        // this.updateAllFilteredExpenses();
-        // Extract expense items (filter out expenseSummary object)
-        this.expenesEmplyeedata = data.filter((item: any) => !item.expenseSummary);
-        // Extract and update expense summary
-        const summaryItem = data.find((item: any) => item.expenseSummary);
+        this.spinnerLoader = false;
+
+        // normalize response shapes
+        let summaryItem: any = null;
+        let expenseItems: any[] = [];
+
+        if (Array.isArray(data)) {
+          summaryItem = data.find((x: any) => x.expenseSummary) ?? null;
+          expenseItems = data.filter((x: any) => !x.expenseSummary) ?? [];
+        } else if (data && data.expenseSummary) {
+          summaryItem = data;
+          expenseItems = data.expensesList || [];
+        } else {
+          // fallback: if backend returns raw summary object
+          summaryItem = data?.expenseSummary ? { expenseSummary: data.expenseSummary } : null;
+          expenseItems = data?.expensesList || [];
+        }
+
+        // update expense items datasource for other UI lists
+        this.expenesEmplyeedatastatusfliter.next(expenseItems);
+        this.expenesEmplyeedata.next(expenseItems);
+        this.updateAllFilteredExpenses();
+
+        // update summary
         if (summaryItem?.expenseSummary) {
           this.getExpenseSummaryDetails = summaryItem.expenseSummary as ISummary;
+
+          // update summary tabs (cast to any for dynamic keys)
           this.expenseSummaryTabs.forEach(tab => {
-            tab.value = this.getExpenseSummaryDetails[tab.key as keyof ISummary] ?? 0;
+            (tab as any).value = (this.getExpenseSummaryDetails as any)[tab.key] ?? 0;
           });
-          this.totalExpense = this.getExpenseSummaryDetails.totalReimbursementLimitFormatted;
+
+          this.totalExpense = this.getExpenseSummaryDetails.totalReimbursementLimitFormatted ?? 0;
+          this.initChart();
+        } else {
+          // if no summary returned, zero out values to avoid stale UI
+          this.expenseSummaryTabs.forEach(tab => (tab as any).value = 0);
+          this.totalExpense = 0;
           this.initChart();
         }
       },
       error: (err) => {
-        console.log("expensesheadererror", err);
+        this.spinnerLoader = false;
+        console.error("expensesheadererror", err);
       }
+    });
+}
+
+
+  updateAllFilteredExpenses() {
+    const data = this.expenesEmplyeedatastatusfliter.value;
+    const drafts = data.filter(x => x.status === 'Draft').reverse();
+    const approved = data.filter(x => x.status === 'Approved').reverse();
+    const pending = data.filter(x => x.status === 'Waiting for Approval').reverse();
+    const processed = data.filter(x => x.status === 'Processed').reverse();
+    const rejected = data.filter(x => x.status === 'Rejected').reverse();
+    this.flitredDrafts.next(drafts);
+    this.flitredapproved.next(approved);
+    this.flitredpending.next(pending);
+    this.processedExpenses.next(processed);
+    this.flitredrejected.next(rejected);
+    this.draftsCount = drafts.length;
+    this.ApprovedCount = approved.length;
+    this.pendingCount = pending.length;
+    this.processedCount = processed.length;
+    this.rejectedCount = rejected.length;
+
+    // Update count tabs
+    this.expenseSummaryTabs.forEach(tab => {
+      if (tab.key === 'approvedAmountFormatted') tab.count = this.ApprovedCount;
+      if (tab.key === 'processedAmountFormatted') tab.count = this.processedCount;
+      if (tab.key === 'requestedAmountFormatted') tab.count = this.pendingCount;
+      if (tab.key === 'rejectAmountFormatted') tab.count = this.rejectedCount;
     });
   }
 

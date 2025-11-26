@@ -222,6 +222,14 @@ export class HttpService {
     console.log('Selected On Behalf Of Expenses Employee:', emp);
   }
 
+// http.service.ts (add inside the service class)
+private _onBehalfExpensesUpdated$ = new BehaviorSubject<number | null>(null);
+public onBehalfExpensesUpdated$ = this._onBehalfExpensesUpdated$.asObservable();
+
+setOnBehalfExpensesUpdated(empId: number | null) {
+  // push empId (or null) to notify subscribers
+  this._onBehalfExpensesUpdated$.next(empId ?? null);
+}
 
 
   // function for employeid TIMEOFF

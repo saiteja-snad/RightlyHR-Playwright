@@ -565,92 +565,89 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     }
   }
 
-  submitOnBehalfExpense(form: FormGroup): void {
-    if (form.valid) {
-      this.spinnerLoader = true
-      const payload = {
-        applied_date: new Date().toISOString(),
-        expenses_Title: form.value.expensesTitle,
-        expenseId: this.selectedexpensesid,
-        // approverEmail: form.value.approvalemail.value,
-        additional_details: form.value.additional_details,
-        status: 'Approved',
-        employeeId: this.selectedEmpId,
-        requestedBy: this.empinfo.employeeId,
-        expenseItem: form.value.expenseItems.map((item: any) => ({
-          expenseId: item.item_expense,
-          item_Name: item.item_Name,
-          item_Description: item.item_Description,
-          expense_Date: item.expense_Date,
-          expense_Amount: item.expense_Amount,
-          receipt_Number: item.receipt_Number,
-          status: 'Approved',
-          attachment_url: item.attachment_url,
-          isVerified: true,
-          verifiedBy: this.empinfo.employeeId?.toString(),
-        })),
-        attachment_url: undefined
-      };
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
-      // Check if there is any file to upload
-      if (this.Myexpense) {
-        const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
-          filepath, this.Myexpense);
-        fileUpload$.pipe(
-          switchMap((data: any) => {
-            // Update the payload with the uploaded file path
-            payload.expenseItem.forEach((item: { attachment_url: any; }) => {
-              if (item.attachment_url === this.Myexpense.name) {
-                item.attachment_url = data.path;
-              }
-            });
-            // Now post the updated payload
-            return this.http.postdata(`Expenses_Header`, payload);
-          })
-        ).subscribe({
-          next: (data: any) => {
-            if (data) {
-              this.newExpenseForm.reset();
-              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expense request has been submitted');
-              this.navigateonBehalfof()
-              this.getexpensesheaderbyid(this.empinfo.employeeId);
-            }
-          },
-          error: (error: any) => {
-            this.conformationPopup.openErrorModal(error.error.message)
-            this.spinnerLoader = false;
-          }, complete: () => {
-            this.spinnerLoader = false;
+ submitOnBehalfExpense(form: FormGroup): void {
+  if (!form.valid) {
+    console.log('Form is invalid');
+    return;
+  }
+
+  this.spinnerLoader = true;
+
+  const payload = {
+    applied_date: new Date().toISOString(),
+    expenses_Title: form.value.expensesTitle,
+    expenseId: this.selectedexpensesid,
+    additional_details: form.value.additional_details,
+    status: 'Approved',
+    employeeId: this.selectedEmpId,
+    requestedBy: this.empinfo.employeeId,
+    expenseItem: form.value.expenseItems.map((item: any) => ({
+      expenseId: item.item_expense,
+      item_Name: item.item_Name,
+      item_Description: item.item_Description,
+      expense_Date: item.expense_Date,
+      expense_Amount: item.expense_Amount,
+      receipt_Number: item.receipt_Number,
+      status: 'Approved',
+      attachment_url: item.attachment_url,
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+    })),
+    attachment_url: undefined,
+  };
+
+  const filepath = `/Expenses/${this.empinfo.employeeId}`;
+  const empToRefresh = this.selectedEmpId || this.empinfo.employeeId;
+
+  // ---- FILE UPLOAD + SUBMIT ----
+  let submit$;
+
+  if (this.Myexpense) {
+    submit$ = this.http.uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filepath,
+      this.Myexpense
+    ).pipe(
+      switchMap((data: any) => {
+        payload.expenseItem.forEach((i: { attachment_url: any; }) => {
+          if (i.attachment_url === this.Myexpense.name) {
+            i.attachment_url = data.path;
           }
         });
-      } else {
-        // No file to upload, directly post the payload
-        this.http.postdata(`Expenses_Header`, payload).subscribe({
-          next: (data: any) => {
-            if (data) {
-              this.conformationPopup.openSuccessModal('Your expense request has been submitted');
-              this.newExpenseForm.reset();
-              this.navigateonBehalfof()
-              this.http.setnewcountDetailsforonBehalfof();
-              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyid(this.empinfo.employeeId);
-              this.spinnerLoader = false;
-            }
-          },
-          error: (error: any) => {
-            this.spinnerLoader = false;
-            this.conformationPopup.openErrorModal(error.error.message);
-          },
-          complete: () => {
-            this.spinnerLoader = false
-          },
-        });
-      }
-    } else {
-      console.log('Form is invalid');
-    }
+        return this.http.postdata(`Expenses_Header`, payload);
+      })
+    );
+  } else {
+    submit$ = this.http.postdata(`Expenses_Header`, payload);
   }
+
+  submit$.subscribe({
+    next: () => {
+      this.conformationPopup.openSuccessModal('Expense request has been submitted');
+      this.newExpenseForm.reset();
+      (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+
+      // Navigate back
+      this.navigateonBehalfof();
+
+      // 🔥 MOST IMPORTANT — tell OnBehalf Dashboard to refresh summary
+      this.http.setOnBehalfExpensesUpdated(empToRefresh);
+
+      // 🔥 optional immediate fetch to update UI without waiting for event
+      this.getexpensesheaderbyid(empToRefresh);
+
+      this.spinnerLoader = false;
+    },
+    error: (error: any) => {
+      this.spinnerLoader = false;
+      this.conformationPopup.openErrorModal(error.error.message);
+    },
+    complete: () => {
+      this.spinnerLoader = false;
+    }
+  });
+}
+
   onAmountInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');

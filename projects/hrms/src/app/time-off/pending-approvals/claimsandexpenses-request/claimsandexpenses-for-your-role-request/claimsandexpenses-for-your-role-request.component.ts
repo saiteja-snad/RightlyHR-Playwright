@@ -106,12 +106,22 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     }
   }
 
+
+
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'reject') {
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
+  onStatusVerifySelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'verified') {
+      this.verifyForm.get('comments')?.setValue('Verified');
+    }
+  }
+
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: [
@@ -119,11 +129,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         [Validators.required, Validators.maxLength(250)],
       ],
     });
-     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
   intializeRejectForm() {
@@ -133,11 +143,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         [Validators.required, Validators.maxLength(250)],
       ],
     });
-      this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-     });
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
   getAllPendingApprovals() {
@@ -448,12 +458,17 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
   intializeVerifyForm() {
     this.verifyForm = this.fb.group({
-      comments: [
-        '',
-        [Validators.required, Validators.maxLength(250)],
-      ],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    // Remove chip highlight if comment is cleared manually
+    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
     });
   }
+
   handleVerify(verifyForm: FormGroup): void {
     if (!verifyForm.valid || !this.selectedItem) return;
 

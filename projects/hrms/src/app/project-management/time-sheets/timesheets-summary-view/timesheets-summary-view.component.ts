@@ -237,7 +237,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.filterService.clearOnlyFilterFields();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    this.closeCanvas();
+    // this.closeCanvas();
   }
 
   getSelectedFilters(): any[] {

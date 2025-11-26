@@ -191,7 +191,7 @@ export class TeamTimesheetsComponent {
     this.first = 0;
     this.getteamsummary();
 
-    this.closeCanvas();
+    // this.closeCanvas();
   }
 
   createDatepickerForm() {

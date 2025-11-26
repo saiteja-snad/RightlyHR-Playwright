@@ -89,8 +89,13 @@ export class PersonalApprovalsComponent implements OnInit {
     return element.offsetWidth < element.scrollWidth;
   }
   showdate(data:any):boolean{
-    console.log(data)
-    if(data?.sourceFieldName =='Dob' && (data.oldValue||data.newValue)){
+    if(data?.sourceFieldName =='Dob' && data.oldValue && data.oldValue!='-'){
+      return true
+    }
+    return false
+  }
+  showdatefornew(data:any):boolean{
+  if(data?.sourceFieldName =='Dob' && data.newValue && data.newValue!='-'){
       return true
     }
     return false
@@ -162,7 +167,7 @@ export class PersonalApprovalsComponent implements OnInit {
                 oldValue: item.oldValue ?? '-',
                 newValue: item.newValue ?? '-',
                 approvalStatus: item.approvalStatus ?? '-',
-                createdDate: this.formatDate(item.createdDate),
+                createdDate: item.createdDate,
                 itemId: item.itemId,
                 headerId: header.headerId,
                 sourceFieldName:item.sourceFieldName

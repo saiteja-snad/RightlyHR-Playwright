@@ -46,7 +46,7 @@
                   <td>
                     <span #newEl class="ellipsis-cell" [pTooltip]="shouldShowTooltip(newEl) ? item.newValue : undefined"
                       tooltipPosition="top">
-                      @if(showdate(item)){
+                      @if(showdatefornew(item)){
                         {{ item.newValue ? (item.newValue | dateformat) : "-" }}
                        }
                        @else{
@@ -56,8 +56,8 @@
                     </span>
                   </td>
 
-                  <td> {{ item.createdDate || "-" }}
-                    <!-- {{ item.createdDate ? (item?.createdDate | dateformat) : "-" }} -->
+                  <td> {{ item.createdDate ?(item.createdDate| dateformat) : "-" }}
+                    <!-- {{ ('2025-11-26' | dateformat) }} -->
                   </td>
 
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">

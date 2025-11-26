@@ -29,21 +29,36 @@
                 <tr>
                   <td>{{ item.fieldName || "-" }}</td>
 
-                  <td>
+                  <td> 
                     <span #oldEl class="ellipsis-cell" [pTooltip]="shouldShowTooltip(oldEl) ? item.oldValue : undefined"
                       tooltipPosition="top">
-                      {{ item.oldValue || "-" }}
+                       @if(showdate(item)){
+                        {{ item.oldValue ? (item.oldValue | dateformat) : "-" }}
+                       }
+                       @else{
+                        {{ item.oldValue ? item.oldValue : "-" }}
+                       }
+                       
+                      
                     </span>
                   </td>
 
                   <td>
                     <span #newEl class="ellipsis-cell" [pTooltip]="shouldShowTooltip(newEl) ? item.newValue : undefined"
                       tooltipPosition="top">
-                      {{ item.newValue || "-" }}
+                      @if(showdate(item)){
+                        {{ item.newValue ? (item.newValue | dateformat) : "-" }}
+                       }
+                       @else{
+                        {{ item.newValue ? item.newValue : "-" }}
+                       }
+                      <!-- {{ item.newValue || "-" }} -->
                     </span>
                   </td>
 
-                  <td>{{ item.createdDate || "-" }}</td>
+                  <td> {{ item.createdDate || "-" }}
+                    <!-- {{ item.createdDate ? (item?.createdDate | dateformat) : "-" }} -->
+                  </td>
 
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">
                     {{ item.approvalStatus.toLowerCase() }}

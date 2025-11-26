@@ -13,6 +13,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { TooltipModule } from 'primeng/tooltip';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Subscription } from 'rxjs';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 
 interface ApprovalItem {
@@ -23,6 +24,7 @@ interface ApprovalItem {
   createdDate: string;
   itemId: number;
   headerId: number;
+  sourceFieldName:string;
 }
 
 interface ModuleData {
@@ -42,7 +44,8 @@ interface ModuleData {
     DataLoaderContentComponent,
     TooltipModule,
     NoDataFoundComponent,
-  ],
+    DateformatPipe
+],
   templateUrl: './personal-approvals.component.html',
   styleUrls: ['./personal-approvals.component.scss'],
 })
@@ -85,7 +88,13 @@ export class PersonalApprovalsComponent implements OnInit {
     if (!element) return false;
     return element.offsetWidth < element.scrollWidth;
   }
-
+  showdate(data:any):boolean{
+    console.log(data)
+    if(data?.sourceFieldName =='Dob' && (data.oldValue||data.newValue)){
+      return true
+    }
+    return false
+  }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
 
@@ -156,6 +165,7 @@ export class PersonalApprovalsComponent implements OnInit {
                 createdDate: this.formatDate(item.createdDate),
                 itemId: item.itemId,
                 headerId: header.headerId,
+                sourceFieldName:item.sourceFieldName
               });
             });
           });

@@ -58,6 +58,17 @@
         </form>
     </div>
 
+    <!-- Filter Chips Display -->
+    <div class="component-header-content" *ngIf="getSelectedFilters().length > 0">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <p-chip *ngFor="let filter of getSelectedFilters()" [label]="filter.label" 
+                [removable]="true" (onRemove)="removeFilter(filter)" />
+            <button type="button" class="clear-all-button" (click)="resetForm()">
+                {{ 'Clear All' | translate }}
+            </button>
+        </div>
+    </div>
+
     <div class="main-content d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
             <app-timesheets-tabs />

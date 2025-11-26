@@ -24,6 +24,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
 import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
+import { Chip } from 'primeng/chip';
 @Component({
   selector: 'app-team-timesheets',
   imports: [
@@ -42,6 +43,7 @@ import { TimesheetSharedDataService } from '../../../services/timesheet-shared-d
     InfoIconComponent,
     DateformatPipe,
     MultiSelectModule,
+    Chip,
   ],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss',
@@ -160,18 +162,35 @@ export class TeamTimesheetsComponent {
   }
 
   resetForm() {
+    // Reset to current month
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    
+    // Clear all form fields including date range and employee selection
     this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth],
+      resourceId: [],
       projectId: null,
       clientId: null,
       departmentId: null,
       tmorrmId: null
     });
-    this.filterService.clearOnlyFilterFields();
+    
+    // Clear filter service
+    this.filterService.clearFilters();
+    
+    // Reload employee lists
     if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
       this.getAllEmployeeDetails();
     } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
       this.getResourceDetailsByManagerId();
     }
+    
+    // Reload table data with cleared filters
+    this.page = 1;
+    this.first = 0;
+    this.getteamsummary();
+    
     this.closeCanvas();
   }
 
@@ -400,5 +419,56 @@ export class TeamTimesheetsComponent {
   onEmployeeChange() {
     // Do nothing - let user click Apply to refresh
     // This preserves original behavior where changes only apply on Submit
+  }
+
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+    const formValue = this.datepickerForm.value;
+
+    if (formValue.projectId && formValue.projectId.length > 0) {
+      formValue.projectId.forEach((id: any) => {
+        const project = this.projectDetails.find((p: any) => p.projectId === id);
+        if (project) {
+          filters.push({ type: 'projectId', label: project.projectName, value: id });
+        }
+      });
+    }
+
+    if (formValue.clientId && formValue.clientId.length > 0) {
+      formValue.clientId.forEach((id: any) => {
+        const client = this.clientDetails.find((c: any) => c.clientId === id);
+        if (client) {
+          filters.push({ type: 'clientId', label: client.clientName, value: id });
+        }
+      });
+    }
+
+    if (formValue.departmentId && formValue.departmentId.length > 0) {
+      formValue.departmentId.forEach((id: any) => {
+        const dept = this.departmentDetails.find((d: any) => d.sno === id);
+        if (dept) {
+          filters.push({ type: 'departmentId', label: dept.departmentName, value: id });
+        }
+      });
+    }
+
+    if (formValue.tmorrmId && formValue.tmorrmId.length > 0) {
+      formValue.tmorrmId.forEach((id: any) => {
+        const tm = this.tmandRmDetails.find((t: any) => t.employeeId === id);
+        if (tm) {
+          filters.push({ type: 'tmorrmId', label: tm.fullName, value: id });
+        }
+      });
+    }
+
+    return filters;
+  }
+
+  removeFilter(filter: any) {
+    const formValue = this.datepickerForm.value;
+    const currentValues = formValue[filter.type] || [];
+    const updatedValues = currentValues.filter((v: any) => v !== filter.value);
+    this.datepickerForm.patchValue({ [filter.type]: updatedValues });
+    this.getAllEmployeeDetails();
   }
 }

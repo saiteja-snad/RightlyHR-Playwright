@@ -591,7 +591,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   clearTimesheetFilters() {
-    this.datepickerFormDataforsummary.patchValue({ dateRange: null });
+    // this.datepickerFormDataforsummary.patchValue({ dateRange: null });
     this.selectedDepartmentIds = [];
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];

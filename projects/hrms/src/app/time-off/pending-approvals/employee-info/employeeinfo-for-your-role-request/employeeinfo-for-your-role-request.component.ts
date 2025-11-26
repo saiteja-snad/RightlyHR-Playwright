@@ -342,8 +342,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Employee Info  request approved successfully'
-                : 'Employee Info  request rejected successfully'
+                ? 'Employee Info request approved successfully'
+                : 'Employee Info request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);
@@ -425,8 +425,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Employee Info  request approved successfully'
-                : 'Employee Info  request rejected successfully'
+                ? 'Employee Info request approved successfully'
+                : 'Employee Info request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);

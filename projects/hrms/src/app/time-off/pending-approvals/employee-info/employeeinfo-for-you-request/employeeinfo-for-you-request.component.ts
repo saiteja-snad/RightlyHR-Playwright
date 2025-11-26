@@ -364,7 +364,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Employee Info approved successfully'
+                ? 'Employee Info request approved successfully'
                 : 'Employee Info request rejected successfully'
             );
           } else {
@@ -447,8 +447,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Employee Info  request approved successfully'
-                : 'Employee Info  request rejected successfully'
+                ? 'Employee Info request approved successfully'
+                : 'Employee Info request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);

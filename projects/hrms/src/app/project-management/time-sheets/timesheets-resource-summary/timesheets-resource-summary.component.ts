@@ -26,6 +26,8 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
+import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
 @Component({
   selector: 'app-timesheets-resource-summary',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule,
@@ -34,7 +36,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
   ],
   templateUrl: './timesheets-resource-summary.component.html',
   styleUrl: './timesheets-resource-summary.component.scss',
- 
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class TimesheetsResourceSummaryComponent implements OnInit {
@@ -132,7 +134,8 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   tmandRmDetails=[] as any;
   filterData={} as any;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
+    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas,
+    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -140,24 +143,9 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.getclientData();
     this.getdepartmentData();
     this.getTmandRMData();
-    this.route.queryParams.subscribe(params => {
-      if (params['data']) {
-        const decrypted = this.encryptionService.decrypt(params['data']);
-        const resoureID = Array.isArray(decrypted?.resourceId) ? decrypted.resourceId[0] : decrypted?.resourceId;
-        this.filterData = {
-          projectId: decrypted?.projectId || null,
-          clientId: decrypted?.clientId || null,
-          departmentId: decrypted?.departmentId || null,
-          tmorrmId: decrypted?.tmorrmId || null,
-          dateRange: decrypted?.dateRange || null
-        };
-        if (resoureID) {
-          this.employeeId = parseInt(resoureID);
-        }
-      }
-    })
     this.updateModuleInfo();
     this.createDatepickerForm();
+    this.loadFiltersFromNavigation();
     // this.http.getteamDateRangeObservable().subscribe((data) => {
     //   console.log('Received BehaviorSubject data:', data);
     //   // Optional check to avoid running on empty initial values
@@ -218,39 +206,58 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     //   }
     // });
     //  this.setDefaultmounth();
-    this.route.queryParams.subscribe(params => {
-          if (params['data']) {
-      const decrypted = this.encryptionService.decrypt(params['data']);
-       const resoureID = decrypted?.resourceId;
-          if (resoureID) {
-            this.employeeId = parseInt(resoureID)
-            this.setDefaultmounth();
-            this.projectSummery(resoureID,decrypted);
-            this.getallocatedSummary(resoureID,decrypted);
-            this.getEmployeeId(resoureID);
-            this.billableChart(resoureID,decrypted);
-            // this.burnDownChart(resoureID);
-            this.timeAllocatedacrossGraph(resoureID,decrypted);
-          }
-           }
-        });
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
   }
+
+  loadFiltersFromNavigation() {
+    this.route.queryParams.subscribe(params => {
+      if (params['data']) {
+        const decrypted = this.encryptionService.decrypt(params['data']);
+        const resoureID = Array.isArray(decrypted?.resourceId) ? decrypted.resourceId[0] : decrypted?.resourceId;
+        this.filterData = {
+          projectId: decrypted?.projectId || null,
+          clientId: decrypted?.clientId || null,
+          departmentId: decrypted?.departmentId || null,
+          tmorrmId: decrypted?.tmorrmId || null,
+          dateRange: decrypted?.dateRange || null
+        };
+        if (resoureID) {
+          this.employeeId = parseInt(resoureID);
+          this.setDefaultmounth();
+          this.projectSummery(resoureID, decrypted);
+          this.getallocatedSummary(resoureID, decrypted);
+          this.getEmployeeId(resoureID);
+          this.billableChart(resoureID, decrypted);
+          this.timeAllocatedacrossGraph(resoureID, decrypted);
+        }
+      } else {
+        const savedFilters = this.filterService.getCurrentFilters();
+        if (savedFilters) {
+          this.datepickerForm.patchValue(savedFilters);
+          if (savedFilters.resourceId) {
+            this.employeeId = savedFilters.resourceId;
+          }
+        } else {
+          this.setDefaultmounth();
+        }
+      }
+    });
+  }
 //get all projects list
   getprojectData(): void {
-    this.subscription = this.http.getData(`Project`).subscribe({
+    this.subscription = this.sharedDataService.getProjectData().subscribe({
       next: (res: any) => {
         this.projectDetails = res.data;
       },
       error: (err) => {
-        console.error('Error fetching clients:', err);
+        console.error('Error fetching projects:', err);
       }
     });
   }
   //get all clients list
   getclientData(): void {
-    this.subscription = this.http.getData(`Client/GetAll`).subscribe({
+    this.subscription = this.sharedDataService.getClientData().subscribe({
       next: (res: any) => {
         this.clientDetails = res.data;
       },
@@ -261,28 +268,21 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
   //get all departments list
   getdepartmentData(): void {
-    this.subscription = this.http.getData(`Department`).subscribe({
+    this.subscription = this.sharedDataService.getDepartmentData().subscribe({
       next: (res: any) => {
         this.departmentDetails = res;
       },
       error: (err) => {
-        console.error('Error fetching clients:', err);
+        console.error('Error fetching departments:', err);
       }
     });
   }
 
   //get all TM and RM list
   getTmandRMData(): void {
-    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
+    this.subscription = this.sharedDataService.getTmandRMData().subscribe({
       next: (res: any) => {
-        this.tmandRmDetails = [
-          ...res.map((emp: any) => ({
-            ...emp,
-            fullName: emp.fusionEmpId
-              ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
-              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-          })),
-        ];
+        this.tmandRmDetails = this.sharedDataService.formatTmRmList(res);
       },
       error: (err) => {
         console.error('Error fetching TM/RM:', err);
@@ -292,11 +292,13 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
 
   onSubmit() {
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
-    this.projectSummery(resoureID,this.datepickerForm.value);
-    this.getallocatedSummary(resoureID,this.datepickerForm.value);
+    const formValue = this.datepickerForm.value;
+    this.filterService.setFilters(formValue);
+    this.projectSummery(resoureID, formValue);
+    this.getallocatedSummary(resoureID, formValue);
     this.getEmployeeId(resoureID);
-    this.billableChart(resoureID,this.datepickerForm.value);
-    this.timeAllocatedacrossGraph(resoureID,this.datepickerForm.value);
+    this.billableChart(resoureID, formValue);
+    this.timeAllocatedacrossGraph(resoureID, formValue);
     this.closeCanvas();
   }
 
@@ -328,20 +330,13 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   }
 
   resetForm() {
-    this.datepickerForm.reset({
-      resourceId: this.employeeId,
-      dateRange: null,
+    this.datepickerForm.patchValue({
       projectId: null,
       clientId: null,
       departmentId: null,
       tmorrmId: null
     });
-    this.setDefaultmounth();
-    const formValue = this.datepickerForm.value;
-    this.projectSummery(this.employeeId, formValue);
-    this.getallocatedSummary(this.employeeId, formValue);
-    this.billableChart(this.employeeId, formValue);
-    this.timeAllocatedacrossGraph(this.employeeId, formValue);
+    this.filterService.clearOnlyFilterFields();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.closeCanvas();
@@ -437,24 +432,17 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
     const formdata = this.datepickerForm.value;
-    const clientId = formdata.clientId;
-    const projectId = formdata.projectId;
-    const departmentId = formdata.departmentId;
-    const reportingId = formdata.tmorrmId;
-    const statuses = 'Active, Trainee Active, Active Contract';
-    this.subscription = this.http.getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId, statuses).subscribe({
+    const filters = {
+      clientId: formdata.clientId,
+      projectId: formdata.projectId,
+      departmentId: formdata.departmentId,
+      reportingId: formdata.tmorrmId
+    };
+    this.subscription = this.sharedDataService.getAllEmployeeDetails(this.http, EmployeeId, filters).subscribe({
       next: (res: any) => {
         if (Array.isArray(res.data)) {
-          const employeeList = res.data.filter((emp: any) => emp.employeeId !== EmployeeId).map((emp: any) => ({
-            value: emp.employeeId,
-            label: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}` : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-          }));
-
-          if (employeeList.length > 0) {
-            this.activeEmplist = employeeList;
-          } else {
-            this.activeEmplist = [];
-          }
+          const employeeList = this.sharedDataService.formatEmployeeList(res.data, EmployeeId);
+          this.activeEmplist = employeeList.length > 0 ? employeeList : [];
         } else {
           this.activeEmplist = [];
         }

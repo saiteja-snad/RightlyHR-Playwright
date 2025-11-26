@@ -10,28 +10,43 @@
                 </div>
 
                 <!-- Date Picker Outside Offcanvas -->
-                <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'" 
-                        selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="form-label filter-labels mt-2">{{'Select Date Range' | translate}}</label>
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'" 
+                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                    </div>
                 </div>
 
                 <!-- Employee Dropdown Outside Offcanvas -->
                 @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
-                <div class="custom-p-multiSelect-content" style="min-width: 250px;">
-                    <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
-                        optionLabel="label" optionValue="value" formControlName="resourceId"
-                        [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'" 
-                        class="form-select custom-select" />
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
+                    <div class="custom-p-multiSelect-content" style="min-width: 250px;">
+                        <p-multiSelect [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
+                            optionLabel="label" optionValue="value" formControlName="resourceId"
+                            [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'" 
+                            class="form-select custom-select" />
+                    </div>
                 </div>
                 }
                 @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
-                <div class="custom-p-multiSelect-content" style="min-width: 250px;">
-                    <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
-                        optionLabel="fullName" optionValue="id" formControlName="resourceId"
-                        [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'" 
-                        class="form-select custom-select" />
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
+                    <div class="custom-p-multiSelect-content" style="min-width: 250px;">
+                        <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
+                            optionLabel="fullName" optionValue="id" formControlName="resourceId"
+                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'" 
+                            class="form-select custom-select" />
+                    </div>
                 </div>
                 }
+
+                <button type="button" class="custom-btn btn-primary"
+                    [disabled]="datepickerForm.invalid || 
+                    (rbac.allowedToAccess('All Employees (Timesheet).view') && (activeEmplist.length === 0 || !datepickerForm.get('resourceId')?.value?.length)) || 
+                    (rbac.allowedToAccess('My Team (Timesheet).view') && !rbac.allowedToAccess('All Employees (Timesheet).view') && (resourcesList.length === 0 || !datepickerForm.get('resourceId')?.value?.length))"
+                    (click)="onSubmit()">{{'Apply' | translate}}</button>
 
                 <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                     <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
@@ -286,8 +301,7 @@
 
             <div class="d-flex offcanvas-footer-content gap-3">
                 <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">{{'Clear All' | translate}}</button>
-                <button class="custom-btn btn-primary w-100" type="submit" 
-                     [disabled]="datepickerForm.invalid || (rbac.allowedToAccess('All Employees (Timesheet).view') && activeEmplist.length === 0) || (rbac.allowedToAccess('My Team (Timesheet).view') && !rbac.allowedToAccess('All Employees (Timesheet).view') && resourcesList.length === 0)">{{'Apply' | translate}}</button>
+                <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">{{'Close' | translate}}</button>
             </div>
         </form>
     </div>

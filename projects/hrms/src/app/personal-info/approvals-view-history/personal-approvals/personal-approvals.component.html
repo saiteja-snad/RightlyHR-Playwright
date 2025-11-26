@@ -46,7 +46,7 @@
                   <td>
                     <span #newEl class="ellipsis-cell" [pTooltip]="shouldShowTooltip(newEl) ? item.newValue : undefined"
                       tooltipPosition="top">
-                      @if(showdate(item)){
+                      @if(showdatefornew(item)){
                         {{ item.newValue ? (item.newValue | dateformat) : "-" }}
                        }
                        @else{

@@ -89,7 +89,13 @@ export class PersonalApprovalsComponent implements OnInit {
     return element.offsetWidth < element.scrollWidth;
   }
   showdate(data:any):boolean{
-    if(data?.sourceFieldName =='Dob' && (data.oldValue||data.newValue)){
+    if(data?.sourceFieldName =='Dob' && data.oldValue && data.oldValue!='-'){
+      return true
+    }
+    return false
+  }
+  showdatefornew(data:any):boolean{
+  if(data?.sourceFieldName =='Dob' && data.newValue && data.newValue!='-'){
       return true
     }
     return false

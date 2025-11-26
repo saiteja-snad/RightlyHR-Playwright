@@ -1,0 +1,188 @@
+<div class="custom-main-component-container">
+    <!--Add Btn-->
+    <div class="mb-3">
+        <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
+            *ngIf="rbac.allowedToAccess('Project Type.create')">{{'Add' | translate}}</button>
+    </div>
+
+    <div class="custom-main-component-container">
+        <div class="custom-table-content">
+            @if(!loading){
+            <table class="w-100" *ngIf="rbac.allowedToAccess('Project Type.view')">
+                <thead>
+                    <tr>
+                        <th>{{'Project Type' | translate}}</th>
+                        <th>{{'Project Type Color' | translate}}</th>
+                        <th class="text-center"
+                            *ngIf="rbac.allowedToAccess('Project Type.update') || rbac.allowedToAccess('Project Type.delete')">
+                            {{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let project of projectTypes">
+                            <td class="w-60">{{project.value}}</td>
+                            <td>
+                                <input type="color" [value]="project?.meta?.graphData?.color || '#000000'" disabled
+                                    class="form-control custom-color w-20">
+                            </td>
+                            <td class="text-center"
+                                *ngIf="rbac.allowedToAccess('Project Type.update') || rbac.allowedToAccess('Project Type.delete')">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openupdateDialog(project)"
+                                            *ngIf="rbac.allowedToAccess('Project Type.update')">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
+                                            </a>
+                                        </li>
+                                        <li (click)="opendeleted(project)"
+                                            *ngIf="rbac.allowedToAccess('Project Type.delete')">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
+        </div>
+    </div>
+</div>
+<!-- addpopup -->
+<ng-template #addpopup let-modal>
+    <form autocomplete="off" [formGroup]="addForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{ 'Project Type' | translate }}</p>
+                </div>
+                <div>
+                    <a (click)="closed(modal)">
+                        <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content ">
+                <!-- Department Name Field -->
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Project Type'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="projectType"
+                        placeholder="Please enter project type"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        minlength="2" maxlength="51">
+                    <div *ngIf="addForm.get('projectType')?.touched && addForm.get('projectType')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="addForm.get('projectType')?.errors?.['required']">
+                            {{ 'Project Type is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="addForm.get('projectType')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                    <div *ngIf="addForm.get('projectType')?.errors?.['maxCharacters'] || 
+                                addForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
+                        {{ 'Project Type must be between 2-50 characters' | translate }}
+                    </div>
+                </div>
+
+                <!--Color Picker-->
+                <div class="mb-3">
+                    <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
+                    <input type="color" id="color" class="form-control custom-color" formControlName="color" />
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closed(modal)">
+                        {{ 'Cancel' | translate }}
+                    </button>
+                    <button type="button" class="custom-btn btn-primary" (click)="onAddSubmit(modal)"
+                        [disabled]="addForm.invalid">
+                        {{ 'Add' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="deleteProjectType()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form autocomplete="off" [formGroup]="updateForm" (ngSubmit)="updateProjectType(updateForm)">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Update Project Type'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Project Type'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="projectType"
+                        placeholder="Please enter project"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        minlength="2" maxlength="51">
+                    <div *ngIf="updateForm.get('projectType')?.touched && updateForm.get('projectType')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('projectType')?.errors?.['required']">
+                            {{ 'Project Type is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('projectType')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('projectType')?.errors?.['maxCharacters'] || 
+                                updateForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
+                        {{ 'Project Type must be between 2-50 characters' | translate }}
+                    </div>
+                </div>
+
+                <!--Color Picker-->
+                <div class="mb-3">
+                    <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
+                    <input type="color" id="color" class="form-control custom-color" formControlName="updatecolor" />
+                </div>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>

@@ -256,7 +256,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     }
   }
   onCountryChange1(country: any): void {
-    this.selectedDialCode = country.dialling_code;
+    this.selectedDialCode1 = country.dialling_code;
     this.selectedCountryflag = country.code;
     console.log('Selected country code:', this.selectedDialCode);
     console.log('Selected country dial code:', this.selectedDialCode);

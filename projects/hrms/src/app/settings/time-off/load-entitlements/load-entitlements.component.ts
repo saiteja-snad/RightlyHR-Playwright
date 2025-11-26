@@ -5,6 +5,7 @@ import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-load-entitlements',
   imports: [CommonModule, FormsModule, NoDataFoundComponent],
@@ -28,7 +29,8 @@ export class LoadEntitlementsComponent {
   constructor(
     private http: HttpService,
     private renderer: Renderer2,
-    private authService: AuthService
+    private authService: AuthService,
+     private confirmation: OpenModalService
   ) { }
 
   ngOnInit(): void {
@@ -402,12 +404,7 @@ export class LoadEntitlementsComponent {
         ],
       };
       this.http.postdata('LeaveEntitlements/load', requestBody).subscribe((response: any) => {
-        const modalElement = document.getElementById('successhide');
-        if (modalElement) {
-          modalElement.classList.add('show');
-          modalElement.style.display = 'block';
-          this.StatusMsg = 'Leaves entitled successfully';
-        }
+       this.confirmation.openSuccessModal('Leaves entitled successfully');
         setTimeout(function () {
           location.reload();
         }, 2000);

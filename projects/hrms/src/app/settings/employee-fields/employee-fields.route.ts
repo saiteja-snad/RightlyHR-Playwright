@@ -37,7 +37,7 @@ export default [
             { path: 'notice', loadComponent: () => import('./job/notice/notice.component').then((m) => m.NoticeComponent), canActivate: [PermissionsGuard],data: { permission: 'Notice Period.view' } },
             { path: 'grade', loadComponent: () => import('./job/grade/grade.component').then((m) => m.GradeComponent), canActivate: [PermissionsGuard],data: { permission: 'Grade Details.view' } },
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent), canActivate: [PermissionsGuard],data: { permission: 'Serving Period.view' } },
-            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), canActivate: [PermissionsGuard],data: { permission: 'Probation Details.view' } },
+            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), canActivate: [PermissionsGuard],data: { permission: 'Settings Job Probation Details.view' } },
             { path: 'interview-round', loadComponent: () => import('./job/interview-round/interview-round.component').then((m) => m.InterviewRoundComponent) },
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent), canActivate: [PermissionsGuard],data: { permission: 'Team.view' } },
             { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent), canActivate: [PermissionsGuard],data: { permission: 'Pre Onboard Documents.view' } },
@@ -45,7 +45,10 @@ export default [
             // { path: 'appointment-details', loadComponent: () => import('./job/appointment-details/appointment-details.component').then((m) => m.AppointmentDetailsComponent)},
             { path: 'probation-frequency', loadComponent: () => import('./job/probation-frequency/probation-frequency.component').then((m) => m.ProbationFrequencyComponent)},
             { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)},
-            { path: 'letter-acknowledgement', loadComponent: () => import('./job/letter-acknowledgement/letter-acknowledgement.component').then((m) => m.LetterAcknowledgementComponent), canActivate: [PermissionsGuard], data: { permission: 'Job Role.view' } }
+            { path: 'letter-acknowledgement', loadComponent: () => import('./job/letter-acknowledgement/letter-acknowledgement.component').then((m) => m.LetterAcknowledgementComponent), canActivate: [PermissionsGuard], data: { permission: 'Job Role.view' } },
+            // {path: 'itsupport-category', loadComponent: () => import('../it-configuration/it-support/itsupport-add-category/itsupport-add-category.component').then((m) => m.ItsupportAddCategoryComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Category.view' } },
+            // {path: 'itsupport-sub-category', loadComponent: () => import('../it-configuration/it-support/itsupport-add-subcategory/itsupport-add-subcategory.component').then((m) => m.ItsupportAddSubcategoryComponent), canActivate: [PermissionsGuard], data: { permission: 'IT Support Sub-Category.view' } },
+
 
         ]
     },
@@ -55,7 +58,9 @@ export default [
         children: [
             // { path: '', redirectTo: 'configuartion', pathMatch: 'full' },
             { path: 'configuartion', loadComponent: () => import('./expenses-configuration/expenses-configuration.component').then((m) => m.ExpensesConfigurationComponent), canActivate: [PermissionsGuard],data: { permission: 'Expenes Configuartion.view' } },
-            { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent), canActivate: [PermissionsGuard],data: { permission: 'Expense Allowed Days.view' } }
+            { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent), canActivate: [PermissionsGuard],data: { permission: 'Expense Allowed Days.view' } },
+            { path: 'expenses-limit', loadComponent: () => import('./expenses-configuration/expenses-limit/expenses-limit.component').then((m) => m.ExpensesLimitComponent), canActivate: [PermissionsGuard], data: { permission: 'Expense Threshold Validation.view' } },
+            { path: 'global-expenses-configuration', loadComponent: () => import('./expenses-configuration/global-expenses-configuration/global-expenses-configuration.component').then((m) => m.GlobalExpensesConfigurationComponent), canActivate: [PermissionsGuard], data: { permission: 'Global Expense Configuration.view' } }
         ]
     },
     {

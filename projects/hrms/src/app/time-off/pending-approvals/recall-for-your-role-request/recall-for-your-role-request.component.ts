@@ -66,6 +66,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   recallAcceptFormForProcess!: FormGroup;
   recallAcceptForm!: FormGroup;
   rejectSeparationForm!: FormGroup;
+  selectedLeaveStatus: any;
 
   constructor(
     private authService: AuthService,
@@ -82,7 +83,20 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
     this.formInializer();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.recallAcceptFormForProcess.get('recallReason')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectSeparationForm.get('notes')?.setValue('Rejected');
+    }
+  }
   //function to initalize the form
   formInializer() {
     this.recallAcceptFormForProcess = this.fb.group({
@@ -96,6 +110,11 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         ],
       ],
     });
+     this.recallAcceptFormForProcess.get('recallReason')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
     this.recallAcceptForm = this.fb.group({
       AcceptReason: [
         null,
@@ -118,6 +137,11 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         ],
       ],
     });
+     this.rejectSeparationForm.get('notes')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   //function to open the modal

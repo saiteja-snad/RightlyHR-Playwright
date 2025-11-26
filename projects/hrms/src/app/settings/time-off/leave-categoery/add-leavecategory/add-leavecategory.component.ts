@@ -43,6 +43,10 @@ export class AddLeavecategoryComponent {
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
+  leaveTypeOptions = [
+    { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
+    { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
+  ];
   shiftsArray = [] as any[];
 
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
@@ -94,7 +98,8 @@ export class AddLeavecategoryComponent {
       noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType'),]],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]],
+      probationFrequencyType: [null, Validators.required],
     });
     this.setupDependentFieldListeners();
     this.validateAllowedDays();
@@ -353,7 +358,8 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
       noticeperiodAllowedType: data.noticeperiodAllowedType,
       noticePeriodAllowedValue: data.noticePeriodAllowedValue,
       isProbationAllowed: data.isProbationAllowed,
-      probationDays: data.probationDays
+      probationDays: data.probationDays,
+      probationFrequencyType: data.probationFrequencyType,
     });
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm.get('futureDatesAllowed')?.updateValueAndValidity();
@@ -397,6 +403,7 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
       noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
       isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType ,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: "Pending for submission",

@@ -15,10 +15,6 @@ import {Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 
-
-
-
-
 @Component({
   selector: 'app-basic-info',
   imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, EditIconComponent],

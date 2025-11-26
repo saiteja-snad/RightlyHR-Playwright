@@ -248,12 +248,11 @@ export class DocumentHistoryInternOfferLetterComponent {
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName} ${loggedInUser.middleName ?? ''
-        }  ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''}`,
+
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName: `${loggedInUser.firstName} ${loggedInUser.middleName ?? ''
-        } ${loggedInUser.lastName ?? ''}`,
+      approvedByName:`${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''}`,
       firstName: datas.employeeName,
     };
     this.subscription = this.http
@@ -309,6 +308,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       workLocation: Values.workLocation,
       offerStartDat: Values.offerStartDate,
       offerExpiryDate: Values.offerExpiryDate,
+      approvedBy: loggedInUser.employeeId
     };
     this.subscription = this.http
       .postdata(`CustomEmail/offerletter`, emaildetails)
@@ -460,8 +460,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''
-        } ${loggedInUser?.lastName} Rejected 
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''} ${loggedInUser.lastName ?? ''} Rejected
            ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };

@@ -35,7 +35,7 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
   getAttendanceCriteria() {
     this.disableEdit();
     const params = 'AttendanceRegularization'
-    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth','maxRegularizeHoursPerDay','maxRegularizeHoursPerMonth'];
+    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth','maxRegularizeHoursPerDay','maxRegularizeHoursPerMonth','pastDaysAllowed'];
     this.dataLoad =  true;
     this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
@@ -129,6 +129,8 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
     if (!criteria) {
       return 'Criteria not found';
     }
+
+    const numericValue = parseFloat(value as any);
     switch (criteria.attribute) {
       case 'maxRegularizePerDay':
         if (isNaN(value) || value <= 0 || value > 99) {
@@ -192,6 +194,13 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
             return 'Max Regularize Hours Per Month should be greater than Max Regularize Hours Per Day';
            
           }
+        }
+        break;
+
+        case 'pastDaysAllowed':
+        // Enforce minimum 1 (user request). Allow integer values >= 1.
+        if (isNaN(numericValue) || numericValue < 1) {
+          return 'Past Allowed Days must be at least 1';
         }
         break;
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
@@ -21,7 +21,7 @@ import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component"
   styleUrl: './onboarding-details.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class OnboardingDetailsComponent {
+export class OnboardingDetailsComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
   buttons = false;
   Statusdetails: any;
@@ -40,6 +40,7 @@ export class OnboardingDetailsComponent {
   selectedEmployeeId: any;
   onboardingForm!: FormGroup;
   traineeForm!: FormGroup;
+  contractForm!:FormGroup;
   isEditing = false;
   empyployeedata = {} as any;
   employeestatus: any;
@@ -108,6 +109,7 @@ export class OnboardingDetailsComponent {
     this.getRemoteLoginManagers();
 
     this.initializeTrainee();
+    this.initializeContract();
   }
 
   canAccess(
@@ -123,9 +125,13 @@ export class OnboardingDetailsComponent {
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
       this.getEmployeeId();
+      this.getTraineeOfferLetterEmployeebyId();
+      this.getcontractDetailsEmployeebyId();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       this.getEmployeeId();
+      this.getTraineeOfferLetterEmployeebyId();
+      this.getcontractDetailsEmployeebyId();
     }
   }
   initializeForm(): void {
@@ -214,7 +220,14 @@ export class OnboardingDetailsComponent {
       trainingEndDate: [{ value: null, disabled: true }],
     });
   }
-
+  initializeContract() {
+    this.contractForm = this.fb.group({
+      empType: [{ value: null, disabled: true }],
+      dateOfJoining: [{ value: null, disabled: true }],
+      durationofContracts: [{ value: null, disabled: true }],
+      contractEndDate: [{ value: null, disabled: true }],
+    });
+  }
   wfhChange() {
     // Initialize filteredWorkLocations if allowwfh has a default
     const initialWFH = this.onboardingForm.get('allowwfh')?.value;
@@ -395,6 +408,12 @@ export class OnboardingDetailsComponent {
     this.onboardingForm.patchValue({
       remoteLoginWorkLocation: remoteLoginWorkLocation?.value,
     });
+      this.traineeForm.patchValue({
+            empType: data.empType,
+            dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
+            durationOfTrainee: data.durationOfTrainee,
+            trainingEndDate: this.formatDateToLocal(data.trainingEndDate),
+          });
   }
 
   //function to get traineeofferletter data using getbyemployeeid
@@ -405,7 +424,7 @@ export class OnboardingDetailsComponent {
       .getData(`TraineeOfferLetter/getbyEmpidNames/${Empid}`)
       .subscribe({
         next: (data: any) => {
-          this.traineeForm.patchValue({
+        this.traineeForm.patchValue({
             empType: data.empType,
             dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
             durationOfTrainee: data.durationOfTrainee,
@@ -415,14 +434,41 @@ export class OnboardingDetailsComponent {
         error: (Reason) => console.log(Reason),
       });
   }
-
+ //function to get contract details data using getbyemployeeid
+  getcontractDetailsEmployeebyId() {
+    let Empid = parseInt(this.empinfo.employeeId);
+    console.log(Empid);
+    this.subscription = this.http
+      .getData(`ContractDetails/getbyemployeeId/${Empid}`)
+      .subscribe({
+        next: (data: any) => {
+        // Filter out records with Active status
+        
+        const filteredData = data.data;
+        
+        if (filteredData.length > 0) {
+          const contract = filteredData[0];
+          this.contractForm.patchValue({
+            empType: this.empinfo.empType,
+            dateOfJoining: this.formatDateToLocal(contract.contractStartDate),
+            durationofContracts: contract.contractDuration,
+            contractEndDate: this.formatDateToLocal(contract.contractEndDate),
+          });
+        }
+        },
+        error: (Reason) => console.log(Reason),
+      });
+  }
   //function to get employee status dropdown
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
         const empStatus = this.employeestatus?.toLowerCase();
         const statusMapping: { [key: string]: string[] } = {
+
           prospective: ['active', 'prospective'],
+          'prospective contract':['prospective contract','active contract'],
+          'active contract':['active contract'],
           active: ['active'],
           inactive: ['inactive'],
           trainee: ['trainee active', 'inactive', 'trainee'],
@@ -630,7 +676,7 @@ export class OnboardingDetailsComponent {
       pf: this.onboardingForm.get('pf')?.value?.value ?? this.empdata.pf,
       esic: this.onboardingForm.get('esic')?.value?.value ?? this.empdata.esic,
       pt: this.onboardingForm.get('pt')?.value?.value ?? this.empdata.pt,
-      totalYearsOfExperience:
+     totalYearsOfExperience:
         parseInt(this.onboardingForm.get('totalExperience')?.value) ??
         parseInt(this.empdata.totalYearsOfExperience),
       ...wfhData,
@@ -679,10 +725,18 @@ export class OnboardingDetailsComponent {
       this.getEmployeeId();
       this.onboardingForm.get('totalExperience')?.disable();
       this.onboardingForm.get('status')?.disable();
-      if (this.statustoprint === 'offer letter accepted') {
+      if(this.statustoprint === 'offer letter accepted' && this.empinfo.empType === 'Contract'){
+        this.onboardingForm.get('status')?.disable();
+      }
+      if ((this.statustoprint === 'nda letter accepted') && this.empinfo.empType === 'Contract') {
         console.log(this.empdata?.substatus);
         this.onboardingForm.get('status')?.enable();
       }
+      if ((this.statustoprint === 'offer letter accepted') && this.empinfo.empType !== 'Contract') {
+        console.log(this.empdata?.substatus);
+        this.onboardingForm.get('status')?.enable();
+      }
+      
     } else {
       this.getEmployeeId();
       
@@ -700,5 +754,11 @@ export class OnboardingDetailsComponent {
       return false;
     }
     return true;
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
   }
 }

@@ -1,0 +1,266 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div>
+            <app-project-management-module-info />
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="total-hrs">{{"Total Logged Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span>
+            </div>
+            @if(isFilterApplied()) {
+            <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+            }
+            <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+                <div class="d-flex gap-3 align-items-center">
+                    <div>
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
+                                selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                        </div>
+                    </div>
+
+                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view') ) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Employee'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true" optionLabel="label"
+                                formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)" 
+                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="true" optionValue="id"
+                                name="myteamemployees"  (onChange)="onCheckemployee($event.value)" placeholder="please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" >
+                            </p-select>
+                        </div>
+                    </div>
+                    } -->
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Employee'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
+                                formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
+                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                        </div>
+                    </div>
+                    }
+                    @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resourcesList" optionLabel="fullName" optionValue="id"
+                                name="myteamemployees" (onChange)="onCheckemployee($event.value)"
+                                placeholder="Please select employee" formControlName="resourceId" [filter]="true"
+                                resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false">
+                            </p-select>
+                        </div>
+                    </div>
+                    }@else {
+
+                    }
+                    <div>
+                        <button class="custom-btn btn-primary" type="submit" (mousedown)="$event.preventDefault()"
+                            [disabled]="datepickerForm.invalid">Apply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="main-content d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-timesheets-tabs />
+        </div>
+
+        <div class="timesheet-right-content">
+            <div class="custom-table-content" [ngClass]="{ 'has-data': (teamSummaryData?.length ?? 0) > 0 }">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <th>Employee Name</th>
+                        <th *ngFor="let date of dateHeaders" [innerHTML]="date" class="text-center th-date"></th>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
+                            <tr *ngFor="let emp of teamSummaryData">
+                                <td> 
+                                    @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') || rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
+                                    <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{
+                                        emp.employee.name}}</a>
+                                    }
+                                    @else{ <span class="project-name-nopermission">{{emp.employee.name}}</span> }
+                                </td>
+                                <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{
+                                    'color': day.dailySummary.colour, 'background': day.dailySummary.backgroundColor}">
+                                    <div class="d-flex flex-column align-items-center gap-2">
+                                        <!-- <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)" 
+                                         [style.background]="day.dailySummary.backgroundColor">
+                                            {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged' 
+                                            && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status : day.dailySummary.loggedHHMM }}</a> -->
+                                        <!-- Clickable only for loggedHHMM -->
+                                        <!-- <div *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
+                                        || day.dailySummary.loggedHHMM !== '0:00'">
+                                            <a  class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                                {{ day.dailySummary.loggedHHMM }}</a>
+                                        </div>
+                                        <div *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
+                                        day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
+                                        <b>{{ day.dailySummary.status }}</b>
+                                        </div> -->
+                                        <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
+                                        @if (day.dailySummary.loggedHHMM !== '0:00') {
+                                        <div class="cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                            <u>{{ day.dailySummary.loggedHHMM }}</u>
+                                        </div>
+                                        <div class="d-flex custom-text">
+                                            <div [style.color]="day.dailySummary.textColor">
+                                                {{day.dailySummary.legendCode}}</div>
+                                        </div>
+                                        }
+                                        @else{
+                                        <div class="project-legendCode" [style.color]="day.dailySummary.textColor">
+                                            {{ day.dailySummary.legendCode }}
+                                        </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+
+            <div class="downdisplay-content d-flex justify-content-end align-items-center py-2 px-3"
+                *ngIf="(teamSummaryData?.length ?? 0) > 0">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-weakend"></div>
+                        <div class="status-text">Weekend(WO)</div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-holiday "></div>
+                        <div class="status-text">Holidays(H)</div>
+                    </div>
+                     <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-red"></div>
+                        <div class="status-text">Absent(AB)</div>
+                    </div>
+
+
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-leave"></div>
+                        <div class="status-text">Leaves</div>
+                    </div>
+
+                    
+
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-pending"></div>
+                        <div class="status-text">Pending(P)</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-yellow"></div>
+                        <div class="status-text">Waiting for Approval</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-green"></div>
+                        <div class="status-text">Approved</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination-content" *ngIf="teamSummaryData.length > 0">
+                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                    <div class="d-flex align-items-center gap-3 p-2">
+                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                            (ngModelChange)="onPageSizeChange($event)">
+                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+                        </select>
+                        <span class="pagination-label text-nowrap">
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                            (+first + +rows) }} of {{ collectionSize }}
+                        </span>
+                    </div>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Summary-->
+<ng-template #summaryforlogs let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Logged Hrs BreakDown' | translate}} ({{ selectedEntries[0]?.entryDate |
+                    dateformat }})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Project Name</th>
+                                <th>Phase/Milestone</th>
+                                <th>Logged Hours</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let entry of selectedEntries">
+                                <td>{{ entry.clientName }}</td>
+                                <td>{{ entry.projectName }}</td>
+                                <td>{{ entry?.phaseName || '-' }}</td>
+                                <td>{{ entry.loggedHHMM }} Hrs</td>
+                                <td class="text-center">
+                                    <div>
+                                        <div *ngIf="entry.summary; else noRequestedComments" type="button"
+                                            [ngbPopover]="requestedComments">
+                                            <app-info-icon />
+                                        </div>
+                                        <ng-template #requestedComments>
+                                            <p class="mb-0">{{ entry.summary }}</p>
+                                        </ng-template>
+                                        <ng-template #noRequestedComments><span>-</span></ng-template>
+                                    </div>
+                                </td>
+                                <td
+                                    [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
+                                 'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
+                                    {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <div class="popup-table-footer">{{"Logged Hours" | translate}}: <b>8:00hrs</b></div> -->
+            </div>
+        </div>
+    </div>
+</ng-template>

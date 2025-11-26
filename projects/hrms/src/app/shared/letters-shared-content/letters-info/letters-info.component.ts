@@ -50,6 +50,8 @@ export class LettersInfoComponent {
       '/letters/relieving-letter': MODULE_INFOS.RELIEVING_LETTER_MODULE_INFO,
       '/letters/probation-confirmation-letter': MODULE_INFOS.PROBATION_CONFIRMATION_LETTER_MODULE_INFO,
       '/letters/probation-extension-letter': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO,
+      'letters/nda-contractor-letter': MODULE_INFOS.NDA_LETTER_MODULE_INFO,
+
     };
     const matchedEntry = Object.entries(this.routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
@@ -94,6 +96,21 @@ export class LettersInfoComponent {
     }
     else if (this.router.url === '/letters/probation-extension-letter') {
       this.componentname = 'Probation Extension Letter';
+    }
+
+   
+
+    else if (this.router.url === '/letters/trainee-relieving-letter') {
+      this.componentname = 'Trainee Relieving Letter';
+    }
+    else if (this.router.url === '/letters/contractor-offer-letter') {
+      this.componentname = 'Contract Offer Letter';
+    }
+    else if (this.router.url === '/letters/nda-contractor-letter') {
+      this.componentname = 'NDA Letter';
+    }
+    else if (this.router.url === '/letters/trainee-internship-completion-letter') {
+      this.componentname = 'Trainee Completion Letter';
     }
   }
 

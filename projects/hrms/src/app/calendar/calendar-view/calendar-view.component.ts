@@ -1,17 +1,7 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  FullCalendarComponent,
-  FullCalendarModule,
-} from '@fullcalendar/angular';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventApi, EventInput } from '@fullcalendar/core'; // useful for typechecking
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -54,11 +44,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   showCompOffs: boolean = true;
   showHolidays: boolean = true;
 
-  constructor(
-    private changeDetector: ChangeDetectorRef,
-    private http: HttpService,
-    public readonly router: Router
-  ) { }
+  constructor(private changeDetector: ChangeDetectorRef, private http: HttpService, public readonly router: Router) { }
 
   ngOnInit(): void {
     this.filterEventsByTitle();
@@ -71,11 +57,9 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
@@ -211,20 +195,12 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
       for (let index = 0; index < results?.length; index++) {
         const allEventsData: any = results[index];
         for (let j = 0; j < allEventsData?.length; j++) {
-        
           // Birthdays
           if (index === 0 && this.showBirthdays) {
             const bday = new Date(allEventsData[j].dob);
             const formattedBday = `${this.changeYear}-${String(bday.getMonth() + 1).padStart(2, '0')}-${String(bday.getDate()).padStart(2, '0')}`;
-
-            const nameParts = [
-              allEventsData[j]?.firstName,
-              allEventsData[j]?.middleName,
-              allEventsData[j]?.lastName
-            ].filter(Boolean).join(' ');
-
+            const nameParts = [allEventsData[j]?.firstName, allEventsData[j]?.middleName, allEventsData[j]?.lastName].filter(Boolean).join(' ');
             const fusionEmpId = allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId}) ` : '';
-
             events.push({
               title: `${fusionEmpId}${nameParts}'s Birthday`,
               start: formattedBday,
@@ -233,23 +209,16 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               display: 'calendar/birthday.png'
             });
           }
-          // Anniversaries
 
+          // Anniversaries
           if (index === 1 && this.showAnniversaries) {
             const joinDate = new Date(allEventsData[j].dateOfJoining);
             const formattedJoinDate = `${this.changeYear}-${String(joinDate.getMonth() + 1).padStart(2, '0')}-${String(joinDate.getDate()).padStart(2, '0')}`;
-
             if (allEventsData[j]?.anniversaryYearCount > 0) {
-              const nameParts = [
-                allEventsData[j]?.firstName,
-                allEventsData[j]?.middleName,
-                allEventsData[j]?.lastName
-              ].filter(Boolean).join(' ');
-
+              const nameParts = [allEventsData[j]?.firstName, allEventsData[j]?.middleName, allEventsData[j]?.lastName].filter(Boolean).join(' ');
               const fusionEmpId = allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId}) ` : '';
               const yearCount = allEventsData[j].anniversaryYearCount;
               const suffix = this.getOrdinalSuffix(yearCount);
-
               events.push({
                 title: `${fusionEmpId}${nameParts}'s ${yearCount}${suffix} Work Anniversary`,
                 start: formattedJoinDate,
@@ -260,21 +229,13 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
             }
           }
 
-
           // New Joinees
           if (index === 2 && this.showJoinees) {
             const joinDate = new Date(allEventsData[j].dateOfJoining);
             const formattedJoinDate = `${this.changeYear}-${String(joinDate.getMonth() + 1).padStart(2, '0')}-${String(joinDate.getDate()).padStart(2, '0')}`;
-
-            const nameParts = [
-              allEventsData[j]?.firstName,
-              allEventsData[j]?.middleName,
-              allEventsData[j]?.lastName
-            ].filter(Boolean).join(' ');
-
+            const nameParts = [allEventsData[j]?.firstName, allEventsData[j]?.middleName, allEventsData[j]?.lastName].filter(Boolean).join(' ');
             const fusionEmpId = allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId}) ` : '';
             const jobRole = allEventsData[j].jobRole ?? '';
-
             events.push({
               title: `${fusionEmpId}${nameParts} joined as ${jobRole}`,
               start: formattedJoinDate,
@@ -283,27 +244,18 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               display: 'calendar/new-joinees.png'
             });
           }
-
         }
+
         // Holidays (index === 3)
         const holidaysResult = results[3] as { orgHolidaysItems: any[] };
         if (index === 3 && this.showHolidays && holidaysResult) {
           const orgHolidaysItems = holidaysResult.orgHolidaysItems;
           for (let j = 0; j < orgHolidaysItems?.length; j++) {
             const holidayDate = new Date(orgHolidaysItems[j].holidayDate);
-            const formattedHolidayDate = `${this.changeYear}-${String(
-              holidayDate.getMonth() + 1
-            ).padStart(2, '0')}-${String(holidayDate.getDate()).padStart(
-              2,
-              '0'
-            )}`;
-            const eventTitle = `${orgHolidaysItems[j].holidayName}${orgHolidaysItems[j].isOptional ? ' (Optional)' : ''
-              }`;
-
-            if (
-              orgHolidaysItems[j].status === 'Published' &&
-              !this.isEventDuplicate(events, eventTitle, formattedHolidayDate)
-            ) {
+            const formattedHolidayDate = `${this.changeYear}-${String(holidayDate.getMonth() + 1).padStart(2, '0')}-
+            ${String(holidayDate.getDate()).padStart(2,'0')}`;
+            const eventTitle = `${orgHolidaysItems[j].holidayName}${orgHolidaysItems[j].isOptional ? ' (Optional)' : ''}`;
+            if (orgHolidaysItems[j].status === 'Published' && !this.isEventDuplicate(events, eventTitle, formattedHolidayDate)) {
               events.push({
                 title: eventTitle,
                 start: formattedHolidayDate,
@@ -326,5 +278,5 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-   }
+  }
 }

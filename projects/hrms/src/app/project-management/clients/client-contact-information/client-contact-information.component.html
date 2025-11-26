@@ -1,0 +1,199 @@
+<div class="custom-main-component-container">
+    <ng-container *ngIf="loading; else maincontent">
+        <ng-template #loadingSpinner>
+            <div>
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <th>Contact Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Role</th>
+                    <th class="text-center" style="text-transform: none;">Set as Primary Contact</th>
+                    @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
+                    && this.inactiveClientStatus !== 'inactive'){
+                    <th class="text-center">{{"Action" | translate}}</th>
+                    }
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="(contactData?.length ?? 0) > 0; else noDataTemplate">
+                        <tr *ngFor="let contact of contactData; let i = index">
+                            <td>{{ contact.name }}</td>
+                            <td>{{ contact.email }}</td>
+                            <td>{{ contact.phoneDialCode }} {{ contact.phoneNumber }}</td>
+                            <td>{{ contact.role }}</td>
+                            <td class="text-center">
+                                <span (click)="openispermiarayModal(conformation ,contact)">
+                                    <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
+                                        [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
+                                </span>
+                            </td>
+                            @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
+                            && this.inactiveClientStatus !== 'inactive'){
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(rbac.allowedToAccess('Contact Information.update')){
+                                        <li (click)="openupdateModal(updatecontact ,contact)">
+                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
+                                        </li>
+                                        }
+                                        @if(rbac.allowedToAccess('Contact Information.delete')){
+                                        <li (click)="opendeletModal(deleteconformation ,contact)">
+                                            <a class="dropdown-item"><i class="bi bi-trash me-2"></i>Delete</a>
+                                        </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                            }
+                        </tr>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+</div>
+
+<!--Delete confirmation-->
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete this Contact?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteContact()">{{'Yes' | translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--Update-->
+<ng-template #updatecontact let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Update Contact' | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="updatecontactFrom" autocomplete="off" (ngSubmit)="updateContact()">
+                <div class="row">
+                    <!-- Project Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="contactname" class="form-label custom-label mb-2">Contact Name
+                            <span class="text-danger">*</span></label>
+                        <input type="text" id="contactname" formControlName="contactname" maxlength="50" minlength="2"
+                            placeholder="Please enter contact name" class="form-control custom-input"
+                            (keydown)="formValidation.restrictInitialSpace($event)">
+                        <div class="error-msg"
+                            *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2 characters required</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="contactemail" class="form-label custom-label mb-2">Email
+                            <span class="text-danger">*</span></label>
+                        <input type="text" id="contactemail" formControlName="contactemail" class="form-control custom-input"
+                            placeholder="Please enter email">
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactemail')?.touched && 
+                        updatecontactFrom.get('contactemail')?.invalid">Email is required</div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="contactPhone" class="form-label custom-label mb-2">Phone Number
+                            <span class="text-danger">*</span></label>
+                        <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                            <div>
+                                <lib-country-list class="country-input" [selectedCountryConfig]="selectedCountryConfig"
+                                    [countryListConfig]="countryListConfig" [selectedCountryCode]="updatecontactFrom.get('countryCode')?.value"
+                                    (onCountryChange)="onCountryChange($event)">
+                                </lib-country-list>
+                            </div>
+                            <input type="text" class="form-control custom-input" formControlName="contactPhone" placeholder="Please enter phone number" 
+                                (keypress)="formValidation.restrictAlphabets($event)">
+                        </div>
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactPhone')?.touched && updatecontactFrom.get('contactPhone')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['required']">Phone number is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['invalidPhoneNumber']">Invalid phone number</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="contactrole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
+                        <input type="text" id="contactrole" formControlName="contactrole" minlength="2" maxlength="50"
+                            placeholder="Please enter role" class="form-control custom-input"(keypress)="formValidation.restrictInitialSpace($event)">
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2 characters required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updatecontactFrom.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Update'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #confirmationpopupfornodue let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text pt-3">{{'Are you sure you want to cancel?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--conformation-->
+<ng-template #conformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <div class="mb-4">
+                <app-confirmation-icon />
+            </div>
+            <p *ngIf="(contactData?.length ?? 0) > 1" class="confirmation-text mb-4">{{'Are you sure you want to set this contact as primary?' | translate}}</p>
+            <p *ngIf="contactData?.length === 1" class="confirmation-text mb-4">{{'You have only one contact. It is set as primary and cannot be changed' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer" *ngIf="(contactData?.length ?? 0) > 1">
+            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="yesChangesprimary()">{{'Yes' | translate}}</button>
+        </div>
+        <div class="custom-modal-footer" *ngIf="contactData?.length === 1">
+            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'Ok' | translate}}</button>
+        </div>
+    </div>
+</ng-template>

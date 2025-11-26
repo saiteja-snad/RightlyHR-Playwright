@@ -11,6 +11,7 @@
         <thead>
           <th>Expense Title</th>
           <th>Expense Date</th>
+          <th>Applied Date</th>
           <th>Total Amount</th>
           <th>Status</th>
           <th class="text-center">Approver Comments</th>
@@ -20,12 +21,13 @@
           <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
             <tr *ngFor="let exp of expenesEmplyeedata | async">
               <td>{{ exp.expenses_Title }}</td>
+                <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
               <td>{{ exp.applied_date | dateformat }}</td>
-              <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+              <td ><span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount  }}</td>
               <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
               <td class="text-center">
-                <app-info-icon *ngIf="exp.expenseApproverComments.length>0; else na" 
-                  (click)="comments_Function(exp.expenseApproverComments);opencommentsModal(viewcomments)" />
+                <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na" 
+                  (click)="comments_Function(exp?.expenseApproverComments);opencommentsModal(viewcomments)" />
                 <ng-template #na>
                   N/A
                 </ng-template>
@@ -39,6 +41,11 @@
                     <li>
                       <a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
                         <i class="bi bi-eye me-2"></i>View</a>
+                    </li>
+                     <li>
+                      <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
+                        <i class="bi bi-download me-1"></i>Download
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -155,13 +162,13 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <div class="card p-3">
-        <div *ngFor="let comment of commentsrecivced">
+      <div >
+        <div *ngFor="let comment of commentsrecivced" class="card p-3 mb-3">
           <div class="mb-0">
             <p><b>Processed by:</b> {{ comment.addedName }} </p>
             <p><b>Processed by ID:</b> {{ comment.addedByFusionEmpId }} </p>
             <p><b> Date:</b> {{ comment.addedDate | date: 'short' }} </p>
-            <p><b>Status:</b> {{ comment.action }}</p>
+            <p><b>Status:</b>Processed</p>
             <!-- <p> <b>Comments:</b> {{ comment.comments }} </p> -->
           </div>
         </div>
@@ -169,3 +176,14 @@
     </div>
   </div>
 </ng-template>
+ <ng-template #openpopupForDownload let-modal>
+        <div class="popup-container" ngbAutofocus>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Expense</h4>
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="popup-content">
+                <app-download-expense [downloadData]="selectedData" />
+            </div>
+        </div>
+    </ng-template>

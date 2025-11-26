@@ -12,13 +12,11 @@ import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
 import { IAuthority } from '../../Interfaces/letters-model';
-import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
-import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })
@@ -118,6 +116,7 @@ export class AddressProofLetterComponent implements OnInit,OnDestroy {
       middleName: [''],
       lastName: [''],
       jobRole: [''],
+      effectiveDate:[''],
       dateOfJoining: [null],
       addressLine1: [''],
       addressLine2: [''],
@@ -332,40 +331,50 @@ export class AddressProofLetterComponent implements OnInit,OnDestroy {
   }
   
   //get Job Details by empployeeid
-  getJobdetails(Employee: any) {
-    if (!Employee || !Employee.employeeId) {
-      console.warn("Invalid employee for job details:", Employee);
-      return;
-    }
-    this.subscription = this.http
-      .getData(`JobDetails/${Employee.employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          if (data && data.length > 0) {
-            let res = data.reverse()[0];
-            this.employeeJobDetails = res;
+getJobdetails(Employee: any) {
+  if (!Employee || !Employee.employeeId) {
+    console.warn("Invalid employee for job details:", Employee);
+    return;
+  }
 
-            Employee.jobRole = res.jobRole;
-            Employee.workLocation = res.location;
+  this.subscription = this.http
+    .getData(`JobDetails/${Employee.employeeId}`)
+    .subscribe({
+      next: (data: any) => {
+        if (data && data.length > 0) {
+          let res = data.sort(
+            (a: any, b: any) =>
+              new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime()
+          )[0];
 
-            this.employeeForm.patchValue({
-              jobRole: Employee.jobRole || 'Not Available',
-            });
-          } else {
-            console.warn("No job details found for employeeId:", Employee.employeeId);
-            this.employeeForm.patchValue({
-              jobRole: 'Not Available',
-            });
-          }
-        },
-        error: (reason: any) => {
-          console.error("Error fetching job details:", reason);
+          this.employeeJobDetails = res;
+
+          Employee.jobRole = res.jobRole;
+          Employee.workLocation = res.location;
+
+          this.employeeForm.patchValue({
+            jobRole: Employee.jobRole || 'Not Available',
+            //  ensure FormControl exists and value is Date
+            effectiveDate: res.effectiveDate ? new Date(res.effectiveDate) : null
+          });
+        } else {
+          console.warn("No job details found for employeeId:", Employee.employeeId);
           this.employeeForm.patchValue({
             jobRole: 'Not Available',
+            effectiveDate: null
           });
-        },
-      });
-  }
+        }
+      },
+      error: (reason: any) => {
+        console.error("Error fetching job details:", reason);
+        this.employeeForm.patchValue({
+          jobRole: 'Not Available',
+          effectiveDate: null
+        });
+      },
+    });
+}
+
 
   //to get address letter template
   async getAddressTemplate() {

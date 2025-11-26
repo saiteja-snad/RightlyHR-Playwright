@@ -16,6 +16,8 @@ export default [
             { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent), },
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), },
+            { path: 'my-skills', loadComponent: () => import('./personal/my-skills/my-skills.component').then(m => m.MySkillsComponent), },
+
         ]
     },
     {
@@ -37,10 +39,13 @@ export default [
             { path: 'trainee-onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent), data: { permission: 'Employee Info Onboarding Request Details.view' } },
             { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent), },
             { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
+            { path: 'contactor-info', loadComponent: () => import('./job/contactor-info/contactor-info.component').then(m => m.ContactorInfoComponent), data: { permission: 'Employee Info Contract Details.view' }},
+            { path: 'project-info', loadComponent: () => import('./job/project-info/project-info.component').then(m => m.ProjectInfoComponent), data: { permission: 'Employee Info Project Details.view' }},
+            { path: 'cards', loadComponent:()=>import('./job/card-details/card-details.component').then(m=>m.CardDetailsComponent) }
         ]
     },
     {
-        path: 'documents',children: [
+        path: 'documents', children: [
             { path: '', redirectTo: 'general-documents', pathMatch: 'full' },
             { path: 'general-documents', loadComponent: () => import('./documents/documents.component').then((m) => m.DocumentsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
             { path: 'letter-acknowledge-documents', loadComponent: () => import('./letters-acknowledgement/document-acknowledgement-tabs/document-acknowledgement-tabs.component').then((m) => m.DocumentAcknowledgementTabsComponent), data: { permission: 'Employee Info Documents Tab.view' } },

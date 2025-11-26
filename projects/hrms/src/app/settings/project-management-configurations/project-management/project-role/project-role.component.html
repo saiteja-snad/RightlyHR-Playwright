@@ -1,0 +1,225 @@
+<div class="custom-main-component-container">
+  <!--Add Btn-->
+  <div class="mb-3">
+    <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
+      *ngIf="rbac.allowedToAccess('Project Role.create')">{{'Add' | translate}}</button>
+  </div>
+
+  <div class="custom-main-component-container">
+    <div class="custom-table-content">
+      @if(!loader){
+      <table class="w-100" *ngIf="rbac.allowedToAccess('Project Role.view')">
+        <thead>
+          <tr>
+            <th>{{'Department' | translate}}</th>
+            <th>{{'Project Role' | translate}}</th>
+            <th>{{'Project Role Color' | translate}}</th>
+            <th class="text-center"
+              *ngIf="rbac.allowedToAccess('Project Role.update') || rbac.allowedToAccess('Project Role.delete')">
+              {{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <ng-container>
+            <tr *ngFor="let roles of ProjectroleDetails">
+              <td>{{roles.entityname}}</td>
+              <td>{{roles.projectrole}}</td>
+              <td>
+                <input type="color" [value]="roles.color || '#000000'" disabled class="form-control custom-color w-20">
+              </td>
+              <td class="text-center"
+                *ngIf="rbac.allowedToAccess('Project Role.update') || rbac.allowedToAccess('Project Role.delete')">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openupdateDialog(roles)" *ngIf="rbac.allowedToAccess('Project Role.update')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
+                      </a>
+                    </li>
+                    <li (click)="opendelete(roles)" *ngIf="rbac.allowedToAccess('Project Role.delete')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      }
+      @else {
+      <app-data-loader-content />
+      }
+    </div>
+  </div>
+</div>
+<!-- addpopup -->
+<ng-template #addpopup let-modal>
+  <form autocomplete="off" [formGroup]="AddForm">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{ 'Project Role' | translate }}</p>
+        </div>
+        <div>
+          <a (click)="close(modal); resetForm()">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content ">
+        <!-- Department Name Field -->
+        <div class="mb-3">
+          <label for="department" class="form-label custom-label mb-2">
+            {{ 'Department' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="departmentlist" optionLabel="departmentName"
+              optionValue="sno" [filter]="true" [showClear]="false" formControlName="department"
+              placeholder="{{'Please select department name' | translate}}">
+            </p-select>
+          </div>
+          <div *ngIf="AddForm.get('department')?.touched && AddForm.get('department')?.invalid" class="error-msg">
+            <div *ngIf="AddForm.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
+            </div>
+          </div>
+        </div>
+        <!-- Project Role Field -->
+        <div class="mb-3">
+          <label for="Addprojectrole" class="form-label custom-label mb-2">
+            {{ 'Project Role' | translate }} <span class="error-msg">*</span>
+          </label>
+          <input type="text" class="form-control custom-input" formControlName="Addprojectrole"
+            placeholder="Please enter Project role"
+            (keydown)="formValidations.restrictInputAllowSpecialChars($event)"
+            maxlength="101" />
+          <div *ngIf="AddForm.get('Addprojectrole')?.touched && AddForm.get('Addprojectrole')?.invalid"
+            class="error-msg">
+            <div *ngIf="AddForm.get('Addprojectrole')?.errors?.['required']">
+              {{ 'Project Role is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="AddForm.get('Addprojectrole')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
+
+          <div *ngIf="AddForm.get('Addprojectrole')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
+          </div>
+        </div>
+
+        <!--Color Picker-->
+        <div class="mb-3">
+          <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
+          <input type="color" id="color" class="form-control custom-color" formControlName="color" />
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
+            {{ 'Add' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+    </div>
+  </div>
+</ng-template>
+
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+  <form autocomplete="off" [formGroup]="updateForm">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div>
+          <p class="popup-heading mb-0">{{'Update Project Role' | translate}}</p>
+        </div>
+        <div>
+          <a (click)="close(modal)">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon">
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <div class="mb-3">
+          <label for="Updateprojectrole" class="form-label custom-label mb-2">
+            {{'Project Role' | translate}} <span class="error-msg">*</span>
+          </label>
+          <input type="text" class="form-control custom-input" formControlName="Updateprojectrole"
+            placeholder="Please enter project role"
+            (keydown)="formValidations.restrictInputAllowSpecialChars($event)"
+            maxlength="101">
+          <div *ngIf="updateForm.get('Updateprojectrole')?.touched && updateForm.get('Updateprojectrole')?.invalid"
+            class="error-msg">
+            <div *ngIf="updateForm.get('Updateprojectrole')?.errors?.['required']">
+              {{ 'Project Role is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="updateForm.get('Updateprojectrole')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
+          <div *ngIf="updateForm.get('Updateprojectrole')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="Updatejobrole" class="form-label custom-label mb-2">
+            {{'Department' | translate}} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="departmentlist" optionLabel="departmentName"
+              optionValue="sno" [filter]="true" [showClear]="false" formControlName="Updatedepartment"
+              placeholder="{{'Please select department name' | translate}}">
+            </p-select>
+          </div>
+        </div>
+        <div *ngIf="AddForm.get('Updatedepartment')?.touched && AddForm.get('Updatedepartment')?.invalid"
+          class="error-msg">
+          <div *ngIf="AddForm.get('Updatedepartment')?.errors?.['required']">{{'Department Name is required'|translate}}
+          </div>
+        </div>
+
+         <!--Color Picker-->
+        <div class="mb-3">
+          <label for="color" class="form-label custom-label mb-2">{{'Color' | translate}}</label>
+          <input type="color" id="color" class="form-control custom-color" formControlName="UpdateColor" />
+        </div>
+
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' |
+            translate}}</button>
+          <button type="button" class="custom-btn btn-primary" (click)="updateJobroletype(modal)"
+            [disabled]="updateForm.invalid">
+            {{'Update' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

@@ -120,7 +120,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
             ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
           };
-        });
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
         this.employeeiddetails = [
           { fullName: 'All Employees', employeeId: 'all' },
           ...employeedata
@@ -133,7 +133,8 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   }
 
   getTeam() {
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+    const statuses = 'Active';
+    this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
       next: (data: any) => {
         if (data) {
           this.teamdetails = data.map((employee: any) => {
@@ -142,7 +143,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
               fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
                 ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
         }
       },
       error: (reason: any) => {
@@ -389,7 +390,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
               ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
           this.getEmployeeInfo.unshift({
             fullName: 'All Employees',
             fusionEmpId: this.loggedInUser.fusionEmpId,

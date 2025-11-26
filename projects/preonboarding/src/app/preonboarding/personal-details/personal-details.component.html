@@ -13,7 +13,7 @@
                         <label for="firstName" class="form-label custom-label mb-2">First Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="firstName" formControlName="firstName"
-                            placeholder="Please enter first name" autocomplete="off" />
+                            placeholder="Please enter first name" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                         <div class="error-msg my-1"
                             *ngIf="personalDetailsForm.get('firstName')?.touched && personalDetailsForm.get('firstName')?.invalid">
                             <div *ngIf="personalDetailsForm.get('firstName')?.errors?.['required']">First name is required</div>
@@ -27,7 +27,7 @@
                         <label for="middleName" class="form-label custom-label mb-2">Middle Name</label>
                         <input type="text" class="form-control custom-input" id="middleName"
                             (keydown)="enforceMaxLength($event, 50)" formControlName="middleName"
-                            placeholder="Please enter middle name" autocomplete="off" />
+                            placeholder="Please enter middle name" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                     </div>
         
                     <!-- Last Name -->
@@ -35,7 +35,7 @@
                         <label for="lastName" class="form-label custom-label mb-2">Last Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="lastName" formControlName="lastName"
-                            placeholder="Please enter last name" autocomplete="off" />
+                            placeholder="Please enter last name" autocomplete="off" (keypress)="formValidation.restrictInput($event)"/>
                         <div class="error-msg my-1"
                             *ngIf="personalDetailsForm.get('lastName')?.touched && personalDetailsForm.get('lastName')?.invalid">
                             <div *ngIf="personalDetailsForm.get('lastName')?.errors?.['required']">Last name is required
@@ -94,7 +94,7 @@
                             <input type="text" class="form-control custom-input" formControlName="phonenumber"
                                 placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
                                 [value]="personalDetailsForm.get('phonenumber')?.value ? formatPhoneNumber(personalDetailsForm.get('phonenumber')?.value) : ''"
-                                autocomplete="off" required>
+                                autocomplete="off" required (keypress)="formValidation.restrictAlphabets($event)">
                         </div>
                         <div class="error-msg my-1"
                             *ngIf="personalDetailsForm.get('phonenumber')?.invalid &&  (personalDetailsForm.get('phonenumber')?.touched || personalDetailsForm.get('phonenumber')?.dirty)">
@@ -180,7 +180,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="currentAddressLine1" [maxLength]="100"
                                 formControlName="addressLine1" (input)="onCurrentAddressChange()"
-                                placeholder="Please enter address line 1" autocomplete="off" />
+                                placeholder="Please enter address line 1" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('currentAddress.addressLine1')?.invalid && personalDetailsForm.get('currentAddress.addressLine1')?.touched"
                                 class="error-msg">
                                 Address Line 1 is required
@@ -191,7 +191,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" (input)="onCurrentAddressChange()"
                                 id="currentAddressLine2" [maxLength]="100" formControlName="addressLine2"
-                                placeholder="Please enter address line 2" autocomplete="off">
+                                placeholder="Please enter address line 2" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                             <div *ngIf="personalDetailsForm.get('currentAddress.addressLine2')?.invalid && personalDetailsForm.get('currentAddress.addressLine2')?.touched"
                                 class="error-msg">
                                 Address Line 2 is required
@@ -202,7 +202,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="currentCity"
                                 (input)="onCurrentAddressChange()" formControlName="city"
-                                (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter city" autocomplete="off" />
+                                (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter city" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('currentAddress.city')?.invalid && personalDetailsForm.get('currentAddress.city')?.touched"
                                 class="error-msg">
                                 City is required
@@ -213,7 +213,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="currentState"
                                 (input)="onCurrentAddressChange()" (keydown)="enforceMaxLength($event, 50)"
-                                placeholder="Please enter state" formControlName="state" autocomplete="off">
+                                placeholder="Please enter state" formControlName="state" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                             <div *ngIf="personalDetailsForm.get('currentAddress.state')?.invalid && personalDetailsForm.get('currentAddress.state')?.touched"
                                 class="error-msg">
                                 State is required
@@ -224,7 +224,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" (input)="onCurrentAddressChange()"
                                 id="currentCountry" (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter country"
-                                formControlName="country" autocomplete="off">
+                                formControlName="country" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                             <div *ngIf="personalDetailsForm.get('currentAddress.country')?.invalid && personalDetailsForm.get('currentAddress.country')?.touched"
                                 class="error-msg">
                                 Country is required
@@ -271,7 +271,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="permanentAddressLine1" [maxLength]="100"
                                 formControlName="addressLine1" (input)="onCurrentAddressChange()"
-                                placeholder="Please enter address line 1" autocomplete="off" />
+                                placeholder="Please enter address line 1" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine1')?.invalid && personalDetailsForm.get('permanentAddress.addressLine1')?.touched"
                                 class="error-msg">Address Line 1 is required
                             </div>
@@ -281,7 +281,7 @@
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="permanentAddressLine2" [maxLength]="100"
                                 formControlName="addressLine2" (input)="onCurrentAddressChange()"
-                                placeholder="Please enter address line 2" autocomplete="off" />
+                                placeholder="Please enter address line 2" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine2')?.invalid && personalDetailsForm.get('permanentAddress.addressLine2')?.touched"
                                 class="error-msg">
                                 Address Line 2 is required
@@ -292,7 +292,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control  custom-input" (input)="onCurrentAddressChange()"
                                 id="permanentCity" formControlName="city" (keydown)="enforceMaxLength($event, 50)"
-                                placeholder="Please enter city" autocomplete="off" />
+                                placeholder="Please enter city" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.city')?.invalid && personalDetailsForm.get('permanentAddress.city')?.touched"
                                 class="error-msg">
                                 City is required
@@ -303,7 +303,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="permanentState"
                                 (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter state"
-                                (input)="onCurrentAddressChange()" formControlName="state" autocomplete="off" />
+                                (input)="onCurrentAddressChange()" formControlName="state" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.state')?.invalid && personalDetailsForm.get('permanentAddress.state')?.touched"
                                 class="error-msg">State is required
                             </div>
@@ -313,7 +313,7 @@
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="permanentCountry"
                                 (keydown)="enforceMaxLength($event, 50)" placeholder="Please enter country"
-                                (input)="onCurrentAddressChange()" formControlName="country" autocomplete="off" />
+                                (input)="onCurrentAddressChange()" formControlName="country" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.country')?.invalid && personalDetailsForm.get('permanentAddress.country')?.touched"
                                 class="error-msg">
                                 Country is required

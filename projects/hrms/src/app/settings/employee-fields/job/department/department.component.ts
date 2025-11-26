@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, model, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -17,14 +17,16 @@ import { RbacService } from '../../../../services/rbac.service';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
 import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-department',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './department.component.html',
   styleUrl: './department.component.scss',
 })
 export class DepartmentComponent {
+  @ViewChild('addpopup') addpopup: any;
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   DepartmentForm!: FormGroup;
@@ -45,24 +47,12 @@ export class DepartmentComponent {
   ) {}
   ngOnInit(): void {
     this.DepartmentForm = this.fb.group({
-      Department: [
-        '',
-        [
-          Validators.required,
-          this.formValidations.maxCharactersValidator(51),
-          Validators.pattern(/^[^\s].*$/)
-        ],
-      ],
+      Department: ['',[ Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],],
+      color : ['#000000']
     });
     this.updateForm = this.fb.group({
-      Department: [
-        '',
-        [
-          Validators.required,
-          this.formValidations.maxCharactersValidator(51),
-          Validators.pattern(/^[^\s].*$/)
-        ],
-      ],
+      Department: ['', [ Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],],
+      updatecolor : ['#000000']
     });
 
     this.getDepartment();
@@ -71,7 +61,10 @@ export class DepartmentComponent {
   getDepartment() {
     this.loading = true;
     this.http.getData('Department').subscribe((data: any) => {
-      this.DepartmentDetail = data;
+      this.DepartmentDetail = data.map((dep: any) => ({
+      ...dep,
+      meta: dep.meta ? JSON.parse(dep.meta) : null
+    }));
       this.loading = false;
     }, (error: any) => {  
       this.loading = false;
@@ -79,10 +72,15 @@ export class DepartmentComponent {
     });
   }
   //ADD
-  addDepartment() {
+  addDepartment(modal: any) {
     const request: DepartmentData = {
       departmentName: this.DepartmentForm.value.Department.trim(),
       isdeleted: 'Active',
+      meta: JSON.stringify({
+        graphData: {
+          color: this.DepartmentForm.value.color || '#000000'
+        }
+      })
     };
 
     this.subscription = this.http.postdata('Department', request).subscribe({
@@ -91,6 +89,7 @@ export class DepartmentComponent {
         this.conformationPopup.openSuccessModal(
           'Department added successfully'
         );
+        modal.close();
         this.resetForm();
       },
       error: (error: any) => {
@@ -106,6 +105,11 @@ export class DepartmentComponent {
         departmentName: this.updateForm.value.Department.trim(),
         isdeleted: 'Active',
         sno: this.selectedId,
+        meta: JSON.stringify({
+          graphData: {
+            color: this.updateForm.value.updatecolor || '#000000'
+          }
+        })
       };
 
       this.subscription = this.http
@@ -113,7 +117,7 @@ export class DepartmentComponent {
         .subscribe({
           next: () => {
             this.getDepartment();
-            modal.close();
+            this.modalService.dismissAll();
             this.updateForm.reset();
             this.conformationPopup.openSuccessModal(
               'Department updated successfully'
@@ -128,14 +132,17 @@ export class DepartmentComponent {
         });
     }
   }
-  close(modal: any) {
-    modal.dismiss();
+  close() {
+    this.modalService.dismissAll();
     this.updateForm.reset();
   }
-  openupdate(departmentlist: any) {
+  openupdate(departmentlist: any) {  
     this.selectedId = departmentlist.sno;
     this.DepartmentForm.reset();
-    this.updateForm.patchValue({ Department: departmentlist.departmentName });
+    this.updateForm.patchValue({ 
+      Department: departmentlist.departmentName,
+      updatecolor: departmentlist.meta?.graphData?.color || '#000000'
+    });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
       centered: true,
@@ -157,6 +164,11 @@ export class DepartmentComponent {
       departmentName: this.selectedDeleteDep.departmentName,
       isdeleted: 'void',
       sno: this.selectedDeleteDep.sno,
+       meta : JSON.stringify({
+        graphData : {
+          color : this.selectedDeleteDep?.meta?.graphData?.color
+        }
+      })
     };
 
     this.http.postdata('Department/UPDATER', deleteRequest).subscribe({
@@ -183,6 +195,18 @@ export class DepartmentComponent {
     this.DepartmentForm.reset();
     this.isEditMode = false;
     this.selectedId = null;
+  }
+
+  openDialog() {
+    this.modalService.open(this.addpopup, {
+      backdrop: 'static',
+      centered: true
+    });
+  }
+
+  closed(modal: any) {
+    modal.close();
+    this.DepartmentForm.reset();
   }
 
   ngOnDestroy(): void {

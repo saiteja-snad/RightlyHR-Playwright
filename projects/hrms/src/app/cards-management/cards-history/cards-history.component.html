@@ -1,0 +1,90 @@
+<div class="custom-main-component-container">
+    <div class="d-flex gap-3 w-100">
+        <div class="component-left-tabs-container">
+            <div class="custom-sub-tabs-container">
+                <ul class="nav flex-column">
+                    <li class="nav-item" *ngFor="let tab of navTabs">
+                        <div class="nav-link" [routerLink]="[tab.route]" [queryParamsHandling]="'preserve'"
+                            routerLinkActive="active-nav-link">
+                            <img [src]="tab.icon" alt="Icon" class="icon mb-2">
+                            <div class="d-flex gap-1">{{ tab.label | translate }}</div>
+                        </div>
+                        <div class="tabs-border-bottom"></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="custom-component-right-content p-3">
+            @if(cardHistoryResponse.length>0){
+
+
+            <div class="card p-3 mb-3" *ngFor="let item of cardHistoryResponse">
+                <p class=" component-header cursor mb-4">{{'Card Details' | translate}}</p>
+                <div class="row mb-3">
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Card Number' | translate}}:</b>
+                        {{ item?.card?.cardNumberMasked ? item?.card?.cardNumberMasked:'-' }}</div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Card Type' | translate}}:</b>
+                        {{ item?.card?.cardType ?item?.card?.cardType:'-' }}</div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Status' | translate}}:</b>
+                        {{ item?.allocationStatus ?item?.allocationStatus:'-' }}</div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated To ' | translate}}:</b>
+                        {{ item?.employee?.name?item?.employee?.name:'-' }}
+                    </div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated By ' | translate}}:</b>
+                        {{ item?.assignedBy?.name?item?.assignedBy?.name:'-' }}
+                    </div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated On ' | translate}}:</b>
+                        {{ item?.allocatedDate?(item?.allocatedDate |dateformat):'-' }}
+                    </div>
+                 <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Allocated Comments' | translate}}:</b>
+                        @if(item?.comments){
+                        <a type="button" [ngbPopover]="comments">
+                            <app-info-icon />
+                        </a>
+                        <ng-template #comments>
+                            <p class="mb-0">{{ item?.comments ?item?.comments:'-' }}</p>
+                        </ng-template>
+                        }
+                        @else{NA}
+
+                    </div>
+                    <!-- <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Action Date ' | translate}}:</b>
+
+                        {{ item?.updateAt?(item?.updateAt |dateformat):'-' }}</div> -->
+                        <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Released On ' | translate}}:</b>
+                        {{ item?.releasedDate?(item?.releasedDate|dateformat):'-' }}
+                    </div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Reason ' | translate}}:</b>
+                        @if(item?.reason){
+                        <a type="button" [ngbPopover]="reason">
+                            <app-info-icon />
+                        </a>
+                        <ng-template #reason>
+                            <p class="mb-0">{{ item?.reason ? item?.reason :'-' }}</p>
+                        </ng-template>
+                        }
+                        @else{NA}
+                    </div>
+                    <div class="col-3 mb-3"><b class="component-sub-header mb-0">{{'Released Comments' | translate}}:</b>
+                        @if(item?.additionalComments){
+                        <a type="button" [ngbPopover]="comments">
+                            <app-info-icon />
+                        </a>
+                        <ng-template #comments>
+                            <p class="mb-0">{{ item?.additionalComments ? item?.additionalComments:'-' }}</p>
+                        </ng-template>
+                        }
+                        @else{NA}
+
+                    </div>
+
+                </div>
+            </div>
+            }
+            @else{
+            <app-no-data-found />
+            }
+        </div>
+    </div>
+</div>

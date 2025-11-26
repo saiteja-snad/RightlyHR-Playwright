@@ -1,0 +1,402 @@
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">Contractor Info</span></div>
+    <div class="d-flex gap-3 align-items-center">
+      <button class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Request for Contract Extension Button.view') 
+                 && (!disablebuttonforonboard1 && !disablebuttonforonboard2 && (this.convdata?.status === 'Active')) && ((dynamicData | async)?.length > 0)"  (click)="openmodel(readyforonboard,this.convdata)">
+      Request For Extension
+    </button>
+    <button class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Employee Info Contract Conversion Request.view') 
+                 && (!disablebuttonforonboard1 && !disablebuttonforonboard2) && ((dynamicData | async)?.length > 0)" (click)="requestForConvertion()">
+      Request For Conversion
+    </button>
+    </div>
+    
+  </div>
+
+  <div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Request Date</th>
+          <!-- <th class="text-center">Contract Duration(Days)</th> -->
+          <th class="text-center">Contract Start Date</th>
+          <th class="text-center">Contract End Date</th>
+          <th class="text-center">Contract Extension Date</th>
+          <!-- <th class="text-center">Contract Conversion Requested Date</th> -->
+          <th class="text-center">Contract Conversion Date</th>
+          <th>Contract Type</th>
+          <th>Approver History</th>
+          <th>Status</th>
+          <!-- <th>Conversion Status</th> -->
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let item of dynamicData | async; let first = first">
+            <td>{{ item.requestedDate ? (item.requestedDate | dateformat) : 'NA' }}</td>
+            <td class="text-center text-nowrap">{{ item.contractStartDate ?  (item.contractStartDate| dateformat) : 'NA' }}</td>
+            <td class="text-center text-nowrap">{{ item.contractEndDate ? (item.contractEndDate| dateformat) : 'NA' }}</td>
+            <td class="text-center text-nowrap">{{ item.contractExtendedDate ? (item.contractExtendedDate | dateformat) : 'NA' }}</td>
+            <td class="text-center text-nowrap">{{ item.conversionProcessedDate ? (item.conversionProcessedDate | dateformat) : 'NA' }}</td>
+            <td class="text-center text-nowrap">{{ item.contractType }}</td> 
+            <td class="text-center">
+              <span *ngIf="item.approvers && item.approvers.length > 0; else feedbackComment">
+                <div (click)="fustiontostorefeedback(item.approvers,EmployeeComments)">
+                  <app-info-icon />
+                </div>
+              </span>
+              <ng-template #feedbackComment>NA</ng-template>
+            </td>
+            <td>{{ item.status ? item.status : 'NA' }}</td>
+            <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
+              <!-- @if(first && (( item.status ==='Rejected' || item.status ==='Processed') && (this.empdata.substatus === 'NDA Letter Accepted' || this.empdata.substatus === 'Contract Extended') &&
+              this.empdata.empstatus === 'Active Contract') && disablebuttonforonboard3){
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" (click)="openmodel(reRequest,item)">
+                      Re-Request
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              } -->
+              @if(first && (item.status==='Processed' && this.empdata.substatus === 'Contract Converted' &&
+              this.empdata.empstatus === 'Active Contract')){
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li
+                    *ngIf="item.status==='Processed' && this.empdata.substatus === 'Contract Converted' && this.empdata.empstatus === 'Active Contract'">
+                    <a class="dropdown-item" (click)="openmodel(readyforonboardrequest,item)">
+                      Ready For Onboard
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              }
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noDataTemplate>
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
+</div>
+<ng-template #EmployeeComments let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Approver History Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <div class="custom-table-content custom-height">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th class="text-nowrap">Approver Role</th>
+              <th class="text-nowrap">Approved Date</th>
+              <th class="text-nowrap">Approved by</th>
+              <th class="text-center">Comments</th>
+              <th class="text-nowrap">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let comment of appover_comments">
+              <td>
+                <span *ngIf="comment?.approverRole;else approverrole"> <span
+                    *ngIf="comment?.approverRole.toLowerCase()=='em';else maincontent">HR</span>
+                  <ng-template #maincontent> {{comment.approverRole}}</ng-template>
+                </span>
+                <ng-template #approverrole>NA</ng-template>
+              </td>
+              <td>
+                <span *ngIf="comment.addedDate; else addeddate">
+                  {{ comment.addedDate | date }}</span>
+                <ng-template #addeddate>NA</ng-template>
+              </td>
+
+              <td>
+                <span *ngIf="comment.employeeName; else addedname">
+                  {{ comment.employeeName }} ({{ comment.fusionEmployeeId }})</span>
+                <ng-template #addedname>NA</ng-template>
+              </td>
+              <td>
+                <div class="text-center" *ngIf="comment.comments; else popupcomments">
+                  <app-info-icon ngbPopover="{{ comment?.comments }}" container="body" />
+                </div>
+                <ng-template #popupcomments>NA</ng-template>
+              </td>
+              <td>
+                <span *ngIf="comment?.status; else isaccept">{{ comment.status }}</span>
+                <ng-template #isaccept>NA</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #ApproverComments let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">View Comments</p>
+      </div>
+      <div>
+        <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content text-wrap">
+      <p class="text-wrap">{{myApproverCommentss}}</p>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #readyforonboard let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to Extend?</p>
+    </div>
+    <div class="custom-main-popup-content p-0 pt-3">
+      <form autocomplete="off" [formGroup]="extendreasonForm" (ngSubmit)="requestForextension()">
+        <div class="row">
+          <!-- //StartDate -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">Contract Start Date<span class="error-msg">*</span></label>
+            <input type="date" class="form-control custom-input" placeholder="" [min]="this.dojDate" formControlName="contractstartdate" id="Contract Start Date" />
+            <div class="error-msg"
+              *ngIf="extendreasonForm.get('contractstartdate')?.invalid && extendreasonForm.get('contractstartdate')?.touched">
+              Contract Start Date is required</div>
+          </div>
+          <!-- //EndDate -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">Contract End Date<span class="error-msg">*</span></label>
+            <input type="date" class="form-control custom-input" placeholder="" [min]="this.extendreasonForm.get('contractstartdate')?.value" formControlName="contractenddate" id="Contract End Date"/>
+            <div class="error-msg"
+              *ngIf="extendreasonForm.get('contractenddate')?.touched && extendreasonForm.get('contractenddate')?.errors">
+              <ng-container *ngIf="extendreasonForm.get('contractenddate')?.errors?.['required']">
+                Contract End Date is required
+              </ng-container>
+              <ng-container *ngIf="extendreasonForm.get('contractenddate')?.errors?.['invalidRange']">
+                Contract End Date must be greater than or equal to Contract Start Date
+              </ng-container>
+            </div>
+
+          </div>
+          <!-- //ExtendedDate -->
+          <!-- <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">Extend Date<span class="error-msg">*</span></label>
+            <input type="date" class="form-control custom-input" placeholder="" formControlName="extenddate" id="Effective Date"
+              [min]="formattedEndDate" (change)="getBlockedpastDate(selectedData.contractEndDate)" />
+            <div class="error-msg"
+              *ngIf="extendreasonForm.get('extenddate')?.invalid && extendreasonForm.get('extenddate')?.touched">
+              Extend Date is required</div>
+          </div> -->
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Reason For Extend<span class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" id="extendreason" maxlength="250"
+            placeholder="Please enter extend reason" (keydown)="formValidations.restrictInitialSpace($event)"
+            name="extendreason" formControlName="extendReason"></textarea>
+          <div class="textarea-count-text">{{ extendreasonForm.get('extendReason')?.value?.length || 0 }} / 250</div>
+          <div class="error-msg"
+            *ngIf="extendreasonForm.get('extendReason')?.touched && extendreasonForm.get('extendReason')?.invalid">
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['required']">
+              Reason is required
+            </ng-container>
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['maxlength']">
+              Maximum 400 characters allowed
+            </ng-container>
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['pattern']">
+              Reason should not start with a space.
+            </ng-container>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'Cancel'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="extendreasonForm.invalid||isLoading">
+            @if(!isLoading){
+            {{'Submit'|translate}}
+            }
+            @else {
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
+            </div>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+
+
+<ng-template #reRequest let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      @if((this.selectedData.contractType === 'Extension' || this.selectedData.contractType === 'Contract')){
+         <p class="confirmation-text">Are you sure you want to Extend?</p>
+         <div class="custom-main-popup-content p-0 pt-3">
+      <form autocomplete="off" [formGroup]="extendreasonForm" (ngSubmit)="reRequestContract()">
+        <div class="row">
+          <!-- //StartDate -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">Contract Start Date<span class="error-msg">*</span></label>
+            <input type="date" class="form-control custom-input" [min]="this.dojDate" placeholder="" formControlName="contractstartdate"
+              id="Contract Start Date" />
+            <div class="error-msg"
+              *ngIf="extendreasonForm.get('contractstartdate')?.invalid && extendreasonForm.get('contractstartdate')?.touched">
+              Contract Start Date is required</div>
+          </div>
+          <!-- //EndDate -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">Contract End Date<span class="error-msg">*</span></label>
+            <input type="date" class="form-control custom-input" [min]="this.extendreasonForm.get('contractstartdate')?.value" placeholder="" formControlName="contractenddate"
+              id="Contract End Date" />
+            <div class="error-msg"
+              *ngIf="extendreasonForm.get('contractenddate')?.invalid && extendreasonForm.get('contractenddate')?.touched">
+              Contract End Date is required</div>
+          </div>
+          <!-- //ExtendedDate -->
+          <!-- <div class="col-md-6 mb-3">
+                  <label class="form-label custom-label mb-2">Extend Date<span class="error-msg">*</span></label>
+                  <input type="date" class="form-control custom-input" placeholder="" formControlName="extenddate" id="Effective Date"
+                    [min]="formattedEndDate" (change)="getBlockedpastDate(selectedData.contractEndDate)" />
+                  <div class="error-msg"
+                    *ngIf="extendreasonForm.get('extenddate')?.invalid && extendreasonForm.get('extenddate')?.touched">
+                    Extend Date is required</div>
+                </div> -->
+        </div>
+      
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Reason For Extend<span class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" id="extendreason" maxlength="250"
+            placeholder="Please enter extend reason" (keydown)="formValidations.restrictInitialSpace($event)"
+            name="extendreason" formControlName="extendReason"></textarea>
+          <div class="textarea-count-text">{{ extendreasonForm.get('extendReason')?.value?.length || 0 }} / 250</div>
+          <div class="error-msg"
+            *ngIf="extendreasonForm.get('extendReason')?.touched && extendreasonForm.get('extendReason')?.invalid">
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['required']">
+              Reason is required
+            </ng-container>
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['maxlength']">
+              Maximum 400 characters allowed
+            </ng-container>
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['pattern']">
+              Reason should not start with a space.
+            </ng-container>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'Cancel'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="extendreasonForm.invalid||isLoading">
+            @if(!isLoading){
+            {{'Submit'|translate}}
+            }
+            @else {
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
+            </div>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+      }
+      @else {
+        <p class="confirmation-text">Are you sure you want to Re-Request?</p>
+        <div class="custom-main-popup-content p-0 pt-3">
+      <form autocomplete="off" [formGroup]="extendreasonForm" (ngSubmit)="reRequestContract()">
+        <!-- <div class="mb-4">
+          <label class="form-label custom-label mb-2">Extend Date<span class="error-msg">*</span></label>
+          <input type="date" class="form-control custom-input" placeholder="" formControlName="extenddate"
+            id="Effective Date" [min]="formattedAppliedDate"
+            (change)="getBlockedpastDate(selectedData.contractEndDate)" />
+          <div class="error-msg"
+            *ngIf="extendreasonForm.get('extenddate')?.invalid && extendreasonForm.get('extenddate')?.touched">
+            Extend Date is required</div>
+        </div> -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Reason For Conversion<span class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" id="extendreason" maxlength="250"
+            placeholder="Please enter extend reason" (keydown)="formValidations.restrictInitialSpace($event)"
+            name="extendreason" formControlName="extendReason"></textarea>
+          <div class="textarea-count-text">{{ extendreasonForm.get('extendReason')?.value?.length || 0 }} / 250</div>
+          <div class="error-msg"
+            *ngIf="extendreasonForm.get('extendReason')?.touched && extendreasonForm.get('extendReason')?.invalid">
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['required']">
+              Reason is required
+            </ng-container>
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['maxlength']">
+              Maximum 400 characters allowed
+            </ng-container>
+            <ng-container *ngIf="extendreasonForm.get('extendReason')?.errors?.['pattern']">
+              Reason should not start with a space.
+            </ng-container>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'Cancel'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="!extendreasonForm.get('extendReason')?.value || isLoading">
+            @if(!isLoading){
+            {{'Submit'|translate}}
+            }
+            @else {
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
+            </div>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+      }
+    </div>
+    
+  </div>
+</ng-template>
+
+<ng-template #readyforonboardrequest let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to Onboard?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'No'| translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="readyforonboardRequest()">{{ 'Yes' | translate
+        }}</button>
+    </div>
+  </div>
+</ng-template>

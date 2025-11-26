@@ -86,19 +86,18 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       }
     })
   }
-
-  getUsers() {
-    // const payload = {
-    //   status: 'Active'
-    // };
-    this.http.getData(`Employeedata/ActiveEmployees`).pipe(takeUntil(this.destroy$)).subscribe({
+ getUsers() {
+  this.http.getData(`Employeedata/ActiveEmployees`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
       next: (res: any) => {
-        this.usersList = res.map((employee: any) => {
+        this.usersList = res.map((emp: any) => {
+          const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+          const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
           return {
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            ...emp,
+            fullName
           };
         });
       },
@@ -106,7 +105,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
         console.log(err);
       }
     });
-  }
+}
 
   selectedUserDetails(event: any) {
     this.selectedUsersCount = event.length;

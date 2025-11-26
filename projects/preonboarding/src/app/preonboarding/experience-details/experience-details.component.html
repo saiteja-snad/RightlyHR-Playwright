@@ -33,7 +33,7 @@
             <thead>
                 <tr>
                     <th>Company Name</th>
-                    <th>Employeement Type</th>
+                    <th>Employment Type</th>
                     <th>From Date</th>
                     <th>To Date</th>
                     <th>Job Role</th>
@@ -91,25 +91,100 @@
     }
 
     <div class="footer-btn-content d-flex justify-content-between gap-3 pt-4">
-        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()">Emergency Contacts</button>
+        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigateemergency()">Emergency
+            Contacts</button>
         <!-- <button class="btn  btn-outline-primary rounded-pill pt-2 pb-2 ps-5 pe-5"  (click)="navigatePrevious()">Emergency Details</button> -->
         <div>
-            <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length <= 0"
+
+            <!-- <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length <= 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
                 
             <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length > 0"
-                class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button>
-
+                class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button> -->
+            <!-- @if (this.empDetails.experienceType == 'Fresher' && getempexpdata.length <= 0 && this.empDetails.empstatus.toLowerCase() == 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+                <button 
+                class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
+            }
+            @else{
             <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length <= 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+            }
+            @if (this.empDetails.experienceType == 'Experienced' && this.empDetails.empstatus.toLowerCase() == 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+                <button 
+                class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
+            }
+            @else{
+            <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0 "
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+            } -->
 
-            <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0"
-                class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button>
+            <!-- Trainee Employee -->
+            @if(this.empDetails.experienceType == 'Trainee' && getempexpdata.length <= 0){ <button
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                }
+                @else if (this.empDetails.experienceType == 'Trainee' && getempexpdata.length > 0) {
+                <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                }
 
-            <button *ngIf="this.empDetails.experienceType == 'Experienced'" 
-                class="custom-btn btn-primary px-5" (click)="navigateNext()" [disabled]="getempexpdata.length <= 0" >Next</button>
-                <!-- <button *ngIf="this.empDetails.experienceType == 'Experienced' && (getempexpdata.length <= 0)" 
-                class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button> -->
+                <!-- Prospective Employee -->
+                @if(getempexpdata?.length <= 0){ 
+                    @if(this.empDetails.experienceType=='Fresher' && !(empDetails.empstatus?.toLowerCase()==='prospective contract' )){ 
+                        <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                    }
+                    @else if(this.empDetails.experienceType == 'Experienced' && !(empDetails.empstatus?.toLowerCase() === 'prospective contract')){
+                        <button class="custom-btn btn-primary px-5" [disabled]="getempexpdata?.length <= 0" (click)="navigateNext()">Next</button>
+                    }
+                } 
+                @else if (getempexpdata?.length > 0){
+                    @if(this.empDetails.experienceType == 'Fresher' && !(empDetails.empstatus?.toLowerCase()==='prospective contract')){ 
+                        <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                    }
+                    @else if(this.empDetails.experienceType == 'Experienced' && !(empDetails.empstatus?.toLowerCase() === 'prospective contract')){
+                        <button class="custom-btn btn-primary px-5" [disabled]="getempexpdata?.length <= 0" (click)="navigateNext()">Next</button>
+                    }
+                }
+
+                    <!-- Prospective contractor -->
+                    @if (getempexpdata?.length <= 0) { 
+                        <!-- @if (empDetails.experienceType === 'Fresher' && empDetails.empstatus?.toLowerCase() === 'prospective contract' && (prosempdata.substatus?.toLowerCase() === 'nda letter released' || prosempdata.substatus?.toLowerCase() === 'nda letter regenerated' || prosempdata.substatus?.toLowerCase() === 'nda letter accepted')) {
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
+                        }
+                        @else {
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                        } -->
+                        @if(empDetails.experienceType === 'Fresher' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && (prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
+                        }
+                        @else if(empDetails.experienceType === 'Fresher' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && !(prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted') ){
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                        }
+                        @else if(empDetails.experienceType === 'Experienced' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && (prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted') ){
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
+                        }
+                        @else if(empDetails.experienceType === 'Experienced' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && !(prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted') ){
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
+                        }
+                    }
+                    @else if (getempexpdata?.length > 0) {
+                        <!-- @if (empDetails.experienceType === 'Fresher' && empDetails.empstatus?.toLowerCase() === 'prospective contract' && (prosempdata.substatus?.toLowerCase() === 'nda letter released' || prosempdata.substatus?.toLowerCase() === 'nda letter regenerated' || prosempdata.substatus?.toLowerCase() === 'nda letter accepted')) {
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Next</button>
+                        }
+                        @else {
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                        } -->
+                        @if(empDetails.experienceType === 'Fresher' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && (prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Next</button>
+                        }
+                        @else if(empDetails.experienceType === 'Fresher' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && !(prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted') ){
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                        }
+                        @else if(empDetails.experienceType === 'Experienced' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && (prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted') ){
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Next</button>
+                        }
+                        @else if(empDetails.experienceType === 'Experienced' && (empDetails.empstatus?.toLowerCase() === 'prospective contract') && !(prosempdata.substatus.toLowerCase() == 'nda letter released'||prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||prosempdata.substatus.toLowerCase() == 'nda letter accepted') ){
+                            <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                        }
+                    }
         </div>
     </div>
 </div>
@@ -125,7 +200,8 @@
             </div>
             <div class="d-flex justify-content-center gap-5 mt-4">
                 <button class="custom-btn btn-secondary w-100" (click)="close()">No</button>
-                <button class="custom-btn btn-primary w-100" (click)="deleteExperienceDetails(selectExperience)">yes</button>
+                <button class="custom-btn btn-primary w-100"
+                    (click)="deleteExperienceDetails(selectExperience)">yes</button>
             </div>
         </div>
     </div>

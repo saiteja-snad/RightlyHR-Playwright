@@ -25,11 +25,11 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss',
-  
+
 })
 
-export class BankLoanLetterComponent  implements OnInit,OnDestroy {
-  moduleinfo : string = '';
+export class BankLoanLetterComponent implements OnInit, OnDestroy {
+  moduleinfo: string = '';
   subscription!: Subscription;
   bankLoanTemplate: any | string | ArrayBuffer | null = null;
   bankLoanFile!: File;
@@ -59,7 +59,7 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
     private router: Router,
     private fb: FormBuilder,
     private modal: OpenModalService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initializeForm();
@@ -100,13 +100,11 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
           this.employeeDetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
         },
         error: (reason: any) => {
           console.log(reason);
@@ -122,8 +120,8 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
         next: (data: any) => {
           this.signatureAuthorityDetails = data.map((authority: any) => ({
             ...authority,
-            fullName:`${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
-             
+            fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+
           }));
         },
         error: (error: any) => {
@@ -166,7 +164,7 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
             this.jobErrorMessage = 'No job details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           } else {
-            let res = data.reverse()[0];
+            let res = data.sort((a: any, b: any) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime())[0];
             this.selectedEmployeeJobDetails = res;
             this.jobErrorMessage = '';
             this.employeeForm.get('jobValid')?.setValue(true);
@@ -225,9 +223,8 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
       this.selectedEmployee.firstName &&
       this.selectedEmployee.lastName
     ) {
-      fileName = `${this.selectedEmployee.firstName}_${
-        this.selectedEmployee.lastName
-      }_${new Date().getTime()}_BankLoanLetter.pdf`;
+      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName
+        }_${new Date().getTime()}_BankLoanLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
       return;
@@ -268,14 +265,14 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
         }
       },
       error: (err: any) => {
-        this.spinnerLoader= false;
-        this.modal.openErrorModal(err.error.message? err.error.message: 'Failed to upload Bank Loan Letter');
+        this.spinnerLoader = false;
+        this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to upload Bank Loan Letter');
       },
       complete: () => {
         setTimeout(() => {
           this.router.navigate(['/employee-management/all-employees']);
         }, 2000)
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.employeeForm.reset();
       }
     });

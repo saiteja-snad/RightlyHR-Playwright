@@ -65,6 +65,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedLeaveStatus: any;
 
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
     private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
@@ -82,13 +83,42 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
       trcomments: ['', Validators.required],
       rejectedReason: ['', Validators.required]
     });
+      this.rejectForm.get('trcomments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
     this.rejectForm.valueChanges.subscribe((val) => {
       this.selectedLeaveData.extenddate = val.extenddate;
       this.selectedLeaveData.trcomments = val.trcomments;
       this.selectedLeaveData.rejectedReason = val.rejectedReason;
     });
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+   this.selectedLeaveData.trcomments= 'Approved';
+  }
+}
+onCommentChange(value: string) {
+  // Reset highlight only when the textarea becomes completely empty
+  if (!value || value.trim() === '') {
+    this.selectedLeaveStatus = null;
+  }
+}
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedLeaveData.trcomments='Rejected';
+    }
+  }
+    onStatusdiccontinueRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.selectedLeaveData.rejectedReason='Rejected';
+    }
+  }
   blockLeadingSpace(event: Event, value: string) {
     const inputElement = event.target as HTMLTextAreaElement;
     if (inputElement.value.startsWith(' ')) {
@@ -177,8 +207,10 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
 
   handleAccept(f: NgForm) {
     this.isLoading = true;
+    let loggedInUser = this.authService.getToken();
     let requestBody = {
       status: 'Approved',
+      approvedBy: loggedInUser.employeeId.toString(),
       comments: this.selectedLeaveData.trcomments,
       currentStage: parseInt(
         this.requesthandler.approvalHeader.currentapprovalStage
@@ -210,8 +242,10 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   //function to send the rejected status and comments
   handleReject(f: NgForm) {
     this.isLoading = true;
+    let loggedInUser = this.authService.getToken();
     let requestBody = {
       status: 'Rejected',
+      approvedBy: loggedInUser.employeeId.toString(),
       comments: this.selectedLeaveData.rejectedReason,
       currentStage: parseInt(
         this.requesthandler.approvalHeader.currentapprovalStage
@@ -242,6 +276,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   handleProcess(request: Itraineeapproval) {
     let requestBody = {
       status: 'Processed',
+      approvedBy: this.authService.getToken().employeeId.toString(),
       currentStage: parseInt(request.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
@@ -293,6 +328,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   handleExtend(f: NgForm) {
     let requestBody = {
       status: 'Processed',
+      approvedBy: this.authService.getToken().employeeId.toString(),
       comments: this.selectedLeaveData.trcomments,
       trainingEndDate: this.selectedLeaveData.extenddate,
       currentStage: parseInt(

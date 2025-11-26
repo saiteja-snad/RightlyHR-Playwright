@@ -1,0 +1,133 @@
+@if(rbac.allowedToAccess('Project Details Tab.view')){
+<div class="custom-main-component-container">
+    @if(!loading){
+    <div class="backgroup-colour ">
+        <div class="card custom-background-card p-4">
+            <form [formGroup]="addprojectform">
+                <div class="row">
+                    <!--Client Name-->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine2" class="form-label custom-label mb-2">Client Name</label>
+                        <input type="text" class="form-control custom-input" id="currentAddressLine2" autocomplete="off"
+                            formControlName="clientName" placeholder="Please enter client name">
+                    </div>
+
+                    <!-- Project Code -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="code" class="form-label custom-label mb-2">Project Code</label>
+                        <input type="text" class="form-control custom-input" formControlName="code"
+                            id="code" autocomplete="off" placeholder="Please enter project code">
+                    </div>
+
+                    <!--Project Name-->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">Project Name</label>
+                        <input type="text" class="form-control custom-input" formControlName="projectName"
+                            id="currentAddressLine1" autocomplete="off" placeholder="Please enter project name">
+                    </div>
+
+                    <!-- Project Type -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentZipCode" class="form-label custom-label mb-2">Project Type</label>
+                        <input type="text" class="form-control custom-input" formControlName="projectType"
+                            id="currentZipCode" autocomplete="off" placeholder="Please enter project type">
+                    </div>
+
+                    <!-- Start Date-->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentZipCode" class="form-label custom-label mb-2">Start Date</label>
+                        <input type="date" class="form-control custom-input" id="currentZipCode"
+                            formControlName="startDate" autocomplete="off" placeholder="Please enter start date">
+                    </div>
+
+                    <!-- End Date-->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine1" class="form-label custom-label mb-2">End Date</label>
+                        <input type="date" class="form-control custom-input" formControlName="endDate"
+                            id="currentAddressLine1" autocomplete="off" placeholder="Please enter end date">
+                    </div>
+
+                    <!-- Effective Date -->
+                    <!-- <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentAddressLine2" class="form-label custom-label mb-2">Effective Date</label>
+                        <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+                            id="currentZipCode" autocomplete="off" placeholder="Please enter Effective Date">
+                    </div> -->
+
+                    <!-- Kickoff Date -->
+                    <!-- <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentZipCode" class="form-label custom-label mb-2">Kickoff Date</label>
+                        <input type="date" class="form-control custom-input" id="currentZipCode"
+                            formControlName="kickoffDate" autocomplete="off" placeholder="Please enter kickoff date">
+                    </div> -->
+
+                    <!-- Kickoff Date -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="currentZipCode" class="form-label custom-label mb-2">Status</label>
+                        <input type="text" class="form-control custom-input" id="currentZipCode"
+                            formControlName="statuts" autocomplete="off" placeholder="Please enter status">
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="projectType" class="form-label custom-label mb-2">Allocated Hours</label>
+                        <input type="text" id="projectType" formControlName="allocatedHours"
+                            class="form-control custom-input" placeholder="Enter allocated hours" />
+                    </div>
+
+                    <!-- <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="approvalidAuthority" class="form-label custom-label mb-2">Timesheet Approval Authority
+                        </label>
+                        <input type="text" id="approvalidAuthority" formControlName="approvalidAuthority"
+                            class="form-control custom-input" placeholder="Enter timesheet approval authority" />
+                    </div> -->
+
+                    <!-- Project Color -->
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="color" class="form-label custom-label mb-2">Project Color</label>
+                        <input type="color" id="color" class="form-control custom-color" formControlName="color"/>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" formControlName="overtimeEligible">
+                                <label class="form-label custom-label">Overtime Eligibility</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" formControlName="billable">
+                                <label class="form-label custom-label">Billable</label>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" formControlName="allowweekendWork">
+                                <label class="form-label custom-label">Allow Weekend Work</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    }
+    @else {
+    <div class="card custom-background-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p-skeleton width="10rem" height="2rem"></p-skeleton>
+            <div class="d-flex gap-2">
+                <p-skeleton width="2.5rem" height="2.5rem"></p-skeleton>
+                <p-skeleton width="6rem" height="2.5rem"></p-skeleton>
+            </div>
+        </div>
+        <form>
+            <div class="row">
+                <div class="col-md-6 col-lg-4 mb-3" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+                    <p-skeleton width="7rem" height="1rem" styleClass="mb-2"></p-skeleton>
+                    <p-skeleton width="100%" height="2rem"></p-skeleton>
+                </div>
+            </div>
+        </form>
+    </div>
+    }
+</div>
+}

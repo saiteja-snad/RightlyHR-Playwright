@@ -38,6 +38,7 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   rejectForm!: FormGroup;
   searchValue: any;
+  selectedLeaveStatus: any;
 
   constructor(private http: HttpService, private readonly modalService: NgbModal, private signalService: SignalsService,
     public conformationPopup: OpenModalService, private fb: FormBuilder, public rbac: RbacService, public formValidation: FormValidationService) { }
@@ -52,8 +53,26 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
+     this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
+// onStatusApproveSelect(status: string) {
+//   this.selectedLeaveStatus = status;
 
+//   if (status === 'approved') {
+//     this.approveForm.get('comments')?.setValue('Approved');
+//   }
+// }
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   getexpensespendingforyou(): void {
     this.loading = true;
     this.http.getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=EMP`).subscribe({

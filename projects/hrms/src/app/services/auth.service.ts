@@ -1,24 +1,27 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable,Inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
-
-
+import { catchError, map, throwError } from'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
 
   constructor(
     private http: HttpClient,
+    private router: Router,
+    private modalService: NgbModal,
     private oauthService: OAuthService,
-    private router: Router
   ) { }
 
   ApiUrl = environment.ApiUrl;
+
+
   login(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
@@ -33,7 +36,6 @@ export class AuthService {
   }
   postData(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
-
   }
 
   storeToken(tokenValue: any) {
@@ -89,13 +91,16 @@ export class AuthService {
   }
 
   loginWithMicrosoft(): Promise<{ accessToken: string; idToken: string }> {
-    this.oauthService.configure(microsoftAuthConfig);
-    return this.oauthService.loadDiscoveryDocumentAndLogin().then((loggedIn) => {
+    this.oauthService.configure({
+      ...microsoftAuthConfig,
+      customQueryParams: {
+        prompt: 'select_account'  // 🔑 Force Microsoft to always show the account picker
+      }
+    });
+    return this.oauthService.loadDiscoveryDocumentAndLogin().then((loggedIn: any) => {
       if (loggedIn) {
         const accessToken = this.oauthService.getAccessToken();
         const idToken = this.oauthService.getIdToken();
-        console.log(accessToken);
-        console.log(idToken)
         this.router.navigate(['/uservalidation']);
         return { accessToken, idToken };
       } else {
@@ -109,20 +114,26 @@ export class AuthService {
     this.oauthService.loadDiscoveryDocumentAndLogin();
   }
 
-  logout() {
-    this.oauthService.logOut();
-  }
+  logout(): void {
+    const tokenString = localStorage.getItem('currentUser');
+    const token = tokenString ? JSON.parse(tokenString) : null;
 
-  get identityClaims() {
-    return this.oauthService.getIdentityClaims();
+    const completeLogout = () => {
+      sessionStorage.clear();
+      localStorage.clear();
+      this.router.navigate(['/login']);
+    };
+
+    if (!token?.refreshToken) {
+      completeLogout();
+      return;
+    }
+
+    this.onLogout();
   }
 
   get accessToken() {
     return this.oauthService.getAccessToken();
-  }
-
-  get idToken() {
-    return this.oauthService.getIdToken();
   }
 
   async getTokenResponse(): Promise<TokenResponse | null> {
@@ -166,18 +177,8 @@ export class AuthService {
       if (authResponse.accessToken) {
         localStorage.setItem('accessToken', authResponse.accessToken);
       }
-      if (authResponse.refreshToken) {
-        localStorage.setItem('refreshToken', authResponse.refreshToken);
-      }
-      if (authResponse.email) {
-        localStorage.setItem('email', authResponse.email);
-      }
-      if (authResponse.name) {
-        localStorage.setItem('name', authResponse.name);
-      }
     }
   }
-
 
   getDeviceName(): string {
     const ua = navigator.userAgent;
@@ -206,7 +207,6 @@ export class AuthService {
     if (!token || !token.refreshToken) {
       localStorage.clear();
       sessionStorage.clear();
-      this.logout();
       this.router.navigate(['/login']);
     }
 
@@ -215,8 +215,16 @@ export class AuthService {
     }
 
     this.postData(`v2/Auth/logout`, payload).subscribe({
-      next: (res) => {
-        // localStorage.clear();
+      next: (res : any) => {
+        this.modalService.dismissAll();
+        sessionStorage.clear();
+        localStorage.clear();
+        this.router.navigate(['/login']);
+      },
+      error: (err :any) => {
+        localStorage.clear();
+        sessionStorage.clear();
+        this.router.navigate(['/login']);
       }
     });
   }
@@ -235,7 +243,8 @@ export class AuthService {
     const payload = {
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
-      deviceName: this.getDeviceName()
+      deviceName: this.getDeviceName(),
+      loginType: token.loginType
     };
 
     return this.http.post<any>(`${this.ApiUrl}v2/Auth/refresh`, payload).pipe(
@@ -246,11 +255,10 @@ export class AuthService {
         return res;
       }),
       catchError((error) => {
-        // this.logout();
+        this.logout();
+        this.router.navigate(['/login']);
         return throwError(() => error);
       })
     );
   }
-
-
 }

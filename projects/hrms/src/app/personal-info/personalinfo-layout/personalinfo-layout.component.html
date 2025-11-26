@@ -29,8 +29,7 @@
                 (click)="navigation()">Inactive</button>
             }
 
-            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus
-            =='Employee Created'
+            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective'||emppersonalinfo.empstatus == 'Prospective Contract') && (empdata?.substatus =='Employee Created'
             || empdata?.substatus=='Requested Documents') ){
             <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
@@ -41,7 +40,7 @@
             </button>
             }
 
-            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective'
+            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective'||emppersonalinfo.empstatus == 'Prospective Contract'
                 || emppersonalinfo.empstatus == 'Trainee Prospective')  && (emppersonalinfo?.substatus == 'Employee Created' || 
                 emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 
                 emppersonalinfo?.substatus == 'Documents Rejected'|| emppersonalinfo?.substatus == 'Documents Accepted' || 
@@ -50,27 +49,55 @@
             </button>
 
             <!-- <div *ngIf=""> -->
-            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
-            getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-            || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released'){
-            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
-            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
+               @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract')
+            {
+            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Prospective Contract'
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created') && (getOfferDetails?.letterType?.toLowerCase() === 'offer letter')"
                 (click)="openModal(revokeoffer)">
+                {{'Revoke Offer'|translate}}
+            </button>
+            } 
+
+            
+            <!-- <div *ngIf=""> -->
+            @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted' 
+            || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract' ){
+            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
                 {{' Revoke Offer'|translate}}
+            </button>
+            }
+
+
+            @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType ==='Contract')
+            {
+            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Prospective Contract'
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created') && (getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter')"
+                (click)="openModal(revokeoffer)">
+                {{'Revoke Offer'|translate}}
             </button>
             }
 
             @if(this.rbac.allowedToAccess('Generate Credentials Button.view') && !this.empdata?.isUserRegistred ){
             <button class="custom-btn btn-secondary"
-                *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active') &&  empdata?.substatus !=='Prospective' &&  empdata?.substatus !=='Probation'"
+                *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active' || empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'"
                 (click)="openCredentialsModal(generateCredentialsModal)">
                 {{'Generate Credentials '|translate}}
             </button>
             }
-
+            @if (empdata?.empstatus ==='Prospective' || empdata?.empstatus ==='Trainee Prospective' || empdata?.empstatus ===
+            'Prospective Contract') {
+            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info')"
+                [hidden]="!empdata.isCredentialExpired" (click)="openCredentialsModal(regenerateCredentialsModal)">
+                {{'Regenerate Credentials'|translate}}
+            </button>
+            }
+             
             @if(this.rbac.allowedToAccess('Reset Password Button.view') && this.empdata?.isUserRegistred){
             <button class="custom-btn btn-secondary"
-                *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active') &&  empdata?.substatus !=='Prospective' &&  empdata?.substatus !=='Probation'"
+                *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active'|| empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'"
                 (click)="openCredentialsModal(resetPasswordConfirmation)">
                 {{'Reset Password'|translate}}
             </button>
@@ -98,8 +125,7 @@
                 <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
             </div>
             <div>
-                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -173,6 +199,29 @@
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
             <button type="submit" class="custom-btn btn-primary" [disabled]=" spinnerLoader"
                 (click)="generateCredentials()">
+                @if(spinnerLoader){
+                <div class="d-flex gap-1">
+                    <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
+                    <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>{{'Yes'}}</span>
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #regenerateCredentialsModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text  mt-3">{{'Are you sure you want to re-generate new credentials' |translate}}?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]=" spinnerLoader"
+                (click)="updatePassword()">
                 @if(spinnerLoader){
                 <div class="d-flex gap-1">
                     <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>

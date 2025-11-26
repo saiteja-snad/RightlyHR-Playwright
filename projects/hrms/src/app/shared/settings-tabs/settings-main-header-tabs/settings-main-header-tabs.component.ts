@@ -19,6 +19,8 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
     { label: 'Time Off', link: '/settings/timeoff-configurations', icon:'/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Settings Timeoff Module', action: 'view' } },
     { label: 'Asset Configuration', link: '/settings/assets-configuration', icon:'/main-menu-icons/Asset-configuration-icon.png', permission: { feature: 'Assets Management Configuration Module', action: 'view' } },
     { label: 'Dynamic Forms', link: '/settings/dynamic-forms', icon:'/main-menu-icons/Dynamic-Form-icon.png', permission: { feature: 'Dynamic Forms Module', action: 'view' } },
+    { label: 'Attendance Configuration', link: '/settings/attendance-configuration', icon:'/main-menu-icons/Attendance-configurations-settings-icon.png', permission: { feature: 'Attendance Configuration Module', action: 'view' }},
+    { label: 'Timesheet Locking Configuration', link: 'settings/timesheet-locking-configuration', icon:'/main-menu-icons/Attendance-configurations-settings-icon.png', permission: { feature: 'Timesheet Configuration Module', action: 'view' }},
   ];
   columnsPerRow = 3;
 

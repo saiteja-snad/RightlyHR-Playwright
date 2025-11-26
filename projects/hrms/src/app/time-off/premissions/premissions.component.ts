@@ -82,6 +82,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   yearSelectionForm!: FormGroup;
   selectedYear: number = this.currentYear;
   years: number[] = [];
+  activeEmplist = [] as any;
 
   constructor(
     private modalService: NgbModal,
@@ -105,6 +106,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getAllEmployeeDetails();
     // year selection values
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
@@ -120,6 +122,18 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
+   getAllEmployeeDetails() {
+     const status = ['Active', 'Trainee Active', 'Active Contract'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
+  }
+
   onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
@@ -129,8 +143,8 @@ export class PremissionsComponent implements OnInit, OnDestroy {
 
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-        this.updateModuleInfo();
-      });
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
@@ -142,24 +156,40 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
   // function to get the data of employees by hierarchy
-
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+getTeamManagersDetails() {
+  const EmployeeId = this.empinfo.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
       next: (response: any) => {
-        if (response && response.length) {
-          // No filter
+        if (Array.isArray(response) && response.length) {
           const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-          }));
+
+          this.getEmployeeInfo = myTeam
+            .map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
+              return {
+                ...emp,
+                fullName
+              };
+            })
+            //  Alphabetical sort by firstName
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+        } else {
+          this.getEmployeeInfo = [];
         }
       },
+      error: (err) => {
+        console.error(err);
+        this.getEmployeeInfo = [];
+      }
     });
-  }
+}
+
 
   cleardata() {
     this.modalService.dismissAll();
@@ -348,7 +378,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Premissions request submitted successfully');
+          this.sharedModalService.openSuccessModal('Permission request submitted successfully');
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             permission: true,

@@ -53,6 +53,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   leaves = new BehaviorSubject<LeaveApproval[]>([]);
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
+  employeeLeaveEntitlementsList:ICategoryDetails[] = [] ;
   selectedLeaveData = {} as any;
   leavesselect!: LeaveApproval[];
   selectedProducts: LeaveApproval[] = [];
@@ -61,6 +62,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
+ selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   options = [
@@ -91,6 +93,29 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
   }
+
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+
+  if (status === 'approved') {
+    this.selectedLeaveData.comments = 'Approved';
+  } else if (status === 'planned') {
+    this.selectedLeaveData.comments = 'Planned Leave';
+  } else if (status === 'unplanned') {
+    this.selectedLeaveData.comments = 'Unplanned Leave';
+  }
+}
+
+onStatusRejectSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'reject') {
+    this.selectedLeaveData.comments = 'Rejected';
+  } else if (status === 'planned') {
+    this.selectedLeaveData.comments = 'Planned Leave';
+  } else if (status === 'unplanned') {
+    this.selectedLeaveData.comments = 'Unplanned Leave';
+  }
+}
 
   // selectCheck(Value: any) {
   //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
@@ -306,7 +331,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.leaveEntitlementsList = res.data.find(
             (ele: any) => ele.category.id === Value.entity.leaveCategoryId
           );
-          console.log(this.leaveEntitlementsList)
+          this.employeeLeaveEntitlementsList = res.data;
           // Check if isProbationAllowed is explicitly true or null
           const isProbationAllowed =
             this.leaveEntitlementsList?.category?.isProbationAllowed;
@@ -317,6 +342,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
+          this.leaveEntitlementsList = {} as ICategoryDetails;
+          this.employeeLeaveEntitlementsList = []
           console.log(err);
         },
       });
@@ -363,6 +390,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   ifreasonnull(Value: any) {
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
+       this.selectedLeaveStatus = null;
     } else {
       this.issubmitdiable = false;
     }
@@ -478,9 +506,11 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
           this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
+            if (this.selectedLeaveData) { this.selectedLeaveData.comments = ''; this.selectedLeaveData.isPlannedLeave = '';}
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else if (reason.error.statusCode == 400) {
+               if (this.selectedLeaveData) { this.selectedLeaveData.comments = '';this.selectedLeaveData.isPlannedLeave = ''; }
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {

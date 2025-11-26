@@ -1,0 +1,324 @@
+.custom-view-right-content {
+    width: calc(100% - 8.5rem) !important;
+}
+
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 11.25rem) !important;
+    border-bottom-left-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
+
+    th,
+    td {
+        font-size: var(--fontsize14) !important;
+    }
+
+    th {
+        font-weight: 600 !important;
+        text-transform: capitalize !important;
+    }
+}
+
+.timesheet-graph-content {
+    width: 50rem !important;
+    height: calc(100dvh - 8.5rem) !important;
+    border-radius: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
+}
+
+.time-sheet-graph-card {
+    width: 100%;
+    border: 1px solid #FFFFFF;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
+}
+
+.summary-header {
+    font-weight: 600;
+    font-size: var(--fontsize14);
+    color: var(--primary-color);
+
+    .popover-body {
+        padding: 0.5rem !important;
+        border-radius: 0.5rem;
+        border: 2px solid #FFF !important;
+        box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-weight: 400;
+        font-size: var(--fontsize12);
+        letter-spacing: 0%;
+        color: #424242;
+    }
+
+    .popover {
+        --bs-popover-max-width: 25rem !important;
+        --bs-popover-border-color: var(--module-info-bg) !important;
+        background: var(--module-info-bg) !important;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+        border-bottom-color: #FFFFFF !important;
+    }
+}
+
+.bar-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        width: 400px !important;
+        height: 240px !important;
+    }
+}
+
+.dashed-line {
+    width: 100%;
+    height: 1px;
+    border: 1px dashed #C9D3DD;
+}
+
+.stacked-progress-container {
+    position: relative;
+}
+
+.stacked-progress-overlay {
+    width: 100%;
+    height: 0.625rem;
+    border-radius: 1rem;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 500;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .label {
+        background: #FFF;
+        padding: 0.25rem 0.325rem;
+        white-space: nowrap;
+        border-radius: 0.25rem;
+    }
+
+    .hrs {
+        color: var(--primary-color);
+    }
+}
+
+.approved {
+    color: rgba(0, 169, 18, 1) !important;
+}
+
+.rejected {
+    color: rgba(234, 54, 44, 1) !important;
+}
+
+.waiting {
+    color: rgba(252, 185, 16, 1) !important;
+}
+
+.total-hrs {
+    color: rgba(133, 137, 145, 1);
+    font-weight: 500;
+    font-size: var(--fontsize14);
+}
+
+.total-duration {
+    font-size: var(--fontsize16) !important;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.projectwise-chart-grid {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    canvas {
+        width: 180px !important;
+        height: 180px !important;
+    }
+
+    .legend-circle {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+    }
+
+    .legend-name {
+        color: #323130;
+        font-weight: 600;
+        font-size: var(--fontsize10);
+    }
+
+    .hrs-display {
+        font-weight: 600;
+        font-size: var(--fontsize10);
+        color: #0A0A0A;
+    }
+}
+
+.graph-no-data-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 15rem;
+
+    .no-data-image {
+        width: 7rem !important;
+        height: 6rem !important;
+    }
+
+    .no-data-text {
+        font-size: var(--fontsize14) !important;
+    }
+}
+
+.chart-card-skeleton {
+    width: 100%;
+    margin: 0 auto;
+    background: transparent;
+    min-height: 15rem;
+
+    .p-skeleton {
+        background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+    }
+}
+
+.custom-legend-width {
+    min-width: 180px;
+}
+
+.popup-table-scroll-container {
+    border-radius: 0.5rem !important;
+
+    th:first-child {
+        border-top-left-radius: 0.325rem;
+    }
+
+    th:last-child {
+        border-top-right-radius: 0.325rem;
+    }
+
+    td:first-child {
+        border-bottom-left-radius: 0.325rem;
+    }
+
+    td:last-child {
+        border-bottom-right-radius: 0.325rem;
+    }
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}
+
+::ng-deep .chartjs-tooltip {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+
+.custom-p-select-content {
+    .p-select {
+        width: 240px !important;
+    }
+}
+
+.custom-content-height {
+    height: calc(100dvh - 14.625rem) !important;
+}
+
+.custom-graph-content-height {
+    height: calc(100dvh - 12rem) !important;
+}
+
+.data-chip {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: max-content;
+    padding: 0.365rem 1rem 0.25rem;
+    border-radius: 0.325rem;
+    border: 2px solid;
+}
+
+.downdisplay-content {
+    background-color: #FFF;
+    border: 1px solid #FFF !important;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+
+}
+
+.status-text {
+    font-weight: 400;
+    font-size: var(--fontsize12);
+    color: #747474;
+}
+
+
+.circular-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.circle-weakend {
+    background-color: #6A5ACD;
+}
+
+.circle-holiday {
+    background-color: #A700D0;
+}
+
+.circle-leave {
+    background-color: #F29000;
+}
+
+.circle-blue {
+    background-color: #3397E8;
+}
+
+.circle-green {
+    background-color: #00A912;
+}
+
+.circle-red {
+    background-color: #EA362C;
+}
+
+.circle-pending {
+    background-color: #565557;
+}
+
+.circle-yellow {
+    background-color: #FFEA00;
+}

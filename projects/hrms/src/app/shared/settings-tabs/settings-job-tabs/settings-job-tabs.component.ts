@@ -18,7 +18,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Job Type', route: '/settings/employee-fields/job/jobtype', permission: { feature: 'Job Type', action: 'view' } },
     { label: 'Probation Status', route: '/settings/employee-fields/job/probationstatus', permission: { feature: 'Probation Status', action: 'view' } },
     { label: 'Background Check Status', route: '/settings/employee-fields/job/backgroundcheck', permission: { feature: 'Background check Status', action: 'view' } },
-    { label: 'Notice Period', route: '/settings/employee-fields/job/notice', permission: { feature: 'Notice Period', action: 'view' } },    
+    { label: 'Notice Period', route: '/settings/employee-fields/job/notice', permission: { feature: 'Notice Period', action: 'view' } },
     { label: 'Frequency', route: '/settings/employee-fields/job/frequency', permission: { feature: 'Frequency', action: 'view' } },
     { label: 'Pay Type', route: '/settings/employee-fields/job/paytype', permission: { feature: 'Paytype', action: 'view' } },
     { label: 'Overtime Eligibility', route: '/settings/employee-fields/job/overtime', permission: { feature: 'Overtime Eligibility', action: 'view' } },

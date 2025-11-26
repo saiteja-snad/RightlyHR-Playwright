@@ -37,42 +37,54 @@ export class AllEmployeesHeaderComponent implements OnInit {
     const url = this.router.url;
     this.ComponentnameDisplay();
     this.routeToInfoMap = {
-      '/employee-management/all-employees': MODULE_INFOS.ALL_EMPLOYEES_MODULE_INFO,
-      '/employee-management/active-employees': MODULE_INFOS.ACTIVE_EMPLOYEES_MODULE_INFO,
-      '/employee-management/inactive-employees': MODULE_INFOS.INACTIVE_EMPLOYEES_MODULE_INFO,
-      '/employee-management/prospective-employees': MODULE_INFOS.PROSPECTIVE_EMPLOYEES_MODULE_INFO,
-      '/employee-management/probation-employees': MODULE_INFOS.PROBATION_EMPLOYEES_MODULE_INFO,
-      '/employee-management/active-interns': MODULE_INFOS.ACTIVE_TRAINEES_MODULE_INFO,
-      '/employee-management/inactive-interns': MODULE_INFOS.INACTIVE_TRAINEES_MODULE_INFO,
-      '/employee-management/prospective-interns': MODULE_INFOS.PROSPECTIVE_TRAINEES_MODULE_INFO,
+      // '/employee-management/all-employees': MODULE_INFOS.ALL_EMPLOYEES_MODULE_INFO,
+      '/employee-management/active/employees': MODULE_INFOS.ACTIVE_EMPLOYEES_MODULE_INFO,
+      '/employee-management/inactive/employees': MODULE_INFOS.INACTIVE_EMPLOYEES_MODULE_INFO,
+      '/employee-management/prospective/employees': MODULE_INFOS.PROSPECTIVE_EMPLOYEES_MODULE_INFO,
+      '/employee-management/prospective/contract': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/employee-management/active/contract': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/employee-management/inactive/contract': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/employee-management/probation/employees': MODULE_INFOS.PROBATION_EMPLOYEES_MODULE_INFO,
+      '/employee-management/active/interns': MODULE_INFOS.ACTIVE_TRAINEES_MODULE_INFO,
+      '/employee-management/inactive/interns': MODULE_INFOS.INACTIVE_TRAINEES_MODULE_INFO,
+      '/employee-management/prospective/interns': MODULE_INFOS.PROSPECTIVE_TRAINEES_MODULE_INFO,
     };
     const matchedEntry = Object.entries(this.routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   ComponentnameDisplay() {
-    if (this.router.url === '/employee-management/all-employees') {
-      this.componentname = 'All Employees';
-    }
-    else if (this.router.url === '/employee-management/active-employees') {
+    // if (this.router.url === '/employee-management/all-employees') {
+    //   this.componentname = 'All Employees';
+    // }
+    if (this.router.url === '/employee-management/active/employees') {
       this.componentname = 'Active Employees';
     }
-    else if (this.router.url === '/employee-management/inactive-employees') {
+    else if (this.router.url === '/employee-management/inactive/employees') {
       this.componentname = 'Inactive Employees';
     }
-    if (this.router.url === '/employee-management/prospective-employees') {
+    if (this.router.url === '/employee-management/prospective/employees') {
       this.componentname = 'Prospective Employees';
     }
-    else if (this.router.url === '/employee-management/probation-employees') {
+    if (this.router.url === '/employee-management/prospective/contract') {
+      this.componentname = 'Prospective Contractors';
+    }
+    if (this.router.url === '/employee-management/inactive/contract') {
+      this.componentname = 'Inactive Contractors';
+    }
+    if (this.router.url === '/employee-management/active/contract') {
+      this.componentname = 'Active Contractors';
+    }
+    else if (this.router.url === '/employee-management/probation/employees') {
       this.componentname = 'Probation Employees';
     }
-    else if (this.router.url === '/employee-management/active-interns') {
+    else if (this.router.url === '/employee-management/active/interns') {
       this.componentname = 'Active Trainees';
     }
-    else if (this.router.url === '/employee-management/inactive-interns') {
+    else if (this.router.url === '/employee-management/inactive/interns') {
       this.componentname = 'Inactive Trainees';
     }
-    else if (this.router.url === '/employee-management/prospective-interns') {
+    else if (this.router.url === '/employee-management/prospective/interns') {
       this.componentname = 'Prospective Trainees';
     }
   }

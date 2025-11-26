@@ -98,27 +98,36 @@ export class OrgLeaveBalanceComponent  implements OnInit,OnDestroy {
     this.getAllTeamLeaveBalance(this.selectedEmployeeId);
   }
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
-      next: (data: any) => {
-        const employeedata = data.map((employee: any) => {
+getEmployeeId() {
+  const loggedInUser = this.authService.getToken();
+  const statuses = 'Active';
+  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
+    next: (data: any) => {
+      const employeedata = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''
-              }${employee.firstName ? employee.firstName : ''} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName ? employee.lastName : ''}`,
+            
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-        this.employeeiddetails = employeedata.filter((element: any) => {
-          return element.employeeId != loggedInUser.employeeId;
-        });
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
-  }
+        })
+        .filter((element: any) => element.employeeId !== loggedInUser.employeeId)
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  alphabetical sort
+        );
+
+      this.employeeiddetails = employeedata;
+    },
+    error: (reason: any) => {
+      console.log(reason);
+    },
+  });
+}
+
 
   getAllTeamLeaveBalance(employeeId?: number) {
     const id = employeeId || this.loggedInUser.employeeId;

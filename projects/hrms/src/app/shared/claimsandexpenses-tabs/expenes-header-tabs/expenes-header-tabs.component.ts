@@ -6,9 +6,12 @@ import { IExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+
 @Component({
   selector: 'app-expenes-header-tabs',
-  imports: [CommonModule, RouterModule, TabsModule],
+  imports: [CommonModule, RouterModule, TabsModule,TranslateModule],
   templateUrl: './expenes-header-tabs.component.html',
   styleUrl: './expenes-header-tabs.component.scss'
 })
@@ -27,6 +30,9 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   pendingCount = 0;
   rejectedCount = 0;
   draftsCount = 0;
+   selectemp: any;
+ selectedYear: any;
+  seletedMouthly: any;
   public navTabs: any[] = [];
   public defaultRoute: string = '';
   private allTabs = [
@@ -37,10 +43,10 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount }
   ];
 
-  constructor(private http: HttpService, private rbac: RbacService, private router: Router) { }
+  constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService ) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  
     this.navTabs = this.allTabs.filter(tab =>
       tab.permission &&
       tab.permission.feature &&
@@ -60,15 +66,36 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     if (!isAllowed && this.defaultRoute) {
       this.router.navigateByUrl(this.defaultRoute);
     }
-    this.getexpensesheaderbyemployeeid(this.empinfo.employeeid);
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+           this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;
+          
+          }
+        })
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    });
+
     this.http.expensesprocesscount$.subscribe(() => {
-      this.getexpensesheaderbyemployeeid(this.empinfo.employeeid);
+      this.getexpensesheaderbyemployeeid();
     });
   }
 
-  getexpensesheaderbyemployeeid(_employeeId: number): void {
-    const params = this.empinfo.employeeId;
-    this.subscription = this.http.getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
+  getexpensesheaderbyemployeeid(): void {
+     let empId = this.selectemp ?? this.empinfo?.employeeId;
+    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&month=${this.seletedMouthly}&year=${this.selectedYear}`,).subscribe({
       next: (data: any) => {
         this.expenesEmplyeedata.next(data);
         this.updateAllFilteredExpenses();

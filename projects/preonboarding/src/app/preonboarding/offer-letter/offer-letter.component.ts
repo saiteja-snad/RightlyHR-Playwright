@@ -171,16 +171,13 @@ export class OfferLetterComponent implements OnInit {
       },
       error: (err: any) => {
         console.log(err);
-        if (err.status = 401) {
-          this.http.logOut();
-        }
       }
     })
   }
 
   submitRejectReason() {
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    offerUpdateDetails.candidateComments = this.rejectionReason.comments;
+    offerUpdateDetails.candidateComments = this.rejectForm.get('rejectReason')?.value;
     offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
     this.updateOfferDetails(offerUpdateDetails);
     this.updateEmployeeDetails(this.updateempdata);

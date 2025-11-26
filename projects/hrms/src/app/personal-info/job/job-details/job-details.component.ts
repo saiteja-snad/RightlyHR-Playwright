@@ -29,6 +29,7 @@ import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon
 
 export class JobDetailsComponent implements OnInit, OnDestroy {
   separationRequestForm!: FormGroup;
+  contractConversionForm!: FormGroup;
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
   teamDropdownValues: any[] = [];
@@ -79,11 +80,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   joiningDate: any;
   selectedlocationid: any;
+  dojDate:any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
     private http: HttpService, public formValidations: FormValidationsService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
+    this.getnoticePeriodData();
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializejobForm();
@@ -93,8 +96,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getReportingTo();
     this.getjobLocationList();
     this.getJobDesignation();
-    this.getnoticePeriodData();
     this.getSeparationRequest();
+    this.getContractDetails();
     //subdeparment id changes for update
     this.jobDetailsupdateForm.get('team')?.valueChanges
       .subscribe((subdepartmentId: number) => {
@@ -107,6 +110,36 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     return this.permissionRouteService.canAccessField(action, permission);
   }
 
+  //function to get the notice period duration
+  ContractExtensionDuration: any;
+  getnoticePeriodData() {
+    this.subscription = this.http.getData(`ServingPeriods`).subscribe({
+      next: (res: any) => {
+        let durationValue = res.find((ele: any) => {
+          return ele.servingPeriodType?.toLocaleLowerCase() == 'notice period';
+        });
+        this.noticeperiodDuration = durationValue?.duration;
+
+        let ContractExtensionDays = res.find((ele: any) => {
+          return (
+            ele.servingPeriodType === 'ContractExtensionDays'
+          );
+        });
+        this.ContractExtensionDuration = ContractExtensionDays?.duration;
+        console.log(this.ContractExtensionDuration);
+        this.conversionStartDate = new Date(this.contractConversionForm?.get('contractstartdate')?.value);
+    const endDate = new Date(this.conversionStartDate);
+    endDate.setDate(endDate.getDate() + this.ContractExtensionDuration);
+    this.contractConversionForm.patchValue({
+    enddate: endDate?.toISOString().substring(0, 10)
+  });
+      },
+    });
+  }
+
+  closeonBoard() {
+    this.modalService.dismissAll();
+  }
 
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
@@ -114,10 +147,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.dojDate = this.formatDate(this.empinfo.dateOfJoining);
       this.getEmployeeId();
       this.getJobDetails();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.dojDate = this.formatDate(this.empinfo.dateOfJoining);
       this.getEmployeeId();
       this.getJobDetails();
     }
@@ -172,6 +207,18 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.toggleEarlyRelievingFields(false);
   }
 
+  conversionStartDate : any;
+  conversionEndDate : any;
+
+  initializeFormContractConversion(): void {
+    this.contractConversionForm = this.fb.group({
+      contractstartdate: [new Date().toISOString().substring(0, 10), Validators.required],
+      contractenddate: [null],
+      extendReason: [null, [Validators.required, Validators.maxLength(400)]]
+    });
+    
+  }
+
   //function to send the web notification
   webNotificationformanager() {
     let currentDate = moment();
@@ -216,11 +263,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       EmailData.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName ?? ''}`
 
     }
-    this.subscription = this.http.postdata(`CustomEmail/jobtab`, EmailData).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      }
-    })
+    // this.subscription = this.http.postdata(`CustomEmail/jobtab`, EmailData).subscribe({
+    //   next: (data: any) => {
+    //     console.log(data);
+    //   }
+    // })
   }
   toggleEarlyRelievingFields(isEnabled: boolean): void {
     if (isEnabled) {
@@ -594,6 +641,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
   openModalupdate(content: any, data: any): void {
+    console.log(data) 
     this.getReportingTo()
     this.getDepartment()
     this.onDepartmentChange(data.departmentId)
@@ -621,7 +669,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       team: data.subdepartmentId,
       teamManager: this.teamManagerName || null,
       jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
-      reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
+      reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportsto),
       grade: this.selectedJobRoleObj?.gradeName,
     });
     console.log(this.jobDetailsupdateForm.value);
@@ -691,6 +739,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   //function to open the separation popup
   openModalforSeparationupdate(content: any, data: any): void {
+    this.initializeFormContractConversion();
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
     console.log('separation', data)
     this.postSeparationRequest = data
@@ -702,6 +751,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       teamManager: `${data?.firstName ?? ''} ${data?.middleName ?? ''} ${data?.lastName ?? ''}`,
       reportingManager: `${data?.fName ?? ''} ${data?.mName ?? ''} ${data?.lName ?? ''}`,
     });
+  }
+
+
+  openModalForContractConversionRequest(content: any, data: any): void {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
   }
 
   //function to check the noticeperiod valid upto
@@ -745,18 +799,29 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       this.showSaperationDots = false;
     }
   }
+statusForContractDetails :any;
+showContractDetailSeperationDots= true;
+  getContractDetails() {
+    let EmployeeId = parseInt(this.empinfo.employeeId)
+    this.subscription = this.http.getData(`ContractDetails/getbyemployeeId/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        if (data.data && data.data.length > 0) {
+          this.substatus = data.data[0].status.toLowerCase(); // take first one only
+          const coDetailsStatuses = ['waiting for approval', 'approved', 'processed'];
 
-  //function to get the notice period duration
-  getnoticePeriodData() {
-    this.subscription = this.http.getData(`ServingPeriods`).subscribe({
-      next: (res: any) => {
-        let durationValue = res.find((ele: any) => {
-          return ele.servingPeriodType?.toLocaleLowerCase() == 'notice period';
-        });
-        this.noticeperiodDuration = durationValue?.duration;
-      },
-    });
+          this.statusForContractDetails = coDetailsStatuses.includes(this.substatus);
+          this.checkContractDetailsStatus();
+        }
+      }
+    })
   }
+
+  checkContractDetailsStatus() {
+    if (this.statusForContractDetails) {
+      this.showContractDetailSeperationDots = false;
+    }
+  }
+  
 
   //function to post the separation request form
   postSeparationRequestForm() {
@@ -806,6 +871,34 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+  raiseConversionRequest() {
+    this.isLoading = true;
+    let payload = {
+      "employeeId": this.empinfo.employeeId,
+      "contractStartDate": this.contractConversionForm.get('contractstartdate')?.value,
+      "contractEndDate": this.contractConversionForm.get('contractenddate')?.value,
+      "contractType": "Conversion",
+      "status": "Waiting for Approval",
+      "contractFeedback": this.contractConversionForm.get('extendReason')?.value,
+      "moduleId": 26,
+    }
+    this.http.postdata(`ContractDetails/postActivationContractEmployees`, payload).subscribe({
+      next: (response: any) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Contract Conversion Request raised successfully');
+        this.isLoading = false;
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+      },
+      error: (error: any) => {
+        // this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal(error.error.details ? error.error.details : 'Contract Conversion Request failed');
+        this.isLoading = false;
+      }
+    })
+  }
+
   opendeletModal(content: any, empexperimentdata: any): void {
     // Store the selected job details data for deletion
     this.selectedjobdetailesid = empexperimentdata.id;
@@ -846,14 +939,15 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
       next: (data: any) => {
         console.log(data)
-        this.jobEmailsent()
+        //this.jobEmailsent()
         this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Job details updated successfully');
         this.getJobDetails();
         this.http.setBasicDetails();
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Job details update failed');
+        this.conformationPopup.openErrorModal(err.error.Message? err.error.Message : 'Job details update failed');
+        console.log(err)
       },
     });
   }

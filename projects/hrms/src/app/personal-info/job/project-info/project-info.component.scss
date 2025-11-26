@@ -1,0 +1,103 @@
+.clickable {
+  cursor: pointer;
+  color: #0b3a83;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.spent-hours {
+  font-weight: 600;
+  color: #000;
+}
+
+
+
+.total-row {
+  background-color: #f8f9fa;
+
+  td {
+    padding: 12px 0;
+    font-size: 15px;
+    color: #222;
+  }
+}
+
+.custom-year-dropdown {
+  padding: 8px 24px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.popup-table-wrapper {
+  border-radius: 0.5rem;
+
+  th:first-child {
+    border-top-left-radius: 0.325rem;
+  }
+
+  th:last-child {
+    border-top-right-radius: 0.325rem;
+  }
+}
+
+.total-logged-hours{
+  font-weight: bold;
+}
+
+
+table td:first-child,
+table th:first-child {
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-table-content{
+  height: 70dvh !important;
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.status-closed {
+  color: #9AA2A7;
+}
+
+.status-extended {
+  color: #0056E6;
+}
+
+.status-yet-to-start {
+  color: #08B1FA;
+}
+
+.status-hold {
+  color: #EA362C;
+}
+
+.status-completed {
+  color: #00D520;
+}
+
+.status-in-progress{
+  color: #FF9500 ;
+}
+
+
+.tooltip-text {
+  display: inline-block;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  line-height: 1.4;
+  padding-bottom: 2px;
+}

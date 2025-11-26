@@ -14,6 +14,9 @@ import { TraineeAppointmentLetterComponent } from "./trainee-appointment-letter/
 import { TraineeOfferLetterComponent } from "./trainee-offer-letter/trainee-offer-letter.component";
 import { PermissionsGuard } from "../guards/permissions.guard";
 import { LetterPreviewComponent } from "./letter-preview/letter-preview.component";
+import { TraineeRelievingLetterComponent } from "./trainee-relieving-letter/trainee-relieving-letter.component";
+import { NdaContractorLetterComponent } from "./nda-contractor-letter/nda-contractor-letter.component";
+import { ContractorLetterComponent } from "./contractor-letter/contractor-letter.component";
 
 export default [
     { path: '', redirectTo: '/letters/lettes-tabs', pathMatch: 'full' },
@@ -31,4 +34,7 @@ export default [
     { path: 'probation-confirmation-letter', component: ProbationConfirmationLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Probation Confirmation Letter.view' } },
     { path: 'probation-extension-letter', component: ProbationExtensionLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Probation Extension Letter.view' } },
     { path: 'welcome-letter', component: WelcomeLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Welcome Letter.view' } },
+    { path: 'trainee-relieving-letter', component: TraineeRelievingLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Trainee Relieving Letter.view' } },
+    { path: 'contractor-offer-letter', component: ContractorLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Contract Offer Letter.view' } },
+    { path: 'nda-contractor-letter', component: NdaContractorLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'NDA Letter.view' } },
 ] as Route[];

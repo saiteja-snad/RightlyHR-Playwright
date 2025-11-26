@@ -63,7 +63,8 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
     { value: 'Low', label: 'Low' }
 
   ];
-
+categoryDetails=[] as any;
+subCategoryDetails=[] as any;
   constructor(
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
@@ -92,7 +93,9 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
       deskdetails: ['', [Validators.required]],
       department: ['', [Validators.required]],
       team: [{ value: '', disabled: true }, Validators.required],
-      type: ['', [Validators.required]],
+      categoryId: ['', [Validators.required]],
+      subcategoryId: [{ value: '', disabled: true }, [Validators.required]],
+      // type: ['', [Validators.required]],
       priority: ['', [Validators.required]],
       subject: ['', [Validators.required, Validators.pattern(/^\S.*$/)]],
       description: ['', [Validators.required, Validators.pattern(/^\S.*$/)]],
@@ -102,8 +105,49 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
     });
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getcategoryName();
   }
 
+  //get category
+  getcategoryName() {
+    this.subscription = this.http.getData('entityAttributeValues/getv1?entity=ItSupport&attribute=Category').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.categoryDetails = data;
+      },
+      error: (error: any) => {
+        
+      }
+    });
+  }
+   getsubcategoryName(selecteddata: any): void {
+    const selectedId = selecteddata.id; // Get the sno of the selected department
+    // Fetch the teams based on the selected department ID
+    this.subscription = this.http.getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`).subscribe({
+      next: (data: any) => {
+         if (data && data.length > 0) {
+          // Parse meta if it's a string
+          const parsedData = data.map((item:any) => ({
+            ...item,
+            meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
+          }));
+
+          // Filter subcategories by category meta.id
+          this.subCategoryDetails = parsedData.filter(
+            (item:any) => item.meta?.id === selectedId
+          );
+        }else {
+          this.subCategoryDetails = []; // Reset if no teams are found
+        }
+        this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
+      },
+      error: (err: any) => {
+        this.subCategoryDetails = []; // Reset on error
+        this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
+      }
+    });
+    this.itSupportForm.get('subcategoryId')?.enable();
+  }
   initiateUpdateModuleInfo() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -144,8 +188,8 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
         this.allEmployees = data;
         this.allEmployees = this.allEmployees.map(a => ({
           ...a,
-          fullName: `${a.fusionEmpId} - ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
-        }));
+              fullName: `${a.fusionEmpId ? a.fusionEmpId + ' -' :''} ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
       },
       error: (reason: any) => {
         console.log(reason);
@@ -159,8 +203,8 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
         this.allEmployeesself = data;
         this.allEmployeesself = this.allEmployeesself.map(a => ({
           ...a,
-          fullName: `${a.fusionEmpId} - ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
-        }));
+          fullName: `${a.fusionEmpId ? a.fusionEmpId + ' -' :''} ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
         this.onTicketRaisedForChange("Self");
       },
       error: (reason: any) => {
@@ -314,7 +358,7 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
     this.itTicketDetails.empId = this.ticketEmpData.employeeId;
     this.itTicketDetails.subdeptId = this.selectedSubDepartmentId;
     this.itTicketDetails.deskNo = this.itSupportForm.value.deskdetails;
-    this.itTicketDetails.type = this.itSupportForm.value.type;
+    // this.itTicketDetails.type = this.itSupportForm.value.type;
     this.itTicketDetails.ticketStatus = "Open";
     this.itTicketDetails.priority = this.itSupportForm.value.priority;
     this.itTicketDetails.subject = this.itSupportForm.value.subject;
@@ -325,7 +369,11 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = new Date().toISOString();
     this.itTicketDetails.updatedAt = null;
-    this.itTicketDetails.isdeleted = false
+    this.itTicketDetails.isdeleted = false;
+    this.itTicketDetails.categoryId= this.itSupportForm.value.categoryId.id,
+    this.itTicketDetails.subcategoryId=this.itSupportForm.value.subcategoryId.id,
+    this.itTicketDetails.categoryName= this.itSupportForm.value.categoryId.value,
+    this.itTicketDetails.subcategoryName= this.itSupportForm.value.subcategoryId.value,
     this.subscription = this.http.postdata(`Tickets`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket has been added successfully');

@@ -23,6 +23,10 @@ import { BloodBankComponent } from "../../blood-bank/blood-bank/blood-bank.compo
 import { PhonebookComponent } from "../../phonebook/phonebook/phonebook.component";
 import { ContactDirectoryComponent } from "../../contact-directory/contact-directory/contact-directory.component";
 import { authGuard } from "../../auth/auth-guard/auth.guard";
+import { ProjectManagementLayoutComponent } from "../../project-management/project-management-layout/project-management-layout.component";
+import { CardsManagementLayoutComponent } from "../../cards-management/cards-management-layout/cards-management-layout.component";
+import { SkillDirectoryManagementComponent } from "../../skill-set-management/skill-directory-management/skill-directory-management.component";
+import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -49,6 +53,10 @@ export default [
     { path: 'invite-user', component: InviteUserLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../invite-new-user/invite-user.route') },
     { path: 'letters', component: LettersLayoutComponent, loadChildren: () => import('../../letters/letters.route') },
     { path: 'blood-bank', component: BloodBankComponent, canActivate: [authGuard] },
-     { path: 'phonebook', component: PhonebookComponent, canActivate: [authGuard] },
-      { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
+    { path: 'phonebook', component: PhonebookComponent, canActivate: [authGuard] },
+    { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
+    { path: 'project-management', component: ProjectManagementLayoutComponent, loadChildren: () => import('../../project-management/project-management.route') },
+    { path: 'on-behalf-of', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/on-behalf-of.route') },
+    { path: 'skill-management', component: SkillsetManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../skill-set-management/skillset-management.route') },
+    { path: 'card-management', component: CardsManagementLayoutComponent, loadChildren: () => import('../../cards-management/cards-management.route') },
 ] as Route[];

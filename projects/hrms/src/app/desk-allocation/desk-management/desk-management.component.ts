@@ -266,9 +266,12 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
           // Transform the data to add `employeeName` and a combined property
           this.employeeiddetails = data.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''}- ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            
+            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
 
-          }));
+          })) .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
         },
         error: (reason: any) => {
           // this.employeeiddetails = [];
@@ -283,9 +286,11 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
         // Transform data to include `employeeName`
         this.approvalname = res.map((employee: any) => ({
           ...employee,
-          employeeNames: `${employee.fusionEmpId ?? ''} - ${employee.firstName} 
+          employeeNames: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} 
           ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-        }));
+        })).sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
       },
       error: (errormessage) => {
         console.log(errormessage);

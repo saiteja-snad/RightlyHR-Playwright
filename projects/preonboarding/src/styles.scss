@@ -89,9 +89,9 @@
     --error-msg-color: #ea362c;
 
     //module information
-    --module-info-bg:#E7EFFD;
-    --module-info-border:#cbcfd5;
-    --module-info-text-color:#7F7C7C;
+    --module-info-bg: #E7EFFD;
+    --module-info-border: #cbcfd5;
+    --module-info-text-color: #7F7C7C;
 }
 
 * {
@@ -248,8 +248,7 @@ input:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th,td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -351,9 +350,6 @@ input:focus {
     }
 }
 
-// letter main content
-
-
 // custom -select dropdown
 .custom-dropdown-menu {
     border: 1px solid #305889;
@@ -449,7 +445,6 @@ input[type="file"] {
 .progress-bar {
     background-color: #305889 !important;
 }
-
 
 // custom phone number input with country code stylings
 .custom-phone-number-content {
@@ -616,34 +611,34 @@ input[type="number"].no-arrows {
 }
 
 .custom-year-month-picker {
-  width: 10rem;
+    width: 10rem;
 
-  .p-inputtext {
-    border: 1px solid #DEE8F3 !important;
-    padding: 0.5rem 0.75rem !important;
-    border-radius: 0.5rem !important;
-    font-weight: 400 !important;
-    font-size: var(--fontsize14) !important;
-    vertical-align: middle !important;
-    color: #222222 !important;
-    background-color: #F8FBFF !important;
-    cursor: pointer !important;
-    border-top-right-radius: 0rem !important;
-    border-bottom-right-radius: 0rem !important;
-  }
+    .p-inputtext {
+        border: 1px solid #DEE8F3 !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.5rem !important;
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        vertical-align: middle !important;
+        color: #222222 !important;
+        background-color: #F8FBFF !important;
+        cursor: pointer !important;
+        border-top-right-radius: 0rem !important;
+        border-bottom-right-radius: 0rem !important;
+    }
 
-  .p-datepicker-month-selected {
-    color: var(--p-datepicker-date-selected-color);
-    background: var(--primary-color) !important;
-  }
+    .p-datepicker-month-selected {
+        color: var(--p-datepicker-date-selected-color);
+        background: var(--primary-color) !important;
+    }
 
-  .p-button-text {
-    background: transparent;
-    border-color: transparent;
-    color: var(--primary-color) !important;
-  }
+    .p-button-text {
+        background: transparent;
+        border-color: transparent;
+        color: var(--primary-color) !important;
+    }
 
-  .p-datepicker-month {
-    font-size: var(--fontsize14) !important;
-  }
+    .p-datepicker-month {
+        font-size: var(--fontsize14) !important;
+    }
 }

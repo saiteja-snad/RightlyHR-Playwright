@@ -1,0 +1,38 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem);
+}
+
+.main-content {
+    width: 100% !important;
+}
+
+.project-main-active-content {
+    width: calc(100% - 8.5rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 12rem) !important;
+}
+
+.project-client-table {
+    height: calc(100dvh - 15.25rem) !important;
+}
+
+.primary-link {
+    font-size: var(--fontsize13);
+    font-weight: 600;
+    color: var(--primary-color) !important;
+}
+
+.project-name {
+    font-weight: 700;
+    font-style: Bold;
+    font-size: 14px;
+    text-decoration: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.department-list-view {
+    width: 250px !important;
+}

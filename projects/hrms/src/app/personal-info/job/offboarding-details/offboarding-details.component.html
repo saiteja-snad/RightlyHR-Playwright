@@ -11,6 +11,15 @@
     <form autocomplete="off" [formGroup]="offboardingForm">
       <div class="row">
         <div class="col-lg-4 col-md-6 mb-3">
+          <label for="exitType" class="form-label custom-label mb-2">Exit Type</label>
+          <input type="text" class="form-control  custom-input" placeholder="Please enter exit type"
+            formControlName="exitType">
+          <div class="error-msg"
+            *ngIf="offboardingForm.get('exitType')?.invalid && offboardingForm.get('exitType')?.touched">
+            Exit Type is required.
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
           <label for="exitReason" class="form-label custom-label mb-2">Exit Reason</label>
           <input type="text" class="form-control  custom-input" placeholder="Please enter exit reason"
             formControlName="exitReason">
@@ -48,14 +57,23 @@
             Last Working Day is required.
           </div>
         </div>
+
+        <div class="col-lg-4 col-md-6 mb-3">
+          <label for="contractorLastWorkingDay" class="form-label custom-label mb-2">Contractor Last Working Day</label>
+          <input type="date" class="form-control custom-input" id="contractorLastWorkingDay" formControlName="contractorLastWorkingDay" />
+          <div class="error-msg"
+            *ngIf="offboardingForm.get('contractorLastWorkingDay')?.invalid && offboardingForm.get('contractorLastWorkingDay')?.touched">
+            Contract Last Working Day is required.
+          </div>
+        </div>
       </div>
     </form>
   </div>
-}
+  }
   @else {
   <div class="card custom-background-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <p-skeleton width="10rem" height="2rem"></p-skeleton>  
+      <p-skeleton width="10rem" height="2rem"></p-skeleton>
     </div>
     <form>
       <div class="row">

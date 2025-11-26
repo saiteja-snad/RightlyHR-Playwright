@@ -30,17 +30,18 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     CommonModule,
     CompOffApprovalTabsComponent, DropdownModule, Select, TranslateModule,
     ModuleInformationComponent,
-    NgbPopoverModule,
+        NgbPopoverModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent
-],
+    
+  ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class CompOffComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   addCompOffForm!: FormGroup;
   empinfo = {} as IJob;
@@ -61,14 +62,15 @@ export class CompOffComponent implements OnInit, OnDestroy {
   isWeekOffSelected = true;
   isHolidaySelected = true;
   selectedDay = '';
-  pastDatesAllowed!:number;
-  futureDatesAllowed!:number;
+  pastDatesAllowed!: number;
+  futureDatesAllowed!: number;
   compOffCriterias = [] as any;
   getEmployeeInfo = [] as any;
   yearSelectionForm!: FormGroup;
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
   years: number[] = [];
+  activeEmplist = [] as any;
 
   constructor(
     private modalService: NgbModal,
@@ -76,10 +78,10 @@ export class CompOffComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formsValidation:FormValidationsService,
+    public formsValidation: FormValidationsService,
     public readonly router: Router,
     private TimeoffYearFilterService: TimeoffYearFilterService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -91,6 +93,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getAllEmployeeDetails();
     // year selection values
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
@@ -104,6 +107,18 @@ export class CompOffComponent implements OnInit, OnDestroy {
     });
     // Send initial year to the service so other component can pick it up
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  getAllEmployeeDetails() {
+     const status = ['Active', 'Trainee Active', 'Active Contract'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
   }
 
   onYearChange() {
@@ -128,35 +143,41 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
   // function to get the data of employees by hierarchy
-  
+
+
   getTeamManagersDetails() {
     const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (response: any) => {
-        if (response && response.length) {
-          // No filter
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-          }));
-        }
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+              return {
+                ...emp,
+                fullName
+              };
+            });
+            // Alphabetical sorting by firstName
+            this.getEmployeeInfo.sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+          }
+        },
+        error: (err) => console.error(err)
+      });
   }
- 
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-
+  
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
-      workedDate: [
-        '',
-        [Validators.required, this.afterJoiningDateValidator.bind(this)],
-      ],
+      workedDate: ['', [Validators.required, this.afterJoiningDateValidator.bind(this)]],
       availing: ['', Validators.required],
       halfType: [''],
       reason: ['', [Validators.required, Validators.minLength(10)]],
@@ -176,7 +197,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
     });
   }
 
-  weekendAndHolidaysCheck(selectedDate:string){
+  weekendAndHolidaysCheck(selectedDate: string) {
     this.dateCheckWithHoliday(selectedDate);
     this.checkWeekends(selectedDate);
   }
@@ -247,25 +268,23 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getPastDate(): string {
     const days = Number(this.pastDatesAllowed ?? 0);
-  
     if (isNaN(days)) {
       console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-  
     const currentDate = new Date();
     const pastDate = new Date(currentDate);
     pastDate.setDate(currentDate.getDate() - days); // subtract days for past
     return pastDate.toISOString().split('T')[0];
   }
-  
-    cleardata() {
+
+  cleardata() {
     this.modalService.dismissAll();
     this.addCompOffForm.reset();
     this.isWeekOffSelected = true;
     this.isHolidaySelected = true;
   }
- 
+
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
     if (isNaN(days)) {
@@ -283,21 +302,20 @@ export class CompOffComponent implements OnInit, OnDestroy {
   ApprovedCount = 0;
   rejectedCount = 0;
   ProcessedCount = 0;
-  disaplyapplybutton=true;
-
-  onCheckemployee(employeedId:any){
+  disaplyapplybutton = true;
+  onCheckemployee(employeedId: any) {
     this.http.setEmployeeIdCompOff(employeedId);
-    this.ProcessedCount=0;
-    this.rejectedCount=0;
-    this.ApprovedCount=0;
-    this.pendingCount=0;
+    this.ProcessedCount = 0;
+    this.rejectedCount = 0;
+    this.ApprovedCount = 0;
+    this.pendingCount = 0;
     this.compOff = [];
-    if(employeedId){
-      this.disaplyapplybutton=false;
+    if (employeedId) {
+      this.disaplyapplybutton = false;
       this.getCompOffRequest(employeedId);
-    }else{
+    } else {
       this.http.setEmployeeIdCompOff(null);
-      this.disaplyapplybutton=true;
+      this.disaplyapplybutton = true;
       this.getCompOffRequest(this.empinfo.employeeId);
     }
   }
@@ -334,51 +352,37 @@ export class CompOffComponent implements OnInit, OnDestroy {
         requestedDate: new Date(),
       };
       this.spinnerLoader = true;
-      this.http
-        .postdata('AttendanceRequests', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Comp off request submitted successfully!'
-            );
-            this.http.tirggerCountSignal.update((status) => ({
-              ...status,
-              compOff: true,
-            }));
-            this.http.compOffTriggerSignal.set(true);
-            this.addCompOffForm.reset();
-          },
-          error: (err: any) => {
-            this.spinnerLoader = false;
-            if (
-              err.error.message.toLowerCase() ==
-              'you have already applied to same category for same day'
-            ) {
-              this.sharedModalService.openErrorModal(
-                'Same date range already exists'
-              );
-            } else {
-              this.sharedModalService.openErrorModal(err.error.message);
-            }
-          },
-          complete: () => {
-            
-            this.spinnerLoader = false;
-          },
-        });
+      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('Comp off request submitted successfully!');
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            compOff: true,
+          }));
+          this.http.compOffTriggerSignal.set(true);
+          this.addCompOffForm.reset();
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          if (err.error.message.toLowerCase() ==
+            'you have already applied to same category for same day') {
+            this.sharedModalService.openErrorModal('Same date range already exists');
+          } else {
+            this.sharedModalService.openErrorModal(err.error.message);
+          }
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+        },
+      });
     }
   }
 
   updateDuration() {
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
-      const formattedStartTime = moment(this.compoffdata.startTimeProp).format(
-        'HH:mm'
-      );
-      const formattedEndTime = moment(this.compoffdata.endTimeProp).format(
-        'HH:mm'
-      );
+      const formattedStartTime = moment(this.compoffdata.startTimeProp).format('HH:mm');
+      const formattedEndTime = moment(this.compoffdata.endTimeProp).format('HH:mm');
       const startTime = moment(formattedStartTime, 'hh:mm A');
       const endTime = moment(formattedEndTime, 'hh:mm A');
       // Calculate the duration in minutes
@@ -397,8 +401,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
       const orgHalfDayWFHCritera = parseFloat(this.halfDayValue?.value);
       if (this.compoffdata.duration < orgHalfDayWFHCritera) {
         this.compoffdata.duration = null;
-        this.wfhValidations.DurationErrorMessage =
-          'Provided duration is not eligible for Comp Off';
+        this.wfhValidations.DurationErrorMessage = 'Provided duration is not eligible for Comp Off';
         this.wfhValidations.isdurationValidated = true;
       } else {
         this.duration = this.compoffdata.duration;
@@ -412,57 +415,42 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getEmployeeeHolidays() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http
-      .getData(`orgHolidays/getOrgHoliday/${EmployeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.holidaysData = data;
-        },
-      });
+    this.http.getData(`orgHolidays/getOrgHoliday/${EmployeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.holidaysData = data;
+      },
+    });
   }
 
   getWorkfromhomeCriteria() {
-    this.http
-      .getData(`CompOffEligibilityCriteria`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.compOffEligibilityCriteria = response;
-          this.futureDatesAllowed = parseInt(
-            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'futureDays')?.value ?? '0',
-            10
-          );
-          
-          this.pastDatesAllowed = parseInt(
-            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDaysAllowed')?.value ?? '0',
-            10
-          );
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.compOffEligibilityCriteria = [];
-        },
-      });
+    this.http.getData(`CompOffEligibilityCriteria`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOffEligibilityCriteria = response;
+        this.futureDatesAllowed = parseInt(
+          this.compOffEligibilityCriteria?.find((item: any) => item.name === 'futureDays')?.value ?? '0',
+          10);
+        this.pastDatesAllowed = parseInt(
+          this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDaysAllowed')?.value ?? '0',
+          10);
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.compOffEligibilityCriteria = [];
+      },
+    });
   }
 
   getEmployeeeWeekends() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http
-      .getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.weekendsData = data;
-        },
-      });
+    this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.weekendsData = data;
+      },
+    });
   }
 
-
   // Custom Validator: Ensure date is after the date of joining
-  afterJoiningDateValidator(
-    control: AbstractControl
-  ): { [key: string]: boolean } | null {
+  afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
     if (control.value && this.empinfo.dateOfJoining) {
       const selectedDate = new Date(control.value);
       const joiningDate = new Date(this.empinfo.dateOfJoining);

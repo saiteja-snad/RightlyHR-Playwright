@@ -80,7 +80,9 @@ export class ExperienceDetailsComponent {
   navigateNext() {
     this.router.navigate(['/review']);
   }
-
+  navigateNexttondaletter() {
+    this.router.navigate(['/nda-contractor-letter']);
+  }
   navigateemergency() {
     this.router.navigate(['/emergency-details']);
   }

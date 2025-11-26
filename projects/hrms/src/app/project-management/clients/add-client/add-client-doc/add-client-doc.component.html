@@ -1,0 +1,30 @@
+<div class="add-data-content">
+    <div class="documents-grid-container">
+        <div class="document-card" *ngFor="let tab of navTabs" [routerLink]="tab.link">
+            <div class="profile-content">
+                <div>
+                    <img [src]="tab.icon" alt="profile" class="profile-icon">
+                </div>
+                <div class="label-container">
+                    <p class="name text-truncate m-0">{{ tab.label }}</p>
+                    <span *ngIf="tab?.mandatory" class="text-danger" placement="bottom" triggers="mouseenter:mouseleave"
+                        [ngbPopover]="popContent">*</span>
+                </div>
+            </div>
+            <div class="data-content">
+                <p class="subject-text m-0">{{tab.subject}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 justify-content-end footer-content">
+        <!-- <button type="button" class="custom-btn btn-secondary">Cancel</button> -->
+        <button class="custom-btn btn-primary" [disabled]=" (selectedLetters.includes('NDA') && !ndalettergenerated) || 
+        (selectedLetters.includes('MSA') && !msalettergenerated)" (click)="updateClientSataus()">Submit</button>
+    </div>
+</div>
+
+<!--Module Information-->
+<ng-template #popContent>
+    <div>This letter is mandatory</div>
+</ng-template>

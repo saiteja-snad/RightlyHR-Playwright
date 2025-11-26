@@ -137,14 +137,14 @@ export class InactiveDeskListComponent implements OnInit,OnDestroy {
    onRowsChange() {
     this.page = 1;        
     this.first = 0; 
-    this.getAllDesks(this.page, this.pageSize, null,null,this.Status);
+    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.Status);
   }
 
   onPageChange(event: any) {
      this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+    this.getAllDesks(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   // Called when first size changes
@@ -153,7 +153,7 @@ export class InactiveDeskListComponent implements OnInit,OnDestroy {
     this.rows = newPageSize; 
     this.page = 1;
     this.first = 0;
-    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+    this.getAllDesks(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   navigateToAsset(deskid: any) {

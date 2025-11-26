@@ -12,10 +12,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.component";
+import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, ProfileIconComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent, ItSupportIconComponent, ProfileIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -224,29 +226,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   async onLogout() {
-    const logInType = localStorage.getItem('loginType');
-
-
-    if (logInType === 'Classic Login') {
-      this.authService.onLogout();
-      setTimeout(() => {
-        localStorage.clear();
-        this.modalservie.dismissAll();
-        this.router.navigate(['/login'])
-      }, 100)
-
-    }
-    else if (logInType === 'Microsoft Login') {
-      this.authService.logout();
-      this.authService.onLogout();
-      setTimeout(() => {
-        localStorage.clear();
-        this.modalservie.dismissAll();
-        this.router.navigate(['/login'])
-      }, 100)
-      window.location.href =
-        'https://login.microsoftonline.com/common/oauth2/v2.0/logout';
-    }
+    this.spinnerLoader = true;
+    this.authService.logout();
   }
 
   close() {
@@ -316,7 +297,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       form.markAllAsTouched();
       return;
     }
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const formData = form.value;
     const payload = {
       employeeId: this.empinfo.employeeId,
@@ -331,13 +312,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Password changed successfully');
           this.resetPasswordIcons();
           setTimeout(() => {
-            this.spinnerLoader= false;
+            this.spinnerLoader = false;
             this.modalservie.dismissAll()
             this.onLogout();
           }, 2000)
         },
         error: (error: any) => {
-          this.spinnerLoader= false;
+          this.spinnerLoader = false;
           if (error?.error?.message) {
             this.backendError = error.error.message;
           } else if (typeof error?.error === 'string') {

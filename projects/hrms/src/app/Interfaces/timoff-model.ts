@@ -1,3 +1,4 @@
+
 export interface Iorgcategoryleaves {
   id: any;
   applicableYear: any;
@@ -49,6 +50,7 @@ export interface ICategoryDetails {
   duration: number;
   probationLeaves: number;
   noticePeriodLeaves: number;
+  expiryDaysLeaves: number
 }
 export interface Ileavesdatas {
   requestedBy: any;
@@ -147,7 +149,7 @@ export interface RegularizationRequest {
   processedComment: string;
   notes: string;
   approverHeaderId: number;
-  cancelledReason:string;
+  cancelledReason: string;
   regularizationApproverComments: RegularizationApproverComment[];
 }
 export interface LeaveType {
@@ -412,4 +414,36 @@ export interface ApprovalStatusCount {
   forYou: number;
   forYourRole: number;
   totalCount: number;
+}
+export interface  ILateLoginSetting {
+  id: number;
+  attribute: string;
+  value: string | number | boolean;
+  entity: string;}
+export interface TimesheetEntry {
+  selected: any;
+  employeeName: string;
+  clientName: string;
+  projectName: string;
+  totalHours: string;
+  description: string;
+  timesheetEntryId: number;
+  approvalStatus: string;
+  entryDate: string;
+  status: string;
+  timesheetId: number;
+  pendingItemId: number;
+  comments: any[];
+  id: number;
+  approvalHeader: number;
+
+}
+
+export interface TimesheetDay {
+  date: string;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+  entries: TimesheetEntry[];
+  selectedEntries: TimesheetEntry[];
 }

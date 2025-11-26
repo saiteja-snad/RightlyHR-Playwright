@@ -34,6 +34,11 @@ export class EmployeOffBoardingComponent {
   Statusdetails = [] as IStatus[]
   joiningDate: any;
   dateOfJoining: any
+  exitTypeOptions = [
+  { label: 'Resignation', value: 'Resignation' },
+  { label: 'Termination', value: 'Termination' },
+  { label: 'Abscond', value: 'Abscond' }
+];
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private router: Router) { }
 
@@ -68,6 +73,7 @@ export class EmployeOffBoardingComponent {
 
   initializeForm() {
     this.offBoardingForm = this.fb.group({
+      exitType: [null, Validators.required],
       exit: [null, Validators.required],
       eligiblefor: [null, Validators.required],
       status: [null, Validators.required],
@@ -85,8 +91,16 @@ export class EmployeOffBoardingComponent {
           console.log(data);
           this.offBoardingEmp = data;
           this.joiningDate = this.formatDateToLocal(data.dateOfJoining);
-          const lastWorking = this.formatDateToLocal(data.lastworkingday);
-          if (data.substatus.toLowerCase() === 'cleared no due') {
+          if (data.substatus.toLowerCase() === 'cleared no due' && data.empstatus === "Active") {
+            const lastWorking = this.formatDateToLocal(data.lastworkingday); 
+            this.offBoardingForm.patchValue({ lastdate: lastWorking });
+            const lastDateControl = this.offBoardingForm.get('lastdate');
+            if (lastDateControl) {
+              lastDateControl.disable();
+            }
+          }
+          if (data.substatus.toLowerCase() === 'cleared no due' && data.empstatus === "Active Contract") {
+            const lastWorking = this.formatDateToLocal(data.contractorLastWorkingDate); 
             this.offBoardingForm.patchValue({ lastdate: lastWorking });
             const lastDateControl = this.offBoardingForm.get('lastdate');
             if (lastDateControl) {
@@ -168,10 +182,16 @@ export class EmployeOffBoardingComponent {
           lastDateControl.enable();
         }
       const formdata=this.offBoardingForm.value
-
+      if(formdata.status.statusname === 'Inactive Contract'){
+        this.offBoardingEmp.contractorLastWorkingDay=formdata.lastdate;
+      }
+      else{
+        this.offBoardingEmp.lastworkingday=formdata.lastdate;
+      }
+      this.offBoardingEmp.termtypeoffboard=formdata.exitType
       this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
       this.offBoardingEmp.empstatus=formdata.status.statusname;
-      this.offBoardingEmp.lastworkingday=formdata.lastdate;
+      
       this.offBoardingEmp.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
       this.offBoardingEmp.separationType = this.offBoardingEmp.separationType;
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.offBoardingEmp).subscribe({
@@ -181,11 +201,11 @@ export class EmployeOffBoardingComponent {
          
             this.conformationPopup.openSuccessModal('Employee Inactived successfully')
             if (this.offBoardingEmp.empstatus === 'Inactive') {
-              this.router.navigate(['/employee-management/inactive-employees']);
+              this.router.navigate(['/employee-management/inactive/employees']);
               //this.InactiveEmail(this.empinfo.employeeId);
             }
             else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
-              this.router.navigate(['/employee-management/inactive-interns']);
+              this.router.navigate(['/employee-management/inactive/interns']);
             }
  
           } else if (res.statusCode === 409) {

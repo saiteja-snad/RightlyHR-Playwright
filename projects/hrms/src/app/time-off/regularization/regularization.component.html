@@ -9,7 +9,28 @@
         </div>
         
         <div class="d-flex align-items-center gap-3">
-            @if (rbac.allowedToAccess('My Team (Regularization).view')) {
+            @if(rbac.allowedToAccess('All Employees (Regularization).view') && rbac.allowedToAccess('My Team (Regularization).view')) {
+            <div class="d-flex align-items-center gap-2">
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                    {{'Select Employee' | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                     optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                     (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
+                </div>
+            </div>
+            }
+            @else if(rbac.allowedToAccess('All Employees (Regularization).view')) {
+            <div class="d-flex align-items-center gap-2">
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+                    optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)" 
+                    class="form-select custom-select"></p-select>
+                </div>
+            </div>
+            }
+            @else if (rbac.allowedToAccess('My Team (Regularization).view')) {
             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
@@ -19,7 +40,6 @@
                 </p-select>
             </div>
             }
-
             <div class="d-flex gap-2 align-items-center">
                 <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
                 <form autocomplete="off" [formGroup]="yearSelectionForm">

@@ -1,0 +1,119 @@
+<div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+        <div>
+            <p class="popup-heading mb-0">{{'Add Contacts' }}</p>
+        </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+        <form [formGroup]="addContactForm" (ngSubmit)="submitContacts()">
+            <div class="custom-table-content custom-popup-table">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th> Contact Name<span class="text-danger">*</span> </th>
+                            <th>Email<span class="text-danger">*</span></th>
+                            <th>Phone Number<span class="text-danger">*</span></th>
+                            <th>Role<span class="text-danger">*</span></th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody formArrayName="contacts">
+                        <tr *ngFor="let contact of contacts.controls; let i = index" [formGroupName]="i">
+                            <td>
+                                <input type="text" class="form-control custom-input" minlength="2" maxlength="51"
+                                    (keypress)="formValidation.restrictInitialSpace($event)"
+                                    placeholder="Please enter contact name" formControlName="contactName">
+                                <div class="error-msg" *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid">
+                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">Contact Name is required</div>
+                                </div>
+                                <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || 
+                                    contact.get('contactName')?.errors?.['minCharacters']" class="error-msg">
+                                    {{ 'Contact Name must be between 2-50 characters' | translate }}
+                                </div>
+                            </td>
+                            <td>
+                                <input type="email" class="form-control custom-input" formControlName="contactEmail" placeholder="Please enter email">
+                                <div class="error-msg" *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">
+                                    <div *ngIf="contact.get('contactEmail')?.errors?.['required']">Email is required</div>
+                                    <div *ngIf="contact.get('contactEmail')?.errors?.['email']">Please enter a valid email address</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                                    <div>
+                                        <lib-country-list class="country-input" [selectedCountryConfig]="selectedCountryConfig"
+                                            [countryListConfig]="countryListConfig" [selectedCountryCode]="contact.get('countryCode')?.value"
+                                            (onCountryChange)="onCountryChange($event, i)">
+                                        </lib-country-list>
+                                    </div>
+                                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)"
+                                        formControlName="contactPhone" placeholder="Please enter phone number">
+                                </div>
+                                <div class="error-msg" *ngIf="contact.get('contactPhone')?.touched && contact.get('contactPhone')?.invalid">
+                                    <div *ngIf="contact.get('contactPhone')?.errors?.['required']">Phone number is required</div>
+                                    <div *ngIf="contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">Please enter a valid phone number</div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control custom-input" maxlength="51" placeholder="Please enter role"
+                                    (keypress)="formValidation.restrictInitialSpace($event)" formControlName="contactRole">
+                                <div class="error-msg" *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
+                                    <div *ngIf="contact.get('contactRole')?.errors?.['required']">Role is required</div>
+                                </div>
+                                <div *ngIf="contact.get('contactRole')?.errors?.['maxCharacters'] || 
+                                contact.get('contactRole')?.errors?.['minCharacters']" class="error-msg">
+                                    {{ 'Role must be between 2-50 characters' | translate }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div *ngIf="contacts.length > 1">
+                                        <a class="cursor" (click)="removeContact(i)">
+                                            <app-circular-delete />
+                                        </a>
+                                    </div>
+
+                                    <div *ngIf="i === contacts.length - 1">
+                                        <a class="cursor" (click)="addContact()">
+                                            <app-circular-add />
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="addContactForm.invalid || spinnerLoader">
+                    @if (spinnerLoader) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading' }}...</span>
+                    } @else {
+                    <span>{{'Add'}}</span>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Confirmation-->
+<ng-template #confirmationpopupfornodue let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>

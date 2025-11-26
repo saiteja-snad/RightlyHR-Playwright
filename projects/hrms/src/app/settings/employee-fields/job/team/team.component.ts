@@ -1,18 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
-import { TeamData } from './team.model';
 import { SelectModule } from 'primeng/select';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
+
 
 @Component({
   selector: 'app-team',
@@ -64,14 +64,14 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.getTable();
 
     this.AddForm = this.fb.group({
-      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
+      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
       departmentId: [null, [Validators.required]],
       teamManager: [null, [Validators.required]],
     });
 
     this.updateForm = this.fb.group({
       updateddepartmentId: ['', [Validators.required]],
-      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
+      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
       updatedteamManager: ['', [Validators.required]]
     });
   }
@@ -93,19 +93,22 @@ export class TeamComponent implements OnInit, OnDestroy {
       centered: true
     });
   }
-  getTeam() {
+getTeam() {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         console.log(data);
         if (data) {
-          this.teamdetails = data.map((employee: any) => {
+          this.teamdetails = data.map((emp: any) => {
+            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+            const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`.trim();
+
             return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+              ...emp,
+              fullName: fullName.replace(/\s+/g, ' ')
             };
-          });
+          }).sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+          );
         }
         console.log("Team details" + this.teamdetails)
       },
@@ -167,7 +170,7 @@ export class TeamComponent implements OnInit, OnDestroy {
       const formData = form.value
       const request = {
         subdepartmentName: formData.teamName.trim(),
-        departmentId: formData.departmentId, 
+        departmentId: formData.departmentId,
         reportingmanagerId: formData.teamManager,
         isdeleted: false
       };
@@ -178,25 +181,25 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Team added successfully');
         },
         error: (error: any) => {
-          const errorMessage = error.error?.Message? error.error?.Message : 'Failed to add Team';
+          const errorMessage = error.error?.Message ? error.error?.Message : 'Failed to add Team';
           this.conformationPopup.openErrorModal(errorMessage);
         },
-        complete: ()=>{
+        complete: () => {
           this.AddForm.reset();
           this.getDepartmentName();
           this.getTable();
         }
       });
-    } 
+    }
   }
 
   openupdateDialog(team: any) {
     this.updateDepartmentDetails = team;
     console.log(team);
     console.log(this.deptdetails);
-    
+
     this.updateForm.patchValue({
-      updateddepartmentId:  team.departmentId,       // Should match dept.departmentId
+      updateddepartmentId: team.departmentId,       // Should match dept.departmentId
       UpdatedTeamName: team.subdepartmentName,      // Text input
       updatedteamManager: team.reportingmanagerId   // Should match manager.employeeId
     });
@@ -243,7 +246,7 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.getTable();
         },
         error: (error: any) => {
-          const errorMessage = error.error?.Message? error.error?.Message : 'Failed to update Team';
+          const errorMessage = error.error?.Message ? error.error?.Message : 'Failed to update Team';
           this.conformationPopup.openErrorModal(errorMessage);
         }
       });

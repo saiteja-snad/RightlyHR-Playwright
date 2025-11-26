@@ -23,3 +23,35 @@
     min-height: max-content !important;
     max-height: 45vh !important;
 }
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}
+
+.custom-p-multiSelect-content {
+    .p-multiselect {
+        width: 240px !important;
+    }
+}
+
+.chip-btn {
+    width: max-content !important;
+    padding: 0.325rem 1.5rem !important;
+    // font-size: var(--fontsize10) !important;
+    font-size: var(--fontsize12)!important;
+    border-radius: 0.75rem !important;
+}
+
+.chip-btn.active {
+    border: 2px solid var(--primary-color) !important;
+}

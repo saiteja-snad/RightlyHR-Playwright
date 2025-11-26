@@ -105,7 +105,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Load Entitlements';
     }
-
+   else if(url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')){
+    this.moduleName='Time Off';
+    this.componentName='Flexible WFH Allocation';
+   }
     // Assets Configuration
     else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
       this.moduleName = 'Assets Configuration';
@@ -147,6 +150,82 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Dynamic Forms';
       this.componentName = 'Form Settings';
     }
+
+    //Project Management
+    else if (url.startsWith('/settings/project-management-config/project-type')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Project Type';
+    }
+    else if (url.startsWith('/settings/project-management-config/industry-type')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Industry Type';
+    }
+    else if (url.startsWith('/settings/project-management-config/client-document-type')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Client Document Type';
+    }
+
+    else if (url.startsWith('/settings/project-management-config/project-document-type')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Project Document Type';
+    }
+    else if (url.startsWith('/settings/project-management-config/letter-type')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Letter Configurations';
+    }
+         else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Frequency Configurations';
+    }
+    else if (url.startsWith('/settings/project-management-config/signature-authority')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Project Management Authority';
+    }
+    else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = ' Letter Configurations Frequency';
+    }
+
+    else if (url.startsWith('/settings/attendance-configuration/pending-for-submission')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/attendance-configuration/published')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Published';
+    }
+     else if (url.startsWith('/settings/project-management-config/project-role')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Project Role';
+    }
+    else if (url.startsWith('/settings/project-management-config/task')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Task';
+    }
+    else if (url.startsWith('/settings/it-configuration/itsupport-category')) {
+      this.moduleName = 'IT Configuration';
+      this.componentName = 'IT Support Category';
+    }
+    else if (url.startsWith('/settings/it-configuration/itsupport-sub-category')) {
+      this.moduleName = 'IT Configuration';
+      this.componentName = 'IT Support Sub Category';
+    }
+    // else if (url.startsWith('/settings/timesheet-locking-configuration')) {
+    //   this.moduleName = 'Timesheet Configuration';
+    //   this.componentName = 'Timesheet Locking';
+    // }
+    else if (url.startsWith('/settings/timesheet-locking-configuration/pending-for-submission')) {
+      this.moduleName = 'Timesheet Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/timesheet-locking-configuration/published')) {
+      this.moduleName = 'Timesheet Configuration';
+      this.componentName = 'Published';
+    }
+    else if(url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')){
+    this.moduleName='Time Off';
+    this.componentName='Flexible Work Hours Allocation';
+   }
   }
 
   navigateToSettings() {

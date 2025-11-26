@@ -89,6 +89,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
        countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
       workNumber: [null,], // Required and 10-digit phone number
+      linkedinurl: [null, [ Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/)]], // Optional LinkedIn URL
     });
   }
 
@@ -147,7 +148,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       personalEmail: data.emailaddress || '', // Bind personal email
       workMail: data.workEmail || '',         // Bind work email
       phoneNumber: data.contactnumber || '',  // Bind personal phone number
-      workNumber: data.workPhone || '',       // Bind work phone number
+      workNumber: data.workPhone || '',      // Bind work phone number
+      linkedinurl: data.linkedinUrl || ''   // Bind LinkedIn URL
     });
   }
 
@@ -170,7 +172,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
       workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode || null,
       contactnumbercountryflag:this.selectedCountryCodephoneflag  || this.employedata.contactnumbercountryflag,
-      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag || null
+      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag || null,
+      linkedinUrl: formValue.linkedinurl || null,
      };
 
 

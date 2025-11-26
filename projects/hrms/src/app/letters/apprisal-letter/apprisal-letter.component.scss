@@ -1,5 +1,5 @@
 * {
-   
+
     font-family: 'VERDANA', sans-serif !important;
 }
 
@@ -55,7 +55,7 @@ input:focus {
 
         th,
         td {
-             padding: 0.5rem 0.625rem;
+            padding: 0.5rem 0.625rem;
             text-align: center;
             color: #000;
             font-size: var(--fontsize16) !important;
@@ -69,6 +69,7 @@ input:focus {
 }
 
 .salary-details-table {
+
     .mytable,
     .secondtable {
         th {
@@ -76,21 +77,23 @@ input:focus {
         }
     }
 }
+
 .secondtable tr:nth-child(3) td:nth-child(3),
 .secondtable tr:nth-child(3) td:nth-child(2) {
-  background: #fce4d6;
+    background: #fce4d6;
 }
 
 .mytable tr:nth-child(4),
 .mytable tr:nth-child(10) {
-  background: #fff2cc;
+    background: #fff2cc;
 }
 
 .mytable tr:nth-child(9) {
-  background: #fff2cc;
+    background: #fff2cc;
 }
+
 .soft-copy-letter {
-    background-image: url('/images/snad-letter-bg.jpg') !important;
+    background-image: url('/images/snad-new-letter-bg.png') !important;
     padding-top: 8rem !important;
 
 }

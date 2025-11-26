@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -61,6 +61,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   isLoading = false;
   profileForm!: FormGroup;
   isDataLoaded = false;
+ @ViewChild('NoticePopup') NoticePopup?: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -618,6 +619,12 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
    closeModel() {
     this.modalService.dismissAll();
   }
+  noticeDetailsData: any;
+
+noticedetails(item: any): void {
+  this.noticeDetailsData = item;
+  this.modalService.open(this.NoticePopup, { centered: true });
+}
   
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources

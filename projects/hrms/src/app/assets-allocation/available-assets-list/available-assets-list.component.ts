@@ -119,7 +119,7 @@ export class AvailableAssetsListComponent {
     this.initialReleaseform();
     this.intialfromundermatince();
     this.intialtransferfrom();
-      this.http.assetDetailesadded$.subscribe(() => {
+    this.http.assetDetailesadded$.subscribe(() => {
       this.getFilteredData();
     });
     const today = new Date();
@@ -483,14 +483,14 @@ export class AvailableAssetsListComponent {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getassetsdata(this.page, this.pageSize,this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   // Called when first size changes
@@ -499,7 +499,7 @@ export class AvailableAssetsListComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
   onSearchChange(event: any) {
 
@@ -816,25 +816,38 @@ export class AvailableAssetsListComponent {
       }
     });
   }
-
   getEmployeedata() {
     if (!this.loactionid || !this.sublocation) {
       return;
     }
-    this.http.getData(`JobDetails/empslocansublocation?locationId=${this.loactionid}&sublocationId=${this.sublocation}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.employeeiddetails = data.map((employee: any) => ({
-          ...employee,
-          employeeName: `${employee.fusionEmployeeId ?? ''}- ${employee.employeeName} `,
 
-        }));
-        console.log(this.employeeiddetails);
-      },
-      error: (reason: any) => {
-      },
-    });
+    this.http
+      .getData(
+        `JobDetails/empslocansublocation?locationId=${this.loactionid}&sublocationId=${this.sublocation}`
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.employeeiddetails = data
+            .sort((a: any, b: any) =>
+              (a.employeeName ?? '').localeCompare(
+                b.employeeName ?? '',
+                undefined,
+                { sensitivity: 'base' }
+              )
+            )
+            .map((employee: any) => ({
+              ...employee,
+              employeeName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.employeeName ?? ''}`,
+            }));
+
+          console.log(this.employeeiddetails);
+        },
+        error: (reason: any) => {
+          console.error('Error fetching employee data:', reason);
+        },
+      });
   }
-
 
   postAssignAssets(assignForm: FormGroup, removeAsset: number) {
     if (assignForm.valid) {

@@ -35,7 +35,7 @@ export class UpdateEducationDetailsComponent {
   selectedFile: File | null = null;
 startDatevalidate:any;
   constructor(private modalService: NgbModal,private formValidationService:FormValidationService, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService,
-     private getData:DataService) { }
+     private getData:DataService, public formValidation: FormValidationService) { }
   
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -47,10 +47,10 @@ startDatevalidate:any;
   initializeEducationForm() {
     this.educationForm = this.fb.group({
       education: [this.educationData?.degree || '', Validators.required],
-      university: [this.educationData?.university || '', [Validators.required, Validators.pattern(/^[^\d]+$/),Validators.maxLength(100)]],
+      university: [this.educationData?.university || '', [Validators.required,Validators.maxLength(100)]],
       // specialization: [this.educationData?.specialization || '', Validators.required],
       // gpa: [this.educationData?.gpa || '', Validators.required],
-      specialization: [this.educationData?.specialization || '', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
+      specialization: [this.educationData?.specialization || '', [Validators.required, Validators.maxLength(100)]],
       // gpa: [this.educationData?.gpa || '', [Validators.required,Validators.pattern(/^([0-3](\.\d{1,2})?|4(\.00?)?)$/)]],
       gpa: [this.educationData?.gpa || '', [
         Validators.required,

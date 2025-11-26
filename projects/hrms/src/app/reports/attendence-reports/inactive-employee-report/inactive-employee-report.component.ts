@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {  FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {  Subscription } from 'rxjs';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { IInactiveReportRequest, } from '../../../Interfaces/reports.model';
@@ -16,7 +16,7 @@ import { SelectModule } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 
@@ -32,7 +32,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
     NoDataFoundComponent,
     DataLoaderContentComponent,
     ReportsHeaderComponent
-],
+  ],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss',
 })
@@ -73,7 +73,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     ],
   };
   localeOptions: any;
-  
+
 
   months = [
     { value: 1, name: 'January' },
@@ -97,7 +97,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router
-  ) {}
+  ) { }
 
   getParsedEmployee(event: Event): any {
     const target = event.target as HTMLSelectElement;
@@ -140,61 +140,63 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       form.get('dateRange')?.value
     );
   }
+getEmployeeId() {
+  const loggedInUser = this.authService.getToken();
+  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+    next: (data: any) => {
+      const employeedata = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http
+          return {
+            ...employee,
+            firstName, //  trimmed for sorting
+            lastName,  //  trimmed for fallback if needed
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  alphabetical sort by first name
+        );
 
-      .getData('Employeedata/InactiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-            };
-          });
+      this.employeeiddetails = [
+        { fullName: 'All Employees', employeeId: 'all' },
+        ...employeedata
+      ];
+    },
+    error: (reason: any) => {
+      console.log(reason);
+    },
+  });
+}
 
-          this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata,
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
 
-  getTeam() {
-    this.subscription = this.http
-      .getData('PendingApprovalsAuthority/getAll')
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.teamdetails = data.map((employee: any) => {
-              return {
-                ...employee,
-                fullName: `${
-                  employee.fusionEmployeeId
-                    ? employee.fusionEmployeeId + ' - '
-                    : ''
-                }${employee.firstName} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-              };
-            });
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+getTeam() {
+  const statuses = 'Active,Inactive';
+  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
+    next: (data: any) => {
+      this.teamdetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
+          return {
+            ...employee,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
+
 
   getInactiveReports() {
     this.subscription = this.reportsService.getInactiveReports({}).subscribe({

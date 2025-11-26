@@ -185,22 +185,27 @@
                         </div>
 
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
+                     <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Category' | translate}}<span
                                 class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-
-                            <input type="text" class="form-control custom-input" formControlName="type"
-                                placeholder="Please enter department" onkeydown="return false;" />
-
-                        </div>
-                        <div *ngIf="itSupportForm.get('type')?.invalid && itSupportForm.get('type')?.touched">
-                            <div class="error-msg">{{'Type is required' | translate}}</div>
+                        <input type="text" class="form-control custom-input" formControlName="category"
+                            placeholder="Please enter category" onkeydown="return false;" />
+                        <div *ngIf="itSupportForm.get('category')?.invalid && itSupportForm.get('category')?.touched">
+                            <div class="error-msg">{{'Category is required' | translate}}</div>
                         </div>
 
                     </div>
                 </div>
                 <div class="row">
+                     <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Sub-Category' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="subcategory"
+                            placeholder="Please enter subcategory" onkeydown="return false;" />
+                        <div *ngIf="itSupportForm.get('subcategory')?.invalid && itSupportForm.get('subcategory')?.touched">
+                            <div class="error-msg">{{'Sub-Category is required' | translate}}</div>
+                        </div>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -213,6 +218,10 @@
                         </div>
 
                     </div>
+                 
+                </div>
+
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -225,10 +234,6 @@
                         </div>
 
                     </div>
-                </div>
-
-                <div class="row">
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Action'| translate}}<span
                                 class="text-danger">*</span></label>
@@ -244,7 +249,12 @@
                             <div class="error-msg">{{'Status is required' | translate}}</div>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    
+
+                </div>
+
+                <div class="row">
+                   <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
@@ -264,11 +274,6 @@
                             <div class="error-msg">{{'Assigned To is required' | translate}}</div>
                         </div> -->
                     </div>
-
-                </div>
-
-                <div class="row">
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
                                 class="text-danger">*</span></label>

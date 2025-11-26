@@ -16,12 +16,12 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-available-desk-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginatorModule,TranslateModule, DropdownModule, Select, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, Select, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './available-desk-list.component.html',
   styleUrl: './available-desk-list.component.scss'
 })
 
-export class AvailableDeskListComponent implements OnInit,OnDestroy {
+export class AvailableDeskListComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   datesShouldNotBeEqual = false;
   empinfo = {} as any;
@@ -96,7 +96,7 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
-       this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
+    this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
     this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
     this.http.deskUpdateLocationId(this.selectedLocationId);
     this.getdatabyentriyinactive()
@@ -108,12 +108,12 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
     this.getdatabyentriyundermaintance();
     this.getdatabyentriy();
     this.getdatabyentriyrealse();
-      this.http.deskDetailesadded$.subscribe(() => {
+    this.http.deskDetailesadded$.subscribe(() => {
       this.getFilteredData();
     });
     // this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, null,null);
     this.getFilteredData();
-      this.http.deskDetailesadded$.subscribe(() => {
+    this.http.deskDetailesadded$.subscribe(() => {
       this.getFilteredData();
     });
     this.assiginForm.get('shifts')?.valueChanges.subscribe((seletshift) => {
@@ -198,26 +198,26 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
     });
   }
 
-    onRowsChange() {
-    this.page = 1;        
-    this.first = 0; 
-    this.getAllDesks(this.page, this.pageSize, null,null,this.Status);
+  onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   onPageChange(event: any) {
-     this.page = event.page + 1;
+    this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
-     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
 
@@ -330,7 +330,7 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Desk has been successfully allocated');
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null,null,this.Status);
+          this.getcount(null, null, this.Status);
           this.assiginForm.reset();
           this.assiginForm.get('employeeName')?.reset()
           this.assiginForm.get('approvid')?.reset()
@@ -435,7 +435,7 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
             location.reload();
           }, 2000);
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null,null,this.Status);
+          this.getcount(null, null, this.Status);
           this.inactiveForm.reset();
         },
         error: (error) => {
@@ -503,9 +503,12 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
           // Transform the data to add `employeeName` and a combined property
           this.employeeiddetails = data.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''}- ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
 
-          }));
+          })).sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
+
         },
         error: (reason: any) => {
           console.error(reason);
@@ -538,7 +541,7 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Desk set under maintenance successfully')
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null,null,this.Status);
+          this.getcount(null, null, this.Status);
           this.undermaintancedata.reset();
         },
         error: (error) => {
@@ -559,8 +562,10 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
           // Transform data to include `employeeName`
           this.approvalname = res.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-          }));
+            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          })).sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
         },
         error: (errormessage) => {
           console.log(errormessage);

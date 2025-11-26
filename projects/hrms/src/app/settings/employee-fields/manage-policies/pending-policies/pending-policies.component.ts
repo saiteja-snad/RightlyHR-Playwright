@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { RbacService } from '../../../../services/rbac.service';
 import { IPolicy } from './policies.model';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { OpenModalService } from '../../../../services/open-modal.service';
 
 
 @Component({
@@ -23,9 +24,11 @@ export class PendingPoliciesComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   allPolicies: IPolicy[] = [];
   loading = false;
-
-  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService) { }
-  
+ message: any;
+  successModalRef: any;
+  deleteModalRef: any;
+  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService,private confirmation: OpenModalService,
+   ) { }
   ngOnInit(): void {
     this.getAllPolicies();
   }
@@ -38,7 +41,38 @@ export class PendingPoliciesComponent implements OnInit, OnDestroy {
     localStorage.setItem('updatepolicies', JSON.stringify(policy));
     this.router.navigate(['/settings/employee-fields/updatepolices']);
   }
+  Message: any;
+  policedata: any;
+  
+  DeletePolicyDailog(content: any, policy: any) {
+    this.policedata = policy;
+    this.deleteModalRef = this.modalService.open(content, { centered: true });
+  }
+  onDelete(modal: any) {
+    this.http.deleteData(`orgPolicies/${this.policedata.id}`).subscribe({
+      next: () => {
+        // Remove from list after successful delete
+        this.allPolicies = this.allPolicies.filter(item => item.id !== this.policedata.id);
 
+        // Close delete popup
+        modal.close();
+        this.http.triggerRefresh();
+        // Open success popup
+        this.confirmation.openSuccessModal('Policy deleted successfully');
+        this.getAllPolicies();
+
+        setTimeout(() => {
+          if (this.successModalRef) {
+            this.successModalRef.close();
+          }
+        }, 2000);
+      },
+      error: () => {
+        modal.close();
+        this.confirmation.openErrorModal('Failed to delete Policy.');
+      }
+    });
+  }
   getAllPolicies() {
   this.loading = true;
     this.subscription = this.http.getData('orgPolicies').subscribe({

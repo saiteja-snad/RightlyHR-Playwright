@@ -9,15 +9,13 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployee } from './probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-probation-confirmation-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule],
   templateUrl: './probation-confirmation-letter.component.html',
   styleUrl: './probation-confirmation-letter.component.scss'
 })
@@ -53,7 +51,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
     private openModalService: OpenModalService) { }
 
   ngOnInit(): void {
-  this.Employeeinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.Employeeinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.getProbationEmployees();
     this.getAuthorityDetails();
@@ -135,8 +133,8 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
         console.log(data)
         this.probationemp = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
-        }));
+          fullName: `${employee.fusionEmpId ? employee.fusionEmpId + '-': ''}  ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (reason: any) => {
         console.log(reason);
@@ -180,8 +178,8 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authoruty: any) => ({
           ...authoruty,
-          fullName:  `${authoruty.fusionEmpId  ?? ''}  ${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
-        }));
+          fullName:  `${authoruty.fusionEmpId  ? authoruty.fusionEmpId + '-' :''}  ${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       }
     })
   }

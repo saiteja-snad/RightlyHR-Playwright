@@ -80,6 +80,28 @@ import { PermissionsCancellationComponent } from './premissions/permissions-canc
 import { RemoteLoginRequestComponent } from './pending-approvals/remote-login-request/remote-login-request.component';
 import { RemoteLoginForYouRequestComponent } from './pending-approvals/remote-login-request/remote-login-for-you-request/remote-login-for-you-request.component';
 import { RemoteLoginForRoleRequestComponent } from './pending-approvals/remote-login-request/remote-login-for-role-request/remote-login-for-role-request.component';
+import { TimeSheetApprovalsComponent } from './pending-approvals/time-sheet-approvals/time-sheet-approvals.component';
+import { ContractConversionForYourRoleComponent } from './pending-approvals/contract-conversion/contract-conversion-for-your-role/contract-conversion-for-your-role.component';
+import { ContractConversionForYouComponent } from './pending-approvals/contract-conversion/contract-conversion-for-you/contract-conversion-for-you.component';
+import { ContractConversionComponent } from './pending-approvals/contract-conversion/contract-conversion.component';
+import { ContractorsComponent } from './pending-approvals/contractors/contractors.component';
+import { ContractForYouComponent } from './pending-approvals/contractors/contract-for-you/contract-for-you.component';
+import { ContractForYourRoleComponent } from './pending-approvals/contractors/contract-for-your-role/contract-for-your-role.component';
+import { OnBehalfOfWfhComponent } from './on-behalf-of-wfh/on-behalf-of-wfh.component';
+import { OnBehalfOfWhfWaitingForApprovalComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-waiting-for-approval/on-behalf-of-wfh-waiting-for-approval.component';
+import { OnBehalfOfWhfApprovedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-approved/on-behalf-of-whf-approved.component';
+import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-processed/on-behalf-of-wfh-processed.component';
+import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-rejected/on-behalf-of-wfh-rejected.component';
+import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-cancellation/on-behalf-of-wfh-cancellation.component';
+import { ExtraHoursComponent } from './extra-hours/extra-hours.component';
+import { ExtraHoursApprovalComponent } from './extra-hours/extra-hours-approval/extra-hours-approval.component';
+import { ExtraHoursWaitingForApprovalComponent } from './extra-hours/extra-hours-waiting-for-approval/extra-hours-waiting-for-approval.component';
+import { ExtraHoursProcessComponent } from './extra-hours/extra-hours-process/extra-hours-process.component';
+import { ExtraHoursRejectComponent } from './extra-hours/extra-hours-reject/extra-hours-reject.component';
+import { ExtraHoursCancelComponent } from './extra-hours/extra-hours-cancel/extra-hours-cancel.component';
+import { ExtraHoursRequestComponent } from './pending-approvals/extra-hours-request/extra-hours-request.component';
+import { ExtraHoursForYouComponent } from './pending-approvals/extra-hours-for-you/extra-hours-for-you.component';
+import { ExtraHoursForYourRoleComponent } from './pending-approvals/extra-hours-for-your-role/extra-hours-for-your-role.component';
 
 
 export default [
@@ -258,22 +280,7 @@ export default [
       // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  {
-    path: 'on-behalf-of',
-    component: OnBeHalfOfComponent,
-    children: [
-      {
-        path: 'waiting-for-approval',
-        component: OnBeHalfOfWaitingForApprovalComponent,
-        data: { permission: 'Waiting For Approval (Regularization).view' },
-      },
-      { path: 'approved', component: OnBeHalfOfApprovalComponent },
-      { path: 'processed', component: OnBeHalfOfProcessComponent },
-      { path: 'rejected', component: OnBeHalfOfRejectComponent },
-      { path: 'cancel', component: OnBeHalfOfCancelComponent },
-      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
-    ],
-  },
+ 
   {
     path: 'pending-approvals',
     component: PendingApprovalsComponent,
@@ -397,6 +404,24 @@ export default [
           // { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
+
+      {
+        path: 'extra-hours-request',
+        component: ExtraHoursRequestComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: ExtraHoursForYouComponent,
+            data: { permission: 'For You (Extra Hours).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: ExtraHoursForYourRoleComponent,
+            data: { permission: 'For Role (Extra Hours).view' },
+          },
+        ],
+      },
+
       {
         path: 'claimsandexpenses-request',
         component: ClaimsandexpensesRequestComponent,
@@ -413,6 +438,40 @@ export default [
           },
 
           // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+        ],
+      },
+      {
+        path: 'contractors-request',
+        component: ContractorsComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: ContractForYouComponent,
+            data: { permission: 'For You (Contractors).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: ContractForYourRoleComponent,
+            data: { permission: 'For Role (Contractors).view' },
+          },
+
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+        ],
+      },
+      {
+        path: 'contract-conversion',
+        component: ContractConversionComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: ContractConversionForYouComponent,
+            data: { permission: 'For You (Contract-Conversion).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: ContractConversionForYourRoleComponent,
+            data: { permission: 'For Role (Contract-Conversion).view' },
+          },
         ],
       },
       {
@@ -474,6 +533,9 @@ export default [
         component: TraineeApprovalsComponent,
         data: { permission: 'Trainee Details.view' },
       },
+      
+      { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
+
     ],
   },
   // on be half of approvals
@@ -508,5 +570,51 @@ export default [
     path: 'global-permissions',
     component: GlobalPermissionsComponent,
     data: { permission: 'Global Permissions Module.view' },
+  },
+  // {
+  //   path: 'on-behalf-of-wfh',
+  //   component: OnBehalfOfWfhComponent,
+  //   children: [
+  //     {
+  //       path: 'waiting-for-approval', component: OnBehalfOfWhfWaitingForApprovalComponent,
+  //     },
+  //     { path: 'approved', component: OnBehalfOfWhfApprovedComponent },
+  //     { path: 'processed', component: OnBehalfOfWhfProcessedComponent },
+  //     { path: 'rejected', component: OnBehalfOfWhfRejectedComponent },
+  //     { path: 'cancelled', component: OnBehalfOfWhfCancellationComponent }
+  //   ],
+  // },
+    {
+    path: 'extra-hours',
+    component: ExtraHoursComponent,
+    children: [
+      {
+        path: 'waiting-for-approval',
+        component: ExtraHoursWaitingForApprovalComponent,
+        data: { permission: 'Waiting For Approval (Extra Hours).view' },
+      },
+      // {
+      //   path: 'approved',
+      //   component: ExtraHoursApprovalComponent,
+      //   data: { permission: 'Approved (Extra Hours).view' },
+      // },
+      {
+        path: 'process',
+        component: ExtraHoursProcessComponent,
+        data: { permission: 'Processed (Extra Hours).view' },
+      },
+      {
+        path: 'rejected',
+        component: ExtraHoursRejectComponent,
+        data: { permission: 'Rejected (Extra Hours).view' },
+      },
+      // {
+      //   path: 'cancelled',
+      //   component: ExtraHoursCancelComponent,
+      //   data: { permission: 'Cancelled(Extra Hours).view' },
+      // },
+
+      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ],
   },
 ] as Route[];

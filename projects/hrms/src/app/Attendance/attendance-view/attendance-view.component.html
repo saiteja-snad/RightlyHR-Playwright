@@ -13,11 +13,11 @@
                 <!-- <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
                     (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
                     dateFormat="mm/yy" [readonlyInput]="true" /> -->
-                    <div class="custom-year-month-picker">
-                        <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)"
-                            [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true"
-                            [maxDate]="maxMonth"></p-datepicker>
-                    </div>
+                <div class="custom-year-month-picker">
+                    <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)" 
+                    [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true" 
+                    [maxDate]="maxMonth"></p-datepicker>
+                </div>
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
@@ -42,6 +42,11 @@
                 </p-select>
             </div>
             }
+
+            @if(!selectedEmployee && !selectedEmployeeOfHr){
+                <a class="log-extra-hrs" (click)="openModal(extraHoursLodModal)">Log Extra Hours</a>
+            }
+
             @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view') ||
             this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))
             && ((selectedEmployeeOfHr?.employeeId != empdata.employeeId && selectedEmployeeOfHr != null) ||
@@ -72,21 +77,21 @@
                     <th class="max-width">Logs</th>
                     <th class="text-end pe-5">Status</th>
                 </thead>
-                <tbody>           
+                <tbody>
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
                         <td class="max-width">{{(item.date | dateformat)??'-'}}</td>
                         <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
                         <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-                        <td class="max-width">{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
-                            item.duration.totalDuration}}
+                        <td class="max-width">
+                            {{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration.totalDuration}}
                         </td>
                         <td class="max-width">
-                            @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
+                            @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0) || (item.logExtraHours.length>0)){
                             <div>
-                                <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
-                                            item.permissions,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
+                                <a type="button" (click)="openModalLarge(punchintimes);
+                                dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,item.permissions,item.logExtraHours,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
                                     <app-info-icon />
                                 </a>
                             </div>
@@ -97,8 +102,7 @@
                             <div class="d-flex justify-content-end">
                                 @if(item.status !== '-'){
                                 <ul class="ps-0 mb-2">
-                                    <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">
-                                        {{item?.status}}</li>
+                                    <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">{{item?.status}}</li>
                                 </ul>
                                 }
                                 @else {
@@ -109,8 +113,20 @@
                             <!--Sub status content-->
                             @if((item?.tags ?? []).length > 0 &&item.status){
                             <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
-                                @for(item of item.tags; track $index){
-                                <div class="card substatus-card">{{item?.name}}</div>
+                                @for(tag of item.tags; track $index){
+                                <div class="card substatus-card"  
+                                [ngStyle]="{ color: tag?.colour ?? '#305889',borderColor: tag?.colour ?? '#305889'}">
+                                     {{tag?.name}}
+                                    @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.exceededBreakDuration){
+                                        ({{tag?.additionalInfo?.exceededBreakDuration}})
+                                    }
+                                    @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.lateLoginDuration){
+                                        ({{tag?.additionalInfo?.lateLoginDuration}})
+                                    }
+                                    <!-- @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.lateLoginDuration){
+                                        ({{tag?.additionalInfo?.lateLoginDuration}})
+                                    } -->
+                                </div>
                                 }
                             </div>
                             }
@@ -126,7 +142,7 @@
                                 @if(rbac.allowedToAccess('Request Regularization.view')){
                                 @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
                                 (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable 
-                                && currentMonth==selectedMonth && item.employeeId==empdata.employeeId){ 
+                                && isWithinPastDaysAllowed(item.date) && item.employeeId==empdata.employeeId){ 
                                 <a class="application-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                     <u>Regularization</u>
                                 </a>
@@ -144,14 +160,14 @@
             </table>
             }
             @else {
-                <app-data-loader-content />
+            <app-data-loader-content />
             }
         </div>
 
-        @if(statusCounts$.value.length>0){ 
+        @if(statusCounts$.value.length>0){
         <div class="attendance-summary-card">
             <div>
-               <p class="summary-header mb-2">Attendance Summary</p>
+                <p class="summary-header mb-2">Attendance Summary</p>
             </div>
             <div class="chart-content">
                 <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions" class="doughnut-chart" />
@@ -182,7 +198,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form autocomplete="off" [formGroup]="regularizationForm"
+            <form autocomplete="off" [formGroup]="regularizationForm" (focusin)="setActiveForm('regularization')"
                 (ngSubmit)="applyRgularization(regularizationForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -230,8 +246,7 @@
                         <div class="error-msg" *ngIf="regularizationForm.get('reason')?.errors?.['minlength']">
                             Reason must be at least 10 characters
                         </div>
-                        <div class="error-msg"
-                            *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
+                        <div class="error-msg" *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
                                 Reason is required
                             </div>
@@ -298,23 +313,27 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             <div class="popup-table-footer">
                                 <!-- Total Duration: <b>{{ logsDuration }}</b> -->
                                 <div>
-                                    <div>Duration: <span *ngIf="logsDuration;else popupcomments">
-                                            <!-- <div class="text-truncate" style="width:150px;">{{comment.comments}}</div> -->
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <div class="custom-text">Working Hours: <b class="popup-heading">{{logsDuration}}</b></div>
+                                        <div class="break-line my-1"></div>
+                                        <div class="custom-text">Break Hours: <b class="popup-heading">{{breakDuration}}</b></div>
+                                    </div>
+                                    <!-- <div>Duration: <span *ngIf="logsDuration;else popupcomments">
+                                            <div class="text-truncate" style="width:150px;">{{comment.comments}}</div>
                                             <a [ngbPopover]="popContent">
                                                 <i class="bi bi-info-circle-fill ms-2"></i>
                                             </a>
                                             <ng-template #popContent>
-                                                <div class="custom-text">Working Hours: <b>{{logsDuration}}</b></div>
-                                                <div class="custom-text">Break Hours: <b>{{breakDuration}}</b></div>
-                                                <!-- <div class="custom-text">Total Duration: <b>{{ getTotalDuration(logsDuration, breakDuration) }}</b></div> -->
+                                                
+                                                <div class="custom-text">Total Duration: <b>{{ getTotalDuration(logsDuration, breakDuration) }}</b></div>
                                             </ng-template>
                                         </span>
                                         <ng-template #popupcomments>-</ng-template>
-                                    </div>
+                                    </div> -->
                                     <!-- <div>Total Duration: <b>{{ logsDuration }}</b></div> -->
                                 </div>
                             </div>
@@ -322,7 +341,7 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-        
+
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
                     <p-accordion-header>Permissions</p-accordion-header>
@@ -350,7 +369,7 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-        
+
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
                     <p-accordion-header>Regularizations</p-accordion-header>
@@ -370,6 +389,44 @@
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
                                             <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
+
+                @if(extra_logs.length>0){
+                <p-accordion-panel value="3">
+                    <p-accordion-header>Extra Hours</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Duration</th>
+                                            <th>Status</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of extra_logs">
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
+                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                            <td>
+                                                <a [ngbPopover]="desprictionContent">
+                                                    <app-info-icon />
+                                                </a>
+                                                <!--Module Information-->
+                                                <ng-template #desprictionContent>
+                                                    <div>
+                                                        {{log.notes}}
+                                                    </div>
+                                                </ng-template>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -398,7 +455,8 @@
                 <div class="d-block">
                     <div class="d-flex flex-column">
                         <p class="m-0 p-2 rounded popupcomments">
-                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal">
+                            Total Duration: 
+                            <span *ngIf="totalDurationHours;else durationtotal">
                                 {{totalDurationHours === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
                             </span>
                             <ng-template #durationtotal>{{logsDuration}}</ng-template>
@@ -408,20 +466,15 @@
                             Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
                         </p>
 
-                        <p class="m-0 p-2 rounded popupcomments">
-                            Permissions Duration: <span *ngIf="permissionsDuration;else permisiondur">
-                                {{permissionsDuration === '00:00:00' || !permissionsDuration ? '-' :
-                                permissionsDuration}}
-                            </span>
+                        <p class="m-0 p-2 rounded popupcomments">Permissions Duration:
+                            <span *ngIf="permissionsDuration;else permisiondur">{{permissionsDuration === '00:00:00'
+                                || !permissionsDuration ? '-' : permissionsDuration}}</span>
                             <ng-template #permisiondur>NA</ng-template>
                         </p>
 
-                        <p class="m-0 p-2 rounded popupcomments">
-                            Regularization Duration:
-                            <span *ngIf="regularizationAttendDuration;else regularization">
-                                {{regularizationAttendDuration === '00:00:00' || !regularizationAttendDuration ? '-' :
-                                regularizationAttendDuration}}
-                            </span>
+                        <p class="m-0 p-2 rounded popupcomments">Regularization Duration:
+                            <span *ngIf="regularizationAttendDuration;else regularization">{{regularizationAttendDuration === '00:00:00' || 
+                            !regularizationAttendDuration ? '-' : regularizationAttendDuration}}</span>
                             <ng-template #regularization>NA</ng-template>
                         </p>
                     </div>
@@ -431,20 +484,78 @@
     </div>
 </ng-template>
 
+
+<ng-template #extraHoursLodModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'Log Extra Hours'| translate}}</p>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="extraHoursForm" (focusin)="setActiveForm('extraHours')" (ngSubmit)="onExtraHrsSubmit(extraHoursForm)">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Date'| translate}}<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="date" [min]="getMinAllowedDate()"
+                            [max]="getCurrentDate()" />
+                        <div class="error-msg" *ngIf="extraHoursForm.get('date')?.invalid && extraHoursForm.get('date')?.touched">
+                            Date is required</div>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Duration'| translate}}
+                            <span class="text-danger">*</span></label>
+                            <div class="custom-p-select-content">
+                            <p-select [options]="extraHoursDuration" optionLabel="name" id="duration" formControlName="duration"
+                                placeholder="Please select duration" class="form-select custom-select w-100">
+                            </p-select>
+                        </div>
+                       
+                        <div class="error-msg">
+                            <div *ngIf="extraHoursForm.get('duration')?.invalid && extraHoursForm.get('duration')?.touched">Duration is required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
+                       <textarea class="form-control custom-input" style="height: 120px;" [maxlength]="500" [minlength]="10" formControlName="description"
+                        placeholder="Please enter description" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                        <div class="textarea-count-text">{{ extraHoursForm.get('description')?.value?.length ?? 0 }}/500</div>
+                        <div class="error-msg">
+                            <div *ngIf="(extraHoursForm.get('description')?.touched && extraHoursForm.get('description')?.errors?.['required'])">Description is required</div>
+                            <div *ngIf="extraHoursForm.get('description')?.invalid && extraHoursForm.get('description')?.errors?.['minlength']">
+                                Description must be atleast 10 characters</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="extraHoursForm.invalid || extraHrsLoader">
+                        <span *ngIf="!extraHrsLoader">{{'Submit'| translate}}</span>
+                        <div class="button-loader-content" *ngIf="extraHrsLoader">
+                            <div class="spinner-border button-spinner text-light" role="status"></div>
+                            <div>{{'loading'|translate}}...</div>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <img src="/icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-                No
-            </button>
-            <button type="submit" class="custom-btn btn-primary"
-                (click)="modalService.dismissAll();this.regularizationForm.reset()">
-                Yes
-            </button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">Yes</button>
         </div>
     </div>
 </ng-template>

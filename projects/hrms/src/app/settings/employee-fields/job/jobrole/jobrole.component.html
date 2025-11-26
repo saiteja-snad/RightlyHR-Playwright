@@ -141,7 +141,7 @@
           </label>
           <input type="text" class="form-control custom-input" formControlName="Addjobrole"
             placeholder="Please enter job role"
-            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+            (keydown)="formValidations.restrictInitialSpace($event)"
             maxlength="101" />
             <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg">
               <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">

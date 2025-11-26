@@ -17,6 +17,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-nodue-approval-details',
   imports: [
@@ -30,6 +31,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     NodueDetailsPipe,
     DateformatPipe,
     DataLoaderContentComponent,
+    InfoIconComponent
   ],
   templateUrl: './nodue-approval-details.component.html',
   styleUrl: './nodue-approval-details.component.scss',
@@ -53,6 +55,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   isLoading = false;
   selectedNoDueData = {} as any;
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -69,7 +72,20 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     this.formInializer();
     this.getAllPendingApprovalsNoDue();
   }
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.AcceptForm.get('AcceptReason')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('notes')?.setValue('Rejected');
+    }
+  }
   //function to initalize the form
   formInializer() {
     this.AcceptForm = this.fb.group({
@@ -82,6 +98,11 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
         ],
       ],
     });
+     this.AcceptForm.get('AcceptReason')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
     this.rejectForm = this.fb.group({
       notes: [
         null,
@@ -92,6 +113,11 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
         ],
       ],
     });
+     this.rejectForm.get('notes')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getAllPendingApprovalsNoDue() {
@@ -181,17 +207,19 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
 
   //function to reject the nodue
   rejectNodue() {
+
     this.isLoading = true;
     const date = moment();
     let loggedInuser = this.authService.getToken();
     (this.selectedNoDueData.status = 'Rejected'),
       (this.selectedNoDueData.processedBy = loggedInuser.employeeId),
+      (this.selectedNoDueData.comments = this.rejectForm.get('notes')?.value),
       (this.selectedNoDueData.processdByFusionEmpId = loggedInuser.fusionEmpId);
     this.selectedNoDueData.processedDate = date;
     this.selectedNoDueData.processedByName = `${loggedInuser.firstName ?? ''} ${
       loggedInuser.middleName ?? ''
     } ${loggedInuser.lastName ?? ''}`;
-    this.selectedNoDueData.comments = this.AcceptForm.get('notes')?.value;
+    // this.selectedNoDueData.comments = this.AcceptForm.get('notes')?.value;
     this.subscription = this.http
       .postdata(
         `NoDueClearanceForm/pendingApprovalsUpdate`,

@@ -7,9 +7,12 @@ import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
+import { ProjectManagementMainTabsComponent } from "../project-management-tabs/project-management-main-tabs/project-management-main-tabs.component";
+import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-main-tabs/onbehalfof-main-tabs.component";
+import { SkillSetMainTabsComponent } from "../skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -19,7 +22,7 @@ export class SidenavComponent implements OnInit {
   modules = [
     //Holidays
     {
-      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
+      label: 'Holidays', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
     },
     //Policies
@@ -72,9 +75,10 @@ export class SidenavComponent implements OnInit {
       label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
       route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
     },
-      {
-      label: 'Themes', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
-      route: '/theme', permission: { feature: 'Themes', action: 'view' } 
+    //Card Management
+    {
+      label: 'Cards Management', icon: '/main-menu-icons/card-management-icon.png', activeIcon: '/main-menu-icons/card-management-active.png',
+      route: '/card-management', permission: { feature: 'Desk Allocation', action: 'view' }
     },
   ];
   columnsPerRow = 3;
@@ -130,6 +134,18 @@ export class SidenavComponent implements OnInit {
       currentUrl === '/pms/myPerformance/completed-review' || currentUrl === '/pms/team-performance/pending-review' ||
       currentUrl === '/pms/team-performance/completed-review' || currentUrl === '/pms/assessment-form'
     );
+  }
+
+  isActiveprojectManagement(): boolean {
+    const currentUrl = this.router.url;
+    // Active for pending-approvals and its subroutes
+    return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
+  }
+
+  isActiveskillsetManagement(): boolean {
+    const currentUrl = this.router.url;
+    // Active for pending-approvals and its subroutes
+    return currentUrl === '/skill-management' || currentUrl.startsWith('/skill-management');
   }
 
   resetDropdown(): void {

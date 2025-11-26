@@ -36,13 +36,13 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     ModuleInformationComponent
-],
+  ],
   templateUrl: './absent-report.component.html',
   styleUrl: './absent-report.component.scss'
 })
 
-export class AbsentReportComponent implements OnInit, OnDestroy{
-  moduleinfo : string = '';
+export class AbsentReportComponent implements OnInit, OnDestroy {
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -78,7 +78,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-  localeOptions: any ;
+  localeOptions: any;
 
   isFilterGivenabsent = false;
   selectedAbsentMonth: string | null = null;
@@ -102,7 +102,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
   frequencyOptions = [
     { label: 'Month wise', value: 'month' },
     { label: 'Date wise', value: 'date' }
-  ];  
+  ];
 
   constructor(
     private authService: AuthService,
@@ -119,7 +119,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-      this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -146,12 +146,12 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       this.disableBtn = true;
     })
 
-    this.absentReportForm.get('frequency')?.valueChanges.subscribe(()=>{
+    this.absentReportForm.get('frequency')?.valueChanges.subscribe(() => {
       this.absentReportForm.get('dateRange')?.reset();
       this.absentReportForm.get('month')?.reset();
     })
   }
-  
+
   get isAbsentGenerateDisabled(): boolean {
     const form = this.absentReportForm;
     return !(
@@ -163,69 +163,81 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     );
   }
 
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/reports/attendence-reports/absent-report': MODULE_INFOS.ATTENDANCE_ABSENT_REPORTS_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http
+getEmployeeId() {
+  const loggedInUser = this.authService.getToken();
+  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+    next: (data: any) => {
+      const employeedata = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            };
-          });
-          
-          this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => { },
-      });
-  }
+          return {
+            ...employee,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        })
+        .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
 
-  getTeam() {
-    this.subscription = this.http
-      .getData('PendingApprovalsAuthority/getAll')
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.teamdetails = data.map((employee: any) => {
-              return {
-                ...employee,
-                fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-              };
-            });
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+      this.employeeiddetails = [
+        { fullName: 'All Employees', employeeId: 'all' },
+        ...employeedata
+      ];
+    },
+    error: (reason: any) => {
+      console.log(reason);
+    },
+  });
+}
+
+getTeam() {
+  const statuses = 'Active';
+  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
+    next: (data: any) => {
+      this.teamdetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
+          return {
+            ...employee,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
+
 
   generateAbsentReport(): void {
     this.spinnerLoader1 = true;
@@ -421,11 +433,11 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
- navigation(){
+  navigation() {
     this.router.navigate(['/reports']);
   }
 
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

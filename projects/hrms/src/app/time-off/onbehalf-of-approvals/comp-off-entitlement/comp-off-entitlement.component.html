@@ -60,12 +60,12 @@
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                    <td>{{leave.entity.attendanceRequesterName}}</td>
-                    <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                    <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                    <td>{{leave.entity?.attendanceRequestFusionEmployeeId}}</td>
+                    <td>{{leave.entity?.attendanceRequesterName}}</td>
+                    <td>{{leave.entity?.attendanceRequestStartTime | dateformat}}</td>
+                    <td>{{leave.entity?.attendanceRequestDurationType}}</td>
                     <td class="text-center">
-                        @if(leave.entity.attendanceRequestDescription != null &&
+                        @if(leave.entity?.attendanceRequestDescription != null &&
                         leave.entity.attendanceRequestDescription != '') {
                         <div>
                             <a type="button" [ngbPopover]="reason">
@@ -82,14 +82,14 @@
                         }
                     </td>
                     <td class="text-center">
-                        <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                        <div *ngIf="leave.entity?.attendanceApprovalcomments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
                                 <app-info-icon />
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
                     </td>
-                    <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                    <td>{{leave.entity?.attendanceRequestAppliedDate | dateformat}}</td>
                     @if(!multiSelect && (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') ||
                     rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete'))) {
                     <td class="text-center">

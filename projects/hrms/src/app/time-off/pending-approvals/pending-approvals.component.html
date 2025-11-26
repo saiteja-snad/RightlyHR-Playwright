@@ -28,6 +28,45 @@
             </ng-template>
         </div>
         }
+        @if (router.url == '/time-off/pending-approvals/time-sheets') {
+        <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+            <div class="d-flex gap-3 align-items-center">
+                @if(isFilterApplied()) {
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                }
+                <div class="custom-date-range-picker">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
+                        selectionMode="range" [showIcon]="true" [readonlyInput]="true" [maxDate]="today">
+                    </p-datepicker>
+                </div>
+
+                <div class="custom-p-multiSelect-content">
+                    <!-- <p-select [options]="projectsData" optionLabel="displayName" optionValue="projectId" [filter]="true"
+                        [resetFilterOnHide]="true" filterBy="displayName" formControlName="projectId"
+                        placeholder="Please select project" class="form-select custom-select"
+                        (onChange)="onProjectChange($event)">
+                    </p-select> -->
+                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
+                        defaultLabel="Please select project/phase" class="form-select custom-select"
+                        (onChange)="onProjectChange($event)">
+                    </p-multiSelect>
+
+                </div>
+
+                <!-- Resource MultiSelect Dropdown -->
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
+                        defaultLabel="Please select resource"[resetFilterOnHide]="true" formControlName="resourceId"
+                        class="form-select custom-select "  (onChange)="onresourceChange($event)"></p-multiSelect>
+                </div>
+                <div>
+                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' |
+                        translate}}</button>
+                </div>
+            </div>
+        </form>
+        }
     </div>
 
     <div class="d-flex gap-3 w-100">

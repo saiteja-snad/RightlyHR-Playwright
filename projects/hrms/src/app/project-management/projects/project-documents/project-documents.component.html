@@ -1,0 +1,183 @@
+<div class="custom-main-component-container">
+    <div class="d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-project-documents-side-tabs />
+        </div>
+
+        <div class="phase-right-content">
+            <div class="custom-table-content">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        <th>Document Type</th>
+                        <th>Created Date</th>
+                        <!-- <th>File Name</th> -->
+                        <th>Attachment</th>
+                        <th class="text-center">Download</th>
+                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
+                        && inactiveStatus !== 'inactive' ){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
+                            <tr *ngFor="let data of documentdata">
+                                <td>{{data.documentType}}</td>
+                                <td>{{data.createdAt | dateformat}}</td>
+                                <!-- <td>{{data.documentName}}</td> -->
+                                <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
+                                <td class="text-center">
+                                    <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
+                                        <app-download-icon />
+                                    </span>
+                                    <ng-template #noData>-</ng-template>
+                                </td>
+                                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))
+                                && inactiveStatus !== 'inactive' ){
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <a data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </a>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            <!-- @if(rbac.allowedToAccess('Documents Tab.update')){
+                                    <li>
+                                        <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data, 'lg')">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                    } -->
+                                            @if(rbac.allowedToAccess('Documents Tab.delete')){
+                                            <li (click)="openModal(deleteconformation, data,'m')">
+                                                <a class="dropdown-item">
+                                                    <i class="bi bi-slash-circle me-2"></i>Archive
+                                                </a>
+                                            </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </td>
+                                }
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Update-->
+<ng-template #updateDocumentmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Update Documents' | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="updateDocumentForm" autocomplete="off" (ngSubmit)="UpdateDocumentdata()">
+                <div class="row">
+                    <!-- File Name -->
+                    <!-- <div class="col-md-6 mb-3">
+                        <label for="documentName" class="form-label custom-label mb-2">File Name<span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="documentName" formControlName="documentName"
+                            class="form-control custom-input" placeholder="Enter file name" />
+                        <div class="error-msg"
+                            *ngIf="updateDocumentForm.get('documentName')?.touched && updateDocumentForm.get('documentName')?.errors?.['required']">
+                            File Name is required
+                        </div>
+                        <div *ngIf="updateDocumentForm.get('documentName')?.errors?.['maxCharacters'] || updateDocumentForm.get('documentName')?.errors?.['maxlength']"
+                            class="error-msg">
+                            {{ 'File Name must be less than or equal to 100 characters' | translate }}
+                        </div>
+                        <div *ngIf="updateDocumentForm.get('documentName')?.errors?.['minCharacters'] || updateDocumentForm.get('documentName')?.errors?.['minlength']"
+                            class="error-msg">
+                            {{ 'File Name must be at least 2 characters' | translate }}
+                        </div>
+                    </div> -->
+
+                    <!-- Document Type -->
+                    <div class="col-md-6 mb-3">
+                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true" optionLabel="value"
+                                optionValue="value" formControlName="documentType" placeholder="Please select project type"
+                                class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="updateDocumentForm.get('documentType')?.touched && updateDocumentForm.get('documentType')?.invalid">
+                            Document Type is required
+                        </div>
+                    </div>
+
+                    <!-- Document Attachment -->
+                    <div class="col-md-12 mb-3">
+                        <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
+                                class="text-danger">*</span></label>
+                        <input type="file" id="documentAttachment" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
+                            (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
+                        <div class="custom-file-name text-wrap">{{ displayClientAttachment}}</div>
+                        <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
+                        <div class="error-msg" *ngIf="updateDocumentForm.get('documentUrl')?.touched && 
+                        updateDocumentForm.get('documentUrl')?.invalid">Attachment is required</div>
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid || spinnerLoader ">
+                        @if (spinnerLoader) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Update'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!--Delete-->
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4">{{'Are you sure you want to archive this Document?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--Confirmation-->
+<ng-template #confirmationpopupfornodue let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text pt-3">{{'Are you sure you want to cancel?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>

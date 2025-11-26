@@ -48,18 +48,29 @@
           <!-- <td>{{ shift.shiftName }}</td> -->
           <td>{{ shift.status }}</td>
           <td>{{ shift.addedbyName }}</td>
-          @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
+           @if(rbac.allowedToAccess('Shifts Pending Tab.update') || rbac.allowedToAccess('Shifts Pending Tab.delete')){
           <td class="text-center">
             <div class="dropdown">
               <a data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
               </a>
               <ul class="dropdown-menu custom-dropdown-menu">
+                @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
                 <li>
                   <a class="dropdown-item" (click)="updateShift(shift.id)">
+
                     <app-settings-update-icon />Update
+
                   </a>
                 </li>
+                }
+                @if(rbac.allowedToAccess('Shifts Pending Tab.delete')){
+                <li>
+                  <a class="dropdown-item" (click)="DeleteShiftDailog(deletepopup,shift)">
+                    <i class="bi bi-trash3 me-2"></i>Delete
+                  </a>
+                </li>
+                }
               </ul>
             </div>
           </td>
@@ -81,3 +92,15 @@
     }
   </div>
 </div>
+<ng-template #deletepopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to delete?' | translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes' | translate}}</button>
+    </div>
+  </div>
+</ng-template>

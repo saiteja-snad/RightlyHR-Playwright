@@ -1,0 +1,243 @@
+<div class="custom-main-component-container">
+    <div class="my-3">
+        <app-detailed-step-progressbar />
+    </div>
+
+    <div class="component-data-content">
+        <div class="component-header mb-4">Offer Letter</div>
+
+        <div class="card custom-main-sub-content p-4">
+            <div class="letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+                    <div class="letter-sub-data-content">
+                        <div>
+                            <!--page-1-->
+                            <div class="letter-page-content" id="pdfContent1">
+                                <div class="letter-page-sub-content">
+
+                                    <div class="letter-div">
+                                        <div class="text-center mb-5">
+                                            <p class="letter-header text-center">OFFER LETTER</p>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <ul class="list-style-none  letter-sub-header ps-0">
+                                                    <!--Name-->
+                                                    <li class="mb-3">To,</li>
+                                                    <li class="mb-1"
+                                                        *ngIf="!prosempdata.firstName && !prosempdata.middleName && !prosempdata.lastName;else fullname">
+                                                        Name:</li>
+                                                    <ng-template #fullname>
+                                                        <li class="mb-1">{{prosempdata.firstName}}
+                                                            {{prosempdata.middleName}}
+                                                            {{prosempdata.lastName}},</li>
+                                                    </ng-template>
+                                                    <!--Address-->
+                                                    <li class="mb-1" *ngIf="!address;else address">Employee Location:
+                                                    </li>
+                                                    <ng-template #address>
+                                                        <li class="mb-1 letter-sub-header">
+                                                            {{offerLetterData.addressLine1}},
+                                                        </li>
+                                                        @if (offerLetterData.addressLine2) {
+                                                        <li class="mb-1 letter-sub-header">
+                                                            {{offerLetterData.addressLine2}},
+                                                        </li>
+                                                        }
+                                                        <li class="mb-1 letter-sub-header">{{offerLetterData.city}},
+                                                            {{offerLetterData.state}},</li>
+                                                        <li class="mb-0 letter-sub-header">
+                                                            {{offerLetterData.country}} -
+                                                            {{offerLetterData.zipCode}}.</li>
+                                                    </ng-template>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4 letter-sub-header">
+                                                <p class="text-end p-0"> {{offerLetterData.offerSentDate | dateFormat}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="letter-sub-header mb-3">
+                                        <p>Dear {{prosempdata.firstName}} {{prosempdata.middleName}}
+                                            {{prosempdata.lastName}},</p>
+                                    </div>
+
+                                    <p class="mb-3">We are pleased to offer you contract employment in SNAD Developers
+                                        India Pvt
+                                        Ltd. as a <b>{{prosempdata?.jobRole}}</b> on a remuneration of <b>{{ selectedSymbol }} {{this.offerLetterData.currencyType}}
+                                            {{prosempdata.salary ?? 0}}<span *ngIf="offerLetterData?.currencyType === 'INR'"> /-</span> per {{prosempdata.frequency}}</b>.
+                                        You will have to submit weekly/monthly Time sheet approved by the reporting
+                                        manager.
+                                        You will be working part time as required by SNAD. Your approximate start
+                                        date with the company is {{prosempdata.dateOfJoining | dateformat}}.
+                                    </p>
+
+                                     <p class="mb-2">Please note the following details regarding your consultancy engagement </p>
+                                    <div class="dynamicdata" [innerHTML]="safeRolesAndResponsibilities">
+                                    </div>
+                                    <p>SNAD Developers India Pvt Ltd is in the business of product development and
+                                deployment and also providing technology and business consultants to various
+                                multinational companies. </p>
+                                  
+                                  
+
+                                </div>
+
+                            </div>
+
+                            <!--page-2-->
+
+
+
+                            <div class="letter-page-content my-4" id="pdfContent2">
+                                <div class="letter-page-sub-content">
+                                    <div class="pt-2">
+
+                                        <div>
+
+                                            <p><b>{{prosempdata.title}} {{prosempdata.firstName}} {{prosempdata.middleName}}
+                                                    {{prosempdata.lastName}} </b>, please sign this offer letter
+                                                along with Non-Disclosure Agreement and return them to our office to
+                                                confirm your acceptance of this offer. </p>
+
+
+                                            <p><b>Yours Sincerely</b>,</p>
+                                            <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
+                                            <div class="mb-3"></div>
+                                            <p class="letter-signature" *ngIf="offerLetterData.authorityName?.trim()">
+                                                {{offerLetterData.authorityName}}</p>
+                                            <p class="mb-1 signature "> Authorized Signatory, </p>
+                                            <p class="mb-1 signature">{{offerLetterData.authorityName}} </p>
+                                            <p class="mb-5 signature">{{authorityDesignation}} </p>
+
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <p class="signature">ACCEPTANCE</p>
+                                                </div>
+                                                <div>
+                                                    <p class="me-5 pe-5"><b>Date</b> {{currentDate|dateFormat}}</p>
+                                                </div>
+                                            </div>
+
+                                            <p>I accept this offer letter and will provide the required pre-onboarding details and documents through the portal.
+                                            </p>
+                                            <p class="mt-4">Signature: <span
+                                                    class="letter-signature">{{prosempdata.firstName}}
+                                                    {{prosempdata.middleName}}
+                                                    {{prosempdata.lastName}} </span></p>
+                                            <p>Name: {{prosempdata.firstName}} {{prosempdata.middleName}}
+                                                {{prosempdata.lastName}}</p>
+                                            <p>Date: {{currentDate|dateFormat}}</p>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-btn-content d-flex justify-content-between gap-3 pt-3">
+                <div>
+                    <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Onboarding
+                        Documents</button>
+                </div>
+
+                <div class="d-flex gap-3">
+
+                    @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
+                    <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
+                    }
+                    @if(this.updatedOfferLetterDetails?.candidateStatus == null || this.updatedOfferLetterDetails?.candidateStatus == ''){
+                    <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
+                    }
+                    @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+                    <button class="custom-btn accepted-btn px-5">Accepted</button>
+                    }
+                    @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
+                    }
+                    @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+                    <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
+                    }
+                    @if(this.updatedOfferLetterDetails.candidateStatus!=='Offer Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                    }
+
+                    @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
+                    <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Offer letter accept popup-->
+<ng-template #acceptpopup let-modal>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <div class="custom-main-popup-content text-center">
+            <div class="mb-5">
+                <img src="images\conformation.png" alt="Confirmation icon" class="confirmation-icon mb-3">
+                <p class="confirmation-text">Are you sure you want to accept offer?</p>
+            </div>
+            <div class="d-flex gap-5 w-100">
+                <button class="custom-btn btn-secondary w-50" (click)="closeModal()">Close</button>
+                <button class="custom-btn btn-primary w-50" (click)="acceptoffer()" [disabled]="loadingcircle">
+                    @if(!loadingcircle){ Yes }
+                    @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div> Submitting</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Reject popup-->
+<ng-template #rejectpopup let-modal>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="submitRejectReason()">
+            <div class="custom-main-popup-content">
+                <div class="text-center mb-3">
+                    <img src="images\reject.png" alt="reject Icon" class="confirmation-icon mb-3">
+                    <p class="confirmation-text">Are you sure you want to reject offer?</p>
+                </div>
+                <div class="mb-3">
+                    <label for="documentType" class="form-label custom-label mb-2">Enter reason<span
+                            class="error-msg">*</span></label>
+                    <textarea type="note" name="rejectReason" class="form-control custom-input"
+                        formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
+                        id="rejectReason" autocomplete="off" required></textarea>
+                    <div class="error-msg py-1"
+                        *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is
+                            required</ng-container>
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not
+                            allowed</ng-container>
+
+                    </div>
+                    <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['required']"> {{'Reject Reason is required'| translate}}</ng-container>
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
+                    </div> -->
+                    <div class="count-text text-end w-100 py-1"><span>{{
+                            rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="closeModal()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4"
+                        [disabled]="rejectForm.invalid">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>

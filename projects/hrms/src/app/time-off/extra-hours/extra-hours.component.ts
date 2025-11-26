@@ -1,0 +1,173 @@
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
+import { HttpService } from '../../services/http.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../services/form-validations.service';
+import { RbacService } from '../../services/rbac.service';
+import { Select } from 'primeng/select';
+import { CommonModule } from '@angular/common';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ExtraHoursTabsComponent } from "../../shared/time-off-module-tabs/extra-hours-tabs/extra-hours-tabs.component";
+
+@Component({
+  selector: 'app-extra-hours',
+  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent],
+  templateUrl: './extra-hours.component.html',
+  styleUrl: './extra-hours.component.scss',
+  encapsulation: ViewEncapsulation.None,
+})
+export class ExtraHoursComponent implements OnInit {
+  moduleinfo: string = '';
+  subscription!: Subscription;
+  ApprovedCount = 0;
+  rejectedCount = 0;
+  ProcessedCount = 0;
+  pendingCount = 0;
+  regularize = [];
+  emp: any;
+  getEmployeeInfo: any;
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+  activeEmplist = [] as any;
+
+  constructor(private http: HttpService, public rbac: RbacService, public formsValidation: FormValidationsService,
+    public readonly router: Router, private TimeoffYearFilterService: TimeoffYearFilterService) { }
+
+  ngOnInit(): void {
+    this.emp = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getTeamManagersDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+    this.getAllEmployeeDetails();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  getAllEmployeeDetails() {
+    const status = ['Active', 'Trainee Active', 'Active Contract'];
+
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res
+          // Exclude logged-in employee
+          .filter((employee: any) => employee.employeeId !== this.emp.employeeId)
+          // Then map the remaining
+          .map((employee: any) => ({
+            label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+            value: employee.employeeId
+          }));
+      },
+    });
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/extra-hours': MODULE_INFOS.ATTENDANCE_EXTRA_HOURS_MODULE_INFO
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  // function to get the data of employees by hierarchy
+  getTeamManagersDetails() {
+    const EmployeeId = this.emp.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (Array.isArray(response) && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam
+              .map((employee: any) => ({
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+              }))
+              //  Alphabetical sorting by firstName
+              .sort((a: any, b: any) =>
+                a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+              );
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          this.getEmployeeInfo = [];
+        },
+      });
+  }
+
+  onCheckemployee(employeedId: any) {
+    this.http.setEmployeeIdRegularization(employeedId);
+    this.ProcessedCount = 0;
+    this.rejectedCount = 0;
+    this.ApprovedCount = 0;
+    this.pendingCount = 0;
+    this.regularize = [];
+    if (employeedId) {
+      this.getPermission(employeedId);
+    } else {
+      this.http.setEmployeeIdRegularization(null);
+      this.getPermission(this.emp.employeeId);
+    }
+  }
+
+  getPermission(employeedId?: any) {
+    // let empId = this.empinfo.employeeId;
+    // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({
+    let empId = employeedId
+    this.subscription = this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).subscribe({
+      next: (response: any) => {
+        this.regularize = response;
+        this.regularize.forEach((element: { status: string }) => {
+          if (element.status === 'Waiting for Approval') {
+            this.pendingCount++;
+          }
+          if (element.status === 'Approved') {
+            this.ApprovedCount++;
+          }
+          if (element.status === 'Rejected') {
+            this.rejectedCount++;
+          }
+          if (element.status === 'Processed') {
+            this.ProcessedCount++;
+          }
+        });
+      },
+      error: (reason: any) => console.log(reason)
+    })
+  }
+}

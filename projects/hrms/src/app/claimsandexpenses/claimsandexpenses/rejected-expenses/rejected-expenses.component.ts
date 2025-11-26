@@ -13,15 +13,16 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
 
-export class RejectedExpensesComponent implements OnInit ,OnDestroy {
+export class RejectedExpensesComponent implements OnInit, OnDestroy {
   empinfo: any
   subscription!: Subscription;
   ExpenseImageUrl: any;
@@ -32,15 +33,38 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   updataid!: number;
   loading = false;
   searchTerm: any = '';
+  selectemp: any;
+  selectedYear: any;
+  seletedMouthly: any;
+  selectedData = {} as any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
-  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid();
-  }
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;
 
+          }
+        })
+
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    });
+  }
   openModalcomments(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -52,21 +76,29 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   comments_Function(comments: any) {
     this.commentsrecivced = comments;
   }
+  //download expenses popup open function
+  openpopupforDownload(content: any, expenseDetails: any) {
+    this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
+  }
 
   getexpensesheaderbyemployeeid(): void {
+    let empId = this.selectemp ?? this.empinfo?.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Rejected&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata.next(data)
           this.loading = false
+          const filteredData = data.filter((item: any) => !item.expenseSummary);
+          this.expenesEmplyeedata.next(filteredData)
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
+  
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({

@@ -109,8 +109,8 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.employeedetails = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
-        }));
+          fullName: `${employee.fusionEmpId ? employee.fusionEmpId + '-' :''}  ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (reason: any) => {
         console.log(reason);
@@ -126,7 +126,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
         this.authorityDetails = data.map((authoruty: any) => ({
           ...authoruty,
           fullName: `${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
-        }));
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       }
     })
   }

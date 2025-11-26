@@ -21,7 +21,7 @@
 }
 
 .substatus-card {
-  border: 0.5px solid #305889;
+  border: 0.5px solid;
   font-weight: 500;
   font-size: var(--fontsize10);
   color: #305889;
@@ -135,4 +135,23 @@
   .max-width {
     width: 120px !important;
   }
+}
+
+.break-line {
+  width: 0.125rem;
+  height: auto;
+  background-color: var(--primary-color);
+}
+
+.custom-text {
+  color: #8F8F8F;
+}
+
+.log-extra-hrs {
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 13px;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  color: #FF6D48;
 }

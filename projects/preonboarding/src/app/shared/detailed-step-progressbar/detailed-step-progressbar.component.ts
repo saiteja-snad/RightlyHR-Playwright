@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-detailed-step-progressbar',
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrl: './detailed-step-progressbar.component.scss'
 })
 
-export class DetailedStepProgressbarComponent {
+export class DetailedStepProgressbarComponent implements OnInit, OnDestroy{
   currentStep = 1;
   currentStepp = 1;
   a = false;
@@ -22,8 +22,9 @@ export class DetailedStepProgressbarComponent {
     { id: 4, name: 'Academics' },
     { id: 5, name: 'Emergency Contacts' },
     { id: 6, name: 'Employment History' },
-    { id: 7, name: 'Review' },
-    { id: 8, name: 'Appointment Letter' },
+    // { id: 7, name: 'Non-Disclosure Agreement Letter' },
+    // { id: 8, name: 'Review' },
+    
   ];
 
   step2 = [
@@ -31,7 +32,20 @@ export class DetailedStepProgressbarComponent {
     { id: 2, name: 'Onboarding Documents' },
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) { 
+     this.prosempdata = JSON.parse(
+       localStorage.getItem('prospectiveemppersonaldata') || '{}'
+     );
+     if (this.prosempdata.empstatus.toLowerCase() == 'prospective contract' && (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+       this.steps.push(
+         { id: 7, name: 'Non-Disclosure Agreement Letter' },
+         { id: 8, name: 'Review' }
+       );
+     } else {
+       this.steps.push({ id: 7, name: 'Review' });
+     }
+     console.log(this.steps)
+  }
 
   ngOnInit(): void {
     const storedStep = localStorage.getItem('currentStep');

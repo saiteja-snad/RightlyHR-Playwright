@@ -1,0 +1,57 @@
+@if(rbac.allowedToAccess('Documents History Non-Disclosure Agreement Letter.view')){
+<div class="custom-main-component-container">
+    <div class="d-flex gap-3 justify-content-between align-items-center mb-2">
+        <div class="input-group custom-search">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i></span>
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search by employee name  " aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        
+        <div class="custom-year-month-picker">
+            <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year" [selectOtherMonths]="true"
+                (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
+                [readonlyInput]="true" [maxDate]="maxMonth">
+            </p-datepicker>
+        </div>
+    </div>
+    
+    <div class="custom-table-content">
+        @if(!dataloader){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">{{'Date'|translate}}</th>
+                    <th>{{'Employee Name'|translate}}</th>
+                    <th class="text-center">{{'Action'|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(ndaLetters.length > 0){
+                @for (ndaLetter of ndaLetters| ndaletter : searchValue; ; track
+                ndaLetter.id){
+                <tr>
+                    <td>{{ndaLetter.ndaSentDate | dateformat }}</td>
+                    <td>{{ndaLetter.employeeName ?ndaLetter.employeeName:'-'}}</td>
+                    <td class="text-center">
+                        <span (click)="onSelectDownload(ndaLetter)">
+                            <img src="/icons/Download.png" alt="Icon" class="download-icon">
+                        </span>
+                    </td>
+                </tr>
+                }
+                }
+                @else {
+                <tr>
+                    <app-no-data-found />
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>
+}

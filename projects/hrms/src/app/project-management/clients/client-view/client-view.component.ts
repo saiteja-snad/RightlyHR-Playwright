@@ -190,8 +190,18 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const currentTab = projectTabs.find(tab => url.includes(tab));
 
     if (currentTab && currentTab !== this.previousTabUrl) {
-      this.clearAllFilters();  // ← Auto clear when switching tabs
+      this.clearAllFilters();
       this.previousTabUrl = currentTab;
+    }
+
+    const resourceTabs = [
+      '/clients/details/resources',
+      '/clients/details/inactive-resources'
+    ];
+
+    const currentResourceTab = resourceTabs.find(tab => url.includes(tab));
+    if (currentResourceTab) {
+      this.clearResourceFilters();
     }
   });
   }

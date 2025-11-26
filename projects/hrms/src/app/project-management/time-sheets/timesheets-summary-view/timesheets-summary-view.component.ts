@@ -31,11 +31,12 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
 import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
+import { Chip } from 'primeng/chip';
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
     NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent,
-    ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,MultiSelectModule],
+    ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,MultiSelectModule,Chip],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -239,6 +240,57 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.closeCanvas();
   }
 
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+    const formValue = this.datepickerForm.value;
+
+    if (formValue.projectId && formValue.projectId.length > 0) {
+      formValue.projectId.forEach((id: any) => {
+        const project = this.projectDetails.find((p: any) => p.projectId === id);
+        if (project) {
+          filters.push({ type: 'projectId', label: project.projectName, value: id });
+        }
+      });
+    }
+
+    if (formValue.clientId && formValue.clientId.length > 0) {
+      formValue.clientId.forEach((id: any) => {
+        const client = this.clientDetails.find((c: any) => c.clientId === id);
+        if (client) {
+          filters.push({ type: 'clientId', label: client.clientName, value: id });
+        }
+      });
+    }
+
+    if (formValue.departmentId && formValue.departmentId.length > 0) {
+      formValue.departmentId.forEach((id: any) => {
+        const dept = this.departmentDetails.find((d: any) => d.sno === id);
+        if (dept) {
+          filters.push({ type: 'departmentId', label: dept.departmentName, value: id });
+        }
+      });
+    }
+
+    if (formValue.tmorrmId && formValue.tmorrmId.length > 0) {
+      formValue.tmorrmId.forEach((id: any) => {
+        const tm = this.tmandRmDetails.find((t: any) => t.employeeId === id);
+        if (tm) {
+          filters.push({ type: 'tmorrmId', label: tm.fullName, value: id });
+        }
+      });
+    }
+
+    return filters;
+  }
+
+  removeFilter(filter: any) {
+    const formValue = this.datepickerForm.value;
+    const currentValues = formValue[filter.type] || [];
+    const updatedValues = currentValues.filter((v: any) => v !== filter.value);
+    this.datepickerForm.patchValue({ [filter.type]: updatedValues });
+    this.getAllEmployeeDetails();
+  }
+
   setDefaultmounth() {
     // Define current month's start & end
     const startOfMonth = dayjs().startOf('month').toDate();
@@ -346,6 +398,10 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         const employees = res.data || res || [];
         if (Array.isArray(employees)) {
           this.activeEmplist = this.sharedDataService.formatEmployeeList(employees, EmployeeId);
+          const currentResourceId = this.datepickerForm.get('resourceId')?.value;
+          if (currentResourceId && !this.activeEmplist.some((emp: any) => emp.value === currentResourceId)) {
+            this.datepickerForm.patchValue({ resourceId: null });
+          }
         } else {
           this.activeEmplist = [];
         }
@@ -355,6 +411,23 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         this.activeEmplist = [];
       },
     });
+  }
+
+  isApplyDisabled(): boolean {
+    const formValue = this.datepickerForm.value;
+    const resourceId = formValue.resourceId;
+    if (this.datepickerForm.invalid || !resourceId) {
+      return true;
+    }
+    if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
+      return !this.activeEmplist || this.activeEmplist.length === 0 || 
+             !this.activeEmplist.some((emp: any) => emp.value === resourceId);
+    }
+    if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
+      return !this.resourcesList || this.resourcesList.length === 0 || 
+             !this.resourcesList.some((emp: any) => emp.id === resourceId);
+    }
+    return false;
   }
 
   navigatetomy() {

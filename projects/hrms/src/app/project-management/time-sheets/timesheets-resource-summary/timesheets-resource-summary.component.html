@@ -61,8 +61,9 @@
                     </div>
                     }
 
-                    <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" 
-                        [disabled]="!datepickerForm.get('resourceId')?.value">{{'Apply' | translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
+                        {{'Apply' | translate}}
+                    </button>
 
                     <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
@@ -72,6 +73,17 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Filter Chips Display -->
+    <div class="fliter-content mb-2" *ngIf="getSelectedFilters().length > 0">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <p-chip *ngFor="let filter of getSelectedFilters()" [label]="filter.label" 
+                [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red"/>
+            <button type="button" class="clear-all-btn" (click)="resetForm()">
+                {{ 'Clear All' | translate }}
+            </button>
         </div>
     </div>
 

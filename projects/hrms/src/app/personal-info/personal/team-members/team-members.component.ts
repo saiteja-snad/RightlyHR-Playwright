@@ -50,10 +50,11 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
   selectedData: any = {};
   teamMembersdata: any[] = [];
   spinnerLoader = false;
-  getTeamMemberArray: any[] = [];
+
   departmentDetails = [] as IDepartment[];
   teamDropdownValues: any[] = [];
   teamMemberArray: any[] = [];
+    getTeamMemberArray: any[] = [];
   requestForm!: FormGroup;
   foremployeeForm!: FormGroup;
   teamManagerDropdownValues: any[] = [];

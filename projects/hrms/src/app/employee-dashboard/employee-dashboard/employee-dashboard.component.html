@@ -21,16 +21,28 @@
 
                     <!-- Team Availability -->
                     <div class="content-card">
-                        <div class="section-title">My Team Availability</div>
+                        <p class="section-title">My Team Availability</p>
                     </div>
                     <!-- Today's Time Entry -->
                     <div class="content-card">
-                        <div class="section-title">Today's Time Entry</div>
+                        <p class="section-title">Today's Time Entry</p>
                     </div>
 
                     <!-- Consumed Leave Types -->
                     <div class="content-card">
-                        <div class="section-title">Consumed Leave Types</div>
+                        <p class="section-title">Consumed Leave Types</p>
+                        <div class="leave-box" *ngFor="let leave of leavesList">
+                            <div class="leave-row">
+                                <div class="leave-name">{{ leave.name }}</div>
+
+                                <div class="progress-container">
+                                    <div class="progress-bar" [style.width.%]="leave.percentage"></div>
+                                </div>
+
+                                <span class="leave-count"><b>{{ leave.used }}</b>/{{ leave.allowed }}</span>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -45,8 +57,8 @@
 
                 <div class="members-list">
                     <div class="member-card " *ngFor="let emp of teamMembers">
-                        <div class="text-center">
-                            <img [src]="emp.photo" class="member-photo" />
+                        <div class="text-center  member-data">
+                            <img [src]="emp.photo ?? 'images/alternate.png'" class="member-photo" />
                             <div class="member-name">{{ emp.name }}</div>
                             <div class="member-role">{{ emp.role }}</div>
                         </div>
@@ -100,12 +112,13 @@
                     <div class="d-flex justify-content-center align-content-center">
                         <img src="icons\brithday.png" alt="" class="brithday-icon">
                     </div>
-                    <div *ngFor="let item of anniversaries">
-                        <div class="d-flex  gap-1">
+                    <div *ngFor="let item of anniversaries" class="mb-2">
+                        <div class="d-flex  gap-1 ">
                             <div class="circular-dot circle-workanniversary"></div>
-                            <div class="item-name mb-1">{{ item.name }}</div>
+                            <div class="item-name mb-1"> {{ item.firstName }} {{ item.lastName }} , {{
+                                getSuffix(item.anniversaryYearCount) }} Work Anniversary</div>
                         </div>
-                        <div class="item-date mb-1">{{ item.date }}</div>
+                        <div class="item-date mb-1"> {{ item.dateOfJoining | dateformat}}</div>
                     </div>
                 </div>
             </div>
@@ -115,12 +128,15 @@
                     <div class="d-flex justify-content-center align-content-center">
                         <img src="icons\brithday.png" alt="" class="brithday-icon">
                     </div>
-                    <div *ngFor="let item of anniversaries">
-                        <div class="d-flex  gap-1">
-                            <div class="circular-dot circle-brithday"></div>
-                            <div class="item-name mb-1">{{ item.name }}</div>
+                    <div *ngFor="let item of birthdays">
+                        <div class="mb-2">
+                            <div class="d-flex  gap-1 ">
+                                <div class="circular-dot circle-brithday"></div>
+                                <div class="item-name mb-1">{{ item.firstName }} {{item.middleName}} {{item.lastName}}
+                                </div>
+                            </div>
+                            <div class="item-date ">{{ item.dob | dateformat }}</div>
                         </div>
-                        <div class="item-date mb-1">{{ item.date }}</div>
                     </div>
                 </div>
             </div>

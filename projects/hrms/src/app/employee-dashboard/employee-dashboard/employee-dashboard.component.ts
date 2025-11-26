@@ -10,13 +10,14 @@ import { Component } from '@angular/core';
 export class EmployeeDashboardComponent {
   greetingMessage = ''
   employeedata: any;
+   currentTime: Date = new Date();
    // TEAM MEMBERS
   teamMembers = [
-    { name: 'Ravi Kumar', role: 'UI Developer', photo: 'assets/user1.png' },
-    { name: 'Sita Devi', role: 'QA Analyst', photo: 'assets/user2.png' },
-    { name: 'Arjun R', role: 'Backend Engineer', photo: 'assets/user3.png' },
-    { name: 'Divya S', role: 'Project Lead', photo: 'assets/user4.png' },
-    { name: 'Manoj T', role: 'DevOps Engineer', photo: 'assets/user5.png' },
+    { name: 'Ravi Kumar', role: 'UI Developer', photo: 'icons/employe-img.png' },
+    { name: 'Sita Devi', role: 'QA Analyst', photo: 'icons/employe-img.png' },
+    { name: 'Arjun R', role: 'Backend Engineer', photo: 'icons/employe-img.png'},
+    { name: 'Divya S', role: 'Project Lead', photo: 'icons/employe-img.png' },
+    { name: 'Manoj T', role: 'DevOps Engineer', photo:'icons/employe-img.png' },
   ];
 
   // GENDER DIVERSITY
@@ -31,7 +32,7 @@ export class EmployeeDashboardComponent {
     { day: 'Wed', time: '07:45' },
     { day: 'Thu', time: '08:00' },
     { day: 'Fri', time: '06:55' },
-  ];
+  ];  
 
   // TEAM AVAILABILITY CHART (DUMMY)
   teamAvailability = {
@@ -57,13 +58,16 @@ export class EmployeeDashboardComponent {
   anniversaries = [
     { name: 'Rahul Verma', date: 'Dec 10' },
     { name: 'Kavya R', date: 'Dec 14' },
-    { name: 'Srinivas', date: 'Dec 20' }
+    { name: 'Srinivas', date: 'Dec 20' },
+    { name: 'Srinivas', date: 'Dec 20' },
+    { name: 'Anita Singh', date: 'Dec 20' }
   ];
   ngOnInit(): void {
     this.setIconBasedOnTime();
       this.employeedata = JSON.parse(
       localStorage.getItem('rightlyHrUser') || '{}'
     );
+        this.currentTime = new Date();
   }
 
   setIconBasedOnTime() {

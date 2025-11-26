@@ -82,6 +82,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   verifiedExpenseIds: number[] = [];
   verifyModalRef: NgbModalRef | null = null;
   isVerified: boolean = false;
+  selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
@@ -110,7 +111,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-      this.LOGIN = null;
+    this.LOGIN = null;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
 
@@ -122,6 +123,19 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       this.expenses.next([]);
     }
   }
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
+   onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
@@ -130,6 +144,12 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.maxLength(250)],
       ],
     });
+        this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
+
   }
 
   intializeRejectForm() {
@@ -139,49 +159,66 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.maxLength(250)],
       ],
     });
+       this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
   intializeVerifyForm() {
     this.verifyForm = this.fb.group({
-      comments: [
-        '',
-        [Validators.required, Validators.maxLength(250)],
-      ],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    // Remove chip highlight if comment is cleared manually
+    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
     });
   }
 
- getAllPendingApprovals() {
-  if (!this.LOGIN || !this.LOGIN.employeeId) {
-    this.expenseheaderpending = [];
-    this.expenses.next([]);
-    this.loading = false;
-    return;
+  onStatusVerifySelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'verified') {
+      this.verifyForm.get('comments')?.setValue('Verified');
+    }
   }
 
-  this.loading = true;
-  let EmployeeId = parseInt(this.LOGIN.employeeId);
+  getAllPendingApprovals() {
+    if (!this.LOGIN || !this.LOGIN.employeeId) {
+      this.expenseheaderpending = [];
+      this.expenses.next([]);
+      this.loading = false;
+      return;
+    }
 
-  this.http
-    .getData(`PendingApproval/employee/${EmployeeId}?moduleId=19`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response: any) => {
-        this.loading = false;
+    this.loading = true;
+    let EmployeeId = parseInt(this.LOGIN.employeeId);
 
-        if (response?.data?.length > 0) {
-          this.expenseheaderpending = (response.data as ExpenseApprovalResponse[])
-            .filter(item =>
-              item.approvalHeader.status !== 'Processed' &&
-              item.approvalHeader.status !== 'Rejected'
-            );
-        } else {
-          this.expenseheaderpending = [];
-          this.expenses.next([]);
-        }
-      },
-      error: () => { this.loading = false; },
-      complete: () => { this.loading = false; },
-    });
-}
+    this.http
+      .getData(`PendingApproval/employee/${EmployeeId}?moduleId=19`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.loading = false;
+
+          if (response?.data?.length > 0) {
+            this.expenseheaderpending = (response.data as ExpenseApprovalResponse[])
+              .filter(item =>
+                item.approvalHeader.status !== 'Processed' &&
+                item.approvalHeader.status !== 'Rejected'
+              );
+          } else {
+            this.expenseheaderpending = [];
+            this.expenses.next([]);
+          }
+        },
+        error: () => { this.loading = false; },
+        complete: () => { this.loading = false; },
+      });
+  }
 
 
   openModal(content: any) {
@@ -475,40 +512,40 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.selectedItem = item; // store clicked item
   }
 
- handleVerify(verifyForm: FormGroup): void {
-  if (!verifyForm.valid || !this.selectedItem) return;
-  const formData = verifyForm.value;
-  const verifiedItem = this.selectedItem;
-  const requestBody = {
-    isVerified: true,
-    verifiedBy: this.empinfo.employeeId?.toString(),
-    verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
-    comments: formData.comments
-  };
-  this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        this.verifyModalRef?.close();
-        this.sharedModalService.openSuccessModal('Expense item verified successfully');
-        if (this.expenseheaderiteams?.expenseitem?.length) {
-          const idx = this.expenseheaderiteams.expenseitem.findIndex(
-            it => it.expenseitem_id === verifiedItem.expenseitem_id
-          );
-          if (idx > -1) {
-            this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+  handleVerify(verifyForm: FormGroup): void {
+    if (!verifyForm.valid || !this.selectedItem) return;
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments
+    };
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openSuccessModal('Expense item verified successfully');
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
           }
+          this.selectedItem = null;
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+          this.getAllPendingApprovals();
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.message || 'Verification failed');
         }
-        this.selectedItem = null;
-        this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
-        this.getAllPendingApprovals();
-      },
-      error: (err: any) => {
-        this.verifyModalRef?.close();
-        this.sharedModalService.openErrorModal(err?.error?.message || 'Verification failed');
-      }
-    });
-}
+      });
+  }
 
 
 

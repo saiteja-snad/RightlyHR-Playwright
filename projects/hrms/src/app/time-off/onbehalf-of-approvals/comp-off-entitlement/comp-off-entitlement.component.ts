@@ -52,6 +52,7 @@ export class CompOffEntitlementComponent {
   rejectForm!: FormGroup;
   spinnerLoader = false;
   searchValue: any | null;
+  selectedLeaveStatus: any;
   selectedLeavesItems: AttendanceRequest[] = [];
   dataLoad = false;
   responseSummary!: any;
@@ -101,12 +102,36 @@ export class CompOffEntitlementComponent {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
+      this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
+      this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+     });
+  }
+  onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+
+  if (status === 'approved') {
+    this.approveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
   }
 
   getAllPendingApprovals() {

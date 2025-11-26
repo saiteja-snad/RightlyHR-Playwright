@@ -83,6 +83,7 @@ export class PermissionsComponent {
   searchValue: any | null;
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
+    selectedLeaveStatus: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -213,6 +214,19 @@ export class PermissionsComponent {
 
     this.selectedLeavesItems = [...value];
   }
+ onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
+   onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    }
+  }
 
 
   private updateTableSelectionState(selectedItems: any[]) {
@@ -244,6 +258,11 @@ export class PermissionsComponent {
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+       this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   intializeRejectForm() {
@@ -253,6 +272,11 @@ export class PermissionsComponent {
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+       this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   getAllPendingApprovals() {

@@ -19,6 +19,9 @@ import { RbacService } from '../../../services/rbac.service';
 import { DocumentData } from '../../../Interfaces/document.model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+
+import { FormValidationsService } from '../../../services/form-validations.service';
+
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
@@ -45,7 +48,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   // For modal view
   @ViewChild('viewmodel') viewmodel!: NgbModal;
 
-  constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
+  constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router, public formvalidation: FormValidationsService,
     private conformationPopup: OpenModalService, private modalService: NgbModal, public rbac: RbacService) { this.intitalizeForm(); }
 
   ngOnInit(): void {
@@ -75,10 +78,10 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   intitalizeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
     this.reRequestForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
   }
 
@@ -223,8 +226,13 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   submitRejectReason(data: any) {
     this.rejectionData = data;
   }
-
-  updaterejectdocs() {
+isSubmitting = false;
+  updaterejectdocs(modal: any) {
+    this.isSubmitting = true;
+     if (this.rejectDocument.invalid) {
+    this.rejectDocument.markAllAsTouched();
+    return;
+  }
     // Setting the status for Reject button
     let loggedInUser = this.authService.getToken();
     this.rejectionData.status = 'Rejected';
@@ -232,15 +240,17 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.rejectionData.reason = this.rejectDocument.get('comments')?.value;
     this.http.postdata('OnBoardingDocuments/Update', this.rejectionData).subscribe({
       next: (updatedData: any) => {
-        this.conformationPopup.openSuccessModal('Document rejected successfully');
+         this.isSubmitting = false;
+        modal.close(); 
         setTimeout(() => {
-          this.rejectDocument.reset();
-          this.modalService.dismissAll();
-          this.getdocumentdeatilsbyempid();
-          this.getEmployeeId();
-        }, 2000);
+        this.conformationPopup.openSuccessModal('Document rejected successfully');
+        this.rejectDocument.reset();
+        this.getdocumentdeatilsbyempid();
+        this.getEmployeeId();
+      }, 150);
       },
       error: (reason: any) => {
+         this.isSubmitting = false;
         this.conformationPopup.openErrorModal(reason.error.Message
         );
       },

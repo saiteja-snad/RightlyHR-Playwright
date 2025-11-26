@@ -22,8 +22,8 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-team-timesheets',
-  imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, InfoIconComponent, DateformatPipe],
+  imports: [TimesheetsTabsComponent,NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, DateformatPipe],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })

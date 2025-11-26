@@ -103,7 +103,7 @@
                                 <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{
                                     'color': day.dailySummary.colour, 'background': day.dailySummary.backgroundColor}">
                                     <div class="d-flex flex-column align-items-center gap-2">
-                               
+
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
                                         <div class="cursor"
                                             (click)="openModal(day.entries, summaryforlogs, emp.employee.name)">
@@ -216,8 +216,7 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Client Name</th>
-
+                                <th>Project Details</th>
                                 <th>Logged Hours</th>
                                 <th>Approver</th>
                                 <th>Description</th>
@@ -229,25 +228,50 @@
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center flex-column">
 
-                                        <div class="project-name-chip text-truncate"><b  [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
+                                        <div class="project-name-chip text-truncate mb-1" type="button"
+                                            [ngbPopover]="projectname"><b
+                                                [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
                                                 entry.projectName }}</b></div>
+                                        <ng-template #projectname>
+                                            <p class="mb-0" [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">
+                                                <b>{{ entry.projectName }}</b>
+                                            </p>
+                                        </ng-template>
+
                                         <div class="d-flex flex-wrap align-items-center  justify-content-center gap-2">
 
-
-                                            <div class="timesheet-chip chip-truncate  text-truncate"
-                                             [style.background]="getLighterColor(entry?.meta?.graphData?.color) "
-                                              [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"  
-                                                [style.border-color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">
+                                            <div class="timesheet-chip chip-truncate  text-truncate" type="button"
+                                                [ngbPopover]="clientname"
+                                                [style.background]="getLighterColor(entry?.clientMeta?.graphData?.color) "
+                                                [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"
+                                                [style.border-color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
                                                 {{
                                                 entry.clientName }}</div>
 
+                                            <ng-template #clientname>
+                                                <p class="mb-0 text-popover"
+                                                    [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                    <b>{{ entry.clientName }}</b>
+                                                </p>
+                                            </ng-template>
 
-                                            <div *ngIf="entry?.phaseName"  class="timesheet-chip chip-truncate  text-truncate"
-                                             [style.background]="getLighterColor(entry?.meta?.graphData?.color) "
+
+                                            <div *ngIf="entry?.phaseName"
+                                                class="timesheet-chip chip-truncate  text-truncate" type="button"
+                                                [ngbPopover]="phasename"
+                                                [style.background]="getLighterColor(entry?.phaseMeta?.graphData?.color) "
                                                 [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
-                                                [style.border-color]="entry?.meta?.graphData?.color ?? '#0B3A83'">
+                                                [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
                                                 {{ entry?.phaseName }}
                                             </div>
+
+                                            <ng-template #phasename>
+                                                <p class="mb-0 text-popover"
+                                                    [style.color]="entry?.phaseMeta?.graphData?.color  ?? '#0B3A83'">
+                                                   <b> {{ entry.phaseName }}</b>
+                                                </p>
+                                            </ng-template>
+
                                         </div>
                                     </div>
                                 </td>

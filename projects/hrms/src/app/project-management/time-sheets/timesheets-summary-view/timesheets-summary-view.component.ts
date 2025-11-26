@@ -520,7 +520,26 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
-
+  
+  getLighterColor(color: string, amount: number = 0.9): string {
+  if (!color) return color || '#d8d8daff'; // Default color if none provided;
+  
+  // Remove # if present
+  const hex = color.replace('#', '');
+  
+  // Parse RGB values
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Calculate lighter values
+  const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+  const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+  const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+  
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+}
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

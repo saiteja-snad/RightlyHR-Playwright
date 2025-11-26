@@ -325,25 +325,29 @@
 
 
 .timesheet-chip {
-    font-size: var(--fontsize8) !important;
+    font-size: 8.5px !important;
+    border: 1px solid;
     border-radius: 0.25rem;
-    padding: 0.125rem 0.25rem;
-    text-align: center;
-    border: 1px solid ;
-    background: #FFF;
+    line-height: 100%;
+    padding: 0.125rem;
 }
-.project-name {
-  max-width: 160px;   // set width you want
-  display: inline-block; 
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+
+.text-popover {
+    font-size: 10px !important;
+}
+
+.project-name-chip {
+    max-width: 80px; // set width you want
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .chip-truncate {
-  max-width: 140px;   // chip width
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    max-width: 60px; // chip width
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

@@ -110,6 +110,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+      this.LOGIN = null;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
 
@@ -117,6 +118,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       this.LOGIN = storedEmployee;
       this.getAllPendingApprovals();
     } else {
+      this.expenseheaderpending = [];
       this.expenses.next([]);
     }
   }
@@ -147,37 +149,40 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllPendingApprovals() {
-    this.loading = true;
-    let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=19`
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.loading = false;
-
-          if (response?.data?.length > 0) {
-            this.expenseheaderpending = (response.data as ExpenseApprovalResponse[]).filter(
-              (item) =>
-                item.approvalHeader.status !== 'Processed' &&
-                item.approvalHeader.status !== 'Rejected'
-            );
-          } else {
-            this.expenseheaderpending = [];
-          }
-        },
-        error: (reason) => {
-          this.loading = false;
-          console.error('Error fetching expense approvals:', reason);
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+ getAllPendingApprovals() {
+  if (!this.LOGIN || !this.LOGIN.employeeId) {
+    this.expenseheaderpending = [];
+    this.expenses.next([]);
+    this.loading = false;
+    return;
   }
+
+  this.loading = true;
+  let EmployeeId = parseInt(this.LOGIN.employeeId);
+
+  this.http
+    .getData(`PendingApproval/employee/${EmployeeId}?moduleId=19`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.loading = false;
+
+        if (response?.data?.length > 0) {
+          this.expenseheaderpending = (response.data as ExpenseApprovalResponse[])
+            .filter(item =>
+              item.approvalHeader.status !== 'Processed' &&
+              item.approvalHeader.status !== 'Rejected'
+            );
+        } else {
+          this.expenseheaderpending = [];
+          this.expenses.next([]);
+        }
+      },
+      error: () => { this.loading = false; },
+      complete: () => { this.loading = false; },
+    });
+}
+
 
   openModal(content: any) {
     this.modalService.open(content, {
@@ -510,5 +515,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    localStorage.removeItem('onbehalfofaproverData');
   }
 }

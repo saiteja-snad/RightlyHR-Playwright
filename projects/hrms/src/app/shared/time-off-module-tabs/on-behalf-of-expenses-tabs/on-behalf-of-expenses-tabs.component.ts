@@ -80,6 +80,12 @@ export class OnBehalfOfExpensesTabsComponent {
   constructor(private http: HttpService, private rbac: RbacService, private router: Router, private SelectedyeartimeOffService: TimeoffYearFilterService) {
   }
   ngOnInit(): void {
+    this.selectemp = null;
+    this.expenesEmplyeedata.next([]);
+    this.flitredapproved.next([]);
+    this.flitredpending.next([]);
+    this.processedExpenses.next([]);
+    this.flitredrejected.next([]);
 
     this.navTabs = this.allTabs.filter(tab =>
       tab.permission &&
@@ -87,9 +93,11 @@ export class OnBehalfOfExpensesTabsComponent {
       tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+
     if (this.navTabs.length > 0) {
       this.defaultRoute = this.navTabs[0].link;
     }
+
     const currentUrl = this.router.url;
     const baseUrl = '/on-behalf-of/on-behalf-of-expenses';
     if (currentUrl === baseUrl && this.defaultRoute) {
@@ -101,54 +109,67 @@ export class OnBehalfOfExpensesTabsComponent {
       this.router.navigateByUrl(this.defaultRoute);
     }
 
-
-    this.http.selectedEmployeeIdExpensesforonbehalf$.subscribe((id) => {
-      if (id) {
-        this.selectemp = id;
-     
+    // Subscribe with takeUntil for cleanup
+    this.http.selectedEmployeeIdExpensesforonbehalf$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((id) => {
+        if (id) {
+          this.selectemp = id;
+        } else {
+          this.selectemp = null;
+        }
         this.getexpensesheaderbyemployeeid();
-      } else {
-        this.selectemp = null;
-        this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-        this.getexpensesheaderbyemployeeid();
-      }
-    });
+      });
 
-    this.http.expensesprocesscountOnBehalfof$.subscribe(() => {
-      
-      this.getexpensesheaderbyemployeeid();
-    });
+    this.http.expensesprocesscountOnBehalfof$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.getexpensesheaderbyemployeeid();
+      });
   }
 
-  getexpensesheaderbyemployeeid(): void {  
+  getexpensesheaderbyemployeeid(): void {
+    if (!this.selectemp) {
+      // No employee selected, clear all
+      this.expenesEmplyeedata.next([]);
+      this.flitredapproved.next([]);
+      this.flitredpending.next([]);
+      this.processedExpenses.next([]);
+      this.flitredrejected.next([]);
+      this.ApprovedCount = 0;
+      this.pendingCount = 0;
+      this.processedCount = 0;
+      this.rejectedCount = 0;
+      this.updateNavTabs();
+      return;
+    }
+
     const empId = this.selectemp;
     const year = this.selectedYear ?? new Date().getFullYear();
     const month = this.seletedMouthly ?? new Date().getMonth() + 1;
-    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}`,).subscribe({
-      next: (data: any) => {
-        this.expenesEmplyeedata.next(data);
-        this.updateAllFilteredExpenses();
-      }, error: (err: any) => {
-        this.loading = false;
-        this.expenesEmplyeedata.next([]);
-        // Ensure counts become 0
-        this.flitredapproved.next([]);
-        this.flitredpending.next([]);
-        this.processedExpenses.next([]);
-        this.flitredrejected.next([]);
 
-        this.ApprovedCount = 0;
-        this.pendingCount = 0;
-        this.processedCount = 0;
-        this.rejectedCount = 0;
-
-        this.updateNavTabs();
-      },
-      complete: () => {
-        this.loading = false;
-      },
-    });
+    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.expenesEmplyeedata.next(data);
+          this.updateAllFilteredExpenses();
+        },
+        error: () => {
+          this.expenesEmplyeedata.next([]);
+          this.flitredapproved.next([]);
+          this.flitredpending.next([]);
+          this.processedExpenses.next([]);
+          this.flitredrejected.next([]);
+          this.ApprovedCount = 0;
+          this.pendingCount = 0;
+          this.processedCount = 0;
+          this.rejectedCount = 0;
+          this.updateNavTabs();
+        },
+        complete: () => { this.loading = false; }
+      });
   }
+
 
 
   updateNavTabs() {
@@ -182,11 +203,13 @@ export class OnBehalfOfExpensesTabsComponent {
   get isOnBehalfAddPage(): boolean {
     return this.router.url.includes('/on-behalf-of/on-behalf-of-expenses/add');
   }
+ngOnDestroy(): void {
+  this.destroy$.next(true);
+  this.destroy$.complete();
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  if (this.subscription) {
+    this.subscription.unsubscribe();
   }
+}
 
 }

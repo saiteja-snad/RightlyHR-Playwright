@@ -266,11 +266,11 @@ setOnBehalfExpensesUpdated(empId: number | null) {
     this.selectedEmployeeIdCompOff.next(id);
   }
 
-  private selectedEmployeeIdExpensesforonbehalf = new BehaviorSubject<any>(null);
+  private selectedEmployeeIdExpensesforonbehalf = new BehaviorSubject<string | null>(null);
   // Observable for components to subscribe to
   selectedEmployeeIdExpensesforonbehalf$ = this.selectedEmployeeIdExpensesforonbehalf.asObservable();
   // Method to update the employeeId
-  setEmployeeIdExpensesforonbehalf(id: any): void {
+  setEmployeeIdExpensesforonbehalf(id:any | null): void {
     this.selectedEmployeeIdExpensesforonbehalf.next(id);
     console.log('Selected Employee Expenses ID:', id);
   }

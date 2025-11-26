@@ -59,28 +59,31 @@ export class OnBehalfOfExpensesComponent {
   draftsCount = 0;
   constructor(public router: Router, private authService: AuthService, public rbac: RbacService, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
-  ngOnInit(): void {
+ngOnInit(): void {
+  this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  this.updateModuleInfo();
+  this.initiateUpdateModuleInfo();
+  this.getEmployeeId();
+  this.getMyTeam();
 
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-    this.getEmployeeId();
-    this.getMyTeam();
-    // subscribe to on-behalf update signal
-    this.http.onBehalfExpensesUpdated$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((empId) => {
-        if (empId !== null) {
-          // refresh the summary for the employee the submit code passed
-          this.getexpensesheaderbyemployeeid(empId);
-        } else {
-          // if null, refresh current selected or logged-in
-          const selected = JSON.parse(localStorage.getItem('selectedEmployee') || 'null');
-          const id = selected?.employeeId || this.empinfo.employeeId;
-          if (id) this.getexpensesheaderbyemployeeid(id);
-        }
-      });
-  }
+  // Clear previous selection when navigating away
+  this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event: NavigationEnd) => {
+      if (!event.url.includes('/on-behalf-of/on-behalf-of-expenses')) {
+        this.onClearEmployee();
+      }
+    });
+
+  // Subscribe to on-behalf updates
+  this.http.onBehalfExpensesUpdated$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((empId) => {
+      const selected = JSON.parse(localStorage.getItem('selectedEmployee') || 'null');
+      const id = empId ?? selected?.employeeId ?? this.empinfo.employeeId;
+      if (id) this.getexpensesheaderbyemployeeid(id);
+    });
+}
 
   navigatetoAddExpenses() {
     this.router.navigate(['/on-behalf-of/on-behalf-of-expenses/add'])
@@ -94,19 +97,15 @@ export class OnBehalfOfExpensesComponent {
       });
   }
   onClearEmployee(): void {
-    this.showDashboard = false;
-    this.selectedOtherEmployee = null;
-    this.selectedEmpName = '';
-    this.selectedEmpFusionId = '';
-    this.http.setOnBehalfOfExpensesSelectedEmp(null);
-    this.http.onBehlafOfExpensesSignal.set(false);
-    this.http.setEmployeeIdExpensesforonbehalf(null)
-    this.http.setnewcountDetailsforonBehalfof()
-    const loggedInEmpId = this.empinfo?.employeeId || this.empinfo?.employeeId;
-    if (loggedInEmpId) {
-      console.log('Reset to logged-in employee:', loggedInEmpId);
-      this.getexpensesheaderbyemployeeid(loggedInEmpId);
-    }
+  this.showDashboard = false;
+  this.selectedOtherEmployee = null;
+  this.selectedEmpName = '';
+  this.selectedEmpFusionId = '';
+  localStorage.removeItem('selectedEmployee');
+  this.http.setOnBehalfOfExpensesSelectedEmp(null);
+  this.http.onBehlafOfExpensesSignal.set(false);
+  this.http.setEmployeeIdExpensesforonbehalf(null);
+  this.http.setnewcountDetailsforonBehalfof();
   }
 
   onEmployeeChange(event: any): void {

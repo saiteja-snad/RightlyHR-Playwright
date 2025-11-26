@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, BehaviorSubject, takeUntil, Subject } from 'rxjs';
+import { Subscription, BehaviorSubject, takeUntil, Subject, debounceTime } from 'rxjs';
 import { FormValidationService } from '../../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { environment } from '../../../../../environments/environment';
 import { IExpenseHeaders, IExpense } from '../../../../Interfaces/claimsandexpenses.model';
@@ -50,7 +50,7 @@ export class OnBehalfOfExpensesWaitingForApprovalComponent {
   selectedYear: any;
   selectemp: any;
   ngOnInit(): void {
-    this.http.selectedEmployeeIdExpensesforonbehalf$.subscribe((id) => {
+    this.http.selectedEmployeeIdExpensesforonbehalf$.pipe(debounceTime(100),takeUntil(this.destroy$)).subscribe((id) => {
       console.log(id)
       if (id) {
         this.selectemp = id;
@@ -77,13 +77,13 @@ export class OnBehalfOfExpensesWaitingForApprovalComponent {
   }
 
   getExpensesHeaderByEmployeeId(): void {
+    this.loading = true;
     const empId = this.selectemp
     const status = 'Waiting for Approval';
     const searchQuery = this.searchTerm?.trim() || '';
-    this.loading = true;
-    this.http.getData( `v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${encodeURIComponent(status)}&searchQuery=${encodeURIComponent(searchQuery)}`)
+    this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${encodeURIComponent(status)}&searchQuery=${encodeURIComponent(searchQuery)}`)
       .pipe(takeUntil(this.destroy$))
-.subscribe({
+      .subscribe({
         next: (response: any) => {
           this.expenesEmplyeedata.next(response);
           const filteredData = response.filter((item: any) => !item.expenseSummary);

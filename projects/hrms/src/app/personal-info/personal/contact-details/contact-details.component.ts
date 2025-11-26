@@ -206,6 +206,7 @@ getFieldsApprovalStatusList: any[] = [];
     'Personal Email': 'personalEmail',
     'Work Email': 'workMail',
     'Phone Number': 'phoneNumber',
+    'Work Number':'workPhone'
   };
 
   pendingFields.forEach((fieldName) => {
@@ -263,14 +264,16 @@ getFieldsApprovalStatusList: any[] = [];
   updateAddressInfo(): void {
   const formValue = this.contactForm.getRawValue();
 
-  const pendingFieldNames = this.getFieldsApprovalStatusList
-    .filter((item: any) => item.approvalStatus === 'Pending')
-    .map((item: any) => item.fieldName);
+  const targetStatuses = ['Pending', 'Cancelled'];
+      const pendingFieldNames = this.getFieldsApprovalStatusList
+        .filter((item) => targetStatuses.includes(item.approvalStatus))
+        .map((item) => item.fieldName);
 
   const fieldToApiMap: { [key: string]: string } = {
     'Personal Email': 'emailaddress',
     'Work Email': 'workEmail',
     'Phone Number': 'contactnumber',
+    'Work Number':'workPhone'
   };
 
   const updatePayload: any = {

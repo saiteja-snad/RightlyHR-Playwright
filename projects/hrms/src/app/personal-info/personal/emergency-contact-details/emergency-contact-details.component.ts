@@ -261,10 +261,14 @@ getEmergencyFieldsApprovalStatus() {
 saveForm(): void {
   const formValue = this.emergencyContactForm.getRawValue();
   const cleanPhone = (phone: any) => phone ? String(phone).replace(/\D+/g, '') : '';
-
+  const targetStatuses = ['Pending', 'Cancelled'];
   const pendingFields = this.getFieldsApprovalStatusList
-    .filter(item => item.approvalStatus === 'Pending')
+    .filter(item => targetStatuses.includes(item.approvalStatus))
     .map(item => item.fieldName);
+    
+      // const pendingFieldNames = this.getFieldsApprovalStatusList
+      //   .filter((item) => targetStatuses.includes(item.approvalStatus))
+      //   .map((item) => item.fieldName);
 
   const updatePayload: any = {
     ...this.employedata,

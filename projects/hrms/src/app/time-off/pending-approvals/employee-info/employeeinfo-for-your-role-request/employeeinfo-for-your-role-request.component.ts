@@ -342,8 +342,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Timesheet request approved successfully'
-                : 'Timesheet request rejected successfully'
+                ? 'Employefields request approved successfully'
+                : 'Employefields request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);
@@ -425,8 +425,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Timesheet request approved successfully'
-                : 'Timesheet request rejected successfully'
+                ? 'Employefields request approved successfully'
+                : 'Employefields request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);

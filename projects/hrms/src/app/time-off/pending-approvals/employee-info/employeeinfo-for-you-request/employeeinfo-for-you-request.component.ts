@@ -72,6 +72,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
   allFields: any;
   allPendingApprovals: any;
   allPendingApprovalItems: any;
+     selectedLeaveStatus: any;
   //emp: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
@@ -114,8 +115,31 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+    this.timeSheetApproveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
+  this.timeSheetRejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
+ onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.timeSheetApproveForm.get('comments')?.setValue('Approved');
+  }
+}
+
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.timeSheetRejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   // called for pagination 
   onRowsChange() {
     this.page = 1;
@@ -340,8 +364,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Timesheet request approved successfully'
-                : 'Timesheet request rejected successfully'
+                ? 'Employee Info approved successfully'
+                : 'Employee Info request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);
@@ -423,8 +447,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Timesheet request approved successfully'
-                : 'Timesheet request rejected successfully'
+                ? 'Employefields request approved successfully'
+                : 'Employefields request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);

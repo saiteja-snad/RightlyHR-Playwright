@@ -288,6 +288,8 @@ roleWiseHoursGraph(
           return;
         }
 
+        this.roleWiseData = apiData;
+
         const labels = apiData.map((item: any) => item.name || 'Unknown');
         const dataValues = apiData.map((item: any) => item.percentage || 0);
         const backgroundColors = apiData.map((item: any) => item.meta?.graphData?.color || '#CCCCCC');
@@ -303,7 +305,7 @@ roleWiseHoursGraph(
 
         this.roleWiseHoursOptions = {
           cutout: '60%',
-          plugins: { legend: { display: false } },
+          plugins: {legend: { display: true, position: 'right' } },
           responsive: true,
           maintainAspectRatio: false
         };

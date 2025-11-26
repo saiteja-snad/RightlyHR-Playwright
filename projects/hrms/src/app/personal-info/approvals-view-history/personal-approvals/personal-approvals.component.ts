@@ -162,7 +162,7 @@ export class PersonalApprovalsComponent implements OnInit {
                 oldValue: item.oldValue ?? '-',
                 newValue: item.newValue ?? '-',
                 approvalStatus: item.approvalStatus ?? '-',
-                createdDate: this.formatDate(item.createdDate),
+                createdDate: item.createdDate,
                 itemId: item.itemId,
                 headerId: header.headerId,
                 sourceFieldName:item.sourceFieldName

@@ -56,8 +56,8 @@
                     </span>
                   </td>
 
-                  <td> {{ item.createdDate || "-" }}
-                    <!-- {{ item.createdDate ? (item?.createdDate | dateformat) : "-" }} -->
+                  <td> {{ item.createdDate ?(item.createdDate| dateformat) : "-" }}
+                    <!-- {{ ('2025-11-26' | dateformat) }} -->
                   </td>
 
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">

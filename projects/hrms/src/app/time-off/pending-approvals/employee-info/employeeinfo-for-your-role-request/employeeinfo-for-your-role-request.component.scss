@@ -2,6 +2,73 @@
     height: 40vh !important;
 }
 
+.custom-accordian-data-content {
+    width: 100%;
+    height: calc(100dvh - 15rem);
+    overflow-y: auto;
+    position: relative;
+
+    .p-accordionpanel {
+        margin-bottom: 1rem !important;
+        border: 1.5px solid var(--white-color) !important;
+        border-radius: 0.625rem !important;
+        overflow: hidden !important;
+    }
+
+    .p-accordionheader {
+        padding: 1rem !important;
+        background-color: var(--table-header-bg-color) !important;
+        font-weight: 600;
+        font-size: var(--fontsize14);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        color: var(--table-header-color) !important;
+    }
+
+    .p-accordioncontent-content {
+        padding: 0rem !important;
+        border-bottom-left-radius: 0.5rem !important;
+        border-bottom-right-radius: 0.5rem !important;
+    }
+
+    .p-icon {
+        transform: rotate(180deg);
+    }
+
+    .employee-data-table {
+        th {
+            background-color: var(--body-bg-color) !important;
+            color: var(--table-header-color) !important;
+            font-weight: 500;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: center;
+            line-height: 100%;
+            letter-spacing: 0%;
+            vertical-align: middle;
+            font-size: var(--fontsize14);
+        }
+
+        tr {
+            border-bottom: 1px solid #DDE6F0;
+        }
+
+        td {
+            font-weight: 400;
+            color: var(--table-data-color);
+        }
+
+        .avaliable-number {
+            font-weight: 600;
+            color: #184066 !important;
+        }
+    }
+}
+
 .action-img {
     width: 1.5rem;
     height: 1.5rem;
@@ -101,4 +168,7 @@
             cursor: not-allowed;
         }
     }
+}
+.custom-p-multi-select-table .p-datatable-table-container {
+    height: 40vh!important;
 }

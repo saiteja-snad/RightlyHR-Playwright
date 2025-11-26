@@ -447,8 +447,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
             // Single
             this.conformationPopup.openSuccessModal(
               this.conformationstatus === 'Processed'
-                ? 'Employefields request approved successfully'
-                : 'Employefields request rejected successfully'
+                ? 'Employee Info  request approved successfully'
+                : 'Employee Info  request rejected successfully'
             );
           } else {
             // this.openModal(this.leaveSummary, null, this.conformationstatus);

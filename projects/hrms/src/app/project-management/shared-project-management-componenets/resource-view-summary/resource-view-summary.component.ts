@@ -21,6 +21,8 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
+import { combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
@@ -110,66 +112,51 @@ ngOnInit() {
   this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
   this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
 
-  // Keep your existing request$ logic (resourceId + dateRange)
-  this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
-    if (request) {
-      if (request.resetPagination) {
-        this.page = 1;
-        this.first = 0;
-      }
-      this.resourceDataids = {
-        ...this.resourceDataids,
-        employeeId: request.resourceId || this.resourceDataids.employeeId,
-        dateRange: request.dateRange
-      };
-      this.refreshData();
-    } else {
-      this.refreshData();
+  // SINGLE COMBINED STREAM — this is the magic fix
+  combineLatest([
+    this.http.request$,                          // contains resourceId + dateRange + resetPagination
+    this.http.projectTimesheetDepartmentIds$,
+    this.http.projectTimesheetRoleFilter$,
+    this.http.projectTimesheetPhaseFilter$,
+    this.http.getDateRangeObservable()           // fallback date range
+  ]).pipe(
+    debounceTime(100),                 // wait 100ms after last emission
+    distinctUntilChanged((prev, curr) => {
+      // Optional: prevent unnecessary calls if values didn't actually change
+      return JSON.stringify(prev) === JSON.stringify(curr);
+    }),
+    takeUntil(this.destroy$)
+  ).subscribe(([request, deptIds, roleIds, phaseIds, dateRange]) => {
+    // Merge everything into resourceDataids
+    this.resourceDataids = {
+      ...this.resourceDataids,
+      employeeId: request?.resourceId || this.resourceDataids.employeeId,
+      dateRange: request?.dateRange || dateRange || this.resourceDataids.dateRange
+    };
+
+    // Update local filter arrays (for future API param building)
+    this.selectedDepartmentIds = deptIds || [];
+    this.selectedResourceRoles = roleIds || [];
+    this.selectedResourcePhases = phaseIds || [];
+
+    // Reset pagination only when explicitly requested
+    if (request?.resetPagination) {
+      this.page = 1;
+      this.first = 0;
     }
+
+    // ONE CALL ONLY
+    this.refreshData();
   });
 
-  // NEW: Listen to shared project timesheet filters (Department, Role, Phase, DateRange)
-  this.http.projectTimesheetDepartmentIds$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(ids => {
-      this.selectedDepartmentIds = ids;
-      this.refreshData();
-    });
-
-  this.http.projectTimesheetRoleFilter$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(ids => {
-      this.selectedResourceRoles = ids;
-      this.refreshData();
-    });
-
-  this.http.projectTimesheetPhaseFilter$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(ids => {
-      this.selectedResourcePhases = ids;
-      this.refreshData();
-    });
-
-  this.http.getDateRangeObservable()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(range => {
-      if (range) {
-        this.resourceDataids = {
-          ...this.resourceDataids,
-          dateRange: { startDate: range.startDate, endDate: range.endDate }
-        };
-      }
-      this.refreshData();
-    });
-
-  // Initial load
+  // Initial load (will trigger the combined stream once)
   this.refreshData();
 }
 
 
 private refreshData() {
-  this.page = 1;
-  this.first = 0;
+  // this.page = 1;
+  // this.first = 0;
   this.getProjectSummary();
   this.estimatedActualChart();
   this.billableVSNonBillable();

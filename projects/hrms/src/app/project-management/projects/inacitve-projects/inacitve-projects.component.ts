@@ -75,6 +75,13 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
         this.selectedDepartmentIds = deptIds || [];
         this.getdatabaedonRoute(); // Re-fetch projects when department filter changes
       });
+
+      this.http.projectTypeFilter$
+  .pipe(takeUntil(this.destroy$))
+  .subscribe((projectTypes) => {
+    this.selectedProjectTypes = projectTypes || [];
+    this.getdatabaedonRoute();
+  });
     this.getdatabaedonRoute();
     this.clientList();
   }

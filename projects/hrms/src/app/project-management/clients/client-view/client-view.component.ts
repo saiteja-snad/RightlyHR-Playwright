@@ -131,6 +131,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         this.clientid = clientID;
         this.getClientsData(clientID);
         this.getprojectbyid(clientID);
+        this.setDefaultmounth();
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
@@ -167,6 +168,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     }
     this.loadResourceFilters();
     this.loadPhases(this.clientid);
+     if (this.router.url.includes('/project-management/clients/details/timesheet/summary')) {
+        this.setDefaultmounth();
+      }
   }
 
   loadResourceFilters() {
@@ -389,15 +393,17 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-    this.datepickerFormDataforsummary?.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
-  }
+      const startOfMonth = dayjs().startOf('month').toDate();
+      const endOfMonth = dayjs().endOf('month').toDate();
+      this.datepickerForm.patchValue({
+        dateRange: [startOfMonth, endOfMonth]
+      });
+      const startOfMonths = dayjs().startOf('month').toDate();
+      const endOfMonths = dayjs().endOf('month').toDate();
+      this.datepickerFormDataforsummary?.patchValue({
+        dateRange: [startOfMonths, endOfMonths]
+      })
+    }
 
   getClientsData(clientID: any): void {
     this.http

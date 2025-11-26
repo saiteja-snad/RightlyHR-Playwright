@@ -16,6 +16,9 @@ import { Project } from '../../../../Interfaces/projects.model';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { SkeletonModule } from 'primeng/skeleton';
+import { combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import dayjs from 'dayjs'
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [
@@ -111,98 +114,59 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
     private fb: FormBuilder
   ) {}
 
-  ngOnInit() {
-    this.createClientForm();
-    this.route.queryParams.subscribe((params) => {
-      const clientID = params['id'];
-      if (clientID) {
-        this.storeclientId = clientID;
-        this.getClientById(clientID);
-      }
-    });
-    this.http.requestclienttimesheetdata$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((request) => {
-        if (request && request.dateRange) {
-          // Call API with date filter (if BehaviorSubject has data)
-          this.projectSummery(request);
-          this.projectWiseResourceCountGraph(request);
-          this.departmentWiseContributionGraph(request);
-          this.projectTypeChart(request);
-          this.estimatedActualChart(request);
-          this.billableChart(request);
-          this.burnDownChart(request);
-        } else {
-          // Call API without any date filter
-          this.projectSummery();
-          this.projectWiseResourceCountGraph();
-          this.departmentWiseContributionGraph();
-          this.projectTypeChart();
-          this.estimatedActualChart();
-          this.billableChart();
-          this.burnDownChart();
-          // Reset form dropdowns here
-          this.datepickerForm.reset({
-            projectId: '',
-            status: '',
-          });
-          this.selectedDeptProjectId = null;
-        }
-      });
+ngOnInit() {
+  this.createClientForm();
 
-    // Subscribe to department filter (already exists in HttpService!)
-    this.http.selectedDepartmentIds$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((deptIds) => {
-        const ids = deptIds || [];
-        console.log('Department filter applied:', ids);
+  this.route.queryParams.subscribe((params) => {
+    const clientID = params['id'];
+    if (clientID) {
+      this.storeclientId = clientID;
+      this.getClientById(clientID);
+    }
+  });
 
-        // Trigger all charts with current date range + department filter
-        this.http.requestclienttimesheetdata$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((request) => {
-            const updatedRequest = {
-              ...request,
-              departmentIds: ids.length > 0 ? ids : undefined,
-            };
-            this.refreshAllCharts(updatedRequest);
-          });
-      });
-
-    this.http.clientTimesheetRoleFilter$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((roleIds) => {
-        const ids = roleIds || [];
-
-        this.http.requestclienttimesheetdata$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((request) => {
-            const updatedRequest = {
-              ...request,
-              roleIds: ids.length > 0 ? ids : undefined,
-            };
-
-            this.refreshAllCharts(updatedRequest);
-          });
-      });
-
+  combineLatest([
+    this.http.requestclienttimesheetdata$,
+    this.http.selectedDepartmentIds$,
+    this.http.clientTimesheetRoleFilter$,
     this.http.clientTimesheetPhaseFilter$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((phaseIds) => {
-        const ids = phaseIds || [];
+  ]).pipe(
+    debounceTime(150),
+    distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+    takeUntil(this.destroy$)
+  ).subscribe(([dateRequest, deptIds, roleIds, phaseIds]) => {
 
-        this.http.requestclienttimesheetdata$
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((request) => {
-            const updatedRequest = {
-              ...request,
-              phaseIds: ids.length > 0 ? ids : undefined,
-            };
+    const departments = Array.isArray(deptIds) ? deptIds : [];
+    const roles = Array.isArray(roleIds) ? roleIds : [];
+    const phases = Array.isArray(phaseIds) ? phaseIds : [];
 
-            this.refreshAllCharts(updatedRequest);
-          });
-      });
-  }
+    const request: any = {
+      ...(dateRequest || {}),
+
+      ...(departments.length > 0 ? { departmentIds: departments } : {}),
+      ...(roles.length > 0 ? { roleIds: roles } : {}),
+      ...(phases.length > 0 ? { phaseIds: phases } : {}),
+    };
+
+    // Default date range: current month (if none provided)
+    if (!request.dateRange?.startDate || !request.dateRange?.endDate) {
+      const start = dayjs().startOf('month').format('YYYY-MM-DD');
+      const end = dayjs().endOf('month').format('YYYY-MM-DD');
+      request.dateRange = { startDate: start, endDate: end };
+    }
+
+    this.refreshAllCharts(request);
+  });
+
+  // Initial load with current month
+  const defaultRange = {
+    dateRange: {
+      startDate: dayjs().startOf('month').format('YYYY-MM-DD'),
+      endDate: dayjs().endOf('month').format('YYYY-MM-DD')
+    }
+  };
+  this.refreshAllCharts(defaultRange);
+}
 
   private refreshAllCharts(request: any = {}) {
     this.projectSummery(request);

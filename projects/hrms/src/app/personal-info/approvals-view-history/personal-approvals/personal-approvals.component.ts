@@ -89,7 +89,6 @@ export class PersonalApprovalsComponent implements OnInit {
     return element.offsetWidth < element.scrollWidth;
   }
   showdate(data:any):boolean{
-    console.log(data)
     if(data?.sourceFieldName =='Dob' && (data.oldValue||data.newValue)){
       return true
     }

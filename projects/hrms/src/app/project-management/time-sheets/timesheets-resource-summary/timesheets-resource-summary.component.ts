@@ -340,7 +340,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.filterService.clearOnlyFilterFields();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    this.closeCanvas();
+    // this.closeCanvas();
   }
 
   // getSelectedFilters(): any[] {

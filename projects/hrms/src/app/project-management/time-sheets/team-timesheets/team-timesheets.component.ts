@@ -22,6 +22,9 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
+import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
+import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
+import { Chip } from 'primeng/chip';
 @Component({
   selector: 'app-team-timesheets',
   imports: [
@@ -40,6 +43,7 @@ import { EncriptdecriptService } from '../../../services/encriptdecript.service'
     InfoIconComponent,
     DateformatPipe,
     MultiSelectModule,
+    Chip,
   ],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss',
@@ -74,12 +78,13 @@ export class TeamTimesheetsComponent {
   tmandRmDetails = [] as any;
 
   constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, 
-    private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
+    private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
+    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
-    this.setDefaultmounth();
+    this.loadSavedFilters();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.getteamsummary(); // always call once
@@ -91,35 +96,21 @@ export class TeamTimesheetsComponent {
 
   //get all projects list
   getprojectData(): void {
-    this.subscription = this.http.getData(`Project?status=active`).subscribe({
+    this.subscription = this.sharedDataService.getProjectData().subscribe({
       next: (res: any) => {
         this.projectDetails = res.data;
       },
       error: (err) => {
-        console.error('Error fetching clients:', err);
+        console.error('Error fetching projects:', err);
       },
     });
   }
 
   //get all clients list
   getclientData(): void {
-    this.subscription = this.http
-      .getData(`Client/GetAll?status=active`)
-      .subscribe({
-        next: (res: any) => {
-          this.clientDetails = res.data;
-        },
-        error: (err) => {
-          console.error('Error fetching clients:', err);
-        },
-      });
-  }
-
-  //get all departments list
-  getdepartmentData(): void {
-    this.subscription = this.http.getData(`Department`).subscribe({
+    this.subscription = this.sharedDataService.getClientData().subscribe({
       next: (res: any) => {
-        this.departmentDetails = res;
+        this.clientDetails = res.data;
       },
       error: (err) => {
         console.error('Error fetching clients:', err);
@@ -127,29 +118,28 @@ export class TeamTimesheetsComponent {
     });
   }
 
+  //get all departments list
+  getdepartmentData(): void {
+    this.subscription = this.sharedDataService.getDepartmentData().subscribe({
+      next: (res: any) => {
+        this.departmentDetails = res;
+      },
+      error: (err) => {
+        console.error('Error fetching departments:', err);
+      },
+    });
+  }
+
   //get all TM and RM list
   getTmandRMData(): void {
-    this.subscription = this.http
-      .getData(`JobDetails/getAllReportingnTeamManagers`)
-      .subscribe({
-        next: (res: any) => {
-          this.tmandRmDetails = [
-            ...res.map((emp: any) => ({
-              ...emp,
-              fullName: emp.fusionEmpId
-                ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${
-                    emp.middleName ?? ''
-                  } ${emp.lastName ?? ''}`
-                : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${
-                    emp.lastName ?? ''
-                  }`,
-            })),
-          ];
-        },
-        error: (err) => {
-          console.error('Error fetching clients:', err);
-        },
-      });
+    this.subscription = this.sharedDataService.getTmandRMData().subscribe({
+      next: (res: any) => {
+        this.tmandRmDetails = this.sharedDataService.formatTmRmList(res);
+      },
+      error: (err) => {
+        console.error('Error fetching TM/RM:', err);
+      },
+    });
   }
 
   isFilterApplied(): boolean {
@@ -172,21 +162,35 @@ export class TeamTimesheetsComponent {
   }
 
   resetForm() {
-    this.datepickerForm.reset({
+    // Reset to current month
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    
+    // Clear all form fields including date range and employee selection
+    this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth],
       resourceId: [],
-      dateRange: null,
       projectId: null,
       clientId: null,
       departmentId: null,
-      tmorrmId: null,
+      tmorrmId: null
     });
-    this.setDefaultmounth();
+    
+    // Clear filter service
+    this.filterService.clearFilters();
+    
+    // Reload employee lists
     if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
       this.getAllEmployeeDetails();
     } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
       this.getResourceDetailsByManagerId();
     }
+    
+    // Reload table data with cleared filters
+    this.page = 1;
+    this.first = 0;
     this.getteamsummary();
+    
     this.closeCanvas();
   }
 
@@ -207,7 +211,15 @@ export class TeamTimesheetsComponent {
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
     });
-    // return [startOfMonth, endOfMonth];
+  }
+
+  loadSavedFilters() {
+    const savedFilters = this.filterService.getCurrentFilters();
+    if (savedFilters) {
+      this.datepickerForm.patchValue(savedFilters);
+    } else {
+      this.setDefaultmounth();
+    }
   }
 
   employeeDetails: any;
@@ -265,24 +277,26 @@ export class TeamTimesheetsComponent {
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
     const formdata = this.datepickerForm.value;
-    const clientId = formdata.clientId;
-    const projectId = formdata.projectId;
-    const departmentId = formdata.departmentId;
-    const reportingId = formdata.tmorrmId;
-    const statuses = 'Active, Trainee Active, Active Contract';
-    this.subscription = this.http.getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId, statuses).subscribe({
+    const filters = {
+      clientId: formdata.clientId,
+      projectId: formdata.projectId,
+      departmentId: formdata.departmentId,
+      reportingId: formdata.tmorrmId
+    };
+    this.subscription = this.sharedDataService.getAllEmployeeDetails(this.http, EmployeeId, filters).subscribe({
       next: (res: any) => {
         if (Array.isArray(res.data)) {
-          const employeeList = res.data.filter((emp: any) => emp.employeeId !== EmployeeId).map((emp: any) => ({
-            value: emp.employeeId,
-            label: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} 
-                ${emp.lastName ?? ''}` : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+          const employeeList = this.sharedDataService.formatEmployeeList(res.data, EmployeeId).map((emp: any) => ({
+            ...emp,
             key: 'all',
           }));
 
           if (employeeList.length > 0) {
             this.activeEmplist = employeeList;
-            this.datepickerForm.patchValue({ resourceId: [] });
+            const savedFilters = this.filterService.getCurrentFilters();
+            if (!savedFilters || !savedFilters.resourceId) {
+              this.datepickerForm.patchValue({ resourceId: [] });
+            }
           } else {
             this.activeEmplist = [];
             this.datepickerForm.patchValue({ resourceId: [] });
@@ -309,6 +323,7 @@ export class TeamTimesheetsComponent {
       return;
     }
     const formValue = this.datepickerForm.value;
+    this.filterService.setFilters(formValue);
     const [startDate, endDate] = formValue.dateRange || [];
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
@@ -386,8 +401,9 @@ export class TeamTimesheetsComponent {
   navigateView(employeeId: any) {
     const formData = {
       ...this.datepickerForm.value,
-      resourceId: [employeeId] // Pass selected employee
+      resourceId: employeeId // Pass selected employee as single value
     };
+    this.filterService.setFilters(formData);
     const encryptedData = this.encryptionService.encrypt(formData);
     if (this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')) {
       this.router.navigate(['project-management/timesheet/resourcesummary'], {
@@ -403,5 +419,56 @@ export class TeamTimesheetsComponent {
   onEmployeeChange() {
     // Do nothing - let user click Apply to refresh
     // This preserves original behavior where changes only apply on Submit
+  }
+
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+    const formValue = this.datepickerForm.value;
+
+    if (formValue.projectId && formValue.projectId.length > 0) {
+      formValue.projectId.forEach((id: any) => {
+        const project = this.projectDetails.find((p: any) => p.projectId === id);
+        if (project) {
+          filters.push({ type: 'projectId', label: project.projectName, value: id });
+        }
+      });
+    }
+
+    if (formValue.clientId && formValue.clientId.length > 0) {
+      formValue.clientId.forEach((id: any) => {
+        const client = this.clientDetails.find((c: any) => c.clientId === id);
+        if (client) {
+          filters.push({ type: 'clientId', label: client.clientName, value: id });
+        }
+      });
+    }
+
+    if (formValue.departmentId && formValue.departmentId.length > 0) {
+      formValue.departmentId.forEach((id: any) => {
+        const dept = this.departmentDetails.find((d: any) => d.sno === id);
+        if (dept) {
+          filters.push({ type: 'departmentId', label: dept.departmentName, value: id });
+        }
+      });
+    }
+
+    if (formValue.tmorrmId && formValue.tmorrmId.length > 0) {
+      formValue.tmorrmId.forEach((id: any) => {
+        const tm = this.tmandRmDetails.find((t: any) => t.employeeId === id);
+        if (tm) {
+          filters.push({ type: 'tmorrmId', label: tm.fullName, value: id });
+        }
+      });
+    }
+
+    return filters;
+  }
+
+  removeFilter(filter: any) {
+    const formValue = this.datepickerForm.value;
+    const currentValues = formValue[filter.type] || [];
+    const updatedValues = currentValues.filter((v: any) => v !== filter.value);
+    this.datepickerForm.patchValue({ [filter.type]: updatedValues });
+    this.getAllEmployeeDetails();
   }
 }

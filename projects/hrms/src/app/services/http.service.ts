@@ -955,6 +955,21 @@ export class HttpService {
       employeeName: null,
     });
   }
+
+  private timesheetFiltersSubject = new BehaviorSubject<any>(null);
+
+  setTimesheetFilters(filters: any) {
+    this.timesheetFiltersSubject.next(filters);
+  }
+
+  getTimesheetFilters() {
+    return this.timesheetFiltersSubject.asObservable();
+  }
+
+  clearTimesheetFilters() {
+    this.timesheetFiltersSubject.next(null);
+  }
+
   //  Example API call
   getDatEdATA(url: string) {
     return this.http.get(url);

@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationExtras } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 
 @Component({
   selector: 'app-timesheets-resource-tabs',
@@ -26,7 +28,8 @@ export class TimesheetsResourceTabsComponent {
     
   ];
 
-  constructor(private rbac: RbacService, private router: Router) { }
+  constructor(private rbac: RbacService, private router: Router, 
+    private filterService: TimesheetFilterService, private encryptionService: EncriptdecriptService) { }
 
   ngOnInit(): void {
 
@@ -60,6 +63,19 @@ export class TimesheetsResourceTabsComponent {
     }
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+  navigateWithFilters(link: string): void {
+    const savedFilters = this.filterService.getCurrentFilters();
+    if (savedFilters) {
+      const encryptedData = this.encryptionService.encrypt(savedFilters);
+      const navigationExtras: NavigationExtras = {
+        queryParams: { data: encryptedData }
+      };
+      this.router.navigate([link], navigationExtras);
+    } else {
+      this.router.navigate([link]);
+    }
   }
 
 }

@@ -29,6 +29,8 @@ import { Skeleton } from "primeng/skeleton";
 import { TimesheetsResourceTabsComponent } from "../timesheets-resource-tabs/timesheets-resource-tabs.component";
 import { MultiSelectModule } from 'primeng/multiselect';
 import { EncriptdecriptService } from '../../../services/encriptdecript.service';
+import { TimesheetFilterService } from '../../../services/timesheet-filter.service';
+import { TimesheetSharedDataService } from '../../../services/timesheet-shared-data.service';
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
@@ -36,7 +38,7 @@ import { EncriptdecriptService } from '../../../services/encriptdecript.service'
     ModuleInformationComponent, Skeleton, TimesheetsResourceTabsComponent,MultiSelectModule],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
-  
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
@@ -102,7 +104,8 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   tmandRmDetails=[] as any;
   filterData={} as any;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
+    public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas,
+    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -110,8 +113,16 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.getclientData();
     this.getdepartmentData();
     this.getTmandRMData();
-    this.updateModuleInfo()
+    this.updateModuleInfo();
     this.createDatepickerForm();
+    this.loadFiltersFromNavigation();
+    this.getAllEmployeeDetails();
+    this.getResourceDetailsByManagerId();
+    this.projectWiseChart();
+    this.estimatedActualChart();
+  }
+
+  loadFiltersFromNavigation() {
     this.route.queryParams.subscribe(params => {
       if (params['data']) {
         const decrypted = this.encryptionService.decrypt(params['data']);
@@ -125,61 +136,37 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         };
         if (resoureID) {
           this.employeeId = parseInt(resoureID);
+          this.setDefaultmounth();
+          this.getProjectSummary(resoureID);
+          this.getEmployeeId(resoureID);
+        }
+      } else {
+        const savedFilters = this.filterService.getCurrentFilters();
+        if (savedFilters) {
+          this.datepickerForm.patchValue(savedFilters);
+          if (savedFilters.resourceId) {
+            this.employeeId = savedFilters.resourceId;
+          }
+        } else {
+          this.setDefaultmounth();
         }
       }
-    })
-    this.http.getteamDateRangeObservable().subscribe((data) => {
-      console.log('Received BehaviorSubject data:', data);
-      // Optional check to avoid running on empty initial values
-      if (data && (data.startDate || data.endDate || data.employeeId)) {
-        this.employeeId = data.employeeId || this.employeeId;
-        this.startDate = data.startDate;
-        this.endDate = data.endDate;
-        this.setDefaultmounth();
-        // You can trigger your logic with these updated values
-        this.getProjectSummary(this.employeeId);
-      } else {
-        this.route.queryParams.subscribe(params => {
-          if (params['data']) {
-            const decrypted = this.encryptionService.decrypt(params['data']);
-            const resoureID = Array.isArray(decrypted?.resourceId) ? decrypted.resourceId[0] : decrypted?.resourceId;
-            this.filterData = {
-              projectId: decrypted?.projectId || null,
-              clientId: decrypted?.clientId || null,
-              departmentId: decrypted?.departmentId || null,
-              tmorrmId: decrypted?.tmorrmId || null,
-              dateRange: decrypted?.dateRange || null
-            };
-            if (resoureID) {
-              this.employeeId = parseInt(resoureID);
-              this.setDefaultmounth();
-              this.getProjectSummary(resoureID);
-              this.getEmployeeId(resoureID);
-            }
-          }
-        });
-      }
     });
-    
-    this.getAllEmployeeDetails();
-    this.getResourceDetailsByManagerId();
-    this.projectWiseChart();
-    this.estimatedActualChart();
   }
 //get all projects list
   getprojectData(): void {
-    this.subscription = this.http.getData(`Project`).subscribe({
+    this.subscription = this.sharedDataService.getProjectData().subscribe({
       next: (res: any) => {
         this.projectDetails = res.data;
       },
       error: (err) => {
-        console.error('Error fetching clients:', err);
+        console.error('Error fetching projects:', err);
       }
     });
   }
   //get all clients list
   getclientData(): void {
-    this.subscription = this.http.getData(`Client/GetAll`).subscribe({
+    this.subscription = this.sharedDataService.getClientData().subscribe({
       next: (res: any) => {
         this.clientDetails = res.data;
       },
@@ -190,28 +177,21 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
   //get all departments list
   getdepartmentData(): void {
-    this.subscription = this.http.getData(`Department`).subscribe({
+    this.subscription = this.sharedDataService.getDepartmentData().subscribe({
       next: (res: any) => {
         this.departmentDetails = res;
       },
       error: (err) => {
-        console.error('Error fetching clients:', err);
+        console.error('Error fetching departments:', err);
       }
     });
   }
 
   //get all TM and RM list
   getTmandRMData(): void {
-    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
+    this.subscription = this.sharedDataService.getTmandRMData().subscribe({
       next: (res: any) => {
-        this.tmandRmDetails = [
-          ...res.map((emp: any) => ({
-            ...emp,
-            fullName: emp.fusionEmpId
-              ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
-              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-          })),
-        ];
+        this.tmandRmDetails = this.sharedDataService.formatTmRmList(res);
       },
       error: (err) => {
         console.error('Error fetching TM/RM:', err);
@@ -247,21 +227,15 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
 
   resetForm() {
-    this.datepickerForm.reset({
-      resourceId: this.employeeId,
-      dateRange: null,
+    this.datepickerForm.patchValue({
       projectId: null,
       clientId: null,
       departmentId: null,
       tmorrmId: null
     });
-    this.setDefaultmounth();
-    this.getProjectSummary(this.employeeId);
-    this.getEmployeeId(this.employeeId);
+    this.filterService.clearOnlyFilterFields();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    this.projectWiseChart();
-    this.estimatedActualChart();
     this.closeCanvas();
   }
 
@@ -361,19 +335,17 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
     const formdata = this.datepickerForm.value;
-    const clientId = formdata.clientId;
-    const projectId = formdata.projectId;
-    const departmentId = formdata.departmentId;
-    const reportingId = formdata.tmorrmId;
-    const statuses = 'Active, Trainee Active, Active Contract';
-    this.subscription = this.http.getProjectResources(`ProjectResource/employees`, clientId, projectId, departmentId, reportingId, statuses).subscribe({
+    const filters = {
+      clientId: formdata.clientId,
+      projectId: formdata.projectId,
+      departmentId: formdata.departmentId,
+      reportingId: formdata.tmorrmId
+    };
+    this.subscription = this.sharedDataService.getAllEmployeeDetails(this.http, EmployeeId, filters).subscribe({
       next: (res: any) => {
         const employees = res.data || res || [];
         if (Array.isArray(employees)) {
-          this.activeEmplist = employees.filter((emp: any) => emp.employeeId !== EmployeeId).map((emp: any) => ({
-            value: emp.employeeId,
-            label: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}` : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-          }));
+          this.activeEmplist = this.sharedDataService.formatEmployeeList(employees, EmployeeId);
         } else {
           this.activeEmplist = [];
         }
@@ -391,6 +363,8 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
 
   onSubmit() {
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
+    const formValue = this.datepickerForm.value;
+    this.filterService.setFilters(formValue);
     this.getProjectSummary(resoureID);
     this.getEmployeeId(resoureID);
     this.closeCanvas();

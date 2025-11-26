@@ -99,6 +99,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   projectDetails=[] as any;
   clientDetails=[] as any;
   departmentDetails=[] as any;
+  tmandRmDetails=[] as any;
   filterData={} as any;
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute,private encryptionService:EncriptdecriptService, private offcanvasService: NgbOffcanvas) { }
@@ -108,19 +109,24 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.getprojectData();
     this.getclientData();
     this.getdepartmentData();
+    this.getTmandRMData();
     this.updateModuleInfo()
     this.createDatepickerForm();
-     this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {
       if (params['data']) {
-      const decrypted = this.encryptionService.decrypt(params['data']);
-      // console.log('Decrypted Data:', decrypted);
-       const resoureID = decrypted?.resourceId;
-       this.filterData=decrypted
-      if (resoureID) {
-        this.employeeId = parseInt(resoureID)
+        const decrypted = this.encryptionService.decrypt(params['data']);
+        const resoureID = Array.isArray(decrypted?.resourceId) ? decrypted.resourceId[0] : decrypted?.resourceId;
+        this.filterData = {
+          projectId: decrypted?.projectId || null,
+          clientId: decrypted?.clientId || null,
+          departmentId: decrypted?.departmentId || null,
+          tmorrmId: decrypted?.tmorrmId || null,
+          dateRange: decrypted?.dateRange || null
+        };
+        if (resoureID) {
+          this.employeeId = parseInt(resoureID);
+        }
       }
-      }
-      
     })
     this.http.getteamDateRangeObservable().subscribe((data) => {
       console.log('Received BehaviorSubject data:', data);
@@ -134,18 +140,23 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         this.getProjectSummary(this.employeeId);
       } else {
         this.route.queryParams.subscribe(params => {
-            if (params['data']) {
-      const decrypted = this.encryptionService.decrypt(params['data']);
-      // console.log('Decrypted Data:', decrypted);
-       const resoureID = decrypted?.resourceId;
-       this.filterData=decrypted
-      if (resoureID) {
-            this.employeeId = parseInt(resoureID)
-            this.setDefaultmounth();
-            this.getProjectSummary(resoureID);
-            this.getEmployeeId(resoureID);
+          if (params['data']) {
+            const decrypted = this.encryptionService.decrypt(params['data']);
+            const resoureID = Array.isArray(decrypted?.resourceId) ? decrypted.resourceId[0] : decrypted?.resourceId;
+            this.filterData = {
+              projectId: decrypted?.projectId || null,
+              clientId: decrypted?.clientId || null,
+              departmentId: decrypted?.departmentId || null,
+              tmorrmId: decrypted?.tmorrmId || null,
+              dateRange: decrypted?.dateRange || null
+            };
+            if (resoureID) {
+              this.employeeId = parseInt(resoureID);
+              this.setDefaultmounth();
+              this.getProjectSummary(resoureID);
+              this.getEmployeeId(resoureID);
+            }
           }
-      }
         });
       }
     });
@@ -189,52 +200,69 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     });
   }
 
+  //get all TM and RM list
+  getTmandRMData(): void {
+    this.subscription = this.http.getData(`JobDetails/getAllReportingnTeamManagers`).subscribe({
+      next: (res: any) => {
+        this.tmandRmDetails = [
+          ...res.map((emp: any) => ({
+            ...emp,
+            fullName: emp.fusionEmpId
+              ? `${emp.fusionEmpId} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`
+              : `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+          })),
+        ];
+      },
+      error: (err) => {
+        console.error('Error fetching TM/RM:', err);
+      },
+    });
+  }
+
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
-      resourceId: [null],
+      resourceId: [null], // Single select for summary screens
       projectId: [null],
       clientId: [null],
-      departmentId: [null]
+      departmentId: [null],
+      tmorrmId: [null]
     });
+  }
+
+  onEmployeeChange() {
+    // Do nothing - let user click Apply to refresh
+    // This preserves behavior where changes only apply on Submit
   }
 
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
-    // Check if any field has value
+    // Check if any filter (except date & employee) has value
     return (
-      (formValue?.dateRange && formValue?.dateRange?.length > 0)
+      (formValue?.projectId && formValue?.projectId?.length > 0) ||
+      (formValue?.clientId && formValue?.clientId?.length > 0) ||
+      (formValue?.departmentId && formValue?.departmentId?.length > 0) ||
+      (formValue?.tmorrmId && formValue?.tmorrmId?.length > 0)
     );
   }
 
   resetForm() {
     this.datepickerForm.reset({
-      resourceId: null,
+      resourceId: this.employeeId,
       dateRange: null,
       projectId: null,
       clientId: null,
-      departmentId: null
+      departmentId: null,
+      tmorrmId: null
     });
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth]
-    });
-    this.route.queryParams.subscribe(params => {
-      if (params['data']) {
-        const decrypted = this.encryptionService.decrypt(params['data']);
-        const resoureID = decrypted?.resourceId;
-        if (resoureID) {
-          this.employeeId = parseInt(resoureID);
-          this.getProjectSummary(resoureID);
-          this.getEmployeeId(resoureID);
-        }
-      }
-    });
+    this.setDefaultmounth();
+    this.getProjectSummary(this.employeeId);
+    this.getEmployeeId(this.employeeId);
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.projectWiseChart();
     this.estimatedActualChart();
+    this.closeCanvas();
   }
 
   setDefaultmounth() {
@@ -250,9 +278,10 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.datepickerForm.patchValue({
       dateRange: [start, end],
       resourceId: this.employeeId || null,
-      projectId: this.filterData.projectId,
-      clientId: this.filterData.clientId,
-      departmentId: this.filterData.departmentId
+      projectId: this.filterData.projectId || null,
+      clientId: this.filterData.clientId || null,
+      departmentId: this.filterData.departmentId || null,
+      tmorrmId: this.filterData.tmorrmId || null
     });
   }
 

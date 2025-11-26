@@ -154,8 +154,13 @@ export class TeamTimesheetsComponent {
 
   isFilterApplied(): boolean {
     const formValue = this.datepickerForm?.value;
-    // Check if any field has value
-    return formValue?.dateRange && formValue?.dateRange?.length > 0;
+    // Check if any filter (except date & employee) has value
+    return (
+      (formValue?.projectId && formValue?.projectId?.length > 0) ||
+      (formValue?.clientId && formValue?.clientId?.length > 0) ||
+      (formValue?.departmentId && formValue?.departmentId?.length > 0) ||
+      (formValue?.tmorrmId && formValue?.tmorrmId?.length > 0)
+    );
   }
 
   toggleFilters(content: TemplateRef<any>) {
@@ -175,17 +180,14 @@ export class TeamTimesheetsComponent {
       departmentId: null,
       tmorrmId: null,
     });
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-    });
+    this.setDefaultmounth();
     if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
       this.getAllEmployeeDetails();
     } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
       this.getResourceDetailsByManagerId();
     }
     this.getteamsummary();
+    this.closeCanvas();
   }
 
   createDatepickerForm() {
@@ -382,10 +384,11 @@ export class TeamTimesheetsComponent {
   }
 
   navigateView(employeeId: any) {
-    //console.log(this.datepickerForm.value);
-    const encryptedData = this.encryptionService.encrypt(
-      this.datepickerForm.value
-    );
+    const formData = {
+      ...this.datepickerForm.value,
+      resourceId: [employeeId] // Pass selected employee
+    };
+    const encryptedData = this.encryptionService.encrypt(formData);
     if (this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')) {
       this.router.navigate(['project-management/timesheet/resourcesummary'], {
         queryParams: { data: encryptedData },
@@ -395,5 +398,10 @@ export class TeamTimesheetsComponent {
         queryParams: { data: encryptedData },
       });
     }
+  }
+
+  onEmployeeChange() {
+    // Do nothing - let user click Apply to refresh
+    // This preserves original behavior where changes only apply on Submit
   }
 }

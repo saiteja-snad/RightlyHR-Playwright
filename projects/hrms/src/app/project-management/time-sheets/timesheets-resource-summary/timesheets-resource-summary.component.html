@@ -1,40 +1,67 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-        <div class="component-header-content">
-            <div class="heading-content">
-                <div class="commpoment-name">Project Management<span class="ms-1">
-                        <i class="bi bi-chevron-double-right"></i></span></div>
-                @if(isShowtimesheetforteamRoute()){
-                <div class="commpoment-name">
-                    <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
-                    <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-                </div>
-                }
-                @if(isShowtimesheetformyRoute()){
-                <div class="commpoment-name">
-                    <a (click)="navigatetomy()"><u>My Timesheet</u></a>
-                    <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-                </div>
-                }
-                <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
-                    {{employename?.lastName}}</div>
-                <div>
-                    <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
-                </div>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">Project Management<span class="ms-1">
+                    <i class="bi bi-chevron-double-right"></i></span></div>
+            @if(isShowtimesheetforteamRoute()){
+            <div class="commpoment-name">
+                <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-
-            <div class="d-flex align-items-center gap-3">
-                <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}}
-                        Hrs</span>
-                </div>
-                <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
-                    <button type="button" class="custom-btn btn-secondary" (click)="toggleFilters(filterContent)"><i
-                            class="bi bi-funnel me-2"></i>Fliters</button>
-                </div>
+            }
+            @if(isShowtimesheetformyRoute()){
+            <div class="commpoment-name">
+                <a (click)="navigatetomy()"><u>My Timesheet</u></a>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-
+            }
+            <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
+                {{employename?.lastName}}</div>
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
         </div>
-    </form>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}}
+                    Hrs</span>
+            </div>
+            <form [formGroup]="datepickerForm">
+                <div class="d-flex gap-3 align-items-center">
+                    <!-- Date Picker Outside Offcanvas -->
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'" 
+                            selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
+                    </div>
+
+                    <!-- Employee Dropdown Outside Offcanvas (Single Select) -->
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="custom-p-select-content">
+                        <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
+                            optionLabel="label" optionValue="value" formControlName="resourceId"
+                            [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'" 
+                            class="form-select custom-select" />
+                    </div>
+                    }
+                    @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
+                    <div class="custom-p-select-content">
+                        <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
+                            optionLabel="fullName" optionValue="id" formControlName="resourceId"
+                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'" 
+                            class="form-select custom-select" />
+                    </div>
+                    }
+
+                    <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+                        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+                            <i class="bi bi-funnel me-2"></i>Filters
+                            <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </div>
 
@@ -323,23 +350,13 @@
             <a (click)="closeCanvas()" class="cursor"><i class="bi bi-x-lg"></i></a>
         </div>
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-
-            <div class="mb-3">
-                <label class="form-label custom-label filter-labels mb-3">{{'Select Date Range'| translate}}</label>
-                <div class="custom-date-range-picker w-100">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
-                        selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
-                </div>
-            </div>
-
-
             <div class="mb-3">
                 <label class="form-label custom-label filter-labels mb-3">{{'Select Project'| translate}}</label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName"
                         [resetFilterOnHide]="true" optionLabel="projectName" optionValue="projectId"
-                        formControlName="projectId" placeholder="Please select project"
-                        class="form-select custom-select" />
+                        formControlName="projectId" (onChange)="getAllEmployeeDetails()"
+                        placeholder="Please select project" class="form-select custom-select" />
                 </div>
             </div>
 
@@ -348,8 +365,8 @@
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="clientDetails" [filter]="true" filterBy="clientName"
                         [resetFilterOnHide]="true" optionLabel="clientName" optionValue="clientId"
-                        formControlName="clientId" placeholder="Please select client"
-                        class="form-select custom-select" />
+                        formControlName="clientId" (onChange)="getAllEmployeeDetails()"
+                        placeholder="Please select client" class="form-select custom-select" />
                 </div>
             </div>
 
@@ -358,16 +375,23 @@
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
                         [resetFilterOnHide]="true" optionLabel="departmentName" optionValue="sno"
-                        formControlName="departmentId" placeholder="Please select department"
-                        class="form-select custom-select" />
+                        formControlName="departmentId" (onChange)="getAllEmployeeDetails()"
+                        placeholder="Please select department" class="form-select custom-select" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label custom-label filter-labels mb-3">{{'Select RM/TM' | translate}}</label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="fullName"
+                        [resetFilterOnHide]="true" optionLabel="fullName" optionValue="employeeId"
+                        formControlName="tmorrmId" (onChange)="getAllEmployeeDetails()"
+                        placeholder="Please select rm/tm" class="form-select custom-select" />
                 </div>
             </div>
 
             <div class="d-flex offcanvas-footer-content gap-3">
-                @if(isFilterApplied()) {
-                <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">{{'Clear All' |
-                    translate}}</button>
-                }
+                <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 <button class="custom-btn btn-primary w-100" type="submit">{{'Apply' | translate}}</button>
             </div>
         </form>

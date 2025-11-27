@@ -220,7 +220,7 @@
 
     <div class="custom-main-popup-content">
       <div class="mb-3 d-flex gap-3">
-        <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+        <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
         <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
       </div>
 
@@ -282,7 +282,7 @@
                     expenseheaderiteams.approvalHeader?.finalapprovalStage){
                     <!-- Only show Reject if not verified (hide after verification) -->
                     <li *ngIf="!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))">
-                      <a class="dropdown-item" (click)="openRejectModal(rejectmodal, selectedLeaveData)">
+                      <a class="dropdown-item" (click)="openRejectModal(rejectmodal, expenseheaderiteams)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
                       </a>
                     </li>

@@ -369,6 +369,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
           this.sharedModalService.openSuccessModal(
             'Expense request processed successfully'
           );
+          this.http.triggerActionSignal();
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             expenses: true,

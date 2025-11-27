@@ -200,10 +200,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.selectedLeaveData = request;
   }
 
-  openRejectModal(content: any, request: ExpenseApprovalResponse) {
+  openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders ) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
-    this.selectedLeaveData = request;
+    this.selectedLeaveData = request as any;
   }
 
   handleAccept(approveForm: FormGroup): void {

@@ -125,7 +125,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="approvalTypeOptions" optionLabel="label"
-              optionValue="value" formControlName="approvalType" [readonly]="isReadOnlyMode"
+              optionValue="value" formControlName="approvalType" [readonly]="isReadOnlyMode && !isEditMode"
               placeholder="{{'Please select approval type' | translate}}">
             </p-select>
           </div>

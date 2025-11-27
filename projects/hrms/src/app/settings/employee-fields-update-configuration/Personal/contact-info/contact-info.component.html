@@ -125,7 +125,7 @@
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="approvalTypeOptions" optionLabel="label"
               optionValue="value" formControlName="approvalType"
-              placeholder="{{'Please select approval type' | translate}}" [readonly]="isReadOnlyMode">
+              placeholder="{{'Please select approval type' | translate}}" [readonly]="isReadOnlyMode && !isEditMode">
             </p-select>
           </div>
           <div *ngIf="!isReadOnlyMode &&fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"

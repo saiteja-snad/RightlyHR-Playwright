@@ -24,7 +24,7 @@
                         <tr *ngFor="let dep of DepartmentDetail">
                             <td class="w-60">{{dep.departmentName}}</td>
                             <td >
-                                <input type="color" [value]="dep.meta?.graphData?.color || ''" disabled
+                                <input type="color" [value]="dep.meta?.graphData?.color || '#000000'" disabled
                                     class="form-control custom-color">
                             </td>
                             <td class="text-center"

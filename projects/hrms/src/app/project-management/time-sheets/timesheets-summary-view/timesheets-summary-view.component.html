@@ -58,10 +58,9 @@
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
-                                    optionValue="value" formControlName="resourceId" [resetFilterOnHide]="true"
-                                    placeholder="Please select employee" class="form-select custom-select"
-                                    required></p-select>
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
+                                    formControlName="resourceId" [resetFilterOnHide]="true" placeholder="Please select employee"
+                                    class="form-select custom-select" required></p-select>
                             </div>
                         </div>
                         }
@@ -69,15 +68,13 @@
                         <div class="d-flex align-items-center gap-2">
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
-                                    name="myteamemployees" optionValue="id" placeholder="Please select employee"
-                                    formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true"
-                                    class="form-select custom-select" [autoDisplayFirst]="false" required>
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
+                                    optionValue="id" placeholder="Please select employee" formControlName="resourceId" [filter]="true"
+                                    [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
                         </div>
                         }
-
                     </div>
 
                     <div>
@@ -118,7 +115,8 @@
                                         <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ?
                                             '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                                         <td>
-                                            <div class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
+                                            <div
+                                                class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
                                                 <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
                                                     <a>
                                                         <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
@@ -177,7 +175,7 @@
                                 <div class="circular-dot circle-leave"></div>
                                 <div class="status-text">Leaves</div>
                             </div>
-
+                            
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-pending"></div>
                                 <div class="status-text">Pending(P)</div>
@@ -186,9 +184,7 @@
                     </div>
                 </div>
 
-
-                <div class="timesheet-graph-content p-3"
-                    [ngClass]="{'custom-graph-content-height': isShowtimesheetforteamRoute()}">
+                <div class="timesheet-graph-content p-3" [ngClass]="{'custom-graph-content-height': isShowtimesheetforteamRoute()}">
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Timesheet Summary</div>
                         <div>
@@ -204,16 +200,13 @@
                             <div class="stacked-progress-container">
                                 <!-- overlay color bar -->
                                 <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
-                                            + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                                            + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
-                                            + rejectedColor + ' 100%)'"></div>
+                                + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                                + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                                + rejectedColor + ' 100%)'"></div>
                                 <div class="progress-labels">
-                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">
-                                        {{ displayApproved }} Hrs</span></div>
-                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">
-                                        {{ displaySubmitted }} Hrs</span></div>
-                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">
-                                        {{ displayRejected }} Hrs</span></div>
+                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
+                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
+                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
                                 </div>
                             </div>
                         </ng-container>
@@ -247,9 +240,7 @@
                                         <div class="col-md-8">
                                             <div class="d-flex align-items-center gap-1">
                                                 <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
-                                                <div class="legend-name text-truncate" [ngbPopover]="labelName" 
-                                                triggers="mouseenter:mouseleave">{{ item.label }}</div>
-                                            <ng-template #labelName>{{ item.label }}</ng-template>
+                                                <div class="legend-name">{{ item.label }}</div>
                                             </div>
                                         </div>
                                         <div class="hrs-display text-nowrap col-md-4">{{item.hours}} Hrs</div>
@@ -275,8 +266,7 @@
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Allocated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
-                                class="module-icon">
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
                             <ng-template #resourceSummaryContent>
                                 <div class="module-info-text">{{AllocatedActualhours}}</div>
                             </ng-template>
@@ -287,8 +277,7 @@
                     <div class="time-sheet-graph-card p-3">
                         <div class="bar-chart">
                             <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
-                                <p-chart type="bar" [data]="estimatedVsActualGraphData"
-                                    [options]="estimatedVsActualGraphOptions" />
+                                <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                             </ng-container>
                         </div>
                         <ng-template #noActualData>

@@ -40,7 +40,7 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
       industryType: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       logo: [null, Validators.required],
       clientAddress: ['', [Validators.required, this.formValidations.minCharactersValidator(5), this.formValidations.maxCharactersValidator(250)]],
-      color: [''],
+      color: ['#000000'],
       overtimeEligibility: [false],
       billable: [false],
       allowWeekendWork: [false]
@@ -137,7 +137,7 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
       updatedBy: this.empinfo.employeeId,
       meta: {
       graphData: {
-        color: formValue.color
+        color: formValue.color || '#000000'
       }
     }
     };

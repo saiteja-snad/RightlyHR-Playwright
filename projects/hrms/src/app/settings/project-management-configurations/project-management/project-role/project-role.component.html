@@ -26,7 +26,7 @@
               <td>{{roles.entityname}}</td>
               <td>{{roles.projectrole}}</td>
               <td>
-                <input type="color" [value]="roles.color" disabled class="form-control custom-color w-20">
+                <input type="color" [value]="roles.color || '#000000'" disabled class="form-control custom-color w-20">
               </td>
               <td class="text-center"
                 *ngIf="rbac.allowedToAccess('Project Role.update') || rbac.allowedToAccess('Project Role.delete')">

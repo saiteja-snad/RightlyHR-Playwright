@@ -99,11 +99,6 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
             fullName
           };
         });
-
-        //  Sort by firstName alphabetically
-        this.usersList.sort((a: any, b: any) =>
-          a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-        );
       },
       error: (err) => {
         console.log(err);

@@ -482,14 +482,14 @@ export class AvailableAssetsListComponent {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getassetsdata(this.page, this.pageSize,this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
 
   // Called when first size changes
@@ -498,7 +498,7 @@ export class AvailableAssetsListComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
   }
   onSearchChange(event: any) {
 

@@ -13,6 +13,7 @@ import { HttpService } from '../../../services/http.service';
 })
 
 export class PendingApprovalsTabsComponent {
+
   filteredTabs: any[] = [];
   isActive(route: string): boolean {
     return this.router.isActive(route, true);

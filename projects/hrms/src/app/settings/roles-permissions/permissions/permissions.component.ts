@@ -412,6 +412,24 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expense Tab',
     'NoDue Clearance Tab',
   ];
+  employeeFieldsConfigUpdate = [
+    'Personal Config Update Tab',
+    'Job Config Update Tab',
+    'Document Config Update Tab',
+  ];
+  settingsEmployeeConfigUpdateJobTabs = [
+    'Certifications',
+    'Employment History'
+  ];
+  settingsEmployeeConfigUpdatePersonalTabs = [
+    'Basic Info',
+    'Contact Info',
+    'Addresses',
+    'Emergency Contacts',
+    'Identity Info',
+    'Bank Info',
+    'Academics',
+  ];
   settingsEmployeeJobFields = [
     'Job Role',
     'Job Type',
@@ -739,6 +757,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Probation Details Tab',
     'Contractor Details Tab',
     'Contract-Conversion Tab',
+    'EmployeeInfo Tab',
     'Time Off main Tab',
     'Contractors main Tab',
     'Offboarding main Tab',
@@ -775,6 +794,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'For You (Claims and Expenses)',
     'For Role (Claims and Expenses)',
   ];
+  pendingApprovalEmployeinfoSubTabs = [
+  'For You (Employee Info)',
+  'For Role (Employee Info)',
+];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',
     'For Role (Desk Requests)',
@@ -992,7 +1015,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Asset Details',
     'My Info Separation Request Button',
     'My Info Card Details',
+
   ];
+
+  myInfoApprovalFields = [
+    'My Info Personal Approval History',
+    'My Info Job Approval History',
+    'My Info Documents Approval History',
+  ]
+
+  employeeApprovalFields = [
+    'Employee Personal Approval History',
+    'Employee Job Approval History',
+    'Employee Documents Approval History',
+  ]
+
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
     'Submission Of No Due Clearance',
@@ -1328,6 +1365,20 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  isemployeeConfigUpdateCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Only enabled for 'NoDue Clearance Tab'
+      return (!this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields));
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return (!this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields));
+    }
+    return false;
+  }
+
   isattendenceCheckboxDisabled(
     per: any,
     action: 'View' | 'Update' | 'Create' | 'Delete'
@@ -1363,6 +1414,40 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  isSettingsEmployeeJobTabsFieldConfigCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isSettingsEmployeePersonalTabsFieldConfigCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+
 
   isSettingsEmployeePersonalCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
@@ -1744,7 +1829,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isonlyempinfofunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Create') {
+      return true;
+    }
+    if (action === 'Update' || action === 'View' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+ isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'Create') {
       return true;
     }
@@ -1915,6 +2009,50 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           'My Info Family Details',
           'My Info Bank Details',
           'My Info Visa Details',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
+
+    isMyInfoViewHistoryActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Update' || action === 'Create') {
+      return true;
+    }
+    if (action === 'View') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Personal Approval History',
+          'My Info Job Approval History',
+          'My Info Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Delete') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Personal Approval History',
+          'My Info Job Approval History',
+          'My Info Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
+
+      isPersonalViewHistoryActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true;
+    }
+    if (action === 'View') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'Employee Personal Approval History',
+          'Employee Job Approval History',
+          'Employee Documents Approval History',
         ].includes(per.fields)
       );
     }

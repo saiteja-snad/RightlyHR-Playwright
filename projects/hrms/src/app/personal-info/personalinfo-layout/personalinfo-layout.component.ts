@@ -1,9 +1,21 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
-import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterModule,
+  RouterOutlet,
+} from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
@@ -12,17 +24,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
-import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { ConfirmationIconComponent } from '../../icons/confirmation-icon/confirmation-icon.component';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-personalinfo-layout',
-  imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule, ConfirmationIconComponent],
+  imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent, FormsModule, ReactiveFormsModule,
+    TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule, ConfirmationIconComponent, RouterModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
@@ -44,7 +57,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   selectedData: any = {};
   selectedEmployeeIds: any;
-  pouptext1: any
+  pouptext1: any;
   selectedManager: any = null;
   jobPostData: any;
   headerName!: string;
@@ -53,46 +66,163 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   subHeader: string = '';
   loginEmployee = {} as any;
+  basePath = '/myinfo';
+  permissionKeys = {
+    myinfo: {
+      personal: 'My Info Personal Approval History.view',
+      job: 'My Info Job Approval History.view',
+      documents: 'My Info Documents Approval History.view',
+    },
+    personalinfo: {
+      personal: 'Employee Personal Approval History.view',
+      job: 'Employee Job Approval History.view',
+      documents: 'Employee Documents Approval History.view',
+    },
+  };
+  navTabs: any[] = [];
+  approvalHistoryData: any = null;
 
-  constructor(private http: HttpService, private authService: AuthService, private router: Router, public rbac: RbacService,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
-    public fieldpremission: AccessForEmployeeinfoService) { }
+  constructor(private http: HttpService, private authService: AuthService, private router: Router,
+    public rbac: RbacService, private modalService: NgbModal, private fb: FormBuilder,
+    private conformationPopup: OpenModalService, private route: ActivatedRoute,
+    public fieldpremission: AccessForEmployeeinfoService, private accessNav: AccessNavigationService) {}
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
       this.setSubHeader();
     });
     this.setSubHeader();
-    this.fieldpremission.checkrouters.next(this.route.snapshot.routeConfig?.path || '')
+    this.fieldpremission.checkrouters.next(
+      this.route.snapshot.routeConfig?.path || ''
+    );
     if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
-      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    } else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     }
-    else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
-      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    }
-    this.loginEmployee = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.loginEmployee = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.initialzerevoke();
     this.getEmployeeId();
     this.getAllTeammembersList();
     this.getEmployee();
-    this.emppersonalinfo = JSON.parse(localStorage.getItem("personaldata") || '{}')
+    this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.getTraineeofferdetails();
     this.assignHeading();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.getofferdetails();
     this.getTraineeofferdetails();
+    this.setBasePath();
+    this.buildTabs();
+    this.fetchApprovalHistory();
+     this.http.basicDetailesadded$.subscribe(() => {
+        this.fetchApprovalHistory();
+      });
   }
+
+  fetchApprovalHistory() {
+    this.http
+      .getData(
+        `EmployeeInfoFieldUpdate/employeeInfoFieldsHistory/${this.empinfo.employeeId}`
+      )
+      .subscribe({
+        next: (response: any) => {
+          if (response.success && response.data && response.data.length > 0) {
+            this.approvalHistoryData = response.data;
+          } else {
+            this.approvalHistoryData = [];
+          }
+        },
+        error: () => {
+          this.approvalHistoryData = [];
+        },
+      });
+  }
+
+  get fullName(): string {
+  return [
+    this.emppersonalinfo.firstName,
+    this.emppersonalinfo.middleName,
+    this.emppersonalinfo.lastName
+  ]
+    .filter(n => n)
+    .join(' ');
+}
+
+
+  hasHistory(): boolean {
+    return this.approvalHistoryData && this.approvalHistoryData.length > 0;
+  }
+
+  buildTabs() {
+    const key = this.basePath === '/personalinfo' ? 'personalinfo' : 'myinfo';
+
+    this.navTabs = [
+      {
+        label: 'Personal',
+        link: `${this.basePath}/approvals/personal`,
+        img: '/my-info-icons/view-history-personal.png',
+        permission: this.permissionKeys[key].personal,
+      },
+      {
+        label: 'Job',
+        link: `${this.basePath}/approvals/job`,
+        img: '/my-info-icons/view-history-job.png',
+        permission: this.permissionKeys[key].job,
+      },
+      {
+        label: 'Documents',
+        link: `${this.basePath}/approvals/documents`,
+        img: '/my-info-icons/view-history-documents.png',
+        permission: this.permissionKeys[key].documents,
+      },
+    ].filter((t) => this.rbac.allowedToAccess(t.permission));
+  }
+
+  setBasePath() {
+    const url = this.router.url;
+    if (url.startsWith('/personalinfo')) {
+      this.basePath = '/personalinfo';
+    } else if (url.startsWith('/myinfo')) {
+      this.basePath = '/myinfo';
+    }
+  }
+
+  isInApprovalsRoute(): boolean {
+    return this.router.url.includes('/approvals');
+  }
+
+  get approvalsBasePath(): string {
+    return this.router.url.includes('/personalinfo')
+      ? '/personalinfo/approvals'
+      : '/myinfo/approvals';
+  }
+
+  isActiveRoute(link: string): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+  isInsideApprovals(): boolean {
+  const url = this.router.url.toLowerCase();
+  return url.includes('/approvals/personal') ||
+         url.includes('/approvals/job') ||
+         url.includes('/approvals/documents');
+}
+
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data;
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.empdata = data;
+        },
+        error: (reason) =>
+          console.error('Error fetching employee data:', reason),
+      });
   }
 
   emailForRequestDoc() {
@@ -110,7 +240,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
       senderEmail: loggedInUser.workEmail,
       status: this.postIsApplicable,
-      empType: ''
+      empType: '',
     };
     if (this.emppersonalinfo.empType === 'Contract') {
       pdata.empType = 'Contract';
@@ -120,21 +250,29 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else {
       pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
     }
-    this.subscription = this.http.postdata(`CustomEmail/RequestDocuments`, pdata).subscribe({
-      next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email has been sent successfully')
-        this.isLoading = false;
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/RequestDocuments`, pdata)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal(
+            'Email has been sent successfully'
+          );
+          this.isLoading = false;
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   onSelectManager(event: any, field: string) {
     if (field === 'teamMembers') {
-      this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
-      this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
+      this.selectedEmployees = Array.isArray(event.value)
+        ? event.value
+        : [event.value];
+      this.selectedEmployeeIds = this.selectedEmployees.map(
+        (emp) => emp.employeeId
+      );
     }
     if (field === 'reportingManager') {
       this.teamForm.patchValue({ reportingManager: event.value });
@@ -142,34 +280,91 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/admin/dashboard']);
+  }
+
+  navigateMyInfo() {
+    if (this.rbac.allowedToAccess('My Info Personal Approval History.view')) {
+      this.router.navigate(['/myinfo/approvals/personal']);
+    } else if (this.rbac.allowedToAccess('My Info Job Approval History.view')) {
+      this.router.navigate(['/myinfo/approvals/job']);
+    } else if (
+      this.rbac.allowedToAccess('My Info Documents Approval History.view')
+    ) {
+      this.router.navigate(['/myinfo/approvals/documents']);
+    }
+  }
+
+  navigatePersonal() {
+    if (this.rbac.allowedToAccess('Employee Personal Approval History.view')) {
+      this.router.navigate(['/personalinfo/approvals/personal']);
+    } else if (
+      this.rbac.allowedToAccess('Employee Job Approval History.view')
+    ) {
+      this.router.navigate(['/personalinfo/approvals/job']);
+    } else if (
+      this.rbac.allowedToAccess('Employee Documents Approval History.view')
+    ) {
+      this.router.navigate(['/personalinfo/approvals/documents']);
+    }
+  }
+
+  hasMyInfoHistoryAccess(): boolean {
+    return (
+      this.rbac.allowedToAccess('My Info Personal Approval History.view') ||
+      this.rbac.allowedToAccess('My Info Job Approval History.view') ||
+      this.rbac.allowedToAccess('My Info Documents Approval History.view')
+    );
+  }
+
+  hasEmployeeHistoryAccess(): boolean {
+    return (
+      this.rbac.allowedToAccess('Employee Personal Approval History.view') ||
+      this.rbac.allowedToAccess('Employee Job Approval History.view') ||
+      this.rbac.allowedToAccess('Employee Documents Approval History.view')
+    );
   }
 
   getEmployee() {
-    this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
-      next: (data: any) => {
-        this.managers = data.filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { fusionEmpId: string; firstName: any; middleName?: string; lastName: any }) => ({
-            ...emp,
-            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
-          }));
-      },
-      error: (err: any) => console.log(err),
-    });
+    this.subscription = this.http
+      .getData('JobDetails/getAllReportingManagers')
+      .subscribe({
+        next: (data: any) => {
+          this.managers = data
+            .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
+            .map(
+              (emp: {
+                fusionEmpId: string;
+                firstName: any;
+                middleName?: string;
+                lastName: any;
+              }) => ({
+                ...emp,
+                name: `${emp.fusionEmpId} - ${emp.firstName} ${
+                  emp.middleName ? emp.middleName + ' ' : ''
+                }${emp.lastName}`,
+              })
+            );
+        },
+        error: (err: any) => console.log(err),
+      });
   }
 
   getAllTeammembersList() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        this.teamMembersdata = data.map((member: any) => ({
-          ...member,
-          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
-        }));
-      },
-      error: (err: any) => console.log(err),
-    }
-    );
+    this.subscription = this.http
+      .getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.teamMembersdata = data.map((member: any) => ({
+            ...member,
+            name: `${member.fusionEmpId} - ${member.firstName} ${
+              member.middleName ? member.middleName + ' ' : ''
+            }${member.lastName}`,
+          }));
+        },
+        error: (err: any) => console.log(err),
+      });
   }
 
   openModal(content: any) {
@@ -177,7 +372,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   openCredentialsModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'md' });
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'md',
+    });
   }
 
   isActive(route: string): boolean {
@@ -207,14 +406,16 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else if (selectedCount === 1) {
       return this.formatEmployeeName(this.firstSelectedEmployee);
     } else {
-      return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${selectedCount - 1}`;
+      return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${
+        selectedCount - 1
+      }`;
     }
   }
 
   formsubmit() {
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required],
-      reportingManager: [null, Validators.required]
+      reportingManager: [null, Validators.required],
     });
   }
 
@@ -248,29 +449,14 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else {
       pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
     }
-    this.subscription = this.http.postdata(`CustomEmail/RerequestDocuments`, pdata).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Email has been sent successfully')
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
-  }
-
-  submitArchive() {
-    (this.empdata.empstatus = 'Archived'),
-      (this.empdata.substatus = 'Employee Created'),
-      this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
+    this.subscription = this.http
+      .postdata(`CustomEmail/RerequestDocuments`, pdata)
+      .subscribe({
         next: (data: any) => {
-          this.getEmployeeId();
-          this.updateOnboardingStatus();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Employee archived successfully');
-          setTimeout(() => {
-            this.router.navigate(['/admin/dashboard']);
-          }, 1000);
+          this.conformationPopup.openSuccessModal(
+            'Email has been sent successfully'
+          );
         },
         error: (err: any) => {
           console.log(err);
@@ -278,47 +464,74 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       });
   }
 
+  submitArchive() {
+    (this.empdata.empstatus = 'Archived'),
+      (this.empdata.substatus = 'Employee Created'),
+      (this.subscription = this.http
+        .postdata(`Employeedata/UPDATER`, this.empdata)
+        .subscribe({
+          next: (data: any) => {
+            this.getEmployeeId();
+            this.updateOnboardingStatus();
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Employee archived successfully'
+            );
+            setTimeout(() => {
+              this.router.navigate(['/admin/dashboard']);
+            }, 1000);
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+        }));
+  }
+
   updateOnboardingStatus() {
     let data = {
       status: 'Revoked',
       employeeId: this.empdata.employeeId,
     };
-    this.subscription = this.http.postdata('JobApplicantsData/UPDATERbyEmployeeId', data).subscribe({
-      next: (data: any) => {
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Something went wrong');
-        setTimeout(function () {
-        }, 2000);
-      },
-    });
+    this.subscription = this.http
+      .postdata('JobApplicantsData/UPDATERbyEmployeeId', data)
+      .subscribe({
+        next: (data: any) => {},
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal('Something went wrong');
+          setTimeout(function () {}, 2000);
+        },
+      });
   }
 
   updatePassword() {
     const employeeId = this.empdata.employeeId;
-    this.http.getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`).subscribe({
-      next: (response: any) => {
-        this.conformationPopup.openSuccessModal('Regenerate credentials generated successfully and shared with the employee via email');
-
-      },
-      error: (error: any) => {
-        console.log(error);
-      },
-      complete: () => {
-        this.emailToEmployee();
-      },
-    });
+    this.http
+      .getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          this.conformationPopup.openSuccessModal(
+            'Regenerate credentials generated successfully and shared with the employee via email'
+          );
+        },
+        error: (error: any) => {
+          console.log(error);
+        },
+        complete: () => {
+          this.emailToEmployee();
+        },
+      });
   }
 
   emailToEmployee() {
     let data = {
-      personName: `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''} ${this.empdata.lastName ?? ''}`,
+      personName: `${this.empdata.firstName ?? ''} ${
+        this.empdata.middleName ?? ''
+      } ${this.empdata.lastName ?? ''}`,
       personEmail: this.empdata.emailaddress,
       employeeId: this.empdata.employeeId,
     };
     this.http.postdata(`CustomEmail/generateCredentialEmail`, data).subscribe({
-      next: (res: any) => {
-      },
+      next: (res: any) => {},
       error: (error: any) => {
         console.log(error);
       },
@@ -366,28 +579,32 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     if (this.empdata.marriedDate === 'Invalid date') {
       this.empdata.marriedDate = null;
     }
-    this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.getEmployeeId();
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Offer revoked successfully');
-          this.revokeEmail();
-          this.updateRevokeStatustooffer();
-          this.revokeEmailToEmployee();
-          this.updateOnboardingStatus();
-          if (this.jobPostData?.id) {
-            this.updateJobapplicantdata();
+    this.subscription = this.http
+      .postdata(`Employeedata/UPDATER`, this.empdata)
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.getEmployeeId();
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Offer revoked successfully'
+            );
+            this.revokeEmail();
+            this.updateRevokeStatustooffer();
+            this.revokeEmailToEmployee();
+            this.updateOnboardingStatus();
+            if (this.jobPostData?.id) {
+              this.updateJobapplicantdata();
+            }
+            setTimeout(() => {
+              this.router.navigate(['/employee-management/all-employees']);
+            }, 2000);
           }
-          setTimeout(() => {
-            this.router.navigate(['/employee-management/all-employees']);
-          }, 2000);
-        }
-      },
-      error: (err: any) => {
-        console.error('Error revoking offer:', err);
-      }
-    });
+        },
+        error: (err: any) => {
+          console.error('Error revoking offer:', err);
+        },
+      });
   }
 
   revokeEmail() {
@@ -415,12 +632,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else {
       sdata.personName = `${this.empdata?.firstName} ${this.empdata?.lastName}`;
     }
-    this.subscription = this.http.postdata(`CustomEmail/revokeemailtomanager`, sdata).subscribe({
-      next: (data: any) => {
-      },
-      error: (err: any) => {
-      },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/revokeemailtomanager`, sdata)
+      .subscribe({
+        next: (data: any) => {},
+        error: (err: any) => {},
+      });
   }
 
   //function to send email to employee
@@ -436,26 +653,30 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       jobRole: 'string',
       comments: this.empdata.revokeComments,
     };
-    this.subscription = this.http.postdata(`CustomEmail/revokeemailtoemployee`, pdata).subscribe({
-      next: (data: any) => { },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/revokeemailtoemployee`, pdata)
+      .subscribe({
+        next: (data: any) => {},
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   updateRevokeStatustooffer() {
     this.getOfferDetails.offerSentStatus = 'Revoked';
-    this.subscription = this.http.postdata('OfferLetter/UPDATE', this.getOfferDetails).subscribe({
-      next: (data: any) => {
-        if (data.offerSentStatus == 'Revoked') {
-          this.revokeEmailToEmployee();
-        }
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    this.subscription = this.http
+      .postdata('OfferLetter/UPDATE', this.getOfferDetails)
+      .subscribe({
+        next: (data: any) => {
+          if (data.offerSentStatus == 'Revoked') {
+            this.revokeEmailToEmployee();
+          }
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
 
   getOfferDetails = {} as any;
@@ -474,7 +695,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   updateJobapplicantdata() {
     const empData = JSON.parse(localStorage.getItem('personaldata') || '{}');
     const data = {
-      status: "Revoked",
+      status: 'Revoked',
       employeeId: parseInt(empData.employeeId),
       id: this.jobPostData.id,
       firstName: empData.firstName,
@@ -484,18 +705,20 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       mobileNumber: empData.contactnumber,
       resume: 'demo',
       gender: empData.gender,
-    }
-    this.subscription = this.http.postdata('JobApplicantsData/UPDATER', data).subscribe({
-      next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Offer revoked successfully');
-        setTimeout(() => {
-          this.router.navigate(['/admin']);
-        }, 3000)
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    };
+    this.subscription = this.http
+      .postdata('JobApplicantsData/UPDATER', data)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal('Offer revoked successfully');
+          setTimeout(() => {
+            this.router.navigate(['/admin']);
+          }, 3000);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
 
   initialzerevoke() {
@@ -507,14 +730,16 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   getTraineeOfferDetails = {} as any;
   getTraineeofferdetails() {
     let EmpId = this.empinfo.employeeId;
-    this.subscription = this.http.getData(`TraineeOfferLetter/${EmpId}`).subscribe({
-      next: (data: any) => {
-        this.getTraineeOfferDetails = data;
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .getData(`TraineeOfferLetter/${EmpId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.getTraineeOfferDetails = data;
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   onBackSubmit() {
@@ -528,46 +753,46 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else {
       switch (routestatus.empstatus) {
         case 'Prospective':
-          this.router.navigate(['/employee-management/prospective/employees'])
+          this.router.navigate(['/employee-management/prospective/employees']);
           break;
         case 'Prospective Contract':
-          this.router.navigate(['/employee-management/prospective/contract'])
+          this.router.navigate(['/employee-management/prospective/contract']);
           break;
         case 'Active Contract':
-          this.router.navigate(['/employee-management/active/contract'])
+          this.router.navigate(['/employee-management/active/contract']);
           break;
         case 'Active':
-          this.router.navigate(['/employee-management/active/employees'])
+          this.router.navigate(['/employee-management/active/employees']);
           break;
         case 'Probation':
-          this.router.navigate(['/employee-management/probation-employees'])
+          this.router.navigate(['/employee-management/probation-employees']);
           break;
         case 'Inactive':
-          this.router.navigate(['/employee-management/inactive/employees'])
+          this.router.navigate(['/employee-management/inactive/employees']);
           break;
         case 'Inactive Contract':
-          this.router.navigate(['/employee-management/inactive/contract'])
+          this.router.navigate(['/employee-management/inactive/contract']);
           break;
         case 'Trainee Prospective':
-          this.router.navigate(['/employee-management/prospective/interns'])
+          this.router.navigate(['/employee-management/prospective/interns']);
           break;
         case 'Trainee Active':
-          this.router.navigate(['/employee-management/active/interns'])
+          this.router.navigate(['/employee-management/active/interns']);
           break;
         case 'Trainee Inactive':
-          this.router.navigate(['/employee-management/inactive/interns'])
+          this.router.navigate(['/employee-management/inactive/interns']);
           break;
         case 'External Prospective':
-          this.router.navigate(['/admin/externalprospective/employee'])
+          this.router.navigate(['/admin/externalprospective/employee']);
           break;
         case 'External Active':
-          this.router.navigate(['/admin/externalactive/employee'])
+          this.router.navigate(['/admin/externalactive/employee']);
           break;
         case 'External Inactive':
-          this.router.navigate(['/admin/externalinactive/employee'])
+          this.router.navigate(['/admin/externalinactive/employee']);
           break;
         default:
-          this.router.navigate(['/admin'])
+          this.router.navigate(['/admin']);
       }
     }
   }
@@ -575,59 +800,64 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   assignHeading() {
     const currentPath = this.router.url;
     if (currentPath.startsWith('/myinfo')) {
-      this.headerName = "My Info";
-      this.showBackIcon = false;  // Hide back icon for personalinfo
+      this.headerName = 'My Info';
+      this.showBackIcon = false; // Hide back icon for personalinfo
       return;
     }
     // Now we know route is NOT personalinfo, so we check admin logic
     if (currentPath.startsWith('/personalinfo')) {
       this.showBackIcon = true; // Show back icon for admin
-      let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
-      if (routestatus.empType === 'Probation' && routestatus.empstatus === 'Active') {
-        this.headerName = "Probation Employee";
+      let routestatus = JSON.parse(
+        localStorage.getItem('personaldata') || '{}'
+      );
+      if (
+        routestatus.empType === 'Probation' &&
+        routestatus.empstatus === 'Active'
+      ) {
+        this.headerName = 'Probation Employee';
       } else {
         switch (routestatus.empstatus) {
           case 'Prospective':
-            this.headerName = "Prospective Employee";
+            this.headerName = 'Prospective Employee';
             break;
           case 'Prospective Contract':
-            this.headerName = "Prospective Contractor";
+            this.headerName = 'Prospective Contractor';
             break;
           case 'Active Contract':
-            this.headerName = "Active Contractor";
+            this.headerName = 'Active Contractor';
             break;
           case 'Active':
-            this.headerName = "Active Employee";
+            this.headerName = 'Active Employee';
             break;
           case 'Probation':
-            this.headerName = "Probation Employee";
+            this.headerName = 'Probation Employee';
             break;
           case 'Inactive':
-            this.headerName = "Inactive Employee";
+            this.headerName = 'Inactive Employee';
             break;
           case 'Inactive Contract':
-            this.headerName = "Inactive Contractor";
+            this.headerName = 'Inactive Contractor';
             break;
           case 'Trainee Prospective':
-            this.headerName = "Prospective Trainee";
+            this.headerName = 'Prospective Trainee';
             break;
           case 'Trainee Active':
-            this.headerName = "Active Trainee";
+            this.headerName = 'Active Trainee';
             break;
           case 'Trainee Inactive':
-            this.headerName = "Inactive Trainee";
+            this.headerName = 'Inactive Trainee';
             break;
           case 'External Prospective':
-            this.headerName = "External Prospective";
+            this.headerName = 'External Prospective';
             break;
           case 'External Active':
-            this.headerName = "External Active";
+            this.headerName = 'External Active';
             break;
           case 'External Inactive':
-            this.headerName = "External Inactive";
+            this.headerName = 'External Inactive';
             break;
           default:
-            this.headerName = "Team member info";
+            this.headerName = 'Team member info';
         }
       }
     }
@@ -647,15 +877,15 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Team Members',
-    'my-skills':'My Skills',
+    'my-skills': 'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
     'onboarding-details': 'Onboarding Info',
-    'employmentType': 'Offboarding Info',
+    employmentType: 'Offboarding Info',
     'desk-details': 'Desk Info',
     'assets-details': 'Assigned Assets',
     'past-experiences': 'Employment History',
-    'certifications': 'Certifications',
+    certifications: 'Certifications',
     'job-details': 'Job Info',
     'compensation-details': 'Compensations',
     'no-due-clearance-details': 'No Due Clearance',
@@ -663,12 +893,16 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'separation-details': 'Separation Request',
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
-    'contactor-info': "Contractor Info",
-    'project-info': "Assigned Projects",
-    'cards': 'Cards',
+    'contactor-info': 'Contractor Info',
+    'project-info': 'Assigned Projects',
+    cards: 'Cards',
+
     // Documents
     'general-documents': 'Documents',
     'letter-acknowledge-documents': 'Letter Acknowledgement',
+    personal: 'Personal History',
+    job: 'Job History',
+    documents: 'Documents History',
   };
 
   setSubHeader() {
@@ -679,7 +913,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   navigation() {
-    localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
+    localStorage.setItem(
+      'offBoardingemplist',
+      JSON.stringify(this.emppersonalinfo)
+    );
     this.router.navigate(['/personalinfo/job/employee-off-boarding']);
   }
 
@@ -689,86 +926,159 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      this.updateModuleInfo();
-    });
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
       // My Info perosnal
-      '/myinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
-      '/myinfo/personal/address-info': MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
-      '/myinfo/personal/contact-details': MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
-      '/myinfo/personal/emergency-contact-details': MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
-      '/myinfo/personal/education-details': MODULE_INFOS.PERSONAL_MODULE_EDUCATION_DETAILS_MODULE_INFO,
-      '/myinfo/personal/identity-details': MODULE_INFOS.PERSONAL_MODULE_IDENTITY_DETAILS_MODULE_INFO,
-      '/myinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
-      '/myinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
-      '/myinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
-      '/myinfo/personal/my-skills': MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
+      '/myinfo/personal/basic-info':
+        MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
+      '/myinfo/personal/address-info':
+        MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
+      '/myinfo/personal/contact-details':
+        MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
+      '/myinfo/personal/emergency-contact-details':
+        MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
+      '/myinfo/personal/education-details':
+        MODULE_INFOS.PERSONAL_MODULE_EDUCATION_DETAILS_MODULE_INFO,
+      '/myinfo/personal/identity-details':
+        MODULE_INFOS.PERSONAL_MODULE_IDENTITY_DETAILS_MODULE_INFO,
+      '/myinfo/personal/family-details':
+        MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
+      '/myinfo/personal/bank-details':
+        MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
+      '/myinfo/personal/visa-details':
+        MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/myinfo/personal/my-skills':
+        MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
       // My Info Job
-      '/myinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
-      '/myinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
-      '/myinfo/job/job-details': MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
-      '/myinfo/job/separation-details': MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
-      '/myinfo/job/no-due-clearance-details': MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
-      '/myinfo/job/probation-details': MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,
-      '/myinfo/job/past-experiences': MODULE_INFOS.JOB_MODULE_PREVIOUS_EXPERIENCE_DETAILS_MODULE_INFO,
-      '/myinfo/job/certifications': MODULE_INFOS.JOB_MODULE_CERTIFICATION_DETAILS_MODULE_INFO,
-      '/myinfo/job/compensation-details': MODULE_INFOS.JOB_MODULE_COMPENSATION_DETAILS_MODULE_INFO,
-      '/myinfo/job/desk-details': MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
-      '/myinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
-      '/myinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
+      '/myinfo/job/pre-onboarding-details':
+        MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/myinfo/job/onboarding-details':
+        MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/myinfo/job/job-details':
+        MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
+      '/myinfo/job/separation-details':
+        MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/no-due-clearance-details':
+        MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
+      '/myinfo/job/probation-details':
+        MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/past-experiences':
+        MODULE_INFOS.JOB_MODULE_PREVIOUS_EXPERIENCE_DETAILS_MODULE_INFO,
+      '/myinfo/job/certifications':
+        MODULE_INFOS.JOB_MODULE_CERTIFICATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/compensation-details':
+        MODULE_INFOS.JOB_MODULE_COMPENSATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/desk-details':
+        MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
+      '/myinfo/job/assets-details':
+        MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
+      '/myinfo/job/employmentType':
+        MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
-
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
+
+      // My Info Approvals
+      '/myinfo/approvals/personal':
+        MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/job':
+        MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+      '/myinfo/approvals/documents':
+        MODULE_INFOS.MY_INFO_PERSONAL_APPROVALS_MODULE_INFO,
+
       // Personal Info perosnal
-      '/personalinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
-      '/personalinfo/job/onboarding-verification': MODULE_INFOS.JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
-      '/personalinfo/personal/address-info': MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/contact-details': MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/emergency-contact-details': MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/education-details': MODULE_INFOS.PERSONAL_MODULE_EDUCATION_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/identity-details': MODULE_INFOS.PERSONAL_MODULE_IDENTITY_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/my-skills': MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
+      '/personalinfo/personal/basic-info':
+        MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
+      '/personalinfo/job/onboarding-verification':
+        MODULE_INFOS.JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
+      '/personalinfo/personal/address-info':
+        MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/contact-details':
+        MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/emergency-contact-details':
+        MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/education-details':
+        MODULE_INFOS.PERSONAL_MODULE_EDUCATION_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/identity-details':
+        MODULE_INFOS.PERSONAL_MODULE_IDENTITY_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/family-details':
+        MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/bank-details':
+        MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/visa-details':
+        MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/my-skills':
+        MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
       // Personal Info Job
-      '/personalinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
-      '/personalinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
-      '/personalinfo/job/job-details': MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
-      '/personalinfo/job/separation-details': MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
-      '/personalinfo/job/no-due-clearance-details': MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
-      '/personalinfo/job/probation-details': MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,
-      '/personalinfo/job/past-experiences': MODULE_INFOS.JOB_MODULE_PREVIOUS_EXPERIENCE_DETAILS_MODULE_INFO,
-      '/personalinfo/job/certifications': MODULE_INFOS.JOB_MODULE_CERTIFICATION_DETAILS_MODULE_INFO,
-      '/personalinfo/job/compensation-details': MODULE_INFOS.JOB_MODULE_COMPENSATION_DETAILS_MODULE_INFO,
-      '/personalinfo/job/desk-details': MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
-      '/personalinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
-      '/personalinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
-      '/personalinfo/job/trainee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
+      '/personalinfo/job/pre-onboarding-details':
+        MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/personalinfo/job/onboarding-details':
+        MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/personalinfo/job/job-details':
+        MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
+      '/personalinfo/job/separation-details':
+        MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/no-due-clearance-details':
+        MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
+      '/personalinfo/job/probation-details':
+        MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/past-experiences':
+        MODULE_INFOS.JOB_MODULE_PREVIOUS_EXPERIENCE_DETAILS_MODULE_INFO,
+      '/personalinfo/job/certifications':
+        MODULE_INFOS.JOB_MODULE_CERTIFICATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/compensation-details':
+        MODULE_INFOS.JOB_MODULE_COMPENSATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/desk-details':
+        MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
+      '/personalinfo/job/assets-details':
+        MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
+      '/personalinfo/job/employmentType':
+        MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
+      '/personalinfo/job/trainee-onboarding-requests':
+        MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
       '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-      '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/personalinfo/job/contactor-info':
+        MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
+
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
-      '/personalinfo/job/cards': MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
+      '/personalinfo/job/cards':
+        MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
 
+      // Personal Info Approvals
+      '/personalinfo/approvals/personal':
+        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/job':
+        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
+      '/personalinfo/approvals/documents':
+        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
     };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
+      url.includes(route)
+    );
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   resetPassword() {
     this.spinnerLoader = true;
-    this.subscription = this.http.postData(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' })
+    this.subscription = this.http
+      .postData(
+        `Employeedata/internal-reset-password/${this.empinfo.employeeId}`,
+        null,
+        { responseType: 'blob', observe: 'response' }
+      )
       .subscribe({
         next: (res: any) => {
           this.spinnerLoader = false;
@@ -781,10 +1091,14 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             reader.onload = () => {
               try {
                 const json = JSON.parse(reader.result as string);
-                const errorMsg = json.message || 'Something went wrong while resetting password';
+                const errorMsg =
+                  json.message ||
+                  'Something went wrong while resetting password';
                 this.conformationPopup.openErrorModal(errorMsg);
               } catch {
-                this.conformationPopup.openErrorModal('Invalid response from server');
+                this.conformationPopup.openErrorModal(
+                  'Invalid response from server'
+                );
               }
             };
             reader.readAsText(res.body);
@@ -792,8 +1106,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const fileURL = window.URL.createObjectURL(res.body);
             const a = document.createElement('a');
             a.href = fileURL;
-            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId
-              }.xlsx`;
+            a.download = `EmployeeCredentials_${
+              this.empinfo.fusionEmpId
+                ? this.empinfo.fusionEmpId
+                : this.empinfo.employeeId
+            }.xlsx`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -818,7 +1135,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
                 const errorMsg = json.message || 'Something went wrong';
                 this.conformationPopup.openErrorModal(errorMsg);
               } catch {
-                this.conformationPopup.openErrorModal('Unexpected error response');
+                this.conformationPopup.openErrorModal(
+                  'Unexpected error response'
+                );
               }
             };
             reader.readAsText(err.error);
@@ -827,73 +1146,96 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const errorMsg = err.error?.message || 'Something went wrong';
             this.conformationPopup.openErrorModal(errorMsg);
           }
-        }
+        },
       });
   }
 
   generateCredentials() {
     this.spinnerLoader = true;
-    this.subscription = this.http.postData(`Employeedata/generate-credentials/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' }).subscribe({
-      next: (res: any) => {
-        this.spinnerLoader = false;
-        this.modalService.dismissAll();
+    this.subscription = this.http
+      .postData(
+        `Employeedata/generate-credentials/${this.empinfo.employeeId}`,
+        null,
+        { responseType: 'blob', observe: 'response' }
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.spinnerLoader = false;
+          this.modalService.dismissAll();
 
-        const contentType = res.body.type;
+          const contentType = res.body.type;
 
-        if (contentType.includes('application/json')) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            try {
-              const json = JSON.parse(reader.result as string);
-              const errorMsg = json.message || 'Something went wrong while resetting password';
-              this.conformationPopup.openErrorModal(errorMsg);
-            } catch {
-              this.conformationPopup.openErrorModal('Invalid response from server');
-            }
-          };
-          reader.readAsText(res.body);
-        } else {
-          const fileURL = window.URL.createObjectURL(res.body);
-          const a = document.createElement('a');
-          a.href = fileURL;
-          a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId
+          if (contentType.includes('application/json')) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result as string);
+                const errorMsg =
+                  json.message ||
+                  'Something went wrong while resetting password';
+                this.conformationPopup.openErrorModal(errorMsg);
+              } catch {
+                this.conformationPopup.openErrorModal(
+                  'Invalid response from server'
+                );
+              }
+            };
+            reader.readAsText(res.body);
+          } else {
+            const fileURL = window.URL.createObjectURL(res.body);
+            const a = document.createElement('a');
+            a.href = fileURL;
+            a.download = `EmployeeCredentials_${
+              this.empinfo.fusionEmpId
+                ? this.empinfo.fusionEmpId
+                : this.empinfo.employeeId
             }.xlsx`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(fileURL);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(fileURL);
 
-          this.conformationPopup.openSuccessModal(
-            'Login credentials generated successfully and shared with the employee via email'
-          );
-          this.getEmployeeId();
-        }
-      },
-      error: (err: any) => {
-        this.spinnerLoader = false;
-        this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Login credentials generated successfully and shared with the employee via email'
+            );
+            this.getEmployeeId();
+          }
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.modalService.dismissAll();
 
-        if (err.error instanceof Blob) {
-          // Backend might have returned JSON error wrapped in Blob
-          const reader = new FileReader();
-          reader.onload = () => {
-            try {
-              const json = JSON.parse(reader.result as string);
-              const errorMsg = json.message || 'Something went wrong';
-              this.conformationPopup.openErrorModal(errorMsg);
-            } catch {
-              this.conformationPopup.openErrorModal('Unexpected error response');
-            }
-          };
-          reader.readAsText(err.error);
-        } else {
-          // Regular JSON error
-          const errorMsg = err.error?.message || 'Something went wrong';
-          this.conformationPopup.openErrorModal(errorMsg);
-        }
-      }
+          if (err.error instanceof Blob) {
+            // Backend might have returned JSON error wrapped in Blob
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result as string);
+                const errorMsg = json.message || 'Something went wrong';
+                this.conformationPopup.openErrorModal(errorMsg);
+              } catch {
+                this.conformationPopup.openErrorModal(
+                  'Unexpected error response'
+                );
+              }
+            };
+            reader.readAsText(err.error);
+          } else {
+            // Regular JSON error
+            const errorMsg = err.error?.message || 'Something went wrong';
+            this.conformationPopup.openErrorModal(errorMsg);
+          }
+        },
+      });
+  }
 
-    });
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   ngOnDestroy(): void {

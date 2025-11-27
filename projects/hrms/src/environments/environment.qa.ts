@@ -54,6 +54,7 @@ export const environment = {
   ProbationbuttonbeforeId: 1,
   ProbationExtensionId: 2,
    timesheetModuleId:30,
+   pendingapprovalemployeid:32,
   ProbationExtendPeriodTimes: 3,
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,

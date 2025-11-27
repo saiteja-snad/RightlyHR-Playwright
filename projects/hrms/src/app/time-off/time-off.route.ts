@@ -123,4 +123,5 @@ export default [
       // { path: 'cancelled', component: ExtraHoursCancelComponent, data: { permission: 'Cancelled(Extra Hours).view' } },
     ],
   },
+ 
 ] as Route[];

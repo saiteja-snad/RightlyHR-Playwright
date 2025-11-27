@@ -69,6 +69,12 @@ export const SETTINGS_ROLES_TABS: SettingsRolesTab[] = [
   { route: '/settings/roles-permissions/role-assignee' },
 ]
 
+export const SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_TABS = [
+  { route: '/settings/employee-fields-update-configurations/personal', permission: 'Personal Config Update Tab.view' },
+  { route: '/settings/employee-fields-update-configurations/job', permission: 'Job Config Update Tab.view' },
+  { route: '/settings/employee-fields-update-configurations/documents', permission: 'Document Config Update Tab.view' },
+]
+
 export const SETTINGS_TIMEOFF_TABS = [
   { route: '/settings/timeoff-configurations/leave-categoery', permission: 'Leave Category Tab.view' },
   { route: '/settings/timeoff-configurations/leave-allocation', permission: 'Leave Allocation Tab.view' },
@@ -119,6 +125,21 @@ export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
   { route: '/settings/it-configuration/itsupport-category', permission: 'IT Support Category.view' },
   { route: '/settings/it-configuration/itsupport-sub-category', permission: 'IT Support Sub-Category.view' },
 ]
+export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS_CONFIG_UPDATE = [
+  { route: '/settings/employee-fields-update-configurations/personal/basic-info', permission: 'Basic Info.view' },
+  { route: '/settings/employee-fields-update-configurations/personal/contact-info', permission: 'Contact Info.view' },
+  { route: '/settings/employee-fields-update-configurations/personal/addresses', permission: 'Addresses.view' },
+  { route: '/settings/employee-fields-update-configurations/personal/emergency-contacts', permission: 'Emergency Contacts.view' },
+  { route: '/settings/employee-fields-update-configurations/personal/identity-info', permission: 'Identity Info.view' },
+  { route: '/settings/employee-fields-update-configurations/personal/bank-info', permission: 'Bank Info.view' },
+  { route: '/settings/employee-fields-update-configurations/personal/academics', permission: 'Academics.view' },
+];
+
+export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS_CONFIG_UPDATE = [
+  { route: '/settings/employee-fields-update-configurations/job/certifications', permission: 'Certifications.view' },
+  { route: '/settings/employee-fields-update-configurations/job/employment-history', permission: 'Employment History.view' },
+];
+
 
 export const TIME_OFF_TABS = [
   { route: '/time-off/leaves', permission: 'Time Off Tab.view' },
@@ -318,7 +339,10 @@ export const EXPENSES_REQUEST_SUB_TABS = [
   { route: '/pending-approvals/claimsandexpenses-request/for-you', permission: 'For You (Claims and Expenses).view' },
   { route: '/pending-approvals/claimsandexpenses-request/for-your-role', permission: 'For Role (Claims and Expenses).view' },
 ]
-
+export const EMPLOYEINFO_REQUEST_SUB_TABS = [
+  { route: '/time-off/pending-approvals/employeeinfo-request/for-you', permission: 'For You (Employee Info).view' },
+  { route: '/time-off/pending-approvals/employeeinfo-request/for-your-role', permission: 'For Role (Employee Info.view' },
+]
 export const DESK_REQUEST_SUB_TABS = [
   { route: '/pending-approvals/desk-approval/for-you', permission: 'For You (Desk Requests).view' },
   { route: '/pending-approvals/desk-approval/for-your-role', permission: 'For Role (Desk Requests).view' },
@@ -495,6 +519,18 @@ export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
 export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
 ];
+
+export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
+  { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },
+  { permission: 'My Info Job Approval History.view', route: 'myinfo/approvals/job' },
+  { permission: 'My Info Documents Approval History.view', route: 'myinfo/approvals/documents' }
+]
+
+export const EMPLOYEE_APPROVALS_VIEW_HISTORY_ROUTES = [
+  { permission: 'Employee Personal Approval History.view', route: 'personalinfo/approvals/personal' },
+  { permission: 'Employee Job Approval History.view', route: 'personalinfo/approvals/job' },
+  { permission: 'Employee Documents Approval History.view', route: 'personalinfo/approvals/documents' }
+]
 
 export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Pre-Onboarding Details.view', route: '/personalinfo/job/pre-onboarding-details' },

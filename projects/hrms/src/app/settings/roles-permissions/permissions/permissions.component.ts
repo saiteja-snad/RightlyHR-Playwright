@@ -437,6 +437,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Signature Authority',
     'Settings Job Probation Details',
     'Signature Authority',
+
   ];
   settingsEmployeePersonalFields = [
     'Salutation',
@@ -448,6 +449,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Identity Type',
     'Relationship',
     'Bank Names',
+    'SkillSet'
   ];
   settingsManageShiftsTabFields = [
     'Shifts Pending Tab',
@@ -488,11 +490,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
-  flexibleWFHTabsFields=[
+  flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
-  flexibleWorkHoursTabsFields=[
+  flexibleWorkHoursTabsFields = [
     'Work Hours Allocation History Tab',
     'Work Hours Allocations Tab'
   ]
@@ -524,11 +526,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
-   Lockingsystemtabs = [
+  Lockingsystemtabs = [
     'Attendance Configuration Module',
     'Timesheet Configuration Module'
   ];
-    TymesheetTypeFields = [
+  TymesheetTypeFields = [
     'Timesheet Locking Pending Tab',
     'Timesheet Locking Published Tab'
   ];
@@ -588,7 +590,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
   ];
-   cardsModuleFields = [
+  cardsModuleFields = [
     'Cards Allocated',
     'Cards Available',
     'Cards Expired',
@@ -860,7 +862,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(WFH)',
     'Attendance Team Manager List(WFH)',
     'My Team Report(WFH)',
-     'Attendance All Employees List(RemoteLogin)',
+    'Attendance All Employees List(RemoteLogin)',
     'Attendance Team Manager List(RemoteLogin)',
     'My Team Report(RemoteLogin)',
     'Attendance All Employees List(Permission)',
@@ -902,7 +904,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // 'Attendance vs Timesheet Report - Export',
   ];
 
-    expenseReportsEmployeeTeamTabsFields = [
+  expenseReportsEmployeeTeamTabsFields = [
     'Expense Report - Generate',
     'Expense Report All Employees List',
     'Expense Report Manager List',
@@ -1259,7 +1261,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   itSupportFields = [
     'IT Support Configuration ',
   ];
-   settingsItSupportFields = [
+  settingsItSupportFields = [
     'IT Support Category',
     'IT Support Sub-Category',
 
@@ -1673,7 +1675,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
- iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -2080,7 +2082,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  
+
   isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
@@ -2094,15 +2096,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-    isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  // Disable Create/Delete for 'Timesheet Locking Published Tab'
-  if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
-    return true;
-  }
+  isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    // Disable Create/Delete for 'Timesheet Locking Published Tab'
+    if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
+      return true;
+    }
 
-  // Existing logic: disable all if role is not selected
-  return !this.roleToFilter?.id;
-}
+    // Existing logic: disable all if role is not selected
+    return !this.roleToFilter?.id;
+  }
 
 
   ngOnDestroy(): void {

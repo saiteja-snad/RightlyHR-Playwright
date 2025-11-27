@@ -30,6 +30,7 @@ export class MySkillsComponent {
   empinfo: any = {};
   MySkills: any[] = [];
   categoryList: any
+  skillCategories: any[] = [];
   spinnerLoader = false;
   subscription!: Subscription;
   spinnerLoaderforallrecoders = false;
@@ -110,34 +111,116 @@ export class MySkillsComponent {
   openmodelforConfirm(content: any) {
     this.modalService.open(this.Confirmation, { centered: true });
   }
+  private categoryIcons: Record<string, string> = {
+    technicalskill: "/icons/technical-skills-icon.png",
+    softskill: "/icons/soft-skills-icon.png",
+    leadershipskill: "/icons/leadership-skills.png",
+    functionalskill: "/icons/functional-skills.png"
+  };
+  private normalizeCategory(key: string): string {
+    return key.replace(/\s+/g, '').toLowerCase();
+  }
+  private categoryAliases: Record<string, string> = {
+    technicalskill: "technicalskill",
+    technicalskills: "technicalskill",
+
+    softskill: "softskill",
+    softskills: "softskill",
+
+    leadershipskill: "leadershipskill",
+    leadershipskills: "leadershipskill",
+
+    functionalskill: "functionalskill",
+    functionalskills: "functionalskill"
+  };
+
+  private fallbackIconPool: string[] = [
+    "/icons/intelligence.png",
+    "/icons/logical-thinking.png",
+    "/icons/technique.png"
+  ];
+
+  private usedFallbackIcons = new Set<string>();
 
   getSkills(): void {
     const params = {
       employeeId: this.empinfo.employeeId,
       isActive: true
     };
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).pipe(takeUntil(this.destroy$),
-      map((res: any) => {
-        if (res?.data?.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
-          return res.data.items[0].skills || [];
-        }
-        return [];
-      })
-    ).subscribe({
-      next: (skills: any[]) => {
-        this.technicalSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('technical') && s.isActive);
-        this.softSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('soft') && s.isActive);
-      },
-      error: (err) => {
-        console.error(' Error fetching skills:', err);
-      }
-    });
+
+    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params)
+      .pipe(
+        takeUntil(this.destroy$),
+        map((res: any) => {
+          if (res?.data?.items && res.data.items.length > 0) {
+            return res.data.items[0].skills || [];
+          }
+          return [];
+        })
+      )
+      .subscribe({
+        next: (skills: any[]) => {
+          const activeSkills = skills.filter(s => s.isActive);
+
+          const grouped: any = {};
+
+          activeSkills.forEach(skill => {
+            const category = skill.skillCategory?.trim();
+            if (!grouped[category]) grouped[category] = [];
+            grouped[category].push(skill);
+          });
+
+          this.skillCategories = Object.keys(grouped).map(category => ({
+            category,
+            icon: this.getCategoryIcon(category),
+            skills: grouped[category]
+          }));
+
+
+          console.log("Grouped Skills by Category:", this.skillCategories);
+        },
+        error: (err) => console.error("Error fetching skills:", err)
+      });
   }
+  private fallbackMap: Record<string, string> = {};
+  getCategoryIcon(category: string): string {
+    // Normalize
+    let normalized = this.normalizeCategory(category || "");
+    normalized = this.categoryAliases[normalized] || normalized;
+
+    // If category has known icon
+    if (this.categoryIcons[normalized]) {
+      return this.categoryIcons[normalized];
+    }
+
+    // If fallback icon already assigned for this unknown category → reuse it
+    if (this.fallbackMap[normalized]) {
+      return this.fallbackMap[normalized];
+    }
+
+    // Assign next available fallback icon uniquely
+    for (const icon of this.fallbackIconPool) {
+      const alreadyUsed = Object.values(this.fallbackMap).includes(icon);
+      if (!alreadyUsed) {
+        this.fallbackMap[normalized] = icon;
+        return icon;
+      }
+    }
+
+    // If all fallback icons are used, start cycling
+    const cycleIndex = Object.keys(this.fallbackMap).length % this.fallbackIconPool.length;
+    const fallback = this.fallbackIconPool[cycleIndex];
+
+    this.fallbackMap[normalized] = fallback;
+    return fallback;
+  }
+
+
 
   getCategory() {
     const params = {
       entity: "employee",
-      attribute: "skillset"
+      attribute: "Skill Category"
     }
     this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
       next: (data: any) => {
@@ -227,6 +310,7 @@ export class MySkillsComponent {
       next: (res: any) => {
         this.spinnerLoader = false;
         modal.close();
+        this.getSkills()
         this.conformationPopup.openSuccessModal('Skill removed successfully');
         // Remove only after success
         this.technicalSkills = this.technicalSkills.filter(
@@ -274,47 +358,47 @@ export class MySkillsComponent {
     this.AddForm.get('skills')?.setValue(updatedSkills);
     this.AddForm.get('skills')?.updateValueAndValidity();
     const control = this.AddForm.get('skills');
-    control?.markAsTouched(); 
+    control?.markAsTouched();
     control?.updateValueAndValidity();
   }
 
- onSkillBlur(): void {
-  const control = this.AddForm.get('skills');
-  const skills = control?.value || [];
+  onSkillBlur(): void {
+    const control = this.AddForm.get('skills');
+    const skills = control?.value || [];
 
-  if (this.typedSkill.length > 0) {
-    control?.setErrors({ pendingSkill: true });
-  } 
-  else {
-    if (skills.length === 0) {
-      control?.setErrors({ required: true });
-    } else {
-      control?.setErrors(null);
+    if (this.typedSkill.length > 0) {
+      control?.setErrors({ pendingSkill: true });
     }
-  }
+    else {
+      if (skills.length === 0) {
+        control?.setErrors({ required: true });
+      } else {
+        control?.setErrors(null);
+      }
+    }
 
-  control?.markAsTouched();
-}
+    control?.markAsTouched();
+  }
 
   getSkillsByLevel(level: string, skills: any[]) {
     return skills.filter(skill => skill.proficiencyLevel === level);
   }
 
- onSkillInput(event: any): void {
-  this.typedSkill = event.target.value.trim();
-  const control = this.AddForm.get('skills');
-  const skills = control?.value || [];
-  if (this.typedSkill.length > 0) {
-    control?.setErrors({ pendingSkill: true });
-  } 
-  else {
-    if (skills.length === 0) {
-      control?.setErrors({ required: true });
-    } else {
-      control?.setErrors(null);
+  onSkillInput(event: any): void {
+    this.typedSkill = event.target.value.trim();
+    const control = this.AddForm.get('skills');
+    const skills = control?.value || [];
+    if (this.typedSkill.length > 0) {
+      control?.setErrors({ pendingSkill: true });
     }
+    else {
+      if (skills.length === 0) {
+        control?.setErrors({ required: true });
+      } else {
+        control?.setErrors(null);
+      }
+    }
+    control?.markAsTouched();
   }
-  control?.markAsTouched();
-}
 
 }

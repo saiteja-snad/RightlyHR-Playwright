@@ -112,6 +112,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/identitytype', permission: 'Identity Type.view' },
   { route: '/settings/employee-fields/personal/relationship', permission: 'Relationship.view' },
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
+  {route: '/settings/employee-fields/personal/skills',permission: 'SkillSet.view'}
 ]
 
 export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
@@ -360,8 +361,8 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' },
-  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view'},
-  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view'}
+  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view' },
+  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view' }
 ]
 
 export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
@@ -372,8 +373,8 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
   { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
-  { route: '/settings/project-management-config/project-role', permission: 'Project Role.view'},
-  { route: '/settings/project-management-config/task', permission: 'Task.view'},
+  { route: '/settings/project-management-config/project-role', permission: 'Project Role.view' },
+  { route: '/settings/project-management-config/task', permission: 'Task.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -397,6 +398,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: 'Pre Onboard Documents.view' },
   { route: '/settings/employee-fields/job/serving-period', permission: 'Serving Period.view' },
   { route: '/settings/employee-fields/job/probation-details', permission: 'Settings Job Probation Details.view' },
+  { route: '/settings/employee-fields/job/skills', permission: 'SkillSet.view' },
   { route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' }
 ]
 
@@ -424,7 +426,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS = [
   { route: '/settings/employee-fields/expenes/configuartion', permission: 'Expenes Configuartion.view' },
   { route: '/settings/employee-fields/expenes/allowed-days', permission: 'Expense Allowed Days.view' },
   { route: '/settings/employee-fields/expenes/expenses-limit', permission: 'Expense Threshold Validation.view' },
-  { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view'},
+  { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS = [

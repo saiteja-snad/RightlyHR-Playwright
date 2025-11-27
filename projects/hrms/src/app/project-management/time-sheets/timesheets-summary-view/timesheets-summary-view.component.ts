@@ -37,7 +37,7 @@ import { TimesheetsResourceTabsComponent } from "../timesheets-resource-tabs/tim
   encapsulation: ViewEncapsulation.None
 })
 
-export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
+export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
@@ -102,14 +102,14 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo()
     this.createDatepickerForm();
-     this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
-        this.employeeId = parseInt(resoureID)
+        this.employeeId = parseInt(resoureID);
+         this.getEmployeeId(this.employeeId);
       }
     })
     this.http.getteamDateRangeObservable().subscribe((data) => {
-      console.log('Received BehaviorSubject data:', data);
       // Optional check to avoid running on empty initial values
       if (data && (data.startDate || data.endDate || data.employeeId)) {
         this.employeeId = data.employeeId || this.employeeId;
@@ -216,19 +216,18 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   //   }
   // }
 
-
   //graphs no data found conditions
   get hasprojectWiseHoursData(): boolean {
     return !!(
       this.projectTypeGraphData?.datasets?.length &&
-      this.projectTypeGraphData.datasets[0]?.data?.length
+      this.projectTypeGraphData?.datasets[0]?.data?.length
     );
   }
 
   get hasallocatedvsactualData(): boolean {
     return !!(
       this.estimatedVsActualGraphData?.datasets?.length &&
-      this.estimatedVsActualGraphData.datasets[0]?.data?.length
+      this.estimatedVsActualGraphData?.datasets[0]?.data?.length
     );
   }
 
@@ -376,25 +375,23 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   // Project Type (Pie)
   projectWiseChart() {
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
-    // Extract labels
-    const labels = this.projectTypeData.map((item: any) => item.meta?.graphData?.code ? item.meta?.graphData?.code : item.projectName);
-    // Convert "HH:mm" string → numeric hours for plotting
+    // Labels
+    const labels = this.projectTypeData.map((item: any) =>
+      item.meta?.graphData?.code ? item.meta.graphData.code : item.projectName
+    );
+    const backgroundColor = this.projectTypeData.map((item: any) => item.meta?.graphData?.color);
+    // Convert HH:MM → number (for chart)
     const data = this.projectTypeData.map((item: any) => {
-      const [hours, minutes] = item.hours.split(':').map(Number);
-      return hours + minutes / 60;
+      const [hours, minutes] = item.hoursHHMM.split(':').map(Number);
+      return hours + minutes / 60;  // numeric only for graph
     });
-    // Keep original HH:mm values for display
-    const originalTimes = this.projectTypeData.map((item: any) => item.hours);
-    // Chart colors
-    const backgroundColors = [
-      '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
-      '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
-    ].slice(0, labels.length);
-    // Store for legend display (outside chart)
+    // Use correct HH:MM display value
+    const originalTimesHHMM = this.projectTypeData.map((item: any) => item.hoursHHMM);
+    // Legend (outside chart)
     this.projectTypeLabelData = labels.map((label: string, index: number) => ({
       label,
-      color: backgroundColors[index],
-      hours: originalTimes[index],
+      color: backgroundColor[index],
+      hours: originalTimesHHMM[index],  // <-- FIXED (HH:MM)
     }));
     // Chart data
     this.projectTypeGraphData = {
@@ -403,7 +400,7 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
         {
           label: 'Project Hours (in Hrs)',
           data,
-          backgroundColor: backgroundColors,
+          backgroundColor: backgroundColor,
         },
       ],
     };
@@ -416,101 +413,167 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
           bodyFont: { size: 10 },
           callbacks: {
             title: (tooltipItems: any) => {
-              const index = tooltipItems[0].dataIndex;
-              const name = this.projectTypeData[index].projectName;
-              // Wrap long names (max 20 chars per line)
-              return name.match(/.{1,20}/g);
+              const index = tooltipItems[0]?.dataIndex;
+              const name = this.projectTypeData[index]?.projectName;
+              return name.match(/.{1,20}/g); // wrap lines
             },
             label: (tooltipItem: any) => {
-              const value = Number(tooltipItem.raw).toFixed(2);
-              return `Project Hours (in Hrs): ${value}`;
-            }
-          }
-        }
-      }
+              const originalHHMM = originalTimesHHMM[tooltipItem.dataIndex];
+              return `Project Hours (in Hrs) : ${originalHHMM}`; // <-- FIXED tooltip to show HH:MM
+            },
+          },
+        },
+      },
     };
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
+    if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)
+      return;
     // Extract labels
-    const labels = this.estimatedVsActualData.map((item: any) => item.meta.graphData.code ? item.meta.graphData.code : item.projectName);
+    const labels = this.estimatedVsActualData.map((item: any) =>
+      item?.meta?.graphData?.code ? item?.meta?.graphData?.code : item?.projectName
+    );
+    const color = this.estimatedVsActualData.map((item: any) =>
+      item?.meta?.graphData.color ? item?.meta?.graphData?.color : '#1A237E'
+    );
+    const toHHMM = (value: string | number): string => {
+      if (!value) return "0:00";
+      const num = Number(value);
+      const hours = Math.floor(num);
+      const minutes = Math.round((num - hours) * 60);
+      return `${hours}:${minutes.toString().padStart(2, '0')}`;
+    };
     // Convert estimated hours to numbers (already numeric strings)
-    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
-    // Convert "HH:mm" to numeric hours for actualHours
-    const actualData = this.estimatedVsActualData.map((item: any) => {
-      const [h, m] = item.actualHours.split(':').map(Number);
-      const actualDecimal = h + (m / 60);   // convert HH:mm → decimal
-      const overdue = Number(item.overDue || 0);  // overdue already decimal
-      return actualDecimal - overdue;   // REMOVE overdue from actual
-    });
+    const estimatedData = this.estimatedVsActualData?.map(
+      (item: any) => Number(item?.estimatedHours) || 0
+    );
     // Convert overdue (may come as string)
-    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
+    const overdueData = this.estimatedVsActualData?.map(
+      (item: any) => Number(item?.overDue) || 0
+    );
+    // Convert "HH:mm" to numeric hours for actualHours
+    const actualData = this.estimatedVsActualData?.map((item: any) => {
+      const [h, m] = item?.actualHoursHHMM.split(':').map(Number);
+      return Number((h + m / 60).toFixed(2));  // Decimal hours (33.00)
+    });
+        const actualDisplay = this.estimatedVsActualData.map(
+      (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+    );
+
+    const estimatedDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item?.estimatedHours)
+    );
+
+    const overdueDisplay = this.estimatedVsActualData.map(
+      (item: any) => toHHMM(item?.overDue)
+    );
+    const fullProjectNames = this.estimatedVsActualData?.map(
+      (item: any) => item?.projectName
+    );
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
       datasets: [
         {
           label: 'Estimated Hours',
-          backgroundColor: '#1A237E',
+          backgroundColor: color,
           data: estimatedData,
-          stack: 'Estimated'
+          stack: 'Estimated',
         },
         {
           label: 'Actual Hours',
           backgroundColor: '#90CAF9',
           data: actualData,
-          stack: 'ActualOverdue'
+          stack: 'ActualOverdue',
         },
         {
           label: 'Over Due',
           backgroundColor: '#FF5252',
           data: overdueData,
-          stack: 'ActualOverdue'
-        }
-      ]
+          stack: 'ActualOverdue',
+        },
+      ],
     };
     // Chart options
     this.estimatedVsActualGraphOptions = {
       responsive: true,
-      barThickness: 30,
+      barThickness: 18,
+      plugins: {
+        legend: { display: false },
+        callbacks: {
+          title: (tooltipItems: any) => {
+            const index = tooltipItems[0].dataIndex;
+            return fullProjectNames[index];
+          },
+          label: (context: any) => {
+              const idx = context.dataIndex;
+
+              if (context.dataset.label === 'Estimated Hours') {
+                return `Estimated: ${estimatedDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Actual Hours') {
+                return `Actual: ${actualDisplay[idx]} hrs`;
+              }
+
+              if (context.dataset.label === 'Over Due') {
+                return `Over Due: ${overdueDisplay[idx]} hrs`;
+              }
+
+              return `${context.dataset.label}: ${context.raw}`;
+            }
+        }
+      },
       scales: {
         x: {
           stacked: false,
-          grid: { display: false, },
-          ticks: { color: '#141414', font: { size: 11 } },
+          grid: { display: false },
+          ticks: {
+            color: '#141414', font: { size: 9 },
+            callback: (value: any, index: number) => {
+              return this.truncateLabel(labels[index], 12);
+            }
+          },
         },
         y: {
           stacked: true,
           beginAtZero: true,
-          title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
-          ticks: { color: '#72777B', font: { size: 11 } },
-        },
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: (tooltipItems: any) => {
-              const index = tooltipItems[0].dataIndex;
-              return this.estimatedVsActualData[index].projectName;
-            },
-            label: (tooltipItem: any) => {
-              const datasetLabel = tooltipItem.dataset.label || '';
-              const value = tooltipItem.raw;
-              return `${datasetLabel}: ${value}`;
-            }
-          }
+          title: { display: true, text: 'Hours', color: '#505050', font: { size: 9 } },
+          ticks: { color: '#72777B', font: { size: 10 } },
         }
-      },
+      }
     };
+  }
+
+  truncateLabel(label: string, maxLength: number = 12): string {
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
   }
 
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
-
+  
+  getLighterColor(color: string, amount: number = 0.9): string {
+  if (!color) return color || '#d8d8daff'; // Default color if none provided;
+  
+  // Remove # if present
+  const hex = color.replace('#', '');
+  
+  // Parse RGB values
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Calculate lighter values
+  const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+  const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+  const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+  
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+}
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -8,7 +8,7 @@
             @if (!loading) {
             <table class="w-100">
                 <thead>
-                    <th>Employee ID</th>
+                    <!-- <th>Employee ID</th> -->
                     <th>Name</th>
                     <!-- <th>Designation</th> -->
                     <th class="text-center">Role</th>
@@ -29,7 +29,7 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
-                            <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
+                            <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
                             <td class="text-center">{{ data?.role || '-' }}</td>

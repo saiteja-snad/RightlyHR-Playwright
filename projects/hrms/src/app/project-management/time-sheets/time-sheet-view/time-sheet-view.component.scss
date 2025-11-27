@@ -190,12 +190,13 @@
     background-color: #00A912;
 }
 
-.circle-red {
-    background-color: #EA362C;
-}
 
 .circle-yellow {
     background-color: #FFEA00;
+}
+
+.circle-red {
+    background-color: #EA362C;
 }
 
 .circle-orange {
@@ -283,7 +284,6 @@
     border-radius: 0.25rem;
     padding: 0.25rem 0.325rem;
     text-align: center;
-    color: var(--primary-color) !important;
     border: 1px solid var(--primary-color);
     background: #FFF;
 }

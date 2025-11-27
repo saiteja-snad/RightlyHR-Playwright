@@ -34,6 +34,7 @@ export const permissionsData = [
   { fields: 'Identity Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Relationship', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bank Names', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
 
   // Attendance Locking
   { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
@@ -245,6 +246,8 @@ export const permissionsData = [
   { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },

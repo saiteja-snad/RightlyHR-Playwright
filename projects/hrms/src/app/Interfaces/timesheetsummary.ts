@@ -60,6 +60,12 @@ export interface TimesheetEntry {
   loggedHHMM: string;
   summary: string;
   allocatedHours: number;
+  finalApproverName?: string;
+  approverDesignation?: string;
+  clientMeta?: any;
+  meta?: any;
+  phaseMeta?: any;
+
 }
 
 export interface DailySummary {
@@ -70,6 +76,8 @@ export interface DailySummary {
   loggedHHMM: string;
   weekday: string;
   holiday: string;
+  textColor?: string;
+  legendCode?: any;
 }
 
 

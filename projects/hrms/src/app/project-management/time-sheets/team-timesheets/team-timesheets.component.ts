@@ -22,8 +22,8 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-team-timesheets',
-  imports: [TimesheetsTabsComponent, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, InfoIconComponent, DateformatPipe],
+  imports: [TimesheetsTabsComponent,NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
+    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, DateformatPipe],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss'
 })
@@ -54,7 +54,6 @@ export class TeamTimesheetsComponent {
   selectedEntries: TimesheetEntry[] = [];
 
   constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router, private modalService: NgbModal) { }
-
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
@@ -104,8 +103,12 @@ export class TeamTimesheetsComponent {
     // return [startOfMonth, endOfMonth];
   }
 
-  openModal(entries: any, content?: any) {
-    this.selectedEntries = entries?.filter((ele:any)=>ele?.status!=='Not Entered');;
+  selectedEmployeeName!: string;
+  openModal(entries: any, content?: any, empName?: string) {
+    this.selectedEmployeeName = empName || '';
+    this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
+    console.log(this.selectedEntries);
+    
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -151,7 +154,7 @@ export class TeamTimesheetsComponent {
       error: (err: any) => console.error(err)
     });
   }
-  
+
   // getAllEmployeeDetails() {
   //   const EmployeeId = this.empdata?.employeeId;
   //   const satus = ['Active', 'Trainee Active', 'Active Contract'];
@@ -240,43 +243,12 @@ export class TeamTimesheetsComponent {
     //  Store it in BehaviorSubject (inside HttpService)
     this.http.setteamDateRange(start, end, empId, empName);
     // Trigger your existing API call
-    this.page = 1; // Reset to first page on new filter apply
+    this.page = 1;
+    this.first = 0;
     this.getteamsummary();
   }
 
-  // getteamsummary() {
-  //   const formValue = this.datepickerForm.value;
-  //   const [startDate, endDate] = formValue.dateRange || [];
-  //   const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
-  //   const start = startDate
-  //     ? dayjs(startDate).format('YYYY-MM-DD')
-  //     : dayjs().startOf('month').format('YYYY-MM-DD');
-  //   const end = endDate
-  //     ? dayjs(endDate).format('YYYY-MM-DD')
-  //     : dayjs().endOf('month').format('YYYY-MM-DD');
-  //   const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
-  //   this.loading = true
-  //   this.subscription = this.http.getData(url).subscribe({
-  //     next: (res: any) => {
-  //       this.loading = false
-  //       if (res?.success) {
-  //         this.teamSummaryData = res.data;
-  //         this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
-  //         console.log(this.totalhrs);
-  //         this.collectionSize = res.pagination.totalRecords;
-  //         // Extract dates for header dynamically (use first record)
-  //         if (this.teamSummaryData.length > 0) {
-  //           this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
-  //             dayjs(d.date).format('ddd<br>MMM D')
-  //           );
-  //         }
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.loading = false
-  //     }
-  //   });
-  // }
+
 
   getteamsummary() {
     const formValue = this.datepickerForm.value;
@@ -339,6 +311,31 @@ export class TeamTimesheetsComponent {
   }
 
   navigateView(employeeId: any) {
+    if(this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')){
     this.router.navigate(['project-management/timesheet/resourcesummary'], { queryParams: { id: employeeId } });
+    }
+    else if(this.rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
+    this.router.navigate(['project-management/timesheet/summary'], { queryParams: { id: employeeId } });
+    }
   }
+
+  getLighterColor(color: string, amount: number = 0.9): string {
+  if (!color) return color || '#d8d8daff'; // Default color if none provided;
+  
+  // Remove # if present
+  const hex = color.replace('#', '');
+  
+  // Parse RGB values
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Calculate lighter values
+  const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+  const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+  const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+  
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+}
 }

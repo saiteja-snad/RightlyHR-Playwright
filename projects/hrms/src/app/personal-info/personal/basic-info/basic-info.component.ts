@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import moment from 'moment';
 
 @Component({
   selector: 'app-basic-info',
@@ -359,7 +360,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       middleName: this.basicInfoForm?.get('middleName')?.value,
       lastName: this.basicInfoForm?.get('lastName')?.value,
       gender: this.basicInfoForm?.get('gender')?.value,
-      dob: this.basicInfoForm?.get('dob')?.value,
+      dob: moment(this.basicInfoForm?.get('dob')?.value).format('YYYY-MM-DD'),
       bloodGroup: this.basicInfoForm?.get('bloodGroup')?.value?.name,
       maritalStatus: this.basicInfoForm?.get('maritalStatus')?.value?.maritalstatus1,
       marriedDate: this.basicInfoForm?.get('marriageDate')?.value,

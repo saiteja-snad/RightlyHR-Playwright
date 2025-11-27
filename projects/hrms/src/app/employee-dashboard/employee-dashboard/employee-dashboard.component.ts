@@ -84,7 +84,7 @@ export class EmployeeDashboardComponent {
     );
     this.currentTime = new Date();
     this.currentYear = new Date().getFullYear(); // e.g., 2025
-    this.currentMonth = 12;
+    this.currentMonth =  new Date().getMonth() + 1;
     this.getAllTeammembersList();
     this.getworkanniversary();
     this.getbrithday();

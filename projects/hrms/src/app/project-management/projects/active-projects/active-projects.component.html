@@ -60,7 +60,7 @@
                   <td>{{ project.client.clientName }}</td>
                   }
                   <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
-                   <td class="text-center" [style.color]="project?.meta?.graphData?.color"><b>{{project?.meta?.graphData?.code || '-' }}</b></td>
+                   <td class="text-center" ><div  class="timesheet-chip " [style.color]="project?.meta?.graphData?.color"  [style.background]="getLighterColor(project?.meta?.graphData?.color) "><b>{{project?.meta?.graphData?.code || '-' }}</b></div></td>
                
                   <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>

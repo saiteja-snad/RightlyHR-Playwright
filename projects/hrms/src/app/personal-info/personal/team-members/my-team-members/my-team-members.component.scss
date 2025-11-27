@@ -1,7 +1,7 @@
 .custom-tree-table {
     .p-treetable-scrollable-wrapper {
         width: 100%;
-        height: calc(100vh - 16rem) !important;
+        height: calc(100vh - 20rem) !important;
         overflow: auto !important;
         border-radius: 0.5rem !important;
         // border: 1px solid var(--table-header-bg-color) !important;
@@ -56,4 +56,10 @@
 .custom-p-multi-select-table .p-datatable-table-container {
     min-height: 30vh !important;
     max-height: 45vh !important;
+}
+
+.nodata-tree-table{
+    position: relative;
+    height: calc(100vh - 20rem) !important;
+    width: 100%;
 }

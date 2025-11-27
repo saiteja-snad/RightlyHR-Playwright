@@ -12,9 +12,11 @@ import { TableModule } from 'primeng/table';
 import { ChipModule } from 'primeng/chip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TreeTableModule } from 'primeng/treetable';
+import { FormsModule } from '@angular/forms';
+import { MyteamsearchPipe } from '../../../../Pipes/myteamsearch.pipe';
 @Component({
   selector: 'app-my-team-members',
-  imports: [TeamMembersTabsComponent, NoDataFoundComponent, MyInfoTeamNumbersTabComponent, CommonModule,
+  imports: [TeamMembersTabsComponent, MyteamsearchPipe, CommonModule, FormsModule,NoDataFoundComponent, MyInfoTeamNumbersTabComponent, CommonModule,
     TranslateModule, TableModule, ChipModule, SkeletonModule, TreeTableModule],
   templateUrl: './my-team-members.component.html',
   styleUrl: './my-team-members.component.scss',
@@ -27,6 +29,7 @@ export class MyTeamMembersComponent {
   }
   teamData: any;
   empinfo = {} as any;
+  searchValue:any;
   resourceDetails: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   clientId: any;

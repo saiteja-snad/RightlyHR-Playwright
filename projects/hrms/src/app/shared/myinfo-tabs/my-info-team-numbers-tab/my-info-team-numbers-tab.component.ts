@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
 import { Router, RouterModule } from '@angular/router';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
+import { Subject, takeUntil } from 'rxjs';
+import { HttpService } from '../../../services/http.service';
 
 @Component({
   selector: 'app-my-info-team-numbers-tab',
@@ -13,12 +15,14 @@ import { AccessNavigationService } from '../../../services/access-navigation.ser
 })
 export class MyInfoTeamNumbersTabComponent {
   filteredTabs: any[] = [];
+  empinfo:any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
-    { label: 'Reports to you', link: '/myinfo/job/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
-    { label: 'Works with you', link: '/myinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
+    { label: 'Reports to you', link: '/myinfo/job/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' },count:0 },
+    { label: 'Works with you', link: '/myinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' }, count:0 },
   ];
 
-  constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) { }
+  constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService, private http: HttpService) { }
   
   ngOnInit(): void {
     // this.filterTabsByRbac();
@@ -31,6 +35,43 @@ export class MyInfoTeamNumbersTabComponent {
           `${tab.permission.feature}.${tab.permission.action}`
         )
     );
+    this.getEmpInfoFromRoute();
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getResourceDetails();
+      this.getAllTeammembersList();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getResourceDetails();
+      this.getAllTeammembersList();
+    }
+  }
+  myteamcount:any;
+  getResourceDetails(): void {
+      let url = `v2/Employeedata/GetReporteesAndTeamMembersReportees/${this.empinfo.employeeId}`;
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.navTabs[0].count = res.length;
+        },
+        error: (err:any) => {
+          
+        }
+      });
+    }
+
+    getAllTeammembersList() {
+      let url = `Employeedata/getEmployeesByhierarchy/${this.empinfo.employeeId}`;
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.navTabs[1].count = res.length;
+        },
+        error: (err:any) => {
+          
+        }
+      });
   }
 
   filterTabsByRbac(): void {

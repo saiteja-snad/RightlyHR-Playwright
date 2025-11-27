@@ -59,8 +59,8 @@
                                 <!-- <a [ngClass]="{'select-item cursor': details.isAccess}" (click)="details.isAccess && select(details)">
                                     {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}</a> -->
                                 <td>{{ details.firstName || '' }} {{ details.middleName || '' }} {{ details.lastName || ''}}</td>
-                                <td>{{ details.workEmail || 'N/A' }}</td>
-                                <td class="text-nowrap">{{details.mobilePhoneCountryCode}} {{ details.contactnumber || 'N/A' }}</td>
+                                <td>{{ details.workEmail || '-' }}</td>
+                                <td class="text-nowrap">{{details.mobilePhoneCountryCode || '-'}} {{ details.contactnumber || '-' }}</td>
                                 @if(canAccess('update','team-managers')) {
                                 <td class="text-center">
                                     <div class="dropdown">

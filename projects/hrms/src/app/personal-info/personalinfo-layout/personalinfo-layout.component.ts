@@ -646,8 +646,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'contact-details': 'Contact Info',
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
-    'team-members': 'Team Members',
-    'my-team-members': 'Team Members',
+    'team-members': 'Works With You',
+    'my-team-members': 'Reports To You',
     'my-skills':'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',

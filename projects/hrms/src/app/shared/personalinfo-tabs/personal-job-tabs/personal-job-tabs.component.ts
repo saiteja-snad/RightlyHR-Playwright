@@ -45,7 +45,7 @@ filterTabs(): void {
     { label: 'Compensations', link: '/personalinfo/job/compensation-details', icon: '/images/compensation.png', permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
     { label: 'Probation Info', link: '/personalinfo/job/probation-details', icon: '/images/probation.png', permission: { feature: 'Employee Info Probation Details', action: 'view' } },
     { label: 'Job Info', link: '/personalinfo/job/job-details', icon: '/images/jobdetailes.png', permission: { feature: 'Employee Info Job Details', action: 'view' } },
-    { label: 'Team Members', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
+    { label: 'Team Members', link: '/personalinfo/job/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' } },
     { label: 'Assigned Assets ', link: '/personalinfo/job/assets-details', icon: '/images/assets-list.png', permission: { feature: 'Employee Info Asset Details', action: 'view' } },
     { label: 'Employment History', link: '/personalinfo/job/past-experiences', icon: '/images/experience.png', permission: { feature: 'Employee Info Previous Experience Details', action: 'view' } },
     { label: 'Certifications', link: '/personalinfo/job/certifications', icon: '/images/certificate.png', permission: { feature: 'Employee Info Certification Details', action: 'view' } },

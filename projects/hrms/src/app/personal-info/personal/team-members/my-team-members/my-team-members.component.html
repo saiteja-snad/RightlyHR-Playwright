@@ -15,34 +15,53 @@
                 <app-my-info-team-numbers-tab />
             </div>
         </div>
-
+<div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                        class="bi bi-search"></i></span>
+                <input type="search" class="form-control custom-search-input"
+                    placeholder="Search by employee name / work email / phone number" aria-label="Username"
+                    #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" aria-describedby="basic-addon1">
+            </div>
         <div class="custom-tree-table">
-            <p-treetable [value]="teamMemberData" [scrollable]="true" [tableStyle]="{'min-width':'60rem'}">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Employee Id</th>
-                        <th>Employee Name</th>
-                        <th>Work Email</th>
-                        <th>Phone Number</th>
-                    </tr>
+            
+            <div *ngIf="(teamMemberData 
+          | myteamsearch : searchValue : ['fusionEmpId','fullName','workEmail','contact']) 
+          as filteredMembers">
+
+                <!-- ✅ When data exists -->
+                <p-treetable *ngIf="filteredMembers && filteredMembers.length > 0; else noData"
+                    [value]="filteredMembers" [scrollable]="true" [tableStyle]="{'min-width':'60rem'}">
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Employee Id</th>
+                            <th>Employee Name</th>
+                            <th>Work Email</th>
+                            <th>Phone Number</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                        <tr [ttRow]="rowNode">
+                            <td>
+                                <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                {{ rowData.fusionEmpId }}
+                            </td>
+                            <td>{{ rowData.fullName }}</td>
+                            <td>{{ rowData.workEmail }}</td>
+                            <td>{{ rowData.contact }}</td>
+                        </tr>
+                    </ng-template>
+
+                </p-treetable>
+                <ng-template #noData>
+                    <div class="nodata-tree-table">
+                        <app-no-data-found></app-no-data-found>
+                    </div>
+                        
                 </ng-template>
-        
-                <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-                    <tr [ttRow]="rowNode">
-                        <!-- FusionEmpId with toggler -->
-                        <td>
-                            <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                            {{ rowData.fusionEmpId }}
-                        </td>
-                        <!-- Full Name -->
-                        <td>{{ rowData.fullName }}</td>
-                        <!-- Work Email -->
-                        <td>{{ rowData.workEmail }}</td>
-                        <!-- Contact number -->
-                        <td>{{ rowData.contact }}</td>
-                    </tr>
-                </ng-template>
-            </p-treetable>
+
+            </div>
         </div>
     </div>
 </div>

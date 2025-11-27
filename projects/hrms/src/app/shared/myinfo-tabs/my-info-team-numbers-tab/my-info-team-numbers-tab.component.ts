@@ -13,8 +13,8 @@ import { RouterModule } from '@angular/router';
 export class MyInfoTeamNumbersTabComponent {
    filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'My Team Members', link: '/personalinfo/job/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
-    { label: 'Reporting Manager ', link: '/personalinfo/job/my-team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
+    { label: 'My Team Members', link: '/myinfo/job/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
+    { label: 'Reporting Manager ', link: '/myinfo/job/my-team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }

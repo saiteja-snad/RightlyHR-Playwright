@@ -1,17 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Ipersonal } from '../../Interfaces/personal-modal';
 import { environment } from '../../../environments/environment';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { ICategoryDetails } from '../../settings/time-off/flexible-leave-allocation/leave-allocation.model';
+import { forkJoin, Observable } from 'rxjs';
+import { IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee } from '../../Interfaces/dashboard.modal';
+import { AccordionModule } from 'primeng/accordion';
+import { Carousel } from 'primeng/carousel';
+import { TranslateModule } from '@ngx-translate/core';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, DateformatPipe],
+  imports: [CommonModule, DateformatPipe,AccordionModule,Carousel,Skeleton,TranslateModule],
   templateUrl: './employee-dashboard.component.html',
-  styleUrl: './employee-dashboard.component.scss'
+  styleUrl: './employee-dashboard.component.scss',
+    encapsulation: ViewEncapsulation.None,
 })
 export class EmployeeDashboardComponent {
   greetingMessage = ''
@@ -26,6 +33,8 @@ export class EmployeeDashboardComponent {
   currentMonth!: number;
   currentYear!: number;
   leavesList: any[] = [];
+  eventsLoader = false;
+  eventItems: any[] = [];
   constructor(
     private http: HttpService,
 
@@ -63,12 +72,6 @@ export class EmployeeDashboardComponent {
     targetHours: 8
   };
 
-  // LEAVE TYPES (DUMMY)
-  leaveTypes = [
-    { type: 'Casual Leave', value: 6 },
-    { type: 'Sick Leave', value: 2 },
-    { type: 'Earned Leave', value: 4 }
-  ];
 
   // ANNIVERSARY LIST (DUMMY)
   anniversaries: any[] = [];
@@ -85,6 +88,7 @@ export class EmployeeDashboardComponent {
     this.getAllTeammembersList();
     this.getworkanniversary();
     this.getbrithday();
+    this.loadEvents();
     this.getCategoryempDetails(this.empinfo?.employeeId);
   }
 
@@ -202,5 +206,108 @@ export class EmployeeDashboardComponent {
           }
         }
       });
+  }
+  getFullName(b: { firstName: string; middleName?: string; lastName: string }): string {
+    return [b.firstName, b.middleName, b.lastName].filter(Boolean).join(' ');
+  }
+
+   loadEvents() {
+    this.eventsLoader = true;
+    forkJoin([
+      this.http.getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`) as Observable<IBirthDaysData[]>,
+      this.http.getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`) as Observable<IAnniversariesData[]>,
+      this.http.getData(`Employeedata/Newjoinee?year=${this.currentYear}&months=${this.currentMonth}`) as Observable<INewJoinee[]>,
+      this.http.getData(`Employeedata/ActiveEmployeeMarriageAnniversary?months=${this.currentMonth}`) as Observable<IMarriageAnniversary[]>,
+    ]).subscribe(
+      ([birthdays, anniversaries, newJoinees, marriageAnniversary]) => {
+        const today = new Date();
+        const todayDay = today.getDate();
+        const todayMonth = today.getMonth(); // 0-based
+        const birthDayEvents = birthdays.filter((b) => {
+          const dob = new Date(b.dob);
+          return dob.getDate() === todayDay && dob.getMonth() === todayMonth;
+        }).map((b) => ({
+          type: 'Birthday',
+          name: this.getFullName({
+            firstName: b.firstName,
+            middleName: b.middleName,
+            lastName: b.lastName,
+          }),
+          date: b.dob,
+        }));
+        const anniversaryEvents = anniversaries
+          .filter((a) => {
+            const doj = new Date(a.dateOfJoining);
+            return doj.getDate() === todayDay && doj.getMonth() === todayMonth;
+          })
+          .map((a) => ({
+            type: 'Work Anniversary',
+            name: this.getFullName({
+              firstName: a.firstName,
+              middleName: a.middleName,
+              lastName: a.lastName,
+            }),
+            yearCount: a.anniversaryYearCount,
+            date: a.dateOfJoining,
+          }));
+        const marriageAnniversariesEvent = marriageAnniversary
+          .filter((a) => {
+            const doj = new Date(a.marriedDate);
+            return doj.getDate() === todayDay && doj.getMonth() === todayMonth;
+          })
+          .map((a) => ({
+            type: 'Marriage Anniversary',
+            name: this.getFullName({
+              firstName: a.firstName,
+              middleName: a.middleName,
+              lastName: a.lastName,
+            }),
+            date: a.marriedDate,
+          }));
+        const todayString = today.toISOString().split('T')[0];
+        const newJoineeEvents = newJoinees
+          .filter((n) => n.dateOfJoining?.split('T')[0] === todayString)
+          .map((n) => ({
+            type: 'New Joinee',
+            name: this.getFullName({
+              firstName: n.firstName,
+              middleName: n.middleName,
+              lastName: n.lastName,
+            }),
+            doj: n.dateOfJoining,
+          }));
+        const events = [
+          ...birthDayEvents,
+          ...anniversaryEvents,
+          ...newJoineeEvents,
+          ...marriageAnniversariesEvent
+        ];
+        this.eventsLoader = false;
+        if (events.length) {
+          this.eventItems = events;
+        } else {
+          this.quotationsData();
+        }
+      },
+      (err: any) => {
+        this.eventsLoader = false;
+        console.error(err);
+        this.quotationsData();
+      }
+    );
+  }
+  
+   quotationsData() {
+    this.eventsLoader = true;
+    this.subscription = this.http.getData(`EmployeeData/Quotation`).subscribe({
+      next: (data: any) => {
+        const shuffled = data.sort(() => 0.5 - Math.random());
+        this.eventItems = shuffled.slice(0, 3);
+        this.eventsLoader = false;
+      },
+      error: (reason) => {
+        this.eventsLoader = false;
+      },
+    });
   }
 }

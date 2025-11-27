@@ -66,8 +66,9 @@
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+              class="country-input"
+             [ngClass]="{'disabled-country': isPrimaryCountryDisabled,'disabled-country-code': !buttons}"
                 [selectedCountryCode]="selectedemergencycoutrycode()" [countryListConfig]="countryListConfig"
-                class="country-input" [ngClass]="{ 'disabled-country-code': !buttons }"
                 (onCountryChange)="onCountryChange($event)">
               </lib-country-list>
             </div>
@@ -161,7 +162,7 @@
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                 [selectedCountryCode]="selectedemergency1coutrycode()" [countryListConfig]="countryListConfig"
-                class="country-input" [ngClass]="{ 'disabled-country-code': !buttons }"
+                class="country-input" [ngClass]="{'disabled-country': isSecondaryCountryDisabled,'disabled-country-code': !buttons}"
                 (onCountryChange)="onCountryChange1($event)">
               </lib-country-list>
             </div>

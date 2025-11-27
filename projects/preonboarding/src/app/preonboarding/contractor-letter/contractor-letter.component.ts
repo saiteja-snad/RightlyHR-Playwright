@@ -11,13 +11,13 @@ import moment from 'moment';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
-import { DateformatPipe } from '../../../../../hrms/src/app/Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../../hrms/src/app/pipes/dateformat.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { HttpService } from '../../http-services/http.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
 import { IAddress } from '../../models/personal-details.model';
 import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-progressbar/detailed-step-progressbar.component';
-import { DateFormatPipe } from "../../Pipes/date-format.pipe";
+import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({

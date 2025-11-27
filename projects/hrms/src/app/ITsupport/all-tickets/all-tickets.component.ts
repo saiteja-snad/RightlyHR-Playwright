@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 

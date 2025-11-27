@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AuthService } from '../../../services/auth.service';

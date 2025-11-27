@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { IStatus } from '../../../Interfaces/personal-modal';
 import { IJobdetails } from '../../../admin/active-employees/active-model';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import moment from 'moment';
 
 @Component({

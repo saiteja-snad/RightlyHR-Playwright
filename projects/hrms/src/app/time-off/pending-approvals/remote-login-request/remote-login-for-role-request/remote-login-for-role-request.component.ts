@@ -18,7 +18,7 @@ import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
-import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-remote-login-for-role-request',

@@ -18,7 +18,7 @@ import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { OfferletterdashboardpipePipe } from '../../../Pipes/offerletterdashboardpipe.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";

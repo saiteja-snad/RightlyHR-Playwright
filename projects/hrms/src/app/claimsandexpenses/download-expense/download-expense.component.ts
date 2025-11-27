@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../pipes/dateformat.pipe";
 import { environment } from '../../../environments/environment.dev';
 import { CurrencyPipe } from '@angular/common';
 import { CommonModule } from '@angular/common';

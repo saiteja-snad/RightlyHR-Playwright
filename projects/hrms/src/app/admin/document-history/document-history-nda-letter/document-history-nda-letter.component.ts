@@ -7,7 +7,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { Subscription } from 'rxjs';
 import { INDALetterDetails } from '../../../Interfaces/documentsHistory';
 import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.pipe';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';

@@ -14,9 +14,10 @@ import { Skeleton } from 'primeng/skeleton';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.component";
 import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
+import { GearIconComponent } from "../../icons/gear-icon/gear-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent, ItSupportIconComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent, ItSupportIconComponent, GearIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -78,60 +79,55 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onSelectprofilePicDownload(employee: any) {
     if (employee.profileUrl) {
-      this.subscription = this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl)
-        .subscribe({
-          next: (res: any) => {
-            let blob = new Blob([res['body']], { type: 'image/png' });
-            let objectURL = URL.createObjectURL(blob);
-            this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          },
-          error: (reason) => {
-            //console.log(reason),
-          },
-        });
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl).subscribe({
+        next: (res: any) => {
+          let blob = new Blob([res['body']], { type: 'image/png' });
+          let objectURL = URL.createObjectURL(blob);
+          this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        },
+        error: (reason) => {
+          //console.log(reason),
+        },
+      });
     }
   }
+
   getEmployeeId() {
     this.isloading = true;
     let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.isloading = false;
-          this.empdata = data;
-          this.imageUrl = this.empdata.profileUrl;
-          this.onSelectprofilePicDownload(this.empdata);
-        },
-        error: (reason: any) => {
-          this.isloading = false
-        },
-        complete: () => {
-          this.isloading = false;
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.isloading = false;
+        this.empdata = data;
+        this.imageUrl = this.empdata.profileUrl;
+        this.onSelectprofilePicDownload(this.empdata);
+      },
+      error: (reason: any) => {
+        this.isloading = false
+      },
+      complete: () => {
+        this.isloading = false;
+      },
+    });
   }
 
   getJobDetails() {
     this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http
-      .getData(`JobDetails/Empname/${EmployeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.isloading = false;
-          let jobdetails = data;
-          this.jobRole = jobdetails[0]?.jobRole;
-        },
-        error: (reason: any) => {
-          console.error(reason);
-          this.isloading = false;
-        },
-        complete: () => {
-          this.isloading = false;
-        },
-      });
+    this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.isloading = false;
+        let jobdetails = data;
+        this.jobRole = jobdetails[0]?.jobRole;
+      },
+      error: (reason: any) => {
+        console.error(reason);
+        this.isloading = false;
+      },
+      complete: () => {
+        this.isloading = false;
+      },
+    });
   }
 
   chooseNewProfileHeader(event: any) {
@@ -179,36 +175,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   postUploadprofilePicheader() {
     let filePath = `/Profilepics/${this.empinfo.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.profilePic
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.empinfo.employeeId = this.empinfo.employeeId;
-            this.empinfo.profileUrl = data.path;
-            this.subscription = this.http
-              .postdata('Employeedata/UPDATER', this.empinfo)
-              .subscribe({
-                next: (data: any) => {
-                  this.http.setprofileDetails();
-                  this.conformationPopup.openSuccessModal(
-                    'Profile picture updated successfully'
-                  );
-                  this.getEmployeeId();
-                },
-                error: (reason: any) => {
-                  this.conformationPopup.openErrorModal(
-                    reason.error.message || 'Profile picture update failed'
-                  );
-                },
-              });
-          }
-        },
-      });
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.empinfo.employeeId = this.empinfo.employeeId;
+          this.empinfo.profileUrl = data.path;
+          this.subscription = this.http.postdata('Employeedata/UPDATER', this.empinfo).subscribe({
+            next: (data: any) => {
+              this.http.setprofileDetails();
+              this.conformationPopup.openSuccessModal('Profile picture updated successfully');
+              this.getEmployeeId();
+            },
+            error: (reason: any) => {
+              this.conformationPopup.openErrorModal(
+                reason.error.message || 'Profile picture update failed'
+              );
+            },
+          });
+        }
+      },
+    });
   }
 
   isActive(route: string): boolean {
@@ -252,7 +238,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         confirmPassword: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.StrongPasswordRegx)]],
       }
     );
-
     this.changePasswordForm.valueChanges.subscribe(() => {
       this.backendError = '';
     })
@@ -304,29 +289,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
       currentPassword: formData.currentPassword,
       confirmPassword: formData.confirmPassword
     };
-    this.http.postdata('Employeedata/internal-update-password', payload)
-      .subscribe({
-        next: (response: any) => {
-          this.modalservie.dismissAll();
-          this.conformationPopup.openSuccessModal('Password changed successfully');
-          this.resetPasswordIcons();
-          setTimeout(() => {
-            this.spinnerLoader = false;
-            this.modalservie.dismissAll()
-            this.onLogout();
-          }, 2000)
-        },
-        error: (error: any) => {
+    this.http.postdata('Employeedata/internal-update-password', payload).subscribe({
+      next: (response: any) => {
+        this.modalservie.dismissAll();
+        this.conformationPopup.openSuccessModal('Password changed successfully');
+        this.resetPasswordIcons();
+        setTimeout(() => {
           this.spinnerLoader = false;
-          if (error?.error?.message) {
-            this.backendError = error.error.message;
-          } else if (typeof error?.error === 'string') {
-            this.backendError = error.error;
-          } else {
-            this.backendError = 'Failed to change password. Please try again later.';
-          }
+          this.modalservie.dismissAll()
+          this.onLogout();
+        }, 2000)
+      },
+      error: (error: any) => {
+        this.spinnerLoader = false;
+        if (error?.error?.message) {
+          this.backendError = error.error.message;
+        } else if (typeof error?.error === 'string') {
+          this.backendError = error.error;
+        } else {
+          this.backendError = 'Failed to change password. Please try again later.';
         }
-      });
+      }
+    });
   }
 
   ngOnDestroy() {

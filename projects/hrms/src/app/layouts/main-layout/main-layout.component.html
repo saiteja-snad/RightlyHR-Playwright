@@ -1,19 +1,18 @@
 <div class="main-layout-container">
-   <div>
-      <app-header />
-   </div>
-   <div class="d-flex w-100">
-      <div class="sidebar-content">
-         <app-sidenav />
-      </div>
-      <div class="main-layout-content">
-         <div class="display-area">
-            <router-outlet />
-         </div>
-      </div>
-   </div>
+    <div>
+        <app-header />
+    </div>
+    <div class="d-flex w-100">
+        <div class="sidebar-content">
+            <app-sidenav />
+        </div>
+        <div class="main-layout-content">
+            <div class="display-area">
+                <router-outlet />
+            </div>
+        </div>
+    </div>
 </div>
-
 
 <ng-template #getstarted  let-modal >
     <div class="custom-modal-bg" ngbAutofocus>
@@ -55,12 +54,10 @@
                             <label for="newPassword" class="form-label custom-label mb-2">New Password
                                 <span class="text-danger">*</span></label>
                             <div class="input-group border-input">
-                                <input type="{{ showPassword1 ? 'text' : 'password' }}" id="newPassword"
-                                    placeholder="Please enter new password"
-                                    class="form-control custom-input border-none" formControlName="newPassword"
-                                    maxlength="15" (keydown.space)="$event.preventDefault()" />
-                                <span class="input-group-text border-none cursor" id="basic-addon1"
-                                    (click)="togglePasswordVisibility1()">
+                                <input type="{{ showPassword1 ? 'text' : 'password' }}" id="newPassword" placeholder="Please enter new password"
+                                    class="form-control custom-input border-none" formControlName="newPassword" maxlength="15"
+                                    (keydown.space)="$event.preventDefault()" />
+                                <span class="input-group-text border-none cursor" id="basic-addon1" (click)="togglePasswordVisibility1()">
                                     <i [ngClass]="showPassword1 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
                                 </span>
                             </div>
@@ -68,23 +65,18 @@
                                 class="error-msg">
                                 New Password is required
                             </div>
-                            <div *ngIf="changePasswordForm.controls['newPassword'].errors?.['pattern']"
-                                class="error-msg">
+                            <div *ngIf="changePasswordForm.controls['newPassword'].errors?.['pattern']" class="error-msg">
                                 Your password must be at least 8 characters long and include at least one uppercase
-                                letter,
-                                one number, and one special character
-                            </div>
+                                letter, one number, and one special character</div>
                         </div>
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label custom-label mb-2">Confirm New Password<span
-                                    class="text-danger">*</span></label>
+                            <label for="confirmPassword" class="form-label custom-label mb-2">Confirm New Password
+                                <span class="text-danger">*</span></label>
                             <div class="input-group border-input">
                                 <input type="{{ showPassword2 ? 'text' : 'password' }}" id="confirmPassword"
-                                    placeholder="Please re enter new password"
-                                    class="form-control custom-input border-none" formControlName="confirmPassword"
-                                    maxlength="15" (keydown.space)="$event.preventDefault()"  />
-                                <span class="input-group-text border-none cursor" id="basic-addon1"
-                                    (click)="togglePasswordVisibility2()">
+                                    placeholder="Please re enter new password" class="form-control custom-input border-none"
+                                    formControlName="confirmPassword" maxlength="15" (keydown.space)="$event.preventDefault()" />
+                                <span class="input-group-text border-none cursor" id="basic-addon1" (click)="togglePasswordVisibility2()">
                                     <i [ngClass]="showPassword2 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
                                 </span>
                             </div>
@@ -93,21 +85,17 @@
                                 Confirm New Password is required
                             </div>
                             <div *ngIf="changePasswordForm.hasError('passwordMismatch') && changePasswordForm.get('confirmPassword')?.touched"
-                                class="error-msg">
-                                Confirm new password must match the new password
-                            </div>
+                                class="error-msg">Confirm new password must match the new password</div>
                         </div>
                         <!-- <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="terms" formControlName="terms">
                                 <label class="form-check-label custom-term-label">I have read and accept
-                                    the
-                                    <a href="https://rightlyhr.com/terms-and-conditions/" target="_blank" class="ms-1 link-text" type="button" tabindex="0" (click)="$event.stopPropagation()"><u>Terms & Conditions</u></a></label>
+                                    the <a href="https://rightlyhr.com/terms-and-conditions/" target="_blank" class="ms-1 link-text" type="button" tabindex="0" (click)="$event.stopPropagation()"><u>Terms & Conditions</u></a></label>
                             </div>
                         </div> -->
                         <div class="pt-2">
-                            <button type="submit" class="custom-btn btn-primary"
-                                [disabled]="changePasswordForm.invalid">Save & Proceed
+                            <button type="submit" class="custom-btn btn-primary" [disabled]="changePasswordForm.invalid">Save & Proceed
                                 <img src="/images/right-arrow.png" alt="right Arrow" class="right-arrow ms-2"></button>
                         </div>
                     </form>

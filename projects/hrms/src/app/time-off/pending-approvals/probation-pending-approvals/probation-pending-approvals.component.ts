@@ -23,25 +23,12 @@ import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+
 @Component({
   selector: 'app-probation-pending-approvals',
-  imports: [
-    CommonModule,
-    RouterModule,
-    NgbPopoverModule,
-    FormsModule,
-    NgbPopoverModule,
-    PaginatorModule,
-    DropdownModule,
-    NoDataFoundComponent,
-    ProbationdetailsPipe,
-    ProbationformViewComponent,
-    TranslateModule,
-    Select,
-    DateformatPipe,
-    DataLoaderContentComponent,
-    InfoIconComponent
-],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
+    PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent,
+    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
 })
@@ -64,22 +51,17 @@ export class ProbationPendingApprovalsComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  managers= [
-    {label :'Reporting Manager', value : 'Reproting Manager'},
-    {label : 'Team Manager', value : 'Team Manager'}
+  managers = [
+    { label: 'Reporting Manager', value: 'Reproting Manager' },
+    { label: 'Team Manager', value: 'Team Manager' }
   ]
   @ViewChild('assessmentForm') assessmentForm!: NgbModal;
   @ViewChild('commentspopup') commentspopup!: NgbModal;
   selectedLeaveStatus: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private http: HttpService,
-    public rbac: RbacService,
-    private authService: AuthService,
-    private openModalService:OpenModalService, 
-    public formsValidation: FormValidationsService,
-  ) {}
+  constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService, 
+    private authService: AuthService, private openModalService: OpenModalService, 
+    public formsValidation: FormValidationsService) { }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -96,17 +78,16 @@ export class ProbationPendingApprovalsComponent {
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    //console.log(this.isformsubmit);
     this.getProbationExtendDays();
     this.getAllPendingApprovals();
   }
-onStatusApproveSelect(status: string) {
-  this.selectedLeaveStatus = status;
 
-  if (status === 'approved') {
-   this.selectedData.comments ='Approved'
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+      this.selectedData.comments = 'Approved'
+    }
   }
-}
 
   // onStatusRejectSelect(status: string) {
   //   this.selectedLeaveStatus = status;
@@ -114,29 +95,26 @@ onStatusApproveSelect(status: string) {
   //     this.rejectForm.get('comments')?.setValue('Rejected');
   //   }
   // }
+
   getAllPendingApprovals() {
     this.loading = true;
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=20&approvedType=EMP`
-      )
-      .subscribe({
-        next: (data: any) => {
-          this.loading = false;
-          this.probationDetails = data.data.filter(
-            (item: any) =>
-              item.approvalHeader.status != 'Processed' &&
-              item.approvalHeader.status != 'Rejected'
-          );
-          // this.filterPendingApprovalsByModule();
-        },
-        error: (reason) =>{ console.log(reason)
-          this.loading = false;
-        
-        },
-      });
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=20&approvedType=EMP`).subscribe({
+      next: (data: any) => {
+        this.loading = false;
+        this.probationDetails = data.data.filter(
+          (item: any) =>
+            item.approvalHeader.status != 'Processed' &&
+            item.approvalHeader.status != 'Rejected'
+        );
+        // this.filterPendingApprovalsByModule();
+      },
+      error: (reason) => {
+        console.log(reason)
+        this.loading = false;
+      },
+    });
   }
 
   requesthandler = {} as any;
@@ -160,9 +138,11 @@ onStatusApproveSelect(status: string) {
     });
     this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
   }
-openModalView(){
-  this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
-}
+
+  openModalView() {
+    this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
+  }
+
   openview() {
     this.modalService.dismissAll();
     this.modalService.open(this.assessmentForm, { centered: true, backdrop: 'static', size: 'xl' });
@@ -172,34 +152,29 @@ openModalView(){
     this.http.communicationService.next({ employeeId, responseId });
   }
 
-  handleRequests(request: Iprobationapproval,content:any) {
+  handleRequests(request: Iprobationapproval, content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' })
     this.requesthandler = request;
     this.selectedData = request.entity;
     this.selectedPrRequestDataforheader = request.approvalHeader;
-    console.log(this.selectedData);
     this.getEmployeedatabyid(this.selectedData);
   }
 
   empdata = {} as Ipersonal;
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.empdata = data as Ipersonal;
-        },
-        error: (err: any) => {
-          console.log(err);
-          alert('Insertion of data faild');
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.empdata = data as Ipersonal;
+      },
+      error: (err: any) => {
+        console.log(err);
+        alert('Insertion of data faild');
+      },
+    });
   }
 
   getComments(value: any) {
-    console.log(value);
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.meta);
@@ -215,23 +190,20 @@ openModalView(){
   }
 
   getProbationExtendDays() {
-    const ProbationExtensionId=environment.ProbationExtensionId;
+    const ProbationExtensionId = environment.ProbationExtensionId;
     const extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
-    this.subscription = this.http
-      .getData(`ProbationFlow/settingsprobationconfiggetall`)
-      .subscribe({
-        next: (data: any) => {
-          let duration = data.find((ele: any) => {
-            return ele.configValueId === ProbationExtensionId;
-          });
-          this.probationExtensionDuration = duration.noOfDays;
-              let extendTimes = data.find((ele: any) => {
-            return ele.configValueId === extensionPeriodTimes;
-          });
-          this.probationExtensionTimes = extendTimes.noOfDays;
-          console.log(this.probationExtensionTimes);
-        },
-      });
+    this.subscription = this.http.getData(`ProbationFlow/settingsprobationconfiggetall`).subscribe({
+      next: (data: any) => {
+        let duration = data.find((ele: any) => {
+          return ele.configValueId === ProbationExtensionId;
+        });
+        this.probationExtensionDuration = duration.noOfDays;
+        let extendTimes = data.find((ele: any) => {
+          return ele.configValueId === extensionPeriodTimes;
+        });
+        this.probationExtensionTimes = extendTimes.noOfDays;
+      },
+    });
   }
 
   onclickproceevalue(value: any) {
@@ -298,20 +270,19 @@ openModalView(){
   clearDiscontinueData() {
     this.selectedData.comments = '';
     this.selectedData.rejectedReason = '';
-     this.selectedLeaveStatus = null;
+    this.selectedLeaveStatus = null;
   }
 
   issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
-       const trimmedValue = Value?.trim();
-     const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
-
+    const trimmedValue = Value?.trim();
+    const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
     if (!trimmedValue || startsWithSpecialChar) {
-    this.issubmitdiable = true;
-    this.selectedLeaveStatus = null;
+      this.issubmitdiable = true;
+      this.selectedLeaveStatus = null;
     } else {
-    this.issubmitdiable = false;
-     }
+      this.issubmitdiable = false;
+    }
   }
 
   letters(event: KeyboardEvent): boolean {
@@ -322,8 +293,8 @@ openModalView(){
     return true;
   }
 
-getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextendedcount:number): string {
-     if(extendedDate ){
+  getBlockedFutureDate(lastWorkingDate: string, extendedDate: string, probationextendedcount: number): string {
+    if (extendedDate) {
       lastWorkingDate = extendedDate;
     }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
@@ -332,8 +303,8 @@ getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextend
     return formattedDate;
   }
 
-  getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
-      if(extendedDate){
+  getBlockedFutureDateupto(startDate: string, duration: number, extendedDate: string): string {
+    if (extendedDate) {
       startDate = extendedDate;
     }
     const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
@@ -343,26 +314,23 @@ getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextend
     const formattedFutureDate = futureDate.format('YYYY-MM-DD');
     return formattedFutureDate;
   }
+
   // getBlockedFutureDate(lastWorkingDate: string): string {
   //   const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
-
   //   // Format the date as "YYYY-MM-DD"
   //   const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
-
   //   return formattedDate;
   // }
 
   // getBlockedFutureDateupto(startDate: string, duration: number): string {
   //   const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
-
   //   // Add the duration (e.g., 90 days) to the start date
   //   const futureDate = startDateObj.add(duration, 'days');
-
   //   // Format the future date as "YYYY-MM-DD"
   //   const formattedFutureDate = futureDate.format('YYYY-MM-DD');
-
   //   return formattedFutureDate;
   // }
+
   jsonData = {} as any;
   handleProcess(f: NgForm) {
     this.openModalService.openLoaderModal('Processing....')
@@ -415,24 +383,19 @@ getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextend
       requestBody.status = 'Processed';
       requestBody.comments = this.selectedData.comments;
     }
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.modalService.dismissAll();
-          this.openModalService.openSuccessModal(successMessage);
-          this.getAllPendingApprovals();
-        },
-        error: (reason: any) => {
-          this.openModalService.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.openModalService.openSuccessModal(successMessage);
+        this.getAllPendingApprovals();
+      },
+      error: (reason: any) => {
+        this.openModalService.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        this.getAllPendingApprovals();
+      },
+    });
   }
 
   reset() {

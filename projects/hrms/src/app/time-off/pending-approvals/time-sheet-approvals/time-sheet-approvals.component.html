@@ -6,14 +6,16 @@
             <div class="d-flex justify-content-between align-items-center mb-3 ms-4">
                 <div class="d-flex align-items-center gap-2">
                     <input #globalCheckbox type="checkbox" [checked]="areAllDaysSelected()"
-                        [indeterminate]="isGlobalIndeterminate()"
-                        (change)="toggleSelectAllDays(globalCheckbox.checked)" />
+                        [indeterminate]="isGlobalIndeterminate()" (change)="toggleSelectAllDays(globalCheckbox.checked)" />
                     <label class="form-label custom-label m-0"><b>Select All</b></label>
                 </div>
                 <div *ngIf="(selectedEntries?.length ?? 0) > 0 && !showhideaction">
-                    <button class="custom-btn btn-primary-approve me-2"
-                        (click)="bulkApprove(approverPopup)">Approve</button>
+                    @if(rbac.allowedToAccess('Timesheet Approvals.update')){
+                    <button class="custom-btn btn-primary-approve me-2" (click)="bulkApprove(approverPopup)">Approve</button>
+                    }
+                    @if(rbac.allowedToAccess('Timesheet Approvals.delete')){
                     <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                    }
                 </div>
             </div>
             <p-accordion-panel *ngFor="let day of timesheetData; let i = index" [value]="i">
@@ -39,8 +41,10 @@
                                     <th>{{ 'Phase/Milestone' | translate }}</th>
                                     <th>{{ 'Total Hours' | translate }}</th>
                                     <th class="text-center">{{ 'Description' | translate }}</th>
+                                    @if(rbac.allowedToAccess('Timesheet Approvals.update') || rbac.allowedToAccess('Timesheet Approvals.delete')) {
                                     @if(showhideaction){
                                     <th class="text-center">{{ 'Actions' | translate }}</th>
+                                    }
                                     }
                                 </tr>
                             </ng-template>
@@ -59,29 +63,31 @@
                                             <a type="button" [ngbPopover]="descTpl">
                                                 <app-info-icon></app-info-icon>
                                             </a>
-
                                             <ng-template #descTpl>
                                                 <p class="mb-0">{{ entry.description }}</p>
                                             </ng-template>
                                         </ng-container>
-
                                         <ng-template #noEntries>
                                             -
                                         </ng-template>
-
                                     </td>
+                                    @if(rbac.allowedToAccess('Timesheet Approvals.update') || rbac.allowedToAccess('Timesheet Approvals.delete')) {
                                     @if(showhideaction){
                                     <td>
                                         <div class="d-flex justify-content-center gap-3">
+                                            @if(rbac.allowedToAccess('Timesheet Approvals.update')){
                                             <a (click)="openModal(approverPopup, entry, 'Processed')">
-                                                <img src="/icons/check-approve-icon.png" class="action-img"
-                                                    alt="Approve" />
+                                                <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve" />
                                             </a>
+                                            }
+                                            @if(rbac.allowedToAccess('Timesheet Approvals.delete')){
                                             <a (click)="openModal(rejectPopup, entry, 'Rejected')">
                                                 <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
                                             </a>
+                                            }
                                         </div>
                                     </td>
+                                    }
                                     }
                                 </tr>
                             </ng-template>
@@ -155,32 +161,23 @@
                         (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ timeSheetApproveForm.get('comments')?.value?.length || 0 }}/250
                     </div>
-                    <div class="error-msg"
-                        *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
-                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is
-                            required</div>
-                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">
-                            Approver Comments exceed 250 characters
-                        </div>
+                    <div class="error-msg" *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">Approver Comments exceed 250 characters</div>
                     </div>
                 </div>
             </div>
               <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
-                    (click)="onStatusApproveSelect('approved')">
-                    Approved
-                </button>
+                    (click)="onStatusApproveSelect('approved')">Approved</button>
             </div>
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
-                    [disabled]="spinnerLoader">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
                     {{'Cancel' | translate }}</button>
-                <button type="submit" class="custom-btn btn-primary"
-                    [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
+                <button type="submit" class="custom-btn btn-primary" [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
                     <ng-container *ngIf="spinnerLoader; else approveText">
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                             <span>{{ 'Loading...' }}</span>
                         </div>
                     </ng-container>
@@ -225,9 +222,7 @@
             </div>
                 <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                 <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
-                    (click)="onStatusRejectSelect('reject')">
-                    Rejected
-                </button>
+                    (click)="onStatusRejectSelect('reject')">Rejected</button>
             </div>
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"

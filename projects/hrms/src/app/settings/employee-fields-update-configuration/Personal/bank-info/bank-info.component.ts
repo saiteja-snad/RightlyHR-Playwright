@@ -86,7 +86,13 @@ export class BankInfoComponent {
     this.getAllRoles();
     this.getBankInfoFieldsConfigList();
   }
+  get allOptionsDisabled(): boolean {
+  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+}
 
+get isReadOnlyMode(): boolean {
+  return this.allOptionsDisabled;
+}
   getBankInfoFields() {
     const params = 'Personal';
     const param = 'Bank Info';

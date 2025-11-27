@@ -110,7 +110,13 @@ export class ContactInfoComponent {
         },
       });
   }
+  get allOptionsDisabled(): boolean {
+  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+}
 
+get isReadOnlyMode(): boolean {
+  return this.allOptionsDisabled;
+}
   getContactInfoFieldsConfigList() {
     this.loader = true;
     const params = {

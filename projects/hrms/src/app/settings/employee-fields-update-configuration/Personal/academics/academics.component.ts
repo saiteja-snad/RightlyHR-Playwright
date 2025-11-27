@@ -86,7 +86,13 @@ export class AcademicsComponent {
     this.getAllRoles();
     this.getAcademicsFieldsConfigList();
   }
+  get allOptionsDisabled(): boolean {
+  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+}
 
+get isReadOnlyMode(): boolean {
+  return this.allOptionsDisabled;
+}
   getAcademicsFields() {
     const params = 'Personal';
     const param = 'Academics';

@@ -96,7 +96,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="addressTypeOptions" optionLabel="label"
-              optionValue="value" formControlName="addressType"
+              optionValue="value" formControlName="addressType" [readonly]="isReadOnlyMode"
               placeholder="{{'Please select address type' | translate}}">
             </p-select>
           </div>
@@ -118,7 +118,7 @@
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
               optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames"
-              placeholder="{{'Please select field names' | translate}}" [filter]="true">
+              placeholder="{{'Please select field names' | translate}}" [filter]="true" [readonly]="isReadOnlyMode">
             </p-multiSelect>
           </div>
           <!-- Read-only input for update mode -->
@@ -141,7 +141,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="approvalTypeOptions" optionLabel="label"
-              optionValue="value" formControlName="approvalType"
+              optionValue="value" formControlName="approvalType" [readonly]="isReadOnlyMode"
               placeholder="{{'Please select approval type' | translate}}">
             </p-select>
           </div>
@@ -209,7 +209,7 @@
             </div>
           </div>
         </div>
-
+         <div *ngIf="isReadOnlyMode" class="error-msg">Note: All fields are configured</div>
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">

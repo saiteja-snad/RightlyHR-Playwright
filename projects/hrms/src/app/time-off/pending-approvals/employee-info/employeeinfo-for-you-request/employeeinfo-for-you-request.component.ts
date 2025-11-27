@@ -18,6 +18,7 @@ import { ConfirmationIconComponent } from '../../../../icons/confirmation-icon/c
 import { EMPLOYEEINFO } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-employeeinfo-for-you-request',
@@ -76,10 +77,11 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
   //emp: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+     this.getAllPendingApprovals();
     this.employeeid = parseInt(this.empinfo.employeeId);
     this.loadClientsAndProjects(this.page, this.pageSize);
     this.http.selectedEmployeeIdTimesheet$
@@ -392,7 +394,9 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
+           this.signalService.employeinfoDetailsTriggerSignal.set(true);
         },
       });
     }
@@ -475,12 +479,40 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+          this.getAllPendingApprovals();
           this.http.triggerActionSignal();
+          this.signalService.employeinfoDetailsTriggerSignal.set(true);
         },
       });
     }
   }
-
+  getAllPendingApprovals() {
+    let EmployeeId = parseInt(this.empinfo.employeeId);
+    this.dataload = true;
+    this.http
+      .getData(
+        `PendingApproval/employee/${EmployeeId}?moduleId=32&approvedType=EMP`
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          if (response.data.length > 0) {
+          //  this.leaves.next(response.data);
+          //  this.wfhsselects = response.data;
+          } else {
+          //  this.leaves.next([]);
+          //  this.wfhsselects = [];
+          }
+        },
+        error: (reason) => {
+          this.dataload = false;
+          console.error(reason);
+        },
+        complete: () => {
+          this.dataload = false;
+        },
+      });
+  }
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
     if (!this.empinfodata || this.empinfodata.length === 0) return false;

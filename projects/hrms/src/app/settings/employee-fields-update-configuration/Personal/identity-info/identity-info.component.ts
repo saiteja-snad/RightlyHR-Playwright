@@ -91,7 +91,13 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     this.getAllRoles();
     this.getIdentityInfoFieldsConfigList();
   }
+  get allOptionsDisabled(): boolean {
+  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+}
 
+get isReadOnlyMode(): boolean {
+  return this.allOptionsDisabled;
+}
   getIdentityInfoFields() {
     const params = 'Personal';
     const param = 'Identity Info';

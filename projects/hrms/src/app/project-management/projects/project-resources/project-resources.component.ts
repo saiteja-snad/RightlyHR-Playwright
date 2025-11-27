@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { from, Subject, Subscription, takeUntil } from 'rxjs';
+import { combineLatest, Subject, Subscription, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
@@ -99,19 +99,21 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     });
     this.getPhaseData();
 
-    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
-      this.selectedRoleIds = roleIds;
-      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
-    });
-
-    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
-      this.selectedPhaseIds = phaseIds;
-      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
-    });
-
-    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
-      this.selectedAuthorityIds = authorityIds;
-      if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
+    combineLatest([
+      this.http.resourceRoleFilter$,
+      this.http.resourcePhaseFilter$,
+      this.http.resourceAuthorityFilter$
+    ]).pipe(
+      takeUntil(this.destroy$),
+      debounceTime(100),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    ).subscribe(([roleIds, phaseIds, authorityIds]) => {
+      this.selectedRoleIds = roleIds || [];
+      this.selectedPhaseIds = phaseIds || [];
+      this.selectedAuthorityIds = authorityIds || [];
+      if (this.projectId) {
+        this.getResourceData(this.projectId, undefined, false, this.searchValue);
+      }
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getResourceData(parseInt(this.projectId), undefined, false, this.searchValue);
@@ -316,13 +318,13 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       params.searchTerm = searchTerm;
     }
 
-    if (this.selectedRoleIds.length > 0 && !isPopupCall) {
+    if (this.selectedRoleIds?.length > 0 && !isPopupCall) {
       params.roleIds = this.selectedRoleIds.join(',');
     }
-    if (this.selectedPhaseIds.length > 0 && !isPopupCall) {
+    if (this.selectedPhaseIds?.length > 0 && !isPopupCall) {
       params.phaseId = this.selectedPhaseIds.join(',');
     }
-    if (this.selectedAuthorityIds.length > 0 && !isPopupCall) {
+    if (this.selectedAuthorityIds?.length > 0 && !isPopupCall) {
       params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
     }
 

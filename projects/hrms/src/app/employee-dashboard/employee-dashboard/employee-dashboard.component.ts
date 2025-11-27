@@ -485,7 +485,7 @@ export class EmployeeDashboardComponent {
 
           // Prepare weeklyWorkLogs for template
           this.weeklyWorkLogs = attendance.map((item: any) => ({
-            day: moment(item.date).format('ddd'), // Mon, Tue, ...
+          day: moment(item.date).format('dddd') ,
             time: item.duration.totalDuration,
           }));
 
@@ -516,5 +516,16 @@ export class EmployeeDashboardComponent {
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
+  nagvition() {
+    this.router.navigate(['/myinfo/job/team-members']);
+  }
 
+  myattendance() {
+    this.router.navigate(['/attendance']);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
 }

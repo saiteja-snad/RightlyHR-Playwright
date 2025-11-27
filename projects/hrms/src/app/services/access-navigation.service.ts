@@ -274,7 +274,7 @@ export class AccessNavigationService {
             }
           }
         }
-        
+
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
           return '/settings/timesheet-locking-configuration';
         }
@@ -282,7 +282,7 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
         }
-         break;
+        break;
 
 
 
@@ -291,6 +291,15 @@ export class AccessNavigationService {
           return (route = '/policies');
         }
         break;
+
+
+
+      case '/employee-dashboard':
+        if (this.rbac.allowedToAccess('My Info.view')) {
+          return (route = '/employee-dashboard');
+        }
+        break;
+
 
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
@@ -991,12 +1000,12 @@ export class AccessNavigationService {
 
 
 
-        case '/settings/it-configuration':
+      case '/settings/it-configuration':
         if (this.rbac.allowedToAccess('IT Support Configuration.view')) {
           for (const item of SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS) {
-                if (this.rbac.allowedToAccess(item.permission)) {
-                  return item.route;
-                }
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
 
           }
         }
@@ -1185,8 +1194,8 @@ export class AccessNavigationService {
       //     }
       //   }
       //   break;
-       case '/settings/locking-configuration':
-        if (this.rbac.allowedToAccess('Attendance Configuration Module.view' )) {
+      case '/settings/locking-configuration':
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
 
           for (const item of SETTINGS_AttendanceLock_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1217,9 +1226,9 @@ export class AccessNavigationService {
         }
         break;
 
-         //timesheet locking
+      //timesheet locking
       case '/settings/timesheet-locking-configuration':
-        if (this.rbac.allowedToAccess('Timesheet Configuration Module.view' )) {
+        if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
 
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1228,7 +1237,7 @@ export class AccessNavigationService {
           }
         }
         break;
-         case '/settings/timesheet-locking-configuration/pending-for-submission':
+      case '/settings/timesheet-locking-configuration/pending-for-submission':
         if (this.rbac.allowedToAccess('Timesheet Locking Pending Tab.view')) {
           return (route = '/settings/timesheet-locking-configuration/pending-for-submission');
         }
@@ -1238,7 +1247,7 @@ export class AccessNavigationService {
           return (route = '/settings/timesheet-locking-configuration/published');
         }
         break;
-        // assets
+      // assets
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {
           return '/settings/assets-configuration/vendor-detiles';
@@ -1300,7 +1309,7 @@ export class AccessNavigationService {
           }
         }
         break;
-        case '/settings/timeoff-configurations/flexible-workhours-allocation':
+      case '/settings/timeoff-configurations/flexible-workhours-allocation':
         if (this.rbac.allowedToAccess('Flexible Work Hours Allocation Tab.view')) {
           for (const item of FLEXIBLE_WORKHOURS_ALLOCATION_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

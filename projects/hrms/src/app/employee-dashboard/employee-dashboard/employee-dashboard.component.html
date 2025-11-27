@@ -54,7 +54,7 @@
             <div class="content-card mb-3">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">My Team Members</div>
-                    <a class="view-all"><u>View All</u></a>
+                    <a class="view-all" (click)="nagvition()"><u>View All</u></a>
                 </div>
 
                 <div class="members-list">
@@ -86,7 +86,7 @@
             <div class="content-card">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Weekly Work Logs</div>
-                    <button class="custom-btn btn-primary view-attendance-btn">View Attendance</button>
+                    <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
                 </div>
 
                 <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>

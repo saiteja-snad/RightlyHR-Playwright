@@ -394,9 +394,10 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
-           this.getAllPendingApprovals();
+          
           this.http.triggerActionSignal();
            this.signalService.employeinfoDetailsTriggerSignal.set(true);
+            this.getAllPendingApprovals();
         },
       });
     }
@@ -499,10 +500,10 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
           if (response.data.length > 0) {
           //  this.leaves.next(response.data);
           //  this.wfhsselects = response.data;
-          } else {
+         // } else {
           //  this.leaves.next([]);
           //  this.wfhsselects = [];
-          }
+          this.allPendingApprovals = response.data;}
         },
         error: (reason) => {
           this.dataload = false;

@@ -372,9 +372,10 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
-          this.getAllPendingApprovals();
+        
           this.http.triggerActionSignal();
            this.signalService.employeinfoDetailsTriggerSignal.set(true);
+             this.getAllPendingApprovals();
         },
       });
     }
@@ -457,9 +458,10 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
-           this.getAllPendingApprovals();
+         
           this.http.triggerActionSignal();
           this.signalService.employeinfoDetailsTriggerSignal.set(true);
+            this.getAllPendingApprovals();
          
 
         },

@@ -13,8 +13,8 @@ import { RbacService } from '../../../services/rbac.service';
 export class TeamMembersTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'Reporting Manager Change', link: '/personalinfo/team/team-members', permission: { feature: 'Employee Info Reporting Manager Tab', action: 'view' } },
-    { label: 'Team Manager Change', link: '/personalinfo/team/team-manger-members', permission: { feature: 'Employee Info Team Managers Tab', action: 'view' } },
+    { label: 'My Team Members', link: '/personalinfo/job/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
+    { label: 'Reporting Manager ', link: '/personalinfo/job/my-team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }

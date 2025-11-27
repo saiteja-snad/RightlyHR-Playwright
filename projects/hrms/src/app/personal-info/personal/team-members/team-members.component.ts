@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TeamMembersTabsComponent } from "../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 
 @Component({
   selector: 'app-team-members',
@@ -31,8 +32,9 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     SearchfilterPipe,
     ReactiveFormsModule,
     DateformatPipe,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    TeamMembersTabsComponent
+],
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
 })

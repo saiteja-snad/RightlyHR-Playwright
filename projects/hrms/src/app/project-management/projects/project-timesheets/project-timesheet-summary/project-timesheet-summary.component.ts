@@ -305,7 +305,7 @@ roleWiseHoursGraph(
 
         this.roleWiseHoursOptions = {
           cutout: '60%',
-          plugins: {legend: { display: true, position: 'right' } },
+          plugins: {legend: { display: false, position: 'right' } },
           responsive: true,
           maintainAspectRatio: false
         };

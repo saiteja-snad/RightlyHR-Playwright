@@ -169,55 +169,55 @@
     </div>
     }
 
-    @if(isActive('/project-management/clients/details/timesheet/resource-summary')){
-    <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-      <div class="d-flex gap-3 align-items-center">
-        @if(isFilterApplied()) {
-        <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+        @if(isActive('/project-management/clients/details/timesheet/resource-summary')){
+        <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+          <div class="d-flex gap-3 align-items-center">
+            @if(isFilterApplied()) {
+            <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+            }
+            <div class="custom-date-range-picker">
+              <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+                [showIcon]="true" [readonlyInput]="true">
+              </p-datepicker>
+            </div>
+
+            <div class="custom-p-select-content">
+              <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
+                filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
+                class="form-select custom-select">
+              </p-select>
+            </div>
+
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+                resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
+                placeholder="Please select department" [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts"
+                class="form-select custom-select">
+              </p-multiSelect>
+            </div>
+
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
+                [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true"
+                [showToggleAll]="true" resetFilterOnHide="true" selectedItemsLabel="{0} roles"
+                class="form-select custom-select">
+              </p-multiSelect>
+            </div>
+
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId"
+                [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
+                [filter]="true" resetFilterOnHide="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
+                class="form-select custom-select">
+              </p-multiSelect>
+            </div>
+
+            <div>
+              <button class="custom-btn btn-primary" type="submit" [disabled]="!isFormCompletelyValid()">Apply</button>
+            </div>
+          </div>
+        </form>
         }
-        <div class="custom-date-range-picker">
-          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-            [showIcon]="true" [readonlyInput]="true">
-          </p-datepicker>
-        </div>
-
-        <div class="custom-p-select-content">
-          <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
-            filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
-            class="form-select custom-select">
-          </p-select>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
-            placeholder="Please select department" [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true"
-            [showToggleAll]="true" resetFilterOnHide="true" selectedItemsLabel="{0} roles"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="phasesList" optionLabel="phaseName" optionValue="phaseId"
-            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
-            [filter]="true" resetFilterOnHide="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div>
-          <button class="custom-btn btn-primary" type="submit" [disabled]="!isFormCompletelyValid()">Apply</button>
-        </div>
-      </div>
-    </form>
-    }
 
     @if(isActive('/project-management/clients/details/timesheet/summary')){
     <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">

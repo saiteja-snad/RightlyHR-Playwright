@@ -463,8 +463,14 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];
+    this.resourcesData = [];
     this.http.setRequest(null);
     this.setDefaultmounth();
+
+  this.http.setProjectTimesheetDepartmentIds([]);
+  this.http.setProjectTimesheetRoleFilter([]);
+  this.http.setProjectTimesheetPhaseFilter([]);
+
   }
 
   // initialization of form

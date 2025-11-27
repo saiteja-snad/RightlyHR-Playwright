@@ -130,7 +130,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
       this.approveForm.get('comments')?.setValue('Approved');
     }
   }
-   onStatusRejectSelect(status: string) {
+  onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'reject') {
       this.rejectForm.get('comments')?.setValue('Rejected');
@@ -144,11 +144,11 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.maxLength(250)],
       ],
     });
-        this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
 
   }
 
@@ -159,11 +159,11 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.maxLength(250)],
       ],
     });
-       this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
   intializeVerifyForm() {
     this.verifyForm = this.fb.group({
@@ -518,6 +518,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     const verifiedItem = this.selectedItem;
     const requestBody = {
       isVerified: true,
+      onBehalfOfApproval: true,
       verifiedBy: this.empinfo.employeeId?.toString(),
       verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
       comments: formData.comments

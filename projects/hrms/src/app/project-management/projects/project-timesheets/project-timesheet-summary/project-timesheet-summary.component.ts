@@ -174,6 +174,7 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
           this.roleWiseHoursOptions = {
             cutout: '60%',
             plugins: { legend: { display: false } },
+
           };
         },
         error: (err) => {
@@ -212,6 +213,10 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
             const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
             const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
+            const actualDisplay = chartData.map(
+              (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+            );
+
             this.estimatedVsActualData = {
               labels: labels,
               datasets: [
@@ -242,12 +247,39 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
                 legend: {
                   display: false,
                 },
+                tooltip: {
+                  callbacks: {
+                    title: (tooltipItems: any) => {
+                      const index = tooltipItems[0].dataIndex;
+                      return labels[index];
+                    },
+                    label: (context: any) => {
+                      const idx = context.dataIndex;
+                      if (context.dataset.label === 'Estimated Hours') {
+                        return `Estimated: ${estimatedHours[idx]} hrs`;
+                      }
+                      if (context.dataset.label === 'Actual Hours') {
+                        return `Actual: ${actualDisplay[idx]} hrs`;
+                      }
+                      if (context.dataset.label === 'Over Due') {
+                        return `Over Due: ${overdueHours[idx]} hrs`;
+                      }
+                      return `${context.dataset.label}: ${context.raw}`;
+                    }
+                  }
+                }
               },
               scales: {
                 x: {
                   stacked: false,
-                  grid: { display: false, },
-                  ticks: { color: '#141414', font: { size: 11 } },
+                  grid: { display: false },
+                  ticks: {
+                    color: '#141414',
+                    font: { size: 11 },
+                    callback: (value: any, index: number) => {
+                      return this.truncateLabel(labels[index], 12);
+                    }
+                  }
                 },
                 y: {
                   stacked: true,
@@ -267,6 +299,10 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  truncateLabel(label: string, maxLength: number = 12): string {
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
@@ -296,10 +332,21 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
             this.billableData = [];
             return;
           }
+          const convertHHMMToNumber = (hhmm: string): number => {
+            if (!hhmm) return 0;
+            const [h, m] = hhmm.split(':').map(Number);
+            return Number((h + m / 60).toFixed(2));
+          };
           // Extract data safely
           const labels = apiData.map((item: any) => item.name || 'N/A');
-          const billable = apiData.map((item: any) => item.billableHours || 0);
-          const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
+          const billable = apiData.map((item: any) =>
+            convertHHMMToNumber(item?.billableHoursHHMM)
+          );
+          const nonBillable = apiData.map((item: any) =>
+            convertHHMMToNumber(item?.nonBillableHoursHHMM)
+          );
+          const billableDisplay = apiData.map((i: any) => i?.billableHoursHHMM);
+          const nonBillableDisplay = apiData.map((i: any) => i?.nonBillableHoursHHMM);
           // Chart data
           this.billableData = {
             labels,
@@ -324,12 +371,31 @@ export class ProjectTimesheetSummaryComponent implements OnInit, OnDestroy {
             barThickness: 30,
             plugins: {
               legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const idx = context.dataIndex;
+                    if (context.dataset.label === 'Billable') {
+                      return `Billable: ${billableDisplay[idx]} hrs`;  // <-- HH:MM
+                    }
+                    if (context.dataset.label === 'Non-Billable') {
+                      return `Non-Billable: ${nonBillableDisplay[idx]} hrs`; // <-- HH:MM
+                    }
+                    return `${context.dataset.label}: ${context.raw} hrs`;
+                  }
+                }
+              }
             },
             scales: {
               x: {
                 stacked: false,
                 grid: { display: false, },
-                ticks: { color: '#141414', font: { size: 11 } },
+                ticks: {
+                  color: '#141414', font: { size: 11 },
+                  callback: (value: any, index: number) => {
+                    return this.truncateLabel(labels[index], 12);
+                  }
+                },
               },
               y: {
                 stacked: true,

@@ -9,7 +9,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { ChipModule } from 'primeng/chip';
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
 @Component({
@@ -85,7 +85,7 @@ export class ClientTimesheetDetailedComponent {
       resourceStartDate: phase.resourceStartDate,
       resourceEndDate: phase.resourceEndDate,
       resourceRole: phase.resourceRole,
-      loggedHours: phase.loggedHours,
+      loggedHoursHHMM: phase.loggedHoursHHMM,
       resourceStatus: phase.resourceStatus,
           allocatedHours:phase.allocatedHours
     }));

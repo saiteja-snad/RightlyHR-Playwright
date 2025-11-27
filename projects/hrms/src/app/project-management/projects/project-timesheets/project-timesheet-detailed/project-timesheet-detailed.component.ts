@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../../pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { ChipModule } from 'primeng/chip';
@@ -53,7 +53,7 @@ export class ProjectTimesheetDetailedComponent {
             departments: resource.departments,
             phasesCount: resource.phases.length,
             phases: resource.phases,
-            totalLoggedHours: resource.totalLoggedHours ?? 0
+            totalLoggedHoursHHMM: resource.totalLoggedHoursHHMM ?? 0
           }))
         );
 
@@ -84,7 +84,7 @@ export class ProjectTimesheetDetailedComponent {
       resourceStartDate: phase.resourceStartDate,
       resourceEndDate: phase.resourceEndDate,
       resourceRole: phase.resourceRole,
-      loggedHours: phase.loggedHours,
+      loggedHoursHHMM: phase.loggedHoursHHMM,
       resourceStatus: phase.resourceStatus,
       allocatedHours: phase.allocatedHours
     }));

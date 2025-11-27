@@ -103,7 +103,7 @@
 
           <div *ngIf="fieldConfigForm.get('addressType')?.touched &&
               fieldConfigForm.get('addressType')?.invalid" class="error-msg">
-            <div *ngIf="fieldConfigForm.get('addressType')?.errors?.['required']">
+            <div *ngIf=" !isReadOnlyMode && fieldConfigForm.get('addressType')?.errors?.['required']">
               {{ 'Address Type is required' | translate }}
             </div>
           </div>
@@ -145,7 +145,7 @@
               placeholder="{{'Please select approval type' | translate}}">
             </p-select>
           </div>
-          <div *ngIf="fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"
+          <div *ngIf="!isReadOnlyMode &&fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"
             class="error-msg">
             <div *ngIf="fieldConfigForm.get('approvalType')?.errors?.['required']">
               {{ 'Approval Type is required' | translate }}
@@ -209,7 +209,7 @@
             </div>
           </div>
         </div>
-         <div *ngIf="isReadOnlyMode" class="error-msg">Note: All fields are configured</div>
+         <div *ngIf="isReadOnlyMode && !isEditMode" class="error-msg">Note: All fields are configured</div>
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">

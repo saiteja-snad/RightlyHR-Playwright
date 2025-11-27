@@ -105,7 +105,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   resourceAuthorityOptions: any[] = [];
 
   previousTabUrl: string = '';
-  defaultEmployeeId: any;
 
   allprojectslist = [] as any;
   selectedProjects: any[] = [];
@@ -130,7 +129,7 @@ projectOptions: any[] = [];
     this.resourceDataids = JSON.parse(
       localStorage.getItem('resourceData') || '{}'
     );
-    this.defaultEmployeeId = this.resourceDataids?.employeeId;
+
     this.setDefaultmounth();
     this.getResourcesByClient(this.resourceDataids?.projectId);
     this.route.queryParams.subscribe((params) => {
@@ -523,12 +522,9 @@ AllProjectsList() {
     this.selectedDepartmentIds = [];
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];
-    this.resourceDataids.employeeId = this.defaultEmployeeId;
 
     // Notify main filter request
-    this.http.setRequest({
-      resourceId: this.defaultEmployeeId,
-    });
+    this.http.setRequest(null);
     this.setDefaultmounth();
 
     this.http.setProjectTimesheetDepartmentIds([]);

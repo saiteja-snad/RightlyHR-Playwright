@@ -14,8 +14,8 @@ import { AccessNavigationService } from '../../../services/access-navigation.ser
 export class TeamMembersTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'My Team View', link: '/personalinfo/job/my-team-members',icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' } },
-    { label: 'Team Overview', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png',permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
+    { label: 'Reports to you', link: '/personalinfo/job/my-team-members',icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' } },
+    { label: 'Works with you', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png',permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService,private router: Router,private accessNav: AccessNavigationService) { }

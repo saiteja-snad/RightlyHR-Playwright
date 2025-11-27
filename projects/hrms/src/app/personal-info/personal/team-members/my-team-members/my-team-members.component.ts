@@ -1,31 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { TeamMembersTabsComponent } from "../../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { MyInfoTeamNumbersTabComponent } from "../../../../shared/myinfo-tabs/my-info-team-numbers-tab/my-info-team-numbers-tab.component";
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { AccordionModule } from 'primeng/accordion';
-import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { ChipModule } from 'primeng/chip';
-import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { SkeletonModule } from 'primeng/skeleton';
-
+import { TreeTableModule } from 'primeng/treetable';
 @Component({
   selector: 'app-my-team-members',
-  imports: [TeamMembersTabsComponent, NoDataFoundComponent, MyInfoTeamNumbersTabComponent,CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule, ChipModule,
-      DateformatPipe, NoDataFoundComponent, SkeletonModule],
+  imports: [TeamMembersTabsComponent, NoDataFoundComponent, MyInfoTeamNumbersTabComponent, CommonModule,
+    TranslateModule, TableModule, ChipModule, SkeletonModule, TreeTableModule],
   templateUrl: './my-team-members.component.html',
-  styleUrl: './my-team-members.component.scss'
+  styleUrl: './my-team-members.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
-export class MyTeamMembersComponent {
 
-  // contentLoader = false;
-  // constructor(private router: Router) { }
+export class MyTeamMembersComponent {
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
@@ -36,11 +32,12 @@ export class MyTeamMembersComponent {
   clientId: any;
   projectId: any;
   contentLoader = false;
+  employeeName: any;
+  selectedEntries: any;
+  selectedProject: any;
+  teamMemberData: any[] = [];
 
-  employeeName: any
-  selectedEntries: any
-  selectedProject: any
-  constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
+  constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -48,24 +45,21 @@ export class MyTeamMembersComponent {
 
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getResourceDetails();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    
       this.getResourceDetails();
     }
   }
 
   getResourceDetails(): void {
     let url = `v2/Employeedata/GetReporteesAndTeamMembersReportees/${this.empinfo.employeeId}`;
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.teamData = res;
+        this.teamMemberData = this.mapToTreeNodes(this.teamData);
         this.contentLoader = false;
       },
       error: (err) => {
@@ -74,6 +68,18 @@ export class MyTeamMembersComponent {
         this.teamData = [];
       }
     });
+  }
+
+  mapToTreeNodes(data: any[]): any[] {
+    return data.map(item => ({
+      data: {
+        fusionEmpId: item.fusionEmpId ?? '-',
+        fullName: `${item.firstName ?? ''} ${item.middleName ?? ''} ${item.lastName ?? ''}`.trim(),
+        workEmail: item.workEmail ?? '-',
+        contact: `${item.mobilePhoneCountryCode ?? ''} ${item.contactnumber ?? '-'}`.trim()
+      },
+      children: item.childrenCount > 0 ? this.mapToTreeNodes(item.children) : []
+    }));
   }
 
   ngOnDestroy(): void {

@@ -17,7 +17,6 @@ export default [
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), },
             { path: 'my-skills', loadComponent: () => import('./personal/my-skills/my-skills.component').then(m => m.MySkillsComponent), },
-
         ]
     },
     {

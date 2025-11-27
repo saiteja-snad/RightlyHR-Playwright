@@ -647,6 +647,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Team Members',
+    'my-team-members': 'Team Members',
     'my-skills':'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
@@ -722,9 +723,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/myinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/myinfo/job/my-team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
-
 
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
@@ -755,12 +756,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/trainee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
       '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/personalinfo/job/my-team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       '/personalinfo/job/cards': MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
-
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
@@ -768,78 +769,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   resetPassword() {
     this.spinnerLoader = true;
-    this.subscription = this.http.postData(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' })
-      .subscribe({
-        next: (res: any) => {
-          this.spinnerLoader = false;
-          this.modalService.dismissAll();
-
-          const contentType = res.body.type;
-
-          if (contentType.includes('application/json')) {
-            const reader = new FileReader();
-            reader.onload = () => {
-              try {
-                const json = JSON.parse(reader.result as string);
-                const errorMsg = json.message || 'Something went wrong while resetting password';
-                this.conformationPopup.openErrorModal(errorMsg);
-              } catch {
-                this.conformationPopup.openErrorModal('Invalid response from server');
-              }
-            };
-            reader.readAsText(res.body);
-          } else {
-            const fileURL = window.URL.createObjectURL(res.body);
-            const a = document.createElement('a');
-            a.href = fileURL;
-            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId
-              }.xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(fileURL);
-
-            this.conformationPopup.openSuccessModal(
-              'Login credentials generated successfully and shared with the employee via email'
-            );
-            this.getEmployeeId();
-          }
-        },
-        error: (err: any) => {
-          this.spinnerLoader = false;
-          this.modalService.dismissAll();
-
-          if (err.error instanceof Blob) {
-            // Backend might have returned JSON error wrapped in Blob
-            const reader = new FileReader();
-            reader.onload = () => {
-              try {
-                const json = JSON.parse(reader.result as string);
-                const errorMsg = json.message || 'Something went wrong';
-                this.conformationPopup.openErrorModal(errorMsg);
-              } catch {
-                this.conformationPopup.openErrorModal('Unexpected error response');
-              }
-            };
-            reader.readAsText(err.error);
-          } else {
-            // Regular JSON error
-            const errorMsg = err.error?.message || 'Something went wrong';
-            this.conformationPopup.openErrorModal(errorMsg);
-          }
-        }
-      });
-  }
-
-  generateCredentials() {
-    this.spinnerLoader = true;
-    this.subscription = this.http.postData(`Employeedata/generate-credentials/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' }).subscribe({
+    this.subscription = this.http.postData(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' }).subscribe({
       next: (res: any) => {
         this.spinnerLoader = false;
         this.modalService.dismissAll();
-
         const contentType = res.body.type;
-
         if (contentType.includes('application/json')) {
           const reader = new FileReader();
           reader.onload = () => {
@@ -892,7 +826,65 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.conformationPopup.openErrorModal(errorMsg);
         }
       }
+    });
+  }
 
+  generateCredentials() {
+    this.spinnerLoader = true;
+    this.subscription = this.http.postData(`Employeedata/generate-credentials/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' }).subscribe({
+      next: (res: any) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        const contentType = res.body.type;
+        if (contentType.includes('application/json')) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const json = JSON.parse(reader.result as string);
+              const errorMsg = json.message || 'Something went wrong while resetting password';
+              this.conformationPopup.openErrorModal(errorMsg);
+            } catch {
+              this.conformationPopup.openErrorModal('Invalid response from server');
+            }
+          };
+          reader.readAsText(res.body);
+        } else {
+          const fileURL = window.URL.createObjectURL(res.body);
+          const a = document.createElement('a');
+          a.href = fileURL;
+          a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId }.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(fileURL);
+          this.conformationPopup.openSuccessModal(
+            'Login credentials generated successfully and shared with the employee via email'
+          );
+          this.getEmployeeId();
+        }
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        if (err.error instanceof Blob) {
+          // Backend might have returned JSON error wrapped in Blob
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const json = JSON.parse(reader.result as string);
+              const errorMsg = json.message || 'Something went wrong';
+              this.conformationPopup.openErrorModal(errorMsg);
+            } catch {
+              this.conformationPopup.openErrorModal('Unexpected error response');
+            }
+          };
+          reader.readAsText(err.error);
+        } else {
+          // Regular JSON error
+          const errorMsg = err.error?.message || 'Something went wrong';
+          this.conformationPopup.openErrorModal(errorMsg);
+        }
+      }
     });
   }
 

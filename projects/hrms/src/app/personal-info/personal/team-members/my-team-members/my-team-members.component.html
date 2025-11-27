@@ -3,19 +3,19 @@
         <div>
             <span class="component-sub-header">My Team View</span>
         </div>
-
     </div>
     <div class="main-content d-flex w-100 gap-3">
-        <div class="component-left-tabs-container">
+        <div class="mb-3">
+            <!--personal info tabs-->
             <div *ngIf="isActive('/personalinfo')">
                 <app-team-members-tabs />
             </div>
-
-
+            <!--My info tabs-->
             <div *ngIf="isActive('/myinfo')">
                 <app-my-info-team-numbers-tab />
             </div>
         </div>
+
         <div class="client-detailed-content">
             @if(!contentLoader) {
             <div class="custom-accordians">
@@ -26,12 +26,7 @@
                             <p-accordion-header>
                                 <div class="accordian-header-text text-truncate">{{team?.firstName}} {{team.middleName}}
                                     {{team?.lastName}} ({{team?.fusionEmpId ?? '-'}})</div>
-                                <!-- <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
-                            <span class="hrs-text">{{team?.project?.spentHours }} Hrs</span>
-                        </div> -->
-
                             </p-accordion-header>
-
                             <p-accordion-content>
                                 <div class="custom-p-multi-select-table custom-accordian-table"> <p-table
                                         [value]="team?.children">
@@ -43,7 +38,6 @@
                                                 <th>Phone Number</th>
                                             </tr>
                                         </ng-template>
-
                                         <ng-template pTemplate="body" let-entry>
                                             <tr>
                                                 <td>{{entry.fusionEmpId ?? '-'}}</td>
@@ -56,7 +50,6 @@
                                 </div>
                             </p-accordion-content>
                         </p-accordion-panel>
-
                     </p-accordion>
                     }@else {
                     <app-no-data-found />
@@ -84,5 +77,4 @@
             }
         </div>
     </div>
-
 </div>

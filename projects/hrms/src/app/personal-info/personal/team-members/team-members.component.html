@@ -15,17 +15,19 @@
             }
         </div>
     </div>
-    <div class="main-content d-flex w-100 gap-3">
-        <div class="component-left-tabs-container">
+    
+    <div class="main-content">
+        <div class="mb-3">
+            <!--personal Info tabs-->
             <div *ngIf="isActive('/personalinfo')">
                 <app-team-members-tabs />
             </div>
-
-
+            <!--My Info tabs-->
             <div *ngIf="isActive('/myinfo')">
                 <app-my-info-team-numbers-tab />
             </div>
         </div>
+
         <!--Input search-->
         <div class="w-100">
             <div class="input-group custom-search mb-3">
@@ -103,7 +105,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <ng-template #changetmmodals let-modal>

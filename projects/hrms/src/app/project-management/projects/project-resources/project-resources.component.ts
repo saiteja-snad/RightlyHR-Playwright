@@ -33,7 +33,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   searchValue: string = '';
   resourcesData = [] as IResource[];
   resourcestartdate:any
-  
+
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
@@ -98,17 +98,17 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       }
     });
     this.getPhaseData();
-    
+
     this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
       this.selectedRoleIds = roleIds;
       if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
     });
-    
+
     this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
       this.selectedPhaseIds = phaseIds;
       if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
     });
-    
+
     this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
       this.selectedAuthorityIds = authorityIds;
       if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
@@ -177,7 +177,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     }
   }
 
-  
+
 
   initializeForms() {
     this.updateResourceForm = this.fb.group({
@@ -206,11 +206,11 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
       statusEffectiveDate: ['', ]
     });
-    
+
     // Add conditional validator for statusEffectiveDate when modal opens
     this.updateStatusEffectiveDateValidation();
   }
-  
+
   updateStatusEffectiveDateValidation() {
     const statusEffectiveDateControl = this.reasonForm.get('statusEffectiveDate');
     if (this.modalData?.title?.includes('release')) {
@@ -301,7 +301,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   }
 
   getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false, searchTerm?: string) {
-  
+
     const params: any = {
       entityType: 'project',
       entityRefId: projectId,
@@ -315,12 +315,12 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     if (searchTerm) {
       params.searchTerm = searchTerm;
     }
-    
+
     if (this.selectedRoleIds.length > 0 && !isPopupCall) {
       params.roleIds = this.selectedRoleIds.join(',');
     }
     if (this.selectedPhaseIds.length > 0 && !isPopupCall) {
-      params.phaseIds = this.selectedPhaseIds.join(',');
+      params.phaseId = this.selectedPhaseIds.join(',');
     }
     if (this.selectedAuthorityIds.length > 0 && !isPopupCall) {
       params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
@@ -445,7 +445,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           return {
             ...employee,
             id: employee.employeeId, // force number
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -488,7 +488,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
-  
+
   updateResources() {
     if (this.updateResourceForm.invalid) {
       this.updateResourceForm.markAllAsTouched();
@@ -706,7 +706,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       // 'On Hold': 'bi-pause-circle',
       // 'Resume': 'bi-arrow-repeat'
     }[action] || 'bi-question-circle';
-    
+
   }
 
   getActionsByStatus(status: string): string[] {
@@ -720,7 +720,7 @@ formatDateToLocalforresource(dateString: string | null): Date | null {
   return new Date(dateString); // Converts ISO string to Date object
 }
   handleAction(action: string, data: any) {
-  
+
     const config = this.confirmationMessages[action];
 
     if (!config) return;
@@ -731,7 +731,7 @@ formatDateToLocalforresource(dateString: string | null): Date | null {
       this.openReasonModal(config.title, data);
         this.resourcestartdate=this.formatDateToLocalforresource(data?.startDate)
         console.log(this.resourcestartdate);
-        
+
     }
   }
 

@@ -5,7 +5,6 @@ import { Subject } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { HttpService } from '../../../services/http.service';
-
 @Component({
   selector: 'app-pending-approvals-tabs',
   imports: [CommonModule, RouterModule],
@@ -24,52 +23,50 @@ export class PendingApprovalsTabsComponent {
   navTabs: any[] = [];
   columnsPerRow = 3;
   destroy$: Subject<boolean> = new Subject<boolean>();
-approvalCounts: any[] = [];
-timeOffTotalCount: number = 0;
-  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService, private accessNav: AccessNavigationService) { }
+  approvalCounts: any[] = [];
+  timeOffTotalCount: number = 0;
+
+  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.allowedWfh = this.empinfo.allowWFH;
     this.allowRemoteLogin = this.empinfo.allowRemoteLogin;
     this.navTabs = [
-      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' }, moduleIds: [2, 1, 11, 3, 18, 31, 17]  },
-      { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/images/onboarding.png', permission: { feature: 'Onboarding main Tab', action: 'view' },moduleIds: [20,15]  },
-      { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/my-info-icons/contractor.png', permission: { feature: 'Contractors main Tab', action: 'view' },moduleIds: [25, 26]  },
-      { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' },moduleIds: [13,14] },
-      { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' },moduleIds: [23]  },
-      { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' } ,moduleIds: [19] },
-      { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' },moduleIds: [30]  },
-       { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  }
+      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' }, moduleIds: [2, 1, 11, 3, 18, 31, 17] },
+      { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/images/onboarding.png', permission: { feature: 'Onboarding main Tab', action: 'view' }, moduleIds: [20, 15] },
+      { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/my-info-icons/contractor.png', permission: { feature: 'Contractors main Tab', action: 'view' }, moduleIds: [25, 26] },
+      { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' }, moduleIds: [13, 14] },
+      { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' }, moduleIds: [23] },
+      { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' }, moduleIds: [19] },
+      { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' }, moduleIds: [30] },
+      // { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  }
     ];
-    
-  this.getApprovalStatusCounts();
+    this.getApprovalStatusCounts();
     this.filterTabsByRbac();
   }
-getApprovalStatusCounts() {
-  this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
-    this.approvalCounts = res;
 
-    this.updateTabCounts();   //Map counts to tabs
-  });
-}
-updateTabCounts() {
-  this.navTabs.forEach(tab => {
-    let total = 0;
-
-    tab.moduleIds.forEach((id: any) => {
-      const result = this.approvalCounts.find(x => x.moduleId === id);
-      if (result) {
-        total += result.totalCount;
-      }
+  getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.approvalCounts = res;
+      this.updateTabCounts();   //Map counts to tabs
     });
+  }
 
-    tab.totalCount = total;   //  store final count
-  });
-
-  // filter again because now count is available
-  this.filterTabsByRbac();
-}
+  updateTabCounts() {
+    this.navTabs.forEach(tab => {
+      let total = 0;
+      tab.moduleIds.forEach((id: any) => {
+        const result = this.approvalCounts.find(x => x.moduleId === id);
+        if (result) {
+          total += result.totalCount;
+        }
+      });
+      tab.totalCount = total;   //  store final count
+    });
+    // filter again because now count is available
+    this.filterTabsByRbac();
+  }
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {

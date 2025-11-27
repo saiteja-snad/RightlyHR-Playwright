@@ -297,10 +297,10 @@ projectOptions: any[] = [];
     this.selectedResourcePhases = [];
     this.selectedResourceAuthorities = [];
     this.selectedProjects = []
-    this.http.clearResourceRoleFilter();
-    this.http.clearResourcePhaseFilter();
-    this.http.clearResourceAuthorityFilter();
-     this.http.clearResourceProjectFilter();
+    this.http.setResourceRoleFilter([]);
+    this.http.setResourcePhaseFilter([]);
+    this.http.setResourceAuthorityFilter([]);
+    this.http.setResourceProjectFilter([]);
   }
 
   isResourceFilterApplied(): boolean {

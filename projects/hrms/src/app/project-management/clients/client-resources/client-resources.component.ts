@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { combineLatest, Subject, Subscription, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Project } from '../../../Interfaces/projects.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -82,6 +82,8 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
 
+
+
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
@@ -105,27 +107,32 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
-      this.selectedRoleIds = roleIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    combineLatest([
+      this.http.resourceRoleFilter$,
+      this.http.resourcePhaseFilter$,
+      this.http.resourceAuthorityFilter$,
+      this.http.resourceProjectFilter$
+    ]).pipe(
+      takeUntil(this.destroy$),
+      debounceTime(100),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    ).subscribe(([roleIds, phaseIds, authorityIds, projectIds]) => {
+      this.selectedRoleIds = roleIds || [];
+      this.selectedPhaseIds = phaseIds || [];
+      this.selectedAuthorityIds = authorityIds || [];
+      this.selectedProjectIds = projectIds || [];
+      if (this.clientID) {
+        this.getResourceData(this.clientID, this.searchValue);
+      }
     });
 
-    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
-      this.selectedPhaseIds = phaseIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
-    });
-
-    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
-      this.selectedAuthorityIds = authorityIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
-    });
-
-    this.http.resourceProjectFilter$.pipe(takeUntil(this.destroy$)).subscribe(projectIds => {
-      this.selectedProjectIds = projectIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
-    });
-    this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.clientID), this.searchValue);
+    this.http.resourceDetailesadded$.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(50)
+    ).subscribe(() => {
+      if (this.clientID) {
+        this.getResourceData(this.clientID, this.searchValue);
+      }
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -198,16 +205,16 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     if (searchTerm) {
       url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
     }
-    if (this.selectedRoleIds.length > 0) {
+    if (this.selectedRoleIds?.length > 0) {
       url += `&roleIds=${this.selectedRoleIds.join(',')}`;
     }
-    if (this.selectedPhaseIds.length > 0) {
+    if (this.selectedPhaseIds?.length > 0) {
       url += `&phaseId=${this.selectedPhaseIds.join(',')}`;
     }
-    if (this.selectedAuthorityIds.length > 0) {
+    if (this.selectedAuthorityIds?.length > 0) {
       url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
     }
-    if (this.selectedProjectIds.length > 0) {
+    if (this.selectedProjectIds?.length > 0) {
       url += `&projectIds=${this.selectedProjectIds.join(',')}`;
     }
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
@@ -868,5 +875,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    clearTimeout(this.searchTimeout);
   }
 }

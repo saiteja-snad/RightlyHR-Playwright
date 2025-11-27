@@ -3,24 +3,38 @@
         <div class="col-xxl-9 col-xl-8">
             <div class="welcome-text d-flex align-items-center gap-1">
                 <div>{{ greetingMessage }},</div>
-                <div class="name">{{ employeedata.firstName }} 
+                <div class="name">{{ employeedata.firstName }}
                     {{ employeedata.middleName }} {{ employeedata.lastName }}!</div>
             </div>
             <!--Time-->
             <!-- <div class="time text-nowrap mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div> -->
             <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
-        
+
             <div class="dashboard-grid my-3">
                 <!-- Team Availability -->
                 <div class="content-card">
                     <p class="section-title">My Team Availability</p>
                 </div>
-        
+
                 <!-- Today's Time Entry -->
                 <div class="content-card">
                     <p class="section-title">Today's Time Entry</p>
+
+                    <div class="circle-chart-container">
+
+                        <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions"
+                            styleClass="today-chart">
+                        </p-chart>
+
+                        <!-- Center Text -->
+                        <div class="chart-center-label">
+                            <div class="time-value">{{ todayDurationLabel }}</div>
+                            <div class="time-text">Work Time</div>
+                        </div>
+
+                    </div>
                 </div>
-        
+
                 <!-- Consumed Leave Types -->
                 <div class="content-card">
                     <p class="section-title">Consumed Leave Types</p>
@@ -35,14 +49,14 @@
                     </div>
                 </div>
             </div>
-        
+
             <!-- Team Members Section -->
             <div class="content-card mb-3">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">My Team Members</div>
                     <a class="view-all"><u>View All</u></a>
                 </div>
-        
+
                 <div class="members-list">
                     <div class="member-card-border" *ngFor="let emp of teamMembers">
                         <div class="member-card text-center">
@@ -53,7 +67,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <!-- Gender Diversity -->
             <div class="content-card mb-3">
                 <div class="flex-between-content mb-3">
@@ -62,18 +76,12 @@
                 </div>
 
                 <div class="gender-graph">
-                    <div class="gender-item mb-2">
-                        <label>Female</label>
-                        <div class="bar pink" [style.width.%]="femaleCount"></div>
-                    </div>
-            
-                    <div class="gender-item">
-                        <label>Male</label>
-                        <div class="bar blue" [style.width.%]="maleCount"></div>
-                    </div>
+                    <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions">
+                    </p-chart>
+
                 </div>
             </div>
-        
+
             <!-- Weekly Work Logs -->
             <div class="content-card">
                 <div class="flex-between-content mb-3">
@@ -81,8 +89,8 @@
                     <button class="custom-btn btn-primary view-attendance-btn">View Attendance</button>
                 </div>
 
-                <div class="total-hrs">51:40:30 <sub class="suffix-text pb-3">Work done this week</sub></div>
-        
+                <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>
+
                 <div class="week-grid">
                     <div class="text-center py-4" *ngFor="let day of weeklyWorkLogs">
                         <div class="work-time">{{ day.time }}</div>
@@ -98,7 +106,8 @@
                 <!-- Upcoming Work Anniversary's Panel -->
                 <div class="content-card work-anniversary-content mb-3">
                     <div class="section-title mb-3">Upcoming Work Anniversary's</div>
-                    <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon" class="custom-party-image"></div>
+                    <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon"
+                            class="custom-party-image"></div>
                     <div class="px-4">
                         <div *ngFor="let item of anniversaries" class="mb-2">
                             <div class="d-flex align-items-center gap-1">
@@ -113,12 +122,14 @@
                 <!-- Upcoming Birthday's Panel -->
                 <div class="content-card birthday-content mb-3">
                     <div class="section-title mb-3">Upcoming Birthday's</div>
-                    <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon" class="custom-party-image"></div>
+                    <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon"
+                            class="custom-party-image"></div>
                     <div class="px-4">
                         <div *ngFor="let item of birthdays" class="mb-2">
                             <div class="d-flex align-items-center gap-1">
                                 <div class="circular-dot circle-birthday"></div>
-                                <div class="content-text content-name">{{ item.firstName }} {{item.middleName}} {{item.lastName}}</div>
+                                <div class="content-text content-name">{{ item.firstName }} {{item.middleName}}
+                                    {{item.lastName}}</div>
                             </div>
                             <div class="content-text content-date">{{ item.dob | dateformat }}</div>
                         </div>
@@ -129,8 +140,8 @@
                     @if(!eventsLoader){
                     <div class="events-content">
                         <div class="carousel-content">
-                            <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false" [circular]="true"
-                                [autoplayInterval]="3000">
+                            <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false"
+                                [circular]="true" [autoplayInterval]="3000">
                                 <ng-template pTemplate="item" let-item>
                                     <div class="accordian-text">
                                         <ng-container [ngSwitch]="item.type">
@@ -149,7 +160,8 @@
                                             </div>
                                             <div *ngSwitchCase="'Marriage Anniversary'">
                                                 <p class="event-name mb-2">{{ item.name }}</p>
-                                                <p class="m-0">{{'Celebrating their Marriage Anniversary today...'| translate}}</p>
+                                                <p class="m-0">{{'Celebrating their Marriage Anniversary today...'|
+                                                    translate}}</p>
                                             </div>
                                             <div *ngSwitchDefault class="event-name">{{ item.quotationname }}</div>
                                         </ng-container>

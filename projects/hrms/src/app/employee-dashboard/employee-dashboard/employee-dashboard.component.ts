@@ -6,19 +6,21 @@ import { Ipersonal } from '../../Interfaces/personal-modal';
 import { environment } from '../../../environments/environment';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { ICategoryDetails } from '../../settings/time-off/flexible-leave-allocation/leave-allocation.model';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee } from '../../Interfaces/dashboard.modal';
 import { AccordionModule } from 'primeng/accordion';
 import { Carousel } from 'primeng/carousel';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
+import { ChartModule } from 'primeng/chart';
+import moment from 'moment';
 
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, DateformatPipe,AccordionModule,Carousel,Skeleton,TranslateModule],
+  imports: [CommonModule, DateformatPipe, ChartModule, AccordionModule, Carousel, Skeleton, TranslateModule],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
-    encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 export class EmployeeDashboardComponent {
   greetingMessage = ''
@@ -27,6 +29,7 @@ export class EmployeeDashboardComponent {
   loading = false;
   subscription: any;
   empinfo = {} as Ipersonal;
+  destroy$: Subject<boolean> = new Subject<boolean>();
   teamMemberArray: any[] = [];
   getTeamMemberArray: any[] = [];
   categoryDetails = [] as ICategoryDetails[];
@@ -35,6 +38,12 @@ export class EmployeeDashboardComponent {
   leavesList: any[] = [];
   eventsLoader = false;
   eventItems: any[] = [];
+  todayChartData: any;
+  todayChartOptions: any;
+  currentDate: number = new Date().getDate();
+  startOfWeek: any;
+  endOfWeek: any;
+  totalHours: any
   constructor(
     private http: HttpService,
 
@@ -46,50 +55,41 @@ export class EmployeeDashboardComponent {
   birthdays: any[] = [];
 
   // GENDER DIVERSITY
-  genderTotal = 20;
-  femaleCount = 40; // in percent (40%)
-  maleCount = 60;   // in percent (60%)
+  genderTotal: number = 0;
+  femaleCount: number = 0;
+  maleCount: number = 0;
+  weeklyWorkLogs: any[] = [];
 
-  // WEEKLY WORK LOGS
-  weeklyWorkLogs = [
-    { day: 'Mon', time: '08:30' },
-    { day: 'Tue', time: '09:15' },
-    { day: 'Wed', time: '07:45' },
-    { day: 'Thu', time: '08:00' },
-    { day: 'Fri', time: '06:55' },
-  ];
 
-  // TEAM AVAILABILITY CHART (DUMMY)
   teamAvailability = {
     present: 7,
     onLeave: 2,
     workingRemote: 3
   };
 
-  // TODAY TIME ENTRY (DUMMY)
-  todayTimeEntry = {
-    loggedHours: 6.5,
-    targetHours: 8
-  };
 
-
-  // ANNIVERSARY LIST (DUMMY)
   anniversaries: any[] = [];
   ngOnInit(): void {
     this.setIconBasedOnTime();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-
     this.employeedata = JSON.parse(
       localStorage.getItem('rightlyHrUser') || '{}'
     );
     this.currentTime = new Date();
     this.currentYear = new Date().getFullYear(); // e.g., 2025
-    this.currentMonth =  new Date().getMonth() + 1;
+    this.currentMonth = new Date().getMonth() + 1;
+    this.currentDate = new Date().getDate();
+    this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
+    this.endOfWeek = moment().endOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
     this.getAllTeammembersList();
     this.getworkanniversary();
+    this.getGenderCountChart();
+    this.gettodayloggedtime();
     this.getbrithday();
     this.loadEvents();
+    this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
+
   }
 
   setIconBasedOnTime() {
@@ -211,7 +211,7 @@ export class EmployeeDashboardComponent {
     return [b.firstName, b.middleName, b.lastName].filter(Boolean).join(' ');
   }
 
-   loadEvents() {
+  loadEvents() {
     this.eventsLoader = true;
     forkJoin([
       this.http.getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`) as Observable<IBirthDaysData[]>,
@@ -296,8 +296,8 @@ export class EmployeeDashboardComponent {
       }
     );
   }
-  
-   quotationsData() {
+
+  quotationsData() {
     this.eventsLoader = true;
     this.subscription = this.http.getData(`EmployeeData/Quotation`).subscribe({
       next: (data: any) => {
@@ -310,4 +310,211 @@ export class EmployeeDashboardComponent {
       },
     });
   }
+
+
+
+
+  genderCountLoader = false;
+  genderChartData: any = {};
+  genderChartOptions: any = {};
+
+  getGenderCountChart() {
+    this.genderCountLoader = true;
+
+    let apiUrl = `v2/Employeedata/teammembers/gendercount/${this.empinfo.employeeId}`;
+
+    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.genderCountLoader = false;
+        const female = data.find((x: any) => x.gender === 'Female');
+        const male = data.find((x: any) => x.gender === 'Male');
+        this.genderTotal = female?.count + male?.count;
+        if (!data || !data.length) {
+          this.genderChartData = { labels: [], datasets: [] };
+          return;
+        }
+
+        // Extract values
+        const labels = data.map((item: any) => item.gender);
+        const counts = data.map((item: any) => item.count);
+
+        // Assign chart data (same style as your reference)
+        this.genderChartData = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Gender Count',
+              data: counts,
+              backgroundColor: ['#FF69B4', '#187DF5'], // Pink for female, Blue for male
+              barThickness: 12
+            }
+          ]
+        };
+
+        // Chart options (same structure as your reference)
+        this.genderChartOptions = {
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems: any) => labels[tooltipItems[0].dataIndex],
+                label: (tooltipItem: any) =>
+                  `${tooltipItem.dataset.label}: ${tooltipItem.raw}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Count',
+                color: '#505050',
+                font: { size: 10, weight: 400 }
+              },
+              grid: { display: false },
+              ticks: {
+                color: '#505050',
+                font: { size: 10 },
+                stepSize: 1,
+                callback: (val: any) => Number.isInteger(Number(val)) ? val : ''
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Gender',
+                color: '#505050',
+                font: { size: 10, weight: 400 }
+              },
+              grid: { display: false },
+              ticks: {
+                color: '#505050',
+                font: { size: 10 }
+              }
+            }
+          }
+        };
+      },
+      error: (err: any) => {
+        this.genderCountLoader = false;
+        this.genderChartData = { labels: [], datasets: [] };
+        console.error('Error fetching gender chart:', err);
+      }
+    });
+  }
+
+  todayDurationLabel: string = "00:00:00";
+  todayDurationPercent: number = 0;
+  gettodayloggedtime() {
+    this.subscription = this.http
+      .getData(
+        `v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&date=${this.currentDate}`
+      )
+      .subscribe({
+        next: (res: any) => {
+
+          const today = res?.data?.attendanceData?.find(
+            (x: any) => x.date === this.currentYear + '-' + this.currentMonth + '-' + this.currentDate
+          ) ?? res?.data?.attendanceData?.[0];
+
+          const totalDuration = today?.duration?.totalDuration ?? "00:00:00";
+
+          this.todayDurationLabel = totalDuration;
+
+          const workedSeconds = this.timeToSeconds(totalDuration);
+          const fullDaySeconds = 8 * 3600; // 8 hours
+
+          this.todayDurationPercent = Math.min(
+            (workedSeconds / fullDaySeconds) * 100,
+            100
+          );
+
+          this.buildCircularChart();
+        },
+        error: err => console.log(err),
+      });
+  }
+
+
+  timeToSeconds(time: string | null | undefined): number {
+    if (!time || !time.includes(':')) return 0;
+
+    const parts = time.split(':').map(Number);
+
+    const h = parts[0] ?? 0;
+    const m = parts[1] ?? 0;
+    const s = parts[2] ?? 0;
+
+    return h * 3600 + m * 60 + s;
+  }
+
+
+
+
+  buildCircularChart() {
+    this.todayChartData = {
+      datasets: [
+        {
+          data: [this.todayDurationPercent, 100 - this.todayDurationPercent],
+          backgroundColor: ["#0B3A83", "#E5E7EB"],
+          borderWidth: 0
+        }
+      ]
+    };
+
+    this.todayChartOptions = {
+      cutout: '75%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
+
+    };
+  }
+
+
+  getWeeklyWorkLogHours() {
+    this.subscription = this.http
+      .getData(
+        `v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
+      )
+      .subscribe({
+        next: (res: any) => {
+          const attendance = res.data.attendanceData;
+
+          // Prepare weeklyWorkLogs for template
+          this.weeklyWorkLogs = attendance.map((item: any) => ({
+            day: moment(item.date).format('ddd'), // Mon, Tue, ...
+            time: item.duration.totalDuration,
+          }));
+
+          // Calculate total hours of the week
+          this.totalHours = this.sumDurations(
+            attendance.map((item: any) => item.duration.totalDuration)
+          );
+        },
+        error: (err) => console.log(err),
+      });
+  }
+
+  // Sum durations in HH:mm:ss format
+  sumDurations(durations: string[]): string {
+    let totalSeconds = 0;
+
+    durations.forEach((time) => {
+      const [h, m, s] = time.split(':').map(Number);
+      totalSeconds += h * 3600 + m * 60 + s;
+    });
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+
 }

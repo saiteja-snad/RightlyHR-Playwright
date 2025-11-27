@@ -326,81 +326,88 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   updateBasicInfo(): void {
-    const formValue = this.basicInfoForm.getRawValue();
+    // const formValue = this.basicInfoForm.getRawValue();
 
     // Get list of pending field names
-    // const pendingFieldNames = this.getFieldsApprovalStatusList
-    //   .filter((item) => item.approvalStatus === 'Pending')
-    //   .map((item) => item.fieldName);
-      const targetStatuses = ['Pending', 'Cancelled'];
-      const pendingFieldNames = this.getFieldsApprovalStatusList
-        .filter((item) => targetStatuses.includes(item.approvalStatus))
-        .map((item) => item.fieldName);
+      // const targetStatuses = ['Pending', 'Cancelled'];
+      // const pendingFieldNames = this.getFieldsApprovalStatusList
+      //   .filter((item) => targetStatuses.includes(item.approvalStatus))
+      //   .map((item) => item.fieldName);
 
     // Map fieldName (display) → form control name
-    const fieldToControlMap: { [key: string]: string } = {
-      'First Name': 'firstName',
-      'Last Name': 'lastName',
-      'Middle Name': 'middleName',
-      Salutation: 'salutation',
-      Gender: 'gender',
-      'Date of Birth': 'dob',
-      'Blood Group': 'bloodGroup',
-      'Marital Status': 'maritalStatus',
-      'Married Date': 'marriageDate',
-    };
+    // const fieldToControlMap: { [key: string]: string } = {
+    //   'First Name': 'firstName',
+    //   'Last Name': 'lastName',
+    //   'Middle Name': 'middleName',
+    //   Salutation: 'salutation',
+    //   Gender: 'gender',
+    //   'Date of Birth': 'dob',
+    //   'Blood Group': 'bloodGroup',
+    //   'Marital Status': 'maritalStatus',
+    //   'Married Date': 'marriageDate',
+    // };
 
     // Build payload — only include fields that are NOT pending
+         const formValue = this.basicInfoForm.value;
     const updatePayload: any = {
       ...this.empyployeedata,
       updatedby: this.empinfo.employeeId.toString(),
       employeeId: this.empinfo.employeeId,
+      fusionEmpId: formValue.fusionEmpId || this.empyployeedata.fusionEmpId,
+      title: this.basicInfoForm?.get('salutation')?.value?.titlename,
+      firstName: this.basicInfoForm?.get('firstName')?.value,
+      middleName: this.basicInfoForm?.get('middleName')?.value,
+      lastName: this.basicInfoForm?.get('lastName')?.value,
+      gender: this.basicInfoForm?.get('gender')?.value,
+      dob: this.basicInfoForm?.get('dob')?.value,
+      bloodGroup: this.basicInfoForm?.get('bloodGroup')?.value?.name,
+      maritalStatus: this.basicInfoForm?.get('maritalStatus')?.value?.maritalstatus1,
+      marriedDate: this.basicInfoForm?.get('marriageDate')?.value,
       selfUpdate: this.isMyInfoRoute,
       moduleName: this.isMyInfoRoute ? 'Basic Info' : undefined,
       displayName: this.isMyInfoRoute ? 'Personal' : undefined,
     };
 
-    // Only add fields that are editable (not pending) and have changed
-    Object.keys(fieldToControlMap).forEach((displayFieldName) => {
-      const controlName = fieldToControlMap[displayFieldName];
+    // // Only add fields that are editable (not pending) and have changed
+    // Object.keys(fieldToControlMap).forEach((displayFieldName) => {
+    //   const controlName = fieldToControlMap[displayFieldName];
 
-      if (!pendingFieldNames.includes(displayFieldName)) {
-        const currentValue = formValue[controlName];
-        const originalValue =
-          this.empyployeedata[
-          controlName === 'salutation'
-            ? 'title'
-            : controlName === 'bloodGroup'
-              ? 'bloodGroup'
-              : controlName === 'maritalStatus'
-                ? 'maritalStatus'
-                : controlName === 'marriageDate'
-                  ? 'marriedDate'
-                  : controlName === 'dob'
-                    ? 'dob'
-                    : controlName
-          ];
+    //   if (!pendingFieldNames.includes(displayFieldName)) {
+    //     const currentValue = formValue[controlName];
+    //     const originalValue =
+    //       this.empyployeedata[
+    //       controlName === 'salutation'
+    //         ? 'title'
+    //         : controlName === 'bloodGroup'
+    //           ? 'bloodGroup'
+    //           : controlName === 'maritalStatus'
+    //             ? 'maritalStatus'
+    //             : controlName === 'marriageDate'
+    //               ? 'marriedDate'
+    //               : controlName === 'dob'
+    //                 ? 'dob'
+    //                 : controlName
+    //       ];
 
-        // Optional: only send if changed
-        if (currentValue !== undefined && currentValue !== null) {
-          if (controlName === 'salutation') {
-            updatePayload.title = currentValue?.titlename || currentValue;
-          } else if (controlName === 'bloodGroup') {
-            updatePayload.bloodGroup = currentValue?.name || currentValue;
-          } else if (controlName === 'maritalStatus') {
-            updatePayload.maritalStatus =
-              currentValue?.maritalstatus1 || currentValue;
-          } else if (controlName === 'marriageDate') {
-            updatePayload.marriedDate = currentValue;
-          } else if (controlName === 'dob') {
-            updatePayload.dob = currentValue;
-          } else {
-            updatePayload[controlName] = currentValue;
-          }
-        }
-      }
-    });
-
+    //     // Optional: only send if changed
+    //     if (currentValue !== undefined && currentValue !== null) {
+    //       if (controlName === 'salutation') {
+    //         updatePayload.title = currentValue?.titlename || currentValue;
+    //       } else if (controlName === 'bloodGroup') {
+    //         updatePayload.bloodGroup = currentValue?.name || currentValue;
+    //       } else if (controlName === 'maritalStatus') {
+    //         updatePayload.maritalStatus =
+    //           currentValue?.maritalstatus1 || currentValue;
+    //       } else if (controlName === 'marriageDate') {
+    //         updatePayload.marriedDate = currentValue;
+    //       } else if (controlName === 'dob') {
+    //         updatePayload.dob = currentValue;
+    //       } else {
+    //         updatePayload[controlName] = currentValue;
+    //       }
+    //     }
+    //   }
+    // });
     // Always include fusionEmpId if editable
     if (!this.basicInfoForm.get('fusionEmpId')?.disabled) {
       updatePayload.fusionEmpId =

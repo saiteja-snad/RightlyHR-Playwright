@@ -17,6 +17,7 @@
                   <th>Previous Details</th>
                   <th>Requested Details</th>
                   <th>Updated Date</th>
+                  <th>Description</th>
                   <th>Status</th>
                   @if (!cameFromPersonalInfo) {
                   <th class="text-center">Actions</th>
@@ -59,7 +60,23 @@
                   <td> {{ item.createdDate ?(item.createdDate| dateformat) : "-" }}
                     <!-- {{ ('2025-11-26' | dateformat) }} -->
                   </td>
-
+                  <td>
+                    @if(item?.comments && item?.comments !== '-'){
+                    <div [ngbPopover]="desprictionContent">
+                      <app-info-icon />
+                    </div>
+                    <ng-template #desprictionContent>
+                      <p class="mb-0 p-2">
+                        {{item.comments ? item.comments:'-'}}
+                     </p>
+                    </ng-template>
+                    }@else {
+                    <span>-</span>
+                    }
+                     
+                  </td>
+                  <!--Module Information-->
+                   
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">
                     {{ item.approvalStatus.toLowerCase() }}
                   </td>

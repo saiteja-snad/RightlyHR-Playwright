@@ -11,7 +11,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { Category, IAttendanceLockItem } from '../attendance.model';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { PaginatorModule } from 'primeng/paginator';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 

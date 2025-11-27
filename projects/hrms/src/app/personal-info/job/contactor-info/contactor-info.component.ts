@@ -15,7 +15,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-contactor-info',

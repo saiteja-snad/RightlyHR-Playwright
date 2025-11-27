@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, Subscription } from 'rxjs';
 import { DocumentService } from '../../../services/document/document.service';
 import { LastValuePipe } from '../../../Pipes/last-value/last-value.pipe';
-import { DateformatPipe } from '../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';

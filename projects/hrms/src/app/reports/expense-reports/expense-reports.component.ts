@@ -22,7 +22,7 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 import * as XLSX from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-expense-reports',

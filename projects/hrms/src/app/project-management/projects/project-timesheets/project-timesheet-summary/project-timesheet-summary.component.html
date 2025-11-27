@@ -6,7 +6,8 @@
                 <div class="summary-header d-flex flex-nowrap gap-2 mb-2">
                     <div>Resource Summary</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
+                            class="module-icon" />
                         <ng-template #resourceSummaryContent>
                             <div class="module-info-text">{{resourceSummaryInfo}}</div>
                         </ng-template>
@@ -34,7 +35,9 @@
                                             backgroundColor: getProgressColor(roles?.utilizationPercent)}"></div>
                                     </div>
                                 </td>
-                                <td class="text-center"><span class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}} Hrs</td>
+                                <td class="text-center"><span
+                                        class="logged-hrs">{{roles.totalLoggedHours}}</span>/{{roles.totalAllocatedHours}}
+                                    Hrs</td>
                                 <td class="logged-hrs text-center">{{roles.utilizationPercent}} %</td>
                             </tr>
                         </tbody>
@@ -58,7 +61,8 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project Completion Rate</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="completionRateContent" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="completionRateContent"
+                            class="module-icon" />
                         <!--Module Information-->
                         <ng-template #completionRateContent>
                             <div class="module-info-text">{{projectCompletionRateInfo}}</div>
@@ -75,8 +79,10 @@
                     <!-- center circle -->
                     <div class="needle-base"></div>
                     <!-- percentage label -->
-                    <div class="gauge-label d-flex">{{ completionRate.toFixed(2) }}% <div class="over-due-value" *ngIf="overrunValue >= 1">
-                        + {{ this.overrunValue }}%</div></div>
+                    <div class="gauge-label d-flex">{{ completionRate.toFixed(2) }}% <div class="over-due-value"
+                            *ngIf="overrunValue >= 1">
+                            + {{ this.overrunValue }}%</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,7 +93,8 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Role wise Hours</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="roleWiseContent" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="roleWiseContent" class="module-icon" />
+
                         <!--Module Information-->
                         <ng-template #roleWiseContent>
                             <div class="module-info-text">{{roleWiseHoursInfo}}</div>
@@ -104,7 +111,8 @@
                             <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
                                 <div class="col-md-7">
                                     <div class="d-flex align-items-center gap-1">
-                                        <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
+                                        <div class="legend-circle"
+                                            [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                         <div class="legend-name">{{ item.name }}</div>
                                     </div>
                                 </div>
@@ -132,7 +140,10 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Estimated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedContent" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="estimatedContent"
+                                class="module-icon" />
+
+
                             <!--Module Information-->
                             <ng-template #estimatedContent>
                                 <div class="module-info-text">{{estimatedvsActualHoursInfo}}</div>
@@ -169,7 +180,10 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Billable vs Non-Billable Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billableContent" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="billableContent"
+                                class="module-icon" />
+
+
                             <!--Module Information-->
                             <ng-template #billableContent>
                                 <div class="module-info-text">{{billablevsNonBillableHoursInfo}}</div>
@@ -204,7 +218,8 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Project Burndown Chart</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="burnDownContent" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="burnDownContent"
+                                class="module-icon" />
                             <!--Module Information-->
                             <ng-template #burnDownContent>
                                 <div class="module-info-text">{{projectBurndownInfo}}</div>

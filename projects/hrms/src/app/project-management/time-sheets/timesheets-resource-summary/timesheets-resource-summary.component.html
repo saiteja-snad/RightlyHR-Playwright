@@ -2,7 +2,7 @@
     <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name">Project Management<span class="ms-1">
-                <i class="bi bi-chevron-double-right"></i></span></div>
+                    <i class="bi bi-chevron-double-right"></i></span></div>
             @if(isShowtimesheetforteamRoute()){
             <div class="commpoment-name">
                 <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
@@ -40,14 +40,16 @@
                     </div>
 
                     <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
+                        @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
+                        Team(Timesheet).view')) {
                         <div class="d-flex align-items-center gap-2">
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
-                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" 
-                                    [resetFilterOnHide]="true" placeholder="Please select employee" class="form-select custom-select"></p-select>
+                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
+                                    [resetFilterOnHide]="true" placeholder="Please select employee"
+                                    class="form-select custom-select"></p-select>
                             </div>
                         </div>
                         }
@@ -56,8 +58,8 @@
                             <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                                 {{'Select Employee'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
-                                    formControlName="resourceId"  [resetFilterOnHide]="true"
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    optionValue="value" formControlName="resourceId" [resetFilterOnHide]="true"
                                     placeholder="Please select employee" class="form-select custom-select"></p-select>
                             </div>
                         </div>
@@ -66,9 +68,11 @@
                         <div class="d-flex align-items-center gap-2">
                             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                             <div class="custom-p-select-content">
-                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                    placeholder="Please select employee" formControlName="resourceId" [filter]="true"  optionValue="id"
-                                    [resetFilterOnHide]="true" class="form-select custom-select" [autoDisplayFirst]="false" required>
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
+                                    name="myteamemployees" placeholder="Please select employee"
+                                    formControlName="resourceId" [filter]="true" optionValue="id"
+                                    [resetFilterOnHide]="true" class="form-select custom-select"
+                                    [autoDisplayFirst]="false" required>
                                 </p-select>
                             </div>
                         </div>
@@ -103,7 +107,8 @@
                                     <div class="summary-header d-inline-flex gap-2">
                                         <div>Projects Summary</div>
                                         <div>
-                                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                                            <app-module-info-icon placement="bottom"
+                                                [ngbPopover]="resourceSummaryContent" class="module-icon" />
                                             <ng-template #resourceSummaryContent>
                                                 <div class="module-info-text">{{projectsummaryinfo}}</div>
                                             </ng-template>
@@ -127,15 +132,18 @@
                                     <tbody>
                                         <tr *ngFor="let item of projectSummeryData">
                                             <td class="project-name">{{item.projectName?item.projectName:'-'}}</td>
-                                            <td>{{item?.projectColor?.graphData?.code?item.projectColor?.graphData?.code:'-'}}</td>
+                                            <td>{{item?.projectColor?.graphData?.code?item.projectColor?.graphData?.code:'-'}}
+                                            </td>
                                             <td>{{item?.department?item?.department:'-'}}</td>
                                             <td>{{item?.phaseName?item?.phaseName:'-'}}</td>
                                             <td>{{item?.role?item?.role:'-'}}</td>
-                                            <td><span class="logged-hrs">{{item.loggedHours?item.loggedHours:'0'}}</span>
+                                            <td><span
+                                                    class="logged-hrs">{{item.loggedHours?item.loggedHours:'0'}}</span>
                                                 /{{item.allocatedHours?item.allocatedHours:''}}hrs
                                             </td>
                                             <td class="text-center">
-                                                <span class="status-badge" [ngClass]="getStatusClass(item.status)">{{item.status}}</span>
+                                                <span class="status-badge"
+                                                    [ngClass]="getStatusClass(item.status)">{{item.status}}</span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -160,7 +168,8 @@
                             <div class="summary-header d-flex gap-2 mb-2">
                                 <div>Project-wise Time Allocation</div>
                                 <div>
-                                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectTypedata" class="module-icon">
+                                    <app-module-info-icon placement="bottom" [ngbPopover]="projectTypedata"
+                                        class="module-icon" />
                                     <ng-template #projectTypedata>
                                         <div class="module-info-text">{{timeAllocatedInfo}}</div>
                                     </ng-template>
@@ -170,11 +179,14 @@
                             <div class="rolewise-chart-grid circular-chart graph-no-data-content">
                                 <ng-container *ngIf="hasallocationTypeData; else noData">
                                     <div>
-                                        <p-chart type="pie" [data]="timeAllocatedData" [options]="timeAllocatedOptions" />
+                                        <p-chart type="pie" [data]="timeAllocatedData"
+                                            [options]="timeAllocatedOptions" />
                                     </div>
                                     <div class="legends-view">
-                                        <div class="d-flex align-items-center gap-1" *ngFor="let item of timeAllocatedlist">
-                                            <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
+                                        <div class="d-flex align-items-center gap-1"
+                                            *ngFor="let item of timeAllocatedlist">
+                                            <div class="legend-circle"
+                                                [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                             <div class="legend-name">{{ item.projectName }}</div>
                                         </div>
                                     </div>
@@ -195,7 +207,8 @@
                             <div class="summary-header d-flex gap-2 mb-2">
                                 <div>Time Allocated Across Project</div>
                                 <div>
-                                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="roleWiseContent" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="roleWiseContent"  class="module-icon" />
+
                                     <ng-template #roleWiseContent>
                                         <div class="module-info-text">{{timeAllocatedInfo}}</div>
                                     </ng-template>
@@ -238,17 +251,20 @@
                                 <div class="summary-header d-flex gap-2 mb-2">
                                     <div>Allocated vs Actual Hours</div>
                                     <div>
-                                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedContent" class="module-icon">
+                                        <app-module-info-icon placement="bottom" [ngbPopover]="estimatedContent"
+                                            class="module-icon" />
+
                                         <!--Module Information-->
                                         <ng-template #estimatedContent>
                                             <div class="module-info-text">{{AllocatedActualhours}}</div>
                                         </ng-template>
                                     </div>
                                 </div>
-                            
+
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
-                                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                                        <span class="legend-circle"
+                                            [ngStyle]="{ 'background-color': item.color }"></span>
                                         <span class="legend-label">{{ item.label }}</span>
                                     </div>
                                 </div>
@@ -256,7 +272,8 @@
 
                             <div class="bar-chart">
                                 <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
-                                    <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                                    <p-chart type="bar" [data]="estimatedVsActualGraphData"
+                                        [options]="estimatedVsActualGraphOptions" />
                                 </ng-container>
                             </div>
                             <ng-template #noActualData>
@@ -277,8 +294,10 @@
                                 <div class="summary-header d-flex gap-2">
                                     <div>Billable vs Non-Billable Hours</div>
                                     <div>
-                                        <img src="\icons\moduelicon.png" alt="Icon"
-                                            [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon">
+                                        <app-module-info-icon placement="bottom"
+                                            [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon" />
+
+
                                         <ng-template #billablevsNonBillableHoursdata>
                                             <div class="module-info-text">{{BillablevsNonBillableHoursInfo}}</div>
                                         </ng-template>
@@ -287,7 +306,8 @@
 
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
-                                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                                        <span class="legend-circle"
+                                            [ngStyle]="{ 'background-color': item.color }"></span>
                                         <span class="legend-label">{{ item.label }}</span>
                                     </div>
                                 </div>
@@ -314,8 +334,7 @@
                                 <div class="summary-header d-flex gap-2 mb-2">
                                     <div>Project Burndown Chart</div>
                                     <div>
-                                        <img src="\icons\moduelicon.png" alt="Icon"
-                                            [ngbPopover]="projectBurndownChartdata" class="module-icon">
+                                        <app-module-info-icon placement="bottom" [ngbPopover]="projectBurndownChartdata"  class="module-icon" />
                                         <ng-template #projectBurndownChartdata>
                                             <div class="module-info-text">{{ProjectBurndownChartInfo}}</div>
                                         </ng-template>

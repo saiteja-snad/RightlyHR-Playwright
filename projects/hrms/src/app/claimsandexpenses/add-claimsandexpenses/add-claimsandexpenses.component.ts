@@ -13,9 +13,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInfoIconComponent,ModuleInformationComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None,

@@ -16,7 +16,8 @@
                             <tr *ngFor="let row of attendanceSummaryData">
                                 <td class="text-center">{{row.date | dateformat }}</td>
                                 <td class="text-center">{{row.entries?.phaseName || "-" }}</td>
-                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
+                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
+                                    row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
                                 <td class="text-center">
                                     <ng-container *ngIf="row.entries?.summary; else noEntries">
                                         <a type="button" [ngbPopover]="description">
@@ -29,7 +30,8 @@
                                     <ng-template #noEntries>-</ng-template>
                                 </td>
                                 <td [style.color]="row.dailySummary.colour">
-                                    <b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b>
+                                    <b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status
+                                        }}</b>
                                 </td>
                             </tr>
                         </ng-container>
@@ -68,19 +70,21 @@
             <div class="summary-header d-flex gap-2 mb-2">
                 <div>Allocated vs Actual Hours</div>
                 <div>
-                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="allocatedVsActualContent" class="module-icon">
+                    <app-module-info-icon placement="bottom" [ngbPopover]="allocatedVsActualContent"
+                        class="module-icon" />
                     <!--Module Information-->
                     <ng-template #allocatedVsActualContent>
                         <div class="module-info-text">{{allocatedVsActualInfo}}</div>
                     </ng-template>
                 </div>
             </div>
-            
+
             @if (!allocatedVsActualLoader) {
             <div class="time-sheet-graph-card p-3">
                 <div class="rolewise-chart-grid gap-3">
                     <ng-container *ngIf="hasallocatedvsactualData; else noData">
-                        <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                        <p-chart type="pie" [data]="estimatedVsActualGraphData"
+                            [options]="estimatedVsActualGraphOptions" />
                         <div class="legends-view">
                             <div class="row gap-0 mb-1" *ngFor="let item of estimatedVsActualData">
                                 <div class="col-md-9">
@@ -93,7 +97,9 @@
                             </div>
                         </div>
                     </ng-container>
-                    <ng-template #noData><div class="graph-no-data-content"><app-no-data-found /></div></ng-template>
+                    <ng-template #noData>
+                        <div class="graph-no-data-content"><app-no-data-found /></div>
+                    </ng-template>
                 </div>
             </div>
             }@else {
@@ -101,13 +107,14 @@
                 <p-skeleton width="100%" height="100%" borderRadius="12px" />
             </div>
             }
-        
+
             <div class="dashed-line my-3"></div>
 
             <div class="summary-header d-flex gap-2 mb-2">
                 <div>Timesheet Summary</div>
                 <div>
-                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent" class="module-icon">
+                    <app-module-info-icon placement="bottom" [ngbPopover]="timesheetSummaryContent"
+                        class="module-icon" />
                     <!--Module Information-->
                     <ng-template #timesheetSummaryContent>
                         <div class="module-info-text">{{timesheetSummaryInfo}}</div>
@@ -123,11 +130,14 @@
                         + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
                         + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
                         + rejectedColor + ' 100%)'"></div>
-            
+
                         <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
-                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
+                            <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
+                                    displayApproved }} Hrs</span></div>
+                            <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{
+                                    displaySubmitted }} Hrs</span></div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{
+                                    displayRejected }} Hrs</span></div>
                         </div>
                     </div>
                 </ng-container>
@@ -135,25 +145,27 @@
                     <div class="graph-no-data-content"><app-no-data-found /></div>
                 </ng-template>
             </div>
-        
+
             <div class="dashed-line my-3"></div>
 
             <div class="summary-header d-flex gap-2 mb-2">
                 <div>Billable vs Non-Billable Hours</div>
                 <div>
-                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billableVsNonbillableContent" class="module-icon">
+                    <app-module-info-icon placement="bottom" [ngbPopover]="billableVsNonbillableContent"
+                        class="module-icon" />
                     <!--Module Information-->
                     <ng-template #billableVsNonbillableContent>
                         <div class="module-info-text">{{billableVsNonbillableInfo}}</div>
                     </ng-template>
                 </div>
             </div>
-            
+
             @if (!billableVsNonbillableLoader) {
             <div class="time-sheet-graph-card p-3">
                 <div class="rolewise-chart-grid gap-3">
                     <ng-container *ngIf="hasroleWiseHoursData; else noData">
-                        <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />
+                        <p-chart type="doughnut" [data]="billableVsNonBillableGraphData"
+                            [options]="billableVsNonBillableGraphOptions" />
                         <div class="legends-view">
                             <div class="row gap-0 mb-1" *ngFor="let item of billableVsNonBillableData">
                                 <div class="col-md-9">
@@ -166,7 +178,9 @@
                             </div>
                         </div>
                     </ng-container>
-                    <ng-template #noData><div class="graph-no-data-content"><app-no-data-found /></div></ng-template>
+                    <ng-template #noData>
+                        <div class="graph-no-data-content"><app-no-data-found /></div>
+                    </ng-template>
                 </div>
             </div>
             }@else {

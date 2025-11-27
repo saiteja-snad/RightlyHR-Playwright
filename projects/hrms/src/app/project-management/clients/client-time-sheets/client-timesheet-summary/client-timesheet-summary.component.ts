@@ -11,10 +11,11 @@ import { Project } from '../../../../Interfaces/projects.model';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
+import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [CommonModule, SelectModule, NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule,
-    ChartModule, NoDataFoundComponent, SkeletonModule],
+    ChartModule, NoDataFoundComponent, SkeletonModule,ModuleInfoIconComponent],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None

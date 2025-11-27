@@ -21,9 +21,10 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
+  imports: [ReactiveFormsModule, ChartModule,ModuleInfoIconComponent, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
     DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator, SkeletonModule],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',

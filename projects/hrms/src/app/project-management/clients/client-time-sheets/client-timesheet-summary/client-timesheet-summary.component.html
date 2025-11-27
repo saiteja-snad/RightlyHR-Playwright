@@ -8,30 +8,35 @@
                         <div class="summary-header d-inline-flex gap-2 mb-2">
                             <div>Project Summary</div>
                             <div>
-                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
+                                    class="module-icon" />
+
                                 <ng-template #resourceSummaryContent>
                                     <div class="module-info-text">{{projectsummaryinfo}}</div>
                                 </ng-template>
                             </div>
                         </div>
-        
+
                         <div class="d-flex gap-2 align-items-center">
                             <div class="custom-p-select-content custom-icon">
-                                <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
-                                    [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                                    [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
-                                    class="form-select custom-select" (onChange)="onProjectChange($event)" />
+                                <p-select [options]="projectsDataDrown" optionLabel="projectName"
+                                    optionValue="projectId" [filter]="true" [resetFilterOnHide]="true"
+                                    filterBy="projectName" formControlName="projectId"
+                                    [showClear]="!!datepickerForm.get('projectId')?.value"
+                                    placeholder="Please select project" class="form-select custom-select"
+                                    (onChange)="onProjectChange($event)" />
                             </div>
-        
+
                             <div class="custom-p-select-content custom-icon">
-                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                                    formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
+                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value"
+                                    [filter]="false" formControlName="status" placeholder="Please select status"
+                                    [showClear]="!!datepickerForm.get('status')?.value"
                                     class="form-select custom-select" (onChange)="onStatusChange($event)" />
                             </div>
                         </div>
                     </div>
                 </form>
-        
+
                 <div class="custom-table-content project-summary-table">
                     @if( projectSummeryData.length > 0){
                     <table class="w-100">
@@ -43,9 +48,11 @@
                         <tbody>
                             <tr *ngFor="let roles of projectSummeryData">
                                 <td class="project-name">{{roles.project.projectName}}</td>
-                                <td class="text-center"><span class="logged-hrs">{{roles.loggedHours}}</span>/{{roles.allocatedHours}}hrs</td>
+                                <td class="text-center"><span
+                                        class="logged-hrs">{{roles.loggedHours}}</span>/{{roles.allocatedHours}}hrs</td>
                                 <td class="text-center">
-                                    <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>
+                                    <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status
+                                        }}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -70,7 +77,10 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project wise Resource Count</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="ProjectwiseResourceContent" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="ProjectwiseResourceContent"
+                            class="module-icon" />
+
+
                         <ng-template #ProjectwiseResourceContent>
                             <div class="module-info-text">{{ProjectwiseResourceCountInfo}}</div>
                         </ng-template>
@@ -98,7 +108,9 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Department wise Contribution</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="departmentwiseContributionContent" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="departmentwiseContributionContent"
+                                class="module-icon" />
+
                             <ng-template #departmentwiseContributionContent>
                                 <div class="module-info-text">{{DepartmentwiseContributionInfo}}</div>
                             </ng-template>
@@ -106,22 +118,25 @@
                     </div>
 
                     <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName"
-                            optionValue="projectId" [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            [showClear]="!!selectedDeptProjectId" placeholder="Please select project" class="form-select custom-select"
+                        <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId"
+                            optionLabel="projectName" optionValue="projectId" [filter]="true" [resetFilterOnHide]="true"
+                            filterBy="projectName" [showClear]="!!selectedDeptProjectId"
+                            placeholder="Please select project" class="form-select custom-select"
                             (onChange)="onDeptProjectChange($event)" />
                     </div>
                 </div>
-        
+
                 <div class="rolewise-chart-grid graph-no-data-content">
                     <ng-container *ngIf="hasDepartmentWiseData; else noData">
                         <div>
-                            <p-chart type="doughnut" [data]="departmentContributionData" [options]="departmentContributionOptions" />
+                            <p-chart type="doughnut" [data]="departmentContributionData"
+                                [options]="departmentContributionOptions" />
                         </div>
-        
+
                         <div class="legends-view">
                             <div class="d-flex align-items-center gap-1" *ngFor="let item of projectResourcesLableData">
-                                <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
+                                <div class="legend-circle"
+                                    [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
                                 <div class="legend-name">{{ item.name }}</div>
                             </div>
                         </div>
@@ -142,22 +157,25 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project Type</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectTypedata" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="projectTypedata" class="module-icon" />
+
+
                         <ng-template #projectTypedata>
                             <div class="module-info-text">{{ProjectTypeInfo}}</div>
                         </ng-template>
                     </div>
                 </div>
-        
+
                 <div class="rolewise-chart-grid graph-no-data-content">
                     <ng-container *ngIf="hasProjectTypeData; else noData">
                         <div>
                             <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
                         </div>
-        
+
                         <div class="legends-view">
                             <div class="d-flex align-items-center gap-1" *ngFor="let item of projectTypeLableData">
-                                <div class="legend-circle" [ngStyle]="{ 'background-color': item.projectTypeColor?.graphData?.color }"></div>
+                                <div class="legend-circle"
+                                    [ngStyle]="{ 'background-color': item.projectTypeColor?.graphData?.color }"></div>
                                 <div class="legend-name">{{ item.projectType }}</div>
                             </div>
                         </div>
@@ -179,7 +197,10 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Estimated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedActualHoursdata" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="estimatedActualHoursdata"
+                                class="module-icon" />
+
+
                             <ng-template #estimatedActualHoursdata>
                                 <div class="module-info-text">{{EstimatedActualHoursInfo}}</div>
                             </ng-template>
@@ -193,7 +214,7 @@
                         </div>
                     </div>
                 </div>
-        
+
                 <div class="bar-chart graph-no-data-content">
                     <ng-container *ngIf="hasestimatedActualHoursData; else noData">
                         <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
@@ -215,7 +236,10 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Billable vs Non-Billable Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="billablevsNonBillableHoursdata"
+                                class="module-icon" />
+
+
                             <ng-template #billablevsNonBillableHoursdata>
                                 <div class="module-info-text">{{BillablevsNonBillableHoursInfo}}</div>
                             </ng-template>
@@ -251,7 +275,9 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Project Burndown Chart</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectBurndownChartdata" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="projectBurndownChartdata"
+                                class="module-icon" />
+
                             <ng-template #projectBurndownChartdata>
                                 <div class="module-info-text">{{ProjectBurndownChartInfo}}</div>
                             </ng-template>

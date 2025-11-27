@@ -49,7 +49,7 @@
                     <td>{{user.authority.name}}</td>
                     @if(rbac.allowedToAccess('Project Management Authority.delete')){
                     <td class="text-center" (click)="openDeleteModal(confirmationModal, user)">
-                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                     <app-settings-delete-icon />
                     </td>
                     }
                 </tr>

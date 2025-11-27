@@ -230,14 +230,14 @@ getEmergencyFieldsApprovalStatus() {
     .map(item => item.fieldName);
 
   const fieldMap: { [key: string]: string } = {
-    'Primary Name': 'contact1Name',
-    'Primary Email Id': 'contact1Email',
-    'Primary Phone Number': 'contact1Phone',
-    'Primary Relationship': 'contact1Relationship',
-    'Secondary Name': 'contact2Name',
-    'Secondary Email Id': 'contact2Email',
-    'Secondary Phone Number': 'contact2Phone',
-    'Secondary Relationship': 'contact2Relationship',
+    'Primary Contact Name': 'contact1Name',
+    'Primary Contact Email Id': 'contact1Email',
+    'Primary Contact Phone Number': 'contact1Phone',
+    'Primary Contact Relationship': 'contact1Relationship',
+    'Secondary Contact Name': 'contact2Name',
+    'Secondary Contact Email Id': 'contact2Email',
+    'Secondary Contact Phone Number': 'contact2Phone',
+    'Secondary Contact Relationship': 'contact2Relationship',
   };
 
   pendingFields.forEach(fieldName => {

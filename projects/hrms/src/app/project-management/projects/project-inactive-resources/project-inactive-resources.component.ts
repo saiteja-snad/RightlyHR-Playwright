@@ -31,7 +31,7 @@ import { ProjectResourceTabComponent } from "../../../shared/project-management-
 export class ProjectInactiveResourcesComponent {
   searchValue: string = '';
   resourcesData = [] as IResource[];
-  
+
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
@@ -91,17 +91,17 @@ export class ProjectInactiveResourcesComponent {
       }
     });
     this.getPhaseData();
-    
+
     this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
       this.selectedRoleIds = roleIds;
       if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
     });
-    
+
     this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
       this.selectedPhaseIds = phaseIds;
       if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
     });
-    
+
     this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
       this.selectedAuthorityIds = authorityIds;
       if (this.projectId) this.getResourceData(this.projectId, undefined, false, this.searchValue);
@@ -280,12 +280,12 @@ export class ProjectInactiveResourcesComponent {
     if (searchTerm) {
       params.searchTerm = searchTerm;
     }
-    
+
     if (this.selectedRoleIds.length > 0 && !isPopupCall) {
       params.roleIds = this.selectedRoleIds.join(',');
     }
     if (this.selectedPhaseIds.length > 0 && !isPopupCall) {
-      params.phaseIds = this.selectedPhaseIds.join(',');
+      params.phaseId = this.selectedPhaseIds.join(',');
     }
     if (this.selectedAuthorityIds.length > 0 && !isPopupCall) {
       params.timesheetApprovalAuthorityIds = this.selectedAuthorityIds.join(',');
@@ -358,7 +358,7 @@ export class ProjectInactiveResourcesComponent {
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''} 
+      resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''}
       ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-' : '-',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
@@ -394,7 +394,7 @@ export class ProjectInactiveResourcesComponent {
           return {
             ...employee,
             id: employee.employeeId, // force number
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -410,7 +410,7 @@ export class ProjectInactiveResourcesComponent {
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''}
       ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-'
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);

@@ -183,7 +183,7 @@ export class ClientResourceInactiveComponent {
       url += `&projectRoleIds=${this.selectedRoleIds.join(',')}`;
     }
     if (this.selectedPhaseIds.length > 0) {
-      url += `&phaseIds=${this.selectedPhaseIds.join(',')}`;
+      url += `&phaseId=${this.selectedPhaseIds.join(',')}`;
     }
         if (this.selectedProjectIds.length > 0) {
       url += `&projectIds=${this.selectedProjectIds.join(',')}`;

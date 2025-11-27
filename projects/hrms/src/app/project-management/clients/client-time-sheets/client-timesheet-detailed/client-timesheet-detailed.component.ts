@@ -32,9 +32,9 @@ export class ClientTimesheetDetailedComponent implements OnInit {
   employeeName: any
   selectedEntries: any
   selectedProject: any
-  
+
   private currentFilters: any = {};
-  
+
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -56,7 +56,7 @@ export class ClientTimesheetDetailedComponent implements OnInit {
   getResourceDetails(clientID: any, filters?: any): void {
     this.contentLoader = true;
     let url = `ProjectResource/getClientProjectResourceSummary?clientId=${clientID}`;
-    
+
     if (filters) {
       if (filters.dateRange?.startDate && filters.dateRange?.endDate) {
         url += `&startDate=${filters.dateRange.startDate}&endDate=${filters.dateRange.endDate}`;
@@ -68,7 +68,7 @@ export class ClientTimesheetDetailedComponent implements OnInit {
         url += `&roleIds=${filters.roleIds.join(',')}`;
       }
       if (filters.phaseIds?.length > 0) {
-        url += `&phaseIds=${filters.phaseIds.join(',')}`;
+        url += `&phaseId=${filters.phaseIds.join(',')}`;
       }
     }
 
@@ -125,6 +125,7 @@ export class ClientTimesheetDetailedComponent implements OnInit {
       projectId: projectdata.projectId
     };
     localStorage.setItem('resourceData', JSON.stringify(resourceData))
+    localStorage.setItem('clientProjectId', this.clientId.toString());
     this.router.navigate(['/project-management/clients/details/timesheet/resource-summary'], {
       queryParams: {
         id: parseInt(this.clientId),

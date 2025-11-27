@@ -140,7 +140,7 @@
                             <span class="text-danger">*</span></label>
                         <input type="text" id="projectName" formControlName="projectName"
                             class="form-control custom-input" placeholder="Enter project name" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched &&
                          updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
                     </div>
 
@@ -182,7 +182,7 @@
                                 resetFilterOnHide="true" [readonly]="true" [ngClass]="{ 'readonly-select': true }">
                             </p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched &&
                         updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
                     </div>
                     <!-- Designation -->
@@ -222,7 +222,7 @@
                                 *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
                             <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
+                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']
                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
                                 {{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
@@ -233,12 +233,12 @@
                     <div class="col-md-6 mb-3">
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
                             <span class="text-danger">*</span></label>
-                        <input type="date" id="startDate" formControlName="startDate" [min]="projectStartDate ? 
+                        <input type="date" id="startDate" formControlName="startDate" [min]="projectStartDate ?
                         (projectStartDate | date:'yyyy-MM-dd') : null"
                             [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null"
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
                             class="form-control custom-input" />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched &&
                         updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
@@ -282,7 +282,7 @@
                                 (onChange)="onClickEmployee($event)"></p-select>
                         </div>
 
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched &&
                         updateResourceForm.get('resourceAuthority')?.invalid">
                             Resource Name is required
                         </div>

@@ -202,7 +202,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       url += `&roleIds=${this.selectedRoleIds.join(',')}`;
     }
     if (this.selectedPhaseIds.length > 0) {
-      url += `&phaseIds=${this.selectedPhaseIds.join(',')}`;
+      url += `&phaseId=${this.selectedPhaseIds.join(',')}`;
     }
     if (this.selectedAuthorityIds.length > 0) {
       url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;

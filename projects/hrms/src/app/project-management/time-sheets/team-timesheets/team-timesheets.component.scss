@@ -48,6 +48,7 @@
     color: var(--primary-color);
     text-decoration: underline;
 }
+
 .project-name-nopermission {
     // font-weight: 700;
     // font-style: Bold;
@@ -56,7 +57,8 @@
     color: var(--primary-color);
     // text-decoration: underline;
 }
-.project-legendCode{
+
+.project-legendCode {
     font-size: 14px;
     text-decoration: none;
     color: var(--primary-color);
@@ -92,7 +94,7 @@
     background-color: #EA362C;
 }
 
-.circle-pending{
+.circle-pending {
     background-color: #565557;
 }
 
@@ -173,7 +175,8 @@
         border-collapse: collapse;
         table-layout: fixed;
 
-        th, td {
+        th,
+        td {
             text-align: center;
             padding: 0.5rem;
             border: 1px solid #D1D8E3;
@@ -249,5 +252,33 @@
 }
 
 .custom-text {
-  font-size: var(--fontsize10) !important;
+    font-size: var(--fontsize10) !important;
+}
+
+.timesheet-chip {
+    font-size: 8.5px !important;
+    border: 1px solid;
+    border-radius: 0.25rem;
+    line-height: 100%;
+    padding: 0.125rem;
+}
+
+.text-popover {
+    font-size: 10px !important;
+}
+
+.project-name-chip {
+    max-width: 80px; // set width you want
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chip-truncate {
+    max-width: 60px; // chip width
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

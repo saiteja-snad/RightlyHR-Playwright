@@ -298,7 +298,7 @@
                   received prior written authorization from the Company. For all such expenses, you shall furnish to the
                   Company original receipts, statements and vouchers. </p>
               </div>
-              <div class="pb-2">
+               <div class="pb-2">
                 <p class="letter-sub-header m-0">8. Increments and Promotion:</p>
                 <p>Your growth in the Company and increments in the salary will depend solely
                   on your performance and contribution to the Company. The appraisal cycle for the company is April to
@@ -320,11 +320,10 @@
           <div class="letter-page-content my-4" id="pdfContent3"
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-
-
               <div class="pb-2">
-
-                <p>
+                <p>This includes
+                  adhering, maintaining information security artefact as required by policy of the organization and
+                  customer.
                   During your employment with the Company, you shall not disclose any information to anyone including
                   but not
                   limited to Company’s customers, prospective customers, people or entities outside the Company or to
@@ -661,10 +660,10 @@
                 to
                 you and you will not be entitled to transfer or assign it in whole or in part.
               </p>
-              <p>
+              <!-- <p>
                 <b>c) Independent Legal Advice:</b> By signing this Appointment
                 Letter you agree that you have:
-              </p>
+              </p> -->
 
             </div>
 
@@ -675,6 +674,10 @@
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
 
+              <p>
+                <b>c) Independent Legal Advice:</b> By signing this Appointment
+                Letter you agree that you have:
+              </p>
               <p>(a) been given two (2) days time to review this Appointment Letter;
                 (b) read and understands the terms of this Appointment Letter;(c) has been advised of the right,
                 and
@@ -752,10 +755,10 @@
           <!--page-8-->
           <div class="letter-page-content my-4" id="pdfContent8"
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
-            <div class="letter-page-sub-content">
+            <div class="letter-page-sub-content" >
 
 
-              <div class="pt-2">
+              <div class="pt-0">
                 <div>
                   <p class="authorized-signatory text-end">Date of Joining: {{ employeeForm.get('dateOfJoining')?.value
                     |
@@ -779,10 +782,19 @@
                   </div>
                 </div>
 
+              </div>
 
-                <div class="letter-header text-center mb-4">Annexure A</div>
+            </div>
 
-                <div class="letter-sub-header text-center mb-3">Non-Disclosure Agreement and Invention Assignment
+          </div>
+
+          <div class="letter-page-content my-4" id="pdfContent9"
+            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
+            <div class="letter-page-sub-content">
+
+              <div class="letter-header text-center mb-2">Annexure A</div>
+
+                <div class="letter-sub-header text-center mb-2">Non-Disclosure Agreement and Invention Assignment
                   Agreement</div>
 
                 <p>This Non-Disclosure Agreement and Invention Assignment Agreement (hereinafter “Agreement”) is
@@ -840,21 +852,7 @@
                   agreed between the Parties.
                 </p>
 
-                <p><b>The Parties agree as follows:</b></p>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <div class="letter-page-content my-4" id="pdfContent9"
-            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
-            <div class="letter-page-sub-content">
-
-
-
-
+              <p><b>The Parties agree as follows:</b></p>
               <p class="letter-sub-header m-0">1.Confidential Information and Exclusion:</p>
               <p>
                 Confidential information, includes but is not limited to, any and all technical and non- technical
@@ -893,6 +891,56 @@
                 during
                 normal working hours or on the premises of the Company.
               </p>
+              <!-- <p class="letter-sub-header mb-0">3. Non-disclosure and Non-Use of Confidential Information:</p>
+              <p><b>a)</b>
+                The Receiving Party acknowledges that the Confidential Information is the exclusive property of the
+                Company or its client and the Receiving Party shall make use of the Confidential Information only for
+                the purpose of carrying out obligations of the Engagement and for no other purpose.During the
+                Engagement and thereafter, the Receiving Party unconditionally and unequivocally agrees and undertakes
+                for self to take onerous responsibility not to disclose any of the Confidential Information or any
+                related information obtained from discussions or meetings or tale-conf or video-conference or any
+                other source to any third parties and shall restrict disclosure of Confidential Information only to
+                the
+                Company’s concerned officers, employees, attorneys, subcontractors or professional advisors who need
+                to have access to the Confidential Information and each of whom shall be informed by Receiving Party
+                of
+                the confidential nature of Confidential Information and agree to observe the same terms and conditions
+                set
+                forth herein as if specifically named a party hereto.
+              </p>
+
+              <p>
+                <b>b)</b> The Receiving Party shall not make copies of Confidential Information unless the same are
+                reasonably
+                necessary.
+              </p>
+
+              <p>
+                <b>c)</b> The Receiving Party shall immediately notify the Company in the event of any unauthorized
+                use
+                or
+                disclosure of the Confidential Information and reasonably support the Company in taking necessary
+                remedial action.
+              </p>
+
+              <p>
+                <b>d)</b> The Receiving Party shall protect the Confidential Information by using the same degree of
+                care to
+                prevent unauthorized use, dissemination, or publication of the Confidential Information as the
+                Receiving Party would use to protect his/her own confidential information of a like nature, but no
+                less
+                than a
+                reasonable degree of care.
+              </p> -->
+
+
+            </div>
+
+          </div>
+          <!--page-9-->
+          <div class="letter-page-content my-4" id="pdfContent10"
+            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
+            <div class="letter-page-sub-content">
               <p class="letter-sub-header mb-0">3. Non-disclosure and Non-Use of Confidential Information:</p>
               <p><b>a)</b>
                 The Receiving Party acknowledges that the Confidential Information is the exclusive property of the
@@ -934,16 +982,6 @@
                 than a
                 reasonable degree of care.
               </p>
-
-
-            </div>
-
-          </div>
-          <!--page-9-->
-          <div class="letter-page-content my-4" id="pdfContent10"
-            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
-            <div class="letter-page-sub-content">
-
 
               <p>
                 <b>e)</b> The Receiving Party shall not use, modify, reverse engineer, decompile, create other works
@@ -1000,6 +1038,55 @@
                 alter, steal, or cause to disclose, destroy, delete, alter, steal the Confidential Information.
               </p>
 
+              <!-- <p>
+                <b>l)</b>
+                The Company’s Property: All works, programs, papers, records, data, notes, drawings, files, documents,
+                samples, devices, opinions, research material, checklists, dockets, processes and other materials,
+                including copies in whatever form and translations into any other language and intellectual property,
+                relating to the business of the Company that the Receiving Party possesses or creates during the term
+                of the engagement with the Company, whether or not confidential, are and shall remain the sole and
+                exclusive property of the Company.
+              </p> -->
+
+              <!-- <p class="letter-sub-header m-0">4. Disclosure and Assignment of Developments: </p>
+              <p>
+                <b>a)</b>
+                The Receiving Party agrees to promptly disclose to the Company in writing, all the Developments which
+                are conceived, made, discovered, written or created whether alone or jointly with someone else during
+                the Engagement.
+              </p>
+              <p>
+                <b>b)</b> The Receiving Party understands and acknowledges that no license is granted to the Receiving
+                Party in
+                and to the Confidential Information and/or the Developments, nor is any intellectual property right
+                implied to be granted by this Agreement. The Receiving Party understands and acknowledges that the
+                Company shall be the exclusive owner of all rights pertaining to the Developments created or developed
+                by him/her. The Receiving Party agrees to assign and does hereby assign to the Company all his/her
+                right, title and interest in and to all Developments and all related patents, patent applications,
+                copyrights and copyright applications. The Receiving Party understands and acknowledges that all
+                Developments shall be the property of the Company and, to the greatest extent permitted by law, shall
+                be ‘works made for hire.
+              </p> -->
+
+              <!-- <p>
+                <b>c)</b> The Receiving Party shall give the Company all assistance it reasonably requires to perfect,
+                protect,
+                and use its rights to the Developments.
+              </p> -->
+
+
+
+
+
+
+            </div>
+
+          </div>
+
+          <!--page-10-->
+          <div class="letter-page-content my-4" id="pdfContent11"
+            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
+            <div class="letter-page-sub-content">
               <p>
                 <b>l)</b>
                 The Company’s Property: All works, programs, papers, records, data, notes, drawings, files, documents,
@@ -1035,20 +1122,6 @@
                 protect,
                 and use its rights to the Developments.
               </p>
-
-
-
-
-
-
-            </div>
-
-          </div>
-
-          <!--page-10-->
-          <div class="letter-page-content my-4" id="pdfContent11"
-            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
-            <div class="letter-page-sub-content">
               <p>In particular, the Receiving Party shall sign all documents,
                 do all things, and supply all information that the Company considers necessary or desirable to
                 transfer
@@ -1097,6 +1170,45 @@
                 prior written consent.
               </p>
 
+              <!-- <p>
+                <b>g)</b>
+                In the event the Company is unable for any reason, after reasonable effort, to secure the Receiving
+                Party’s signature on any document needed in connection with the actions specified in the preceding
+                paragraphs, the Receiving Party hereby irrevocably designate and appoint the Company and its duly
+                authorized officers and agents as the Receiving Party’s agent and attorney in fact, which appointment
+                is coupled with an interest, to act for and in the Receiving Party’s behalf to execute, verify and
+                file
+                any such documents and to do all other lawfully permitted acts to further the purposes of the
+                preceding
+                paragraphs with the same legal force and effect as if executed by the Receiving Party.
+              </p> -->
+              <!-- <p>
+                <b>h)</b>
+                The Receiving Party further represents that he/she has no other employment(s), consultancies or
+                undertakings which would restrict and impair his/her performance of this Agreement.
+              </p>
+
+              <p class="letter-sub-header m-0">Return:</p>
+              <p>
+                In the event of termination of Engagement, or upon request by the Company, the Receiving Party agrees
+                to promptly return or destroy, at the Company’s discretion, all Confidential Information provided by
+                the Company, and any computer files and other materials incorporating any such Confidential
+                Information
+                and all copies thereof.
+              </p> -->
+              <!-- <p class="letter-sub-header mb-0">5.Indemnity: </p>
+              <p>
+                The Receiving Party agrees to indemnify and save harmless the Company and its employees,
+              </p> -->
+
+            </div>
+
+          </div>
+
+          <!--page-11-->
+          <div class="letter-page-content my-4" id="pdfContent12"
+            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
+            <div class="letter-page-sub-content">
               <p>
                 <b>g)</b>
                 In the event the Company is unable for any reason, after reasonable effort, to secure the Receiving
@@ -1124,21 +1236,7 @@
                 and all copies thereof.
               </p>
               <p class="letter-sub-header mb-0">5.Indemnity: </p>
-              <p>
-                The Receiving Party agrees to indemnify and save harmless the Company and its employees,
-              </p>
-
-            </div>
-
-          </div>
-
-          <!--page-11-->
-          <div class="letter-page-content my-4" id="pdfContent12"
-            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
-            <div class="letter-page-sub-content">
-
-
-              <p>successors
+              <p>The Receiving Party agrees to indemnify and save harmless the Company and its employees, successors
                 and assigns against all losses, damages (including reasonable attorney fees) incurred by the Company
                 and
                 its employees, successors and assigns due to any breach of the terms of this Agreement.</p>
@@ -1185,6 +1283,29 @@
                 be construed as a waiver of any subsequent breach of the same or any other provision hereof.
               </p>
 
+              <!-- <p><b>c)</b> Attorneys’ Fees. If either party seeks to enforce its rights under this Agreement by legal
+                proceedings
+                or otherwise, the non-prevailing party shall pay all costs and expenses of the prevailing Party.
+              </p>
+
+
+              <p><b>d)</b>
+                Entire Agreement. This Agreement contains the entire understanding between the Company and the
+                Receiving Party concerning the subject matter hereof and is in addition to any and all prior and
+                contemporaneous
+                negotiations, correspondence, understandings and agreements, whether oral or written, respecting that
+                subject matter.
+              </p> -->
+
+
+            </div>
+
+          </div>
+
+          <div class="letter-page-content my-4" id="pdfContent13"
+            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
+            <div class="letter-page-sub-content">
+
               <p><b>c)</b> Attorneys’ Fees. If either party seeks to enforce its rights under this Agreement by legal
                 proceedings
                 or otherwise, the non-prevailing party shall pay all costs and expenses of the prevailing Party.
@@ -1198,15 +1319,6 @@
                 negotiations, correspondence, understandings and agreements, whether oral or written, respecting that
                 subject matter.
               </p>
-
-
-            </div>
-
-          </div>
-
-          <div class="letter-page-content my-4" id="pdfContent13"
-            [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
-            <div class="letter-page-sub-content">
 
               <p class="mt-3">Thank You!!</p>
 

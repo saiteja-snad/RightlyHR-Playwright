@@ -223,7 +223,8 @@ getEmergencyFieldsApprovalStatus() {
     this.emergencyContactForm.enable();
     this.disablePendingFields();
   }
-
+isPrimaryCountryDisabled = false;
+isSecondaryCountryDisabled = false;
  private disablePendingFields(): void {
   const pendingFields = this.getFieldsApprovalStatusList
     .filter(item => item.approvalStatus === 'Pending')
@@ -244,6 +245,13 @@ getEmergencyFieldsApprovalStatus() {
     const controlName = fieldMap[fieldName];
     if (controlName) {
       this.emergencyContactForm.get(controlName)?.disable({ emitEvent: false });
+      // also disable country selectors
+      if (controlName === 'contact1Phone') {
+        this.isPrimaryCountryDisabled = true;
+      }
+      if (controlName === 'contact2Phone') {
+        this.isSecondaryCountryDisabled = true;
+      }
     }
   });
 }

@@ -35,7 +35,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
   filteredResourcesData = [] as IResource[];
   resourcesDataByPhase = [] as IResource[];
-  
+
 
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -89,6 +89,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
+  selectedProjectIds:number[] = [];
 
   ngOnInit() {
     this.initializeForms();
@@ -103,19 +104,24 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         this.getClientsData(clientID);
       }
     });
-    
+
     this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
       this.selectedRoleIds = roleIds;
       if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
-    
+
     this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
       this.selectedPhaseIds = phaseIds;
       if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
-    
+
     this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
       this.selectedAuthorityIds = authorityIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    });
+
+    this.http.resourceProjectFilter$.pipe(takeUntil(this.destroy$)).subscribe(projectIds => {
+      this.selectedProjectIds = projectIds;
       if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -174,7 +180,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       extendReason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
     });
   }
-  
+
   updateStatusEffectiveDateValidation() {
     const statusEffectiveDateControl = this.reasonForm.get('statusEffectiveDate');
     if (this.modalData?.title?.includes('release')) {
@@ -185,7 +191,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     statusEffectiveDateControl?.updateValueAndValidity();
   }
 
-  
+
 
   getResourceData(id: any, searchTerm?: string) {
     let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
@@ -200,6 +206,9 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     }
     if (this.selectedAuthorityIds.length > 0) {
       url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
+    }
+    if (this.selectedProjectIds.length > 0) {
+      url += `&projectIds=${this.selectedProjectIds.join(',')}`;
     }
     this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
@@ -484,7 +493,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
           resourceName: data?.employee?.id,
           resourceEmail: data?.employee?.workMail,
           overtimeEligible: data.overtimeEligibile,
-          resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''} 
+          resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''}
           ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-' : '-',
           designation: data?.employee?.designation,
           resourceAllocationhrs: data.allocatedHours || null,
@@ -779,7 +788,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
           return {
             ...employee,
             id: employee.employeeId,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -795,7 +804,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.selectedEmployee = this.employeeDetails?.find(emp => emp.employeeId === employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''}
       ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-'
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
@@ -823,7 +832,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   watchSearchValue() {
     let timeout: any;
     const originalSearchValue = this.searchValue;
-    
+
     const checkSearch = () => {
       if (this.searchValue !== originalSearchValue) {
         clearTimeout(timeout);
@@ -832,7 +841,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         }, 300);
       }
     };
-    
+
     setInterval(() => {
       if (this.searchValue !== originalSearchValue) {
         checkSearch();

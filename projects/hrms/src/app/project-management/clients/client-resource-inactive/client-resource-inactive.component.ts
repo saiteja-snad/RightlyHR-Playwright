@@ -31,10 +31,11 @@ import { ClientResourceTabComponent } from '../../../shared/project-management-t
 export class ClientResourceInactiveComponent {
   searchValue: string = '';
   resourcesData = [] as IResource[];
-  
+
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
   selectedAuthorityIds: number[] = [];
+  selectedProjectIds:number[] = [];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -79,7 +80,7 @@ export class ClientResourceInactiveComponent {
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
-    private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute, 
+    private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
@@ -95,19 +96,25 @@ export class ClientResourceInactiveComponent {
         this.getClientsData(clientID);
       }
     });
-    
+
     this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
       this.selectedRoleIds = roleIds;
       if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
-    
+
     this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
       this.selectedPhaseIds = phaseIds;
       if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
-    
+
     this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
       this.selectedAuthorityIds = authorityIds;
+      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    });
+
+
+    this.http.resourceProjectFilter$.pipe(takeUntil(this.destroy$)).subscribe(projectIds => {
+      this.selectedProjectIds = projectIds;
       if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
     });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -178,6 +185,9 @@ export class ClientResourceInactiveComponent {
     if (this.selectedPhaseIds.length > 0) {
       url += `&phaseIds=${this.selectedPhaseIds.join(',')}`;
     }
+        if (this.selectedProjectIds.length > 0) {
+      url += `&projectIds=${this.selectedProjectIds.join(',')}`;
+    }
     if (this.selectedAuthorityIds.length > 0) {
       url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
     }
@@ -227,7 +237,7 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolea
           }));
         this.defaultPendingAuthorityId = this.resourcesDataByPhase[0]?.pendingApprovalAuthority?.id ?? null;
       }
-      
+
       const authorityControl = this.updateResourceForm.get('resourceAuthority');
       if (this.resoucesDropDownData.length === 0) {
         authorityControl?.disable();
@@ -441,7 +451,7 @@ onPhaseChange(event: any) {
   openModal(content: any, size: any, data: any) {
     this.selectedResource = data;
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
-    
+
     const selectedRole = this.projectRoleDropdown.find(
       (r: any) => r.value.roleId === data.projectRoleId
     );
@@ -643,7 +653,7 @@ onPhaseChange(event: any) {
 
   get newStartDate() { return this.extendForm.get('newStartDate')?.value; }
   get newEndDate() { return this.extendForm.get('newEndDate')?.value; }
-  
+
   openExtendModal(data: any) {
     this.modalData = { data };
     this.extendForm.reset();
@@ -774,7 +784,7 @@ onPhaseChange(event: any) {
           return {
             ...employee,
             id: employee.employeeId,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });

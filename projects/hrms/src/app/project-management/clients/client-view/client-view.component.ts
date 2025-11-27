@@ -97,7 +97,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   selectedDepartmentIds: number[] = [];
 
-    selectedResourceRoles: number[] = [];
+  selectedResourceRoles: number[] = [];
   selectedResourcePhases: number[] = [];
   selectedResourceAuthorities: number[] = [];
   resourceRoleOptions: any[] = [];
@@ -105,6 +105,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   resourceAuthorityOptions: any[] = [];
 
   previousTabUrl: string = '';
+  defaultEmployeeId: any;
+
+  allprojectslist = [] as any;
+  selectedProjects: any[] = [];
+projectOptions: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -125,6 +130,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.resourceDataids = JSON.parse(
       localStorage.getItem('resourceData') || '{}'
     );
+    this.defaultEmployeeId = this.resourceDataids?.employeeId;
     this.setDefaultmounth();
     this.getResourcesByClient(this.resourceDataids?.projectId);
     this.route.queryParams.subscribe((params) => {
@@ -134,6 +140,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         this.getClientsData(clientID);
         this.getprojectbyid(clientID);
         this.setDefaultmounth();
+        this.AllProjectsList()
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
@@ -170,40 +177,46 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     }
     this.loadResourceFilters();
     this.loadPhases(this.clientid);
-     if (this.router.url.includes('/project-management/clients/details/timesheet/summary')) {
-        this.setDefaultmounth();
-      }
-      this.router.events
-  .pipe(
-    filter(event => event instanceof NavigationEnd),
-    takeUntil(this.destroy$)
-  )
-  .subscribe((event: NavigationEnd) => {
-    const url = event.urlAfterRedirects;
-
-    const projectTabs = [
-      '/clients/details/projects',
-      '/clients/details/inactiveprojects',
-      '/clients/details/hold'
-    ];
-
-    const currentTab = projectTabs.find(tab => url.includes(tab));
-
-    if (currentTab && currentTab !== this.previousTabUrl) {
-      this.clearAllFilters();
-      this.previousTabUrl = currentTab;
+    if (
+      this.router.url.includes(
+        '/project-management/clients/details/timesheet/summary'
+      )
+    ) {
+      this.setDefaultmounth();
     }
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        const url = event.urlAfterRedirects;
 
-    const resourceTabs = [
-      '/clients/details/resources',
-      '/clients/details/inactive-resources'
-    ];
+        const projectTabs = [
+          '/clients/details/projects',
+          '/clients/details/inactiveprojects',
+          '/clients/details/hold',
+        ];
 
-    const currentResourceTab = resourceTabs.find(tab => url.includes(tab));
-    if (currentResourceTab) {
-      this.clearResourceFilters();
-    }
-  });
+        const currentTab = projectTabs.find((tab) => url.includes(tab));
+
+        if (currentTab && currentTab !== this.previousTabUrl) {
+          this.clearAllFilters();
+          this.previousTabUrl = currentTab;
+        }
+
+        const resourceTabs = [
+          '/clients/details/resources',
+          '/clients/details/inactive-resources',
+        ];
+
+        const currentResourceTab = resourceTabs.find((tab) =>
+          url.includes(tab)
+        );
+        if (currentResourceTab) {
+          this.clearResourceFilters();
+        }
+      });
   }
 
   loadResourceFilters() {
@@ -218,12 +231,12 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.resourceRoleOptions = (res?.data || []).map((item: any) => ({
           label: item.roleName,
-          value: item.id
+          value: item.id,
         }));
       },
       error: () => {
         this.resourceRoleOptions = [];
-      }
+      },
     });
   }
 
@@ -234,28 +247,34 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.resourcePhaseOptions = (res?.data || []).map((item: any) => ({
           label: item.phaseName,
-          value: item.phaseId
+          value: item.phaseId,
         }));
       },
       error: () => {
         this.resourcePhaseOptions = [];
-      }
+      },
     });
   }
 
   loadResourceAuthorities() {
     if (!this.clientid) return;
-    this.http.getData(`ProjectResource/timesheet-approval-authorities?entityType=Client&entityRefId=${this.clientid}`).subscribe({
-      next: (res: any) => {
-        this.resourceAuthorityOptions = (res?.data || []).map((item: any) => ({
-          label: `${item.fusionEmployeeId} - ${item.name}`,
-          value: item.id
-        }));
-      },
-      error: () => {
-        this.resourceAuthorityOptions = [];
-      }
-    });
+    this.http
+      .getData(
+        `ProjectResource/timesheet-approval-authorities?entityType=Client&entityRefId=${this.clientid}`
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.resourceAuthorityOptions = (res?.data || []).map(
+            (item: any) => ({
+              label: `${item.fusionEmployeeId} - ${item.name}`,
+              value: item.id,
+            })
+          );
+        },
+        error: () => {
+          this.resourceAuthorityOptions = [];
+        },
+      });
   }
 
   onResourceRoleChange() {
@@ -270,24 +289,36 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.http.setResourceAuthorityFilter(this.selectedResourceAuthorities);
   }
 
+  onProjectSelectionChange() {
+    this.http.setResourceProjectFilter(this.selectedProjects);
+}
+
   clearResourceFilters() {
     this.selectedResourceRoles = [];
     this.selectedResourcePhases = [];
     this.selectedResourceAuthorities = [];
+    this.selectedProjects = []
     this.http.clearResourceRoleFilter();
     this.http.clearResourcePhaseFilter();
     this.http.clearResourceAuthorityFilter();
+     this.http.clearResourceProjectFilter();
   }
 
   isResourceFilterApplied(): boolean {
-    return this.selectedResourceRoles.length > 0 || this.selectedResourcePhases.length > 0 || this.selectedResourceAuthorities.length > 0;
+    return (
+      this.selectedResourceRoles.length > 0 ||
+      this.selectedResourcePhases.length > 0 ||
+      this.selectedResourceAuthorities.length > 0 ||
+      this.selectedProjects.length >0
+    );
   }
 
   datepickerforsummaryview() {
     this.datepickerFormDataforsummary = this.fb.group({
-      dateRange: [null]
+      dateRange: [null],
     });
   }
+
   DepartmentList() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {
@@ -296,6 +327,35 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+AllProjectsList() {
+  if (!this.clientid) {
+    console.warn("Client ID not available yet");
+    return;
+  }
+
+  const params = { clientId: this.clientid };
+  console.log("Calling Project API with:", params);
+
+  this.http.getDataIncludeParams('Project', params).subscribe({
+    next: (data: any) => {
+      this.allprojectslist = data?.data || [];
+
+      // Map projects to p-multiSelect format: { label: string, value: any }
+      this.projectOptions = this.allprojectslist.map((project: any) => ({
+        label: project.projectName,
+        value: project.projectId   // or use projectName if you prefer string
+      }));
+
+      // Optional: Sort alphabetically
+      this.projectOptions.sort((a, b) => a.label.localeCompare(b.label));
+    },
+    error: (err) => {
+      console.error('Error fetching projects', err);
+    }
+  });
+}
+
 
   loadRoles() {
     this.http.getData('ProjectRoles?isActive=true').subscribe({
@@ -418,7 +478,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.getAllActiveEmployees();
 
     this.selectedDepartments = [...this.selectedDepartments];
-  this.selectedProjectTypes = [...this.selectedProjectTypes];
+    this.selectedProjectTypes = [...this.selectedProjectTypes];
   }
 
   // Create reactive form
@@ -431,17 +491,17 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   setDefaultmounth() {
-      const startOfMonth = dayjs().startOf('month').toDate();
-      const endOfMonth = dayjs().endOf('month').toDate();
-      this.datepickerForm.patchValue({
-        dateRange: [startOfMonth, endOfMonth]
-      });
-      const startOfMonths = dayjs().startOf('month').toDate();
-      const endOfMonths = dayjs().endOf('month').toDate();
-      this.datepickerFormDataforsummary?.patchValue({
-        dateRange: [startOfMonths, endOfMonths]
-      })
-    }
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerForm.patchValue({
+      dateRange: [startOfMonth, endOfMonth],
+    });
+    const startOfMonths = dayjs().startOf('month').toDate();
+    const endOfMonths = dayjs().endOf('month').toDate();
+    this.datepickerFormDataforsummary?.patchValue({
+      dateRange: [startOfMonths, endOfMonths],
+    });
+  }
 
   getClientsData(clientID: any): void {
     this.http
@@ -463,14 +523,17 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];
-    this.resourcesData = [];
-    this.http.setRequest(null);
+    this.resourceDataids.employeeId = this.defaultEmployeeId;
+
+    // Notify main filter request
+    this.http.setRequest({
+      resourceId: this.defaultEmployeeId,
+    });
     this.setDefaultmounth();
 
-  this.http.setProjectTimesheetDepartmentIds([]);
-  this.http.setProjectTimesheetRoleFilter([]);
-  this.http.setProjectTimesheetPhaseFilter([]);
-
+    this.http.setProjectTimesheetDepartmentIds([]);
+    this.http.setProjectTimesheetRoleFilter([]);
+    this.http.setProjectTimesheetPhaseFilter([]);
   }
 
   // initialization of form
@@ -589,7 +652,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
   isTimesheetFilterApplied(): boolean {
     return (
-      (this.datepickerFormDataforsummary?.value?.dateRange?.length > 0) ||
+      this.datepickerFormDataforsummary?.value?.dateRange?.length > 0 ||
       this.selectedDepartmentIds.length > 0 ||
       this.selectedRoleIds.length > 0 ||
       this.selectedPhaseIds.length > 0
@@ -861,9 +924,14 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const request = {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerForm.value.resourceId,
-      departmentIds: this.selectedDepartmentIds.length > 0 ? this.selectedDepartmentIds : undefined,
-      roleIds: this.selectedRoleIds.length > 0 ? this.selectedRoleIds : undefined,
-      phaseIds: this.selectedPhaseIds.length > 0 ? this.selectedPhaseIds : undefined
+      departmentIds:
+        this.selectedDepartmentIds.length > 0
+          ? this.selectedDepartmentIds
+          : undefined,
+      roleIds:
+        this.selectedRoleIds.length > 0 ? this.selectedRoleIds : undefined,
+      phaseIds:
+        this.selectedPhaseIds.length > 0 ? this.selectedPhaseIds : undefined,
     };
     this.http.setProjectTimesheetDepartmentIds(this.selectedDepartmentIds);
     this.http.setProjectTimesheetRoleFilter(this.selectedRoleIds);

@@ -1,5 +1,5 @@
-.custom-margin {
-    margin-top: 0.75rem;
+.custom-main-component-container{
+    padding-top: 0.75rem;
 }
 
 .welcome-text {
@@ -13,17 +13,11 @@
     }
 }
 
-.time {
+.current-date {
     font-weight: 400;
-    font-style: Regular;
-    font-size: 11px;
-    line-height: 100%;
-    letter-spacing: -2%;
+    font-size: var(--fontsize12);
     color: #8E8C8C;
-
-
 }
-
 
 .dashboard-grid {
     display: grid;
@@ -32,132 +26,116 @@
 }
 
 .content-card {
-    background: linear-gradient(180deg, #FFFFFF, #ECF0F4);
-    border: 3px solid #FFFFFF;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    border: 2px solid #FFFFFF;
     border-radius: 0.75rem;
-    padding: 1rem;
-    min-height: 12rem;
+    padding: 0.5rem 0.75rem;
+    min-height: 10rem;
 
     .section-title {
         font-weight: 500;
-        font-style: Medium;
-        font-size: 12px;
-        line-height: 100%;
+        font-size: var(--fontsize13);
+        color: #222222;
+    }
 
+    .view-all {
+        font-weight: 600;
+        font-size: 10px;
+        color: var(--primary-color);
+    }
+
+    .total {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+        color: #656565;
+
+        .count {
+            font-weight: 600;
+            color: var(--primary-color) !important;
+        }
+    }
+
+    .view-attendance-btn {
+        font-size: var(--fontsize10);
+        padding: 0.25rem 1.5rem;
+    }
+
+    .total-hrs {
+        font-weight: 600;
+        font-size: var(--fontsize20);
         color: #222222;
 
+        .suffix-text {
+            font-weight: 400;
+            font-size: 11px;
+            color: #909090;
+            bottom: 0em !important;
+        }
     }
+}
+
+.flex-between-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Team Members */
-.content-box {
-    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-    border: 2px solid #FFFFFF;
-    border-radius: 12px;
-    border-width: 2px;
-    padding: 1rem;
-    overflow-x: auto;
-
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-
-        .title {
-            font-weight: 500;
-            font-style: Medium;
-            font-size: 12px;
-            line-height: 100%;
-            color: #222222;
-        }
-
-        .view-all {
-            font-weight: 600;
-            font-style: SemiBold;
-            font-size: 10px;
-            line-height: 100%;
-            letter-spacing: 0px;
-            text-align: center;
-            text-decoration: underline;
-            text-decoration-style: solid;
-            text-decoration-thickness: 0%;
-            color: var(--primary-color);
-        }
-    }
-}
-
 .members-list {
+    width: 100%;
     display: flex;
-    gap: 1.25rem;
+    gap: 1rem;
+    overflow: hidden;
 
-    padding: 1rem 0;
-}
+    .member-card-border {
+        background: linear-gradient(90deg, rgba(11, 58, 131, 0.1) 0%, rgba(208, 208, 208, 0.1) 100%);
+        padding: 2px;
+        border-radius: 0.5rem;
 
-.member-card {
-    min-width: 8rem;
-    max-width: 8rem;
-    padding: 0.25rem 0rem;
-    border-radius: 1rem;
-    background: linear-gradient(95.64deg,
-            rgba(255, 255, 255, 0.05) -11.57%,
-            rgba(11, 58, 131, 0.05) 100.11%);
+        .member-card {
+            width: 8rem;
+            height: max-content;
+            padding: 0.5rem;
 
-    border: 2px solid #D0D0D0;
-    border-image-source: linear-gradient(90deg, rgba(11, 58, 131, 0.1) 0%, rgba(208, 208, 208, 0.1) 100%);
-}
+            .profile-img {
+                width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                object-fit: cover;
+            }
 
-.member-data {
-    padding: 0.125rem;
+            .name {
+                font-weight: 700;
+                font-size: 10px;
+                color: #444444;
+            }
 
-    .member-photo {
-        width: 3.2rem;
-        height: 3.2rem;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-
-    .member-name {
-        font-size: 0.875rem;
-
-        font-weight: 600;
-        margin-top: 0.5rem;
-        line-height: 1.2;
-    }
-
-
-    .member-role {
-        font-size: 0.75rem;
-        color: #6c757d;
-        margin-top: 0.2rem;
+            .role {
+                font-weight: 400;
+                font-size: 8px;
+                color: #8F8F8F;
+            }
+        }
     }
 }
-
 
 /* Gender Diversity */
 .gender-graph {
-    padding: 1rem;
+    label {
+        font-size: 14px;
+    }
 
-    .gender-item {
-        margin-bottom: 0.75rem;
+    .bar {
+        height: 0.8rem;
+        border-radius: 1rem;
+    }
 
-        label {
-            font-size: 14px;
-            margin-right: 1rem;
-        }
+    .pink {
+        background: #E600A0;
+    }
 
-        .bar {
-            height: 0.8rem;
-            border-radius: 1rem;
-        }
-
-        .pink {
-            background: #E600A0;
-        }
-
-        .blue {
-            background: #004FC4;
-        }
+    .blue {
+        background: #004FC4;
     }
 }
 
@@ -167,162 +145,28 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
 
-    .day-card {
-        text-align: center;
-        padding: 1rem;
-        background: #F2F4F8;
-        border-radius: 0.75rem;
+    .work-time {
+        font-size: var(--fontsize18);
+        font-weight: 600;
+        color: var(--primary-color);
+    }
 
-        .work-time {
-            font-size: 18px;
-            font-weight: 700;
-            color: #003B82;
-        }
-
-        .day-name {
-            font-size: 14px;
-            color: #555;
-        }
+    .day-name {
+        font-weight: 500;
+        font-size: var(--fontsize14);
+        color: #656565;
     }
 }
 
-.view-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.4rem 1rem;
+.dashboard-right-content {
+    width: 100%;
+    height: max-content;
+    padding: 1rem;
     border-radius: 0.5rem;
-}
-
-
-.w-80 {
-    width: 80%;
-}
-
-.w-20 {
-    width: 20%;
-}
-
-.dashboard-right {
-    height: 90vh;
     background: linear-gradient(139.07deg, #FFFFFF 2.89%, #E8EEF4 56.98%, #FAECE8 75.03%, #DAE9EF 87.05%, #F4DAF2 99.07%);
     border: 2px solid #FFFFFF;
-    border-radius: 10px;
-    padding: 0.625rem;
 
-
-    .workanniversarycard {
-        width: 100%;
-        height: 100%;
-        min-height: 12rem;
-        background: linear-gradient(180deg, #FDF5FB 0%, #ECF0F4 100%);
-        border: 2px solid #FFFFFF;
-        border-radius: 12px;
-        border-width: 2px;
-        padding: 0.625rem 1rem;
-
-
-    }
-
-    .brithdaycard {
-        width: 100%;
-        height: 100%;
-        min-height: 12rem;
-        background: linear-gradient(180deg, #EEF2FF 0%, #ECF0F4 100%);
-        border: 2px solid #FFFFFF;
-        border-radius: 12px;
-        border-width: 2px;
-        padding: 0.625rem 1rem;
-
-
-    }
-
-    .daliy-brithdaycard {
-        background: linear-gradient(180deg, #FFFFFF, #ECF0F4);
-        border: 3px solid #FFFFFF;
-        border-radius: 0.75rem;
-        padding: 1rem;
-        min-height: 12rem;
-        .events-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            overflow: hidden;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 0.75rem;
-
-            .celebration-img {
-                position: absolute;
-                top: 0.25rem;
-                right: 0;
-
-                .icon {
-                    width: 3rem;
-                    height: 3rem;
-                }
-            }
-
-            .carousel-content {
-                letter-spacing: 2%;
-                text-align: center;
-                font-size: var(--fontsize12);
-                width: 100%;
-                position: relative;
-
-                .p-carousel-indicator-list {
-                    padding: 0rem !important;
-                }
-
-                .p-carousel-indicator-button {
-                    width: 0.625rem !important;
-                    height: 0.25rem !important;
-                    background: #FFFFFF !important;
-                }
-
-                .p-carousel-indicator-active .p-carousel-indicator-button {
-                    height: 0.25rem !important;
-                    width: 3.5rem !important;
-                    background: var(--primary-color) !important;
-                }
-
-                .event-name {
-                    font-weight: 700;
-                    color: var(--primary-color);
-                }
-
-                .accordian-text {
-                    color: #919191;
-                    font-weight: 400;
-                    font-size: 12px;
-                }
-            }
-
-            .p-carousel-indicator-list {
-                position: absolute !important;
-                justify-content: center;
-                top: 5rem !important;
-                left: 38%;
-            }
-        }
-    }
-
-}
-
-
-
-.side-title {
-    font-weight: 500;
-    font-style: Medium;
-    font-size: 12px;
-    line-height: 100%;
-    letter-spacing: -2%;
-    color: #222222;
-    margin-bottom: 1rem;
-
-    .brithday-icon {
+    .custom-party-image {
         width: 8rem;
     }
 
@@ -332,32 +176,106 @@
         border-radius: 50%;
     }
 
-    .circle-workanniversary {
+    .circle-work-anniversary {
         background: #FEE1F7;
-        border: 0.37px solid #95267A;
+        border: 0.4px solid #95267A;
     }
 
-    .circle-brithday {
+    .circle-birthday {
         background: #E1E8FE;
-        border: 0.43px solid #131C6D
+        border: 0.4px solid #131C6D;
     }
 
-    .item-name {
+    .content-text {
         font-weight: 400;
-        font-style: Regular;
         font-size: 10px;
-        line-height: 100%;
-        letter-spacing: 0%;
-        color: #06274F;
     }
 
-    .item-date {
-        font-weight: 400;
-        font-style: Regular;
-        font-size: 10px;
-        line-height: 100%;
-        letter-spacing: 0%;
+    .content-name {
+        color: var(--primary-color);
+    }
+
+    .content-date {
         color: #A9A9A9;
+    }
+}
+
+// work anniversary content
+.work-anniversary-content {
+    background: linear-gradient(180deg, #FDF5FB 0%, #ECF0F4 100%);
+}
+
+// birthday-content
+.birthday-content {
+    background: linear-gradient(180deg, #EEF2FF 0%, #ECF0F4 100%);
+}
+
+.daliy-events-content {
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    min-height: 8rem !important;
+
+    .events-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding: 0.75rem;
+
+        .celebration-img {
+            position: absolute;
+            top: 0.25rem;
+            right: 0;
+
+            .icon {
+                width: 3rem;
+                height: 3rem;
+            }
+        }
+
+        .carousel-content {
+            letter-spacing: 2%;
+            text-align: center;
+            font-size: var(--fontsize12);
+            width: 100%;
+            position: relative;
+
+            .p-carousel-indicator-list {
+                padding: 0rem !important;
+            }
+
+            .p-carousel-indicator-button {
+                width: 0.625rem !important;
+                height: 0.25rem !important;
+                background: #FFFFFF !important;
+            }
+
+            .p-carousel-indicator-active .p-carousel-indicator-button {
+                height: 0.25rem !important;
+                width: 3.5rem !important;
+                background: var(--primary-color) !important;
+            }
+
+            .event-name {
+                font-weight: 700;
+                color: var(--primary-color);
+            }
+
+            .accordian-text {
+                color: #919191;
+                font-weight: 400;
+                font-size: 12px;
+            }
+        }
+
+        .p-carousel-indicator-list {
+            position: absolute !important;
+            justify-content: center;
+            top: 5rem !important;
+            left: 38%;
+        }
     }
 }
 

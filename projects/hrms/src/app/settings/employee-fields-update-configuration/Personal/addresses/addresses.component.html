@@ -96,7 +96,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="addressTypeOptions" optionLabel="label"
-              optionValue="value" formControlName="addressType" [readonly]="isReadOnlyMode"
+              optionValue="value" formControlName="addressType" [readonly]="isReadOnlyMode && !isEditMode"
               placeholder="{{'Please select address type' | translate}}">
             </p-select>
           </div>
@@ -141,7 +141,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="approvalTypeOptions" optionLabel="label"
-              optionValue="value" formControlName="approvalType" [readonly]="isReadOnlyMode"
+              optionValue="value" formControlName="approvalType" [readonly]="isReadOnlyMode && !isEditMode"
               placeholder="{{'Please select approval type' | translate}}">
             </p-select>
           </div>

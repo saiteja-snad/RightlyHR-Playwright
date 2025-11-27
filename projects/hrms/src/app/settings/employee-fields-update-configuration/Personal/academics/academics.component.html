@@ -97,7 +97,7 @@
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
               optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames"
-              placeholder="{{'Please select field names' | translate}}" [filter]="true">
+              placeholder="{{'Please select field names' | translate}}" [filter]="true" [readonly]="isReadOnlyMode">
             </p-multiSelect>
           </div>
           <!-- Read-only input for update mode -->
@@ -120,7 +120,7 @@
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="approvalTypeOptions" optionLabel="label"
               optionValue="value" formControlName="approvalType"
-              placeholder="{{'Please select approval type' | translate}}">
+              placeholder="{{'Please select approval type' | translate}}" [readonly]="isReadOnlyMode">
             </p-select>
           </div>
           <div *ngIf="fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"
@@ -187,7 +187,7 @@
             </div>
           </div>
         </div>
-
+         <div *ngIf="isReadOnlyMode" class="error-msg">Note: All fields are configured</div>
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">

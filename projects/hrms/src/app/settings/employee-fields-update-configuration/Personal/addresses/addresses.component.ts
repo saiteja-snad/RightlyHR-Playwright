@@ -118,7 +118,13 @@ export class AddressesComponent {
 // }
 
 
+  get allOptionsDisabled(): boolean {
+  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+}
 
+get isReadOnlyMode(): boolean {
+  return this.allOptionsDisabled;
+}
   getAddressesFields() {
     const params = 'Personal';
     const param = 'Address';

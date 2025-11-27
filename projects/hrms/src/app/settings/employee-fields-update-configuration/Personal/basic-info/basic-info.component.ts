@@ -105,13 +105,20 @@ export class BasicInfoComponent {
           } else {
             console.log('No data found.');
           }
+        
         },
         error: (err) => {
           console.error('Error fetching data:', err);
         },
       });
   }
+  get allOptionsDisabled(): boolean {
+  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+}
 
+get isReadOnlyMode(): boolean {
+  return this.allOptionsDisabled;
+}
   getBasicInfoFieldsConfigList() {
     this.loader = true;
     const params = {

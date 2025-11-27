@@ -57,6 +57,7 @@
                   <ng-template pTemplate="header">
                     <tr>
                       <th style="width: 4rem"></th>
+                      <th>Module Name</th>
                       <th>Field Name</th>
                       <th>Requested Date</th>
                       <th>Current Value</th>
@@ -74,7 +75,7 @@
                       <td>
                         <p-tableCheckbox [value]="entry"></p-tableCheckbox>
                       </td>
-
+                      <td>{{entry.moduleName ? entry.moduleName:'-'}}</td>
                       <td>{{ entry.fieldName }}</td>
                       <td>{{ entry.requestedDate | dateformat }}</td>
                       <td>

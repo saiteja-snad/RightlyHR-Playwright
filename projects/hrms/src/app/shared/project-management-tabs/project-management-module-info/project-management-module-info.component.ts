@@ -29,7 +29,11 @@ export class ProjectManagementModuleInfoComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourceDataids = {} as any;
   clientColor: any;
-
+  projectsDetails: any;
+  projectname: any;
+  projectColor: any;
+  projectId: any;
+  storeclientId: any;
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -37,9 +41,14 @@ export class ProjectManagementModuleInfoComponent {
     this.initiateUpdateModuleInfo();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     const clientProjectId = localStorage.getItem('clientProjectId');
+    const projectProjectId = localStorage.getItem('projectProjectId');
     if (clientProjectId) {
       this.getClientsData(clientProjectId);
       this.clientID = clientProjectId;
+    }
+    if (projectProjectId) {
+      this.getProjects(projectProjectId)
+      this.projectId = projectProjectId;
     }
     this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
       const currentUrl = this.router.url.split('?')[0];
@@ -79,6 +88,25 @@ export class ProjectManagementModuleInfoComponent {
         this.clients = {};
         console.error('Error fetching clients:', err);
       }
+    });
+  }
+
+  getProjects(projectId: any) {
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDetails = res?.data ?? [];
+
+        this.projectname = this.projectsDetails[0]?.projectName;
+        // this.storeclientId =  this.projectsDetails[0]?.client?.clientId;
+
+        this.getClientsData(this.projectsDetails[0]?.client?.clientId);
+        this.storeclientId = this.projectsDetails[0]?.client?.clientId;
+        this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.projectname = [];
+      },
     });
   }
 
@@ -265,7 +293,8 @@ export class ProjectManagementModuleInfoComponent {
   isShowClientRoute(): boolean {
     const showPaths = [
       '/project-management/clients/details',
-      '/project-management/clients/add'
+
+
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -273,6 +302,7 @@ export class ProjectManagementModuleInfoComponent {
   isShowProjectRoute(): boolean {
     const showPaths = [
       '/project-management/projects/details',
+
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -315,7 +345,10 @@ export class ProjectManagementModuleInfoComponent {
   navigateClient() {
     this.router.navigate(['project-management/clients/active']);
     localStorage.removeItem('clientProjectId');
+    localStorage.removeItem('projectProjectId');
   }
+
+
 
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
@@ -329,12 +362,17 @@ export class ProjectManagementModuleInfoComponent {
     const clientProjectId = localStorage.getItem('clientProjectId');
     this.router.navigate(['project-management/clients/details/timesheet/detailed'], { queryParams: { id: clientProjectId } });
     localStorage.removeItem('clientProjectId');
+    localStorage.removeItem('projectProjectId');
   }
 
   navigatetodetaliedtoproject() {
     this.router.navigate(['/project-management/projects/details/timesheet/detailed'], { queryParams: { id: this.resourceDataids?.projectId } });
+    localStorage.removeItem('projectProjectId');
   }
 
+  navigationtoclientinfo() {
+    this.router.navigate(['/project-management/clients/details/info'], { queryParams: { id:  this.storeclientId } });
+  }
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');
     if (clientProjectId) {
@@ -344,6 +382,7 @@ export class ProjectManagementModuleInfoComponent {
     } else {
       // Default navigation
       this.router.navigate(['project-management/projects/active']);
+      localStorage.removeItem('projectProjectId');
     }
   }
 }

@@ -7,10 +7,8 @@
     width: 100%;
 }
 
-@media only screen and (max-width: 1430px) {
-    .component-right-content {
-        width: calc(100% - 8.625rem) !important;
-    }
+.custom-width-content {
+    width: calc(100% - 8.5rem) !important;
 }
 
 .custom-table-content {
@@ -47,8 +45,7 @@
 .chip-btn {
     width: max-content !important;
     padding: 0.325rem 1.5rem !important;
-    // font-size: var(--fontsize10) !important;
-    font-size: var(--fontsize12)!important;
+    font-size: var(--fontsize12) !important;
     border-radius: 0.75rem !important;
 }
 

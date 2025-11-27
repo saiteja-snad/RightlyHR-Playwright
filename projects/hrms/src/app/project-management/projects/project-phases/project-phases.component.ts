@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
@@ -107,14 +107,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      reason: ['', [Validators.required, Validators.maxLength(250),]],
       statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
       newStartDate: ['', Validators.required],
       newEndDate: ['', Validators.required],
-      extendReason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      extendReason: ['', [Validators.required, Validators.maxLength(250)]]
     });
 
     // ✅ subscribe to correct controls

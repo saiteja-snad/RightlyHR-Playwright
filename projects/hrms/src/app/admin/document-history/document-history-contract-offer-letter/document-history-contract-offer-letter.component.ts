@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OfferletterdashboardpipePipe } from "../../../Pipes/offerletterdashboardpipe.pipe";
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../pipes/dateformat.pipe";
 import { DatePicker } from 'primeng/datepicker';
 
 @Component({

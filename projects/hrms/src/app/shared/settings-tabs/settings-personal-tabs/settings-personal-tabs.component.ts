@@ -22,6 +22,8 @@ export class SettingsPersonalTabsComponent implements OnInit {
     { label: 'Identity Type', route: '/settings/employee-fields/personal/identitytype', permission: { feature: 'Identity Type', action: 'view' } },
     { label: 'Relationship', route: '/settings/employee-fields/personal/relationship', permission: { feature: 'Relationship', action: 'view' } },
     { label: 'Bank Names', route: '/settings/employee-fields/personal/bank-name', permission: { feature: 'Bank Names', action: 'view' } },
+    { label: 'Skill Set', route: '/settings/employee-fields/personal/skills', permission: { feature: 'SkillSet', action: 'view' } },
+
   ];
 
   constructor(public rbac: RbacService) { }

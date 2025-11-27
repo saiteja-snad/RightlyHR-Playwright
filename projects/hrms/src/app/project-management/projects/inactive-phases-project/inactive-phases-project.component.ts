@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { Select } from 'primeng/select';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../pipes/dateformat.pipe';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ProjectsSideTabsforPhasesComponent } from "../../../shared/project-management-tabs/projects-side-tabsfor-phases/projects-side-tabsfor-phases.component";
 
@@ -108,13 +108,13 @@ export class InactivePhasesProjectComponent {
 
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      reason: ['', [Validators.required, Validators.maxLength(250), ]]
     });
 
     this.extendForm = this.fb.group({
       newStartDate: ['', Validators.required],
       newEndDate: ['', Validators.required],
-      extendReason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
+      extendReason: ['', [Validators.required, Validators.maxLength(250),]]
     });
 
     // ✅ subscribe to correct controls

@@ -36,12 +36,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
-
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
-
     this.getUserPreference(this.empinfo.employeeId);
-
   }
 
   getUserPreference(employeeId: number) {
@@ -52,12 +49,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         }
         else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !res.data.isPasswordChanged) {
           // Open change password modal
-          this.modalService.open(this.changepasswordModal, {
-            centered: true,
-            backdrop: 'static',
-            keyboard: false,
-            size: 'xl'
-          });
+          this.modalService.open(this.changepasswordModal, {centered: true, backdrop: 'static', keyboard: false, size: 'xl'});
         }
       }
     })
@@ -74,25 +66,22 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   updateAcceptanceStatus(employeeId: number) {
-    this.subscription = this.http.postbyId(`Employeedata/update-registration/${employeeId}`)
-      .subscribe({
-        next: (res: any) => {
-          this.modalService.dismissAll();
-          this.getUserPreference(this.empinfo.employeeId);
-        },
-        error: (err) => {
-          console.error('Error updating registration status:', err);
-        }
-      });
+    this.subscription = this.http.postbyId(`Employeedata/update-registration/${employeeId}`).subscribe({
+      next: (res: any) => {
+        this.modalService.dismissAll();
+        this.getUserPreference(this.empinfo.employeeId);
+      },
+      error: (err) => {
+        console.error('Error updating registration status:', err);
+      }
+    });
   }
-
 
   intilaizeChangePasswordForm() {
     this.changePasswordForm = this.fb.group(
       {
         newPassword: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.StrongPasswordRegx)]],
         confirmPassword: ['', [Validators.required]],
-
       },
       { validators: this.passwordMatchValidator }
     );

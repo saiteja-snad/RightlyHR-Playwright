@@ -455,6 +455,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Signature Authority',
     'Settings Job Probation Details',
     'Signature Authority',
+
   ];
   settingsEmployeePersonalFields = [
     'Salutation',
@@ -466,6 +467,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Identity Type',
     'Relationship',
     'Bank Names',
+    'SkillSet'
   ];
   settingsManageShiftsTabFields = [
     'Shifts Pending Tab',
@@ -510,7 +512,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
-  flexibleWorkHoursTabsFields=[
+  flexibleWorkHoursTabsFields = [
     'Work Hours Allocation History Tab',
     'Work Hours Allocations Tab'
   ]
@@ -542,11 +544,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
-   Lockingsystemtabs = [
+  Lockingsystemtabs = [
     'Attendance Configuration Module',
     'Timesheet Configuration Module'
   ];
-    TymesheetTypeFields = [
+  TymesheetTypeFields = [
     'Timesheet Locking Pending Tab',
     'Timesheet Locking Published Tab'
   ];
@@ -755,7 +757,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Probation Details Tab',
     'Contractor Details Tab',
     'Contract-Conversion Tab',
-    'EmployeeInfo Tab'
+    'EmployeeInfo Tab',
+    'Time Off main Tab',
+    'Contractors main Tab',
+    'Offboarding main Tab',
+    'Onboarding main Tab',
+    'Time Sheet approval Tab'
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
@@ -1291,7 +1298,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   itSupportFields = [
     'IT Support Configuration ',
   ];
-   settingsItSupportFields = [
+  settingsItSupportFields = [
     'IT Support Category',
     'IT Support Sub-Category',
 
@@ -2227,15 +2234,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-    isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  // Disable Create/Delete for 'Timesheet Locking Published Tab'
-  if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
-    return true;
-  }
+  isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    // Disable Create/Delete for 'Timesheet Locking Published Tab'
+    if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
+      return true;
+    }
 
-  // Existing logic: disable all if role is not selected
-  return !this.roleToFilter?.id;
-}
+    // Existing logic: disable all if role is not selected
+    return !this.roleToFilter?.id;
+  }
 
 
   ngOnDestroy(): void {

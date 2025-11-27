@@ -7,12 +7,12 @@
     </div>
     }
      @if(isShowClientRoute()){
-    <div class="commpoment-name" [style.color]="clientColor"><b>{{this.clientName}}</b>
+    <div class="commpoment-name" ><b>{{this.clientName}}</b>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
     @if(isShowProjectRoute() && clients.clientName ){
-    <div class="commpoment-name">{{clients.clientName}}
+    <div class="commpoment-name" ><a (click)="navigationtoclientinfo()"><u><b>{{clients.clientName}}</b></u></a>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
@@ -22,6 +22,16 @@
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
+     @if(isShowProjectRoute()){
+    <div class="commpoment-name" ><b>{{this.projectname}}</b>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+    </div>
+    }
+    <!-- @if(isShowProjectRoute() && projectname ){
+    <div class="commpoment-name">{{projectname}}
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+    </div>
+    } -->
     @if(isShowtimesheetforteamRoute()){
     <div class="commpoment-name">
         <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>

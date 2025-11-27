@@ -8,7 +8,7 @@
             @if (!loading) {
             <table class="w-100">
                 <thead>
-                    <th>Employee ID</th>
+                    <!-- <th>Employee ID</th> -->
                     <th>Name</th>
                     <!-- <th>Designation</th> -->
                     <th class="text-center">Role</th>
@@ -20,10 +20,8 @@
                     <th class="text-center">End Date</th>
                     <th class="text-center">Allocated Hours</th>
                     <th>Timesheet Approval Authority</th>
-
                     <th class="text-center">Status</th>
-                       <th>Effective Date</th>
-
+                    <th>Effective Date</th>
                     <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     } -->
@@ -31,7 +29,7 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
-                            <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
+                            <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
                             <td class="text-center">{{ data?.role || '-' }}</td>
@@ -46,11 +44,8 @@
                             <td class="text-center">
                                 <div>
                                     <span>{{ (data?.status | titlecase) || '-' }}</span>
-                                    <ng-container
-                                        *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
-                                        <span type="button" [ngbPopover]="statusReasonPopover">
-                                            <app-info-icon />
-                                        </span>
+                                    <ng-container *ngIf="data?.reason && data.status?.toLowerCase() !== 'active'; else noStatusReason">
+                                        <span type="button" [ngbPopover]="statusReasonPopover"><app-info-icon /></span>
                                     </ng-container>
                                     <ng-template #noStatusReason></ng-template>
                                 </div>
@@ -58,7 +53,7 @@
                                     <p class="mb-0">{{ data.reason }}</p>
                                 </ng-template>
                             </td>
-                                  <td>{{ data?.statusEffectiveDate ? (data.statusEffectiveDate | dateformat) : '-' }}</td>
+                            <td>{{ data?.statusEffectiveDate ? (data.statusEffectiveDate | dateformat) : '-' }}</td>
                             <!-- @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
                             this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center"
@@ -70,8 +65,7 @@
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li *ngFor="let action of getActionsByStatus(data.status)">
                                             <a class="dropdown-item" (click)="handleAction(action, data)">
-                                                <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action
-                                                }}
+                                                <i class="bi me-2" [ngClass]="getActionIcon(action)"></i> {{ action }}
                                             </a>
                                         </li>
                                     </ul>
@@ -117,8 +111,7 @@
                             <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="false"
                                 optionValue="id" placeholder="Please select employee" formControlName="resourceName" class="custom-select w-100"
                                 (onChange)="onClickEmployee($event)" resetFilterOnHide="true" [readonly]="true"
-                                [ngClass]="{ 'readonly-select': true }">
-                            </p-select>
+                                [ngClass]="{ 'readonly-select': true }"></p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
                         updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
@@ -223,6 +216,7 @@
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched && 
                         updateResourceForm.get('resourceAuthority')?.invalid">Timesheet Approval Authority is required</div>
                     </div>
+                    
                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceEmail" class="form-label custom-label mb-2">Email<span class="text-danger">*</span></label>

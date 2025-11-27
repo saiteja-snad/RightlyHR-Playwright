@@ -94,9 +94,9 @@ export const SETTINGS_AttendanceLock_TABS = [
   { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
   { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
 ];
+
 // Timesheet Locking Tabs
 export const SETTINGS_TIMESHEET_LOCKING_TABS = [
-
   { route: '/settings/timesheet-locking-configuration/pending-for-submission', permission: 'Timesheet Locking Pending Tab.view' },
   { route: '/settings/timesheet-locking-configuration/published', permission: 'Timesheet Locking Published Tab.view' }
 ];
@@ -118,6 +118,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/identitytype', permission: 'Identity Type.view' },
   { route: '/settings/employee-fields/personal/relationship', permission: 'Relationship.view' },
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
+  {route: '/settings/employee-fields/personal/skills',permission: 'SkillSet.view'}
 ]
 
 export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
@@ -269,96 +270,97 @@ export const IT_SUPPORT_TEAM_TICKETS_TABS = [
   { route: '/it-support/team-tickets/rejected-tickets', permission: 'Rejected Tickets Tab.view' }
 ]
 
-export const PENDING_APPROVALS_TABS = [
-  { route: '/time-off/pending-approvals/time-off-request', permission: 'Time Off Tab.view' },
-  { route: 'time-off/pending-approvals/wfh', permission: 'WFH Tab.view' },
-  { route: '/time-off/pending-approvals/comp-off', permission: 'Comp Off Tab.view' },
-  { route: '/time-off/pending-approvals/permissions', permission: 'Permissions Tab.view' },
-  { route: '/time-off/pending-approvals/regularization-request', permission: 'Regularization Tab.view' },
-  { route: '/time-off/pending-approvals/extra-hours-request', permission: 'Extra Hours Tab.view' },
-  { route: '/time-off/pending-approvals/separation-request', permission: 'Separation Request Tab.view' },
-  { route: '/time-off/pending-approvals/recall-request', permission: 'Recall Request Tab.view' },
-  { route: '/time-off/pending-approvals/trainee-approvals', permission: 'Trainee Details Tab.view' },
-  { route: '/time-off/pending-approvals/nodue-request', permission: 'No Due Clearence Requests Tab.view' },
-  { route: '/time-off/pending-approvals/claimsandexpenses-request', permission: 'Claims and Expenses Tab.view' },
-  { route: '/time-off/pending-approvals/desk-approval', permission: 'Desk Requests Tab.view' },
-  { route: '/time-off/pending-approvals/probation-request', permission: 'Probation Details Tab.view' },
-  { route: '/time-off/pending-approvals/contract-conversion', permission: 'Contract-Conversion Tab.view' },
-  { route: '/time-off/pending-approvals/employeeinfo-request', permission: 'EmployeeInfo Tab.view' },
+export const TIMEOFF_APPROVALS_TABS = [
+  { route: '/pending-approvals/time-off/leaves', permission: 'Time Off Tab.view' },
+  { route: '/pending-approvals/time-off/wfh', permission: 'WFH Tab.view' },
+  { route: '/pending-approvals/time-off/comp-off', permission: 'Comp Off Tab.view' },
+  { route: '/pending-approvals/time-off/permissions', permission: 'Permissions Tab.view' },
+  { route: '/pending-approvals/time-off/regularization-request', permission: 'Regularization Tab.view' },
+  { route: '/pending-approvals/time-off/extra-hours-request', permission: 'Extra Hours Tab.view' },
 ]
 
 export const PENDING_APPROVALS_TIME_OFF_SUB_TABS = [
-  { route: '/time-off/pending-approvals/time-off-request/for-you', permission: 'For You (Time Off).view' },
-  { route: '/time-off/pending-approvals/time-off-request/for-your-role', permission: 'For Role (Time Off).view' },
+  { route: '/pending-approvals/time-off/leaves/for-you', permission: 'For You (Time Off).view' },
+  { route: '/pending-approvals/time-off/leaves/for-your-role', permission: 'For Role (Time Off).view' },
 ]
 
 export const PENDING_APPROVALS_WFH_SUB_TABS = [
-  { route: '/time-off/pending-approvals/wfh/for-you', permission: 'For You (WFH).view' },
-  { route: '/time-off/pending-approvals/wfh/for-your-role', permission: 'For Role (WFH).view' },
+  { route: '/pending-approvals/time-off/wfh/for-you', permission: 'For You (WFH).view' },
+  { route: '/pending-approvals/time-off/wfh/for-your-role', permission: 'For Role (WFH).view' },
 ]
 
 export const PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS = [
-  {
-    route: '/time-off/pending-approvals/remote/for-you',
-    permission: 'For You (Remote Login).view',
-  },
-  {
-    route: '/time-off/pending-approvals/remote/for-your-role',
-    permission: 'For Role (Remote Login).view',
-  },
+  { route: '/pending-approvals/time-off/remote/for-you', permission: 'For You (Remote Login).view' },
+  { route: '/pending-approvals/time-off/remote/for-your-role', permission: 'For Role (Remote Login).view' },
 ];
 
 export const PENDING_APPROVALS_COMP_OFF_SUB_TABS = [
-  { route: '/time-off/pending-approvals/comp-off/for-you', permission: 'For You (Comp Off).view' },
-  { route: '/time-off/pending-approvals/comp-off/for-your-role', permission: 'For Role (Comp Off).view' },
+  { route: '/pending-approvals/time-off/comp-off/for-you', permission: 'For You (Comp Off).view' },
+  { route: '/pending-approvals/time-off/comp-off/for-your-role', permission: 'For Role (Comp Off).view' },
 ]
 
 export const PENDING_APPROVALS_PERMISSIONS_SUB_TABS = [
-  { route: '/time-off/pending-approvals/permissions/for-you', permission: 'For You (Permission).view' },
-  { route: '/time-off/pending-approvals/permissions/for-your-role', permission: 'For Role (Permission).view' },
+  { route: '/pending-approvals/time-off/permissions/for-you', permission: 'For You (Permission).view' },
+  { route: '/pending-approvals/time-off/permissions/for-your-role', permission: 'For Role (Permission).view' },
 ]
 
 export const PENDING_APPROVALS_REGULARIZATION_SUB_TABS = [
-  { route: '/time-off/pending-approvals/regularization-request/for-you', permission: 'For You (Regularization).view' },
-  { route: '/time-off/pending-approvals/regularization-request/for-your-role', permission: 'For Role (Regularization).view' },
+  { route: '/pending-approvals/time-off/regularization-request/for-you', permission: 'For You (Regularization).view' },
+  { route: '/pending-approvals/time-off/regularization-request/for-your-role', permission: 'For Role (Regularization).view' },
 ]
 
 export const PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS = [
-  { route: '/time-off/pending-approvals/extra-hours-request/for-you', permission: 'For You (Extra Hours).view' },
-  { route: '/time-off/pending-approvals/extra-hours-request/for-your-role', permission: 'For Role (Extra Hours).view' },
+  { route: '/pending-approvals/time-off/extra-hours-request/for-you', permission: 'For You (Extra Hours).view' },
+  { route: '/pending-approvals/time-off/extra-hours-request/for-your-role', permission: 'For Role (Extra Hours).view' },
+]
+
+export const ONBOARDING_APPROVALS_TABS = [
+  { route: '/pending-approvals/on-boarding/probation-request', permission: 'Probation Details Tab.view' },
+  { route: '/pending-approvals/on-boarding/trainee-approvals', permission: 'Trainee Details Tab.view' },
+]
+
+export const OFFBOARDING_APPROVALS_TABS = [
+  { route: '/pending-approvals/off-boarding/separation-request', permission: 'Separation Request Tab.view' },
+  { route: '/pending-approvals/off-boarding/recall-request', permission: 'Recall Request Tab.view' },
+  { route: '/pending-approvals/off-boarding/nodue-request', permission: 'No Due Clearence Requests Tab.view' },
 ]
 
 export const SEPARATION_REQUEST_SUB_TABS = [
-  { route: '/time-off/pending-approvals/separation-request/separation-for-you', permission: 'For You (Separation Requests).view' },
-  { route: '/time-off/pending-approvals/separation-request/separation-for-role', permission: 'For Role (Separation Requests).view' },
+  { route: '/pending-approvals/off-boarding/separation-request/separation-for-you', permission: 'For You (Separation Requests).view' },
+  { route: '/pending-approvals/off-boarding/separation-request/separation-for-role', permission: 'For Role (Separation Requests).view' },
 ]
 
 export const RECALL_REQUEST_SUB_TABS = [
-  { route: '/time-off/pending-approvals/recall-request/recall-for-you', permission: 'For You (Recall Requests).view' },
-  { route: '/time-off/pending-approvals/recall-request/recall-for-role', permission: 'For Role (Recall Requests).view' },
+  { route: '/pending-approvals/off-boarding/recall-request/recall-for-you', permission: 'For You (Recall Requests).view' },
+  { route: '/pending-approvals/off-boarding/recall-request/recall-for-role', permission: 'For Role (Recall Requests).view' },
 ]
 
 export const EXPENSES_REQUEST_SUB_TABS = [
-  { route: '/time-off/pending-approvals/claimsandexpenses-request/for-you', permission: 'For You (Claims and Expenses).view' },
-  { route: '/time-off/pending-approvals/claimsandexpenses-request/for-your-role', permission: 'For Role (Claims and Expenses).view' },
+  { route: '/pending-approvals/claimsandexpenses-request/for-you', permission: 'For You (Claims and Expenses).view' },
+  { route: '/pending-approvals/claimsandexpenses-request/for-your-role', permission: 'For Role (Claims and Expenses).view' },
 ]
 export const EMPLOYEINFO_REQUEST_SUB_TABS = [
   { route: '/time-off/pending-approvals/employeeinfo-request/for-you', permission: 'For You (Employee Info).view' },
   { route: '/time-off/pending-approvals/employeeinfo-request/for-your-role', permission: 'For Role (Employee Info.view' },
 ]
 export const DESK_REQUEST_SUB_TABS = [
-  { route: '/time-off/pending-approvals/desk-approval/for-you', permission: 'For You (Desk Requests).view' },
-  { route: '/time-off/pending-approvals/desk-approval/for-your-role', permission: 'For Role (Desk Requests).view' },
+  { route: '/pending-approvals/desk-approval/for-you', permission: 'For You (Desk Requests).view' },
+  { route: '/pending-approvals/desk-approval/for-your-role', permission: 'For Role (Desk Requests).view' },
+]
+
+export const CONTRACT_APPROVALS_TABS = [
+  { route: '/pending-approvals/contractors/request', permission: 'Contractor Details Tab.view' },
+  { route: '/pending-approvals/contractors/conversion', permission: 'Contract-Conversion Tab.view' },
 ]
 
 export const CONTRACT_REQUEST_SUB_TABS = [
-  { route: '/time-off/pending-approvals/contractors-request/for-you', permission: 'For You (Contractors).view' },
-  { route: '/time-off/pending-approvals/contractors-request/for-your-role', permission: 'For Role (Contractors).view' },
+  { route: '/pending-approvals/contractors/request/for-you', permission: 'For You (Contractors).view' },
+  { route: '/pending-approvals/contractors/request/for-your-role', permission: 'For Role (Contractors).view' },
 ]
 
 export const CONTRACT_CONVERSION_REQUEST_SUB_TABS = [
-  { route: '/time-off/pending-approvals/contract-conversion/for-you', permission: 'For You (Contract-Conversion).view' },
-  { route: '/time-off/pending-approvals/contract-conversion/for-your-role', permission: 'For Role (Contract-Conversion).view' },
+  { route: '/pending-approvals/contractors/conversion/for-you', permission: 'For You (Contract-Conversion).view' },
+  { route: '/pending-approvals/contractors/conversion/for-your-role', permission: 'For Role (Contract-Conversion).view' },
 ]
 
 export const SETTINGS_MAIN_HEADER_TABS = [
@@ -383,8 +385,8 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' },
-  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view'},
-  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view'}
+  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view' },
+  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view' }
 ]
 
 export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
@@ -395,8 +397,8 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
   { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
-  { route: '/settings/project-management-config/project-role', permission: 'Project Role.view'},
-  { route: '/settings/project-management-config/task', permission: 'Task.view'},
+  { route: '/settings/project-management-config/project-role', permission: 'Project Role.view' },
+  { route: '/settings/project-management-config/task', permission: 'Task.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -420,6 +422,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: 'Pre Onboard Documents.view' },
   { route: '/settings/employee-fields/job/serving-period', permission: 'Serving Period.view' },
   { route: '/settings/employee-fields/job/probation-details', permission: 'Settings Job Probation Details.view' },
+  { route: '/settings/employee-fields/job/skills', permission: 'SkillSet.view' },
   { route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' }
 ]
 
@@ -447,7 +450,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS = [
   { route: '/settings/employee-fields/expenes/configuartion', permission: 'Expenes Configuartion.view' },
   { route: '/settings/employee-fields/expenes/allowed-days', permission: 'Expense Allowed Days.view' },
   { route: '/settings/employee-fields/expenes/expenses-limit', permission: 'Expense Threshold Validation.view' },
-  { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view'},
+  { route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: 'Global Expense Configuration.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS = [

@@ -46,11 +46,11 @@ export class DepartmentComponent {
   ngOnInit(): void {
     this.DepartmentForm = this.fb.group({
       Department: ['',[ Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],],
-      color : ['']
+      color : ['#000000']
     });
     this.updateForm = this.fb.group({
       Department: ['', [ Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],],
-      updatecolor : ['']
+      updatecolor : ['#000000']
     });
 
     this.getDepartment();
@@ -76,7 +76,7 @@ export class DepartmentComponent {
       isdeleted: 'Active',
       meta: JSON.stringify({
         graphData: {
-          color: this.DepartmentForm.value.color
+          color: this.DepartmentForm.value.color || '#000000'
         }
       })
     };
@@ -105,7 +105,7 @@ export class DepartmentComponent {
         sno: this.selectedId,
         meta: JSON.stringify({
           graphData: {
-            color: this.updateForm.value.updatecolor
+            color: this.updateForm.value.updatecolor || '#000000'
           }
         })
       };
@@ -139,7 +139,7 @@ export class DepartmentComponent {
     this.DepartmentForm.reset();
     this.updateForm.patchValue({ 
       Department: departmentlist.departmentName,
-      updatecolor: departmentlist.meta?.graphData?.color || ''
+      updatecolor: departmentlist.meta?.graphData?.color || '#000000'
     });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',

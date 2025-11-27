@@ -19,7 +19,7 @@ import { ProjectsSideTabsForClientsComponent } from "../../../shared/project-man
 @Component({
   selector: 'app-inacitve-projects',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, 
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe,
     ProjectsSideTabsComponent, ProjectsSideTabsForClientsComponent],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
@@ -33,7 +33,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   searchValue: any;
   inactiveClientStatus: any;
-  
+
   constructor(private router: Router, private http: HttpService, private conformationPopup: OpenModalService,
     private modalService: NgbModal, private route: ActivatedRoute, public rbac: RbacService) { }
 
@@ -63,7 +63,8 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   }
 
   navigateView(projectId: number) {
-    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } } );
+    localStorage.setItem('projectProjectId', projectId.toString());
+    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
   }
 
   getDepartmentNames(project: Project): string {
@@ -143,6 +144,25 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     return this.router.url.includes(route);
   }
 
+  getLighterColor(color: any, amount: number = 0.9): string {
+    if (!color) return color || '#d8d8daff'; // Default color if none provided;
+
+    // Remove # if present
+    const hex = color.replace('#', '');
+
+    // Parse RGB values
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    // Calculate lighter values
+    const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+    const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+    const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

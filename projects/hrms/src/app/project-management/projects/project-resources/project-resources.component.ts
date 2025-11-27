@@ -638,7 +638,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
          this.phaseData = (data?.data || []).filter(
         (p: any) =>
           p?.status?.toLowerCase() === 'in progress' ||
-          p?.status?.toLowerCase() === 'extended'
+          p?.status?.toLowerCase() === 'extended' || p?.status?.toLowerCase() === 'yet to start'
       );
         this.phaseDropdown = this.phaseData.map(p => ({
         label: p.phaseName,

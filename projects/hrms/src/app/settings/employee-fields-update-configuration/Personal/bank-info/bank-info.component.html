@@ -130,7 +130,7 @@
           </div>
           <div *ngIf="fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"
             class="error-msg">
-            <div *ngIf="fieldConfigForm.get('approvalType')?.errors?.['required']">
+            <div *ngIf=" !isReadOnlyMode && fieldConfigForm.get('approvalType')?.errors?.['required']">
               {{ 'Approval Type is required' | translate }}
             </div>
           </div>

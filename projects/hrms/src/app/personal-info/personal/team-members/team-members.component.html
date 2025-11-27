@@ -52,22 +52,15 @@
                             <th class="text-center">Action</th>}
                         </tr>
                     </thead>
-                    <tbody
-                        *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+                    <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
                         <ng-container *ngIf="filteredMembers.length > 0; else noData">
                             <tr *ngFor="let details of filteredMembers">
-                                <td>{{ details.fusionEmpId || 'N/A' }}</td>
-                                <td>
-                                    <a [ngClass]="{'select-item cursor': details.isAccess}"
-                                        (click)="details.isAccess && select(details)">
-                                        {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName
-                                        }}</a>
-                                </td>
+                                <td>{{ details.fusionEmpId || '-' }}</td>
+                                <!-- <a [ngClass]="{'select-item cursor': details.isAccess}" (click)="details.isAccess && select(details)">
+                                    {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}</a> -->
+                                <td>{{ details.firstName || '' }} {{ details.middleName || '' }} {{ details.lastName || ''}}</td>
                                 <td>{{ details.workEmail || 'N/A' }}</td>
-                                <td class="text-nowrap">{{details.mobilePhoneCountryCode}} {{ details.contactnumber ||
-                                    'N/A'
-                                    }}
-                                </td>
+                                <td class="text-nowrap">{{details.mobilePhoneCountryCode}} {{ details.contactnumber || 'N/A' }}</td>
                                 @if(canAccess('update','team-managers')) {
                                 <td class="text-center">
                                     <div class="dropdown">

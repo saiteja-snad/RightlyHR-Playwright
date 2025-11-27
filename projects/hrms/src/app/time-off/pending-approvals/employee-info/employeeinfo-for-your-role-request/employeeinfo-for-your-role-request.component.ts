@@ -74,7 +74,7 @@ export class EmployeeinfoForYourRoleRequestComponent {
   allFields: any;
   allPendingApprovals: any;
   allPendingApprovalItems: any;
-
+ selectedLeaveStatus: any;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
@@ -127,6 +127,16 @@ export class EmployeeinfoForYourRoleRequestComponent {
         [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
       ],
     });
+    this.timeSheetApproveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
+  this.timeSheetRejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+    if (!value || value.trim() === '') {
+      this.selectedLeaveStatus = null; // remove chip highlight if cleared
+    }
+  });
   }
 
   // called for pagination
@@ -293,7 +303,19 @@ loadClientsAndProjects(page: number, pageSize: number): void {
     }
     this.syncGlobalSelectedEntries();
   }
+   onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
 
+  if (status === 'approved') {
+    this.timeSheetApproveForm.get('comments')?.setValue('Approved');
+  }
+}
+ onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.timeSheetRejectForm.get('comments')?.setValue('Rejected');
+    }
+  }
   // open approva and reject popup
   openModal(modal: any, request: any, conformationstatus: string) {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });

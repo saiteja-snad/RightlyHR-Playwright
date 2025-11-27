@@ -83,7 +83,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   errorOccurred = false;
   errormodaldata: any;
   lockMessages: any;
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,public formValidation:FormValidationsService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {

@@ -156,13 +156,8 @@ export class ProjectViewComponent implements OnInit {
           this.http.setPhaseStatusFilter([]);
         }
 
-        const resourceTabs = [
-          '/projects/details/resources',
-          '/projects/details/inactive-resources'
-        ];
-
-        const currentResourceTab = resourceTabs.find(tab => this.router.url.includes(tab));
-        if (currentResourceTab) {
+        if (this.isActive('/project-management/projects/details/resources') ||
+            this.isActive('/project-management/projects/details/inactive-resources')) {
           this.clearResourceFilters();
         }
       });
@@ -311,9 +306,9 @@ onPhaseDateClear() {
     this.selectedResourceRoles = [];
     this.selectedResourcePhases = [];
     this.selectedResourceAuthorities = [];
-    this.http.clearResourceRoleFilter();
-    this.http.clearResourcePhaseFilter();
-    this.http.clearResourceAuthorityFilter();
+    this.http.setResourceRoleFilter([]);
+    this.http.setResourcePhaseFilter([]);
+    this.http.setResourceAuthorityFilter([]);
   }
 
   isResourceFilterApplied(): boolean {

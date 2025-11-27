@@ -29,10 +29,11 @@ export class ProjectManagementModuleInfoComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourceDataids = {} as any;
   clientColor: any;
-projectsDetails :any;
-projectname:any;
-projectColor:any;
-projectId:any;
+  projectsDetails: any;
+  projectname: any;
+  projectColor: any;
+  projectId: any;
+  storeclientId: any;
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -94,8 +95,12 @@ projectId:any;
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDetails = res?.data ?? [];
+
         this.projectname = this.projectsDetails[0]?.projectName;
-        console.log("project" ,this.projectname);
+        // this.storeclientId =  this.projectsDetails[0]?.client?.clientId;
+
+        this.getClientsData(this.projectsDetails[0]?.client?.clientId);
+        this.storeclientId = this.projectsDetails[0]?.client?.clientId;
         this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
       },
       error: (err) => {
@@ -288,7 +293,8 @@ projectId:any;
   isShowClientRoute(): boolean {
     const showPaths = [
       '/project-management/clients/details',
-      '/project-management/clients/add'
+
+
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -296,6 +302,7 @@ projectId:any;
   isShowProjectRoute(): boolean {
     const showPaths = [
       '/project-management/projects/details',
+
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -341,6 +348,8 @@ projectId:any;
     localStorage.removeItem('projectProjectId');
   }
 
+
+
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
@@ -361,6 +370,9 @@ projectId:any;
     localStorage.removeItem('projectProjectId');
   }
 
+  navigationtoclientinfo() {
+    this.router.navigate(['/project-management/clients/details/info'], { queryParams: { id:  this.storeclientId } });
+  }
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');
     if (clientProjectId) {

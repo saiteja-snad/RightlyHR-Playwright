@@ -97,15 +97,14 @@
                                         <ng-template #hasProject>
                                             <ng-container
                                                 *ngIf="project.value.selectedProject?.clientName && project.value.selectedProject?.projectName; else selectProject">
-                                                <div class="mb-2">
+                                                 <div class="mb-2 "   [style.color]="getProjectColor(project.value.selectedProject?.projectId)">
                                                     <u>{{ project.value.selectedProject?.projectName }}</u>
                                                 </div>
-                                                <div class="d-flex flex-wrap align-items-center gap-2">
-                                                    <div class="timesheet-chip">
+                                                  <div class="d-flex flex-wrap align-items-center gap-2">
+                                                    <div class="timesheet-chip" [style.background-color]="getLighterColor(getClientColor(project.value.selectedProject?.clientId))" [style.color]="getClientColor(project.value.selectedProject?.clientId)" [style.border-color]="getClientColor(project.value.selectedProject?.clientId)">
                                                         {{ project.value.selectedProject?.clientName }}
                                                     </div>
-                                                    <div *ngIf="project.value.selectedProject?.phaseName"
-                                                        class="timesheet-chip">
+                                                    <div *ngIf="project.value.selectedProject?.phaseName" class="timesheet-chip" [style.background-color]="getLighterColor(getPhaseColor(project.value.selectedProject?.phaseId))" [style.color]="getPhaseColor(project.value.selectedProject?.phaseId)" [style.border-color]="getPhaseColor(project.value.selectedProject?.phaseId)">
                                                         {{ project.value.selectedProject?.phaseName }}
                                                     </div>
                                                 </div>

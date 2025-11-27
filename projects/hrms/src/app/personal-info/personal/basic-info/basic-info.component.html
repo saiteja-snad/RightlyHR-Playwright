@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
   @if(!loading){
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -210,11 +210,6 @@
   }
 </div>
 
-
-<div class="employee-label-info">
-  <ng-template #pendingPopover>
-    <div class="module-info-text">{{activeMessage}}</div>
-  </ng-template>
-</div>
-
-
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
+</ng-template>

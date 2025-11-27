@@ -2712,3 +2712,29 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: 16px;
     font-weight: 700;
 }
+
+.employee-label-info {
+  .popover {
+    --bs-popover-max-width: 25rem !important;
+    --bs-popover-border-color: var(--module-info-bg) !important;
+    background: var(--module-info-bg) !important;
+
+    .popover-body {
+      padding: 0.5rem !important;
+      border-radius: 0.5rem;
+      border: 2px solid #FFF !important;
+      box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
+    }
+
+    .module-info-text {
+      font-weight: 400;
+      font-size: var(--fontsize12);
+      letter-spacing: 0%;
+      color: #424242;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+      border-bottom-color: #FFFFFF !important;
+    }
+  }
+}

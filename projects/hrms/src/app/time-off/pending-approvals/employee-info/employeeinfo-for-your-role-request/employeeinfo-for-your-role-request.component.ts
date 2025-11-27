@@ -19,11 +19,12 @@ import { EMPLOYEEINFO } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { SignalsService } from '../../../../services/signals.service';
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-employeeinfo-for-your-role-request',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
   templateUrl: './employeeinfo-for-your-role-request.component.html',
   styleUrl: './employeeinfo-for-your-role-request.component.scss'
 })
@@ -104,7 +105,18 @@ export class EmployeeinfoForYourRoleRequestComponent {
 
     this.intializeApproveForm();
   }
-
+  showdate(data:any):boolean{
+    if(data?.sourceFieldName =='Dob' && data.oldValue && data.oldValue!='-'){
+      return true
+    }
+    return false
+  }
+  showdatefornew(data:any):boolean{
+  if(data?.sourceFieldName =='Dob' && data.newValue && data.newValue!='-'){
+      return true
+    }
+    return false
+  }
   intializeApproveForm() {
     this.timeSheetApproveForm = this.fb.group({
       comments: [null, [Validators.required, Validators.maxLength(250)]]
@@ -193,6 +205,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
                 fieldName: fieldname.fieldName,
                 oldValue: fieldname.oldValue,
                 newValue: fieldname.newValue,
+                sourceFieldName: fieldname.sourceFieldName,
                 requestedDate: fieldname.createdDate,
                 headerId: entry.employeeFieldHeader?.headerId,
                 moduleName: entry.employeeFieldHeader?.moduleName,
@@ -372,9 +385,10 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
-        
           this.http.triggerActionSignal();
            this.signalService.employeinfoDetailsTriggerSignal.set(true);
+           this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
+           this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
              this.getAllPendingApprovals();
         },
       });
@@ -461,6 +475,8 @@ loadClientsAndProjects(page: number, pageSize: number): void {
          
           this.http.triggerActionSignal();
           this.signalService.employeinfoDetailsTriggerSignal.set(true);
+          this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
+           this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
             this.getAllPendingApprovals();
          
 

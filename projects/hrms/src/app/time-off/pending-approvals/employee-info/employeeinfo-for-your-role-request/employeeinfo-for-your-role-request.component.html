@@ -76,9 +76,23 @@
                       </td>
 
                       <td>{{ entry.fieldName }}</td>
-                      <td>{{ entry.requestedDate | date }}</td>
-                      <td>{{ entry.oldValue }}</td>
-                      <td>{{ entry.newValue }}</td>                     
+                      <td>{{ entry.requestedDate | dateformat }}</td>
+                      <td>
+                        @if(showdate(entry)){
+                        {{ entry.oldValue ? (entry.oldValue | dateformat) : "-" }}
+                       }
+                       @else{
+                        {{ entry.oldValue ? entry.oldValue : "-" }}
+                       }
+                      </td>
+                      <td>
+                        @if(showdatefornew(entry)){
+                        {{ entry.newValue ? (entry.newValue | dateformat) : "-" }}
+                       }
+                       @else{
+                        {{ entry.newValue ? entry.newValue : "-" }}
+                       }
+                      </td>                     
                       @if (showhideaction) {
                         <td>
                           <div class="d-flex justify-content-center gap-3">

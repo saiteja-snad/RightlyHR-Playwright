@@ -19,11 +19,12 @@ import { EMPLOYEEINFO } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { SignalsService } from '../../../../services/signals.service';
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-employeeinfo-for-you-request',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
   templateUrl: './employeeinfo-for-you-request.component.html',
   styleUrl: './employeeinfo-for-you-request.component.scss'
 })
@@ -213,6 +214,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
                   fieldName: fieldname.fieldName,
                   oldValue: fieldname.oldValue,
                   newValue: fieldname.newValue,
+                  sourceFieldName: fieldname.sourceFieldName,
                   requestedDate: fieldname.createdDate,
                   headerId: entry.employeeFieldHeader?.headerId,
                   moduleName: entry.employeeFieldHeader?.moduleName,
@@ -377,6 +379,10 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
             });
             setTimeout(() => modalRef.close(), 3000);
           }
+             this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              employeinfo: true,
+            }));
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -397,6 +403,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
           
           this.http.triggerActionSignal();
            this.signalService.employeinfoDetailsTriggerSignal.set(true);
+           this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
+           this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
             this.getAllPendingApprovals();
         },
       });
@@ -483,6 +491,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
           this.signalService.employeinfoDetailsTriggerSignal.set(true);
+          this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
+           this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
         },
       });
     }
@@ -552,6 +562,18 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
       this.selectedMap = {};
     }
     this.syncGlobalSelectedEntries();
+  }
+    showdate(data:any):boolean{
+    if(data?.sourceFieldName =='Dob' && data.oldValue && data.oldValue!='-'){
+      return true
+    }
+    return false
+  }
+  showdatefornew(data:any):boolean{
+  if(data?.sourceFieldName =='Dob' && data.newValue && data.newValue!='-'){
+      return true
+    }
+    return false
   }
   // destroy the component
 

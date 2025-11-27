@@ -9,7 +9,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
-import { SearchfilterPipe } from '../../../pipes/searchfilter.pipe';
+import { SearchfilterPipe } from '../../../Pipes/searchfilter.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';

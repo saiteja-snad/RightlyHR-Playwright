@@ -1014,6 +1014,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Desk Details',
     'Employee Info Asset Details',
     'Employee Info Separation Request',
+    'Employee Info My Team Members Tab',
     'No Due Form',
     'Employee Info Contract Conversion Request',
     'Employee Info Card Details'

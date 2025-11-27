@@ -508,6 +508,7 @@ export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
   { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team-members' },
+  { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/my-team-members' },
   { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/tranee-onboarding-requests' },
   { permission: 'Employee Info Documents Verification.view', route: '/personalinfo/job/onboarding-verification' }
 ];

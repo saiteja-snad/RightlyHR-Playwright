@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-my-info-team-numbers-tab',
@@ -13,11 +14,11 @@ import { RouterModule } from '@angular/router';
 export class MyInfoTeamNumbersTabComponent {
    filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'My Team Members', link: '/myinfo/job/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
-    { label: 'Reporting Manager ', link: '/myinfo/job/my-team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
+    { label: 'My Team View', link: '/myinfo/job/my-team-members',icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
+    { label: 'Team Overview', link: '/myinfo/job/team-members',icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } },
   ];
 
-  constructor(public rbac: RbacService) { }
+  constructor(public rbac: RbacService,private router: Router,private accessNav: AccessNavigationService) { }
  ngOnInit(): void {
     // this.filterTabsByRbac();
     this.navTabs = this.navTabs.filter(
@@ -38,5 +39,18 @@ export class MyInfoTeamNumbersTabComponent {
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+  }
+
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
   }
 }

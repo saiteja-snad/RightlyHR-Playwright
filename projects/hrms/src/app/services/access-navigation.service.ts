@@ -827,6 +827,13 @@ export class AccessNavigationService {
         //   return (route = '/personalinfo/team-members');
         // }
 
+        if (this.rbac.allowedToAccess('Employee Info My Team Members Tab.view')) {
+          return (route = '/personalinfo/job/my-team-members');
+        }
+        if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
+          return (route = '/personalinfo/job/team-members');
+        }
+
         if (
           this.rbac.allowedToAccess('Employee Info Onboard Request Tab.view')
         ) {
@@ -902,6 +909,18 @@ export class AccessNavigationService {
       case '/myinfo/team/my-team-members':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
           return (route = '/myinfo/team/my-team-members');
+        }
+        break;
+
+        case '/myinfo/job/team-members':
+        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
+          return (route = '/myinfo/job/team-members');
+        }
+        break;
+
+        case '/myinfo/job/my-team-members':
+        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
+          return (route = '/myinfo/job/my-team-members');
         }
         break;
 
@@ -1958,6 +1977,8 @@ export class AccessNavigationService {
         }
         break;
 
+        
+
       case '/personalinfo/documents':
         if (
           this.rbac.allowedToAccess('Employee Info Documents Tab.view') ||
@@ -1989,6 +2010,18 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        break;
+
+        case '/personalinfo/job/team-members':
+        if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
+          return (route = '/personalinfo/job/team-members');
+        }
+        break;
+
+        case '/personalinfo/job/my-team-members':
+        if (this.rbac.allowedToAccess('Employee Info My Team Members Tab.view')) {
+          return (route = '/personalinfo/job/my-team-members');
         }
         break;
     }

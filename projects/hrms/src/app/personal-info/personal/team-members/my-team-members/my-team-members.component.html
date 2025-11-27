@@ -1,13 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <span class="component-sub-header">Team Members</span>
+            <span class="component-sub-header">My Team View</span>
         </div>
 
     </div>
     <div class="main-content d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
-          <div *ngIf="isActive('/personalinfo')">
+            <div *ngIf="isActive('/personalinfo')">
                 <app-team-members-tabs />
             </div>
 
@@ -16,70 +16,72 @@
                 <app-my-info-team-numbers-tab />
             </div>
         </div>
-        <!--Input search-->
-        <div class="w-100">
-  
+        <div class="client-detailed-content">
+            @if(!contentLoader) {
+            <div class="custom-accordians">
+                <div class="custom-accordian-data-content">
+                    @if(teamData?.length > 0){
+                    <p-accordion>
+                        <p-accordion-panel *ngFor="let team of teamData; let i = index" [value]="i">
+                            <p-accordion-header>
+                                <div class="accordian-header-text text-truncate">{{team?.firstName}} {{team.middleName}}
+                                    {{team?.lastName}} ({{team?.fusionEmpId ?? '-'}})</div>
+                                <!-- <div class="total-hrs-text text-truncate"><span class="total-hrs me-2">Total Logged Hours:</span>
+                            <span class="hrs-text">{{team?.project?.spentHours }} Hrs</span>
+                        </div> -->
 
-            <div class="custom-table-content ">
+                            </p-accordion-header>
 
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th>Employee ID</th>
-                            <th>Employee Name</th>
-                            <th>Work Email</th>
-                            <th>Phone Number</th>
-                            <!-- <th>Employee Job Details</th> -->
+                            <p-accordion-content>
+                                <div class="custom-p-multi-select-table custom-accordian-table"> <p-table
+                                        [value]="team?.children">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Employee ID</th>
+                                                <th>Employee Name</th>
+                                                <th>Work Email</th>
+                                                <th>Phone Number</th>
+                                            </tr>
+                                        </ng-template>
 
-                        </tr>
-                    </thead>
-                </table>
-                    <!-- <tbody
-                    *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
-                    <ng-container *ngIf="filteredMembers.length > 0; else noData">
-                        <tr *ngFor="let details of filteredMembers">
-                            <td>{{ details.fusionEmpId || 'N/A' }}</td>
-                            <td>
-                                <a [ngClass]="{'select-item cursor': details.isAccess}"
-                                    (click)="details.isAccess && select(details)">
-                                    {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}</a>
-                            </td>
-                            <td>{{ details.workEmail || 'N/A' }}</td>
-                            <td class="text-nowrap">{{details.mobilePhoneCountryCode}} {{ details.contactnumber || 'N/A'
-                                }}
-                            </td>
-                            @if(canAccess('update','team-managers')) {
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu py-0">
-                                        @if(canAccess('update','team-managers')) {
-                                        <li (click)="assigintm(changetmmodalforsingle, details)">
-                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
-                                        </li>
-                                        }
-                                        @if(canAccess('update','team-members')) {
-                                        <li (click)="openModal(changermmodal,details)">
-                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
-                                        </li>
-                                        }
-                                    </ul>
+                                        <ng-template pTemplate="body" let-entry>
+                                            <tr>
+                                                <td>{{entry.fusionEmpId ?? '-'}}</td>
+                                                <td>{{entry.firstName}} {{entry.middleName}} {{entry.lastName}}</td>
+                                                <td>{{entry.workEmail ?? '-'}}</td>
+                                                <td>{{entry.mobilePhoneCountryCode}} {{entry.contactnumber ?? '-'}}</td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
                                 </div>
-                            </td>
-                            }
-                        </tr>
-                    </ng-container>
-                </tbody>
-                <ng-template #noData>
+                            </p-accordion-content>
+                        </p-accordion-panel>
+
+                    </p-accordion>
+                    }@else {
+                    <app-no-data-found />
+                    }
+                </div>
+            </div>
+            }@else {
+            <p-table [value]="[1,2,3,4,5,6,7]" [tableStyle]="{'min-width':'50rem'}">
+                <ng-template pTemplate="header">
                     <tr>
-                        <app-no-data-found />
+                        <th *ngFor="let h of [1]">
+                            <p-skeleton width="100%" height="1rem" styleClass="mb-2"></p-skeleton>
+                        </th>
                     </tr>
                 </ng-template>
-            </table>
-           -->
-            </div>
+
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td *ngFor="let col of [1]">
+                            <p-skeleton width="100%" styleClass="mb-2" height="1.2rem"></p-skeleton>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            }
         </div>
     </div>
 

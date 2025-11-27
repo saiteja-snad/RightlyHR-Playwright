@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { RbacService } from '../../../services/rbac.service';
 import { HttpService } from '../../../services/http.service';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -14,6 +14,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 
 interface ApprovalItem {
@@ -25,6 +26,7 @@ interface ApprovalItem {
   itemId: number;
   headerId: number;
   sourceFieldName:string;
+  comments?:string;
 }
 
 interface ModuleData {
@@ -44,7 +46,9 @@ interface ModuleData {
     DataLoaderContentComponent,
     TooltipModule,
     NoDataFoundComponent,
-    DateformatPipe
+    DateformatPipe,
+    InfoIconComponent,
+    NgbPopoverModule
 ],
   templateUrl: './personal-approvals.component.html',
   styleUrls: ['./personal-approvals.component.scss'],
@@ -170,7 +174,8 @@ export class PersonalApprovalsComponent implements OnInit {
                 createdDate: item.createdDate,
                 itemId: item.itemId,
                 headerId: header.headerId,
-                sourceFieldName:item.sourceFieldName
+                sourceFieldName:item.sourceFieldName,
+                comments:item.comments
               });
             });
           });

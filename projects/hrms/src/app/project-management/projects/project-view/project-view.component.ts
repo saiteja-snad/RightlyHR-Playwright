@@ -311,9 +311,9 @@ onPhaseDateClear() {
     this.selectedResourceRoles = [];
     this.selectedResourcePhases = [];
     this.selectedResourceAuthorities = [];
-    this.http.clearResourceRoleFilter();
-    this.http.clearResourcePhaseFilter();
-    this.http.clearResourceAuthorityFilter();
+    this.http.setResourceRoleFilter([]);
+    this.http.setResourcePhaseFilter([]);
+    this.http.setResourceAuthorityFilter([]);
   }
 
   isResourceFilterApplied(): boolean {

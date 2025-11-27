@@ -7,7 +7,14 @@
     </div>
     <div class="main-content d-flex w-100 gap-3">
         <div class="component-left-tabs-container">
-            <app-team-members-tabs />
+          <div *ngIf="isActive('/personalinfo')">
+                <app-team-members-tabs />
+            </div>
+
+
+            <div *ngIf="isActive('/myinfo')">
+                <app-my-info-team-numbers-tab />
+            </div>
         </div>
         <!--Input search-->
         <div class="w-100">

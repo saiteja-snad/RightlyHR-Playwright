@@ -19,6 +19,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TeamMembersTabsComponent } from "../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
+import { MyInfoTeamNumbersTabComponent } from "../../../shared/myinfo-tabs/my-info-team-numbers-tab/my-info-team-numbers-tab.component";
 
 @Component({
   selector: 'app-team-members',
@@ -33,7 +34,8 @@ import { TeamMembersTabsComponent } from "../../../shared/personalinfo-tabs/team
     ReactiveFormsModule,
     DateformatPipe,
     DataLoaderContentComponent,
-    TeamMembersTabsComponent
+    TeamMembersTabsComponent,
+    MyInfoTeamNumbersTabComponent
 ],
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
@@ -109,6 +111,10 @@ export class TeamMembersComponent implements OnInit, OnDestroy {
 
 
 
+  }
+
+    isActive(route: string): boolean {
+    return this.router.url.includes(route);
   }
 
   clearData() {

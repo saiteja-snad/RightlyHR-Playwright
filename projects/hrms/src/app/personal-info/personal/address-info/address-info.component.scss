@@ -17,4 +17,9 @@ input:focus,select:focus,.form-check-input {
 input[type="text"] {
     text-transform: capitalize;
 }
+.info-pending {
+  color: #0b3a83 !important;
+  padding-left: 0.25rem;
+  cursor: pointer;
+}
  

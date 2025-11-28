@@ -17,11 +17,10 @@ export class TeamMembersTabsComponent {
   filteredTabs: any[] = [];
   empinfo: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  navTabs: any[] = [
-    { label: 'Reports to you', link: '/personalinfo/job/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' }, count: 0 },
-    { label: 'Works with you', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' }, count: 0 },
+ navTabs: any[] = [
+    { label: 'Reports to you', link: '/personalinfo/job/team/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' }, count: 0 },
+    { label: 'Works with you', link: '/personalinfo/job/team/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' }, count: 0 },
   ];
-
   constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService, private http: HttpService) { }
 
   ngOnInit(): void {

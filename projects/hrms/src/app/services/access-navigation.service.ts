@@ -81,7 +81,8 @@ import {
   CONTRACT_APPROVALS_TABS,
   OFFBOARDING_APPROVALS_TABS,
   ONBOARDING_APPROVALS_TABS,
-  Employee_TEAM_NUMBERS
+  Employee_TEAM_NUMBERS,
+  MyINFO_TEAM_NUMBERS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -735,23 +736,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/myinfo/team/my-team-members':
-        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/team/my-team-members');
-        }
-        break;
-
-      case '/myinfo/job/team-members':
-        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/job/team-members');
-        }
-        break;
-
-      case '/myinfo/job/my-team-members':
-        if (this.rbac.allowedToAccess('My Info My Team Members Tab.view')) {
-          return (route = '/myinfo/job/my-team-members');
-        }
-        break;
+     
 
       case '/myinfo/onboarding-request':
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
@@ -1801,9 +1786,13 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/personalinfo/job/team-members':
+    
+
+        
+      case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {
+            console.log('Checking permission for route:', item.route);
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1812,6 +1801,18 @@ export class AccessNavigationService {
 
         break;
 
+
+      case '/myinfo/job/team':
+        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
+          for (const item of MyINFO_TEAM_NUMBERS) {
+            console.log('Checking permission for route:', item.route);
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        break;
 
 
     }

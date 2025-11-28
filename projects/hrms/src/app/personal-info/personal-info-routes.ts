@@ -45,8 +45,9 @@ export default [
       { path: 'cards', loadComponent: () => import('./job/card-details/card-details.component').then(m => m.CardDetailsComponent) },
       {
         path: 'team', children: [
+            { path: 'my-team-members', loadComponent: () => import('./personal/team-members/my-team-members/my-team-members.component').then(m => m.MyTeamMembersComponent), data: { permission: 'Employee Info My Team Members Tab.view' } },
           { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent), data: { permission: 'Employee Info Team Members Tab.view' } },
-          { path: 'my-team-members', loadComponent: () => import('./personal/team-members/my-team-members/my-team-members.component').then(m => m.MyTeamMembersComponent), data: { permission: 'Employee Info My Team Members Tab.view' } },
+        
         ]
       }
 

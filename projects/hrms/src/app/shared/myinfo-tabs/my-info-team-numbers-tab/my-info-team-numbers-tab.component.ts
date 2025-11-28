@@ -18,8 +18,8 @@ export class MyInfoTeamNumbersTabComponent {
   empinfo: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
-    { label: 'Reports to you', link: '/myinfo/job/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info My Team Members Tab', action: 'view' }, count: 0 },
-    { label: 'Works with you', link: '/myinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' }, count: 0 },
+    { label: 'Reports to you', link: '/myinfo/job/team/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info My Team Members Tab', action: 'view' }, count: 0 },
+    { label: 'Works with you', link: '/myinfo/job/team/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' }, count: 0 },
   ];
 
   constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService, private http: HttpService) { }

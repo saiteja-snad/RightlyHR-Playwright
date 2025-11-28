@@ -12,8 +12,8 @@
 
     .accordian-list-item {
         width: 100%;
-        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-        border: 1px solid #DCE3E9;
+        background: linear-gradient(180deg, #FFFFFF 0%, var(--module-accordian-bg-color) 100%);
+        border: 1px solid var(--content-border-color);
         padding: 1rem;
         border-radius: 0.625rem;
         cursor: pointer;

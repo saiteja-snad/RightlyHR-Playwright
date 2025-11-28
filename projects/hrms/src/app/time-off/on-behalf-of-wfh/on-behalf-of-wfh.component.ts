@@ -17,24 +17,16 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { AuthService } from '../../services/auth.service';
 import { OnBehalfOfWfhTabsComponent } from "../../shared/time-off-module-tabs/on-behalf-of-wfh-tabs/on-behalf-of-wfh-tabs.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-on-behalf-of-wfh',
-  imports: [
-    CommonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    DropdownModule,
-    Select,
-    ModuleInformationComponent,
-    NgbPopoverModule,
-    FormsModule,
-    OnBehalfOfWfhTabsComponent,
-  ],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule, 
+    Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfWfhTabsComponent, ModuleInfoIconComponent],
   templateUrl: './on-behalf-of-wfh.component.html',
   styleUrl: './on-behalf-of-wfh.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   Workfromhome = [] as any;
@@ -47,16 +39,9 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   selectedEmpFusionId!: string;
   today: string = new Date().toISOString().split('T')[0];
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService: OpenModalService,
-    public rbac: RbacService,
-    public formsValidation: FormValidationsService,
-    public readonly router: Router,
-    private authService: AuthService
-  ) {}
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
+    private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService, 
+    public readonly router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -90,8 +75,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/on-behalf-of/on-behalf-of-wfh':
-        MODULE_INFOS.ON_BEHALF_OF_WFH_MODULE_INFO,
+      '/on-behalf-of/on-behalf-of-wfh': MODULE_INFOS.ON_BEHALF_OF_WFH_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)
@@ -102,82 +86,59 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   // Method to get the Active employees list
   getEmployeeId() {
     let loggedInUser = this.authService.getToken();
-    this.http
-      .getData('Employeedata/ActiveEmployees')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.employeeiddetails = data
-            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
-            .map((emp: any) => {
-              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-              const fullName = `${fusionPart}${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''}`.trim();
-              const leaveRequestName = `${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''} ${
-                emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
-              }`.trim();
-              return {
-                ...emp,
-                fullName,
-                leaveRequestName,
-              };
+    this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
+          const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+          const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}`.trim();
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''} 
+          ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : '' }`.trim();
+          return {
+            ...emp,
+            fullName,
+            leaveRequestName,
+          };
+        })
+        // Alphabetical sorting by firstName
+          .sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', {
+              sensitivity: 'base',
             })
-
-            // Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', {
-                sensitivity: 'base',
-              })
-            );
+          );
         },
         error: (reason: any) => {
           console.error(reason);
         },
-      });
+    });
   }
-
 
   // Method to get the Reportess list
   getMyTeam() {
     let loggedInUser = this.authService.getToken();
-    this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${loggedInUser.employeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.myTeamData = data
-            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
-            .map((emp: any) => {
-              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-              const fullName = `${fusionPart}${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''}`.trim();
-              const leaveRequestName = `${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''} ${
-                emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
-              }`.trim();
-              return {
-                ...emp,
-                fullName,
-                leaveRequestName,
-              };
+    this.http.getData(`Employeedata/getEmployeesByhierarchy/${loggedInUser.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.myTeamData = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
+          const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+          const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} 
+          ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : '' }`.trim();
+          return {
+            ...emp,
+            fullName,
+            leaveRequestName,
+          };
+        })
+        // Alphabetical sorting by firstName
+          .sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', {
+              sensitivity: 'base',
             })
-
-            // Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', {
-                sensitivity: 'base',
-              })
-            );
+          );
         },
         error: (reason: any) => {
           console.error(reason);
         },
-      });
+    });
   }
 
   openModal(content: any) {
@@ -192,17 +153,14 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
 
   getWorkfromhomeRequest(employeedId: any) {
     const year = new Date().getFullYear();
-    this.http
-      .getFilterOnBehalfWFHDataByID(employeedId, year)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.Workfromhome = response;
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.http.getFilterOnBehalfWFHDataByID(employeedId, year).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.Workfromhome = response;
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   handleAvailingChange() {
@@ -223,17 +181,11 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   onEmployeeChange(event: any): void {
     const selectedEmp = event?.value?.employeeId || 0;
     this.selectedOtherEmployee = event?.value;
-
     this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${
-      this.selectedOtherEmployee?.middleName
-        ? this.selectedOtherEmployee?.middleName + ' '
-        : ''
-    }${this.selectedOtherEmployee?.lastName ?? ''}`;
+    this.selectedOtherEmployee?.middleName ? this.selectedOtherEmployee?.middleName + ' ' : ''}${this.selectedOtherEmployee?.lastName ?? ''}`;
     this.selectedEmpFusionId = this.selectedOtherEmployee?.fusionEmpId;
-
     this.http.onBehalfOfWFHSelectedEmp$.next(selectedEmp);
     this.http.onBehlafOfWFHSignal.set(!!selectedEmp);
-
     if (selectedEmp) {
       this.getWorkfromhomeRequest(selectedEmp);
     } else {
@@ -245,7 +197,6 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
     this.selectedOtherEmployee = null;
     this.http.onBehalfOfWFHSelectedEmp$.next(null);
     this.http.onBehlafOfWFHSignal.set(false);
-    // reset your WFH data or any dependent state here if needed
   }
 
   applyWFH(addForm: FormGroup) {
@@ -265,26 +216,21 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
         requestedDate: new Date(),
       };
       this.spinnerLoader = true;
-      this.http
-        .postdata('AttendanceRequests/postWFHRequest', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'WFH processed successfully'
-            );
-            this.http.onBehlafOfWFHSignal.set(true);
-          },
-          error: (err: any) => {
-            this.spinnerLoader = false;
-            this.sharedModalService.openErrorModal(err.error.message);
-          },
-          complete: () => {
-            this.addWFHForm.reset();
-            this.spinnerLoader = false;
-          },
-        });
+      this.http.postdata('AttendanceRequests/postWFHRequest', payload).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('WFH processed successfully');
+          this.http.onBehlafOfWFHSignal.set(true);
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.sharedModalService.openErrorModal(err.error.message);
+        },
+        complete: () => {
+          this.addWFHForm.reset();
+          this.spinnerLoader = false;
+        },
+      });
     }
   }
 

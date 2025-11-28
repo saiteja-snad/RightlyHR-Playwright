@@ -17,24 +17,17 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { AuthService } from '../../services/auth.service';
 import { OnBehalfOfRemoteloginTabsComponent } from '../../shared/time-off-module-tabs/on-behalf-of-remotelogin-tabs/on-behalf-of-remotelogin-tabs.component';
-
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-on-behalf-of-remotelogin',
-  imports: [CommonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    DropdownModule,
-    Select,
-    ModuleInformationComponent,
-    NgbPopoverModule,
-    FormsModule,
-    OnBehalfOfRemoteloginTabsComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule, ModuleInfoIconComponent,
+    Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfRemoteloginTabsComponent],
   templateUrl: './on-behalf-of-remotelogin.component.html',
   styleUrl: './on-behalf-of-remotelogin.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
+
+export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   remoteLogin = [] as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -46,16 +39,9 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
   selectedEmpFusionId!: string;
   today: string = new Date().toISOString().split('T')[0];
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService: OpenModalService,
-    public rbac: RbacService,
-    public formsValidation: FormValidationsService,
-    public readonly router: Router,
-    private authService: AuthService
-  ) {}
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
+    private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService, 
+    public readonly router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -79,18 +65,15 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
 
   moduleinfo: string = '';
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/on-behalf-of/on-behalf-of-remotelogin':
-        MODULE_INFOS.ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO,
+      '/on-behalf-of/on-behalf-of-remotelogin': MODULE_INFOS.ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)
@@ -101,37 +84,26 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
   // Method to get the Active employees list
   getEmployeeId() {
     let loggedInUser = this.authService.getToken();
-    this.http
-      .getData('Employeedata/ActiveEmployees')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.employeeiddetails = data
-            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
-            .map((emp: any) => {
-              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-              const fullName = `${fusionPart}${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''}`.trim();
-              const leaveRequestName = `${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''} ${
-                emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
-              }`.trim();
-              return {
-                ...emp,
-                fullName,
-                leaveRequestName,
-              };
+    this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
+          const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+          const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}`.trim();
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''} 
+          ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : '' }`.trim();
+          return {
+            ...emp,
+            fullName,
+            leaveRequestName,
+          };
+        })
+        // Alphabetical sorting by firstName
+          .sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', {
+              sensitivity: 'base',
             })
-
-            // Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', {
-                sensitivity: 'base',
-              })
-            );
-        },
+          );
+      },
         error: (reason: any) => {
           console.error(reason);
         },
@@ -141,41 +113,30 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
   // Method to get the Reportess list
   getMyTeam() {
     let loggedInUser = this.authService.getToken();
-    this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${loggedInUser.employeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.myTeamData = data
-            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
-            .map((emp: any) => {
-              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-              const fullName = `${fusionPart}${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''}`.trim();
-              const leaveRequestName = `${emp.firstName ?? ''} ${
-                emp.middleName ? emp.middleName + ' ' : ''
-              }${emp.lastName ?? ''} ${
-                emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
-              }`.trim();
-              return {
-                ...emp,
-                fullName,
-                leaveRequestName,
-              };
+    this.http.getData(`Employeedata/getEmployeesByhierarchy/${loggedInUser.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.myTeamData = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
+          const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+          const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+          const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} 
+          ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''}`.trim();
+          return {
+            ...emp,
+            fullName,
+            leaveRequestName,
+          };
+        })
+        // Alphabetical sorting by firstName
+          .sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', {
+              sensitivity: 'base',
             })
-
-            // Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', {
-                sensitivity: 'base',
-              })
-            );
+          );
         },
         error: (reason: any) => {
           console.error(reason);
         },
-      });
+    });
   }
 
   openModal(content: any) {
@@ -190,17 +151,14 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
 
   getRemoteLoginRequest(employeedId: any) {
     const year = new Date().getFullYear();
-    this.http
-      .getFilterOnBehalfRemoteLoginDataByID(employeedId, year)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.remoteLogin = response;
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.http.getFilterOnBehalfRemoteLoginDataByID(employeedId, year).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.remoteLogin = response;
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   handleAvailingChange() {
@@ -221,17 +179,11 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
   onEmployeeChange(event: any): void {
     const selectedEmp = event?.value?.employeeId || 0;
     this.selectedOtherEmployee = event?.value;
-
-    this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${
-      this.selectedOtherEmployee?.middleName
-        ? this.selectedOtherEmployee?.middleName + ' '
-        : ''
-    }${this.selectedOtherEmployee?.lastName ?? ''}`;
+    this.selectedEmpName = `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName 
+      ? this.selectedOtherEmployee?.middleName + ' ' : '' }${this.selectedOtherEmployee?.lastName ?? ''}`;
     this.selectedEmpFusionId = this.selectedOtherEmployee?.fusionEmpId;
-
     this.http.onBehalfOfRemoteLoginSelectedEmp$.next(selectedEmp);
     this.http.onBehlafOfRemoteLoginSignal.set(!!selectedEmp);
-
     if (selectedEmp) {
       this.getRemoteLoginRequest(selectedEmp);
     } else {
@@ -263,26 +215,21 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
         requestedDate: new Date(),
       };
       this.spinnerLoader = true;
-      this.http
-        .postdata('AttendanceRequests/postRemoteLoginRequest', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Remote login processed successfully'
-            );
-            this.http.onBehlafOfRemoteLoginSignal.set(true);
-          },
-          error: (err: any) => {
-            this.spinnerLoader = false;
-            this.sharedModalService.openErrorModal(err.error.message);
-          },
-          complete: () => {
-            this.addRemoteLoginForm.reset();
-            this.spinnerLoader = false;
-          },
-        });
+      this.http.postdata('AttendanceRequests/postRemoteLoginRequest', payload).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('Remote login processed successfully');
+          this.http.onBehlafOfRemoteLoginSignal.set(true);
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.sharedModalService.openErrorModal(err.error.message);
+        },
+        complete: () => {
+          this.addRemoteLoginForm.reset();
+          this.spinnerLoader = false;
+        },
+      });
     }
   }
 

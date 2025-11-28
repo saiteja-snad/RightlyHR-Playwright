@@ -85,7 +85,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   constructor(private http: HttpService, private authService: AuthService, private router: Router,
     public rbac: RbacService, private modalService: NgbModal, private fb: FormBuilder,
     private conformationPopup: OpenModalService, private route: ActivatedRoute,
-    public fieldpremission: AccessForEmployeeinfoService, private accessNav: AccessNavigationService) {}
+    public fieldpremission: AccessForEmployeeinfoService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
@@ -109,17 +109,17 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.emppersonalinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.getTraineeofferdetails();
     this.assignHeading();
-    
-    this.initiateUpdateModuleInfo();
     this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+
     this.getofferdetails();
     this.getTraineeofferdetails();
     this.setBasePath();
     this.buildTabs();
     this.fetchApprovalHistory();
-     this.http.basicDetailesadded$.subscribe(() => {
-        this.fetchApprovalHistory();
-      });
+    this.http.basicDetailesadded$.subscribe(() => {
+      this.fetchApprovalHistory();
+    });
   }
 
   fetchApprovalHistory() {
@@ -142,14 +142,14 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   get fullName(): string {
-  return [
-    this.emppersonalinfo.firstName,
-    this.emppersonalinfo.middleName,
-    this.emppersonalinfo.lastName
-  ]
-    .filter(n => n)
-    .join(' ');
-}
+    return [
+      this.emppersonalinfo.firstName,
+      this.emppersonalinfo.middleName,
+      this.emppersonalinfo.lastName
+    ]
+      .filter(n => n)
+      .join(' ');
+  }
 
 
   hasHistory(): boolean {
@@ -206,11 +206,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   isInsideApprovals(): boolean {
-  const url = this.router.url.toLowerCase();
-  return url.includes('/approvals/personal') ||
-         url.includes('/approvals/job') ||
-         url.includes('/approvals/documents');
-}
+    const url = this.router.url.toLowerCase();
+    return url.includes('/approvals/personal') ||
+      url.includes('/approvals/job') ||
+      url.includes('/approvals/documents');
+  }
 
 
   getEmployeeId(): void {
@@ -341,9 +341,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
                 lastName: any;
               }) => ({
                 ...emp,
-                name: `${emp.fusionEmpId} - ${emp.firstName} ${
-                  emp.middleName ? emp.middleName + ' ' : ''
-                }${emp.lastName}`,
+                name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''
+                  }${emp.lastName}`,
               })
             );
         },
@@ -359,9 +358,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.teamMembersdata = data.map((member: any) => ({
             ...member,
-            name: `${member.fusionEmpId} - ${member.firstName} ${
-              member.middleName ? member.middleName + ' ' : ''
-            }${member.lastName}`,
+            name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''
+              }${member.lastName}`,
           }));
         },
         error: (err: any) => console.log(err),
@@ -407,9 +405,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else if (selectedCount === 1) {
       return this.formatEmployeeName(this.firstSelectedEmployee);
     } else {
-      return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${
-        selectedCount - 1
-      }`;
+      return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${selectedCount - 1
+        }`;
     }
   }
 
@@ -496,10 +493,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http
       .postdata('JobApplicantsData/UPDATERbyEmployeeId', data)
       .subscribe({
-        next: (data: any) => {},
+        next: (data: any) => { },
         error: (reason: any) => {
           this.conformationPopup.openErrorModal('Something went wrong');
-          setTimeout(function () {}, 2000);
+          setTimeout(function () { }, 2000);
         },
       });
   }
@@ -525,14 +522,13 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   emailToEmployee() {
     let data = {
-      personName: `${this.empdata.firstName ?? ''} ${
-        this.empdata.middleName ?? ''
-      } ${this.empdata.lastName ?? ''}`,
+      personName: `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''
+        } ${this.empdata.lastName ?? ''}`,
       personEmail: this.empdata.emailaddress,
       employeeId: this.empdata.employeeId,
     };
     this.http.postdata(`CustomEmail/generateCredentialEmail`, data).subscribe({
-      next: (res: any) => {},
+      next: (res: any) => { },
       error: (error: any) => {
         console.log(error);
       },
@@ -636,8 +632,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http
       .postdata(`CustomEmail/revokeemailtomanager`, sdata)
       .subscribe({
-        next: (data: any) => {},
-        error: (err: any) => {},
+        next: (data: any) => { },
+        error: (err: any) => { },
       });
   }
 
@@ -657,7 +653,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http
       .postdata(`CustomEmail/revokeemailtoemployee`, pdata)
       .subscribe({
-        next: (data: any) => {},
+        next: (data: any) => { },
         error: (err: any) => {
           console.log(err);
         },
@@ -879,7 +875,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Works With You',
     'my-team-members': 'Reports To You',
-    'my-skills':'My Skills',
+    'my-skills': 'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
     'onboarding-details': 'Onboarding Info',
@@ -1064,9 +1060,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/approvals/documents':
         MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
     };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
-      url.includes(route)
-    );
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   resetPassword() {
@@ -1104,11 +1099,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const fileURL = window.URL.createObjectURL(res.body);
             const a = document.createElement('a');
             a.href = fileURL;
-            a.download = `EmployeeCredentials_${
-              this.empinfo.fusionEmpId
+            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId
                 ? this.empinfo.fusionEmpId
                 : this.empinfo.employeeId
-            }.xlsx`;
+              }.xlsx`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1183,11 +1177,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const fileURL = window.URL.createObjectURL(res.body);
             const a = document.createElement('a');
             a.href = fileURL;
-            a.download = `EmployeeCredentials_${
-              this.empinfo.fusionEmpId
+            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId
                 ? this.empinfo.fusionEmpId
                 : this.empinfo.employeeId
-            }.xlsx`;
+              }.xlsx`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

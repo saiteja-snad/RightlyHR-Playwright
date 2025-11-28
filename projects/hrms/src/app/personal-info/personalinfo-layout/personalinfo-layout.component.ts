@@ -980,8 +980,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/myinfo/job/employmentType':
         MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
-      '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-      '/myinfo/job/my-team-members': MODULE_INFOS.REPORT_TO,
+      '/myinfo/job/team/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/myinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
@@ -1046,8 +1046,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/trainee-onboarding-requests':
         MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
-      '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-      '/personalinfo/job/my-team-members': MODULE_INFOS.REPORT_TO,
+      '/personalinfo/job/team/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/personalinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 

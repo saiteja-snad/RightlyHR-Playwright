@@ -61,6 +61,7 @@ export class TeamTimesheetsComponent {
   clientDetails = [] as any;
   departmentDetails = [] as any;
   tmandRmDetails = [] as any;
+  previousEmployeeSelection: string[] = [];
 
   constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,
     private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
@@ -228,10 +229,10 @@ export class TeamTimesheetsComponent {
               key: 'team',
             }));
 
-          // Only add "All Employees" if there are actual employees
           if (employeeList.length > 0) {
-            this.resourcesList = employeeList;
-            this.datepickerForm.patchValue({ resourceId: [] });
+            const allEmployeesOption = { id: 'ALL_EMPLOYEES', fullName: 'All Employees', key: 'team' };
+            this.resourcesList = [allEmployeesOption, ...employeeList];
+            this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] });
           } else {
             this.resourcesList = [];
             this.datepickerForm.patchValue({ resourceId: [] });
@@ -273,10 +274,11 @@ export class TeamTimesheetsComponent {
           }));
 
           if (employeeList.length > 0) {
-            this.activeEmplist = employeeList;
+            const allEmployeesOption = { label: 'All Employees', value: 'ALL_EMPLOYEES', key: 'all' };
+            this.activeEmplist = [allEmployeesOption, ...employeeList];
             const savedFilters = this.filterService.getCurrentFilters();
             if (!savedFilters || !savedFilters.resourceId) {
-              this.datepickerForm.patchValue({ resourceId: [] });
+              this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] });
             }
           } else {
             this.activeEmplist = [];
@@ -305,11 +307,21 @@ export class TeamTimesheetsComponent {
     }
     const formValue = this.datepickerForm.value;
     this.filterService.setFilters(formValue);
-    const [startDate, endDate] = formValue.dateRange || [];
-    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : null;
-    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : null;
     const selectedIds = formValue.resourceId || [];
-    const employeeIds = selectedIds.length > 0 ? selectedIds.join(',') : null;
+    
+    let employeeIds: string | null = null;
+    if (selectedIds.includes('ALL_EMPLOYEES')) {
+      const currentList = this.rbac.allowedToAccess('All Employees (Timesheet).view') 
+        ? this.activeEmplist 
+        : this.resourcesList;
+      const allIds = currentList
+        .filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES')
+        .map((emp: any) => emp.value || emp.id);
+      employeeIds = allIds.length > 0 ? allIds.join(',') : null;
+    } else if (selectedIds.length > 0) {
+      employeeIds = selectedIds.join(',');
+    }
+    
     this.page = 1;
     this.first = 0;
     this.getteamsummary(employeeIds);
@@ -390,9 +402,28 @@ export class TeamTimesheetsComponent {
     }
   }
 
-  onEmployeeChange() {
-    // Do nothing - let user click Apply to refresh
-    // This preserves original behavior where changes only apply on Submit
+  onEmployeeChange(event: any) {
+    const selectedIds = event.value || [];
+    
+    // If both "All Employees" and individual employees are selected
+    if (selectedIds.includes('ALL_EMPLOYEES') && selectedIds.length > 1) {
+      const wasAllEmployeesSelected = this.previousEmployeeSelection.includes('ALL_EMPLOYEES');
+      
+      if (wasAllEmployeesSelected) {
+        // User added individual employee(s) while "All Employees" was selected
+        // Remove "All Employees", keep individual selections
+        const filteredIds = selectedIds.filter((id: string) => id !== 'ALL_EMPLOYEES');
+        this.datepickerForm.patchValue({ resourceId: filteredIds }, { emitEvent: false });
+        this.previousEmployeeSelection = filteredIds;
+      } else {
+        // User selected "All Employees" while individual employees were selected
+        // Keep only "All Employees"
+        this.datepickerForm.patchValue({ resourceId: ['ALL_EMPLOYEES'] }, { emitEvent: false });
+        this.previousEmployeeSelection = ['ALL_EMPLOYEES'];
+      }
+    } else {
+      this.previousEmployeeSelection = selectedIds;
+    }
   }
 
   getSelectedFilters(): any[] {

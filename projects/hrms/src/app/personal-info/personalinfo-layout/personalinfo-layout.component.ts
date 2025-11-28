@@ -1100,8 +1100,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const a = document.createElement('a');
             a.href = fileURL;
             a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId
-                ? this.empinfo.fusionEmpId
-                : this.empinfo.employeeId
+              ? this.empinfo.fusionEmpId
+              : this.empinfo.employeeId
               }.xlsx`;
             document.body.appendChild(a);
             a.click();
@@ -1178,8 +1178,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const a = document.createElement('a');
             a.href = fileURL;
             a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId
-                ? this.empinfo.fusionEmpId
-                : this.empinfo.employeeId
+              ? this.empinfo.fusionEmpId
+              : this.empinfo.employeeId
               }.xlsx`;
             document.body.appendChild(a);
             a.click();

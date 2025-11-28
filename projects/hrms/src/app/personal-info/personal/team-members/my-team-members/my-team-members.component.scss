@@ -63,3 +63,9 @@
     height: calc(100vh - 20rem) !important;
     width: 100%;
 }
+
+.no-scroll-body .p-treetable-scrollable-body {
+    max-height: auto !important;
+    height: auto !important;
+    overflow: hidden !important;
+}

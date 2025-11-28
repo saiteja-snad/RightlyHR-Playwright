@@ -13,7 +13,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import dayjs from 'dayjs';
 import { PaginatorModule } from 'primeng/paginator';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TimesheetEntry } from '../../../Interfaces/timesheetsummary';
@@ -64,11 +64,16 @@ export class TeamTimesheetsComponent {
 
   constructor(private fb: FormBuilder, private http: HttpService, public rbac: RbacService, private router: Router,
     private modalService: NgbModal, private encryptionService: EncriptdecriptService, private offcanvasService: NgbOffcanvas,
-    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService) { }
+    private filterService: TimesheetFilterService, private sharedDataService: TimesheetSharedDataService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
+    this.route.queryParams.subscribe(params => {
+      if (!params['data']) {
+        this.filterService.clearFilters();
+      }
+    });
     this.loadSavedFilters();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
@@ -175,8 +180,6 @@ export class TeamTimesheetsComponent {
     this.page = 1;
     this.first = 0;
     this.getteamsummary();
-
-    // this.closeCanvas();
   }
 
   createDatepickerForm() {
@@ -374,8 +377,8 @@ export class TeamTimesheetsComponent {
       ...this.datepickerForm.value,
       resourceId: employeeId // Pass selected employee as single value
     };
-    this.filterService.setFilters(formData);
     const encryptedData = this.encryptionService.encrypt(formData);
+    this.filterService.clearFilters();
     if (this.rbac.allowedToAccess('Team Time Sheet Summary Tab.view')) {
       this.router.navigate(['project-management/timesheet/resourcesummary'], {
         queryParams: { data: encryptedData },

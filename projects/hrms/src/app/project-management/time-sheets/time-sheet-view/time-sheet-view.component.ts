@@ -19,6 +19,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { Router } from '@angular/router';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
@@ -83,7 +84,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   errormodaldata: any;
     lockMessages: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
-    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
+    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router,
+    private encryptionService: EncriptdecriptService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -1702,9 +1704,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   navigation() {
+    const formData = {
+      resourceId: this.empdata?.employeeId,
+      dateRange: [this.start, this.end]
+    };
+    const encryptedData = this.encryptionService.encrypt(formData);
     this.router.navigate(
       ['project-management/timesheet/mysummary'],
-      { queryParams: { id: this.loggedinuser?.employeeId } }
+      { queryParams: { data: encryptedData } }
     );
   }
 

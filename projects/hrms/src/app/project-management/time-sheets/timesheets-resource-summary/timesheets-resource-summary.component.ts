@@ -300,7 +300,9 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     this.getEmployeeId(resoureID);
     this.billableChart(resoureID, formValue);
     this.timeAllocatedacrossGraph(resoureID, formValue);
-    this.closeCanvas();
+    if (this.offcanvasService.hasOpenOffcanvas()) {
+      this.closeCanvas();
+    }
   }
 
   createDatepickerForm() {
@@ -513,6 +515,14 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   isApplyDisabled(): boolean {
     const formValue = this.datepickerForm.value;
     const resourceId = formValue.resourceId;
+    const dateRange = formValue.dateRange;
+    
+    // For mysummary route, only check if date range is valid
+    if (this.isShowtimesheetformyRoute()) {
+      return !dateRange || !dateRange[0] || !dateRange[1];
+    }
+    
+    // For other routes, check both date range and employee selection
     if (this.datepickerForm.invalid || !resourceId) {
       return true;
     }

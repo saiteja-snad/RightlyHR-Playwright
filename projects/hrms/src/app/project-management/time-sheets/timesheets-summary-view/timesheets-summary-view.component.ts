@@ -228,16 +228,22 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
 
   resetForm() {
-    this.datepickerForm.patchValue({
-      projectId: null,
-      clientId: null,
-      departmentId: null,
-      tmorrmId: null
-    });
-    this.filterService.clearOnlyFilterFields();
-    this.getAllEmployeeDetails();
-    this.getResourceDetailsByManagerId();
-    // this.closeCanvas();
+    if (this.isShowtimesheetformyRoute()) {
+      const startOfMonth = dayjs().startOf('month').toDate();
+      const endOfMonth = dayjs().endOf('month').toDate();
+      this.datepickerForm.patchValue({ dateRange: [startOfMonth, endOfMonth] });
+      this.onSubmit();
+    } else {
+      this.datepickerForm.patchValue({
+        projectId: null,
+        clientId: null,
+        departmentId: null,
+        tmorrmId: null
+      });
+      this.filterService.clearOnlyFilterFields();
+      this.getAllEmployeeDetails();
+      this.getResourceDetailsByManagerId();
+    }
   }
 
   getSelectedFilters(): any[] {
@@ -416,6 +422,12 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   isApplyDisabled(): boolean {
     const formValue = this.datepickerForm.value;
     const resourceId = formValue.resourceId;
+    
+    // For mysummary route, only check if date range is valid
+    if (this.isShowtimesheetformyRoute()) {
+      return this.datepickerForm.get('dateRange')?.invalid || !formValue.dateRange;
+    }
+    
     if (this.datepickerForm.invalid || !resourceId) {
       return true;
     }
@@ -435,7 +447,9 @@ export class TimesheetsSummaryViewComponent implements OnInit,OnDestroy {
   }
 
   onSubmit() {
-    const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
+    const resoureID = this.isShowtimesheetformyRoute() 
+      ? this.empdata?.employeeId 
+      : (this.datepickerForm.get('resourceId')?.value || this.employeeId);
     const formValue = this.datepickerForm.value;
     this.filterService.setFilters(formValue);
     this.getProjectSummary(resoureID);

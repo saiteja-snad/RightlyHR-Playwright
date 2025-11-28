@@ -37,8 +37,8 @@
             </div>
           </div>
 
-          <!-- Employee Dropdown Outside Offcanvas (Single Select) -->
-          @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+          <!-- Employee Dropdown Outside Offcanvas (Single Select) - Hidden for mysummary route -->
+          @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
           <div class="d-flex gap-2 align-items-center">
             <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
             <div class="custom-p-select-content">
@@ -49,7 +49,7 @@
             </div>
           </div>
           }
-          @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
+          @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
           <div class="d-flex gap-2 align-items-center">
             <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
             <div class="custom-p-select-content">
@@ -65,7 +65,7 @@
             {{'Apply' | translate}}
           </button>
 
-          <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+          <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
             <button type="button" class="custom-btn btn-secondary position-relative"
               (click)="toggleFilters(filterContent)">
               <i class="bi bi-funnel me-2"></i>Filters

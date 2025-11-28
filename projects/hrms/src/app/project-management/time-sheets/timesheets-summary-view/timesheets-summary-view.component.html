@@ -28,6 +28,13 @@
                         Hrs</span>
                 </div>
 
+                <!-- Clear All button for mysummary route -->
+                @if(isShowtimesheetformyRoute()) {
+                <button type="button" class="custom-btn btn-secondary" (click)="resetForm()">
+                    {{'Clear All' | translate}}
+                </button>
+                }
+
                 <!-- Date Picker Outside Offcanvas -->
                 <div class="d-flex gap-2 align-items-center">
                     <label class="form-label filter-labels mt-2">{{'Select Date Range' | translate}}</label>
@@ -37,8 +44,8 @@
                     </div>
                 </div>
 
-                <!-- Employee Dropdown Outside Offcanvas (Single Select) -->
-                @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                <!-- Employee Dropdown Outside Offcanvas (Single Select) - Hidden for mysummary route -->
+                @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
                 <div class="d-flex gap-2 align-items-center">
                     <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
                     <div class="custom-p-select-content">
@@ -49,7 +56,7 @@
                     </div>
                 </div>
                 }
-                @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
+                @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
                 <div class="d-flex gap-2 align-items-center">
                     <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
                     <div class="custom-p-select-content">
@@ -65,8 +72,8 @@
                         {{'Apply' | translate}}
                     </button>
 
-
-                <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+                <!-- Hide Filters button for mysummary route -->
+                <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
                     <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
                         <i class="bi bi-funnel me-2"></i>Filters
                         <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
@@ -76,8 +83,8 @@
         </form>
     </div>
 
-    <!-- Filter Chips Display -->
-    <div class="fliter-content mb-2" *ngIf="getSelectedFilters().length > 0">
+    <!-- Filter Chips Display - Hidden for mysummary route -->
+    <div class="fliter-content mb-2" *ngIf="!isShowtimesheetformyRoute() && getSelectedFilters().length > 0">
         <div class="d-flex align-items-center gap-2 flex-wrap">
             <p-chip *ngFor="let filter of getSelectedFilters()" [label]="filter.label" 
                 [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red"/>

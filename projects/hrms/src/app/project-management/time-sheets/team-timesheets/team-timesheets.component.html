@@ -32,7 +32,7 @@
                 }
                 @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
                 <div class="d-flex gap-2 align-items-center">
-                    <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
+                    <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
                     <div class="custom-p-multiSelect-content" style="min-width: 250px;">
                         <p-multiSelect [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                             optionLabel="fullName" optionValue="id" formControlName="resourceId"

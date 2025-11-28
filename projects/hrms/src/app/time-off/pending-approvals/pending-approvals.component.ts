@@ -76,6 +76,7 @@ export class PendingApprovalsComponent implements OnInit {
       '/pending-approvals/claimsandexpenses-request': MODULE_INFOS.PENDING_APPROVALS_EXPENSES_MODULE_INFO,
       '/pending-approvals/time-sheets': MODULE_INFOS.PENDING_APPROVALS_TIMESHEET_MODULE_INFO,
       '/pending-approvals/assessmentform': MODULE_INFOS.PENDING_APPROVALS_ASSESSMENT_FORM_MODULE_INFO,
+      '/pending-approvals/employeeinfo-request': MODULE_INFOS.PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
@@ -295,6 +296,11 @@ export class PendingApprovalsComponent implements OnInit {
   isOnboardingRoute(): boolean {
     const currentUrl = this.router.url;
     return currentUrl.startsWith('/pending-approvals/on-boarding');
+  }
+
+  isEmployeeInfoRoute(): boolean {
+    const currentUrl = this.router.url;
+    return currentUrl.startsWith('/pending-approvals/employeeinfo-request');
   }
 
   ngOnDestroy(): void {

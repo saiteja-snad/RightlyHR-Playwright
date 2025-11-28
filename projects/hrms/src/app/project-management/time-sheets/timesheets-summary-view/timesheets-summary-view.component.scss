@@ -228,20 +228,6 @@
     }
 }
 
-.clear-all-btn {
-    background: none;
-    border: none;
-    text-decoration: underline;
-    padding: 0;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
-}
-
-.clear-all-btn:focus {
-    outline: none;
-}
-
 ::ng-deep .chartjs-tooltip {
     white-space: normal !important;
     word-wrap: break-word !important;

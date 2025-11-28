@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule, Router, NavigationExtras } from '@angular/router';
+import { RouterModule, Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
@@ -28,7 +28,7 @@ export class TimesheetsResourceTabsComponent {
     
   ];
 
-  constructor(private rbac: RbacService, private router: Router, 
+  constructor(private rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private filterService: TimesheetFilterService, private encryptionService: EncriptdecriptService) { }
 
   ngOnInit(): void {
@@ -66,15 +66,17 @@ export class TimesheetsResourceTabsComponent {
   }
 
   navigateWithFilters(link: string): void {
-    const savedFilters = this.filterService.getCurrentFilters();
-    if (savedFilters) {
-      const encryptedData = this.encryptionService.encrypt(savedFilters);
-      const navigationExtras: NavigationExtras = {
-        queryParams: { data: encryptedData }
-      };
-      this.router.navigate([link], navigationExtras);
+    const currentQueryParams = this.route.snapshot.queryParams;
+    if (currentQueryParams['data']) {
+      this.router.navigate([link], { queryParams: { data: currentQueryParams['data'] } });
     } else {
-      this.router.navigate([link]);
+      const savedFilters = this.filterService.getCurrentFilters();
+      if (savedFilters) {
+        const encryptedData = this.encryptionService.encrypt(savedFilters);
+        this.router.navigate([link], { queryParams: { data: encryptedData } });
+      } else {
+        this.router.navigate([link]);
+      }
     }
   }
 

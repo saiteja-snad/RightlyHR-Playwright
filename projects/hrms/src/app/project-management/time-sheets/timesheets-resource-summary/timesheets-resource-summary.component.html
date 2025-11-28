@@ -30,7 +30,6 @@
         <div class="d-flex gap-3 align-items-center">
           <!-- Date Picker Outside Offcanvas -->
           <div class="d-flex gap-2 align-items-center">
-            <label class="form-label filter-labels mt-2">{{'Select Date Range' | translate}}</label>
             <div class="custom-date-range-picker">
               <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'" selectionMode="range"
                 [showIcon]="true" [readonlyInput]="true" />
@@ -51,7 +50,7 @@
           }
           @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
           <div class="d-flex gap-2 align-items-center">
-            <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
+            <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
             <div class="custom-p-select-content">
               <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                 optionLabel="fullName" optionValue="id" formControlName="resourceId"

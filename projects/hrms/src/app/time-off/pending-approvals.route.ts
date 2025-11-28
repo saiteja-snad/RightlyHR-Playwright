@@ -43,6 +43,9 @@ import { ContractForYourRoleComponent } from './pending-approvals/contractors/co
 import { ExtraHoursRequestComponent } from './pending-approvals/extra-hours-request/extra-hours-request.component';
 import { ExtraHoursForYouComponent } from './pending-approvals/extra-hours-for-you/extra-hours-for-you.component';
 import { ExtraHoursForYourRoleComponent } from './pending-approvals/extra-hours-for-your-role/extra-hours-for-your-role.component';
+import { EmployeeinfoRequestComponent } from './pending-approvals/employee-info/employeeinfo-request/employeeinfo-request.component';
+import { EmployeeinfoForYouRequestComponent } from './pending-approvals/employee-info/employeeinfo-for-you-request/employeeinfo-for-you-request.component';
+import { EmployeeinfoForYourRoleRequestComponent } from './pending-approvals/employee-info/employeeinfo-for-your-role-request/employeeinfo-for-your-role-request.component';
 
 export default [
     // Leaves
@@ -177,4 +180,22 @@ export default [
         ]
     },
     { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
+    {
+        path: 'employeeinfo-request',
+        component: EmployeeinfoRequestComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: EmployeeinfoForYouRequestComponent,
+           data: { permission: 'For You (Employee Info).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: EmployeeinfoForYourRoleRequestComponent,
+            data: { permission: 'For Role (Employee Info).view' },
+          },
+ 
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+        ],
+      },  
 ] as Route[];

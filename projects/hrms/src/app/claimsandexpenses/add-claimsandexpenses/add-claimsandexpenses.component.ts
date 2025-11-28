@@ -448,6 +448,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
+               this.http.setnewcountDetailsforonBehalfof();
               this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.newExpenseForm.reset();
               this.router.navigate(['/claimsandexpenses/expenses/draft'])

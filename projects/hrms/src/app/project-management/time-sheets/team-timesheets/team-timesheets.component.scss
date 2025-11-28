@@ -170,7 +170,8 @@
         border-collapse: collapse;
         table-layout: fixed;
 
-        th, td {
+        th,
+        td {
             text-align: center;
             padding: 0.5rem;
             border: 1px solid #D1D8E3;
@@ -247,4 +248,32 @@
 
 .custom-text {
     font-size: var(--fontsize10) !important;
+}
+
+.timesheet-chip {
+    font-size: 8.5px !important;
+    border: 1px solid;
+    border-radius: 0.25rem;
+    line-height: 100%;
+    padding: 0.125rem;
+}
+
+.text-popover {
+    font-size: 10px !important;
+}
+
+.project-name-chip {
+    max-width: 80px; // set width you want
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chip-truncate {
+    max-width: 60px; // chip width
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

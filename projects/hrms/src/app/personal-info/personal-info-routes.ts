@@ -1,6 +1,8 @@
+import { PersonalApprovalsComponent } from './approvals-view-history/personal-approvals/personal-approvals.component';
 import { Route, } from '@angular/router';
 import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
 import { DocumentsComponent } from './documents/documents.component';
+import { ViewHistoryApprovalsLayoutComponent } from './approvals-view-history/view-history-approvals-layout/view-history-approvals-layout.component';
 
 export default [
     // { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
@@ -42,6 +44,7 @@ export default [
             { path: 'contactor-info', loadComponent: () => import('./job/contactor-info/contactor-info.component').then(m => m.ContactorInfoComponent), data: { permission: 'Employee Info Contract Details.view' }},
             { path: 'project-info', loadComponent: () => import('./job/project-info/project-info.component').then(m => m.ProjectInfoComponent), data: { permission: 'Employee Info Project Details.view' }},
             { path: 'cards', loadComponent:()=>import('./job/card-details/card-details.component').then(m=>m.CardDetailsComponent) }
+
         ]
     },
     {
@@ -51,4 +54,29 @@ export default [
             { path: 'letter-acknowledge-documents', loadComponent: () => import('./letters-acknowledgement/document-acknowledgement-tabs/document-acknowledgement-tabs.component').then((m) => m.DocumentAcknowledgementTabsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
         ]
     },
+
+
+    {
+  path: 'approvals',component:ViewHistoryApprovalsLayoutComponent,
+  children: [
+    { path: '', redirectTo: 'personal', pathMatch: 'full' },
+    { path: 'personal',
+      loadComponent: () => import('./approvals-view-history/personal-approvals/personal-approvals.component')
+        .then(m => m.PersonalApprovalsComponent),
+      data: { permission: 'My Info Personal Approval History.view' }
+    },
+    { path: 'job',
+      loadComponent: () => import('./approvals-view-history/job-approvals/job-approvals.component')
+        .then(m => m.JobApprovalsComponent),
+      data: { permission: 'My Info Job Approval History.view' }
+    },
+    { path: 'documents',
+      loadComponent: () => import('./approvals-view-history/documents-approvals/documents-approvals.component')
+        .then(m => m.DocumentsApprovalsComponent),
+      data: { permission: 'My Info Documents Approval History.view' }
+    },
+  ]
+}
+
+
 ] as Route[];

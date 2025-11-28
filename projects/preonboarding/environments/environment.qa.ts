@@ -2,7 +2,7 @@ export const environment = {
     production: false,
     
 
-    ApiUrl:'https://snadqaapi.onpremise.snadhr.com/api/',
+    ApiUrl:'https://api.qa.snad.onpremise.cluster.rightlyhr.com/api/',
 
     viewUrl:'https://sasda001.blob.core.windows.net/fusionplusqa/',
     // ApiUrl: 'https://api.fusion.snadhr.com/api/',

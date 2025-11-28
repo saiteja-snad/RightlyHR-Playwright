@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
   @if(!dataLoader){
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -6,7 +6,8 @@
         <span class="component-sub-header">Contact Info</span>
       </div>
       @if(canAccessfield('update','contact')){
-      @if(!buttons && ( employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()!=='trainee inactive' )){
+      @if(!buttons && ( employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+      employedata?.empstatus?.toLowerCase()!=='trainee inactive' )){
       <div>
         <a (click)="enableForm()"><app-edit-icon /></a>
       </div>
@@ -26,7 +27,10 @@
       <div class="row">
 
         <div class="col-lg-4 col-md-6 mb-3">
-          <label for="location" class="form-label custom-label mb-2">Work Number</label>
+          <label for="location" class="form-label custom-label mb-2">Work Number@if(isFieldPendingApproval('Work Number')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Work Number')"></i>
+            }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
@@ -57,7 +61,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Phone Number')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Phone Number')"></i>
+            }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
@@ -98,7 +105,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Personal Email')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Personal Email')"></i>
+            }</label>
           <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
             placeholder="Please enter personal email">
           <div class="error-msg"
@@ -110,15 +120,15 @@
         </div>
 
 
-           <div class="col-md-6 col-lg-4 mb-3">
+        <div class="col-md-6 col-lg-4 mb-3">
           <label for="linkedinurl" class="form-label custom-label mb-2">LinkedIn Url
-              </label>
+          </label>
           <input type="email" class="form-control custom-input" id="linkedinurl" formControlName="linkedinurl"
             placeholder="Please enter linkedIn Url">
           <div class="error-msg"
             *ngIf="contactForm.get('linkedinurl')?.invalid && contactForm.get('linkedinurl')?.touched">
             <div *ngIf="contactForm.get('linkedinurl')?.errors?.['required']">LinkedIn Url is required</div>
-            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['pattern']"> Please enter a valid  URL</div>
+            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['pattern']"> Please enter a valid URL</div>
           </div>
         </div>
 
@@ -133,7 +143,7 @@
       <p-skeleton width="8rem" height="2rem"></p-skeleton>
       <div class="d-flex gap-2">
         <p-skeleton width="2.5rem" height="2.5rem"></p-skeleton>
-   
+
       </div>
     </div>
     <form>
@@ -147,3 +157,8 @@
   </div>
   }
 </div>
+
+<!--Employee info content-->
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
+</ng-template>

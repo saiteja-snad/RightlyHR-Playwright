@@ -411,19 +411,20 @@ export class HttpService {
       responseType: 'blob',
     });
   }
-  downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string): Observable<Blob> {
+   downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string ,departmentIds?:string ,projectIds?:string): Observable<Blob> {
     let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
 
     if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
     if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
     if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
     if (skillSearch) apiUrl += `&skillSearch=${encodeURIComponent(skillSearch)}`;
+    if (departmentIds) apiUrl += `&departmentIds=${encodeURIComponent(departmentIds)}`;
+    if (projectIds) apiUrl += `&projectIds=${encodeURIComponent(projectIds)}`;
 
     return this.http.get(apiUrl, {
       responseType: 'blob',
     });
   }
-
 
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
@@ -551,6 +552,11 @@ export class HttpService {
 
   getDatabyentriyvalue(url: string, _params?: any, _param?: any) {
     const data_url = `${this.ApiUrl}${url}?entity=${_params}&attribute=${_param}`;
+    return this.http.get(data_url);
+  }
+
+  getDatabyentityvalueForFieldUpdate(url: string, _params?: any, _param?: any) {
+    const data_url = `${this.ApiUrl}${url}?tabName=${_params}&moduleName=${_param}`;
     return this.http.get(data_url);
   }
 

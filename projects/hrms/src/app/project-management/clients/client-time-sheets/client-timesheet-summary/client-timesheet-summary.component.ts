@@ -254,8 +254,8 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           return;
         }
         // Extract data from API response
-        const labels = data.map((item: any) => item.projectColor?.graphData?.code ? 
-        item.projectColor?.graphData?.code : item.projectName);
+        const labels = data.map((item: any) => item.projectColor?.graphData?.code ?
+          item.projectColor?.graphData?.code : item.projectName);
         const resourceCounts = data.map((item: any) => item.resourceCount);
         // Assign chart data
         this.projectResourceData = {
@@ -478,6 +478,9 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           const estimatedHours = chartData.map((item: any) => item.allocateHours);
           const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
           const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
+          const actualDisplay = chartData.map(
+            (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+          );
           this.estimatedVsActualData = {
             labels: labels,
             datasets: [
@@ -513,10 +516,18 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
                     const index = tooltipItems[0].dataIndex;
                     return chartData[index].name;
                   },
-                  label: (tooltipItem: any) => {
-                    const datasetLabel = tooltipItem.dataset.label || '';
-                    const value = tooltipItem.raw;
-                    return `${datasetLabel}: ${value}`;
+                  label: (context: any) => {
+                    const idx = context.dataIndex;
+                    if (context.dataset.label === 'Estimated Hours') {
+                      return `Estimated: ${estimatedHours[idx]} hrs`;
+                    }
+                    if (context.dataset.label === 'Actual Hours') {
+                      return `Actual: ${actualDisplay[idx]} hrs`;
+                    }
+                    if (context.dataset.label === 'Over Due') {
+                      return `Over Due: ${overdueHours[idx]} hrs`;
+                    }
+                    return `${context.dataset.label}: ${context.raw}`;
                   }
                 }
               }
@@ -525,7 +536,12 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
               x: {
                 stacked: false,
                 grid: { display: false },
-                ticks: { color: '#141414', font: { size: 11 } },
+                ticks: {
+                  color: '#141414', font: { size: 11 },
+                  callback: (value: any, index: number) => {
+                    return this.truncateLabel(labels[index], 12);
+                  }
+                },
               },
               y: {
                 stacked: true,
@@ -545,6 +561,10 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
         console.error('Error fetching estimated vs actual chart:', err);
       }
     });
+  }
+
+  truncateLabel(label: string, maxLength: number = 12): string {
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
@@ -571,19 +591,15 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           return;
         }
         // Utility to handle both "HH:mm" and decimal string formats
-        const convertToHours = (timeStr: string | number): number => {
-          if (!timeStr) return 0;
-          const str = timeStr.toString();
-          if (str.includes(':')) {
-            const [hours, minutes] = str.split(':').map(Number);
-            return hours + minutes / 60;
-          }
-          return parseFloat(str); // directly convert decimal string to number
+        const convertHHMMToNumber = (hhmm: string): number => {
+          if (!hhmm) return 0;
+          const [h, m] = hhmm.split(':').map(Number);
+          return Number((h + m / 60).toFixed(2));
         };
         // const chartData = response.data.data;
         const labels = chartData.map((item: any) => item.projectColor?.graphData.code ? item.projectColor?.graphData.code : item.name);
-        const billable = chartData.map((item: any) => convertToHours(item.billableHours));
-        const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
+        const billable = chartData.map((item: any) => convertHHMMToNumber(item.billableHoursHHMM));
+        const nonBillable = chartData.map((item: any) => convertHHMMToNumber(item.nonBillableHoursHHMM));
         // Assign dynamic chart data
         this.billableData = {
           labels: labels,
@@ -600,6 +616,8 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
             },
           ],
         };
+        const billableDisplay = chartData.map((i: any) => i?.billableHoursHHMM);
+        const nonBillableDisplay = chartData.map((i: any) => i?.nonBillableHoursHHMM);
         // Chart options
         this.billableOptions = {
           responsive: true,
@@ -607,7 +625,12 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
           scales: {
             x: {
               stacked: true,
-              ticks: { color: '#141414', font: { size: 11 } },
+              ticks: {
+                color: '#141414', font: { size: 11 },
+                callback: (value: any, index: number) => {
+                  return this.truncateLabel(labels[index], 12);
+                }
+              },
             },
             y: {
               stacked: true,
@@ -625,9 +648,14 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
                   return chartData[index].name;
                 },
                 label: (tooltipItem: any) => {
-                  const datasetLabel = tooltipItem.dataset.label || '';
-                  const value = tooltipItem.raw;
-                  return `${datasetLabel}: ${value}`;
+                  const idx = tooltipItem.dataIndex;
+                  if (tooltipItem.dataset.label === 'Billable Hours') {
+                    return `Billable: ${billableDisplay[idx]} hrs`;  // <-- HH:MM
+                  }
+                  if (tooltipItem.dataset.label === 'Non-Billable Hours') {
+                    return `Non-Billable: ${nonBillableDisplay[idx]} hrs`; // <-- HH:MM
+                  }
+                  return `${tooltipItem.dataset.label}: ${tooltipItem.raw} hrs`;
                 }
               }
             }

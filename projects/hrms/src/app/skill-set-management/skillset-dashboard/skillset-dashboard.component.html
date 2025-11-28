@@ -10,22 +10,21 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <div><button  type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
+            <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
 
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
                     optionValue="value" placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
                     selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
-                    (onChange)="onCheckemployeeProficiency($event.value)">
-                </p-multiselect>
+                    (onChange)="onCheckemployeeProficiency($event)" />
             </div>
+
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
-                    optionLabel="label" optionValue="value" [maxSelectedLabels]="3"
+                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills"
+                    placeholder="Please Select Skills" optionLabel="label" optionValue="value" [maxSelectedLabels]="3"
                     selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
-                    class="form-select custom-select" (onChange)="onSkillSelectionChange()">
-                </p-multiselect>
+                    class="form-select custom-select" (onChange)="onSkillSelectionChange($event)" />
             </div>
         </div>
     </div>
@@ -44,7 +43,14 @@
                         <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
                     </div>
                     <div>
-                        <div class="summary-title mb-1">{{ card.title }}</div>
+                        <div class="summary-title mb-1 d-flex align-items-center gap-1">
+                            <div>{{ card.title }}</div>
+                            <!-- INFO ICON -->
+                            <div class="module-info-content">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="card.popover" class="module-icon" />
+                                <ng-template #popoverTemplate let-text="text">{{text}}</ng-template>
+                            </div>
+                        </div>
                         <div class="summary-value">
                             <u class="view-link"><a (click)="openEnd2(contentResourceList, card)">{{card.value}}</a></u>
                         </div>
@@ -56,23 +62,18 @@
             }
 
             <!--Charts content-->
-
-
             <div class="row">
                 <!-- Top Skiils Chart -->
                 <div class="col-xl-7 col-lg-6 mb-3">
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Top 5 Trending skills</div>
-
-                            <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="topTrendingContent"
-                                    class="module-icon" />
-                                <ng-template #topTrendingContent>
-                                    <div class="module-info-text">{{topTrendingContentInfo}}</div>
-                                </ng-template>
+                            <div class="module-info-content">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="topTrendingContent" class="module-icon" />
+                                <ng-template #topTrendingContent>{{topTrendingContentInfo}}</ng-template>
                             </div>
                         </div>
+                        <!--Graph-->
                         @if(!isLoadingGraphTopSkills){
                         <ng-container *ngIf="hasTopSkillGraphData; else noData">
                             <div class="bar-chart">
@@ -96,14 +97,12 @@
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Skill Proficiency</div>
-                            <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="skillProficiencyContent"
-                                    class="module-icon" />
-                                <ng-template #skillProficiencyContent>
-                                    <div class="module-info-text">{{skillProficiencyContentInfo}}</div>
-                                </ng-template>
+                            <div class="module-info-content">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="skillProficiencyContent" class="module-icon" />
+                                <ng-template #skillProficiencyContent>{{skillProficiencyContentInfo}}</ng-template>
                             </div>
                         </div>
+                        <!--Graph-->
                         @if(!isLoadingGraphSkillProficiency){
                         <ng-container *ngIf="!hasnodata; else noData">
                             <div class="skill-chart-horizontal">
@@ -133,14 +132,12 @@
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Department Wise Skills</div>
-                            <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="departmentWiseContent"
-                                    class="module-icon" />
-                                <ng-template #departmentWiseContent>
-                                    <div class="module-info-text">{{departmentWiseContentInfo}}</div>
-                                </ng-template>
+                            <div class="module-info-content">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="departmentWiseContent" class="module-icon" />
+                                <ng-template #departmentWiseContent>{{departmentWiseContentInfo}}</ng-template>
                             </div>
                         </div>
+                        <!--Graph-->
                         @if(!isLoadingGraphDepartment){
                         <ng-container *ngIf="hasDepartmentwiseGraphData; else noData">
                             <div class="skill-chart-horizontal">
@@ -167,20 +164,15 @@
                 </div>
 
                 <!-- skill Overview table -->
-
                 <div class="col-xl-7 col-lg-6 mb-3">
                     <div class="graph-card">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <div class="graph-header">Skill Overview</div>
-                            <div>
-                                <app-module-info-icon placement="bottom" [ngbPopover]="skillOverviewContent"
-                                    class="module-icon" />
-                                <ng-template #skillOverviewContent>
-                                    <div class="module-info-text">{{skillOverviewContentInfo}}</div>
-                                </ng-template>
+                            <div class="module-info-content">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="skillOverviewContent" class="module-icon" />
+                                <ng-template #skillOverviewContent>{{skillOverviewContentInfo}}</ng-template>
                             </div>
                         </div>
-
                         <!--table content-->
                         @if (!noDataFound) {
                         <div class="custom-table-content w-100 skill-overview-table">
@@ -211,9 +203,7 @@
                                                                 }})</span>
                                                         </div>
                                                     </p-chip>
-
-                                                    <ng-container
-                                                        *ngIf="!skill.proficiencyCounts || getProficiencyKeys(skill.proficiencyCounts).length === 0">
+                                                    <ng-container *ngIf="!skill.proficiencyCounts || getProficiencyKeys(skill.proficiencyCounts).length === 0">
                                                         <span>-</span>
                                                     </ng-container>
                                                 </div>
@@ -229,7 +219,6 @@
                                     </ng-template>
                                 </tbody>
                             </table>
-
                         </div>
                         } @else {
                         <ng-template #noData>
@@ -262,7 +251,6 @@
     </div>
 
     <div class="custom-offcanvas-body p-3">
-
         <!-- Search -->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -271,7 +259,6 @@
             <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchQuery"
                 (input)="searchSubject.next(selectedSkillName)" />
         </div>
-
 
         <div *ngFor="let emp of employeeList" class="profile-content mb-2">
             <div>
@@ -282,9 +269,10 @@
                     <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
                 </ng-template>
             </div>
+
             <div class="profile-info w-100">
                 <div class="name">{{ emp.employeeName }}</div>
-                <div class="d-flex justify-content-between flex-wrap w-100">
+                <div class="d-flex justify-content-between align-items-center flex-wrap w-100">
                     <div class="designation">{{ emp.jobRole || ' ' }} - {{ emp.departmentName }}
                         <!-- <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span> -->
                     </div>
@@ -297,7 +285,7 @@
             </div>
         </div>
 
-        <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
+        <div *ngIf="!isloading && employeeList.length === 0" class="text-center custom-no-data-found text-muted py-3">
             <app-no-data-found />
         </div>
     </div>
@@ -318,6 +306,13 @@
     </div>
 
     <div class="custom-offcanvas-body p-3">
+        <div class="custom-p-multiSelect-content custom-select-width mb-3">
+            <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
+                placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
+                resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
+                (onChange)="ondepSelectionChange()" />
+        </div>
+
         <!-- Search -->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -345,8 +340,8 @@
             </div>
 
             <div class="profile-info w-100">
-                <div class="name">
-                    {{ emp.employeeName }} - ({{ emp.fusionEmployeeId }})
+                <div class="name cursor" (click)="openModal(contentEmployeeInfodetails, emp)">
+                    <u>{{ emp.employeeName }} - ({{ emp.fusionEmployeeId }})</u>
                 </div>
                 <div class="d-flex justify-content-between flex-wrap w-100">
                     <div class="designation">
@@ -355,9 +350,152 @@
                 </div>
             </div>
         </div>
-
-        <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
+        <div *ngIf="!isloading && employeeList.length === 0" class="text-center custom-no-data-found text-muted py-3">
             <app-no-data-found />
         </div>
     </div>
+</ng-template>
+
+<ng-template #contentEmployeeInfodetails let-modal ngbAutofocus>
+    <div class="custom-main-popup-container resources-list-model" ngbAutofocus>
+        <div class="custom-main-popup-content">
+            <div class="cross-btn d-flex justify-content-end mb-3">
+                <a (click)="closep(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+
+            <div class="profile-view-content text-center">
+                <div class="mb-2">
+                    <!-- Profile Image -->
+                    <ng-container *ngIf="selectedEmployee?.profileImage; else defaultIcon">
+                        <img [src]="selectedEmployee.profileImage" alt="Profile Image" class="profile-image" />
+                    </ng-container>
+
+                    <ng-template #defaultIcon>
+                        <app-profile-icon [iconWidth]="'48'" [iconHeight]="'48'"></app-profile-icon>
+                    </ng-template>
+                </div>
+                <div>
+                    <!-- Name and ID -->
+                    <p class="name mt-2 mb-1"> {{ selectedEmployee?.employee?.name }}
+                        ({{selectedEmployee?.employee?.snadEmployeeId}}) </p>
+                    <!-- Designation -->
+                    <p class="designation mb-2">{{ selectedEmployee?.employee?.employeeDesignation }} -
+                        {{selectedEmployee?.departmentDetails?.departmentName }}</p>
+                    <!-- Status -->
+                    <div class="status-badge">• {{ employeeStatusDisplay }}</div>
+                </div>
+            </div>
+
+            <div class="popup-header-border my-3"></div>
+            <!-- Tabs -->
+            <div class="custom-skill-set-tabs">
+                <p-tabs value="0" [lazy]="false">
+                    <p-tablist>
+                        <p-tab value="0">Skills</p-tab>
+                        <p-tab value="1">Projects</p-tab>
+                    </p-tablist>
+                    <!-- Skills -->
+                    <p-tabpanel value="0">
+                        <div class="skills-container custom-offcanvas-content pt-3 pe-2">
+                            @if (skillCategories?.length) {
+                            <ng-container *ngFor="let cat of skillCategories  let i = index">
+                                <!-- Category Title -->
+                                <div class="skills-group mb-4">
+                                    <div class="section-title d-flex align-items-center mb-2">
+                                        <img [src]="cat.icon" class="skill-icon me-1">
+                                        {{ cat.category }}
+                                    </div>
+                                    <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
+                                        <div *ngIf="getSkillsByLevel(level, cat.skills).length" class="mb-3">
+                                            <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">
+                                                {{ level }}
+                                            </p>
+                                            <div class="skill-set-display-card">
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <p-chip *ngFor="let skill of getSkillsByLevel(level, cat.skills)"
+                                                        [label]="skill.skillName"
+                                                        [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                                                    </p-chip>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="popup-header-border my-3" *ngIf="i < skillCategories.length - 1"></div>
+                            </ng-container>
+                            } @else {
+                            <app-no-data-found />
+                            }
+                        </div>
+                    </p-tabpanel>
+
+                    <!-- Projects -->
+                    <p-tabpanel value="1">
+                        <div class="projects-container custom-offcanvas-content pt-3 pe-2">
+                            @if (selectedEmployee?.projects?.length) {
+                            <div class="project-card mb-3" *ngFor="let proj of selectedEmployee.projects">
+                                <p class="project-name mb-1">{{ proj.projectName }}</p>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="project-role mb-0">{{ proj.projectDesignation }}</p>
+                                    </div>
+                                    <div class="offcanvas-chips">
+                                        <p-chip class="mb-0">
+                                            <a class="Phase-link" *ngIf="proj.phasesCount > 0" (click)="openModal2(projectDisplay, proj)">
+                                                Phases ({{ proj.phasesCount }})
+                                            </a>
+                                        </p-chip>
+                                    </div>
+                                </div>                   
+                            </div>
+                            } @else {
+                            <app-no-data-found />
+                            }
+                        </div>
+                    </p-tabpanel>
+                </p-tabs>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #projectDisplay let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{ selectedProject.projectName }}</p>
+      </div>
+      <div>
+        <a (click)="closePr(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Phase Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th class="text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let phase of selectedPhases; trackBy: trackByIndex">
+                <td>{{ phase.name }}</td>
+                <td>{{ phase.startDate | date:'MMM dd, yyyy' }}</td>
+                <td>{{ phase.endDate | date:'MMM dd, yyyy' }}</td>
+                <td class="text-center">
+                  <span class="status-text text-capitalize" [ngClass]="getStatusClassforPhase(phase.status)">
+                    {{ phase.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </ng-template>

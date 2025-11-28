@@ -18,6 +18,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { Skeleton } from "primeng/skeleton";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
@@ -80,7 +81,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedLeaveStatus: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

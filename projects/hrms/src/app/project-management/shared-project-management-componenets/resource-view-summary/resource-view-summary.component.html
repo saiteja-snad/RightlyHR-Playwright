@@ -8,6 +8,7 @@
                         <th class="text-center">{{'Date' | translate}}</th>
                         <th class="text-center">{{'Phase/Milestone' | translate }}</th>
                         <th class="text-center">{{'Logged Hours' | translate }}</th>
+                        <th class="text-center">{{'Approver' | translate }}</th>
                         <th class="text-center">{{'Description' | translate}}</th>
                         <th>{{'Status' | translate }}</th>
                     </thead>
@@ -18,6 +19,12 @@
                                 <td class="text-center">{{row.entries?.phaseName || "-" }}</td>
                                 <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
                                     row.dailySummary.loggedHHMM + ' ' + 'Hrs'}}</td>
+                                <td class="text-center">
+                                <ng-container *ngIf="row.entries?.finalApproverName || row.entries?.approverDesignation; else noValue">
+                                    {{ row.entries?.finalApproverName || '-' }} ({{ row.entries?.approverDesignation || '-' }})
+                                </ng-container>
+                                <ng-template #noValue>-</ng-template>
+                                </td>
                                 <td class="text-center">
                                     <ng-container *ngIf="row.entries?.summary; else noEntries">
                                         <a type="button" [ngbPopover]="description">

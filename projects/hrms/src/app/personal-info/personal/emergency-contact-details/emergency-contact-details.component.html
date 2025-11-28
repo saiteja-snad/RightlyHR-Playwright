@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
 
   @if(!loading){
   <div class="card custom-background-card mb-4">
@@ -28,7 +28,11 @@
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
+          <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>@if(isFieldPendingApproval('Primary Contact Name')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Name')"></i>
+  }</label>
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
           <div class="error-msg"
@@ -38,7 +42,11 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact1Email" class="form-label custom-label mb-2">Email ID</label>
+          <label for="contact1Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Primary Contact Email Id')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Email Id')"></i>
+  }</label>
           <input type="email" class="form-control custom-input" id="contact1Email" formControlName="contact1Email"
             placeholder="Please enter email">
           <div class="error-msg"
@@ -50,12 +58,17 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Contact Phone Number')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Phone Number')"></i>
+  }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+              class="country-input"
+             [ngClass]="{'disabled-country': isPrimaryCountryDisabled,'disabled-country-code': !buttons}"
                 [selectedCountryCode]="selectedemergencycoutrycode()" [countryListConfig]="countryListConfig"
-                class="country-input" [ngClass]="{ 'disabled-country-code': !buttons }"
                 (onCountryChange)="onCountryChange($event)">
               </lib-country-list>
             </div>
@@ -81,7 +94,11 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Primary Contact Relationship')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Primary Contact Relationship')"></i>
+  }</label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact1Relationship"
               placeholder="Please select relationship" class="form-select custom-select"></p-select>
@@ -106,7 +123,11 @@
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
+          <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Contact Name')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Name')"></i>
+  }</label>
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
           <div class="error-msg"
@@ -116,7 +137,11 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Email" class="form-label custom-label mb-2">Email ID </label>
+          <label for="contact2Email" class="form-label custom-label mb-2">Email ID@if(isFieldPendingApproval('Secondary Contact Email Id')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Email Id')"></i>
+  }</label>
           <input type="email" class="form-control custom-input" id="contact2Email" formControlName="contact2Email"
             placeholder="Please enter email">
           <div class="error-msg"
@@ -128,12 +153,16 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Contact Phone Number')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Phone Number')"></i>
+  }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                 [selectedCountryCode]="selectedemergency1coutrycode()" [countryListConfig]="countryListConfig"
-                class="country-input" [ngClass]="{ 'disabled-country-code': !buttons }"
+                class="country-input" [ngClass]="{'disabled-country': isSecondaryCountryDisabled,'disabled-country-code': !buttons}"
                 (onCountryChange)="onCountryChange1($event)">
               </lib-country-list>
             </div>
@@ -159,7 +188,11 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Secondary Contact Relationship')) {
+    <i class="bi bi-info-circle-fill info-pending"
+       [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Secondary Contact Relationship')"></i>
+  }</label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact2Relationship"
               placeholder="Please select relationship" class="form-select custom-select"></p-select>
@@ -210,4 +243,12 @@
     </form>
   </div>
 }
+</div>
+
+
+
+<div class="employee-label-info">
+  <ng-template #pendingPopover>
+    <div class="module-info-text">{{activeMessage}}</div>
+  </ng-template>
 </div>

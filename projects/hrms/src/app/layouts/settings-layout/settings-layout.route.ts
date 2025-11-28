@@ -10,6 +10,7 @@ import { ProjectManagementConfigLayoutComponent } from "../../settings/project-m
 import { AttendanceLockLayoutComponent } from "../../settings/attendance-configurations/attendance-lock-layout/attendance-lock-layout.component";
 import { ItConfigurationLayoutComponent } from "../../settings/it-configuration/it-configuration-layout/it-configuration-layout.component";
 import { TimesheetLockLayoutComponent } from "../../settings/timesheet-locking-configuration/timesheet-lock-layout/timesheet-lock-layout.component";
+import { EmployeeFieldsUpdateConfigurationsLayoutComponentComponent } from "../../settings/employee-fields-update-configuration/employee-fields-update-configurations-layout-component/employee-fields-update-configurations-layout-component.component";
 
 export default [
     { path: '', redirectTo: '/settings/overview', pathMatch: 'full' },
@@ -23,4 +24,5 @@ export default [
     { path: 'attendance-configuration', component: AttendanceLockLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/attendance-configurations/attendance-configuration.route')   },
     { path: 'it-configuration', component: ItConfigurationLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/it-configuration/it-configuration.router')   },
     { path: 'timesheet-locking-configuration', component: TimesheetLockLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/timesheet-locking-configuration/timesheet-lock-configuration.route')   },
+    { path: 'employee-fields-update-configurations', component: EmployeeFieldsUpdateConfigurationsLayoutComponentComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/employee-fields-update-configuration/employee-fields-update-configurations.route') },
 ] as Route[];

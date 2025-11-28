@@ -295,7 +295,7 @@ export class AccessNavigationService {
 
 
       case '/employee-dashboard':
-        if (this.rbac.allowedToAccess('My Info.view')) {
+        if (this.rbac.allowedToAccess('Employee Dashboard.view')) {
           return (route = '/employee-dashboard');
         }
         break;

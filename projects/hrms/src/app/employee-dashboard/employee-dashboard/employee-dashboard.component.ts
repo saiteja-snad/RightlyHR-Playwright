@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Ipersonal } from '../../Interfaces/personal-modal';
@@ -22,7 +22,7 @@ import moment from 'moment';
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class EmployeeDashboardComponent {
+export class EmployeeDashboardComponent implements OnInit {
   greetingMessage = ''
   employeedata: any;
   currentTime: Date = new Date();
@@ -44,31 +44,22 @@ export class EmployeeDashboardComponent {
   startOfWeek: any;
   endOfWeek: any;
   totalHours: any
-  constructor(
-    private http: HttpService,
-
-    private router: Router
-  ) { }
-
-  // TEAM MEMBERS
   teamMembers: any[] = [];
   birthdays: any[] = [];
 
-  // GENDER DIVERSITY
   genderTotal: number = 0;
   femaleCount: number = 0;
   maleCount: number = 0;
   weeklyWorkLogs: any[] = [];
-
-
-  teamAvailability = {
-    present: 7,
-    onLeave: 2,
-    workingRemote: 3
-  };
-
-
   anniversaries: any[] = [];
+
+
+  constructor(
+    private http: HttpService,
+    private router: Router) { }
+
+  // TEAM MEMBERS
+
   ngOnInit(): void {
     this.setIconBasedOnTime();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

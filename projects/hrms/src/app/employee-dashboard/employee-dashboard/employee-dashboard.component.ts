@@ -34,6 +34,7 @@ export class EmployeeDashboardComponent implements OnInit {
   getTeamMemberArray: any[] = [];
   categoryDetails = [] as ICategoryDetails[];
   currentMonth!: number;
+  nextMonth!: number;
   currentYear!: number;
   leavesList: any[] = [];
   eventsLoader = false;
@@ -45,7 +46,7 @@ export class EmployeeDashboardComponent implements OnInit {
   endOfWeek: any;
   totalHours: any
   teamMembers: any[] = [];
-  birthdays: any[] = [];
+  employeesBirthdays: any[] = [];
 
   genderTotal: number = 0;
   femaleCount: number = 0;
@@ -69,6 +70,7 @@ export class EmployeeDashboardComponent implements OnInit {
     this.currentTime = new Date();
     this.currentYear = new Date().getFullYear(); // e.g., 2025
     this.currentMonth = new Date().getMonth() + 1;
+    this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
     this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
     this.endOfWeek = moment().endOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
@@ -105,37 +107,37 @@ export class EmployeeDashboardComponent implements OnInit {
   }
 
 
-getAllTeammembersList() {
-  this.loading = true;
-  const EmployeeId = this.empinfo?.employeeId;
+  getAllTeammembersList() {
+    this.loading = true;
+    const EmployeeId = this.empinfo?.employeeId;
 
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe(
-      (responseData: any) => {
-        this.loading = false;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe(
+        (responseData: any) => {
+          this.loading = false;
 
-        this.teamMembers = responseData
-          .map((emp: any) => {
-            const fullName =
-              `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+          this.teamMembers = responseData
+            .map((emp: any) => {
+              const fullName =
+                `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
 
-            return {
-              name: fullName,
-              role: emp.jobRole,
-              photo: this.getImageUrl(emp.profilePic)
-            };
-          })
-          .sort((a: any, b: any) =>
-            a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
-          ); // <-- sorting applied here
-      },
-      (error) => {
-        console.error(error);
-        this.loading = false;
-      }
-    );
-}
+              return {
+                name: fullName,
+                role: emp.jobRole,
+                photo: this.getImageUrl(emp.profilePic)
+              };
+            })
+            .sort((a: any, b: any) =>
+              a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+            ); // <-- sorting applied here
+        },
+        (error) => {
+          console.error(error);
+          this.loading = false;
+        }
+      );
+  }
 
 
   private getImageUrl(imagePath: string): string | null {
@@ -150,28 +152,67 @@ getAllTeammembersList() {
     }
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
-
-  getworkanniversary() {
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`).subscribe({
+getworkanniversary() {
+  this.subscription = this.http
+    .getData(
+      `Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth},${this.nextMonth}`
+    )
+    .subscribe({
       next: (data: any) => {
-        this.anniversaries = data;
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
-  }
 
-  getbrithday() {
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`).subscribe({
-      next: (data: any) => {
-        this.birthdays = data;
+        const today = new Date();
+        const next30 = new Date();
+        next30.setDate(today.getDate() + 30); // next 30 days
+
+        this.anniversaries = data.filter((item: any) => {
+          const doj = new Date(item.dateOfJoining);
+
+          // Anniversary THIS year (ignore original joining year)
+          const anniversaryThisYear = new Date(
+            today.getFullYear(),
+            doj.getMonth(),
+            doj.getDate()
+          );
+
+          return anniversaryThisYear >= today && anniversaryThisYear <= next30;
+        });
       },
-      error: (err: any) => {
-        console.log(err);
-      },
+
+      error: (err: any) => console.log(err),
     });
-  }
+}
+
+
+
+getbrithday() {
+  this.subscription = this.http
+    .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`)
+    .subscribe({
+      next: (data: any) => {
+
+        const today = new Date();
+        const next30 = new Date();
+        next30.setDate(today.getDate() + 30); // next 30 days
+
+        this.employeesBirthdays = data.filter((item: any) => {
+          const dob = new Date(item.dob);
+
+          // birthday in CURRENT year
+          const birthdayThisYear = new Date(
+            today.getFullYear(),
+            dob.getMonth(),
+            dob.getDate()
+          );
+
+          return birthdayThisYear >= today && birthdayThisYear <= next30;
+        });
+      },
+
+      error: (err: any) => console.log(err),
+    });
+}
+
+
 
   getSuffix(num: number): string {
     if (!num) return '';
@@ -350,7 +391,7 @@ getAllTeammembersList() {
         // Chart options (same structure as your reference)
         this.genderChartOptions = {
           responsive: true,
-          maintainAspectRatio: false, 
+          maintainAspectRatio: false,
 
           indexAxis: 'y',
           plugins: {
@@ -476,7 +517,7 @@ getAllTeammembersList() {
   getWeeklyWorkLogHours() {
     this.subscription = this.http
       .getData(
-        `v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
+        `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
       )
       .subscribe({
         next: (res: any) => {

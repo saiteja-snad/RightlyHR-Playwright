@@ -246,7 +246,8 @@ export const MODULE_INFOS = {
     EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO: "The View History section allows HR/Admin to track all update requests made to personal, job, and document information. It displays previous values, requested changes, approval status, and the dates of each update for complete transparency. This helps maintain an accurate audit trail of all profile modifications.",
 
     //Team Members Module Info
-    TEAM_MEMBERS_MODULE_INFO: "Clicking on the Team Members tab will display the list of team members, with a button at the top to change the TM or RM. You can update the Reporting Manager (RM) or Team Manager (TM) for individual employees or apply changes in bulk for a group.",
+    REPORT_TO:"This tab shows the employees who report directly to you. You can view their details and search by employee ID, name, email, or phone number. Use this section to manage and track your direct reporting team.",
+    TEAM_MEMBERS_MODULE_INFO: "This tab lists employees who work with you, even if they are not your direct reports. You can search and view their contact and role details. Use this section to identify the teammates and peers you actively collaborate with.",
     Bloodbank_MODULE_INFO: "Easily access a list of employees' blood group details for emergencies. Quickly search, filter, and contact donors when needed—right within the system.",
     Contact_DIRTECROTY_INFO: "Quickly access department-wise contact details of employees. Stay connected with the right people across teams using verified email IDs and phone numbers.",
     PHONE_Book_DIRTECROTY_INFO: 'Find contact details of all employees in one place. Instantly search by name to reach out via work or personal numbers when it matters most.',

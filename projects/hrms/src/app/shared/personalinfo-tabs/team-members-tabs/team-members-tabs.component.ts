@@ -15,14 +15,14 @@ import { Subject, takeUntil } from 'rxjs';
 
 export class TeamMembersTabsComponent {
   filteredTabs: any[] = [];
-  empinfo:any;
+  empinfo: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
-    { label: 'Reports to you', link: '/personalinfo/job/my-team-members',icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' } ,count:0},
-    { label: 'Works with you', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png',permission: { feature: 'Employee Info Team Members Tab', action: 'view' },count:0 },
+    { label: 'Reports to you', link: '/personalinfo/job/my-team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info My Team Members Tab', action: 'view' }, count: 0 },
+    { label: 'Works with you', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' }, count: 0 },
   ];
 
-  constructor(public rbac: RbacService,private router: Router,private accessNav: AccessNavigationService, private http: HttpService) { }
+  constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService, private http: HttpService) { }
 
   ngOnInit(): void {
     // this.filterTabsByRbac();
@@ -38,41 +38,48 @@ export class TeamMembersTabsComponent {
     this.getEmpInfoFromRoute();
   }
   getEmpInfoFromRoute(): void {
-      const fullPath = this.router.url;
-      if (fullPath.startsWith('/personalinfo')) {
-        this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
-        this.getResourceDetails();
-        this.getAllTeammembersList();
-      } else if (fullPath.startsWith('/myinfo')) {
-        this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-        this.getResourceDetails();
-        this.getAllTeammembersList();
-      }
+    const fullPath = this.router.url;
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getResourceDetails();
+      this.getAllTeammembersList();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getResourceDetails();
+      this.getAllTeammembersList();
     }
-    myteamcount:any;
-    getResourceDetails(): void {
-        let url = `v2/Employeedata/GetReporteesAndTeamMembersReportees/${this.empinfo.employeeId}`;
-        this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (res: any) => {
-            this.navTabs[0].count = res.length;
-          },
-          error: (err:any) => {
-            
-          }
-        });
+  }
+  myteamcount: any;
+  updateTabCount(label: string, count: number) {
+    const tab = this.navTabs.find(t => t.label === label);
+    if (tab) tab.count = count;
+  }
+  getResourceDetails(): void {
+
+    let url = `v2/Employeedata/GetReporteesAndTeamMembersReportees/${this.empinfo.employeeId}`;
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const count = Array.isArray(res) ? res.length : 0;
+        this.updateTabCount('Reports to you', count);
+      },
+      error: (err: any) => {
+
       }
-  
-      getAllTeammembersList() {
-        let url = `Employeedata/getEmployeesByhierarchy/${this.empinfo.employeeId}`;
-        this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (res: any) => {
-            this.navTabs[0].count = res.length;
-          },
-          error: (err:any) => {
-            
-          }
-        });
-    }
+    });
+  }
+
+  getAllTeammembersList() {
+    let url = `Employeedata/getEmployeesByhierarchy/${this.empinfo.employeeId}`;
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        const count = Array.isArray(res) ? res.length : 0;
+        this.updateTabCount('Works with you', count);
+      },
+      error: (err: any) => {
+
+      }
+    });
+  }
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {

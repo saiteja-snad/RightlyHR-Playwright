@@ -638,6 +638,7 @@ export const permissionsData = [
   { fields: 'My Info Job Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info My Team Members Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Personal Sub Tabs Section

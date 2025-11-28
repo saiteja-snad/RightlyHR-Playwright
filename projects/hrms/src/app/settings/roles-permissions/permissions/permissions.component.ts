@@ -986,6 +986,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Job Tab',
     'My Info Documents Tab',
     'My Info Team Members Tab',
+    'My Info My Team Members Tab',
     'My Info Onboard Request Tab',
   ];
   myInfoPersonalSubTabsFields = [

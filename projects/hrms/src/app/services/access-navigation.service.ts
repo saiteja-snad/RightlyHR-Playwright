@@ -750,7 +750,7 @@ export class AccessNavigationService {
         break;
 
         case '/myinfo/job/my-team-members':
-        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
+        if (this.rbac.allowedToAccess('My Info My Team Members Tab.view')) {
           return (route = '/myinfo/job/my-team-members');
         }
         break;

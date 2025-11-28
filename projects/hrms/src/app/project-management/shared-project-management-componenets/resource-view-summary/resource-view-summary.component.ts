@@ -24,14 +24,14 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [ReactiveFormsModule, ChartModule,ModuleInfoIconComponent, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
+  imports: [ReactiveFormsModule, ChartModule, ModuleInfoIconComponent, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
     DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator, SkeletonModule],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
+export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   resourceDataids = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
@@ -117,7 +117,7 @@ export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
           dateRange: request.dateRange
         };
-         this.getProjectSummary();
+        this.getProjectSummary();
       } else {
         this.getProjectSummary();
       }

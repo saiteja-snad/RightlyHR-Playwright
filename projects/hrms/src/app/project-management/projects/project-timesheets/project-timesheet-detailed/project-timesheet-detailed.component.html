@@ -4,13 +4,11 @@
         <table class="w-100">
             <thead>
                 <tr>
-
                     <th>Resource Name</th>
                     <th class="text-center">Role</th>
                     <th class="text-center">Department</th>
                     <th class="text-center">Phases / Milestones</th>
                     <th class="text-center">Total Logged Hours</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -21,32 +19,26 @@
                             {{ project?.employee?.name }}
                         </a>
                     </td>
-
                     <td class="text-center">
                         @if(project?.roles) {
                         <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
                             <p-chip *ngFor="let role of project.roles.split(',')" [label]="role.trim()" />
                         </div>
-
-                        } @else {
-                        -
-                        }
+                        } @else { - }
                     </td>
                     <td class="text-center">
                         @if(project?.departments) {
                         <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap ">
                             <p-chip *ngFor="let dept of project.departments.split(',')" [label]="dept.trim()" />
                         </div>
-                        } @else {
-                        -
-                        }
+                        } @else { - }
                     </td>
 
-                    <td class="text-center"><a class="project-name cursor"
-                            (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">{{
-                            project?.phasesCount ?? 0 }}</a></td>
+                    <td class="text-center">
+                        <a class="project-name cursor" (click)="project?.phasesCount !== 0 && openModal(project, summaryforlogs)">
+                            {{ project?.phasesCount ?? 0 }}</a>
+                    </td>
                     <td class="text-center">{{ project?.totalLoggedHours ?? '-' }}</td>
-
                 </tr>
                 }@else {
                 <app-no-data-found />
@@ -59,7 +51,6 @@
         }
     </div>
 </div>
-
 
 <ng-template #summaryforlogs let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -77,7 +68,6 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-
                                 <th>Phase / Milestone</th>
                                 <th>Role</th>
                                 <th>Start Date</th>
@@ -88,23 +78,15 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of selectedEntries">
-
                                 <td>{{ entry?.phaseName ?? '-' }}</td>
                                 <td>{{entry?.resourceRole ?? '-'}}</td>
-                                <td>
-                                    {{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}
-                                </td>
+                                <td>{{ entry?.resourceStartDate ? (entry.resourceStartDate | dateformat) : '-' }}</td>
                                 <td>{{ entry?.resourceEndDate ? (entry.resourceEndDate | dateformat) : '-' }}</td>
-
                                 <td><b>{{ entry?.loggedHours ?? 0}}</b>/{{entry?.allocatedHours ?? 0}} Hrs</td>
-
-                                <td [ngClass]="{
-                    'active': entry?.resourceStatus?.toLowerCase() === 'active',
-                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
-                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'
-                }">
-                                <b>    {{
-                                    entry?.resourceStatus ?? '-' }}</b>
+                                <td [ngClass]="{'active': entry?.resourceStatus?.toLowerCase() === 'active',
+                                    'released': entry?.resourceStatus?.toLowerCase() === 'released',
+                                    'assigned': entry?.resourceStatus?.toLowerCase() === 'assigned'}">
+                                    <b>{{ entry?.resourceStatus ?? '-' }}</b>
                                 </td>
                             </tr>
                         </tbody>

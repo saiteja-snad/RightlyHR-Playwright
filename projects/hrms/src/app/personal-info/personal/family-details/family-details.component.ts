@@ -10,59 +10,58 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { IProbationEmployees } from '../../../Interfaces/letters-model';
 import { IJob } from '../../../Interfaces/job-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
-
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
-export class FamilyDetailsComponent implements OnInit,OnDestroy {
+
+export class FamilyDetailsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
   selectedFamilyMembername: any
-  empinfo = {} as IJob; 
+  empinfo = {} as IJob;
   familyDetailsForm!: FormGroup;
   selectedFamilyMember: any
   familyDetailsupdateForm!: FormGroup
-  selectedFamilyMemberid:any
+  selectedFamilyMemberid: any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
-  loading=false
-   employedata={} as  Ipersonal;
-     currentdata=new Date()
-  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, 
-    private http: HttpService, private fb: FormBuilder,
-    public formValidation: FormValidationService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
-  ngOnInit(): void {
+  loading = false
+  employedata = {} as Ipersonal;
+  currentdata = new Date();
 
+  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, 
+    private fb: FormBuilder, public formValidation: FormValidationService, public rbac: RbacService, 
+    public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
+
+  ngOnInit(): void {
     this.initializeFamilyDetailsForm();
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
     this.getEmpInfoFromRoute();
   }
- 
+
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
-        this.getfamilyDetailsByEmployeid();
+      this.getfamilyDetailsByEmployeid();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
-        this.getfamilyDetailsByEmployeid();
+      this.getfamilyDetailsByEmployeid();
     }
   }
 
@@ -83,6 +82,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
       isDependentupdate: [null],
     });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -90,7 +90,6 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   //post family details
   postFamilyDetails(): void {
     if (this.familyDetailsForm.valid) {
-
       const payload = {
         memberName: this.familyDetailsForm.get('memberName')?.value,
         dateOfBirth: this.familyDetailsForm.get('dateOfBirth')?.value,
@@ -105,12 +104,10 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
           this.modalService.dismissAll();
           this.getfamilyDetailsByEmployeid();
           this.conformationPopup.openSuccessModal('Family member details added successfully');
-
         },
         error: (err: any) => {
           console.error('Error saving family details:', err);
           this.conformationPopup.openErrorModal('Family members details added failed');
-
         },
       });
     } else {
@@ -120,37 +117,34 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
 
   //get family relations dropdown
   getFamilyRelations() {
-    this.subscription = this.http
-      .getData('Relationship')
-      .subscribe({
-        next: (data: any) => {
-          this.familyRelations = data as IRelation[];
-        },
-      });
+    this.subscription = this.http.getData('Relationship').subscribe({
+      next: (data: any) => {
+        this.familyRelations = data as IRelation[];
+      },
+    });
   }
 
   //get family details by employee id
   getfamilyDetailsByEmployeid() {
-    this.loading=true
+    this.loading = true
     let EmpId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http
-      .getData(`FamilyMembers/getByEmpId/${EmpId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.loading=false
-          this.familyDetailsdisplay.next(data);
-        },
-        error: (err: any) => {
-          this.loading=false
-          console.error('Error fetching family details:', err);
-        },
-      });
+    this.subscription = this.http.getData(`FamilyMembers/getByEmpId/${EmpId}`).subscribe({
+      next: (data: any) => {
+        this.loading = false
+        this.familyDetailsdisplay.next(data);
+      },
+      error: (err: any) => {
+        this.loading = false
+        console.error('Error fetching family details:', err);
+      },
+    });
   }
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.employedata = data ;
+        this.employedata = data;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -160,15 +154,13 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
 
   patchForm(data: any): void {
     this.familyDetailsForm.patchValue({
-      memberName: data.familyMemberName || '', 
-      dateOfBirth: data.familyMemberDOB || '', 
-      relationShipId: data.familyMemberRelation || '',  
-      isDependent: data.isDependent || false,  
+      memberName: data.familyMemberName || '',
+      dateOfBirth: data.familyMemberDOB || '',
+      relationShipId: data.familyMemberRelation || '',
+      isDependent: data.isDependent || false,
     });
-  
-    console.log(this.familyDetailsForm.value); 
   }
-  
+
   formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -176,31 +168,28 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  
+
   openModalupdate(content: any, familyDetail: any): void {
-    console.log(familyDetail)
     this.selectedFamilyMembername = familyDetail.relationShipName
     this.selectedFamilyMember = familyDetail.id;
     const selectedRelationship = this.familyRelations.find(
       (relation) => relation.sno === familyDetail.relationShipId
     );
-    const formattedDateOfBirth =this.formatDateToLocal(familyDetail.dateOfBirth)
-   
+    const formattedDateOfBirth = this.formatDateToLocal(familyDetail.dateOfBirth)
     this.familyDetailsupdateForm.patchValue({
       memberNameupdate: familyDetail.memberName,
       dateOfBirthupdate: formattedDateOfBirth,
       relationShipIdupdate: selectedRelationship,
       isDependentupdate: familyDetail.isDependent
     });
-
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
   updatefamilyDetails(): void {
     if (this.familyDetailsupdateForm.valid) {
       const EmpId = parseInt(this.empinfo.employeeId);
       const selectedRelationship = this.familyDetailsupdateForm.get('relationShipIdupdate')?.value;
-      console.log('Selected Relationship:', selectedRelationship);
       const payload = {
         id: this.selectedFamilyMember,
         employeeId: EmpId,
@@ -212,13 +201,11 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
         isDependent: this.familyDetailsupdateForm.get('isDependentupdate')?.value ?? false,
         isDeleted: false
       };
-
       this.subscription = this.http.postdata(`FamilyMembers/UPDATE`, payload).subscribe({
         next: (data: any) => {
           this.getfamilyDetailsByEmployeid();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Family member details updated successfully')
-
         },
         error: (err: any) => {
           console.error('Error updating family details:', err);
@@ -231,32 +218,29 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   }
 
   opendeletModal(content: any, educationDetails: any): void {
-   this.selectedFamilyMemberid=educationDetails
+    this.selectedFamilyMemberid = educationDetails
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
- 
   familyDelete() {
-    this.subscription = this.http
-      .getData(`FamilyMembers/deleteById/${this.selectedFamilyMemberid.id}`)
-      .subscribe({
-        next: (data: any) => {
-          this.modalService.dismissAll()
-          this.getfamilyDetailsByEmployeid()
-          this.conformationPopup.openSuccessModal('Family member details deleted successfully')
-        },
-        error: (err: any) => {
-          console.log(err);
-          this.conformationPopup.openErrorModal('Family members deleted failed')
-        },
-      });
-
+    this.subscription = this.http.getData(`FamilyMembers/deleteById/${this.selectedFamilyMemberid.id}`).subscribe({
+      next: (data: any) => {
+        this.modalService.dismissAll()
+        this.getfamilyDetailsByEmployeid()
+        this.conformationPopup.openSuccessModal('Family member details deleted successfully')
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.conformationPopup.openErrorModal('Family members deleted failed')
+      },
+    });
   }
-   openConfirmationModal(content: any) {
+  
+  openConfirmationModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  resetdata(){
+  resetdata() {
     this.familyDetailsForm.reset();
     this.familyDetailsupdateForm.reset();
     this.modalService.dismissAll()
@@ -267,5 +251,4 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-  
 }

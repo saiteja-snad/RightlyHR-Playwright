@@ -3,10 +3,11 @@
     <div class="heading-content">
       <div class="component-header">Contacts Directory</div>
       <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
   </div>
+  
   <!--Module Information-->
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />

@@ -15,8 +15,7 @@
 .custom-table-content {
     border: 1px solid #E1E7F2 !important;
 
-    th,
-    td {
+    th, td {
         font-size: var(--fontsize14) !important;
     }
 
@@ -48,6 +47,10 @@
     td:last-child {
         border-right: 0px !important;
     }
+
+    .p-chip {
+        background: var(--card-bg-color) !important;
+    }
 }
 
 .project-name {
@@ -60,12 +63,13 @@
 }
 
 .assigned {
- color: #F29000 !important;
-}
-.active {
-   color: #00A912 !important;
+    color: #F29000 !important;
 }
 
-.released{
-  color: #EA362C !important;
+.active {
+    color: #00A912 !important;
+}
+
+.released {
+    color: #EA362C !important;
 }

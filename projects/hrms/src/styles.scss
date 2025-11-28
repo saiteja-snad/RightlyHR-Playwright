@@ -2382,7 +2382,7 @@ input[type=number]::-webkit-outer-spin-button {
         width: 21rem;
         padding: 0.75rem 1rem;
         border-radius: 1rem;
-        border: 1px solid #DCE3E9;
+        border: 1px solid var(--content-border-color) !important;
         background-color: var(--white-color);
         display: flex;
         align-items: center;

@@ -218,11 +218,11 @@
 }
 
 .custom-table-content {
-    border: 1px solid #CCDAEC !important;
+    border: 1px solid var(--content-border-color) !important;
     height: calc(100dvh - 8rem) !important;
 
     td {
-        border: 1px solid #CCDAEC !important;
+        border: 1px solid var(--content-border-color) !important;
     }
 
     th {
@@ -250,14 +250,14 @@
 
     tbody {
         td {
-            background-color: #f1f3f8 !important;
+            background-color: var(--body-bg-color) !important;
 
             .custom-input {
                 background-color: #FFFF !important;
             }
 
             .custom-input:read-only {
-                background-color: #dde4eb !important;
+                background-color: var(--table-header-bg-color) !important;
             }
         }
 

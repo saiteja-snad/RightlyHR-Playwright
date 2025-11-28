@@ -82,6 +82,7 @@
       @if(rbac.allowedToAccess('Client Projects.view')){
       <!-- Department Name Field -->
       <div class="custom-p-multiSelect-content">
+         <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
         <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
           resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
           (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
@@ -90,6 +91,7 @@
 
       @if(rbac.allowedToAccess('Client Projects.view')) {
       <div class="custom-p-multiSelect-content">
+         <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project Type</label>
         <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
           defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
           (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
@@ -119,6 +121,7 @@
       @if(rbac.allowedToAccess('Client Projects.view')){
       <!-- Department Name Field -->
       <div class="custom-p-multiSelect-content">
+         <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
         <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
           resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
           (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
@@ -127,6 +130,7 @@
 
       @if(rbac.allowedToAccess('Client Projects.view')) {
       <div class="custom-p-multiSelect-content">
+         <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project Type</label>
         <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
           defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
           (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
@@ -145,6 +149,7 @@
       @if(rbac.allowedToAccess('Client Projects.view')){
       <!-- Department Name Field -->
       <div class="custom-p-multiSelect-content">
+         <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
         <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
           resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
           (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
@@ -153,6 +158,7 @@
 
       @if(rbac.allowedToAccess('Client Projects.view')) {
       <div class="custom-p-multiSelect-content">
+         <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project Type</label>
         <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
           defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
           (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">

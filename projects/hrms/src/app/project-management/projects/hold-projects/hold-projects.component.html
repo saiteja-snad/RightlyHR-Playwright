@@ -15,10 +15,10 @@
 
       <!-- Client Name Filter -->
       <div class="d-flex gap-2 align-items-center">
-        <label class="form-label filter-labels mt-2">{{ 'Client Name' | translate }}</label>
+        <label class="form-label filter-labels mt-2">{{ 'Select Client' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
-            defaultLabel="Select Client" [filter]="true" filterBy="clientName"
+            defaultLabel="Please select client" [filter]="true" filterBy="clientName"
             class="form-select custom-select" (onChange)="onClientChange()"
             (onClear)="selectedClients = []; getdatabaedonRoute()">
           </p-multiSelect>
@@ -28,10 +28,10 @@
 
       <!-- Department Name -->
       <div class="d-flex gap-2 align-items-center">
-        <label class="form-label filter-labels mt-2">{{ 'Department Name' | translate }}</label>
+        <label class="form-label filter-labels mt-2">{{ 'Select Department' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            defaultLabel="Select Department" [filter]="true" filterBy="departmentName"
+            defaultLabel="Please select department" [filter]="true" filterBy="departmentName"
             class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
             [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getdatabaedonRoute()">
           </p-multiSelect>
@@ -40,10 +40,10 @@
 
       <!-- Project Type -->
       <div class="d-flex gap-2 align-items-center">
-        <label class="form-label filter-labels mt-2">{{ 'Project Type' | translate }}</label>
+        <label class="form-label filter-labels mt-2">{{ 'Select Project Type' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
-            defaultLabel="Select Project Type" [filter]="true" class="form-select custom-select"
+            defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
             [(ngModel)]="selectedProjectTypes" (onChange)="onProjectTypeChange()"
             (onClear)="selectedProjectTypes = []; getdatabaedonRoute()">
           </p-multiSelect>
@@ -61,13 +61,13 @@
       [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
       <div *ngIf="isActive('/project-management/clients')" class="mb-3">
         <app-projects-side-tabs-for-clients />
-      </div>
+    </div>
 
-        <div class="main-content"
-            [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
-            <div *ngIf="isActive('/project-management/clients')" class="mb-3">
-                <app-projects-side-tabs-for-clients />
-            </div>
+    <div class="main-content"
+      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+      <div *ngIf="isActive('/project-management/clients')" class="mb-3">
+        <app-projects-side-tabs-for-clients />
+      </div>
 
             <!--Input search-->
             <div class="input-group custom-search mb-3">

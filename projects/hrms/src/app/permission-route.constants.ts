@@ -521,6 +521,11 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
 ];
 
+export const Employee_TEAM_NUMBERS=[
+  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team-members' },
+    { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/my-team-members' }
+]
+
 export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
   { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },
   { permission: 'My Info Job Approval History.view', route: 'myinfo/approvals/job' },

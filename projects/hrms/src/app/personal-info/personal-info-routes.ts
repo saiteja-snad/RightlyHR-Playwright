@@ -5,78 +5,86 @@ import { DocumentsComponent } from './documents/documents.component';
 import { ViewHistoryApprovalsLayoutComponent } from './approvals-view-history/view-history-approvals-layout/view-history-approvals-layout.component';
 
 export default [
-    // { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
-    {
-        path: 'personal', children: [
-            // { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
-            { path: 'basic-info', component: BasicInfoComponent, },
-            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent), },
-            { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent), },
-            { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent), },
-            { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent), },
-            { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent), },
-            { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent), },
-            { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
-            { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), },
-            { path: 'my-skills', loadComponent: () => import('./personal/my-skills/my-skills.component').then(m => m.MySkillsComponent), },
-        ]
-    },
-    {
-        path: 'job', children: [
-            // { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
-            { path: 'pre-onboarding-details', loadComponent: () => import('./job/pre-onboaring-details/pre-onboaring-details.component').then((m) => m.PreOnboaringDetailsComponent), data: { permission: 'Employee Info Pre-Onboarding Details.view' } },
-            { path: 'onboarding-details', loadComponent: () => import('./job/onboarding-details/onboarding-details.component').then((m) => m.OnboardingDetailsComponent), data: { permission: 'Employee Info Onboarding Details.view' } },
-            { path: 'employmentType', loadComponent: () => import('./job/offboarding-details/offboarding-details.component').then((m) => m.OffboardingDetailsComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
-            { path: 'desk-details', loadComponent: () => import('./job/desk/desk.component').then((m) => m.DeskComponent), data: { permission: 'Employee Info Desk Details.view' } },
-            { path: 'assets-details', loadComponent: () => import('./job/assets/assets.component').then((m) => m.AssetsComponent), data: { permission: 'Employee Info Asset Details.view' } },
-            { path: 'past-experiences', loadComponent: () => import('./job/previous-experince/previous-experince.component').then((m) => m.PreviousExperinceComponent), data: { permission: 'Employee Info Previous Experience Details.view' } },
-            { path: 'certifications', loadComponent: () => import('./job/certification/certification.component').then((m) => m.CertificationComponent), data: { permission: 'Employee Info Certification Details.view' } },
-            { path: 'job-details', loadComponent: () => import('./job/job-details/job-details.component').then((m) => m.JobDetailsComponent), data: { permission: 'Employee Info Job Details.view' } },
-            { path: 'compensation-details', loadComponent: () => import('./job/compensation/compensation.component').then((m) => m.CompensationComponent), data: { permission: 'Employee Info Compensation Details.view' } },
-            { path: 'no-due-clearance-details', loadComponent: () => import('./job/no-due-clearance/no-due-clearance.component').then((m) => m.NoDueClearanceComponent), data: { permission: 'Employee Info No Due Clearance Details.view' } },
-            { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), data: { permission: 'Employee Info Probation Details.view' } },
-            { path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
-            { path: 'employee-off-boarding', loadComponent: () => import('./job/employe-off-boarding/employe-off-boarding.component').then((m) => m.EmployeOffBoardingComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
-            { path: 'trainee-onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent), data: { permission: 'Employee Info Onboarding Request Details.view' } },
-            { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent), data: { permission: 'Employee Info Team Members Tab.view' } },
-            { path: 'my-team-members', loadComponent: () => import('./personal/team-members/my-team-members/my-team-members.component').then(m => m.MyTeamMembersComponent), data: { permission: 'Employee Info My Team Members Tab.view' } },
-            { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
-            { path: 'contactor-info', loadComponent: () => import('./job/contactor-info/contactor-info.component').then(m => m.ContactorInfoComponent), data: { permission: 'Employee Info Contract Details.view' }},
-            { path: 'project-info', loadComponent: () => import('./job/project-info/project-info.component').then(m => m.ProjectInfoComponent), data: { permission: 'Employee Info Project Details.view' }},
-            { path: 'cards', loadComponent:()=>import('./job/card-details/card-details.component').then(m=>m.CardDetailsComponent) }
+  // { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
+  {
+    path: 'personal', children: [
+      // { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
+      { path: 'basic-info', component: BasicInfoComponent, },
+      { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent), },
+      { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent), },
+      { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent), },
+      { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent), },
+      { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent), },
+      { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent), },
+      { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
+      { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), },
+      { path: 'my-skills', loadComponent: () => import('./personal/my-skills/my-skills.component').then(m => m.MySkillsComponent), },
+    ]
+  },
+  {
+    path: 'job', children: [
+      // { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
+      { path: 'pre-onboarding-details', loadComponent: () => import('./job/pre-onboaring-details/pre-onboaring-details.component').then((m) => m.PreOnboaringDetailsComponent), data: { permission: 'Employee Info Pre-Onboarding Details.view' } },
+      { path: 'onboarding-details', loadComponent: () => import('./job/onboarding-details/onboarding-details.component').then((m) => m.OnboardingDetailsComponent), data: { permission: 'Employee Info Onboarding Details.view' } },
+      { path: 'employmentType', loadComponent: () => import('./job/offboarding-details/offboarding-details.component').then((m) => m.OffboardingDetailsComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
+      { path: 'desk-details', loadComponent: () => import('./job/desk/desk.component').then((m) => m.DeskComponent), data: { permission: 'Employee Info Desk Details.view' } },
+      { path: 'assets-details', loadComponent: () => import('./job/assets/assets.component').then((m) => m.AssetsComponent), data: { permission: 'Employee Info Asset Details.view' } },
+      { path: 'past-experiences', loadComponent: () => import('./job/previous-experince/previous-experince.component').then((m) => m.PreviousExperinceComponent), data: { permission: 'Employee Info Previous Experience Details.view' } },
+      { path: 'certifications', loadComponent: () => import('./job/certification/certification.component').then((m) => m.CertificationComponent), data: { permission: 'Employee Info Certification Details.view' } },
+      { path: 'job-details', loadComponent: () => import('./job/job-details/job-details.component').then((m) => m.JobDetailsComponent), data: { permission: 'Employee Info Job Details.view' } },
+      { path: 'compensation-details', loadComponent: () => import('./job/compensation/compensation.component').then((m) => m.CompensationComponent), data: { permission: 'Employee Info Compensation Details.view' } },
+      { path: 'no-due-clearance-details', loadComponent: () => import('./job/no-due-clearance/no-due-clearance.component').then((m) => m.NoDueClearanceComponent), data: { permission: 'Employee Info No Due Clearance Details.view' } },
+      { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), data: { permission: 'Employee Info Probation Details.view' } },
+      { path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
+      { path: 'employee-off-boarding', loadComponent: () => import('./job/employe-off-boarding/employe-off-boarding.component').then((m) => m.EmployeOffBoardingComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
+      { path: 'trainee-onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent), data: { permission: 'Employee Info Onboarding Request Details.view' } },
 
+      { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
+      { path: 'contactor-info', loadComponent: () => import('./job/contactor-info/contactor-info.component').then(m => m.ContactorInfoComponent), data: { permission: 'Employee Info Contract Details.view' } },
+      { path: 'project-info', loadComponent: () => import('./job/project-info/project-info.component').then(m => m.ProjectInfoComponent), data: { permission: 'Employee Info Project Details.view' } },
+      { path: 'cards', loadComponent: () => import('./job/card-details/card-details.component').then(m => m.CardDetailsComponent) },
+      {
+        path: 'team', children: [
+          { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent), data: { permission: 'Employee Info Team Members Tab.view' } },
+          { path: 'my-team-members', loadComponent: () => import('./personal/team-members/my-team-members/my-team-members.component').then(m => m.MyTeamMembersComponent), data: { permission: 'Employee Info My Team Members Tab.view' } },
         ]
-    },
-    {
-        path: 'documents', children: [
-            { path: '', redirectTo: 'general-documents', pathMatch: 'full' },
-            { path: 'general-documents', loadComponent: () => import('./documents/documents.component').then((m) => m.DocumentsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
-            { path: 'letter-acknowledge-documents', loadComponent: () => import('./letters-acknowledgement/document-acknowledgement-tabs/document-acknowledgement-tabs.component').then((m) => m.DocumentAcknowledgementTabsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
-        ]
-    },
+      }
+
+    ]
+  },
+  {
+    path: 'documents', children: [
+      { path: '', redirectTo: 'general-documents', pathMatch: 'full' },
+      { path: 'general-documents', loadComponent: () => import('./documents/documents.component').then((m) => m.DocumentsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
+      { path: 'letter-acknowledge-documents', loadComponent: () => import('./letters-acknowledgement/document-acknowledgement-tabs/document-acknowledgement-tabs.component').then((m) => m.DocumentAcknowledgementTabsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
+    ]
+  },
 
 
-    {
-  path: 'approvals',component:ViewHistoryApprovalsLayoutComponent,
-  children: [
-    { path: '', redirectTo: 'personal', pathMatch: 'full' },
-    { path: 'personal',
-      loadComponent: () => import('./approvals-view-history/personal-approvals/personal-approvals.component')
-        .then(m => m.PersonalApprovalsComponent),
-      data: { permission: 'My Info Personal Approval History.view' }
-    },
-    { path: 'job',
-      loadComponent: () => import('./approvals-view-history/job-approvals/job-approvals.component')
-        .then(m => m.JobApprovalsComponent),
-      data: { permission: 'My Info Job Approval History.view' }
-    },
-    { path: 'documents',
-      loadComponent: () => import('./approvals-view-history/documents-approvals/documents-approvals.component')
-        .then(m => m.DocumentsApprovalsComponent),
-      data: { permission: 'My Info Documents Approval History.view' }
-    },
-  ]
-}
+  {
+    path: 'approvals', component: ViewHistoryApprovalsLayoutComponent,
+    children: [
+      { path: '', redirectTo: 'personal', pathMatch: 'full' },
+      {
+        path: 'personal',
+        loadComponent: () => import('./approvals-view-history/personal-approvals/personal-approvals.component')
+          .then(m => m.PersonalApprovalsComponent),
+        data: { permission: 'My Info Personal Approval History.view' }
+      },
+      {
+        path: 'job',
+        loadComponent: () => import('./approvals-view-history/job-approvals/job-approvals.component')
+          .then(m => m.JobApprovalsComponent),
+        data: { permission: 'My Info Job Approval History.view' }
+      },
+      {
+        path: 'documents',
+        loadComponent: () => import('./approvals-view-history/documents-approvals/documents-approvals.component')
+          .then(m => m.DocumentsApprovalsComponent),
+        data: { permission: 'My Info Documents Approval History.view' }
+      },
+    ]
+  }
 
 
 ] as Route[];

@@ -32,7 +32,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ResourceViewSummaryComponent implements OnInit,OnDestroy{
+export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   resourceDataids = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
@@ -285,70 +285,201 @@ private refreshData() {
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
-  estimatedActualChart() {
-    this.allocatedVsActualLoader = true;
-    const { startDate, endDate } = this.resourceDataids?.dateRange || {};
-    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
-    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    // const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
-    // const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
-    // const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+//  estimatedActualChart() {
+//   this.allocatedVsActualLoader = true;
 
-    const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+//   const { startDate, endDate } = this.resourceDataids?.dateRange || {};
+//   const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+//   const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+//   const { projectId, employeeId } = this.resourceDataids;
+
+//   const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+
+//   this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+//     next: (res: any) => {
+//       const chart = res?.data?.chart;
+//       if (!chart) {
+//         this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+//         return;
+//       }
+
+//       // Convert HH:MM to numeric hours
+//       const convertHHMMToNumber = (hhmm: string): number => {
+//         if (!hhmm) return 0;
+//         const [h, m] = hhmm.split(':').map(Number);
+//         return Number((h + m / 60).toFixed(2));
+//       };
+
+//       // Labels
+//       const labels = ['Allocated', 'Actual'];
+
+//       // Numeric values for Pie chart drawing
+//       const numericHours = [
+//         chart.allocated,
+//         convertHHMMToNumber(chart.actualHoursHHMM)
+//       ];
+
+//       // HH:MM values for display
+//       const displayHHMM = [
+//         `${chart.allocated}:00`,       // allocated returned as 300 (convert to "300:00")
+//         chart.actualHoursHHMM          // "25:00"
+//       ];
+
+//       const colors = ['#EE7956', '#5A00D8'];
+
+//       // Legend display (HH:MM format)
+//       this.estimatedVsActualData = labels.map((label, index) => ({
+//         label,
+//         value: displayHHMM[index],
+//         color: colors[index]
+//       }));
+
+//       // Assign Pie data
+//       this.estimatedVsActualGraphData = {
+//         labels,
+//         datasets: [
+//           {
+//             data: numericHours,
+//             backgroundColor: colors,
+//           }
+//         ]
+//       };
+
+//       // Tooltip override → show HH:MM format
+//       this.estimatedVsActualGraphOptions = {
+//         responsive: true,
+//         plugins: {
+//           legend: { display: false },
+//           tooltip: {
+//             callbacks: {
+//               label: (context: any) => {
+//                 const idx = context.dataIndex;
+//                 return `${labels[idx]}: ${displayHHMM[idx]} Hrs`;
+//               }
+//             }
+//           }
+//         }
+//       };
+
+//       this.allocatedVsActualLoader = false;
+//     },
+
+//     error: (err) => {
+//       this.loading = false;
+//       console.error('Error fetching estimated vs actual chart data:', err);
+//       this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+//       this.allocatedVsActualLoader = false;
+//     }
+//   });
+// }
+
+estimatedActualChart() {
+  this.allocatedVsActualLoader = true;
+
+  const { startDate, endDate } = this.resourceDataids?.dateRange || {};
+  const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+  const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+
+  const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
   const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
   const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
 
-    const { projectId, employeeId } = this.resourceDataids;
-    let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+  const { projectId, employeeId } = this.resourceDataids;
 
-    if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+
+  if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
   if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
   if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.loading = false;
-        this.allocatedVsActualLoader = false;
-        const chart = res?.data?.chart;
-        if (!chart) {
-          this.estimatedVsActualGraphData = { labels: [], datasets: [] };
-          return;
-        }
-        // Only show Allocated and Actual Hours
-        const labels = ['Allocated', 'Actual'];
-        const hours = [chart.allocated, chart.actual];
-        const colors = ['#EE7956', '#5A00D8'];
-        // Store legend data in the same variable you already use
-        this.estimatedVsActualData = labels.map((label, index) => ({
-          label: label,
-          value: hours[index],
-          color: colors[index]
-        }));
-        // Assign Pie Chart Data
-        this.estimatedVsActualGraphData = {
-          labels,
-          datasets: [
-            {
-              data: hours,
-              backgroundColor: colors,
-            }
-          ]
-        };
-        // Chart Options
-        this.estimatedVsActualGraphOptions = {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-          }
-        };
-      },
-      error: (err) => {
-        this.loading = false;
-        console.error('Error fetching estimated vs actual chart data:', err);
+
+  this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+    next: (res: any) => {
+      this.loading = false;
+      this.allocatedVsActualLoader = false;
+
+      const chart = res?.data?.chart;
+      if (!chart) {
         this.estimatedVsActualGraphData = { labels: [], datasets: [] };
-        this.allocatedVsActualLoader = false;
+        return;
       }
-    });
-  }
+
+      // --------------------------
+      // HH:MM → Number Conversion
+      // --------------------------
+      const convertHHMMToNumber = (hhmm: string): number => {
+        if (!hhmm) return 0;
+        const [h, m] = hhmm.split(':').map(Number);
+        return Number((h + m / 60).toFixed(2));
+      };
+
+      // Labels
+      const labels = ['Allocated', 'Actual'];
+
+      // Numeric values for Pie chart
+      const numericHours = [
+        chart.allocated,                               // numeric allocated
+        convertHHMMToNumber(chart.actualHoursHHMM)     // convert HH:MM → number
+      ];
+
+      // HH:MM display values
+      const displayHHMM = [
+        `${chart.allocated}:00`,                       // allocated as HH:00
+        chart.actualHoursHHMM                          // actual in HH:MM
+      ];
+
+      const colors = ['#EE7956', '#5A00D8'];
+
+      // ----------------------------------
+      // Save legend data with HH:MM values
+      // ----------------------------------
+      this.estimatedVsActualData = labels.map((label, index) => ({
+        label,
+        value: displayHHMM[index],  // HH:MM for legend
+        color: colors[index]
+      }));
+
+      // -----------------------------
+      // Assign Pie Chart Data (numeric)
+      // -----------------------------
+      this.estimatedVsActualGraphData = {
+        labels,
+        datasets: [
+          {
+            data: numericHours,
+            backgroundColor: colors
+          }
+        ]
+      };
+
+      // -----------------------------
+      // Tooltip Override → HH:MM format
+      // -----------------------------
+      this.estimatedVsActualGraphOptions = {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context: any) => {
+                const idx = context.dataIndex;
+                return `${labels[idx]}: ${displayHHMM[idx]} Hrs`;
+              }
+            }
+          }
+        }
+      };
+    },
+
+    error: (err) => {
+      this.loading = false;
+      console.error('Error fetching estimated vs actual chart data:', err);
+      this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+      this.allocatedVsActualLoader = false;
+    }
+  });
+}
+
+
 
   billableVSNonBillable() {
     this.billableVsNonbillableLoader = true;
@@ -369,22 +500,29 @@ private refreshData() {
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];
+
+        const convertHHMMToNumber = (hhmm: string): number => {
+          if (!hhmm) return 0;
+          const [h, m] = hhmm.split(':').map(Number);
+          return Number((h + m / 60).toFixed(2));
+        };
         // Extract labels and data
         const labels = chartData.map((item: any) => item.label);
-        const hours = chartData.map((item: any) => item.hours);
+        const hoursHHMM = chartData.map((item: any) => item.hoursHHMM);
+        const numericHours = chartData.map((item: any) => convertHHMMToNumber(item.hoursHHMM));
         const colors = ['#0F358A', '#A2B5E2'];
-        // Store legend data in the same variable you already use
+        // Store legend data with hoursHHMM for display
         this.billableVsNonBillableData = labels.map((label: string, index: number) => ({
           label: label,
-          value: hours[index],
+          value: hoursHHMM[index],
           color: colors[index]
         }));
-        // Assign Pie Chart Data
+        // Assign Pie Chart Data with numeric values
         this.billableVsNonBillableGraphData = {
           labels: labels,
           datasets: [
             {
-              data: hours,
+              data: numericHours,
               backgroundColor: colors,
             }
           ]
@@ -394,7 +532,18 @@ private refreshData() {
           responsive: true,
           plugins: {
             legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  const idx = context.dataIndex;
+                  const label = context.label;
+                  const hhmm = hoursHHMM[idx]; // <-- Use HH:MM from API
+                  return `${label}: ${hhmm} Hrs`;
+                }
+              }
+            }
           }
+
         };
         this.billableVsNonbillableLoader = false;
       },
@@ -406,12 +555,13 @@ private refreshData() {
       }
     });
   }
-
   convertTimeToHours(time: string): number {
     if (!time) return 0;
     const [hours, minutes] = time.split(':').map(Number);
     return hours + (minutes / 60);
   }
+
+
 
   formatHoursToHHMM(hours: number): string {
     const h = Math.floor(hours);

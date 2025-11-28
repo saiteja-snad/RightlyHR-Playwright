@@ -1,0 +1,120 @@
+.custom-clean-table {
+  border-collapse: separate;
+  border-spacing: 0 6px;
+
+  th {
+    border: none !important;
+    font-weight: 600;
+  }
+
+  td {
+    border: none !important;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  tr:hover td {
+    background-color: #f9f9f9;
+  }
+}
+
+.dropdown-menu {
+  z-index: 1055 !important; /* Above modals (1050) */
+  min-width: 160px !important;
+}
+
+/* Optional: Add spacing to last row */
+.popup-table tbody tr:last-child td {
+  padding-bottom: 8px !important;
+}
+
+.custom-accordians {
+  .p-accordionheader {
+    padding: 1rem 1.5rem !important;
+  }
+}
+
+.popup-table-wrapper {
+  width: 100%;
+  overflow: visible !important;
+
+  background-color: #fff;
+  border-radius: 0rem;
+
+  .popup-table-scroll-container {
+    max-height: 30vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    border: 1px solid #d1d8e3;
+    border-bottom: 0rem !important;
+  }
+
+  th {
+    position: sticky !important;
+  }
+
+  .popup-table {
+    th,
+    td {
+      padding: 0.8rem;
+    }
+  }
+
+  .popup-table-footer {
+    text-align: center;
+    padding: 0.5rem;
+    border: 2px solid #d1d8e3;
+    border-top: 1px solid #d1d8e3;
+    color: #3b3b3b;
+    font-size: var(--fontsize14);
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+}
+
+.status-approved {
+  color: #00d520 !important;
+  font-weight: 600;
+}
+
+.status-cancelled {
+  color: #ea362c !important;
+  font-weight: 600;
+}
+
+.status-pending {
+  color: #ff9500 !important;
+  font-weight: 600;
+}
+
+.popup-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.popup-table td,
+.popup-table th {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.ellipsis-cell {
+  display: inline-block;
+  max-width: 180px; /* same width as your table cells */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.popup-table tbody tr:last-child td {
+  padding-bottom: 10px !important;
+}
+
+.no-data-wrapper {
+  position: relative;
+  min-height: 600px;
+}

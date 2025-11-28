@@ -17,9 +17,19 @@
       <!-- Skills Multi select -->
       <div class="custom-p-multiSelect-content">
         <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
-          selectedItemsLabel="{3} items selected" [maxSelectedLabels]="3" resetFilterOnHide="true" optionLabel="label"
-          optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()">
-        </p-multiselect>
+          selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2" resetFilterOnHide="true" optionLabel="label"
+          optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()" />
+      </div>
+      <div class="custom-p-multiSelect-content">
+        <p-multiselect [options]="departmentOptions" [(ngModel)]="selectedDepartment"
+          placeholder="Please Select Department" selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2"
+          resetFilterOnHide="true" optionLabel="label" optionValue="value" class="form-select custom-select"
+          (onChange)="onSkillSelectionChange()" />
+      </div>
+      <div class="custom-p-multiSelect-content">
+        <p-multiselect [options]="projectOptions" [(ngModel)]="selectedProjects" placeholder="Please Select Project"
+          selectedItemsLabel="{2} items selected" [maxSelectedLabels]="2" resetFilterOnHide="true" optionLabel="label"
+          optionValue="value" class="form-select custom-select" (onChange)="onSkillSelectionChange()" />
       </div>
 
       <!-- Date Range -->
@@ -32,10 +42,9 @@
       <!-- Export Button -->
       <div>
         <button type="button" class="custom-btn btn-primary px-4" (click)="submitExport()"
-          [disabled]="spinnerLoaderforallrecoders || MySkills.length === 0">
-          @if (spinnerLoaderforallrecoders) {
+          [disabled]="spinnerLoaderforallrecodersforbutton || MySkills.length === 0">
+          @if (spinnerLoaderforallrecodersforbutton) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          <span></span>
           } @else {
           <span>Export</span>
           }
@@ -50,9 +59,9 @@
     </div>
 
     <div class="skill-set-dashboard-container">
-      @if(chartLoader){
+      <!-- @if(chartLoader){ -->
       <!--Summary cards-->
-      <div class="cards-grid-container mb-3">
+      <!-- <div class="cards-grid-container mb-3">
         <div *ngFor="let card of summaryCards" class="summary-card">
           <div>
             <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
@@ -67,7 +76,7 @@
       </div>
       }@else {
       <p-skeleton height="11rem" />
-      }
+      } -->
       <div class="w-100">
         <!-- Search -->
         <div class="input-group custom-search mb-3">
@@ -158,7 +167,7 @@
 <!-- Employee Details Modal -->
 <ng-template #employeeDetailOffcanvas let-offcanvas>
   <div class="custom-offcanvas-skill">
-    <div>
+    <div class="d-flex justify-content-end w-100 pt-2 px-2">
       <a (click)="close(offcanvas)">
         <img src="icons/close.png" alt="Close Icon" class="close-icon">
       </a>
@@ -203,54 +212,36 @@
           <!-- Skills -->
           <p-tabpanel value="0">
             <div class="skills-container custom-offcanvas-content pt-3 pe-2">
-              @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) {
-              <!-- Technical Skills -->
-              @if (selectedEmployee?.techSkills?.length) {
-              <div class="skills-group mb-4" *ngIf="selectedEmployee?.techSkills?.length">
-                <div class="section-title d-flex align-items-center mb-2"><img src="/icons/technical-skills-icon.png"
-                    alt="Skills-icon" class="skill-icon me-1">Technical Skills</div>
+              @if (selectedEmployee?.skillCategories?.length) {
+              <div *ngFor="let cat of selectedEmployee.skillCategories" class="skills-group mb-4">
+                <div class="section-title d-flex align-items-center mb-2">
+                  <img [src]="cat.icon" alt="skill-icon" class="skill-icon me-1">
+                  {{ cat.category }}
+                </div>
                 <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
-                  <div *ngIf="getSkillsByLevel(level, selectedEmployee.techSkills).length" class="mb-3">
-                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level }}</p>
+                  <div *ngIf="getSkillsByLevel(level, cat.skills).length" class="mb-3">
+                    <!-- Level Heading -->
+                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">
+                      {{ level }}
+                    </p>
+                    <!-- Skill Cards -->
                     <div class="skill-set-display-card">
                       <div class="d-flex flex-wrap gap-2">
-                        <p-chip *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.techSkills)"
-                          [label]="skill.skillName" [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                        <p-chip *ngFor="let skill of getSkillsByLevel(level, cat.skills)" [label]="skill.skillName"
+                          [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
                         </p-chip>
                       </div>
                     </div>
                   </div>
                 </ng-container>
+                <!-- Divider Between Categories -->
+                <div class="popup-header-border my-3"></div>
               </div>
-              }
-
-              <div class="popup-header-border my-3"></div>
-
-              <!-- Soft Skills -->
-              @if (selectedEmployee?.softSkills?.length) {
-              <div class="skills-group" *ngIf="selectedEmployee?.softSkills?.length">
-                <p class="section-title d-flex align-items-center mb-2"><img src="/icons/soft-skills-icon.png"
-                    alt="Skills-icon" class="skill-icon me-1">Soft Skills</p>
-                <ng-container *ngFor="let level of ['Expert', 'Intermediate', 'Beginner']">
-                  <div *ngIf="getSkillsByLevel(level, selectedEmployee.softSkills).length" class="mb-3">
-                    <p class="level-heading mb-2" [ngClass]="level.toLowerCase()">{{ level }}</p>
-                    <div class="skill-set-display-card">
-                      <div class="d-flex flex-wrap gap-2">
-                        <p-chip *ngFor="let skill of getSkillsByLevel(level, selectedEmployee.softSkills)"
-                          [label]="skill.skillName" [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
-                        </p-chip>
-                      </div>
-                    </div>
-                  </div>
-                </ng-container>
-              </div>
-              }
               } @else {
               <app-no-data-found />
               }
             </div>
           </p-tabpanel>
-
           <!-- Projects -->
           <p-tabpanel value="1">
             <div class="projects-container custom-offcanvas-content pt-3 pe-2">
@@ -331,7 +322,7 @@
       </div>
 
       <!-- No Data -->
-      <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
+      <div *ngIf="!isloading && employeeList.length === 0" class="text-center custom-no-data-found text-muted py-3">
         <app-no-data-found />
       </div>
     </div>

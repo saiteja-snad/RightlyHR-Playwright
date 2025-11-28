@@ -360,28 +360,44 @@ ngOnInit() {
           );
           const resourceCounts = data.map((item: any) => item.resourceCount);
           // Assign chart data
+          // this.projectResourceData = {
+          //   labels: labels,
+          //   datasets: [
+          //     {
+          //       label: 'Resource Count',
+          //       data: resourceCounts,
+          //       backgroundColor: [
+          //         '#FDCC11',
+          //         '#FF207F',
+          //         '#187DF5',
+          //         '#00A912',
+          //         '#4533E3',
+          //         '#FFA500',
+          //         '#008080',
+          //         '#9932CC',
+          //         '#FF6347',
+          //         '#4682B4',
+          //       ],
+          //       barThickness: 10,
+          //     },
+          //   ],
+          // };
+
           this.projectResourceData = {
-            labels: labels,
-            datasets: [
-              {
-                label: 'Resource Count',
-                data: resourceCounts,
-                backgroundColor: [
-                  '#FDCC11',
-                  '#FF207F',
-                  '#187DF5',
-                  '#00A912',
-                  '#4533E3',
-                  '#FFA500',
-                  '#008080',
-                  '#9932CC',
-                  '#FF6347',
-                  '#4682B4',
-                ],
-                barThickness: 10,
-              },
-            ],
-          };
+          labels: labels,
+          datasets: [
+            {
+              label: 'Resource Count',
+              data: resourceCounts,
+              backgroundColor: [
+                '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
+                '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
+              ],
+              barThickness: 10
+            }
+          ]
+        };
+
           // Chart options
           this.projectResourceOptions = {
             indexAxis: 'y',
@@ -631,76 +647,80 @@ ngOnInit() {
     if (queryParams.length > 0) {
       apiUrl += `&${queryParams.join('&')}`;
     }
-
-    this.http
-      .getData(apiUrl)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.EstimatedActualHoursLoader = false;
-          if (res?.success && res?.data?.data?.length) {
-            const chartData = res.data.data;
-            const labels = chartData.map((item: any) =>
-              item.meta.graphData.code ? item.meta.graphData.code : item.name
-            );
-            const estimatedHours = chartData.map(
-              (item: any) => item.allocateHours
-            );
-            const actualHours = chartData.map(
-              (item: any) => item.actualHours - item.overDueHours
-            );
-            const overdueHours = chartData.map((item: any) =>
-              item.overDue ? item.overDueHours : 0
-            );
-            this.estimatedVsActualData = {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Estimated Hours',
-                  backgroundColor: '#1A237E',
-                  data: estimatedHours,
-                  stack: 'Estimated',
-                },
-                {
-                  label: 'Actual Hours',
-                  backgroundColor: '#90CAF9',
-                  data: actualHours,
-                  stack: 'ActualOverdue',
-                },
-                {
-                  label: 'Over Due',
-                  backgroundColor: '#FF5252',
-                  data: overdueHours,
-                  stack: 'ActualOverdue',
-                },
-              ],
-            };
-            // options
-            this.estimatedVsActualOptions = {
-              responsive: true,
-              barThickness: 30,
-              plugins: {
-                legend: { display: false },
-                tooltip: {
-                  callbacks: {
-                    title: (tooltipItems: any) => {
-                      const index = tooltipItems[0].dataIndex;
-                      return chartData[index].name;
-                    },
-                    label: (tooltipItem: any) => {
-                      const datasetLabel = tooltipItem.dataset.label || '';
-                      const value = tooltipItem.raw;
-                      return `${datasetLabel}: ${value}`;
-                    },
+    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.EstimatedActualHoursLoader = false;
+        if (res?.success && res?.data?.data?.length) {
+          const chartData = res.data.data;
+          const labels = chartData.map((item: any) => item.meta.graphData.code ? item.meta.graphData.code : item.name);
+          const estimatedHours = chartData.map((item: any) => item.allocateHours);
+          const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
+          const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
+          const actualDisplay = chartData.map(
+            (item: any) => item?.actualHoursHHMM   // already HH:MM from backend
+          );
+          this.estimatedVsActualData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Estimated Hours',
+                backgroundColor: '#1A237E',
+                data: estimatedHours,
+                stack: 'Estimated'
+              },
+              {
+                label: 'Actual Hours',
+                backgroundColor: '#90CAF9',
+                data: actualHours,
+                stack: 'ActualOverdue'
+              },
+              {
+                label: 'Over Due',
+                backgroundColor: '#FF5252',
+                data: overdueHours,
+                stack: 'ActualOverdue'
+              }
+            ]
+          };
+          // options
+          this.estimatedVsActualOptions = {
+            responsive: true,
+            barThickness: 30,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: (tooltipItems: any) => {
+                    const index = tooltipItems[0].dataIndex;
+                    return chartData[index].name;
                   },
+                  label: (context: any) => {
+                    const idx = context.dataIndex;
+                    if (context.dataset.label === 'Estimated Hours') {
+                      return `Estimated: ${estimatedHours[idx]} hrs`;
+                    }
+                    if (context.dataset.label === 'Actual Hours') {
+                      return `Actual: ${actualDisplay[idx]} hrs`;
+                    }
+                    if (context.dataset.label === 'Over Due') {
+                      return `Over Due: ${overdueHours[idx]} hrs`;
+                    }
+                    return `${context.dataset.label}: ${context.raw}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                stacked: false,
+                grid: { display: false },
+                ticks: {
+                  color: '#141414', font: { size: 11 },
+                  callback: (value: any, index: number) => {
+                    return this.truncateLabel(labels[index], 12);
+                  }
                 },
               },
-              scales: {
-                x: {
-                  stacked: false,
-                  grid: { display: false },
-                  ticks: { color: '#141414', font: { size: 11 } },
-                },
                 y: {
                   stacked: true,
                   beginAtZero: true,
@@ -726,133 +746,289 @@ ngOnInit() {
       });
   }
 
-  // Billable vs Non-Billable Hours (Stacked Bar)
-  billableChart(request?: any) {
-    this.BillablevsNonBillableHoursLoader = true;
-    // Base URL
-    let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${this.storeclientId}?groupBy=project`;
-    // Prepare query parameters if BehaviorSubject data exists
-    const queryParams: string[] = [];
-    if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
-      queryParams.push(`startDate=${request.dateRange.startDate}`);
-      queryParams.push(`endDate=${request.dateRange.endDate}`);
-    }
-
-    if (request?.departmentIds && request.departmentIds.length > 0) {
-      queryParams.push(`departmentIds=${request.departmentIds.join(',')}`);
-    }
-
-    if (request?.roleIds && request.roleIds.length > 0) {
-      queryParams.push(`roleIds=${request.roleIds.join(',')}`);
-    }
-
-    if (request?.phaseIds && request.phaseIds.length > 0) {
-      queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
-    }
-    // Append query parameters if any exist
-    if (queryParams.length > 0) {
-      apiUrl += `?${queryParams.join('&')}`;
-    }
-
-    this.http
-      .getData(apiUrl)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.BillablevsNonBillableHoursLoader = false;
-          const chartData = res?.data?.data || [];
-          if (!chartData.length) {
-            this.billableData = { labels: [], datasets: [] };
-            return;
-          }
-          // Utility to handle both "HH:mm" and decimal string formats
-          const convertToHours = (timeStr: string | number): number => {
-            if (!timeStr) return 0;
-            const str = timeStr.toString();
-            if (str.includes(':')) {
-              const [hours, minutes] = str.split(':').map(Number);
-              return hours + minutes / 60;
-            }
-            return parseFloat(str); // directly convert decimal string to number
-          };
-          // const chartData = response.data.data;
-          const labels = chartData.map((item: any) =>
-            item.projectColor?.graphData.code
-              ? item.projectColor?.graphData.code
-              : item.name
-          );
-          const billable = chartData.map((item: any) =>
-            convertToHours(item.billableHours)
-          );
-          const nonBillable = chartData.map((item: any) =>
-            convertToHours(item.nonBillableHours)
-          );
-          // Assign dynamic chart data
-          this.billableData = {
-            labels: labels,
-            datasets: [
-              {
-                label: 'Billable Hours',
-                backgroundColor: '#283593',
-                data: billable,
-              },
-              {
-                label: 'Non-Billable Hours',
-                backgroundColor: '#9FA8DA',
-                data: nonBillable,
-              },
-            ],
-          };
-          // Chart options
-          this.billableOptions = {
-            responsive: true,
-            barThickness: 30,
-            scales: {
-              x: {
-                stacked: true,
-                ticks: { color: '#141414', font: { size: 11 } },
-              },
-              y: {
-                stacked: true,
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Hours',
-                  color: '#505050',
-                  font: { size: 9 },
-                },
-                ticks: { color: '#72777B', font: { size: 11 } },
-              },
-            },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  title: (tooltipItems: any) => {
-                    const index = tooltipItems[0].dataIndex;
-                    return chartData[index].name;
-                  },
-                  label: (tooltipItem: any) => {
-                    const datasetLabel = tooltipItem.dataset.label || '';
-                    const value = tooltipItem.raw;
-                    return `${datasetLabel}: ${value}`;
-                  },
-                },
-              },
-            },
-            maintainAspectRatio: false,
-          };
-        },
-        error: (err) => {
-          this.BillablevsNonBillableHoursLoader = false;
-          this.billableData = { labels: [], datasets: [] };
-          console.error(
-            'Error fetching billable/non-billable chart data:',
-            err
-          );
-        },
-      });
+  truncateLabel(label: string, maxLength: number = 12): string {
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
   }
+
+  // Billable vs Non-Billable Hours (Stacked Bar)
+  // billableChart(request?: any) {
+  //   this.BillablevsNonBillableHoursLoader = true;
+  //   // Base URL
+  //   let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${this.storeclientId}?groupBy=project`;
+  //   // Prepare query parameters if BehaviorSubject data exists
+  //   const queryParams: string[] = [];
+  //   if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+  //     queryParams.push(`startDate=${request.dateRange.startDate}`);
+  //     queryParams.push(`endDate=${request.dateRange.endDate}`);
+  //   }
+
+  //   if (request?.departmentIds && request.departmentIds.length > 0) {
+  //     queryParams.push(`departmentIds=${request.departmentIds.join(',')}`);
+  //   }
+
+  //   if (request?.roleIds && request.roleIds.length > 0) {
+  //     queryParams.push(`roleIds=${request.roleIds.join(',')}`);
+  //   }
+
+  //   if (request?.phaseIds && request.phaseIds.length > 0) {
+  //     queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
+  //   }
+  //   // Append query parameters if any exist
+  //   if (queryParams.length > 0) {
+  //     apiUrl += `?${queryParams.join('&')}`;
+  //   }
+
+  //   this.http
+  //     .getData(apiUrl)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         this.BillablevsNonBillableHoursLoader = false;
+  //         const chartData = res?.data?.data || [];
+  //         if (!chartData.length) {
+  //           this.billableData = { labels: [], datasets: [] };
+  //           return;
+  //         }
+  //         // Utility to handle both "HH:mm" and decimal string formats
+  //         const convertToHours = (timeStr: string | number): number => {
+  //           if (!timeStr) return 0;
+  //           const str = timeStr.toString();
+  //           if (str.includes(':')) {
+  //             const [hours, minutes] = str.split(':').map(Number);
+  //             return hours + minutes / 60;
+  //           }
+  //           return parseFloat(str); // directly convert decimal string to number
+  //         };
+  //         // const chartData = response.data.data;
+  //         const labels = chartData.map((item: any) =>
+  //           item.projectColor?.graphData.code
+  //             ? item.projectColor?.graphData.code
+  //             : item.name
+  //         );
+  //         const billable = chartData.map((item: any) =>
+  //           convertToHours(item.billableHours)
+  //         );
+  //         const nonBillable = chartData.map((item: any) =>
+  //           convertToHours(item.nonBillableHours)
+  //         );
+  //         // Assign dynamic chart data
+  //         this.billableData = {
+  //           labels: labels,
+  //           datasets: [
+  //             {
+  //               label: 'Billable Hours',
+  //               backgroundColor: '#283593',
+  //               data: billable,
+  //             },
+  //             {
+  //               label: 'Non-Billable Hours',
+  //               backgroundColor: '#9FA8DA',
+  //               data: nonBillable,
+  //             },
+  //           ],
+  //         };
+  //         // Chart options
+  //         this.billableOptions = {
+  //           responsive: true,
+  //           barThickness: 30,
+  //           scales: {
+  //             x: {
+  //               stacked: true,
+  //               ticks: { color: '#141414', font: { size: 11 } },
+  //             },
+  //             y: {
+  //               stacked: true,
+  //               beginAtZero: true,
+  //               title: {
+  //                 display: true,
+  //                 text: 'Hours',
+  //                 color: '#505050',
+  //                 font: { size: 9 },
+  //               },
+  //               ticks: { color: '#72777B', font: { size: 11 } },
+  //             },
+  //           },
+  //           plugins: {
+  //             legend: { display: false },
+  //             tooltip: {
+  //               callbacks: {
+  //                 title: (tooltipItems: any) => {
+  //                   const index = tooltipItems[0].dataIndex;
+  //                   return chartData[index].name;
+  //                 },
+  //                 label: (tooltipItem: any) => {
+  //                   const datasetLabel = tooltipItem.dataset.label || '';
+  //                   const value = tooltipItem.raw;
+  //                   return `${datasetLabel}: ${value}`;
+  //                 },
+  //               },
+  //             },
+  //           },
+  //           maintainAspectRatio: false,
+  //         };
+  //       },
+  //       error: (err) => {
+  //         this.BillablevsNonBillableHoursLoader = false;
+  //         this.billableData = { labels: [], datasets: [] };
+  //         console.error(
+  //           'Error fetching billable/non-billable chart data:',
+  //           err
+  //         );
+  //       },
+  //     });
+  // }
+
+  billableChart(request?: any) {
+  this.BillablevsNonBillableHoursLoader = true;
+
+  // Base URL
+  let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${this.storeclientId}?groupBy=project`;
+
+  // Prepare query parameters if BehaviorSubject data exists
+  const queryParams: string[] = [];
+
+  if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+    queryParams.push(`startDate=${request.dateRange.startDate}`);
+    queryParams.push(`endDate=${request.dateRange.endDate}`);
+  }
+
+  if (request?.departmentIds?.length) {
+    queryParams.push(`departmentIds=${request.departmentIds.join(',')}`);
+  }
+
+  if (request?.roleIds?.length) {
+    queryParams.push(`roleIds=${request.roleIds.join(',')}`);
+  }
+
+  if (request?.phaseIds?.length) {
+    queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
+  }
+
+  // Append query parameters
+  if (queryParams.length > 0) {
+    apiUrl += `&${queryParams.join('&')}`;
+  }
+
+  this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+    next: (res: any) => {
+      this.BillablevsNonBillableHoursLoader = false;
+
+      const chartData = res?.data?.data || [];
+      if (!chartData.length) {
+        this.billableData = { labels: [], datasets: [] };
+        return;
+      }
+
+      // HH:MM → Decimal Conversion
+      const convertHHMMToNumber = (hhmm: string): number => {
+        if (!hhmm) return 0;
+        const [h, m] = hhmm.split(':').map(Number);
+        return Number((h + m / 60).toFixed(2));
+      };
+
+      // Labels
+      const labels = chartData.map((item: any) =>
+        item.projectColor?.graphData.code
+          ? item.projectColor.graphData.code
+          : item.name
+      );
+
+      // Numeric (decimal) values for Chart Bars
+      const billable = chartData.map((i: any) =>
+        convertHHMMToNumber(i?.billableHoursHHMM)
+      );
+
+      const nonBillable = chartData.map((i: any) =>
+        convertHHMMToNumber(i?.nonBillableHoursHHMM)
+      );
+
+      // HH:MM Display strings for Tooltip
+      const billableDisplay = chartData.map((i: any) => i?.billableHoursHHMM);
+      const nonBillableDisplay = chartData.map((i: any) => i?.nonBillableHoursHHMM);
+
+      // Assign chart data
+      this.billableData = {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Billable Hours',
+            backgroundColor: '#283593',
+            data: billable,
+          },
+          {
+            label: 'Non-Billable Hours',
+            backgroundColor: '#9FA8DA',
+            data: nonBillable,
+          }
+        ]
+      };
+
+      // Chart options
+      this.billableOptions = {
+        responsive: true,
+        barThickness: 30,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: {
+              color: '#141414',
+              font: { size: 11 },
+              callback: (value: any, index: number) => {
+                return this.truncateLabel(labels[index], 12);
+              }
+            }
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Hours',
+              color: '#505050',
+              font: { size: 9 }
+            },
+            ticks: {
+              color: '#72777B',
+              font: { size: 11 }
+            }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items: any) => {
+                const idx = items[0].dataIndex;
+                return chartData[idx].name;
+              },
+              label: (tooltipItem: any) => {
+                const idx = tooltipItem.dataIndex;
+
+                if (tooltipItem.dataset.label === 'Billable Hours') {
+                  return `Billable: ${billableDisplay[idx]} hrs`;
+                }
+
+                if (tooltipItem.dataset.label === 'Non-Billable Hours') {
+                  return `Non-Billable: ${nonBillableDisplay[idx]} hrs`;
+                }
+
+                return `${tooltipItem.dataset.label}: ${tooltipItem.raw} hrs`;
+              }
+            }
+          }
+        }
+      };
+    },
+
+    error: (err) => {
+      this.BillablevsNonBillableHoursLoader = false;
+      this.billableData = { labels: [], datasets: [] };
+      console.error('Error fetching billable/non-billable chart data:', err);
+    }
+  });
+}
+
 
   // Project Burndown Chart (Line)
   burnDownChart(request?: any) {

@@ -321,6 +321,118 @@ roleWiseHoursGraph(
 }
 
   // Estimated vs Actual Hours (Grouped Bar)
+// estimatedActualChart(
+//   startDate?: string,
+//   endDate?: string,
+//   departmentIds?: number[],
+//   roleIds?: number[],
+//   phaseIds?: number[]
+// ): void {
+//   this.estimatedvsActualHoursLoader = true;
+
+//   this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+//     const projectId = params['id'];
+//     if (!projectId) {
+//       this.estimatedVsActualData = [];
+//       this.estimatedvsActualHoursLoader = false;
+//       return;
+//     }
+
+//     // Start with base URL + required query param
+//     let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?groupBy=role`;
+//     const queryParams: string[] = [];
+
+//     // Use the actual parameters passed from refreshAllCharts()
+//     if (startDate && endDate) {
+//       queryParams.push(`startDate=${startDate}`);
+//       queryParams.push(`endDate=${endDate}`);
+//     }
+//     if (departmentIds?.length) {
+//       queryParams.push(`departmentIds=${departmentIds.join(',')}`);
+//     }
+//     if (roleIds?.length) {
+//       queryParams.push(`roleIds=${roleIds.join(',')}`);
+//     }
+//     if (phaseIds?.length) {
+//       queryParams.push(`phaseIds=${phaseIds.join(',')}`);
+//     }
+
+//     // Append additional params with & (since ?groupBy=role already exists)
+//     if (queryParams.length > 0) {
+//       url += `&${queryParams.join('&')}`;
+//     }
+
+//     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+//       next: (res: any) => {
+//         this.estimatedvsActualHoursLoader = false;
+
+//         if (!res?.success || !Array.isArray(res?.data?.data) || res.data.data.length === 0) {
+//           this.estimatedVsActualData = [];
+//           return;
+//         }
+
+//         const chartData = res.data.data;
+
+//         const labels = chartData.map((item: any) => item.name || 'Unknown');
+//         const estimatedHours = chartData.map((item: any) => item.allocateHours ?? 0);
+//         const actualHours = chartData.map((item: any) => (item.actualHours ?? 0) - (item.overDueHours ?? 0));
+//         const overdueHours = chartData.map((item: any) => (item.overDue ? item.overDueHours : 0) ?? 0);
+
+//         this.estimatedVsActualData = {
+//           labels,
+//           datasets: [
+//             {
+//               label: 'Estimated Hours',
+//               backgroundColor: '#1A237E',
+//               data: estimatedHours,
+//               stack: 'Estimated'
+//             },
+//             {
+//               label: 'Actual Hours',
+//               backgroundColor: '#90CAF9',
+//               data: actualHours,
+//               stack: 'ActualOverdue'
+//             },
+//             {
+//               label: 'Over Due',
+//               backgroundColor: '#FF5252',
+//               data: overdueHours,
+//               stack: 'ActualOverdue'
+//             }
+//           ]
+//         };
+
+//         this.estimatedVsActualOptions = {
+//           responsive: true,
+//           maintainAspectRatio: false,
+//           barThickness: 30,
+//           plugins: {
+//             legend: { display: false }
+//           },
+//           scales: {
+//             x: {
+//               stacked: false,
+//               grid: { display: false },
+//               ticks: { color: '#141414', font: { size: 11 } }
+//             },
+//             y: {
+//               stacked: true,
+//               beginAtZero: true,
+//               title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
+//               ticks: { color: '#72777B', font: { size: 11 } }
+//             }
+//           }
+//         };
+//       },
+//       error: (err) => {
+//         this.estimatedvsActualHoursLoader = false;
+//         console.error('Error fetching estimated vs actual chart:', err);
+//         this.estimatedVsActualData = [];
+//       }
+//     });
+//   });
+// }
+
 estimatedActualChart(
   startDate?: string,
   endDate?: string,
@@ -338,29 +450,18 @@ estimatedActualChart(
       return;
     }
 
-    // Start with base URL + required query param
     let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?groupBy=role`;
     const queryParams: string[] = [];
 
-    // Use the actual parameters passed from refreshAllCharts()
     if (startDate && endDate) {
       queryParams.push(`startDate=${startDate}`);
       queryParams.push(`endDate=${endDate}`);
     }
-    if (departmentIds?.length) {
-      queryParams.push(`departmentIds=${departmentIds.join(',')}`);
-    }
-    if (roleIds?.length) {
-      queryParams.push(`roleIds=${roleIds.join(',')}`);
-    }
-    if (phaseIds?.length) {
-      queryParams.push(`phaseIds=${phaseIds.join(',')}`);
-    }
+    if (departmentIds?.length) queryParams.push(`departmentIds=${departmentIds.join(',')}`);
+    if (roleIds?.length) queryParams.push(`roleIds=${roleIds.join(',')}`);
+    if (phaseIds?.length) queryParams.push(`phaseIds=${phaseIds.join(',')}`);
 
-    // Append additional params with & (since ?groupBy=role already exists)
-    if (queryParams.length > 0) {
-      url += `&${queryParams.join('&')}`;
-    }
+    if (queryParams.length > 0) url += `&${queryParams.join('&')}`;
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -377,6 +478,9 @@ estimatedActualChart(
         const estimatedHours = chartData.map((item: any) => item.allocateHours ?? 0);
         const actualHours = chartData.map((item: any) => (item.actualHours ?? 0) - (item.overDueHours ?? 0));
         const overdueHours = chartData.map((item: any) => (item.overDue ? item.overDueHours : 0) ?? 0);
+
+        // ➕ Added: HH:MM for tooltip
+        const actualDisplay = chartData.map((item: any) => item?.actualHoursHHMM);
 
         this.estimatedVsActualData = {
           labels,
@@ -407,13 +511,44 @@ estimatedActualChart(
           maintainAspectRatio: false,
           barThickness: 30,
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+
+            // ➕ Added full tooltip block
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems: any) => {
+                  const index = tooltipItems[0].dataIndex;
+                  return labels[index];
+                },
+                label: (context: any) => {
+                  const idx = context.dataIndex;
+
+                  if (context.dataset.label === 'Estimated Hours') {
+                    return `Estimated: ${estimatedHours[idx]} hrs`;
+                  }
+                  if (context.dataset.label === 'Actual Hours') {
+                    return `Actual: ${actualDisplay[idx]} hrs`; // HH:MM
+                  }
+                  if (context.dataset.label === 'Over Due') {
+                    return `Over Due: ${overdueHours[idx]} hrs`;
+                  }
+                  return `${context.dataset.label}: ${context.raw}`;
+                }
+              }
+            }
           },
           scales: {
             x: {
               stacked: false,
               grid: { display: false },
-              ticks: { color: '#141414', font: { size: 11 } }
+
+              // ➕ Added truncateLabel
+              ticks: {
+                color: '#141414',
+                font: { size: 11 },
+                callback: (value: any, index: number) =>
+                  this.truncateLabel(labels[index], 12)
+              }
             },
             y: {
               stacked: true,
@@ -432,7 +567,116 @@ estimatedActualChart(
     });
   });
 }
+
+
   // Billable vs Non-Billable Hours (Stacked Bar)
+// billableChart(
+//   startDate?: string,
+//   endDate?: string,
+//   departmentIds?: number[],
+//   roleIds?: number[],
+//   phaseIds?: number[]
+// ): void {
+//   this.billablevsNonBillableHoursLoader = true;
+
+//   this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+//     const projectId = params['id'];
+//     if (!projectId) {
+//       this.billableData = [];
+//       this.billablevsNonBillableHoursLoader = false;
+//       return;
+//     }
+
+//     let url = `ProjectManagementGraph/project/billable-non-billable/${projectId}`;
+//     const queryParams: string[] = [];
+
+//     // Use the actual passed parameters — NOT the old stored ones!
+//     if (startDate && endDate) {
+//       queryParams.push(`startDate=${startDate}`);
+//       queryParams.push(`endDate=${endDate}`);
+//     }
+//     if (departmentIds?.length) {
+//       queryParams.push(`departmentIds=${departmentIds.join(',')}`);
+//     }
+//     if (roleIds?.length) {
+//       queryParams.push(`roleIds=${roleIds.join(',')}`);
+//     }
+//     if (phaseIds?.length) {
+//       queryParams.push(`phaseIds=${phaseIds.join(',')}`);
+//     }
+
+//     if (queryParams.length > 0) {
+//       url += `?${queryParams.join('&')}`;
+//     }
+
+//     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+//       next: (res: any) => {
+//         this.billablevsNonBillableHoursLoader = false;
+
+//         const apiData = res?.data?.data || res?.data || [];
+//         if (!Array.isArray(apiData) || apiData.length === 0) {
+//           this.billableData = [];
+//           return;
+//         }
+
+//         const labels = apiData.map((item: any) => item.name || 'N/A');
+//         const billable = apiData.map((item: any) => item.billableHours ?? 0);
+//         const nonBillable = apiData.map((item: any) => item.nonBillableHours ?? 0);
+
+//         this.billableData = {
+//           labels,
+//           datasets: [
+//             {
+//               label: 'Billable',
+//               backgroundColor: '#283593',
+//               data: billable,
+//               stack: 'combined'
+//             },
+//             {
+//               label: 'Non-Billable',
+//               backgroundColor: '#9FA8DA',
+//               data: nonBillable,
+//               stack: 'combined'
+//             }
+//           ]
+//         };
+
+//         this.billableOptions = {
+//           responsive: true,
+//           maintainAspectRatio: false,
+//           barThickness: 30,
+//           plugins: {
+//             legend: { display: false }
+//           },
+//           scales: {
+//             x: {
+//               stacked: false,
+//               grid: { display: false },
+//               ticks: { color: '#141414', font: { size: 11 } }
+//             },
+//             y: {
+//               stacked: true,
+//               beginAtZero: true,
+//               title: { display: true, text: 'Hours', color: '#505050', font: { size: 12 } },
+//               ticks: { color: '#72777B', font: { size: 11 } }
+//             }
+//           }
+//         };
+//       },
+//       error: (err) => {
+//         this.billablevsNonBillableHoursLoader = false;
+//         console.error('Error fetching billable vs non-billable chart:', err);
+//         this.billableData = [];
+//       }
+//     });
+//   });
+// }
+
+  truncateLabel(label: string, maxLength: number = 12): string {
+    return label?.length > maxLength ? label?.substring(0, maxLength) + '...' : label;
+  }
+
+
 billableChart(
   startDate?: string,
   endDate?: string,
@@ -453,7 +697,6 @@ billableChart(
     let url = `ProjectManagementGraph/project/billable-non-billable/${projectId}`;
     const queryParams: string[] = [];
 
-    // Use the actual passed parameters — NOT the old stored ones!
     if (startDate && endDate) {
       queryParams.push(`startDate=${startDate}`);
       queryParams.push(`endDate=${endDate}`);
@@ -482,9 +725,26 @@ billableChart(
           return;
         }
 
+        // -------------------------------------------------------
+        //  HH:MM --> number conversion   (added exactly as asked)
+        // -------------------------------------------------------
+        const convertHHMMToNumber = (hhmm: string): number => {
+          if (!hhmm) return 0;
+          const [h, m] = hhmm.split(':').map(Number);
+          return Number((h + m / 60).toFixed(2));
+        };
+
         const labels = apiData.map((item: any) => item.name || 'N/A');
-        const billable = apiData.map((item: any) => item.billableHours ?? 0);
-        const nonBillable = apiData.map((item: any) => item.nonBillableHours ?? 0);
+
+        const billable = apiData.map((item: any) =>
+          convertHHMMToNumber(item?.billableHoursHHMM)
+        );
+        const nonBillable = apiData.map((item: any) =>
+          convertHHMMToNumber(item?.nonBillableHoursHHMM)
+        );
+
+        const billableDisplay = apiData.map((i: any) => i?.billableHoursHHMM);
+        const nonBillableDisplay = apiData.map((i: any) => i?.nonBillableHoursHHMM);
 
         this.billableData = {
           labels,
@@ -509,13 +769,40 @@ billableChart(
           maintainAspectRatio: false,
           barThickness: 30,
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+
+            // -------------------------------------------------------
+            // Tooltip with HH:MM display (added exactly as asked)
+            // -------------------------------------------------------
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  const idx = context.dataIndex;
+                  if (context.dataset.label === 'Billable') {
+                    return `Billable: ${billableDisplay[idx]} hrs`;
+                  }
+                  if (context.dataset.label === 'Non-Billable') {
+                    return `Non-Billable: ${nonBillableDisplay[idx]} hrs`;
+                  }
+                  return `${context.dataset.label}: ${context.raw} hrs`;
+                }
+              }
+            }
           },
           scales: {
             x: {
               stacked: false,
               grid: { display: false },
-              ticks: { color: '#141414', font: { size: 11 } }
+
+              // -------------------------------------------------------
+              // Add truncateLabel() exactly same as the first function
+              // -------------------------------------------------------
+              ticks: {
+                color: '#141414',
+                font: { size: 11 },
+                callback: (value: any, index: number) =>
+                  this.truncateLabel(labels[index], 12)
+              }
             },
             y: {
               stacked: true,

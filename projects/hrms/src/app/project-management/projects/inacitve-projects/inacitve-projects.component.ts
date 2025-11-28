@@ -19,20 +19,9 @@ import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-man
 import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-inacitve-projects',
-  imports: [
-    NoDataFoundComponent,
-    DataLoaderContentComponent,
-    FormsModule,
-    TranslateModule,
-    CommonModule,
-    RouterModule,
-    ProjectManagementModuleInfoComponent,
-    ConfirmationIconComponent,
-    ActiveprojectsPipe,
-    ProjectsSideTabsComponent,
-    ProjectsSideTabsForClientsComponent,
-    MultiSelectModule,
-  ],
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe,
+    ProjectsSideTabsComponent, ProjectsSideTabsForClientsComponent, MultiSelectModule],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss',
 })
@@ -166,9 +155,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
   navigateView(projectId: number) {
     localStorage.setItem('projectProjectId', projectId.toString());
-    this.router.navigate(['project-management/projects/details'], {
-      queryParams: { id: projectId },
-    });
+    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
   }
 
   getDepartmentNames(project: Project): string {
@@ -312,6 +299,25 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     this.getdatabaedonRoute();
   }
 
+  getLighterColor(color: any, amount: number = 0.9): string {
+    if (!color) return color || '#d8d8daff'; // Default color if none provided;
+
+    // Remove # if present
+    const hex = color.replace('#', '');
+
+    // Parse RGB values
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    // Calculate lighter values
+    const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+    const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+    const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
@@ -13,14 +13,16 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
+import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 
 
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
-  encapsulation: ViewEncapsulation.None,
 })
 export class ContactDetailsComponent implements OnInit, OnDestroy {
 
@@ -45,11 +47,17 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   mobileNumberData: IphoneNumberData | null = null;
- 
+  isMyInfoRoute = false;
+  fieldOptions = [] as any;                    // From approval fields API
+getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
+
+
+
    selectedworkcoutrycode = signal<any>('');
    selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService , 
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService ,
     private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
@@ -58,11 +66,88 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   }
   ngOnInit(): void {
-    
+
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.contactForm.disable();
-  
+    this.getBasicInfoFields()
+    this.getFieldsApprovalStatus()
+
+  }
+
+  getBasicInfoFields() {
+    const params = 'Personal';
+    const param = 'Contact Info';
+    this.subscription = this.http
+      .getDatabyentityvalueForFieldUpdate(
+        `EmployeeInfoApprovalFields/getApprovalFields`,
+        params,
+        param
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.fieldOptions = data.data;
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+
+  getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Contact Info',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+
+  // Add this method in your BasicInfoComponent
+  isFieldPendingApproval(fieldName: string): boolean {
+    return this.getFieldsApprovalStatusList.some(
+      (item: any) =>
+        item.fieldName === fieldName && item.approvalStatus === 'Pending'
+    );
+  }
+
+  getPendingApprovalMessage(fieldName: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        item.fieldName === fieldName && item.approvalStatus === 'Pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
+  }
+
+    setActiveMessage(fieldName: string) {
+  this.activeMessage = this.getPendingApprovalMessage(fieldName);
+}
+
+  // Add this method
+  isFieldDisabledDueToPending(fieldName: string): boolean {
+    return this.isFieldPendingApproval(fieldName);
   }
 
 
@@ -71,11 +156,13 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
+      this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+      this.isMyInfoRoute = true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    
+
       this.getEmployeeId();
     }
   }
@@ -83,7 +170,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]],
-      workMail: ['', [Validators.email]], 
+      workMail: ['', [Validators.email]],
       countyCode1: [null,],
        countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
@@ -106,7 +193,29 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       // If needed, re-enable it explicitly
       this.contactForm.get('workMail')?.enable();
     }
+    this.disablePendingFields();
   }
+
+
+  private disablePendingFields(): void {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter((item: any) => item.approvalStatus === 'Pending')
+    .map((item: any) => item.fieldName);
+
+  const fieldToControlMap: { [key: string]: string } = {
+    'Personal Email': 'personalEmail',
+    'Work Email': 'workMail',
+    'Phone Number': 'phoneNumber',
+    'Work Number':'workPhone'
+  };
+
+  pendingFields.forEach((fieldName) => {
+    const controlName = fieldToControlMap[fieldName];
+    if (controlName && this.contactForm.get(controlName)) {
+      this.contactForm.get(controlName)?.disable();
+    }
+  });
+}
 
   disableForm(): void {
     this.buttons = false;
@@ -137,7 +246,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       } ,
       complete: () => {
         this.loading = false;
-        this.dataLoader = false; 
+        this.dataLoader = false;
       }
     });
   }
@@ -153,30 +262,57 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   updateAddressInfo(): void {
-    const formValue = this.contactForm.value;
-    const cleanPhoneNumber = (phone: any): string => {
-      if (!phone) return '';
-      return String(phone).replace(/\D+/g, '');
-    };
+  const formValue = this.contactForm.getRawValue();
 
-    const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.employedata?.phoneNumber || '');
-    const worknumber = cleanPhoneNumber(formValue.workNumber || this.employedata?.workNumber || null);
-    const updatePayload = {
-      ...this.employedata,
-     
-      emailaddress: formValue.personalEmail,
-      workEmail: formValue.workMail || this.employedata.workEmail,
-      contactnumber: contactnumber,
-      workPhone: worknumber || null,
-      mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
-      workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode || null,
-      contactnumbercountryflag:this.selectedCountryCodephoneflag  || this.employedata.contactnumbercountryflag,
-      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag || null,
-      linkedinUrl: formValue.linkedinurl || null,
-     };
+  const targetStatuses = ['Pending', 'Cancelled'];
+      const pendingFieldNames = this.getFieldsApprovalStatusList
+        .filter((item) => targetStatuses.includes(item.approvalStatus))
+        .map((item) => item.fieldName);
 
+  const fieldToApiMap: { [key: string]: string } = {
+    'Personal Email': 'emailaddress',
+    'Work Email': 'workEmail',
+    'Phone Number': 'contactnumber',
+    'Work Number':'workPhone'
+  };
 
-    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
+  const updatePayload: any = {
+    ...this.employedata,
+    updatedby: this.empinfo.employeeId.toString(),
+    selfUpdate: this.isMyInfoRoute,
+    moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
+    displayName: this.isMyInfoRoute ? 'Personal' : undefined,
+  };
+
+  // Only include non-pending fields
+ Object.keys(fieldToApiMap).forEach((displayName) => {
+  if (!pendingFieldNames.includes(displayName)) {
+    const apiKey = fieldToApiMap[displayName];
+    let value;
+
+    if (displayName === 'Personal Email') value = formValue.personalEmail;
+    else if (displayName === 'Phone Number') value = formValue.phoneNumber;
+    else if (displayName === 'Work Number') value = formValue.workNumber;
+
+    if (value !== undefined && value !== null && value !== '') {
+      if (displayName.includes('Number')) {
+        updatePayload[apiKey] = String(value).replace(/\D+/g, '');
+      } else {
+        updatePayload[apiKey] = value;
+      }
+    }
+  }
+});
+
+  // Always include country codes/flags if changed
+  updatePayload.mobilePhoneCountryCode = this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode;
+  updatePayload.workPhoneCountryCode = this.selectedDialCode || this.employedata.workPhoneCountryCode;
+  updatePayload.contactnumbercountryflag = this.selectedCountryCodephoneflag || this.employedata.contactnumbercountryflag;
+  updatePayload.workPhoneCountryFlag = this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag;
+
+  console.log('Contact Payload (excluding pending):', updatePayload);
+
+ this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
@@ -186,7 +322,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
           this.contactForm.disable();
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
-        
+          this.getFieldsApprovalStatus();
+
           } else if (data.statusCode === 409) {
           this.getEmployeeId();
             this.conformationPopup.openErrorModal(data.message);
@@ -199,7 +336,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
           this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
         },
       });
-  }
+}
 
   onPhoneNumberInput(): void {
     const phoneNumberControl = this.contactForm.get('phoneNumber');
@@ -216,7 +353,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       workNumberControl.setValue(formattedValue, { emitEvent: false });
     }
   }
- 
+
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;
@@ -236,7 +373,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.contactForm.get('phoneNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodephoneflag)]);
     this.contactForm.get('phoneNumber')?.updateValueAndValidity();
     this.employedata.mobilePhoneCountryCode = country.dialling_code;
-    this.employedata.mobilephonecountryflag = country.code; 
+    this.employedata.mobilephonecountryflag = country.code;
   }
 
   formatPhoneNumber(value: any,countryCode:any) {

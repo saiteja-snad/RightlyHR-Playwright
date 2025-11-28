@@ -105,11 +105,14 @@
                                 <div class="col-md-7">
                                     <div class="d-flex align-items-center gap-1">
                                         <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
-                                        <div class="legend-name">{{ item.name }}</div>
+                                        <div class="legend-name text-truncate" [ngbPopover]="nameContent" 
+                                        triggers="mouseenter:mouseleave">{{ item.name }}</div>
+                                        <!--Module Information-->
+                                        <ng-template #nameContent>{{item.name}}</ng-template>
                                     </div>
                                 </div>
                                 <div class="hrs-display col-md-5">
-                                    <span class="actual">{{item.actualHours}}</span>/
+                                    <span class="actual">{{item.actualHoursHHMM}}</span>/
                                     <span>{{item.allocateHours}} Hrs</span>
                                 </div>
                             </div>
@@ -143,7 +146,9 @@
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                            <span class="legend-label">{{ item.label }}</span>
+                            <span class="legend-label" [ngbPopover]="estimatedContent">{{ item.label }}</span>
+                            <!--Module Information-->
+                            <ng-template #estimatedContent>{{estimatedvsActualHoursInfo}}</ng-template>
                         </div>
                     </div>
                 </div>

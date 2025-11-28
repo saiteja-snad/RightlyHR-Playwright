@@ -170,28 +170,14 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
 
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(250),
-          Validators.pattern(/^(?!\s).*$/),
-        ],
-      ],
-      statusEffectiveDate: ['', Validators.required],
+      reason: ['', [Validators.required, Validators.maxLength(250),]],
+      statusEffectiveDate: ['', Validators.required]
     });
 
     this.extendForm = this.fb.group({
       newStartDate: ['', Validators.required],
       newEndDate: ['', Validators.required],
-      extendReason: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(250),
-          Validators.pattern(/^(?!\s).*$/),
-        ],
-      ],
+      extendReason: ['', [Validators.required, Validators.maxLength(250)]]
     });
 
     // ✅ subscribe to correct controls
@@ -210,7 +196,7 @@ export class ProjectPhasesComponent implements OnInit, OnDestroy {
     };
 
     const validStatuses = ['yet to start', 'in progress', 'extended'];
-    const filteredStatuses = this.selectedPhaseStatuses.filter(s => 
+    const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
       validStatuses.includes(s.toLowerCase())
     );
 

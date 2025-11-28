@@ -14,18 +14,22 @@ import { Router } from '@angular/router';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { SettingsLockingSystemTabsComponent } from "../../shared/settings-tabs/settings-locking-system-tabs/settings-locking-system-tabs.component";
 import { SettingsTimesheetLockingTabsComponent } from "../../shared/settings-tabs/settings-timesheet-locking-tabs/settings-timesheet-locking-tabs.component";
+import { SettingsEmployeeFieldsUpdateConfigurationsComponent } from '../../shared/settings-employee-fields-update-configurations/settings-employee-fields-update-configurations.component';
+
 
 @Component({
   selector: 'app-settings-overview',
   imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
-    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent,
+    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent,SettingsEmployeeFieldsUpdateConfigurationsComponent,
     AccordionModule, SettingsLockingSystemTabsComponent, SettingsTimesheetLockingTabsComponent, SettingsItConfigurationTabsComponent],
+
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class SettingsOverviewComponent {
+  settingsEmployeefieldupdateconfigModule = MODULE_INFOS.SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_MODULE_INFO
   settingEmployeefieldsModule = MODULE_INFOS.SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO;
   settingRolesPermissionsModule = MODULE_INFOS.SETTINGS_ROLES_PERMISSIONS_MODULE_INFO;
   settingTimeOffModule = MODULE_INFOS.SETTINGS_TIME_OFF_MODULE_INFO;

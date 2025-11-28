@@ -14,7 +14,8 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/Employee-Fields-icon.png" alt="Icon" class="list-icon">
+                                        <img src="/main-menu-icons/Employee-Fields-icon.png" alt="Icon"
+                                            class="list-icon">
                                         <div class="list-label-name">Employee Fields</div>
                                     </div>
                                     <p class="list-description m-0">{{settingEmployeefieldsModule}}</p>
@@ -52,7 +53,8 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/Time-off-settings-icon.png" alt="Icon" class="list-icon">
+                                        <img src="/main-menu-icons/Time-off-settings-icon.png" alt="Icon"
+                                            class="list-icon">
                                         <div class="list-label-name">Time Off</div>
                                     </div>
                                     <p class="list-description m-0">{{settingTimeOffModule}}</p>
@@ -71,7 +73,8 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon" class="list-icon">
+                                        <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon"
+                                            class="list-icon">
                                         <div class="list-label-name">Asset Configuration</div>
                                     </div>
                                     <p class="list-description m-0">{{settingAssetsConfigurationModule}}</p>
@@ -90,7 +93,8 @@
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/pms-configuration-icon.png" alt="Icon" class="list-icon">
+                                        <img src="/main-menu-icons/pms-configuration-icon.png" alt="Icon"
+                                            class="list-icon">
                                         <div class="list-label-name">PMS Configuration</div>
                                     </div>
                                     <p class="list-description m-0">{{settingsPMSConfigurations}}</p>
@@ -124,12 +128,14 @@
 
                     @if(rbac.allowedToAccess('Project Management Configuration Module.view')){
                     <!--Attendance Configuration-->
-                    <li class="accordian-list-item"  (click)="navigateToAccessedRoute('/settings/project-management-config')">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/project-management-config')">
                         <p-accordion-panel value="6">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/project-management-configuration.png" alt="Icon" class="list-icon">
+                                        <img src="/main-menu-icons/project-management-configuration.png" alt="Icon"
+                                            class="list-icon">
                                         <div class="list-label-name">Project Management Configurations</div>
                                     </div>
                                     <p class="list-description m-0">{{settingAttendanceConfigurationModule}}</p>
@@ -138,14 +144,18 @@
                         </p-accordion-panel>
                     </li>
                     }
-                    <!-- @if(rbac.allowedToAccess('Attendance Configuration Module.view')){ -->
+
+
+                    @if(rbac.allowedToAccess('Attendance Configuration Module.view')){
                     <!--Attendance Configuration-->
-                    <!-- <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/attendance-configuration')">
+                    <li class="accordian-list-item"
+                        (click)="navigateToAccessedRoute('/settings/attendance-configuration')">
                         <p-accordion-panel value="6">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/attendance-locking-icon.png" alt="Icon" class="list-icon">
+                                        <img src="/main-menu-icons/attendance-locking-icon.png" alt="Icon"
+                                            class="list-icon">
                                         <div class="list-label-name">Attendance Locking</div>
                                     </div>
                                     <p class="list-description m-0">{{settingAttendanceConfigurationModule}}</p>
@@ -153,7 +163,7 @@
                             </p-accordion-header>
                         </p-accordion-panel>
                     </li>
-                    } -->
+                    }
                     @if(rbac.allowedToAccess('Locking System Configuration Module.view')){
                     <!--Time Off-->
                     <li class="accordian-list-item">
@@ -162,7 +172,7 @@
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <img src="/main-menu-icons/locking system.png" alt="Icon" class="list-icon">
-                                      
+
                                         <div class="list-label-name">Locking System</div>
                                     </div>
                                     <p class="list-description m-0">{{settingLockingsystemnModule}}</p>
@@ -188,6 +198,26 @@
                             </p-accordion-header>
                             <p-accordion-content>
                                 <app-settings-locking-system-tabs />
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    </li>
+                    }
+
+                    @if(rbac.allowedToAccess('Employee Fields Config Update Module.view')){
+                    <li class="accordian-list-item">
+                        <p-accordion-panel value="7">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/main-menu-icons/Employee-fields-update-config.png" alt="Icon"
+                                            class="list-icon">
+                                        <div class="list-label-name">Employee Field Update Configuration</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingsEmployeefieldupdateconfigModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                            <p-accordion-content>
+                                <app-settings-employee-fields-update-configurations />
                             </p-accordion-content>
                         </p-accordion-panel>
                     </li>

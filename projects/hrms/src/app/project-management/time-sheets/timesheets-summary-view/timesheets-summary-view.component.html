@@ -39,38 +39,73 @@
                 <div class="d-flex gap-2 align-items-center">
                     <label class="form-label filter-labels mt-2">{{'Select Date Range' | translate}}</label>
                     <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'" 
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
                             selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                     </div>
                 </div>
 
-                <!-- Employee Dropdown Outside Offcanvas (Single Select) - Hidden for mysummary route -->
-                @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
-                <div class="d-flex gap-2 align-items-center">
-                    <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
-                            optionLabel="label" optionValue="value" formControlName="resourceId"
-                            [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Select employee'" 
-                            class="form-select custom-select" />
+                    <div *ngIf="this.employeeId !== this.empdata?.employeeId">
+                        <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                                {{'Select Employee'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
+                                    [resetFilterOnHide]="true" placeholder="Please select employee"
+                                    class="form-select custom-select"></p-select>
+                            </div>
+                        </div>
+                        } -->
+                        @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                                {{'Select Employee'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                    optionValue="value" formControlName="resourceId" [resetFilterOnHide]="true"
+                                    [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'" class="form-select custom-select"
+                                    required></p-select>
+                            </div>
+                        </div>
+                        }
+                        @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
+                                    name="myteamemployees" optionValue="id" [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
+                                    formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true"
+                                    class="form-select custom-select" [autoDisplayFirst]="false" required>
+                                </p-select>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                    <div>
+                        <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
+                        {{'Apply' | translate}}
+                    </button>
+
                     </div>
                 </div>
-                }
-                @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
+
+                <!-- @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
                 <div class="d-flex gap-2 align-items-center">
-                    <label class="form-label filter-labels mt-2">{{'Select Employee' | translate}}</label>
+                    <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
                             optionLabel="fullName" optionValue="id" formControlName="resourceId"
-                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'" 
+                            [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
                             class="form-select custom-select" />
                     </div>
                 </div>
-                }
+                } -->
 
-                <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
+                <!-- <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
                         {{'Apply' | translate}}
-                    </button>
+                    </button> -->
 
                 <!-- Hide Filters button for mysummary route -->
                 <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
@@ -79,14 +114,14 @@
                         <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
                     </button>
                 </div>
-            </div>
+            <!-- </div> -->
         </form>
     </div>
 
     <!-- Filter Chips Display - Hidden for mysummary route -->
     <div class="fliter-content mb-2" *ngIf="!isShowtimesheetformyRoute() && getSelectedFilters().length > 0">
         <div class="d-flex align-items-center gap-2 flex-wrap">
-            <p-chip *ngFor="let filter of getSelectedFilters()" [label]="filter.label" 
+            <p-chip *ngFor="let filter of getSelectedFilters()" [label]="filter.label"
                 [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red"/>
             <button type="button" class="clear-all-btn" (click)="resetForm()">
                 {{ 'Clear All' | translate }}
@@ -125,9 +160,11 @@
                                         <td>
                                             <div
                                                 class="d-flex justify-content-center flex-column align-items-center text-center gap-2">
-                                                <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                                <ng-container
+                                                    *ngIf="row.entries && row.entries.length > 0; else noEntries">
                                                     <a>
-                                                        <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
+                                                        <app-info-icon class="cursor"
+                                                            (click)="openModal(row.entries, summaryforlogs)" />
                                                     </a>
                                                     @if(row.dailySummary.legendCode != null){
                                                     <!-- <div class="data-chip"> -->
@@ -183,7 +220,7 @@
                                 <div class="circular-dot circle-leave"></div>
                                 <div class="status-text">Leaves</div>
                             </div>
-                            
+
                             <div class="d-flex align-items-center gap-2">
                                 <div class="circular-dot circle-pending"></div>
                                 <div class="status-text">Pending(P)</div>
@@ -192,11 +229,13 @@
                     </div>
                 </div>
 
-                <div class="timesheet-graph-content p-3" [ngClass]="{'custom-graph-content-height': isShowtimesheetforteamRoute()}">
+                <div class="timesheet-graph-content p-3"
+                    [ngClass]="{'custom-graph-content-height': isShowtimesheetforteamRoute()}">
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Timesheet Summary</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent" class="module-icon">
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
+                                class="module-icon">
                             <ng-template #timesheetSummaryContent>
                                 <div class="module-info-text">{{TimesheetSummary}}</div>
                             </ng-template>
@@ -207,14 +246,17 @@
                         <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
                             <div class="stacked-progress-container">
                                 <!-- overlay color bar -->
-                                <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
-                                + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                                + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                                <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, '
+                                + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' '
+                                + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, '
                                 + rejectedColor + ' 100%)'"></div>
                                 <div class="progress-labels">
-                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{ displayApproved }} Hrs</span></div>
-                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{ displaySubmitted }} Hrs</span></div>
-                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{ displayRejected }} Hrs</span></div>
+                                    <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
+                                            displayApproved }} Hrs</span></div>
+                                    <div class="label" [style.color]="submittedColor">Submitted: <span class="hrs">{{
+                                            displaySubmitted }} Hrs</span></div>
+                                    <div class="label" [style.color]="rejectedColor">Rejected: <span class="hrs">{{
+                                            displayRejected }} Hrs</span></div>
                                 </div>
                             </div>
                         </ng-container>
@@ -241,13 +283,15 @@
                         <ng-container *ngIf="hasprojectWiseHoursData; else noData">
                             <div class="projectwise-chart-grid justify-content-between gap-3">
                                 <div>
-                                    <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                                    <p-chart type="pie" [data]="projectTypeGraphData"
+                                        [options]="projectTypeGraphOptions" />
                                 </div>
                                 <div class="legends-view custom-legend-width">
                                     <div class="row gap-0 mb-1" *ngFor="let item of projectTypeLabelData">
                                         <div class="col-md-8">
                                             <div class="d-flex align-items-center gap-1">
-                                                <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                                <div class="legend-circle"
+                                                    [ngStyle]="{ 'background-color': item.color }"></div>
                                                 <div class="legend-name">{{ item.label }}</div>
                                             </div>
                                         </div>
@@ -274,7 +318,8 @@
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Allocated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
+                                class="module-icon">
                             <ng-template #resourceSummaryContent>
                                 <div class="module-info-text">{{AllocatedActualhours}}</div>
                             </ng-template>
@@ -285,7 +330,8 @@
                     <div class="time-sheet-graph-card p-3">
                         <div class="bar-chart">
                             <ng-container *ngIf="hasallocatedvsactualData; else noActualData">
-                                <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                                <p-chart type="bar" [data]="estimatedVsActualGraphData"
+                                    [options]="estimatedVsActualGraphOptions" />
                             </ng-container>
                         </div>
                         <ng-template #noActualData>
@@ -308,8 +354,9 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Logged Hours BreakDown' | translate}} ({{
-                    selectedEntries[0]?.entryDate | dateformat }})</p>
+                <p class="popup-heading mb-0">{{'Timesheet BreakDown' | translate}} - {{employename?.firstName}}
+                    {{employename?.middleName || ''}}
+                    {{employename?.lastName}} ({{selectedEntries[0]?.entryDate | dateformat }})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -321,20 +368,75 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Client Name</th>
-                                <th>Project Name</th>
-                                <th>Phase/Milestone</th>
+                                <th>Project Details</th>
+
                                 <th>Logged Hours</th>
+                                <th>Approver</th>
                                 <th>Description</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of selectedEntries">
-                                <td>{{ entry.clientName }}</td>
-                                <td>{{ entry.projectName }}</td>
-                                <td>{{ entry?.phaseName || '-' }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center flex-column">
+
+                                        <div class="project-name-chip text-truncate mb-1" type="button"
+                                            [ngbPopover]="projectname"><b
+                                                [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
+                                                entry.projectName }}</b></div>
+                                        <ng-template #projectname>
+                                            <p class="mb-0" [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">
+                                                <b>{{ entry.projectName }}</b>
+                                            </p>
+                                        </ng-template>
+
+                                        <div class="d-flex flex-wrap align-items-center  justify-content-center gap-2">
+
+                                            <div class="timesheet-chip chip-truncate  text-truncate" type="button"
+                                                [ngbPopover]="clientname"
+                                                [style.background]="getLighterColor(entry?.clientMeta?.graphData?.color) "
+                                                [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"
+                                                [style.border-color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                {{
+                                                entry.clientName }}</div>
+
+                                            <ng-template #clientname>
+                                                <p class="mb-0 text-popover"
+                                                    [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                    <b>{{ entry.clientName }}</b>
+                                                </p>
+                                            </ng-template>
+
+
+                                            <div *ngIf="entry?.phaseName"
+                                                class="timesheet-chip chip-truncate  text-truncate" type="button"
+                                                [ngbPopover]="phasename"
+                                                [style.background]="getLighterColor(entry?.phaseMeta?.graphData?.color) "
+                                                [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
+                                                [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
+                                                {{ entry?.phaseName }}
+                                            </div>
+
+                                            <ng-template #phasename>
+                                                <p class="mb-0 text-popover"
+                                                    [style.color]="entry?.phaseMeta?.graphData?.color  ?? '#0B3A83'">
+                                                   <b> {{ entry.phaseName }}</b>
+                                                </p>
+                                            </ng-template>
+
+                                        </div>
+                                    </div>
+                                </td>
+
                                 <td>{{ entry.loggedHours }} hrs</td>
+                                <td>
+                                    <ng-container
+                                        *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
+                                        {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
+                                    </ng-container>
+                                    <ng-template #noValue>-</ng-template>
+                                </td>
                                 <td class="text-center">
                                     <div *ngIf="entry.summary; else noRequestedComments" type="button"
                                         [ngbPopover]="requestedComments">
@@ -346,7 +448,7 @@
                                     <ng-template #noRequestedComments><span>-</span></ng-template>
                                 </td>
                                 <td
-                                    [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected', 
+                                    [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                     'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
                                     {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}
                                 </td>

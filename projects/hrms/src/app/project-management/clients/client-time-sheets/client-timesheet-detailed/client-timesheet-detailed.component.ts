@@ -110,7 +110,7 @@ export class ClientTimesheetDetailedComponent implements OnInit {
       resourceStartDate: phase.resourceStartDate,
       resourceEndDate: phase.resourceEndDate,
       resourceRole: phase.resourceRole,
-      loggedHours: phase.loggedHours,
+      loggedHoursHHMM: phase.loggedHoursHHMM,
       resourceStatus: phase.resourceStatus,
           allocatedHours:phase.allocatedHours
     }));

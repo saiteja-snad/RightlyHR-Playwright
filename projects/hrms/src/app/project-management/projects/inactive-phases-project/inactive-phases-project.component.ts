@@ -169,27 +169,13 @@ export class InactivePhasesProjectComponent {
 
   ExtendDateForm() {
     this.reasonForm = this.fb.group({
-      reason: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(250),
-          Validators.pattern(/^(?!\s).*$/),
-        ],
-      ],
+      reason: ['', [Validators.required, Validators.maxLength(250), ]]
     });
 
     this.extendForm = this.fb.group({
       newStartDate: ['', Validators.required],
       newEndDate: ['', Validators.required],
-      extendReason: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(250),
-          Validators.pattern(/^(?!\s).*$/),
-        ],
-      ],
+      extendReason: ['', [Validators.required, Validators.maxLength(250),]]
     });
 
     // ✅ subscribe to correct controls
@@ -208,7 +194,7 @@ export class InactivePhasesProjectComponent {
     };
 
     const validStatuses = ['completed', 'closed'];
-    const filteredStatuses = this.selectedPhaseStatuses.filter(s => 
+    const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
       validStatuses.includes(s.toLowerCase())
     );
 

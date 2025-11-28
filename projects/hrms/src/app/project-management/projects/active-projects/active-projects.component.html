@@ -110,11 +110,8 @@
                   <td>{{ project.client.clientName }}</td>
                   }
                   <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
-                  <td class="text-center" [style.color]="project?.meta?.graphData?.color"><b>{{project?.meta?.graphData?.code || '-' }}</b></td>
-                  <!-- <td>{{ project.startDate | dateformat }}</td>
-                    <td>{{ project.endDate | dateformat }}</td>
-                    <td>{{ project.effectiveDate | dateformat }}</td>
-                    <td>{{ project.kickoffDate | dateformat }}</td> -->
+                   <td class="d-flex  justify-content-center" ><div  class="timesheet-chip " [style.color]="project?.meta?.graphData?.color"  [style.background]="getLighterColor(project?.meta?.graphData?.color) "><b>{{project?.meta?.graphData?.code || '-' }}</b></div></td>
+
                   <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                   <!-- <td>{{ project.status }}</td> -->
@@ -202,16 +199,16 @@
           <div class="col-md-6 mb-3">
             <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
-              formControlName="updatecode" maxlength="6" placeholder="Please enter project code">
+            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"  formControlName="updatecode" maxlength="13"
+              placeholder="Please enter project code">
             <div class="error-msg"
               *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['required']">
               Project Code is required
             </div>
             <div class="error-msg"
-              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
-              Project Code cannot exceed 5 characters
-            </div>
+            *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
+            Project Code cannot exceed 12 characters
+          </div>
           </div>
 
           <!-- Project Name -->

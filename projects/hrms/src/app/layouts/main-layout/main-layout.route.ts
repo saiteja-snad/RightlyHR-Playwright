@@ -25,8 +25,8 @@ import { ContactDirectoryComponent } from "../../contact-directory/contact-direc
 import { authGuard } from "../../auth/auth-guard/auth.guard";
 import { ProjectManagementLayoutComponent } from "../../project-management/project-management-layout/project-management-layout.component";
 import { CardsManagementLayoutComponent } from "../../cards-management/cards-management-layout/cards-management-layout.component";
-import { SkillDirectoryManagementComponent } from "../../skill-set-management/skill-directory-management/skill-directory-management.component";
 import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
+import { PendingApprovalsComponent } from "../../time-off/pending-approvals/pending-approvals.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -59,4 +59,5 @@ export default [
     { path: 'on-behalf-of', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/on-behalf-of.route') },
     { path: 'skill-management', component: SkillsetManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../skill-set-management/skillset-management.route') },
     { path: 'card-management', component: CardsManagementLayoutComponent, loadChildren: () => import('../../cards-management/cards-management.route') },
+    { path: 'pending-approvals', component: PendingApprovalsComponent, loadChildren: () => import('../../time-off/pending-approvals.route') },
 ] as Route[];

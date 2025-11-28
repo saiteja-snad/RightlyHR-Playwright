@@ -56,90 +56,102 @@
         <app-projects-side-tabs-for-clients />
       </div>
 
-      <!--Input search-->
-      <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1">
-          <i class="bi bi-search"></i>
-        </span>
+        <div class="main-content"
+            [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+            <div *ngIf="isActive('/project-management/clients')" class="mb-3">
+                <app-projects-side-tabs-for-clients />
+            </div>
 
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-          placeholder="Search by client name / project name / project type" aria-label="Search"
-          aria-describedby="basic-addon1">
-      </div>
+            <!--Input search-->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" #search="ngModel" [(ngModel)]="searchValue"
+                    class="form-control custom-search-input"
+                    placeholder="Search by client name / project name / project type" aria-label="Search"
+                    aria-describedby="basic-addon1">
+            </div>
 
-      <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
-        @if (!loading) {
-        <table class="w-100">
-          <thead>
-            @if(!isActive('/project-management/clients')){
-            <th>Client Name</th>
-            }
-            <th>Project Name</th>
-            <th class="text-center">Project Code</th>
-            <!-- <th>Start Date</th>
-            <th>End Date</th>
-            <th>Effective Date</th>
-            <th>Kickoff Date</th> -->
-            <th class="text-center">Project Type</th>
-            <th>Department</th>
-            <!-- <th>Status</th> -->
-            @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
-            inactiveClientStatus!=='inactive'){
-            <th class="text-center">{{"Action" | translate}}</th>
-            }
-          </thead>
-          <tbody>
-            <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
-              <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
-                <tr *ngFor="let project of filteredProjects; let i = index">
-                  @if(!isActive('/project-management/clients')){
-                  <td>{{ project.client.clientName }}</td>
-                  }
-                  <td>
-                    <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
-                  </td>
-                  <td class="text-center" [style.color]="project?.meta?.graphData?.color">
-                    <b>{{ project?.meta?.graphData?.code || '-' }}</b>
-                  </td>
-                  <!-- <td>{{ project.startDate | dateformat }}</td>
-                  <td>{{ project.endDate | dateformat }}</td>
-                  <td>{{ project.effectiveDate | dateformat }}</td>
-                  <td>{{ project.kickoffDate | dateformat }}</td> -->
-                  <td class="text-center">{{ project.projectType }}</td>
-                  <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
-                  <!-- <td>{{ project.status }}</td> -->
-                  @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
-                  inactiveClientStatus!=='inactive'){
-                  <td class="text-center">
-                    <div class="dropdown">
-                      <a data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-three-dots-vertical"></i>
-                      </a>
-                      <ul class="dropdown-menu custom-dropdown-menu">
-                        <li (click)="openModalstatus(statuschanges,project)">
-                          <a class="dropdown-item">
-                            <i class="bi bi-check-circle me-2"></i>Active
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                  }
-                </tr>
-              </ng-container>
-            </ng-container>
-            <ng-template #noDataTemplate>
-              <tr>
-                <app-no-data-found />
-              </tr>
-            </ng-template>
-          </tbody>
-        </table>
-        }
-        @else {
-        <app-data-loader-content />
-        }
-      </div>
+            <div class="custom-table-content"
+                [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
+                @if (!loading) {
+                <table class="w-100">
+                    <thead>
+                        @if(!isActive('/project-management/clients')){
+                        <th>Client Name</th>
+                        }
+                        <th>Project Name</th>
+                        <th class="text-center">Project Code</th>
+                        <!-- <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Effective Date</th>
+                        <th>Kickoff Date</th> -->
+                        <th class="text-center">Project Type</th>
+                        <th>Department</th>
+                        <!-- <th>Status</th> -->
+                        @if(( rbac.allowedToAccess('Project Details Tab.delete')) &&
+                        inactiveClientStatus!=='inactive'){
+                        <th class="text-center">{{"Action" | translate}}</th>
+                        }
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
+                            <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
+                                <tr *ngFor="let project of filteredProjects; let i = index">
+                                    @if(!isActive('/project-management/clients')){
+                                    <td>{{ project.client.clientName }}</td>
+                                    }
+                                    <td>
+                                        <a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                                            project.projectName }}</a>
+                                    </td>
+                                    <td class="d-flex  justify-content-center">
+                                        <div class="timesheet-chip" [style.color]="project?.meta?.graphData?.color"
+                                            [style.background]="getLighterColor(project?.meta?.graphData?.color) ">
+                                            <b>{{project?.meta?.graphData?.code || '-' }}</b></div>
+                                    </td>
+
+                                    <!-- <td>{{ project.startDate | dateformat }}</td>
+                                        <td>{{ project.endDate | dateformat }}</td>
+                                        <td>{{ project.effectiveDate | dateformat }}</td>
+                                        <td>{{ project.kickoffDate | dateformat }}</td> -->
+                                    <td class="text-center">{{ project.projectType }}</td>
+                                    <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
+                                    <!-- <td>{{ project.status }}</td> -->
+                                    @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
+                                    inactiveClientStatus!=='inactive'){
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </a>
+                                            <ul class="dropdown-menu custom-dropdown-menu">
+                                                <li (click)="openModalstatus(statuschanges,project)">
+                                                    <a class="dropdown-item">
+                                                        <i class="bi bi-check-circle me-2"></i>Active
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    }
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <app-no-data-found />
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+                }
+                @else {
+                <app-data-loader-content />
+                }
+            </div>
+        </div>
     </div>
   </div>
 </div>

@@ -44,11 +44,11 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
   initialiseForm() {
     this.addForm = this.fb.group({
       projectType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]],
-      color: [''],
+      color: ['#000000'],
     });
     this.updateForm = this.fb.group({
       projectType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]],
-      updatecolor: [''],
+      updatecolor: ['#000000'],
     });
   }
 
@@ -79,7 +79,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
         value: this.addForm.value.projectType,
         meta: JSON.stringify({
           graphData: {
-            color: this.addForm.value.color
+            color: this.addForm.value.color || '#000000'
           }
         })
       };
@@ -111,10 +111,10 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
   openupdateDialog(project: any) {
     // this.selectedId = jobrole.id;
     this.selectedEAV = project;
-    let color = "";
+    let color = "#000000";
     if (project.meta) {
       const metaObj = typeof project.meta === 'string' ? JSON.parse(project.meta) : project.meta;
-      color = metaObj?.graphData?.color ?? color;
+      color = metaObj?.graphData?.color || '#000000';
     }
     this.updateForm.patchValue({
       projectType: project.value,
@@ -135,7 +135,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
         value: form.value.projectType,
         meta: JSON.stringify({
           graphData: {
-            color: form.value.updatecolor
+            color: form.value.updatecolor || '#000000'
           }
         })
       };

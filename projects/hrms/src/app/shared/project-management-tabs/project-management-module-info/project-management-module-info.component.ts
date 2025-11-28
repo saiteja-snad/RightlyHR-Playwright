@@ -33,7 +33,7 @@ export class ProjectManagementModuleInfoComponent {
   projectname: any;
   projectColor: any;
   projectId: any;
-
+  storeclientId: any;
   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -95,7 +95,12 @@ export class ProjectManagementModuleInfoComponent {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDetails = res?.data ?? [];
+
         this.projectname = this.projectsDetails[0]?.projectName;
+        // this.storeclientId =  this.projectsDetails[0]?.client?.clientId;
+
+        this.getClientsData(this.projectsDetails[0]?.client?.clientId);
+        this.storeclientId = this.projectsDetails[0]?.client?.clientId;
         this.projectColor = this.projectsDetails[0]?.meta?.graphData?.color;
       },
       error: (err) => {
@@ -283,7 +288,8 @@ export class ProjectManagementModuleInfoComponent {
   isShowClientRoute(): boolean {
     const showPaths = [
       '/project-management/clients/details',
-      '/project-management/clients/add'
+
+
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -291,6 +297,7 @@ export class ProjectManagementModuleInfoComponent {
   isShowProjectRoute(): boolean {
     const showPaths = [
       '/project-management/projects/details',
+
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -336,6 +343,8 @@ export class ProjectManagementModuleInfoComponent {
     localStorage.removeItem('projectProjectId');
   }
 
+
+
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
@@ -356,6 +365,9 @@ export class ProjectManagementModuleInfoComponent {
     localStorage.removeItem('projectProjectId');
   }
 
+  navigationtoclientinfo() {
+    this.router.navigate(['/project-management/clients/details/info'], { queryParams: { id:  this.storeclientId } });
+  }
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');
     if (clientProjectId) {

@@ -295,6 +295,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId;
     const formValue = this.datepickerForm.value;
     this.filterService.setFilters(formValue);
+    this.updateQueryParamsWithFilters(formValue);
     this.projectSummery(resoureID, formValue);
     this.getallocatedSummary(resoureID, formValue);
     this.getEmployeeId(resoureID);
@@ -303,6 +304,15 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     if (this.offcanvasService.hasOpenOffcanvas()) {
       this.closeCanvas();
     }
+  }
+
+  updateQueryParamsWithFilters(formValue: any): void {
+    const encryptedData = this.encryptionService.encrypt(formValue);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { data: encryptedData },
+      queryParamsHandling: 'merge'
+    });
   }
 
   createDatepickerForm() {
@@ -607,19 +617,19 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     // Base URL
     let apiUrl = `ProjectManagementGraph/employee/billable-non-billable/${employeeId}`;
     // Prepare query parameters if BehaviorSubject data exists
-    const queryParams: string[] = [];
-    const dateRange = this.datepickerForm.get('dateRange')?.value;
-    if (dateRange && dateRange[0] && dateRange[1]) {
-      const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
-      const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
-      queryParams.push(`?groupBy=project`)
-      queryParams.push(`startDate=${startDate}`);
-      queryParams.push(`endDate=${endDate}`);
-    }
-    if (queryParams.length > 0) {
-      apiUrl += `?${queryParams.join('&')}`;
-    }
-    this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+    // const queryParams: string[] = [];
+    // const dateRange = this.datepickerForm.get('dateRange')?.value;
+    // if (dateRange && dateRange[0] && dateRange[1]) {
+    //   const startDate = moment(dateRange[0]).format('YYYY-MM-DD');
+    //   const endDate = moment(dateRange[1]).format('YYYY-MM-DD');
+    //   queryParams.push(`?groupBy=project`)
+    //   queryParams.push(`startDate=${startDate}`);
+    //   queryParams.push(`endDate=${endDate}`);
+    // }
+    // if (queryParams.length > 0) {
+    //   apiUrl += `?${queryParams.join('&')}`;
+    // }
+    this.http.getProjectSummary(apiUrl,payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.BillablevsNonBillableHoursLoader = false;
         const chartData = res?.data?.data || [];
@@ -869,11 +879,10 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   getallocatedSummary(resoureID: any,payload:any) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
-    const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}&isGraph=${true}`;
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}&isGraph=${true}`;
+    this.http.getProjectSummary(url, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         const data: TimesheetSummaryResponse = res?.data || {};

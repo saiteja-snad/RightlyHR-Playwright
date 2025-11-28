@@ -451,9 +451,19 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
       : (this.datepickerForm.get('resourceId')?.value || this.employeeId);
     const formValue = this.datepickerForm.value;
     this.filterService.setFilters(formValue);
+    this.updateQueryParamsWithFilters(formValue);
     this.getProjectSummary(resoureID);
     this.getEmployeeId(resoureID);
     this.closeCanvas();
+  }
+
+  updateQueryParamsWithFilters(formValue: any): void {
+    const encryptedData = this.encryptionService.encrypt(formValue);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { data: encryptedData },
+      queryParamsHandling: 'merge'
+    });
   }
 
   convertTimeToHours(time: string): number {

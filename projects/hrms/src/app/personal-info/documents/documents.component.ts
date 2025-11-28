@@ -6,7 +6,7 @@ import { ICreateSubDir, IFolders } from '../../Interfaces/document.model';
 import { Subscription } from 'rxjs';
 import { LastValuePipe } from '../../Pipes/last-value/last-value.pipe';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';

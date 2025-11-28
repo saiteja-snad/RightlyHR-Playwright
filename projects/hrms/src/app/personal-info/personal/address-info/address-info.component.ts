@@ -27,6 +27,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   empinfo: any
   loading: boolean = false;
   employedata={} as any;
+  isMyInfoRoute = false;
+
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
      private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService,private router: Router,public permissionRouteService: AccessForEmployeeinfoService, ) { }
@@ -42,16 +44,18 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       this.addressForm.get('currentAddress')?.valueChanges.subscribe(() => {
       this.checkIfAddressesAreSame();
     });
-   
+
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
     console.log('Full path:', fullPath);
-   
+
     if (fullPath.startsWith('/personalinfo')) {
+      this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+      this.isMyInfoRoute = true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
     }
@@ -61,7 +65,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   }
 
 
- 
+
   initializeForm(): void {
     this.addressForm = this.fb.group({
       sameAsPermanent: [{value:false}], // Checkbox for "Same as Current Address"
@@ -100,7 +104,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.addressForm.get('currentAddress')?.enable(); // Enable all current address fields
     this.addressForm.get('permanentAddress')?.enable(); // Enable all permanent address fields
   }
-  
+
   enableForm2(): void {
     this.buttons2 = true;
     this.addressForm.get('sameAsPermanent')?.enable();
@@ -111,8 +115,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.buttons = false;
     this.buttons2 = false;
     this.addressForm.disable();
-    this.addressForm.reset(); 
-    this.getEmployeeId(); 
+    this.addressForm.reset();
+    this.getEmployeeId();
 
   }
 
@@ -124,7 +128,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
          this.loading = false;
         this.employedata = data;
         this.patchForm(data);
-       
+
       },
       error: (reason: any) => {console.error('Error fetching employee data:', reason)
         this.loading = false;
@@ -139,7 +143,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   patchForm(data: any): void {
     this.currentAddress = data.employeeAddresses.find((address: any) => address.type === 'C');
     this.permanentAddress = data.employeeAddresses.find((address: any) => address.type === 'P');
-  
+
     // Patch currentAddress fields
     this.addressForm.get('currentAddress')?.patchValue({
       addressLine1: this.currentAddress?.addressLine1 || '',
@@ -149,7 +153,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       country: this.currentAddress?.country || '',
       zipCode: this.currentAddress?.zipCode || '',
     });
-  
+
     // Patch permanentAddress fields
     this.addressForm.get('permanentAddress')?.patchValue({
       addressLine1: this.permanentAddress?.addressLine1 || '',
@@ -165,16 +169,16 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   checkIfAddressesAreSame(): void {
     const currentAddress = this.addressForm.get('currentAddress')?.value;
     const permanentAddress = this.addressForm.get('permanentAddress')?.value;
-  
+
     const areAddressesSame = JSON.stringify(currentAddress) === JSON.stringify(permanentAddress);
-  
+
     // Update the checkbox value based on the comparison
     this.addressForm.get('sameAsPermanent')?.setValue(areAddressesSame, { emitEvent: false });
   }
 
   updateAddressInfo(): void {
     const formValue = this.addressForm.value; // Get updated form values
-  
+
     // Ensure the existing address object remains unchanged while updating fields
     this.currentAddress = this.currentAddress
       ? {
@@ -189,7 +193,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
           zipCode: formValue.currentAddress.zipCode || this.currentAddress.zipCode,
         }
       : null;
-  
+
     this.permanentAddress = this.permanentAddress
       ? {
           ...this.permanentAddress,
@@ -203,23 +207,28 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
           zipCode: formValue.permanentAddress.zipCode || this.permanentAddress.zipCode,
         }
       : null;
-  
+
     // Debugging Log - Ensure both addresses are updated properly
     console.log('Updated Current Address:', this.currentAddress);
     console.log('Updated Permanent Address:', this.permanentAddress);
-  
+
     // Prepare payload for employee details update
     const updatePayload = {
       ...this.employedata,
-      currentAddress: this.currentAddress, 
+      currentAddress: this.currentAddress,
       permanentAddress: this.permanentAddress,
+
+
+  selfUpdate: this.isMyInfoRoute,
+  moduleName: this.isMyInfoRoute ? 'Address Info' : undefined,
+  displayName: this.isMyInfoRoute ? 'Personal' : undefined,
     };
-  
+
     // Send employee basic details update
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload).subscribe({
       next: (data: any) => {
         console.log('Data updated successfully:', data);
-  
+
         this.modalService.dismissAll();
         this.postEmployeeAddresses(); // Ensure updated addresses are sent
         // this.conformationPopup.openSuccessModal('Address Info updated successfully');
@@ -230,11 +239,11 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       },
     });
   }
-  
+
   postEmployeeAddresses(): void {
     // Update currentAddress and permanentAddress with the latest form values
     const formValue = this.addressForm.value;
-  
+
     this.currentAddress = {
       ...this.currentAddress,
       addressLine1: formValue.currentAddress.addressLine1,
@@ -246,7 +255,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       country: formValue.currentAddress.country,
       zipCode: formValue.currentAddress.zipCode,
     };
-  
+
     this.permanentAddress = {
       ...this.permanentAddress,
       addressLine1: formValue.permanentAddress.addressLine1,
@@ -258,13 +267,13 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       country: formValue.permanentAddress.country,
       zipCode: formValue.permanentAddress.zipCode,
     };
-  
+
     // Prepare the payload
     const payload = {
       employeeAddresses: [this.currentAddress, this.permanentAddress],
     };
     console.log('Payload:', payload);
-  
+
     // Send the updated payload
     this.subscription = this.http.postdata('EmployeeAddress', payload).subscribe({
       next: (data: any) => {
@@ -281,10 +290,10 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       },
     });
   }
-  
+
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
-  
+
     if (isChecked) {
       this.addressForm.get('permanentAddress')?.patchValue({
         addressLine1: this.addressForm.get('currentAddress.addressLine1')?.value,
@@ -304,10 +313,10 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         zipCode: this.permanentAddress?.zipCode || '',
       });
     }
-  
+
     this.checkIfAddressesAreSame();
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

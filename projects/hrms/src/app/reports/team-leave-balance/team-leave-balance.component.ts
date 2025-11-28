@@ -6,7 +6,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { FormsModule } from '@angular/forms';
-import { DateformatPipe } from '../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';

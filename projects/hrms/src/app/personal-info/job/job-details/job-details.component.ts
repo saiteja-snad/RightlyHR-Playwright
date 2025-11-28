@@ -7,7 +7,7 @@ import { IDepartment, IGrade, IJob, IJobtype, IRole } from '../../../Interfaces/
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import moment from 'moment';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
@@ -187,6 +187,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       shiftName: [null, Validators.required],
       jobType: [null, Validators.required],
     });
+     this.jobDetailsupdateForm.get('team')?.valueChanges
+      .subscribe((subdepartmentId: number) => {
+        console.log("dataid" + subdepartmentId)
+        this.onSubDepartmentNameChangeupdate(subdepartmentId);
+      });
   }
 
   initializeForm(): void {
@@ -397,12 +402,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data) {
           this.subdeparmentSingleobj = data || '';
+          console.log(this.subdeparmentSingleobj)
           // Update the team manager dropdown values
           this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
             id: manager.reportingmanagerId,
             name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
               : `${manager.firstName} ${manager.lastName}` || '',
           }));
+          console.log(this.teamManagerDropdownValues)
           this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager Id
 
           this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });

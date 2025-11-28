@@ -1,36 +1,38 @@
 export interface Ipersonal {
-empstatus: any;
-experienceType: string;
-employeeId: any;
-emailaddress: string,
-substatus : any;
-isCredentialExpired : any;
-empType:any
-fusionEmpId : any;
+  empstatus: any;
+  experienceType: string;
+  employeeId: any;
+  emailaddress: string;
+  substatus: any;
+  isCredentialExpired: any;
+  empType: any;
+  fusionEmpId: any;
+  firstName: any;
+  lastName: any;
+  middleName: any;
 }
-export interface Iteammembers{
-    [x: string]: any;
-    firstName: any,
-    lastName: any,
-    middleName: any,
-    
-    duration: any,
-    jobRole: any,
-    workEmail: any,
-    reportingFirstName: any,
-    reportingLastName: any,
-    reportingMiddleName: any,
-    subLocation: any,
-    contactnumber: any,
-    lastworkingday: any,
-    lopcation: any,
-    teamManagerFirstName: any,
-    teamManagerLastName: any,
-    teamManagerMiddleName: any,
-    fusionEmpId: any,
-    employeeId: any,
-    dateOfJoining: any,
-    id: number;
-    selected?: boolean;
-    emailaddress: string,
+export interface Iteammembers {
+  [x: string]: any;
+  firstName: any;
+  lastName: any;
+  middleName: any;
+  duration: any;
+  jobRole: any;
+  workEmail: any;
+  reportingFirstName: any;
+  reportingLastName: any;
+  reportingMiddleName: any;
+  subLocation: any;
+  contactnumber: any;
+  lastworkingday: any;
+  lopcation: any;
+  teamManagerFirstName: any;
+  teamManagerLastName: any;
+  teamManagerMiddleName: any;
+  fusionEmpId: any;
+  employeeId: any;
+  dateOfJoining: any;
+  id: number;
+  selected?: boolean;
+  emailaddress: string;
 }

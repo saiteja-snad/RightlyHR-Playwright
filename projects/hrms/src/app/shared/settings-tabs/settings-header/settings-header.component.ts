@@ -70,6 +70,20 @@ export class SettingsHeaderComponent implements OnInit {
       this.componentName = 'No Due Clearance';
     }
 
+    //employee fields update configurations
+    else if (url.startsWith('/settings/employee-fields-update-configurations/personal')) {
+      this.moduleName = 'Employee Fields Update Configurations';
+      this.componentName = 'Personal';
+    }
+    else if (url.startsWith('/settings/employee-fields-update-configurations/job')) {
+      this.moduleName = 'Employee Fields Update Configurations';
+      this.componentName = 'Job';
+    } 
+    else if (url.startsWith('/settings/employee-fields-update-configurations/documents')) {
+      this.moduleName = 'Employee Fields Update Configurations';
+      this.componentName = 'Documents';
+    }
+
     // Roles & Permissions
     else if (url.startsWith('/settings/roles-permissions/roles')) {
       this.moduleName = 'Roles-Permissions';

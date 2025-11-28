@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { DateformatPipe } from "../../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ActivatedRoute } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AuthService } from '../../../services/auth.service';

@@ -13,7 +13,7 @@ import { ChartModule } from 'primeng/chart';
 import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData,
    IMarriageAnniversary, INewJoinee, Permission } from '../../Interfaces/dashboard.modal';
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
-import { DateformatPipe } from "../../pipes/dateformat.pipe";
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
 import { AccordionModule } from 'primeng/accordion';
 @Component({

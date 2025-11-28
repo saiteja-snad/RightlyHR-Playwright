@@ -18,7 +18,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../../pipes/dateformat.pipe';
+import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import {
   AttendanceRequest,
   ICategoryDetails,

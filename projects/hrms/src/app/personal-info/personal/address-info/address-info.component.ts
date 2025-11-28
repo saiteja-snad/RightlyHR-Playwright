@@ -247,7 +247,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
 
   postEmployeeAddresses(): void {
     // Update currentAddress and permanentAddress with the latest form values
-    const formValue = this.addressForm.value;
+    const formValue = this.addressForm.getRawValue();
 
     this.currentAddress = {
       ...this.currentAddress,

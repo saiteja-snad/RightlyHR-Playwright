@@ -85,6 +85,20 @@ export class MyTeamMembersComponent {
     }));
   }
 
+  onCollapse(event: any) {
+    const node = event.node;
+    this.collapseChildren(node);
+  }
+ 
+  collapseChildren(node: any) {
+    if (node.children && node.children.length > 0) {
+      node.children.forEach((child: any) => {
+        child.expanded = false;        // collapse child
+        this.collapseChildren(child);  // recursively collapse grandchildren
+      });
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -30,7 +30,7 @@
 
                 <!-- ✅ When data exists -->
                 <p-treetable *ngIf="filteredMembers && filteredMembers.length > 0; else noData"
-                    [value]="filteredMembers" [scrollable]="true" [tableStyle]="{'min-width':'60rem'}">
+                    [value]="filteredMembers" [scrollable]="true" (onNodeCollapse)="onCollapse($event)" [tableStyle]="{'min-width':'60rem'}">
 
                     <ng-template pTemplate="header">
                         <tr>

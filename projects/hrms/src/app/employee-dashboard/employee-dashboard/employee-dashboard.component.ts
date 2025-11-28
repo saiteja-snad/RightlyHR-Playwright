@@ -114,17 +114,18 @@ export class EmployeeDashboardComponent {
   }
 
 
-  getAllTeammembersList() {
-    this.loading = true;
-    const EmployeeId = this.empinfo?.employeeId;
+getAllTeammembersList() {
+  this.loading = true;
+  const EmployeeId = this.empinfo?.employeeId;
 
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe(
-        (responseData: any) => {
-          this.loading = false;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe(
+      (responseData: any) => {
+        this.loading = false;
 
-          this.teamMembers = responseData.map((emp: any) => {
+        this.teamMembers = responseData
+          .map((emp: any) => {
             const fullName =
               `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
 
@@ -133,14 +134,18 @@ export class EmployeeDashboardComponent {
               role: emp.jobRole,
               photo: this.getImageUrl(emp.profilePic)
             };
-          });
-        },
-        (error) => {
-          console.error(error);
-          this.loading = false;
-        }
-      );
-  }
+          })
+          .sort((a: any, b: any) =>
+            a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+          ); // <-- sorting applied here
+      },
+      (error) => {
+        console.error(error);
+        this.loading = false;
+      }
+    );
+}
+
 
   private getImageUrl(imagePath: string): string | null {
     if (!imagePath) {
@@ -353,6 +358,9 @@ export class EmployeeDashboardComponent {
 
         // Chart options (same structure as your reference)
         this.genderChartOptions = {
+          responsive: true,
+          maintainAspectRatio: false, 
+
           indexAxis: 'y',
           plugins: {
             legend: { display: false },
@@ -485,7 +493,7 @@ export class EmployeeDashboardComponent {
 
           // Prepare weeklyWorkLogs for template
           this.weeklyWorkLogs = attendance.map((item: any) => ({
-          day: moment(item.date).format('dddd') ,
+            day: moment(item.date).format('dddd'),
             time: item.duration.totalDuration,
           }));
 

@@ -11,6 +11,7 @@
                 @else if (isDeskRoute()) {Desks}
                 @else if (isExpensesRoute()) {Expenses}
                 @else if (router.url === '/pending-approvals/time-sheets') {Timesheets}
+                @else if (isEmployeeInfoRoute()) {Employee Info}
             </div>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">

@@ -1728,6 +1728,16 @@ export class AccessNavigationService {
         }
         break;
 
+         case '/pending-approvals/employeeinfo-request':
+        if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
+          for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+     
       case '/personalinfo/personal':
         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||
           this.rbac.allowedToAccess('My Info Personal Tab.view')) {

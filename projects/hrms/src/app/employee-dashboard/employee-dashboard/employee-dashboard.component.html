@@ -57,6 +57,32 @@
                     <a class="view-all" (click)="nagvition()"><u>View All</u></a>
                 </div>
 
+                <!-- <div class="employee-category-container">
+                    <p-tabs scrollable>
+                        <p-tablist>
+                            <ng-container *ngIf="!loading; else tabsSkeleton">
+                                @for (emp of teamMembers; track $index) {
+                                <p-tab>
+                                    <div class="card employee-category-card">
+                                        <img [src]="emp.photo ?? 'images/alternate.png'" class="icon mb-2" />
+                                        <div class="name">{{ emp.name }}</div>
+                                        <div class="role">{{ emp.role }}</div>
+                                    </div>
+                                </p-tab>
+                                }
+                            </ng-container>
+
+                            <ng-template #tabsSkeleton>
+                                <p-tab *ngFor="let i of [1, 2, 3, 4]">
+                                    <div class="card employee-category-card text-center py-3">
+                                        <p-skeleton shape="circle" size="2.5rem" styleClass="mb-3 mx-auto"></p-skeleton>
+                                        <p-skeleton width="8rem" height="1rem" styleClass="mx-auto"></p-skeleton>
+                                    </div>
+                                </p-tab>
+                            </ng-template>
+                        </p-tablist>
+                    </p-tabs>
+                </div> -->
                 <div class="members-list">
                     <div class="member-card-border" *ngFor="let emp of teamMembers">
                         <div class="member-card text-center">
@@ -86,7 +112,8 @@
             <div class="content-card">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Weekly Work Logs</div>
-                    <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
+                    <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View
+                        Attendance</button>
                 </div>
 
                 <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>

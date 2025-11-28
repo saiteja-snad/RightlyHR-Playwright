@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Ipersonal } from '../../Interfaces/personal-modal';
@@ -14,15 +14,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, DateformatPipe, ChartModule, AccordionModule, Carousel, Skeleton, TranslateModule],
+  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class EmployeeDashboardComponent implements OnInit {
+export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   greetingMessage = ''
   employeedata: any;
   currentTime: Date = new Date();
@@ -53,7 +54,8 @@ export class EmployeeDashboardComponent implements OnInit {
   maleCount: number = 0;
   weeklyWorkLogs: any[] = [];
   anniversaries: any[] = [];
-
+  todayDurationLabel: string = "00:00:00";
+  todayDurationPercent: number = 0;
 
   constructor(
     private http: HttpService,
@@ -113,8 +115,8 @@ export class EmployeeDashboardComponent implements OnInit {
 
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe(
-        (responseData: any) => {
+      .subscribe({
+        next: (responseData: any) => {
           this.loading = false;
 
           this.teamMembers = responseData
@@ -132,11 +134,11 @@ export class EmployeeDashboardComponent implements OnInit {
               a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
             ); // <-- sorting applied here
         },
-        (error) => {
-          console.error(error);
+        error: (err: any) => {
           this.loading = false;
+          console.log(err);
         }
-      );
+      });
   }
 
 
@@ -152,65 +154,65 @@ export class EmployeeDashboardComponent implements OnInit {
     }
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
-getworkanniversary() {
-  this.subscription = this.http
-    .getData(
-      `Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth},${this.nextMonth}`
-    )
-    .subscribe({
-      next: (data: any) => {
-
-        const today = new Date();
-        const next30 = new Date();
-        next30.setDate(today.getDate() + 30); // next 30 days
-
-        this.anniversaries = data.filter((item: any) => {
-          const doj = new Date(item.dateOfJoining);
-
-          // Anniversary THIS year (ignore original joining year)
-          const anniversaryThisYear = new Date(
-            today.getFullYear(),
-            doj.getMonth(),
-            doj.getDate()
-          );
-
-          return anniversaryThisYear >= today && anniversaryThisYear <= next30;
-        });
-      },
-
-      error: (err: any) => console.log(err),
-    });
-}
 
 
+  getworkanniversary() {
+    this.http
+      .getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
 
-getbrithday() {
-  this.subscription = this.http
-    .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`)
-    .subscribe({
-      next: (data: any) => {
+          const today = new Date();
+          const next30 = new Date();
+          next30.setDate(today.getDate() + 30); // next 30 days
 
-        const today = new Date();
-        const next30 = new Date();
-        next30.setDate(today.getDate() + 30); // next 30 days
+          this.anniversaries = data.filter((item: any) => {
+            const doj = new Date(item.dateOfJoining);
 
-        this.employeesBirthdays = data.filter((item: any) => {
-          const dob = new Date(item.dob);
+            // Anniversary THIS year (ignore original joining year)
+            const anniversaryThisYear = new Date(
+              today.getFullYear(),
+              doj.getMonth(),
+              doj.getDate()
+            );
 
-          // birthday in CURRENT year
-          const birthdayThisYear = new Date(
-            today.getFullYear(),
-            dob.getMonth(),
-            dob.getDate()
-          );
+            return anniversaryThisYear >= today && anniversaryThisYear <= next30;
+          });
+        },
 
-          return birthdayThisYear >= today && birthdayThisYear <= next30;
-        });
-      },
+        error: (err: any) => console.log(err),
+      });
+  }
 
-      error: (err: any) => console.log(err),
-    });
-}
+
+
+  getbrithday() {
+    this.http
+      .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+
+          const today = new Date();
+          const next30 = new Date();
+          next30.setDate(today.getDate() + 30); // next 30 days
+
+          this.employeesBirthdays = data.filter((item: any) => {
+            const dob = new Date(item.dob);
+
+            // birthday in CURRENT year
+            const birthdayThisYear = new Date(
+              today.getFullYear(),
+              dob.getMonth(),
+              dob.getDate()
+            );
+
+            return birthdayThisYear >= today && birthdayThisYear <= next30;
+          });
+        },
+
+        error: (err: any) => console.log(err),
+      });
+  }
 
 
 
@@ -229,8 +231,8 @@ getbrithday() {
     }
   }
   getCategoryempDetails(empId: any) {
-    this.subscription = this.http
-      .getData(`LeaveEntitlements/v2/employee/${empId}?year=${this.currentYear}`)
+    this.http
+      .getData(`LeaveEntitlements/v2/employee/${empId}?year=${this.currentYear}`).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           if (res.success) {
@@ -365,7 +367,9 @@ getbrithday() {
         this.genderCountLoader = false;
         const female = data.find((x: any) => x.gender === 'Female');
         const male = data.find((x: any) => x.gender === 'Male');
-        this.genderTotal = female?.count + male?.count;
+        const others = data.find((x: any) => x.gender === 'Others');
+
+        this.genderTotal = (female?.count || 0) + (male?.count || 0) + (others?.count || 0);
         if (!data || !data.length) {
           this.genderChartData = { labels: [], datasets: [] };
           return;
@@ -382,8 +386,10 @@ getbrithday() {
             {
               label: 'Gender Count',
               data: counts,
-              backgroundColor: ['#FF69B4', '#187DF5'], // Pink for female, Blue for male
-              barThickness: 12
+              backgroundColor: ['#E91CAB', '#1E88E5', '#B146C3'], // Pink for female, Blue for male, Grey for others
+              barThickness: 10,
+              borderRadius: 15,   // 🔥 Rounded bar corners
+              borderSkipped: false
             }
           ]
         };
@@ -444,13 +450,12 @@ getbrithday() {
     });
   }
 
-  todayDurationLabel: string = "00:00:00";
-  todayDurationPercent: number = 0;
+
   gettodayloggedtime() {
-    this.subscription = this.http
+    this.http
       .getData(
         `v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&date=${this.currentDate}`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
 
@@ -515,10 +520,10 @@ getbrithday() {
 
 
   getWeeklyWorkLogHours() {
-    this.subscription = this.http
+    this.http
       .getData(
         `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
-      )
+      ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           const attendance = res.data.attendanceData;

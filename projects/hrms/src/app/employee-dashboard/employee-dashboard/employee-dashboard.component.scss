@@ -26,11 +26,13 @@
 }
 
 .content-card {
+    
     background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
     border: 2px solid #FFFFFF;
     border-radius: 0.75rem;
     padding: 0.5rem 0.75rem;
     min-height: 10rem;
+    overflow-y: auto;
 
     .section-title {
         font-weight: 500;
@@ -53,6 +55,71 @@
             font-weight: 600;
             color: var(--primary-color) !important;
         }
+
+        .p-tablist-tab-list {
+            background: none !important;
+            border: none !important;
+        }
+
+        .p-tab {
+            padding: 0rem 0.5rem !important;
+        }
+
+        .p-tab-active {
+            background: none !important;
+            border: 0rem !important;
+        }
+
+        .p-tablist-nav-button {
+            box-shadow: none !important;
+        }
+
+        .p-tablist-active-bar {
+            background: none !important;
+        }
+
+        .p-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .employee-category-container {
+            width: calc(100% - 21rem);
+
+            .active-nav-link {
+                box-shadow: 0px 0px 10px 0px #0B3A8340;
+            }
+
+            .employee-category-card {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 13.5rem !important;
+                padding: 1rem 0.75rem;
+                border: 1px solid #DCE3E9 !important;
+                border-radius: 0.625rem;
+                margin: 0.25rem;
+
+                .icon {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+
+                .content-text {
+                    font-weight: 600;
+                    font-size: var(--fontsize12);
+                    line-height: 18px;
+                    letter-spacing: 0%;
+                    text-align: center;
+                    color: #222222;
+                    text-wrap: wrap;
+                }
+            }
+        }
+
+
     }
 
     .view-attendance-btn {
@@ -91,11 +158,17 @@
         background: linear-gradient(90deg, rgba(11, 58, 131, 0.1) 0%, rgba(208, 208, 208, 0.1) 100%);
         padding: 2px;
         border-radius: 0.5rem;
+        border: 1px  transparent;
+        border-image-source: linear-gradient(90deg, rgba(11, 58, 131, 0.1) 0%, rgba(208, 208, 208, 0.1) 100%);
+
 
         .member-card {
             width: 8rem;
             height: max-content;
             padding: 0.5rem;
+
+
+
 
             .profile-img {
                 width: 3rem;

@@ -125,6 +125,8 @@ export class AddressesComponent {
 get isReadOnlyMode(): boolean {
   return this.allOptionsDisabled;
 }
+
+allFieldOptions: any[] = [];
   getAddressesFields() {
     const params = 'Personal';
     const param = 'Addresses';
@@ -137,6 +139,7 @@ get isReadOnlyMode(): boolean {
       .subscribe({
         next: (data: any) => {
           if (data.data.length > 0) {
+              this.allFieldOptions = data.data
             this.fieldOptions = data.data.filter(
               (field: any) => field.isRequired !== false
             );
@@ -149,6 +152,22 @@ get isReadOnlyMode(): boolean {
         },
       });
   }
+
+  filterFieldsByAddressType() {
+  const selectedType = this.fieldConfigForm.get('addressType')?.value;
+
+  if (!selectedType) {
+    this.fieldOptions = [];
+    return;
+  }
+
+  const prefix = selectedType === 'CURRENT' ? 'Current' : 'Permanent';
+
+  this.fieldOptions = this.allFieldOptions.filter((f: any) =>
+    f.fieldName.startsWith(prefix)
+  );
+}
+
 
   getAddressesFieldsConfigList() {
     this.loader = true;

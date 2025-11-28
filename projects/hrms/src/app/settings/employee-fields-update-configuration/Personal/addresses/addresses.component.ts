@@ -127,7 +127,7 @@ get isReadOnlyMode(): boolean {
 }
   getAddressesFields() {
     const params = 'Personal';
-    const param = 'Address';
+    const param = 'Addresses';
     this.http
       .getDatabyentityvalueForFieldUpdate(
         `EmployeeInfoApprovalFields/getApprovalFields`,
@@ -154,7 +154,7 @@ get isReadOnlyMode(): boolean {
     this.loader = true;
     const params = {
       displayName: 'Personal',
-      moduleName: 'Address',
+      moduleName: 'Addresses',
     };
     this.http
       .getDataIncludeParams(

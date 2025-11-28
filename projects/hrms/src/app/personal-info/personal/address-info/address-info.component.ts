@@ -261,7 +261,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       zipCode: formValue.currentAddress.zipCode,
       updatedBy: this.empinfo.employeeId,
       selfUpdate: true,
-      moduleName: 'Address',
+      moduleName: 'Addresses',
       displayName: 'Personal',
       referenceCategory: 'C',
     };
@@ -278,7 +278,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       zipCode: formValue.permanentAddress.zipCode,
       updatedBy: this.empinfo.employeeId,
       selfUpdate: true,
-      moduleName: 'Address',
+      moduleName: 'Addresses',
       displayName: 'Personal',
       referenceCategory: 'P',
     };
@@ -339,7 +339,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   getFieldsApprovalStatus() {
     const params = {
       displayName: 'Personal',
-      moduleName: 'Address',
+      moduleName: 'Addresses',
       employeeId: parseInt(this.empinfo.employeeId),
     };
     this.subscription = this.http

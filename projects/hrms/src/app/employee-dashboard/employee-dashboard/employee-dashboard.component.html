@@ -20,33 +20,42 @@
                 <div class="content-card">
                     <p class="section-title">Today's Time Entry</p>
 
-                    <div class="circle-chart-container">
+                    <div class="circle-chart-container mb-2">
 
                         <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions"
                             styleClass="today-chart">
                         </p-chart>
 
                         <!-- Center Text -->
-                        <div class="chart-center-label">
+                        <div class="chart-center-label ">
                             <div class="time-value">{{ todayDurationLabel }}</div>
                             <div class="time-text">Work Time</div>
                         </div>
 
+
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center ">
+                        <div class="previous-time-text">Previous Day Entry :</div>
+                        <div class="previous-duration">{{ previousDurationLabel }}</div>
                     </div>
                 </div>
 
                 <!-- Consumed Leave Types -->
-                <div class="content-card">
+                <div class="content-card  ">
                     <p class="section-title">Consumed Leave Types</p>
-                    <div class="leave-box" *ngFor="let leave of leavesList">
-                        <div class="leave-row">
-                            <div class="leave-name">{{ leave.name }}</div>
-                            <div class="progress-container">
-                                <div class="progress-bar" [style.width.%]="leave.percentage"></div>
+
+                    <div class="leave-list-content">
+                        <div class="leave-box " *ngFor="let leave of leavesList">
+                            <div class="leave-row">
+                                <div class="leave-name">{{ leave.name }}</div>
+                                <div class="progress-container">
+                                    <div class="progress-bar" [style.width.%]="leave.percentage"></div>
+                                </div>
+                                <span class="leave-count"><b>{{ leave.used }}</b>/{{ leave.allowed }}</span>
                             </div>
-                            <span class="leave-count"><b>{{ leave.used }}</b>/{{ leave.allowed }}</span>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -54,19 +63,19 @@
             <div class="content-card mb-3">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">My Team Members</div>
-                    <a class="view-all" (click)="nagvition()"><u>View All</u></a>
+                    <!-- <a class="view-all" (click)="nagvition()"><u>View All</u></a> -->
                 </div>
 
-                <!-- <div class="employee-category-container">
+                <div class="member-list-container">
                     <p-tabs scrollable>
                         <p-tablist>
                             <ng-container *ngIf="!loading; else tabsSkeleton">
                                 @for (emp of teamMembers; track $index) {
                                 <p-tab>
-                                    <div class="card employee-category-card">
-                                        <img [src]="emp.photo ?? 'images/alternate.png'" class="icon mb-2" />
-                                        <div class="name">{{ emp.name }}</div>
-                                        <div class="role">{{ emp.role }}</div>
+                                    <div class="member-card text-center">
+                                        <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
+                                        <div class="name text-wrap">{{ emp.name }}</div>
+                                        <div class="role text-wrap">{{ emp.role }}</div>
                                     </div>
                                 </p-tab>
                                 }
@@ -82,8 +91,9 @@
                             </ng-template>
                         </p-tablist>
                     </p-tabs>
-                </div> -->
-                <div class="members-list">
+                </div>
+
+                <!-- <div class="members-list">
                     <div class="member-card-border" *ngFor="let emp of teamMembers">
                         <div class="member-card text-center">
                             <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
@@ -91,7 +101,7 @@
                             <div class="role">{{ emp.role }}</div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <!-- Gender Diversity -->
@@ -119,7 +129,7 @@
                 <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>
 
                 <div class="week-grid">
-                    <div class="text-center py-4" *ngFor="let day of weeklyWorkLogs">
+                    <div class="text-center day-item py-4" *ngFor="let day of weeklyWorkLogs">
                         <div class="work-time">{{ day.time }}</div>
                         <div class="day-name">{{ day.day }}</div>
                     </div>
@@ -135,7 +145,7 @@
                     <div class="section-title mb-3">Upcoming Work Anniversary's</div>
                     <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon"
                             class="custom-party-image"></div>
-                    <div class="px-4">
+                    <div class="px-4 event-list-content">
                         <div *ngFor="let item of anniversaries" class="mb-2">
                             <div class="d-flex align-items-center gap-1">
                                 <div class="circular-dot circle-work-anniversary"></div>
@@ -151,7 +161,7 @@
                     <div class="section-title mb-3">Upcoming Birthday's</div>
                     <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon"
                             class="custom-party-image"></div>
-                    <div class="px-4">
+                    <div class="px-4 event-list-content">
                         <div *ngFor="let item of employeesBirthdays" class="mb-2">
                             <div class="d-flex align-items-center gap-1">
                                 <div class="circular-dot circle-birthday"></div>

@@ -43,6 +43,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   todayChartData: any;
   todayChartOptions: any;
   currentDate: number = new Date().getDate();
+  previousDate: number = new Date().getDate() - 1;
   startOfWeek: any;
   endOfWeek: any;
   totalHours: any
@@ -55,6 +56,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   weeklyWorkLogs: any[] = [];
   anniversaries: any[] = [];
   todayDurationLabel: string = "00:00:00";
+  previousDurationLabel: string = "00:00:00";
   todayDurationPercent: number = 0;
 
   constructor(
@@ -72,6 +74,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.currentTime = new Date();
     this.currentYear = new Date().getFullYear(); // e.g., 2025
     this.currentMonth = new Date().getMonth() + 1;
+    this.previousDate = new Date().getDate() - 1;
     this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
     this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
@@ -79,6 +82,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.getAllTeammembersList();
     this.getworkanniversary();
     this.getGenderCountChart();
+    this.getpreviousloggedtime();
     this.gettodayloggedtime();
     this.getbrithday();
     this.loadEvents();
@@ -386,10 +390,16 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             {
               label: 'Gender Count',
               data: counts,
-              backgroundColor: ['#E91CAB', '#1E88E5', '#B146C3'], // Pink for female, Blue for male, Grey for others
+              backgroundColor: ['#E91CAB', '#1E88E5', '#B146C3'],
               barThickness: 10,
-              borderRadius: 15,   // 🔥 Rounded bar corners
-              borderSkipped: false
+              borderRadius: {
+                topRight: 12,
+                bottomRight: 12,
+                topLeft: 0,
+                bottomLeft: 0
+              },
+              borderSkipped: 'left'
+
             }
           ]
         };
@@ -414,7 +424,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             x: {
               title: {
                 display: true,
-                text: 'Count',
+
                 color: '#505050',
                 font: { size: 10, weight: 400 }
               },
@@ -428,10 +438,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             },
             y: {
               title: {
-                display: true,
-                text: 'Gender',
-                color: '#505050',
-                font: { size: 10, weight: 400 }
+                display: false,
+              
               },
               grid: { display: false },
               ticks: {
@@ -481,6 +489,25 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
+  getpreviousloggedtime() {
+    this.http
+      .getData(
+        `v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&date=${this.previousDate}`
+      ).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+
+          const today = res?.data?.attendanceData?.find(
+            (x: any) => x.date === this.currentYear + '-' + this.currentMonth + '-' + this.currentDate
+          ) ?? res?.data?.attendanceData?.[0];
+
+          const totalDuration = today?.duration?.totalDuration ?? "00:00:00";
+
+          this.previousDurationLabel = totalDuration;
+        },
+        error: err => console.log(err),
+      });
+  }
 
   timeToSeconds(time: string | null | undefined): number {
     if (!time || !time.includes(':')) return 0;

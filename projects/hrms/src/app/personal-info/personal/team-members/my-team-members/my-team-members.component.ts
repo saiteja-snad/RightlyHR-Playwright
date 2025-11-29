@@ -14,9 +14,10 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TreeTableModule } from 'primeng/treetable';
 import { FormsModule } from '@angular/forms';
 import { MyteamsearchPipe } from '../../../../Pipes/myteamsearch.pipe';
+import { AccessNavigationService } from '../../../../services/access-navigation.service';
 @Component({
   selector: 'app-my-team-members',
-  imports: [TeamMembersTabsComponent, MyteamsearchPipe, CommonModule, FormsModule,NoDataFoundComponent, MyInfoTeamNumbersTabComponent, CommonModule,
+  imports: [TeamMembersTabsComponent, MyteamsearchPipe, CommonModule, FormsModule, NoDataFoundComponent, MyInfoTeamNumbersTabComponent, CommonModule,
     TranslateModule, TableModule, ChipModule, SkeletonModule, TreeTableModule],
   templateUrl: './my-team-members.component.html',
   styleUrl: './my-team-members.component.scss',
@@ -29,7 +30,7 @@ export class MyTeamMembersComponent {
   }
   teamData: any;
   empinfo = {} as any;
-  searchValue:any;
+  searchValue: any;
   resourceDetails: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   clientId: any;
@@ -39,8 +40,8 @@ export class MyTeamMembersComponent {
   selectedEntries: any;
   selectedProject: any;
   teamMemberData: any[] = [];
-
-  constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService) { }
+  emp: any;
+  constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -73,23 +74,44 @@ export class MyTeamMembersComponent {
     });
   }
 
+
+
   mapToTreeNodes(data: any[]): any[] {
     return data.map(item => ({
       data: {
         fusionEmpId: item.fusionEmpId ?? '-',
         fullName: `${item.firstName ?? ''} ${item.middleName ?? ''} ${item.lastName ?? ''}`.trim(),
         workEmail: item.workEmail ?? '-',
-        contact: `${item.mobilePhoneCountryCode ?? ''} ${item.contactnumber ?? '-'}`.trim()
+        contact: `${item.mobilePhoneCountryCode ?? ''} ${item.contactnumber ?? '-'}`.trim(),
+        isAccess: item.isAccess ?? false,
+        employeeId: item.employeeId
       },
       children: item.childrenCount > 0 ? this.mapToTreeNodes(item.children) : []
     }));
+  }
+
+  select(act: any) {
+    const fullPath = this.router.url;
+    if (fullPath.startsWith('/myinfo')) {
+      this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+      this.goToAccessibleRoute('/personalinfo');
+    }
+  }
+
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   onCollapse(event: any) {
     const node = event.node;
     this.collapseChildren(node);
   }
- 
+
   collapseChildren(node: any) {
     if (node.children && node.children.length > 0) {
       node.children.forEach((child: any) => {

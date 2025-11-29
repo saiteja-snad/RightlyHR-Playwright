@@ -50,7 +50,11 @@
                         <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
                         {{ rowData.fusionEmpId }}
                     </td>
-                    <td>{{ rowData.fullName }}</td>
+                    <td>
+                        <a [ngClass]="{'select-item cursor': rowData.isAccess}" (click)="rowData.isAccess && select(rowData)">
+                                    {{ rowData.fullName }}</a>
+                    </td>
+                    <!-- <td>{{ rowData.fullName }}</td> -->
                     <td>{{ rowData.workEmail }}</td>
                     <td>{{ rowData.contact }}</td>
                 </tr>

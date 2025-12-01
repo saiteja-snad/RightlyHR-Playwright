@@ -6,7 +6,7 @@
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
         @if(isInApprovalsRoute()){
         <span (click)="goToAccessibleRoute('/personalinfo');" class="ms-1 cursor">
-         <u>{{ fullName }}</u>
+          <u>{{ fullName }}</u>
         </span>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
         }
@@ -19,21 +19,27 @@
           }@else {
           <span>{{headerName}}</span>
           }
+
           <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
         </div>
       </ng-template>
-
+      <div
+        *ngIf="isActive('/myinfo/job/team/my-team-members') || isActive('/myinfo/job/team/team-members') || isActive('/personalinfo/job/team/my-team-members') ||  isActive('/personalinfo/job/team/team-members') ">
+        <span class="component-header ms-1">Team Members</span> <span class="ms-1"><i
+            class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">{{subHeader}}</div>
 
       <div>
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
+     
     </div>
 
     <!--Module Information-->
-    <ng-template #popContent>
-      <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
+     <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+      </ng-template>
+
 
     <div class="d-flex gap-2">
       @if(rbac.allowedToAccess('Inactive Button.view')){
@@ -59,12 +65,24 @@
       emppersonalinfo?.substatus == 'Documents Accepted' || emppersonalinfo?.substatus == 'Documents Verified')" 
       (click)="openModal(archivedbtn)">{{'Archive'|translate}}</button>
 
-     @if (hasMyInfoHistoryAccess() && isActive('/myinfo') && hasHistory() && !isInsideApprovals()){
-      <button class="custom-btn btn-primary" (click)="navigateMyInfo()">{{ 'View History' | translate }}</button>
+      @if (hasMyInfoHistoryAccess()
+      && isActive('/myinfo')
+      && hasHistory()&&
+      !isInsideApprovals()
+      ){
+      <button class="custom-btn btn-primary" (click)="navigateMyInfo()">
+        {{ 'View History' | translate }}
+      </button>
       }
 
-      @if (hasEmployeeHistoryAccess() && isActive('/personalinfo') && hasHistory() && !isInsideApprovals()){
-      <button class="custom-btn btn-primary" (click)="navigatePersonal()">{{ 'View History' | translate }}</button>
+      @if (hasEmployeeHistoryAccess()
+      && isActive('/personalinfo')
+      && hasHistory()&&
+      !isInsideApprovals()
+      ){
+      <button class="custom-btn btn-primary" (click)="navigatePersonal()">
+        {{ 'View History' | translate }}
+      </button>
       }
 
       <!-- <div *ngIf=""> -->
@@ -77,23 +95,32 @@
                 {{'Revoke Offer'|translate}}
             </button>
             }
-      <! <div *ngIf=""> -->
 
-      @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted' 
-      || getTraineeOfferDetails.candidateStatus == 'Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract' ){
-      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
-      || emppersonalinfo.empstatus =='Trainee Prospective') && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
+
+            <! <div *ngIf=""> -->
+      @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
+      getOfferDetails.candidateStatus == 'Offer Letter Accepted'|| getTraineeOfferDetails.candidateStatus=='Offer Letter
+      Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') && emppersonalinfo.empType !== 'Contract' ){
+      <button class="custom-btn btn-secondary"
+        *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective'|| emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
+        (click)="openModal(revokeoffer)">
         {{' Revoke Offer'|translate}}
       </button>
       }
 
-      @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released') 
-      && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType ==='Contract'){
-      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
-      || emppersonalinfo.empstatus=='Prospective Contract' || emppersonalinfo.empstatus =='Trainee Prospective') && 
-      (emppersonalinfo?.substatus!='Employee Created') && (getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter')" 
-      (click)="openModal(revokeoffer)">{{'Revoke Offer'|translate}}</button>
+
+      @if((getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
+      getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+      || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter
+      Released') && getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter' && emppersonalinfo.empType
+      ==='Contract')
+      {
+      <button class="custom-btn btn-secondary"
+        *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || emppersonalinfo.empstatus=='Prospective Contract'
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created') && (getOfferDetails?.letterType?.toLowerCase() === 'contract offer letter')"
+        (click)="openModal(revokeoffer)">
+        {{'Revoke Offer'|translate}}
+      </button>
       }
 
       @if(this.rbac.allowedToAccess('Generate Credentials Button.view') && !this.empdata?.isUserRegistred ){
@@ -126,6 +153,7 @@
       <div class="component-left-tabs-container">
         <div class="custom-sub-tabs-container">
           <ul class="nav flex-column">
+
             <li class="nav-item" *ngFor="let tab of navTabs">
               <div class="nav-link" [routerLink]="tab.link" routerLinkActive="active-nav-link">
                 <img [src]="tab.img" class="nav-tab-img mb-2" alt="" />
@@ -133,6 +161,7 @@
               </div>
               <div class="tabs-border-bottom"></div>
             </li>
+
           </ul>
         </div>
       </div>

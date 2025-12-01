@@ -101,6 +101,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.assignHeading();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+
     this.getofferdetails();
     this.getTraineeofferdetails();
     this.setBasePath();
@@ -127,8 +128,15 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   get fullName(): string {
-    return [this.emppersonalinfo.firstName, this.emppersonalinfo.middleName, this.emppersonalinfo.lastName].filter(n => n).join(' ');
+    return [
+      this.emppersonalinfo.firstName,
+      this.emppersonalinfo.middleName,
+      this.emppersonalinfo.lastName
+    ]
+      .filter(n => n)
+      .join(' ');
   }
+
 
   hasHistory(): boolean {
     return this.approvalHistoryData && this.approvalHistoryData.length > 0;
@@ -182,8 +190,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   isInsideApprovals(): boolean {
     const url = this.router.url.toLowerCase();
-    return url.includes('/approvals/personal') || url.includes('/approvals/job') || url.includes('/approvals/documents');
+    return url.includes('/approvals/personal') ||
+      url.includes('/approvals/job') ||
+      url.includes('/approvals/documents');
   }
+
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
@@ -289,30 +300,43 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   getEmployee() {
-    this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
-      next: (data: any) => {
-        this.managers = data.filter((emp: { fusionEmpId: any }) => emp.fusionEmpId).map(
-          (emp: { fusionEmpId: string; firstName: any; middleName?: string; lastName: any;}) => ({
-            ...emp,
-            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`,
-          })
-        );
-      },
-      error: (err: any) => console.log(err),
-    });
+    this.subscription = this.http
+      .getData('JobDetails/getAllReportingManagers')
+      .subscribe({
+        next: (data: any) => {
+          this.managers = data
+            .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
+            .map(
+              (emp: {
+                fusionEmpId: string;
+                firstName: any;
+                middleName?: string;
+                lastName: any;
+              }) => ({
+                ...emp,
+                name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''
+                  }${emp.lastName}`,
+              })
+            );
+        },
+        error: (err: any) => console.log(err),
+      });
   }
 
   getAllTeammembersList() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        this.teamMembersdata = data.map((member: any) => ({
-          ...member,
-          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`,
-        }));
-      },
-      error: (err: any) => console.log(err),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.teamMembersdata = data.map((member: any) => ({
+            ...member,
+            name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''
+              }${member.lastName}`,
+          }));
+        },
+        error: (err: any) => console.log(err),
+      });
   }
 
   openModal(content: any) {
@@ -350,7 +374,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else if (selectedCount === 1) {
       return this.formatEmployeeName(this.firstSelectedEmployee);
     } else {
-      return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${selectedCount - 1}`;
+      return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${selectedCount - 1
+        }`;
     }
   }
 
@@ -426,13 +451,15 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       status: 'Revoked',
       employeeId: this.empdata.employeeId,
     };
-    this.subscription = this.http.postdata('JobApplicantsData/UPDATERbyEmployeeId', data).subscribe({
-      next: (data: any) => { },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Something went wrong');
-        setTimeout(function () { }, 2000);
-      },
-    });
+    this.subscription = this.http
+      .postdata('JobApplicantsData/UPDATERbyEmployeeId', data)
+      .subscribe({
+        next: (data: any) => { },
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal('Something went wrong');
+          setTimeout(function () { }, 2000);
+        },
+      });
   }
 
   updatePassword() {
@@ -452,7 +479,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   emailToEmployee() {
     let data = {
-      personName: `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''} ${this.empdata.lastName ?? ''}`,
+      personName: `${this.empdata.firstName ?? ''} ${this.empdata.middleName ?? ''
+        } ${this.empdata.lastName ?? ''}`,
       personEmail: this.empdata.emailaddress,
       employeeId: this.empdata.employeeId,
     };
@@ -554,10 +582,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     } else {
       sdata.personName = `${this.empdata?.firstName} ${this.empdata?.lastName}`;
     }
-    this.subscription = this.http.postdata(`CustomEmail/revokeemailtomanager`, sdata).subscribe({
-      next: (data: any) => { },
-      error: (err: any) => { },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/revokeemailtomanager`, sdata)
+      .subscribe({
+        next: (data: any) => { },
+        error: (err: any) => { },
+      });
   }
 
   //function to send email to employee
@@ -573,12 +603,14 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       jobRole: 'string',
       comments: this.empdata.revokeComments,
     };
-    this.subscription = this.http.postdata(`CustomEmail/revokeemailtoemployee`, pdata).subscribe({
-      next: (data: any) => { },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .postdata(`CustomEmail/revokeemailtoemployee`, pdata)
+      .subscribe({
+        next: (data: any) => { },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   updateRevokeStatustooffer() {
@@ -783,7 +815,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'contact-details': 'Contact Info',
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
-    'team-members': 'Team Members',
+    'team-members': 'Works With You',
+    'my-team-members': 'Reports To You',
     'my-skills': 'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
@@ -884,7 +917,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/myinfo/job/employmentType':
         MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
-      '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/myinfo/job/team/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/myinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
       '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
       '/myinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
@@ -950,86 +984,100 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/trainee-onboarding-requests':
         MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
-      '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-      '/personalinfo/job/contactor-info':
-        MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
+      '/personalinfo/job/team/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/personalinfo/job/team/my-team-members': MODULE_INFOS.REPORT_TO,
+      '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       '/personalinfo/job/project-info': MODULE_INFOS.JOB_MODULE_PROJECTS_INFO,
 
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       '/personalinfo/job/cards':
         MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
-
-      // Personal Info Approvals
-      '/personalinfo/approvals/personal':
-        MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
       '/personalinfo/approvals/job':
         MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
       '/personalinfo/approvals/documents':
         MODULE_INFOS.EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO,
     };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
-      url.includes(route)
-    );
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   resetPassword() {
     this.spinnerLoader = true;
-    this.subscription = this.http.postData(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, 
-      null, { responseType: 'blob', observe: 'response' }).subscribe({
-      next: (res: any) => {
-        this.spinnerLoader = false;
-        this.modalService.dismissAll();
-        const contentType = res.body.type;
-        if (contentType.includes('application/json')) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            try {
-              const json = JSON.parse(reader.result as string);
-              const errorMsg = json.message || 'Something went wrong while resetting password';
-              this.conformationPopup.openErrorModal(errorMsg);
-            } catch {
-              this.conformationPopup.openErrorModal('Invalid response from server');
-            }
-          };
-          reader.readAsText(res.body);
-        } else {
-          const fileURL = window.URL.createObjectURL(res.body);
-          const a = document.createElement('a');
-          a.href = fileURL;
-          a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId}.xlsx`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(fileURL);
-          this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email');
-          this.getEmployeeId();
-        }
-      },
-      error: (err: any) => {
-        this.spinnerLoader = false;
-        this.modalService.dismissAll();
-        if (err.error instanceof Blob) {
-          // Backend might have returned JSON error wrapped in Blob
-          const reader = new FileReader();
-          reader.onload = () => {
-            try {
-              const json = JSON.parse(reader.result as string);
-              const errorMsg = json.message || 'Something went wrong';
-              this.conformationPopup.openErrorModal(errorMsg);
-            } catch {
-              this.conformationPopup.openErrorModal('Unexpected error response');
-            }
-          };
-          reader.readAsText(err.error);
-        } else {
-          // Regular JSON error
-          const errorMsg = err.error?.message || 'Something went wrong';
-          this.conformationPopup.openErrorModal(errorMsg);
-        }
-      },
-    });
+    this.subscription = this.http
+      .postData(
+        `Employeedata/internal-reset-password/${this.empinfo.employeeId}`,
+        null,
+        { responseType: 'blob', observe: 'response' }
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.spinnerLoader = false;
+          this.modalService.dismissAll();
+
+          const contentType = res.body.type;
+
+          if (contentType.includes('application/json')) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result as string);
+                const errorMsg =
+                  json.message ||
+                  'Something went wrong while resetting password';
+                this.conformationPopup.openErrorModal(errorMsg);
+              } catch {
+                this.conformationPopup.openErrorModal(
+                  'Invalid response from server'
+                );
+              }
+            };
+            reader.readAsText(res.body);
+          } else {
+            const fileURL = window.URL.createObjectURL(res.body);
+            const a = document.createElement('a');
+            a.href = fileURL;
+            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId
+              ? this.empinfo.fusionEmpId
+              : this.empinfo.employeeId
+              }.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(fileURL);
+
+            this.conformationPopup.openSuccessModal(
+              'Login credentials generated successfully and shared with the employee via email'
+            );
+            this.getEmployeeId();
+          }
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.modalService.dismissAll();
+
+          if (err.error instanceof Blob) {
+            // Backend might have returned JSON error wrapped in Blob
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result as string);
+                const errorMsg = json.message || 'Something went wrong';
+                this.conformationPopup.openErrorModal(errorMsg);
+              } catch {
+                this.conformationPopup.openErrorModal(
+                  'Unexpected error response'
+                );
+              }
+            };
+            reader.readAsText(err.error);
+          } else {
+            // Regular JSON error
+            const errorMsg = err.error?.message || 'Something went wrong';
+            this.conformationPopup.openErrorModal(errorMsg);
+          }
+        },
+      });
   }
 
   generateCredentials() {
@@ -1056,7 +1104,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             const fileURL = window.URL.createObjectURL(res.body);
             const a = document.createElement('a');
             a.href = fileURL;
-            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId}.xlsx`;
+            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId
+              ? this.empinfo.fusionEmpId
+              : this.empinfo.employeeId
+              }.xlsx`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

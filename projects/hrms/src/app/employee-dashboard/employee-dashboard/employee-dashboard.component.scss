@@ -59,6 +59,7 @@
         .count {
             font-weight: 600;
             color: var(--primary-color) !important;
+            position: relative;
         }
     }
 
@@ -285,7 +286,21 @@
 
 .daliy-events-content {
     background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-    min-height: 8rem !important;
+    min-height: 9rem !important;
+    position: relative;
+    overflow: hidden;
+
+    .party-image-content {
+        position: absolute;
+        top: -1rem;
+        right: -1rem;
+
+        .party-image {
+            width: 3.5rem;
+            transform: rotate(10deg);
+
+        }
+    }
 
     .events-content {
         width: 100%;
@@ -295,7 +310,7 @@
         justify-content: center;
         align-items: center;
         position: relative;
-        padding: 0.75rem;
+        padding: 2.5rem 0.75rem 0.75rem;
 
         .celebration-img {
             position: absolute;
@@ -391,7 +406,7 @@
 }
 
 .birthday-event-list-content {
-    height: 18dvh;
+    height: 17dvh;
     max-height: 20dvh;
     overflow-y: auto;
 }

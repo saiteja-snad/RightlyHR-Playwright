@@ -15,6 +15,7 @@ import { Skeleton } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
 import { TabsModule } from 'primeng/tabs';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule],
@@ -584,8 +585,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
       cutout: "70%",
       plugins: {
         legend: { display: false },
-       
-      }
+        
+        tooltip: { enabled: false }
+      },
+    
     };
   }
 

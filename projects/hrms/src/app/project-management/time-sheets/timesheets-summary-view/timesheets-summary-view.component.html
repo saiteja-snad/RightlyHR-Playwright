@@ -30,7 +30,7 @@
 
                 <!-- Clear All button for mysummary route -->
                 @if(isShowtimesheetformyRoute()) {
-                <button type="button" class="custom-btn btn-secondary" (click)="resetForm()">
+                <button type="button" class="clear-all-btn" (click)="resetForm()">
                     {{'Clear All' | translate}}
                 </button>
                 }
@@ -473,15 +473,6 @@
             <a (click)="closeCanvas()" class="cursor"><i class="bi bi-x-lg"></i></a>
         </div>
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-                <label class="form-label custom-label filter-labels mb-3">{{'Select Project'| translate}}</label>
-                <div class="custom-p-multiSelect-content">
-                    <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName"
-                        [resetFilterOnHide]="true" optionLabel="projectName" optionValue="projectId"
-                        formControlName="projectId" (onChange)="getAllEmployeeDetails()"
-                        placeholder="Please select project" class="form-select custom-select" />
-                </div>
-            </div>
 
             <div class="mb-3">
                 <label class="form-label custom-label filter-labels mb-3">{{'Select Client'| translate}}</label>
@@ -490,6 +481,16 @@
                         [resetFilterOnHide]="true" optionLabel="clientName" optionValue="clientId"
                         formControlName="clientId" (onChange)="getAllEmployeeDetails()"
                         placeholder="Please select client" class="form-select custom-select" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label custom-label filter-labels mb-3">{{'Select Project'| translate}}</label>
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName"
+                        [resetFilterOnHide]="true" optionLabel="projectName" optionValue="projectId"
+                        formControlName="projectId" (onChange)="getAllEmployeeDetails()"
+                        placeholder="Please select project" class="form-select custom-select" />
                 </div>
             </div>
 

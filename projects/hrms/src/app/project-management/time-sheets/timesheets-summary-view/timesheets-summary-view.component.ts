@@ -228,21 +228,40 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   }
 
   resetForm() {
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    
     if (this.isShowtimesheetformyRoute()) {
-      const startOfMonth = dayjs().startOf('month').toDate();
-      const endOfMonth = dayjs().endOf('month').toDate();
       this.datepickerForm.patchValue({ dateRange: [startOfMonth, endOfMonth] });
       this.onSubmit();
     } else {
+      const currentResourceId = this.datepickerForm.get('resourceId')?.value;
+      
       this.datepickerForm.patchValue({
+        dateRange: [startOfMonth, endOfMonth],
         projectId: null,
         clientId: null,
         departmentId: null,
         tmorrmId: null
       });
-      this.filterService.clearOnlyFilterFields();
+      
+      const clearedFilters = {
+        dateRange: [startOfMonth, endOfMonth] as [Date, Date],
+        resourceId: currentResourceId,
+        projectId: null,
+        clientId: null,
+        departmentId: null,
+        tmorrmId: null
+      };
+      
+      this.filterService.setFilters(clearedFilters);
+      this.updateQueryParamsWithFilters(clearedFilters);
       this.getAllEmployeeDetails();
       this.getResourceDetailsByManagerId();
+      
+      // Reload data with cleared filters
+      const resoureID = currentResourceId || this.employeeId;
+      this.getProjectSummary(resoureID);
     }
   }
 
@@ -451,9 +470,19 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
       : (this.datepickerForm.get('resourceId')?.value || this.employeeId);
     const formValue = this.datepickerForm.value;
     this.filterService.setFilters(formValue);
+    this.updateQueryParamsWithFilters(formValue);
     this.getProjectSummary(resoureID);
     this.getEmployeeId(resoureID);
     this.closeCanvas();
+  }
+
+  updateQueryParamsWithFilters(formValue: any): void {
+    const encryptedData = this.encryptionService.encrypt(formValue);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { data: encryptedData },
+      queryParamsHandling: 'merge'
+    });
   }
 
   convertTimeToHours(time: string): number {

@@ -256,6 +256,31 @@
 // birthday-content
 .birthday-content {
     background: linear-gradient(180deg, #EEF2FF 0%, #ECF0F4 100%);
+
+    .circular-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .circle-birthday {
+        background: #E1E8FE;
+        border: 0.4px solid #131C6D;
+    }
+
+    .content-text {
+        font-weight: 400;
+        font-size: var(--fontsize12);
+    }
+
+    .content-name {
+        color: var(--primary-color);
+    }
+
+    .content-date {
+        color: #A9A9A9;
+    }
+
 }
 
 .daliy-events-content {

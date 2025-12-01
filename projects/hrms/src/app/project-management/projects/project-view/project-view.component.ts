@@ -231,7 +231,7 @@ onPhaseDateClear() {
   }
 
   loadResourceRoles() {
-    this.http.getData('ProjectRoles?isActive=true').subscribe({
+    this.http.getData('ProjectRoles').subscribe({
       next: (res: any) => {
         this.resourceRoleOptions = (res?.data || []).map((item: any) => ({
           label: item.roleName,

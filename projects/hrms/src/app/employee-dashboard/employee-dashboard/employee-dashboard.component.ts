@@ -28,6 +28,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   employeedata: any;
   currentTime: Date = new Date();
   loading = false;
+  avaliabletlyloading = false;  
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -524,12 +525,13 @@ legendList = [
   teamChartData: any = {};
   teamChartOptions: any = {};
 
-
   getteamavliabletly() {
+    this.avaliabletlyloading = true;
     this.http.getData(`v2/Employeedata/TeamAvailability/Summary/${this.empinfo.employeeId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.avaliabletlyloading = false;
           this.teamSummary = res.summary;
 
           // Total = all except absent
@@ -542,6 +544,7 @@ legendList = [
           this.buildTeamChart();
         },
         error: (err: any) => {
+          this.loading = false;
           console.error('Error fetching team availability:', err);
         }
       });

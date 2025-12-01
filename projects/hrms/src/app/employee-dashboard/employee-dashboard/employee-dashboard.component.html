@@ -11,12 +11,13 @@
             <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
 
             <div class="dashboard-grid my-3">
+                @if(avaliabletlyloading ){
                 <!-- Team Availability -->
                 <div class="content-card">
-                  <div class="d-flex justify-content-between align-content-center">
-                      <p class="section-title">My Team Availability</p>
-                    <span class="section-title">{{ currentTime | date:'MMM d, yyyy' }}</span>
-                  </div>
+                    <div class="d-flex justify-content-between align-content-center">
+                        <p class="section-title">My Team Availability</p>
+                        <span class="section-title">{{ currentTime | date:'MMM d, yyyy' }}</span>
+                    </div>
                     <div class=" total-leave-balance-graph-content">
                         <!-- Donut Chart -->
                         <div class="chart-content">
@@ -107,6 +108,31 @@
                     </div>
 
                 </div>
+                }
+                @else {
+
+                <div class="dashboard-grid my-3">
+
+                    <!-- Column 1 -->
+                    <div class="content-card">
+                        <p-skeleton height="14rem" borderRadius="12px"></p-skeleton>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="content-card">
+                        <p-skeleton height="14rem" borderRadius="12px"></p-skeleton>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="content-card">
+                        <p-skeleton height="14rem" borderRadius="12px"></p-skeleton>
+                    </div>
+
+                </div>
+                }
+                
+
+
             </div>
 
             <!-- Team Members Section -->

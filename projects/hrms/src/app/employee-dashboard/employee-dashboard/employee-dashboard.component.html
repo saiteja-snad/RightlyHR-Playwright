@@ -42,7 +42,22 @@
 
                 <!-- Consumed Leave Types -->
                 <div class="content-card  ">
-                    <p class="section-title">Consumed Leave Types</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="section-title">Consumed Leave Types</p>
+                        </div>
+                        <div class="circle-leaves-graph">
+
+                            <p-chart type="doughnut" [data]="totalLeavesChartData" [options]="totalLeavesChartOptions"
+                                styleClass="today-chart">
+                            </p-chart>
+
+                            <div class="circle-value">
+                                    <span class="leave-count"><b>{{  totalLeaves.used }}</b>/{{ totalLeaves.allowed }}</span>
+                               
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="leave-list-content">
                         <div class="leave-box " *ngFor="let leave of leavesList">

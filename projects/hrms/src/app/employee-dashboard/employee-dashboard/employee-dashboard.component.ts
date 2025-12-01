@@ -38,12 +38,15 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   nextMonth!: number;
   currentYear!: number;
   leavesList: any[] = [];
+  totalLeaves: any = {};
   eventsLoader = false;
   eventItems: any[] = [];
   todayChartData: any;
   todayChartOptions: any;
+  totalLeavesChartData: any;
+  totalLeavesChartOptions: any;
   currentDate: number = new Date().getDate();
-  previousDate: number = new Date().getDate() - 1;
+  previousDate: any;
   startOfWeek: any;
   endOfWeek: any;
   totalHours: any
@@ -74,7 +77,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.currentTime = new Date();
     this.currentYear = new Date().getFullYear(); // e.g., 2025
     this.currentMonth = new Date().getMonth() + 1;
-    this.previousDate = new Date().getDate() - 1;
+    const today = new Date();
+    today.setDate(today.getDate() - 1);
+    const previousDate = today;
+    this.previousDate = previousDate.getDate();
+    console.log(this.previousDate);
+
     this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
     this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
@@ -246,10 +254,54 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
               used: item.utilizedDays,
               percentage: (item.utilizedDays / item.allowedDays) * 100
             }));
+
+            // ✅ NEW: Total leaves calculation
+            const totalAllowed = res.data.reduce(
+              (sum: number, x: any) => sum + x.allowedDays,
+              0
+            );
+
+            const totalUsed = res.data.reduce(
+              (sum: number, x: any) => sum + x.utilizedDays,
+              0
+            );
+
+            this.totalLeaves = {
+              allowed: totalAllowed,
+              used: totalUsed,
+              percentage: totalAllowed === 0 ? 0 : (totalUsed / totalAllowed) * 100
+            };
           }
+          this.buildTotalLeavesChart();
         }
       });
   }
+
+  buildTotalLeavesChart() {
+
+    this.totalLeavesChartData = {
+      datasets: [
+        {
+          data: [
+            this.totalLeaves.used,
+            this.totalLeaves.allowed - this.totalLeaves.used
+          ],
+          backgroundColor: ["#0B3A83", "#E5E7EB"],
+          borderWidth: 0
+        }
+      ]
+    };
+
+    this.totalLeavesChartOptions = {
+      responsive: true,
+      cutout: '75%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      }
+    };
+  }
+
   getFullName(b: { firstName: string; middleName?: string; lastName: string }): string {
     return [b.firstName, b.middleName, b.lastName].filter(Boolean).join(' ');
   }
@@ -439,7 +491,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             y: {
               title: {
                 display: false,
-              
+
               },
               grid: { display: false },
               ticks: {

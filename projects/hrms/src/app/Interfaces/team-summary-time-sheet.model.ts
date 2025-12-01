@@ -19,6 +19,7 @@ export interface TimeTrackingData {
   employee: Employee;
   clients: Client[]; 
   dailyData: DailyData[];
+  totalLoggedHHMM :any;
 }
 
 export interface Employee {

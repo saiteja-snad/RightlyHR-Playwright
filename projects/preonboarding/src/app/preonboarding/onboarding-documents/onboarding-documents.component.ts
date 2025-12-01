@@ -11,7 +11,7 @@ import { Location } from '@angular/common';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { PopupService } from '../../common-services/popup.service';
 import { Ipersonal } from '../../models/personal-details.model';
-import { DateFormatPipe } from '../../Pipes/date-format.pipe';
+import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { FormValidationService } from '../../common-services/form-validation.service';
 @Component({

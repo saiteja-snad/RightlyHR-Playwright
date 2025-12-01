@@ -412,6 +412,24 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Expense Tab',
     'NoDue Clearance Tab',
   ];
+  employeeFieldsConfigUpdate = [
+    'Personal Config Update Tab',
+    'Job Config Update Tab',
+    'Document Config Update Tab',
+  ];
+  settingsEmployeeConfigUpdateJobTabs = [
+    'Certifications',
+    'Employment History'
+  ];
+  settingsEmployeeConfigUpdatePersonalTabs = [
+    'Basic Info',
+    'Contact Info',
+    'Addresses',
+    'Emergency Contacts',
+    'Identity Info',
+    'Bank Info',
+    'Academics',
+  ];
   settingsEmployeeJobFields = [
     'Job Role',
     'Job Type',
@@ -437,6 +455,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Signature Authority',
     'Settings Job Probation Details',
     'Signature Authority',
+
   ];
   settingsEmployeePersonalFields = [
     'Salutation',
@@ -448,6 +467,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Identity Type',
     'Relationship',
     'Bank Names',
+    'SkillSet'
   ];
   settingsManageShiftsTabFields = [
     'Shifts Pending Tab',
@@ -488,11 +508,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
-  flexibleWFHTabsFields=[
+  flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'
   ]
-  flexibleWorkHoursTabsFields=[
+  flexibleWorkHoursTabsFields = [
     'Work Hours Allocation History Tab',
     'Work Hours Allocations Tab'
   ]
@@ -524,11 +544,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
-   Lockingsystemtabs = [
+  Lockingsystemtabs = [
     'Attendance Configuration Module',
     'Timesheet Configuration Module'
   ];
-    TymesheetTypeFields = [
+  TymesheetTypeFields = [
     'Timesheet Locking Pending Tab',
     'Timesheet Locking Published Tab'
   ];
@@ -588,7 +608,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
   ];
-   cardsModuleFields = [
+  cardsModuleFields = [
     'Cards Allocated',
     'Cards Available',
     'Cards Expired',
@@ -737,6 +757,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Probation Details Tab',
     'Contractor Details Tab',
     'Contract-Conversion Tab',
+    'EmployeeInfo Tab',
+    'Time Off main Tab',
+    'Contractors main Tab',
+    'Offboarding main Tab',
+    'Onboarding main Tab',
+    'Time Sheet approval Tab'
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
@@ -768,6 +794,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'For You (Claims and Expenses)',
     'For Role (Claims and Expenses)',
   ];
+  pendingApprovalEmployeinfoSubTabs = [
+  'For You (Employee Info)',
+  'For Role (Employee Info)',
+];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',
     'For Role (Desk Requests)',
@@ -855,7 +885,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(WFH)',
     'Attendance Team Manager List(WFH)',
     'My Team Report(WFH)',
-     'Attendance All Employees List(RemoteLogin)',
+    'Attendance All Employees List(RemoteLogin)',
     'Attendance Team Manager List(RemoteLogin)',
     'My Team Report(RemoteLogin)',
     'Attendance All Employees List(Permission)',
@@ -897,7 +927,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // 'Attendance vs Timesheet Report - Export',
   ];
 
-    expenseReportsEmployeeTeamTabsFields = [
+  expenseReportsEmployeeTeamTabsFields = [
     'Expense Report - Generate',
     'Expense Report All Employees List',
     'Expense Report Manager List',
@@ -956,6 +986,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Job Tab',
     'My Info Documents Tab',
     'My Info Team Members Tab',
+    'My Info My Team Members Tab',
     'My Info Onboard Request Tab',
   ];
   myInfoPersonalSubTabsFields = [
@@ -985,7 +1016,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Asset Details',
     'My Info Separation Request Button',
     'My Info Card Details',
+
   ];
+
+  myInfoApprovalFields = [
+    'My Info Personal Approval History',
+    'My Info Job Approval History',
+    'My Info Documents Approval History',
+  ]
+
+  employeeApprovalFields = [
+    'Employee Personal Approval History',
+    'Employee Job Approval History',
+    'Employee Documents Approval History',
+  ]
+
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
     'Submission Of No Due Clearance',
@@ -1012,6 +1057,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Desk Details',
     'Employee Info Asset Details',
     'Employee Info Separation Request',
+    'Employee Info My Team Members Tab',
     'No Due Form',
     'Employee Info Contract Conversion Request',
     'Employee Info Card Details'
@@ -1254,7 +1300,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   itSupportFields = [
     'IT Support Configuration ',
   ];
-   settingsItSupportFields = [
+  settingsItSupportFields = [
     'IT Support Category',
     'IT Support Sub-Category',
 
@@ -1321,6 +1367,20 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  isemployeeConfigUpdateCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Only enabled for 'NoDue Clearance Tab'
+      return (!this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields));
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return (!this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields));
+    }
+    return false;
+  }
+
   isattendenceCheckboxDisabled(
     per: any,
     action: 'View' | 'Update' | 'Create' | 'Delete'
@@ -1356,6 +1416,40 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  isSettingsEmployeeJobTabsFieldConfigCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isSettingsEmployeePersonalTabsFieldConfigCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+
 
   isSettingsEmployeePersonalCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
@@ -1668,7 +1762,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
- iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1737,7 +1831,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isonlyempinfofunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Create') {
+      return true;
+    }
+    if (action === 'Update' || action === 'View' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+ isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'Create') {
       return true;
     }
@@ -1914,6 +2017,50 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+    isMyInfoViewHistoryActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Update' || action === 'Create') {
+      return true;
+    }
+    if (action === 'View') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Personal Approval History',
+          'My Info Job Approval History',
+          'My Info Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Delete') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Personal Approval History',
+          'My Info Job Approval History',
+          'My Info Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
+
+      isPersonalViewHistoryActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true;
+    }
+    if (action === 'View') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'Employee Personal Approval History',
+          'Employee Job Approval History',
+          'Employee Documents Approval History',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
+
   isMyInfoJobActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
@@ -2075,7 +2222,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  
+
   isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
@@ -2089,15 +2236,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-    isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  // Disable Create/Delete for 'Timesheet Locking Published Tab'
-  if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
-    return true;
-  }
+  isTimesheetLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    // Disable Create/Delete for 'Timesheet Locking Published Tab'
+    if (per.fields === 'Timesheet Locking Published Tab' && (action === 'Create' || action === 'Delete')) {
+      return true;
+    }
 
-  // Existing logic: disable all if role is not selected
-  return !this.roleToFilter?.id;
-}
+    // Existing logic: disable all if role is not selected
+    return !this.roleToFilter?.id;
+  }
 
 
   ngOnDestroy(): void {

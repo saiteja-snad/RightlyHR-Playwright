@@ -173,36 +173,6 @@
     color: var(--primary-color);
 }
 
-.rolewise-chart-grid {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-
-    canvas {
-        width: 10rem !important;
-        height: 10rem !important;
-    }
-
-    .legend-circle {
-        width: 0.75rem;
-        height: 0.75rem;
-        border-radius: 50%;
-    }
-
-    .legend-name {
-        color: #323130;
-        font-weight: 600;
-        font-size: var(--fontsize10);
-    }
-
-    .hrs-display {
-        font-weight: 600;
-        font-size: var(--fontsize10);
-        color: #0A0A0A;
-    }
-}
-
 .graph-no-data-content {
     position: relative;
     width: 100%;
@@ -331,6 +301,7 @@
         color: #323130;
         font-weight: 600;
         font-size: 0.75rem;
+        max-width: 160px;
     }
 
     .hrs-display {

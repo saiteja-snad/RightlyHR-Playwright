@@ -1,4 +1,10 @@
 export const MODULE_INFOS = {
+    //Settings Employee Fields Update Config Module Info
+    SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_MODULE_INFO: "The Employee Info Update  allows HR/Admin to configure which employee profile fields require approval when an employee submits an update request from the My Info page. HR/Admin can define approval authorities, set validation rules, and control the overall workflow for updating employee information, ensuring accuracy and compliance across the system.",
+    SETTINGS_PERSONAL_INFORMATION_UPDATE_MODULE_INFO:"The Personal Information Update enables the configuration of personal-related fields such as name details, date of birth, gender, marital status, identity details, contact information, and other personal attributes. HR/Admin can specify which fields require approval when edited by employees, helping maintain secure, verified, and consistent personal data across the organization.",
+    SETTINGS_JOB_INFORMATION_UPDATE_MODULE_INFO:"The Job Information Update enabled the configuration of job-related fields including job role, department, team, job type, work location, grade, reporting manager, pay type, and other employment attributes. HR/Admin can set approval requirements for any changes requested by employees to ensure proper authorization, transparency, and alignment with organizational structure and HR policies.",
+
+
     //Settings Employee Fields Module Info
     SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO: "Define and manage core employee data sections such as personal details, job info, documents, and policies. Central hub for configuring fields that shape the employee profile structure.",
     SETTINGS_PERSONAL_INFO_MODULE_INFO: "This section allows configuration of dropdown values like Salutation, Status, Gender, Marital Status, Degree, Visa Type, Identity Type, Relationship, and Bank Names. It ensures standardization and consistency across employee profile creation and HR processes.",
@@ -28,6 +34,8 @@ export const MODULE_INFOS = {
     SETTINGS_TIMESHEET_REPORT_MODULE_INFO: "The Timesheet Report provides a comprehensive view of employee work logs, approvals, and utilization. It consolidates individual and team-level data to help managers, HR, and finance teams track productivity, project efforts, and pending actions. Each tab offers focused insights, ensuring accurate reporting and efficient decision-making.",
     SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO: "The Flexible WFH Allocation module enables Admins or HR to assign work-from-home entitlements to employees by configuring specific allocation criteria. Once entitle, the entitled WFHs are automatically reflected in the WFH module, allowing employees to utilize them as per policy.",
     SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO:"The Flexible Work Hours Allocation module allows HR/Admin users to define and assign flexible working hours within the organization. Using this feature, HR/Admin can allocate working hours based on specific roles or individual employees, ensuring that work schedules align with organizational policies and employee needs.",
+
+
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO: "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
     SETTINGS_ASSET_CONFIGURATION_VENDOR_DETAILS: "Manage and track vendor information for all your assets in one place. Easily view contact details, status, and addresses for seamless vendor coordination.",
@@ -45,20 +53,21 @@ export const MODULE_INFOS = {
 
     // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     // SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
-    
+
+
     //Expenses Module Info
     EXPENSES_MODULE_INFO: "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
-    
+
     //attendance Configuration Module Info
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     SETTINGS_IT_CONFIGURATION_MODULE_INFO: "Efficiently manage all IT support settings from one place. Configure categories, subcategories, and priority levels, and define escalation rules to streamline ticket handling. Ensure all configurations reflect instantly in the Support Ticket module for seamless issue reporting and resolution.",
     SETTINGS_LOCKINGSYSTEM_MODULE_INFO: "The Locking System module manages data access by defining restricted periods during which modifications are not allowed. Once a period is locked, users are prevented from adding or updating information within that timeframe.",
-    
+
     // locking system
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULEE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
     SETTINGS_TIMESHEETLOCKING_MODULE_INFO: "The Timesheet locking module enables Admin/HR to lock employee timesheets for a specific period, preventing any further edits or submissions once locked. It ensures data accuracy and compliance with payroll and reporting deadlines.",
     SETTINGS_TIMESHEET_LOCKING_TABS: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
-    
+
     //Pms Module Info
     PMS_REVIEW_CYCLE_LIST_MODULE_INFO: "This module enables creation and tracking of employee review cycles with department, team, and location-level mapping. Users can create review cycles and link them to specific business units in order to track their status, such as Created or Initiated.",
     PMS_REVIEW_CYCLE_EMPLOYEE_LIST_MODULE_INFO: "This module provides a detailed listing of employees mapped to specific review cycles, with filters for department, location, and promotion status. It displays key information like review templates, current status, and final ratings to support performance evaluation tracking.",
@@ -125,7 +134,6 @@ export const MODULE_INFOS = {
     UTILIZATION_REPORTS_MODULE_INFO: "Shows the utilization percentage of each resource, comparing logged hours against available working hours. This helps identify underutilized or overburdened employees.",
     RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO: "Provides a snapshot of each employee’s availability status, scheduled leaves, and working capacity. Useful for planning resource allocation and workload balancing.",
     ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO: "Compares attendance records with timesheet entries to ensure consistency and detect any mismatches. This supports accurate payroll processing and compliance.",
-    
     //Calendar Module Info
     CALENDAR_MODULE_INFO: "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 
@@ -147,7 +155,15 @@ export const MODULE_INFOS = {
     TIME_OFF_PENDING_APPROVAL_MODULE_INFO: "The Pending Approvals section lists all employee requests (e.g., Time-Off, WFH, Comp-Off) awaiting action. It allows managers to approve or reject requests.",
     TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO: "The On Behalf Of Approvals section allows authorized users to manage and approve requests submitted by employees. It includes categories such as Time Off, Comp Off, WFH, and Permissions, each showing the count of pending items for review.",
     TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO: "The Global Permissions section allows bulk permission requests across departments and teams. Each request includes details like requester, duration, employee list, and reason.",
-
+    PENDING_APPROVALS_TIMEOFF_MODULE_INFO: "The Time-Off Approvals page displays all pending attendance-related requests from employees, including Leaves, WFH, Remote Login, Comp-Off, Permissions, Extra Work Hours, and Regularization. Approvers can review each request, validate details, and take action to ensure accurate attendance records and smooth workforce planning.",
+    PENDING_APPROVALS_ONBOARDING_MODULE_INFO: "The Onboarding Approvals page displays all pending onboarding requests that require action from HR or managers, including Probation confirmations and Trainee evaluations. It supports a smoother onboarding process by enabling quick review, timely approvals, and efficient progression of new employees.",
+    PENDING_APPROVALS_CONTRACTOR_MODULE_INFO: "The Contractors Approvals page shows pending requests related to contractor onboarding, contract extensions, role modifications, and assignment updates. Reviewers can verify details, manage access requirements, and ensure smooth contractor lifecycle management across departments.",
+    PENDING_APPROVALS_OFFBOARDING_MODULE_INFO: "The Offboarding Approvals page displays pending Separation, No-Due Clearance, and Recall requests. It enables managers and HR to review exit-related information, complete required checks, and ensure orderly employee departures or reinstatements in accordance with company policies.",
+    PENDING_APPROVALS_DESK_MODULE_INFO: "The Desks Approvals page lists pending workplace-related requests, such as desk allocation, movement, and seating changes. Managers can view employee details, analyze space availability, and approve or update workspace arrangements for efficient office planning.",
+    PENDING_APPROVALS_EXPENSES_MODULE_INFO: "The Expenses Approvals page displays all pending employee expense claims, including travel, operational, and reimbursement submissions. Approvers can review receipts, verify claim details, and approve or reject expenses to maintain financial accuracy and policy compliance.",
+    PENDING_APPROVALS_TIMESHEET_MODULE_INFO: "The Timesheets Approvals page shows pending submissions of employee working hours, project logs, and task entries. Approvers can validate recorded time, ensure correct billing or non-billing classification, and confirm adherence to time-tracking policies before approving entries.",
+    PENDING_APPROVALS_ASSESSMENT_FORM_MODULE_INFO: "This module handles probation assessment submissions and provides approvers with tools to evaluate performance, approve outcomes, reject requests, or extend probation. It promotes structured reviews, accountability, and efficiency in managing employee probation periods.",
+    PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO: "The Employee Info section in Pending Approvals displays all requests submitted by employees to update their personal or job-related information. Managers can review each request, verify the details, and take appropriate action by approving or rejecting the update. Once approved, the system automatically updates the employee’s information, ensuring accurate and controlled data maintenance.",
     //on behalf of module info
     ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
     ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO : "The Remote Login module enables HR or managers to apply and manage Remote login requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
@@ -218,18 +234,26 @@ export const MODULE_INFOS = {
     JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO: "The Trainee Onboard Verification section displays trainee onboarding details, including the request date, training start and end dates, extended dates if applicable, and current status. It also allows tracking of training feedback for evaluation and onboarding decisions.",
     JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
     JOB_MODULE_PROJECTS_INFO: "The Project Info section displays the list of projects associated with the employee, including project type, total phases, and hours spent. It allows viewing all assigned projects on a single page, helping track employee involvement, phase progress, and overall performance across multiple projects efficiently.",
-    
+
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
-    
+
+    //My Info Approvals Module Info
+
+    MY_INFO_PERSONAL_APPROVALS_MODULE_INFO: "The View History section allows employees to review all their submitted update requests, including previous and requested details, status, and update dates. Employees can also cancel any pending requests directly from this page. This helps track profile changes easily and maintain clarity on all submitted updates.",
+
+    // Employee Info Approvals Module Info
+    EMPLOYEE_PERSONAL_APPROVALS_MODULE_INFO: "The View History section allows HR/Admin to track all update requests made to personal, job, and document information. It displays previous values, requested changes, approval status, and the dates of each update for complete transparency. This helps maintain an accurate audit trail of all profile modifications.",
+
     //Team Members Module Info
-    TEAM_MEMBERS_MODULE_INFO: "Clicking on the Team Members tab will display the list of team members, with a button at the top to change the TM or RM. You can update the Reporting Manager (RM) or Team Manager (TM) for individual employees or apply changes in bulk for a group.",
+    REPORT_TO:"This tab shows the employees who report directly to you. You can view their details and search by employee ID, name, email, or phone number. Use this section to manage and track your direct reporting team.",
+    TEAM_MEMBERS_MODULE_INFO: "This tab lists employees who work with you, even if they are not your direct reports. You can search and view their contact and role details. Use this section to identify the teammates and peers you actively collaborate with.",
     Bloodbank_MODULE_INFO: "Easily access a list of employees' blood group details for emergencies. Quickly search, filter, and contact donors when needed—right within the system.",
     Contact_DIRTECROTY_INFO: "Quickly access department-wise contact details of employees. Stay connected with the right people across teams using verified email IDs and phone numbers.",
     PHONE_Book_DIRTECROTY_INFO: 'Find contact details of all employees in one place. Instantly search by name to reach out via work or personal numbers when it matters most.',
     CONTRACT_EMPLOYEES_MODULE_INFO: "The Contract Employees page lists candidates with details such as ID, name, personal email, phone number, location, designation, and sub-status reflecting their onboarding progress. Users can add new contract employees and search the list for efficient candidate management.",
     CONTRACT_EMPLOYEES_CONVERSION_MODULE_INFO: "The Contract Employees page lists candidates with details such as ID, name, personal email, phone number, location, designation, and sub-status reflecting their onboarding progress. Users can add new contract employees and search the list for efficient candidate management.",
-    
+
     //Project Management Info
     PROJECT_INFO_On_Hold: 'The On-Hold Projects page lists projects that are temporarily paused due to dependencies, resource constraints, or management decisions. Timesheet logging and phase updates remain disabled until the project is reactivated.',
     CLIENT_INFO_Inactive:"The Inactive Clients section lists clients with no ongoing projects or engagements. These records are maintained for reference and future opportunities, allowing users to review past associations and client history.",

@@ -6,6 +6,15 @@
         </div>
 
         <div class="d-flex gap-3 align-items-center">
+            <!--Settings-->
+            @if(this.rbac.allowedToAccess('Settings Icon.view')){
+            <div routerLink="/settings" class="cursor">
+                <app-gear-icon />
+            </div>
+
+            <div class="break-line-content"></div>
+            }
+            
             <!--It Support-->
             @if(this.rbac.allowedToAccess('IT Support.view')){
             <div (click)="goToAccessibleRoute('/it-support');" class="cursor">

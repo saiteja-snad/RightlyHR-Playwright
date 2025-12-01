@@ -48,6 +48,7 @@ export const environment = {
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,
   timesheetModuleId:30,
+  pendingapprovalemployeid:32,
   RecallrequestmoduleId: 14,
   ProbationrequestmoduleId: 20,
   ProbationNoticePeriodId: 0,

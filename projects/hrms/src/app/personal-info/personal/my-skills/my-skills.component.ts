@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
@@ -22,7 +22,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
   encapsulation: ViewEncapsulation.None
 })
 
-export class MySkillsComponent implements OnInit, OnDestroy {
+export class MySkillsComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   AddForm!: FormGroup;
   isremove: boolean = false;
@@ -30,6 +30,7 @@ export class MySkillsComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   MySkills: any[] = [];
   categoryList: any
+  skillCategories: any[] = [];
   spinnerLoader = false;
   subscription!: Subscription;
   spinnerLoaderforallrecoders = false;
@@ -110,35 +111,27 @@ export class MySkillsComponent implements OnInit, OnDestroy {
   openmodelforConfirm(content: any) {
     this.modalService.open(this.Confirmation, { centered: true });
   }
-
-  // getSkills(): void {
-  //   const params = {
-  //     employeeId: this.empinfo.employeeId,
-  //     isActive: true
-  //   };
-  //   this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).pipe(takeUntil(this.destroy$),
-  //     map((res: any) => {
-  //       if (res?.data?.items && Array.isArray(res.data.items) && res.data.items.length > 0) {
-  //         return res.data.items[0].skills || [];
-  //       }
-  //       return [];
-  //     })
-  //   ).subscribe({
-  //     next: (skills: any[]) => {
-  //       this.technicalSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('technical') && s.isActive);
-  //       this.softSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('soft') && s.isActive);
-  //     },
-  //     error: (err) => {
-  //       console.error(' Error fetching skills:', err);
-  //     }
-  //   });
-  // }
-
   private categoryIcons: Record<string, string> = {
-    "Technical Skill": "/icons/technical-skills-icon.png",
-    "Soft Skill": "/icons/soft-skills-icon.png",
-    "Leadership Skills": "/icons/leadership-skills.png",
-    "Functional Skill": "/icons/functional-skills.png"
+    technicalskill: "/icons/technical-skills-icon.png",
+    softskill: "/icons/soft-skills-icon.png",
+    leadershipskill: "/icons/leadership-skills.png",
+    functionalskill: "/icons/functional-skills.png"
+  };
+  private normalizeCategory(key: string): string {
+    return key.replace(/\s+/g, '').toLowerCase();
+  }
+  private categoryAliases: Record<string, string> = {
+    technicalskill: "technicalskill",
+    technicalskills: "technicalskill",
+
+    softskill: "softskill",
+    softskills: "softskill",
+
+    leadershipskill: "leadershipskill",
+    leadershipskills: "leadershipskill",
+
+    functionalskill: "functionalskill",
+    functionalskills: "functionalskill"
   };
 
   private fallbackIconPool: string[] = [
@@ -149,7 +142,6 @@ export class MySkillsComponent implements OnInit, OnDestroy {
 
   private usedFallbackIcons = new Set<string>();
 
-  skillCategories: any[] = [];
   getSkills(): void {
     const params = {
       employeeId: this.empinfo.employeeId,
@@ -190,31 +182,45 @@ export class MySkillsComponent implements OnInit, OnDestroy {
         error: (err) => console.error("Error fetching skills:", err)
       });
   }
+  private fallbackMap: Record<string, string> = {};
+  getCategoryIcon(category: string): string {
+    // Normalize
+    let normalized = this.normalizeCategory(category || "");
+    normalized = this.categoryAliases[normalized] || normalized;
 
-  private getCategoryIcon(category: string): string {
-    if (this.categoryIcons[category]) {
-      return this.categoryIcons[category];
+    // If category has known icon
+    if (this.categoryIcons[normalized]) {
+      return this.categoryIcons[normalized];
     }
 
-    const availableIcon = this.fallbackIconPool.find(
-      icon => !this.usedFallbackIcons.has(icon)
-    );
+    // If fallback icon already assigned for this unknown category → reuse it
+    if (this.fallbackMap[normalized]) {
+      return this.fallbackMap[normalized];
+    }
 
-    const finalIcon =
-      availableIcon || this.fallbackIconPool[this.fallbackIconPool.length - 1];
+    // Assign next available fallback icon uniquely
+    for (const icon of this.fallbackIconPool) {
+      const alreadyUsed = Object.values(this.fallbackMap).includes(icon);
+      if (!alreadyUsed) {
+        this.fallbackMap[normalized] = icon;
+        return icon;
+      }
+    }
 
-    this.categoryIcons[category] = finalIcon;
+    // If all fallback icons are used, start cycling
+    const cycleIndex = Object.keys(this.fallbackMap).length % this.fallbackIconPool.length;
+    const fallback = this.fallbackIconPool[cycleIndex];
 
-    this.usedFallbackIcons.add(finalIcon);
-
-    return finalIcon;
+    this.fallbackMap[normalized] = fallback;
+    return fallback;
   }
+
 
 
   getCategory() {
     const params = {
       entity: "employee",
-      attribute: "skillset"
+      attribute: "Skill Category"
     }
     this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
       next: (data: any) => {
@@ -304,20 +310,15 @@ export class MySkillsComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.spinnerLoader = false;
         modal.close();
+        this.getSkills()
         this.conformationPopup.openSuccessModal('Skill removed successfully');
         // Remove only after success
-        // this.technicalSkills = this.technicalSkills.filter(
-        //   (s: any) => s.skillId !== this.selectedSkill.skillId
-        // );
-        // this.softSkills = this.softSkills.filter(
-        //   (s: any) => s.skillId !== this.selectedSkill.skillId
-        // );
-        this.skillCategories = this.skillCategories
-          .map(group => ({
-            ...group,
-            skills: group.skills.filter((s: any) => s.skillId !== this.selectedSkill.skillId)
-          }))
-          .filter(group => group.skills.length > 0);
+        this.technicalSkills = this.technicalSkills.filter(
+          (s: any) => s.skillId !== this.selectedSkill.skillId
+        );
+        this.softSkills = this.softSkills.filter(
+          (s: any) => s.skillId !== this.selectedSkill.skillId
+        );
       },
       error: (err: any) => {
         this.spinnerLoader = false;
@@ -336,22 +337,16 @@ export class MySkillsComponent implements OnInit, OnDestroy {
 
   addSkill(event: any): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value.trim();
-
+    const value = input.value.trim();
+    const control = this.AddForm.get('skills');
     if (value) {
-      value = this.toSmartCase(value);
-
-      const control = this.AddForm.get('skills');
       const skills = control?.value || [];
-
       if (!skills.includes(value)) {
         skills.push(value);
         control?.setValue(skills);
       }
-
       control?.setErrors(null);
     }
-
     this.typedSkill = '';
     input.value = "";
     event.preventDefault();
@@ -404,44 +399,6 @@ export class MySkillsComponent implements OnInit, OnDestroy {
       }
     }
     control?.markAsTouched();
-  }
-
-  private toSmartCase(value: string): string {
-    return value
-      .split(' ')
-      .filter(word => word.trim().length > 0)
-      .map(word => {
-        // Preserve fully uppercase tech names (SQL, HTML, CSS, etc.)
-        if (/^[A-Z0-9]+$/.test(word)) {
-          return word; // keep as is (SQL, HTML)
-        }
-
-        // Preserve words starting with special characters (.NET, C#, C++)
-        if (/^[^a-zA-Z0-9]/.test(word)) {
-          return word.charAt(0) + this.capitalize(word.slice(1));
-        }
-
-        // Preserve mixed-case acronyms (Node.js, Vue.js)
-        if (word.includes('.')) {
-          return word
-            .split('.')
-            .map(w => this.capitalize(w))
-            .join('.');
-        }
-
-        return this.capitalize(word);
-      })
-      .join(' ');
-  }
-
-  private capitalize(word: string): string {
-    if (!word.length) return word;
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

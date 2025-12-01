@@ -436,14 +436,48 @@ export interface TimesheetEntry {
   comments: any[];
   id: number;
   approvalHeader: number;
+  pendingApprovalHeader: any;
 
 }
 
 export interface TimesheetDay {
+  fields: any;
   date: string;
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
   entries: TimesheetEntry[];
   selectedEntries: TimesheetEntry[];
+  employeeName:string;
+  pendingApprovalHeader: any;
+}
+export interface EMPLOYEEINFO {
+   fields: any;
+  date: string;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+  entries: EmployeeinfoEntry[];
+  selectedEntries: EmployeeinfoEntry[];
+  employeeName:string;
+  pendingApprovalHeader: any;
+}
+export interface EmployeeinfoEntry {
+  selected: any;
+  employeeName: string;
+  clientName: string;
+  projectName: string;
+  totalHours: string;
+  description: string;
+  timesheetEntryId: number;
+  approvalStatus: string;
+  entryDate: string;
+  status: string;
+  timesheetId: number;
+  pendingItemId: number;
+  comments: any[];
+  id: number;
+  approvalHeader: number;
+  pendingApprovalHeader: any;
+
 }

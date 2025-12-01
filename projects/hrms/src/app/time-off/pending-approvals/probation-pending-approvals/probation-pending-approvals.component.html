@@ -10,14 +10,14 @@
         @if(!loading){
         <table class="w-100">
             <thead>
-                    <th>{{'Employee ID' | translate}} </th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th class="text-center">{{'Probation Start Date' | translate}}</th>
-                    <th class="text-center">{{'Probation End Date' | translate}}</th>
-                    <th class="text-center">{{'Approved History' | translate}}</th>
-                    @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
-                    <th class="text-center">{{'Action' | translate}}</th>
-                    }
+                <th>{{'Employee ID' | translate}} </th>
+                <th>{{'Employee Name' | translate}}</th>
+                <th class="text-center">{{'Probation Start Date' | translate}}</th>
+                <th class="text-center">{{'Probation End Date' | translate}}</th>
+                <th class="text-center">{{'Approved History' | translate}}</th>
+                @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
+                <th class="text-center">{{'Action' | translate}}</th>
+                }
             </thead>
             <tbody>
                 <ng-container *ngIf="(probationDetails | probationdetails: searchValue) as filteredDetails">
@@ -46,7 +46,7 @@
                                 }
                                 @if(rbac.allowedToAccess('Probation Details.update') ) {
                                 <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                [routerLink]="['/time-off/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
+                                [routerLink]="['/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
                                 }
                             </div>
                         </td>

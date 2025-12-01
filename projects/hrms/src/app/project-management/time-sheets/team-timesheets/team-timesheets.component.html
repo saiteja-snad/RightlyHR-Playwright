@@ -87,12 +87,14 @@
                     <thead>
                         <th>Employee Name</th>
                         <th *ngFor="let date of dateHeaders" [innerHTML]="date" class="text-center th-date"></th>
+                        <!-- <th>Total hours</th> -->
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let emp of teamSummaryData">
-                                <td> 
-                                    @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') || rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
+                                <td>
+                                    @if(rbac.allowedToAccess('Team Time Sheet Summary Tab.view') ||
+                                    rbac.allowedToAccess('Team Time Sheet Detailed Tab.view')){
                                     <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{
                                         emp.employee.name}}</a>
                                     }
@@ -101,23 +103,10 @@
                                 <td class="text-center" *ngFor="let day of emp.dailyData" [ngStyle]="{
                                     'color': day.dailySummary.colour, 'background': day.dailySummary.backgroundColor}">
                                     <div class="d-flex flex-column align-items-center gap-2">
-                                        <!-- <a class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)" 
-                                         [style.background]="day.dailySummary.backgroundColor">
-                                            {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !== 'Not Logged' 
-                                            && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status : day.dailySummary.loggedHHMM }}</a> -->
-                                        <!-- Clickable only for loggedHHMM -->
-                                        <!-- <div *ngIf="!day.dailySummary.status || day.dailySummary.status === '-' || day.dailySummary.status === 'Not Logged' 
-                                        || day.dailySummary.loggedHHMM !== '0:00'">
-                                            <a  class="project-name cursor" (click)="openModal(day.entries, summaryforlogs)">
-                                                {{ day.dailySummary.loggedHHMM }}</a>
-                                        </div>
-                                        <div *ngIf="day.dailySummary.status && day.dailySummary.status !== '-' && 
-                                        day.dailySummary.status !== 'Not Logged' && day.dailySummary.loggedHHMM === '0:00'">
-                                        <b>{{ day.dailySummary.status }}</b>
-                                        </div> -->
-                                        <!-- SHOW LOGGED HOURS (only if NOT 0:00) -->
+
                                         @if (day.dailySummary.loggedHHMM !== '0:00') {
-                                        <div class="cursor" (click)="openModal(day.entries, summaryforlogs)">
+                                        <div class="cursor"
+                                            (click)="openModal(day.entries, summaryforlogs, emp.employee.name)">
                                             <u>{{ day.dailySummary.loggedHHMM }}</u>
                                         </div>
                                         <div class="d-flex custom-text">
@@ -132,6 +121,7 @@
                                         }
                                     </div>
                                 </td>
+                                <!-- <td>{{emp.totalLoggedHHMM}}</td> -->
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
@@ -159,7 +149,7 @@
                         <div class="circular-dot circle-holiday "></div>
                         <div class="status-text">Holidays(H)</div>
                     </div>
-                     <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-red"></div>
                         <div class="status-text">Absent(AB)</div>
                     </div>
@@ -170,7 +160,7 @@
                         <div class="status-text">Leaves</div>
                     </div>
 
-                    
+
 
                     <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-pending"></div>
@@ -212,7 +202,8 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Logged Hrs BreakDown' | translate}} ({{ selectedEntries[0]?.entryDate |
+                <p class="popup-heading mb-0">{{'Timesheet Breakdown' | translate}} - {{selectedEmployeeName}} ({{
+                    selectedEntries[0]?.entryDate |
                     dateformat }})</p>
             </div>
             <div>
@@ -225,20 +216,74 @@
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Client Name</th>
-                                <th>Project Name</th>
-                                <th>Phase/Milestone</th>
+                                <th>Project Details</th>
                                 <th>Logged Hours</th>
+                                <th>Approver</th>
                                 <th>Description</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let entry of selectedEntries">
-                                <td>{{ entry.clientName }}</td>
-                                <td>{{ entry.projectName }}</td>
-                                <td>{{ entry?.phaseName || '-' }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center flex-column">
+
+                                        <div class="project-name-chip text-truncate mb-1" type="button"
+                                            [ngbPopover]="projectname"><b
+                                                [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
+                                                entry.projectName }}</b></div>
+                                        <ng-template #projectname>
+                                            <p class="mb-0" [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">
+                                                <b>{{ entry.projectName }}</b>
+                                            </p>
+                                        </ng-template>
+
+                                        <div class="d-flex flex-wrap align-items-center  justify-content-center gap-2">
+
+                                            <div class="timesheet-chip chip-truncate  text-truncate" type="button"
+                                                [ngbPopover]="clientname"
+                                                [style.background]="getLighterColor(entry?.clientMeta?.graphData?.color) "
+                                                [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"
+                                                [style.border-color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                {{
+                                                entry.clientName }}</div>
+
+                                            <ng-template #clientname>
+                                                <p class="mb-0 text-popover"
+                                                    [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                    <b>{{ entry.clientName }}</b>
+                                                </p>
+                                            </ng-template>
+
+
+                                            <div *ngIf="entry?.phaseName"
+                                                class="timesheet-chip chip-truncate  text-truncate" type="button"
+                                                [ngbPopover]="phasename"
+                                                [style.background]="getLighterColor(entry?.phaseMeta?.graphData?.color) "
+                                                [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
+                                                [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
+                                                {{ entry?.phaseName }}
+                                            </div>
+
+                                            <ng-template #phasename>
+                                                <p class="mb-0 text-popover"
+                                                    [style.color]="entry?.phaseMeta?.graphData?.color  ?? '#0B3A83'">
+                                                   <b> {{ entry.phaseName }}</b>
+                                                </p>
+                                            </ng-template>
+
+                                        </div>
+                                    </div>
+                                </td>
+
                                 <td>{{ entry.loggedHHMM }} Hrs</td>
+                                <td>
+                                    <ng-container
+                                        *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
+                                        {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
+                                    </ng-container>
+                                    <ng-template #noValue>-</ng-template>
+                                </td>
                                 <td class="text-center">
                                     <div>
                                         <div *ngIf="entry.summary; else noRequestedComments" type="button"

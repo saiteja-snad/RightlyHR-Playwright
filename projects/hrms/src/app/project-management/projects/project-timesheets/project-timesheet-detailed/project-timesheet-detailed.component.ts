@@ -53,7 +53,7 @@ export class ProjectTimesheetDetailedComponent {
             departments: resource.departments,
             phasesCount: resource.phases.length,
             phases: resource.phases,
-            totalLoggedHours: resource.totalLoggedHours ?? 0
+            totalLoggedHoursHHMM: resource.totalLoggedHoursHHMM ?? 0
           }))
         );
 
@@ -84,7 +84,7 @@ export class ProjectTimesheetDetailedComponent {
       resourceStartDate: phase.resourceStartDate,
       resourceEndDate: phase.resourceEndDate,
       resourceRole: phase.resourceRole,
-      loggedHours: phase.loggedHours,
+      loggedHoursHHMM: phase.loggedHoursHHMM,
       resourceStatus: phase.resourceStatus,
       allocatedHours: phase.allocatedHours
     }));

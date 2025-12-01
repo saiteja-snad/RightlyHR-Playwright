@@ -18,11 +18,12 @@ import { Skeleton } from 'primeng/skeleton';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 import { TooltipModule } from 'primeng/tooltip';
 import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 
 @Component({
   selector: 'app-emergency-contact-details',
   imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule, Skeleton, TooltipModule, 
-    NgbPopoverModule, ModuleInformationComponent, EditIconComponent],
+    NgbPopoverModule, ModuleInformationComponent, EditIconComponent,InfoIconComponent],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss',
 })

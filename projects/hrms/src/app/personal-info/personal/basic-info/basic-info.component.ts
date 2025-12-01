@@ -17,9 +17,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import moment from 'moment';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent, EditIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent, EditIconComponent, InfoIconComponent],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss',
 })

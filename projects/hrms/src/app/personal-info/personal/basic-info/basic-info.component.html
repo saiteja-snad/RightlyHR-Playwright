@@ -26,7 +26,8 @@
     <!--input content-->
     <form autocomplete="off" [formGroup]="basicInfoForm">
       <div class="row">
-        @if((empinfo.empstatus=='Prospective' && empinfo.empType!='onboard')|| empinfo.empstatus =='Trainee Prospective'){
+        @if((empinfo.empstatus=='Prospective' && empinfo.empType!='onboard')|| empinfo.empstatus =='Trainee
+        Prospective'){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">ID<span class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId"
@@ -52,9 +53,9 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Salutation')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-             (click)="setActiveMessage('Salutation')"
-              popoverClass="pending-popover"></i>
+            <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click"
+              (click)="setActiveMessage('Salutation')" />
+
             }</label>
           <div class="custom-p-select-content">
             <p-select [options]="titledetails" optionLabel="titlename" placeholder="Please select salutation"
@@ -72,8 +73,9 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="firstName" class="form-label custom-label mb-2">First Name<span
               class="text-danger">*</span>@if(isFieldPendingApproval('First Name')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click" popoverClass="my-info-popover"
-               (click)="setActiveMessage('First Name')"></i>
+            <app-info-icon [ngbPopover]="pendingPopover" triggers="click" popoverClass="my-info-popover"
+              (click)="setActiveMessage('First Name')" class=" info-pending" />
+
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="firstName"
             formControlName="firstName" placeholder="Please enter first name"
@@ -86,8 +88,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="middleName" class="form-label custom-label mb-2">Middle Name@if(isFieldPendingApproval('Middle Name')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Middle Name')"></i>
+             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Middle Name')" />
+
+         
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="middleName"
             formControlName="middleName" placeholder="Please enter middle name"
@@ -97,8 +101,10 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="lastName" class="form-label custom-label mb-2">Last Name<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Last Name')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Last Name')"></i>
+                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Last Name')" />
+
+      
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="lastName"
             formControlName="lastName" placeholder="Please enter last name"
@@ -112,8 +118,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="gender" class="form-label custom-label mb-2">Gender<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Gender')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Gender')"></i>
+                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Gender')" />
             }</label>
           <div class="custom-p-select-content">
             <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName"
@@ -128,8 +134,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="dob" class="form-label custom-label mb-2">Date Of Birth<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Date of Birth')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Date of Birth')"></i>
+                 <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Date of Birth')" />
             }</label>
           <input type="date" class="form-control custom-input" id="dob" formControlName="dob"
             onkeypress="return false" />
@@ -144,8 +150,10 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="bloodGroup" class="form-label custom-label mb-2">Blood Group@if(isFieldPendingApproval('Blood Group')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('BloodGroup')"></i>
+             <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('BloodGroup')" />
+
+            
             }
           </label>
           <div class="custom-p-select-content">
@@ -161,8 +169,9 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Marital Status')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Marital Status')"></i>
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Marital Status')" />
+
             }</label>
           <div class="custom-p-select-content">
             <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" (onChange)="changemaritalstatus()"

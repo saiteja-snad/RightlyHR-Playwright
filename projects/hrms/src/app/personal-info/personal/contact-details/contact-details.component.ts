@@ -15,9 +15,10 @@ import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 import { TooltipModule } from 'primeng/tooltip';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule,InfoIconComponent],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
 })

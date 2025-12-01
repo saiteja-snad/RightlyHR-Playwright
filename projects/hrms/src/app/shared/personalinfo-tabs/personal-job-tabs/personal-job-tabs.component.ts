@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 @Component({
   selector: 'app-personal-job-tabs',
   imports: [RouterModule, TabsModule, CommonModule],
@@ -16,7 +17,7 @@ export class PersonalJobTabsComponent implements OnInit {
   columnsPerRow = 3;
   empinfo: any;
 
-  constructor(public rbac: RbacService, public readonly router: Router, private route: ActivatedRoute) { }
+  constructor(public rbac: RbacService, public readonly router: Router, private route: ActivatedRoute,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
@@ -45,7 +46,7 @@ filterTabs(): void {
     { label: 'Compensations', link: '/personalinfo/job/compensation-details', icon: '/images/compensation.png', permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
     { label: 'Probation Info', link: '/personalinfo/job/probation-details', icon: '/images/probation.png', permission: { feature: 'Employee Info Probation Details', action: 'view' } },
     { label: 'Job Info', link: '/personalinfo/job/job-details', icon: '/images/jobdetailes.png', permission: { feature: 'Employee Info Job Details', action: 'view' } },
-    { label: 'Team Members', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
+    { label: 'Team Members', link: '/personalinfo/job/team', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
     { label: 'Assigned Assets ', link: '/personalinfo/job/assets-details', icon: '/images/assets-list.png', permission: { feature: 'Employee Info Asset Details', action: 'view' } },
     { label: 'Employment History', link: '/personalinfo/job/past-experiences', icon: '/images/experience.png', permission: { feature: 'Employee Info Previous Experience Details', action: 'view' } },
     { label: 'Certifications', link: '/personalinfo/job/certifications', icon: '/images/certificate.png', permission: { feature: 'Employee Info Certification Details', action: 'view' } },
@@ -67,7 +68,18 @@ filterTabs(): void {
 }
 
   navigateToAccessedRoute(link: string): void {
-    this.router.navigateByUrl(link);
+    if (link == '/personalinfo/job/team') {
+      const actualRoute = this.accessNav.navigateToAccessedRoute(link);
+      if (actualRoute) {
+        this.router.navigate([actualRoute]);
+      } else {
+        this.router.navigate(['/unauthorized']);
+      }
+    }
+    else {
+      this.router.navigateByUrl(link);
+    }
+
   }
 
   isActiveRoute(link: string): boolean {

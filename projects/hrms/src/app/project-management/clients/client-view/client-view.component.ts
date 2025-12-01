@@ -412,8 +412,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.phasesList = (res?.data || []).map((item: any) => ({
           ...item,
-          label: `${item.phaseName} - (${item.meta?.graphData?.code || ''})`,
+          label: item.project?.meta?.graphData?.code
+            ? `${item.phaseName} - (${item.project.meta.graphData.code})`
+            : item.phaseName,
         }));
+
         this.loading = false;
       },
       error: () => {

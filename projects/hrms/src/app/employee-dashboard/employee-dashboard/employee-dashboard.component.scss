@@ -130,6 +130,17 @@
     }
 }
 
+.leaves-count {
+    font-weight: 400;
+    font-size: var(--fontsize10);
+}
+
+.totaled-allowed {
+    font-weight: 500;
+    font-size: 9px;
+    color: #747474;
+}
+
 .chart-center-label {
     position: absolute;
     top: 50%;

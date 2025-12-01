@@ -15,7 +15,6 @@ import { Skeleton } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
 import { TabsModule } from 'primeng/tabs';
-
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule],
@@ -28,7 +27,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   employeedata: any;
   currentTime: Date = new Date();
   loading = false;
-  avaliabletlyloading = false;  
+  avaliabletlyloading = false;
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -53,12 +52,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   totalHours: any
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
-legendList = [
-  { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
-  { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
-  { key: 'wfh', label: 'WFH', color: '#FF1493' },
-  { key: 'leave', label: 'Leave', color: '#8A2BE2' }
-];
+  legendList = [
+    { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
+    { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
+    { key: 'wfh', label: 'WFH', color: '#FF1493' },
+    { key: 'leave', label: 'Leave', color: '#8A2BE2' }
+  ];
 
   genderTotal: number = 0;
   femaleCount: number = 0;

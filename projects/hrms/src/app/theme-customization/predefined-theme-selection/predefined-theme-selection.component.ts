@@ -15,13 +15,13 @@ export class PredefinedThemeSelectionComponent {
   selectedTheme: string = localStorage.getItem('selected-theme') || 'default-theme';
   themes = [
     { name: 'Default', value: 'default-theme', class: 'default-preview' },
-    { name: 'Lavendar', value: 'lavendar-theme', class: 'lavendar-preview' },
+    { name: 'Lavender', value: 'lavendar-theme', class: 'lavendar-preview' },
     { name: 'Navy Blue', value: 'navy-blue-theme', class: 'navy-blue-preview' },
     { name: 'Teal', value: 'teal-theme', class: 'teal-preview' },
     { name: 'Blue', value: 'blue-theme', class: 'blue-preview' },
     { name: 'Copper Wood', value: 'copper-wood-theme', class: 'copper-wood-preview' },
     { name: 'Royal Blue', value: 'royal-blue-theme', class: 'royal-blue-preview' },
-    { name: 'black', value: 'black-theme', class: 'black-preview' },
+    { name: 'Black', value: 'black-theme', class: 'black-preview' },
     { name: 'Enchanted Wine', value: 'enchanted-wine-theme', class: 'enchanted-wine-preview' },
     { name: 'Flare Red', value: 'flare-red-theme', class: 'flare-red-preview' },
     { name: 'Dark Slate Blue', value: 'dark-slate-theme', class: 'dark-slate-preview' },

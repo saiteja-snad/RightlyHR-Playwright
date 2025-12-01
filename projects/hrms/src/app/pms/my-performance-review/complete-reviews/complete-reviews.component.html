@@ -62,31 +62,31 @@
                         <td class="text-center">
                             @if(showActionDropdownForItem(item)){
                             <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu text-center">
+                            <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                     @if(rbac.allowedToAccess('My Performance Assessment View.view')){
-                                    <li class="dropdown-item"
+                                    <li
                                         (click)="selfAssessment(item.reviewCycleItemId, 0, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                        <a class="dropdown-custom-btn">{{item.assessorType}}
+                                        <a  class="dropdown-item">{{item.assessorType}}
                                             {{'Assessment View' | translate}}</a>
                                     </li>
                                     }
                                     @if(rbac.allowedToAccess('My Performance Promotion Letter Download.view')){
-                                    <li class="dropdown-item"
+                                    <li 
                                         *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
                                         (click)="downloadPromotionletter(item)">
-                                        <a class="dropdown-custom-btn">
+                                        <a  class="dropdown-item">
                                             {{'Promotion Letter Download' | translate}}
                                         </a>
                                     </li>
                                     }
                                     @if(rbac.allowedToAccess('My Performance Appraisal Letter Download.view')){
-                                    <li class="dropdown-item"
+                                    <li 
                                         *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' ||  item.rcItemStatus=== 'Appraisal Letter Generated'"
                                         (click)="downloadletter(item)">
-                                        <a class="dropdown-custom-btn">
+                                        <a  class="dropdown-item">
                                             {{'Appraisal Letter Download' | translate}}
                                         </a>
                                     </li>

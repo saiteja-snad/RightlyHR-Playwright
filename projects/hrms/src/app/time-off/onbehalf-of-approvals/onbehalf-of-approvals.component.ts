@@ -109,7 +109,7 @@ export class OnbehalfOfApprovalsComponent {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
+      '/on-behalf-of/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

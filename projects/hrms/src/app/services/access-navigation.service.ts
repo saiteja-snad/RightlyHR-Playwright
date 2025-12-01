@@ -1420,9 +1420,9 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/time-off/on-behalf-of-approvals':
+      case '/on-behalf-of/on-behalf-of-approvals':
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
-          return (route = '/time-off/on-behalf-of-approvals/time-off');
+          return (route = '/on-behalf-of/on-behalf-of-approvals/time-off');
         }
         break;
 

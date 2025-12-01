@@ -18,6 +18,8 @@ import { ProjectsSideTabsComponent } from '../../../shared/project-management-ta
 import { ActiveprojectsPipe } from '../../../Pipes/activeprojects.pipe';
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { combineLatest } from 'rxjs';
+
 
 @Component({
   selector: 'app-hold-projects',
@@ -74,17 +76,15 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.clientList()
 
     // Listen to department filter changes from service (shared across tabs)
-    this.http.selectedDepartmentIds$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((deptIds) => {
-        this.selectedDepartmentIds = deptIds || [];
-        this.getdatabaedonRoute(); // Re-fetch projects when department filter changes
-      });
-
-       this.http.projectTypeFilter$
+    combineLatest([
+    this.http.selectedDepartmentIds$,
+    this.http.projectTypeFilter$
+  ])
   .pipe(takeUntil(this.destroy$))
-  .subscribe((projectTypes) => {
+  .subscribe(([deptIds, projectTypes]) => {
+    this.selectedDepartmentIds = deptIds || [];
     this.selectedProjectTypes = projectTypes || [];
+
     this.getdatabaedonRoute();
   });
   }

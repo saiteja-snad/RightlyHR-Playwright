@@ -662,6 +662,7 @@ AllProjectsList() {
     this.selectedPhaseIds = [];
     this.http.clearRequestclienttimesheet();
     this.http.setRequestclienttimesheet(null);
+      this.setDefaultmounth();
   }
   opencontactModal(content: any) {
     this.modalService.open(content, {

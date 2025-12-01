@@ -346,7 +346,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
     const currentResourceId = this.datepickerForm.get('resourceId')?.value;
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
-    
+
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
       projectId: null,
@@ -354,7 +354,7 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       departmentId: null,
       tmorrmId: null
     });
-    
+
     const clearedFilters = {
       dateRange: [startOfMonth, endOfMonth] as [Date, Date],
       resourceId: currentResourceId,
@@ -363,12 +363,12 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
       departmentId: null,
       tmorrmId: null
     };
-    
+
     this.filterService.setFilters(clearedFilters);
     this.updateQueryParamsWithFilters(clearedFilters);
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    
+
     // Reload data with cleared filters
     const resoureID = currentResourceId || this.employeeId;
     this.projectSummery(resoureID, clearedFilters);

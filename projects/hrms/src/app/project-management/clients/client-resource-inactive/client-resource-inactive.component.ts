@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, Subject, takeUntil } from 'rxjs';
+import {combineLatest,debounceTime, distinctUntilChanged ,Subscription, Subject, takeUntil } from 'rxjs';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -97,26 +97,25 @@ export class ClientResourceInactiveComponent {
       }
     });
 
-    this.http.resourceRoleFilter$.pipe(takeUntil(this.destroy$)).subscribe(roleIds => {
-      this.selectedRoleIds = roleIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
+    combineLatest([
+      this.http.resourceRoleFilter$,
+      this.http.resourcePhaseFilter$,
+      this.http.resourceAuthorityFilter$,
+      this.http.resourceProjectFilter$
+    ]).pipe(
+      takeUntil(this.destroy$),
+      debounceTime(100),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    ).subscribe(([roleIds, phaseIds, authorityIds, projectIds]) => {
+      this.selectedRoleIds = roleIds || [];
+      this.selectedPhaseIds = phaseIds || [];
+      this.selectedAuthorityIds = authorityIds || [];
+      this.selectedProjectIds = projectIds || [];
+      if (this.clientID) {
+        this.getResourceData(this.clientID, this.searchValue);
+      }
     });
 
-    this.http.resourcePhaseFilter$.pipe(takeUntil(this.destroy$)).subscribe(phaseIds => {
-      this.selectedPhaseIds = phaseIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
-    });
-
-    this.http.resourceAuthorityFilter$.pipe(takeUntil(this.destroy$)).subscribe(authorityIds => {
-      this.selectedAuthorityIds = authorityIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
-    });
-
-
-    this.http.resourceProjectFilter$.pipe(takeUntil(this.destroy$)).subscribe(projectIds => {
-      this.selectedProjectIds = projectIds;
-      if (this.clientID) this.getResourceData(this.clientID, this.searchValue);
-    });
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getResourceData(parseInt(this.clientID), this.searchValue);
     });

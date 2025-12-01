@@ -463,6 +463,10 @@ ngOnInit() {
                 ticks: {
                   color: '#505050',
                   font: { size: 10, weight: '400' },
+                  callback: (value: any, index: number) => {
+                    const label = data[index]?.projectColor?.graphData?.code || data[index]?.projectName || '-';
+                    return this.truncateLabel(label, 15);
+                  }
                 },
               },
             },

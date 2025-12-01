@@ -11,7 +11,7 @@
             <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
 
             <div class="dashboard-grid my-3">
-                @if(avaliabletlyloading ){
+                @if(!avaliabletlyloading ){
                 <!-- Team Availability -->
                 <div class="content-card">
                     <div class="d-flex justify-content-between align-content-center">
@@ -43,10 +43,6 @@
                                 </div>
                             </div>
                         </div>
-
-
-
-
                     </div>
 
                 </div>

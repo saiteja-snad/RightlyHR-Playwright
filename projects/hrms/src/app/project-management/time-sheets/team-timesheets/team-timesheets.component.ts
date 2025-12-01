@@ -7,7 +7,6 @@ import { RbacService } from '../../../services/rbac.service';
 import { HttpService } from '../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
-import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import dayjs from 'dayjs';
@@ -27,12 +26,13 @@ import { TimesheetSharedDataService } from '../../../services/timesheet-shared-d
 import { Chip } from 'primeng/chip';
 @Component({
   selector: 'app-team-timesheets',
-  imports: [TimesheetsTabsComponent,NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
-    CommonModule, ProjectManagementModuleInfoComponent, Select, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, DateformatPipe,MultiSelectModule,
-    Chip,],
+  imports: [TimesheetsTabsComponent, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DatePicker, TranslateModule,
+    CommonModule, ProjectManagementModuleInfoComponent, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent,
+    DateformatPipe, MultiSelectModule, Chip],
   templateUrl: './team-timesheets.component.html',
   styleUrl: './team-timesheets.component.scss',
 })
+
 export class TeamTimesheetsComponent {
   empdata = {} as any;
   loading = false;
@@ -148,7 +148,7 @@ export class TeamTimesheetsComponent {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
-  closeCanvas(){
+  closeCanvas() {
     this.offcanvasService.dismiss();
   }
 
@@ -156,7 +156,6 @@ export class TeamTimesheetsComponent {
     // Reset to current month
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
-
     // Clear all form fields including date range and employee selection
     this.datepickerForm.patchValue({
       dateRange: [startOfMonth, endOfMonth],
@@ -166,17 +165,14 @@ export class TeamTimesheetsComponent {
       departmentId: null,
       tmorrmId: null
     });
-
     // Clear filter service
     this.filterService.clearFilters();
-
     // Reload employee lists
     if (this.rbac.allowedToAccess('All Employees (Timesheet).view')) {
       this.getAllEmployeeDetails();
     } else if (this.rbac.allowedToAccess('My Team (Timesheet).view')) {
       this.getResourceDetailsByManagerId();
     }
-
     // Reload table data with cleared filters
     this.page = 1;
     this.first = 0;
@@ -206,8 +202,6 @@ export class TeamTimesheetsComponent {
   openModal(entries: any, content?: any, empName?: string) {
     this.selectedEmployeeName = empName || '';
     this.selectedEntries = entries?.filter((ele: any) => ele?.status !== 'Not Entered');;
-    console.log(this.selectedEntries);
-
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -216,19 +210,12 @@ export class TeamTimesheetsComponent {
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
       next: (res: any) => {
         if (res?.success) {
-          const employeeList = res.data
-            .filter(
-              (emp: IResourceDetail) =>
-                emp.id !== EmployeeId && emp.isReportee == true
-            )
-            .map((emp: IResourceDetail) => ({
+          const employeeList = res.data.filter((emp: IResourceDetail) =>
+            emp.id !== EmployeeId && emp.isReportee == true).map((emp: IResourceDetail) => ({
               ...emp,
-              fullName: emp.fusionEmpId
-                ? `${emp.fusionEmpId} - ${emp.name}`
-                : emp.name,
+              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
               key: 'team',
             }));
-
           if (employeeList.length > 0) {
             const allEmployeesOption = { id: 'ALL_EMPLOYEES', fullName: 'All Employees', key: 'team' };
             this.resourcesList = [allEmployeesOption, ...employeeList];
@@ -272,7 +259,6 @@ export class TeamTimesheetsComponent {
             ...emp,
             key: 'all',
           }));
-
           if (employeeList.length > 0) {
             const allEmployeesOption = { label: 'All Employees', value: 'ALL_EMPLOYEES', key: 'all' };
             this.activeEmplist = [allEmployeesOption, ...employeeList];
@@ -297,10 +283,6 @@ export class TeamTimesheetsComponent {
     });
   }
 
-  onCheckemployee(employeed: any) {
-    // No longer needed for multiselect
-  }
-
   onSubmit() {
     if (this.datepickerForm.invalid) {
       return;
@@ -308,20 +290,14 @@ export class TeamTimesheetsComponent {
     const formValue = this.datepickerForm.value;
     this.filterService.setFilters(formValue);
     const selectedIds = formValue.resourceId || [];
-    
     let employeeIds: string | null = null;
     if (selectedIds.includes('ALL_EMPLOYEES')) {
-      const currentList = this.rbac.allowedToAccess('All Employees (Timesheet).view') 
-        ? this.activeEmplist 
-        : this.resourcesList;
-      const allIds = currentList
-        .filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES')
-        .map((emp: any) => emp.value || emp.id);
+      const currentList = this.rbac.allowedToAccess('All Employees (Timesheet).view') ? this.activeEmplist : this.resourcesList;
+      const allIds = currentList.filter((emp: any) => (emp.value || emp.id) !== 'ALL_EMPLOYEES').map((emp: any) => emp.value || emp.id);
       employeeIds = allIds.length > 0 ? allIds.join(',') : null;
     } else if (selectedIds.length > 0) {
       employeeIds = selectedIds.join(',');
     }
-    
     this.page = 1;
     this.first = 0;
     this.getteamsummary(employeeIds);
@@ -340,7 +316,6 @@ export class TeamTimesheetsComponent {
     // Case 1: Only "My Team" — include manager resourceId
     if (hasMyTeam && !hasAllEmployees) {
       url += `&resourceId=${this.empdata?.employeeId}`;
-
     }
     // NEW LOGIC: employeeIds (single or comma separated)
     if (employeeIds) {
@@ -352,10 +327,8 @@ export class TeamTimesheetsComponent {
         this.loading = false;
         if (res?.success) {
           this.teamSummaryData = res.data;
-          this.totalhrs =
-            res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
+          this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
           this.collectionSize = res.pagination.totalRecords;
-
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map((d) =>
               dayjs(d.date).format('D MMM<br>ddd')
@@ -404,11 +377,9 @@ export class TeamTimesheetsComponent {
 
   onEmployeeChange(event: any) {
     const selectedIds = event.value || [];
-    
     // If both "All Employees" and individual employees are selected
     if (selectedIds.includes('ALL_EMPLOYEES') && selectedIds.length > 1) {
       const wasAllEmployeesSelected = this.previousEmployeeSelection.includes('ALL_EMPLOYEES');
-      
       if (wasAllEmployeesSelected) {
         // User added individual employee(s) while "All Employees" was selected
         // Remove "All Employees", keep individual selections
@@ -429,7 +400,6 @@ export class TeamTimesheetsComponent {
   getSelectedFilters(): any[] {
     const filters: any[] = [];
     const formValue = this.datepickerForm.value;
-
     if (formValue.projectId && formValue.projectId.length > 0) {
       formValue.projectId.forEach((id: any) => {
         const project = this.projectDetails.find((p: any) => p.projectId === id);
@@ -438,7 +408,6 @@ export class TeamTimesheetsComponent {
         }
       });
     }
-
     if (formValue.clientId && formValue.clientId.length > 0) {
       formValue.clientId.forEach((id: any) => {
         const client = this.clientDetails.find((c: any) => c.clientId === id);
@@ -447,7 +416,6 @@ export class TeamTimesheetsComponent {
         }
       });
     }
-
     if (formValue.departmentId && formValue.departmentId.length > 0) {
       formValue.departmentId.forEach((id: any) => {
         const dept = this.departmentDetails.find((d: any) => d.sno === id);
@@ -456,7 +424,6 @@ export class TeamTimesheetsComponent {
         }
       });
     }
-
     if (formValue.tmorrmId && formValue.tmorrmId.length > 0) {
       formValue.tmorrmId.forEach((id: any) => {
         const tm = this.tmandRmDetails.find((t: any) => t.employeeId === id);
@@ -465,7 +432,6 @@ export class TeamTimesheetsComponent {
         }
       });
     }
-
     return filters;
   }
 
@@ -478,23 +444,19 @@ export class TeamTimesheetsComponent {
   }
 
   getLighterColor(color: string, amount: number = 0.9): string {
-  if (!color) return color || '#d8d8daff'; // Default color if none provided;
-
-  // Remove # if present
-  const hex = color.replace('#', '');
-
-  // Parse RGB values
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-
-  // Calculate lighter values
-  const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
-  const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
-  const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
-
-  // Convert back to hex
-  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+    if (!color) return color || '#d8d8daff'; // Default color if none provided;
+    // Remove # if present
+    const hex = color.replace('#', '');
+    // Parse RGB values
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    // Calculate lighter values
+    const newR = Math.min(255, Math.floor(r + (255 - r) * amount));
+    const newG = Math.min(255, Math.floor(g + (255 - g) * amount));
+    const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
 
   loadSavedFilters() {
@@ -504,5 +466,9 @@ export class TeamTimesheetsComponent {
     } else {
       this.setDefaultmounth();
     }
+  }
+
+  openMoreFiltersModal(content?: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 }

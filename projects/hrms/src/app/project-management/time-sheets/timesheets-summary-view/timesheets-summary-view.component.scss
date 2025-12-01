@@ -316,20 +316,6 @@
     }
 }
 
-.custom-offcanvas-content {
-    position: relative;
-    width: 100%;
-    height: 100dvh;
-    overflow-y: auto;
-
-    .offcanvas-footer-content {
-        position: absolute;
-        z-index: 1;
-        bottom: 1rem;
-        width: calc(100% - 2rem);
-    }
-}
-
 /* Filter Indicator Dot */
 .filter-indicator {
     position: absolute;
@@ -347,9 +333,11 @@
     0% {
         box-shadow: 0 0 0 0 #0B3A83;
     }
+
     70% {
         box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
     }
@@ -379,6 +367,7 @@
     color: #0B3A83 !important;
     border: 1px solid #0B3A83 !important;
 }
+
 .timesheet-chip {
     font-size: 8.5px !important;
     border: 1px solid;

@@ -426,15 +426,23 @@ export class TimesheetsResourceSummaryComponent implements OnInit {
   // }
 
   setDefaultmounth() {
-    // Define current month's start & end
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
-    // Check if BehaviorSubject values exist
     const BehaviorDataexist = this.startDate && this.endDate;
-    // If present → use them; else → fallback to month start/end
-    const start = BehaviorDataexist ? dayjs(this.startDate).toDate() : startOfMonth;
-    const end = BehaviorDataexist ? dayjs(this.endDate).toDate() : endOfMonth;
-    // Patch form values
+    const hasFilterDateRange = this.filterData.dateRange && Array.isArray(this.filterData.dateRange);
+    
+    let start, end;
+    if (hasFilterDateRange) {
+      start = dayjs(this.filterData.dateRange[0]).toDate();
+      end = dayjs(this.filterData.dateRange[1]).toDate();
+    } else if (BehaviorDataexist) {
+      start = dayjs(this.startDate).toDate();
+      end = dayjs(this.endDate).toDate();
+    } else {
+      start = startOfMonth;
+      end = endOfMonth;
+    }
+    
     this.datepickerForm.patchValue({
       dateRange: [start, end],
       resourceId: this.employeeId || null,

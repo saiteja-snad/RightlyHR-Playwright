@@ -28,6 +28,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ProjectsSideTabsComponent } from '../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
+import { combineLatest } from 'rxjs';
 @Component({
   selector: 'app-active-projects',
   imports: [
@@ -100,17 +101,15 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.http.selectedDepartmentIds$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((deptIds) => {
-        this.selectedDepartmentIds = deptIds || [];
-        this.getProjectsBasedOnRoute();
-      });
-
+    combineLatest([
+    this.http.selectedDepartmentIds$,
     this.http.projectTypeFilter$
+  ])
   .pipe(takeUntil(this.destroy$))
-  .subscribe((projectTypes) => {
+  .subscribe(([deptIds, projectTypes]) => {
+    this.selectedDepartmentIds = deptIds || [];
     this.selectedProjectTypes = projectTypes || [];
+
     this.getProjectsBasedOnRoute();
   });
     this.editProjectForm();

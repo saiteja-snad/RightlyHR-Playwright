@@ -17,6 +17,8 @@ import { ActiveprojectsPipe } from '../../../Pipes/activeprojects.pipe';
 import { ProjectsSideTabsComponent } from '../../../shared/project-management-tabs/projects-side-tabs/projects-side-tabs.component';
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { combineLatest } from 'rxjs';
+
 @Component({
   selector: 'app-inacitve-projects',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
@@ -58,17 +60,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     this.getprojecttypesData();
 
     // Listen to department filter changes from service (shared across tabs)
-    this.http.selectedDepartmentIds$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((deptIds) => {
-        this.selectedDepartmentIds = deptIds || [];
-        this.getdatabaedonRoute(); // Re-fetch projects when department filter changes
-      });
-
-      this.http.projectTypeFilter$
+    combineLatest([
+    this.http.selectedDepartmentIds$,
+    this.http.projectTypeFilter$
+  ])
   .pipe(takeUntil(this.destroy$))
-  .subscribe((projectTypes) => {
+  .subscribe(([deptIds, projectTypes]) => {
+    this.selectedDepartmentIds = deptIds || [];
     this.selectedProjectTypes = projectTypes || [];
+
     this.getdatabaedonRoute();
   });
     this.getdatabaedonRoute();

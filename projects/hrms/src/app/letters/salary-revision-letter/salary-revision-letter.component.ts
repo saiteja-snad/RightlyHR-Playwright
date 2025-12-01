@@ -17,6 +17,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { IAddress } from '../../Interfaces/personal-modal';
 @Component({
   selector: 'app-salary-revision-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
@@ -66,7 +67,13 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
   jobErrorMessage!: string;
   releaseLoader = false;
   documentGenerated = false;
-
+  addressdata: { name: string, value: string }[] = [
+    { name: 'Current Address', value: 'C' },
+    { name: 'Permanent Address', value: 'P' },
+  ];
+  addressType: any;
+  address = {} as IAddress;
+  employeeaddress = [] as any;
   constructor(private http: HttpService,
     private httpclient: HttpClient,
     private router: Router,
@@ -104,10 +111,24 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
       dateofAppraisal: ['', Validators.required],
       Documenttype: [null, Validators.required],
       authorityid: [null, Validators.required],
-      jobValid: [false, Validators.requiredTrue]
+      jobValid: [false, Validators.requiredTrue],
+      SelectDropDown: [null, Validators.required],
     });
   }
-
+  onclickSelectAddress(Value: any) {
+    this.addressType = Value.value;
+    if (this.employeeaddress?.employeeAddresses.length > 0) {
+      this.address = this.employeeaddress?.employeeAddresses.find(
+        (address: IAddress) => address?.type?.toLowerCase() == Value?.value?.toLowerCase()
+      );
+    }
+    this.appraisalData.addressLine1 = this.address?.addressLine1;
+    this.appraisalData.addressLine2 = this.address?.addressLine2;
+    this.appraisalData.city = this.address?.city;
+    this.appraisalData.state = this.address?.state;
+    this.appraisalData.country = this.address?.country;
+    this.appraisalData.zipCode = this.address?.zipCode;
+  }
   //function for issed by
   getIssuedEmployeebyId() {
     this.employeedata =
@@ -131,6 +152,7 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
       (c: any) => c.fusionEmpId == fusionemployeeId?.fusionEmpId
     );
     this.disablebuttonforemployeeid = true;
+    this.getEmployeeAddress(this.appraisalData.employeeId);
     this.getCompensationById(this.appraisalData);
     this.getJobdetails(this.appraisalData);
     if (this.appraisalData.gender == 'Male') {
@@ -139,7 +161,14 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
       return (this.gender = 'Ms.');
     }
   }
-
+  getEmployeeAddress(Value: any) {
+    let EmployeeId = Value;
+    this.subscription = this.http.getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.employeeaddress = data as IAddress[];
+      },
+    });
+  }
   //toggledropdown to open and close the dropdown list
   toggleDropdown(dropcategory: any) {
     if (dropcategory == 'empid') {

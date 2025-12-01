@@ -10,31 +10,32 @@
                     <div class="text-end my-3"><span class="letter-sub-header">Date: </span>
                         {{promotionDate| dateformat}}
                     </div>
-                    <p class="letter-sub-header">{{promotiondata.firstName}} {{promotiondata.middleName}}
+                    <br>{{gender}} {{promotiondata.firstName}} {{promotiondata.middleName}}
                         {{promotiondata.lastName}}
-                    </p>
-                    <p *ngIf="promotiondata.addressLine1">
-                        <b>{{promotiondata.addressLine1}}
+                    <br>Address
+                     @if(gender || promotiondata.firstName){
+                        <br>
+                        {{promotiondata.addressLine1}}
                             <br>{{promotiondata.addressLine2}}
                             <br>{{promotiondata.city}}
-                            <br>{{promotiondata.state}}</b>
-                    </p>
-                    <p class="letter-sub-header">Dear {{gender}} {{promotiondata.firstName}}
+                            <br>{{promotiondata.state}} - {{promotiondata.zipCode}}.
+                   
+                     }
+                    
+                    <p >Dear {{gender}} {{promotiondata.firstName}}
                         {{promotiondata.middleName}} {{promotiondata.lastName}},</p>
 
-                    <p class="mb-4">Management has truly recognized your potential for growth with
-                        the
-                        company and thus has given you a good increment with great expectations. We would
-                        like
-                        you to take it as a challenge and prove your mettle. </p>
-                    <p class="mb-4">Keeping in view the above, Management has also decided to give
-                        you
-                        a revision of Rs. {{incrementSalary}}/- w.e.f.
-                        <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
-                        This will be in addition to your existing CTC, thereby increasing your CTC from Rs
-                        <span *ngIf="previusSalary?.compensationamount"></span>
-                         {{previusSalary?.compensationamount}}/- to current CTC of Rs
-                        {{promotiondata.salary}} /-
+                    <p class="mb-4">Management has truly recognized your potential for growth with the company and thus
+                        has given you a salary revision with great expectations.
+                        We would like you to take it as a challenge and prove your mettle.</p>
+                    <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to Rs.
+                        {{incrementSalary}}/- w.e.f.
+                        This revision will be effective from <u>{{employeeCompensationDetails.compeffectivedate |
+                            dateformat}}</u>.
+                        <!-- This will be in addition to your existing CTC, thereby increasing your CTC from Rs
+                                <span *ngIf="previusSalary?.compensationamount"></span>
+                                {{previusSalary?.compensationamount}}/- to current CTC of Rs
+                                {{promotiondata.salary}} /- -->
                     </p>
 
                     <p class="mb-4">We are confident that you will put in your best efforts in
@@ -49,11 +50,22 @@
                         remain
                         unchanged. </p>
                     <p>Yours sincerely, </p><br>
-                    <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
-                    <p class="letter-signature  pt-3">{{promotiondata.authorityName}}</p>
-                    <p class="letter-sub-header mb-1">Authorized Signatory,</p>
-                    <p class="letter-sub-header mb-1">{{promotiondata.authorityName}}</p>
-                    <p class="letter-sub-header mb-0">{{authorityDesignation}}</p>
+                    <p class="letter-sub-header mb-5">For SNAD DEVELOPERS INDIA PVT LTD</p>
+                    <div class="d-flex justify-content-between gap-3">
+                        <div class="w-50">
+                            <p class="letter-signature  pt-3">{{promotiondata.authorityName}}</p>
+                            <p class=" mb-1"><b>Authorized Signatory,</b></p>
+                            <p class=" mb-1"><b>{{promotiondata.authorityName}}</b></p>
+                            <p class=" mb-0"><b> {{authorityDesignation}}</b></p>
+                        </div>
+                        <div class="w-50">
+                            <p><b>Employee Name:</b> {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}}</p>
+                            <div class="letter-signature mb-1"> {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}}</div>
+                            <div class="mb-1"><div><b>Employee Signature:</b></div></div>
+                            <p class=" mb-1"><b>Date:</b> {{currentDate |dateformat}}</p>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- <div class="letter-footer">
                             <app-letter-footer />
@@ -64,18 +76,27 @@
                 [ngClass]="{'soft-copy-letter': docType, 'hard-copy-letter': !docType}">
                 <div class="letter-page-sub-content">
 
-                    <div class="letter-header text-center mb-3">CONFIDENTIAL</div>
+                    <!-- <div class="letter-header text-center mb-3">CONFIDENTIAL</div> -->
                     <div class="letter-header text-center">Annexure – A</div>
-
+                    <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
+                    <div class="row">
+                        <div class="p-2 border-box col-md-2 name">NAME</div>
+                        <div class="p-2 border-box col-md-4 text-wrap"><b>{{promotiondata.firstName}}
+                                {{promotiondata.middleName}} {{promotiondata.lastName}}</b></div>
+                        <div class="p-2 border-box col-md-2 name">Designation</div>
+                        <div class="p-2 border-box col-md-4"><b> {{promotiondata.jobRole}}</b></div>
+                    </div>
+                    <p class="text-center letter-sub-header my-3">Compensation Details <span class="boldnone">(All
+                            figures in Rs.)</span></p>
                     <!-- start of paragraphs -->
-                    <p class="m-0"><span class="text-decoration-underline">Name:</span>
-                        {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}},
-                    </p>
-                    <p class="p-0 m-0">
-                        <span class="text-decoration-underline">Designation:</span>
-                        {{promotiondata.jobRole}}
-                    </p>
-                    <p><span class="text-decoration-underline">Salary Structure:</span> </p>
+                    <!-- <p class="m-0"><span class="text-decoration-underline">Name:</span>
+                                {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}},
+                            </p>
+                            <p class="p-0 m-0">
+                                <span class="text-decoration-underline">Designation:</span>
+                                {{promotiondata.jobRole}}
+                            </p>
+                            <p><span class="text-decoration-underline">Salary Structure:</span> </p> -->
                     <!-- second paragraph -->
                     <div class="salary-details-table mb-3">
                         <table class="mytable w-100">
@@ -264,36 +285,58 @@
                         </table>
                     </div>
                     <!-- </div> -->
-                    <p class="note text-decoration-underline">Note:</p>
                     <ul>
-                        <li>Medical insurance amount will be calculated based on the
-                            number of
-                            dependents; the respective amount will be deducted from your monthly salary.
-                        </li>
-                    </ul>
-                    <!-- end of second table -->
-                    <p class="letter-sub-header ">For SNAD Developers India Pvt Ltd</p>
-                    <div class="img-space  mb-5"></div>
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="mb-3 letter-signature">{{promotiondata.authorityName}}</div>
-                            <div>
-                                <p class="letter-sub-header mb-1">Authorized Signatory,</p>
-                                <p class="letter-sub-header mb-1">{{promotiondata.authorityName}}</p>
-                                <p class="letter-sub-header mb-1">{{authorityDesignation}}</p>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="letter-sub-header ">Employee Name: {{promotiondata.firstName}}
-                                {{promotiondata.middleName}} {{promotiondata.lastName}}
-                            </p>
-                            <p class="letter-sub-header mb-3">Employee Signature: <p class="mb-3 letter-signature"> {{promotiondata.firstName}}
-                                {{promotiondata.middleName}} {{promotiondata.lastName}}</p>
-                            <p class="letter-sub-header">Date : </p>
-                        </div>
-                    </div>
-                </div>
+                        <b>Additional Details Related to Salary Structure:</b>
+                        <ol class="list-style-none mb-2 pt-2">
+                            <li>a) TDS will be deducted from the Gross Salary after statutory deductions.</li>
+                            <li>b) Employees are responsible for their Tax Planning.</li>
+                            <li>c) Employees may avail tax benefit by submitting bills against Leave Travel Allowance.
+                            </li>
+                            <li>d) All eligible employees as per the respective policies of the Company will be covered
+                                under the Group Medical Coverage Policy and Group Covid policy.</li>
+                            <li>e) All the above benefits are as per the Company’s policies, which are subjective to
+                                change from time to time. Further salary, allowances, any alteration in salary structure
+                                and other payments/benefits will be governed by The Company’s rules as well as statutory
+                                provisions in force from time to time and subject to deduction of appropriate taxes as
+                                applicable under government norms.</li>
+                            <li>f) While the other terms and conditions of your appointment remain unchanged, please do
+                                take note that as per the current Company’s Separation Policy, if you resign from the
+                                services of the company, you will be liable to serve Ninety (90) days i.e. Three (3)
+                                months of Notice Period.</li>
+                            <li><b>
+                                    g) Medical insurance amount will be calculated based on the number of dependents;
+                                    the respective amount will be deducted from your monthly salary.
+                                </b></li>
 
+                        </ol>
+                    </ul>
+                    <p><b> <span class="note text-decoration-underline">Note:</span> The above compensation package is
+                            strictly confidential between you and the Company and should not be discussed with anyone
+                            nor divulged to anyone in any manner whatsoever.</b></p>
+                    <!-- end of second table -->
+                    <!-- <p class="letter-sub-header ">For SNAD Developers India Pvt Ltd</p>
+                            <div class="img-space  mb-5"></div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="mb-3 letter-signature">{{promotiondata.authorityName}}</div>
+                                    <div>
+                                         <p class="letter-sub-header mb-1" >Authorized Signatory,</p>
+                                        <p class="letter-sub-header mb-1">{{promotiondata.authorityName}}</p>
+                                        <p class="letter-sub-header mb-1">{{authorityDesignation}}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="letter-sub-header">Employee Name: {{promotiondata.firstName}}
+                                        {{promotiondata.middleName}} {{promotiondata.lastName}}
+                                    </p>
+                                    <p class="letter-sub-header">Employee Signature:</p>
+                                    <p class="letter-sub-header">Date : </p>
+                                </div>
+                            </div> -->
+                </div>
+                <!-- <div class="letter-footer">
+                            <app-letter-footer />
+                        </div> -->
             </div>
         </div>
     </div>

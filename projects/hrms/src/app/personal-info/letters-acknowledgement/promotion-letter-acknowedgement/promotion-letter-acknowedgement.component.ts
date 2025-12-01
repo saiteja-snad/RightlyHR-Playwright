@@ -16,6 +16,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { IAddress } from '../../../Interfaces/letters-model';
 @Component({
   selector: 'app-promotion-letter-acknowedgement',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, ConfirmationIconComponent],
@@ -50,7 +51,7 @@ previusSalary:any
   AppraisalFile!: File;
     jobErrorMessage!: string;
   @Input() letterdata: any;
-
+currentDate = new Date();
   constructor(
     private http: HttpService,
     private router: Router,
@@ -81,7 +82,10 @@ previusSalary:any
     this.promotiondata.dateOfJoining = this.formatDatewithDate(
       this.promotiondata.dateOfJoining
     );
- 
+     if (this.letterdata) {
+      this.promotiondata.addressType = this.letterdata.addressType;
+      this.promotiondata.docType = this.letterdata.docType;
+    }
     console.log('Promotion Data:', this.promotiondata);
     // this.getEmployeeId()
     this.getdatepromotion();
@@ -89,6 +93,7 @@ previusSalary:any
     // this.getCompensationById(this.promotiondata);
     this.getCompensationByIdsalery(this.promotiondata);
     this.getIssuedEmployeebyId(this.promotiondata);
+    this.getEmployeeAddress(this.promotiondata.employeeId);
     this.getAuthorityDetails();
      if (this.promotiondata.gender == 'Male') {
       return (this.gender = 'Mr.');
@@ -98,6 +103,34 @@ previusSalary:any
   
     //  this.onclickDesignation();
   }
+   //function to get the address
+    address = {} as IAddress;
+    employeeaddress = [] as any;
+    getEmployeeAddress(Value: any) {
+      const EmployeeId = Value;
+      this.subscription = this.http
+        .getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`)
+        .subscribe({
+          next: (data: any) => {
+            console.log(data);
+            this.employeeaddress = data as IAddress[];
+            if (this.employeeaddress?.employeeAddresses?.length > 0) {
+              this.address = this.employeeaddress.employeeAddresses.find(
+                (address: IAddress) =>
+                  address.type.toLowerCase() ==
+                  this.promotiondata.addressType.toLowerCase()
+              );
+              this.promotiondata.addressLine1 = this.address.addressLine1;
+              this.promotiondata.addressLine2 = this.address.addressLine2;
+              this.promotiondata.city = this.address.city;
+              this.promotiondata.state = this.address.state;
+              this.promotiondata.country = this.address.country;
+              this.promotiondata.zipCode = this.address.zipCode;
+            }
+  
+          },
+        });
+    }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -136,8 +169,16 @@ previusSalary:any
         console.log(data);
         this.authorityDetails = data;
         console.log('Authority Details:', this.authorityDetails);
-
-        this.onclickDesignation();
+          if (this.letterdata.authoritySignature) {
+          if (this.authorityDetails?.length > 0) {
+            const signatureAuthorityDetails = this.authorityDetails.find(
+              (c: any) => (c.employeeId == this.letterdata.authoritySignature)
+            );
+            console.log(signatureAuthorityDetails)
+            this.authorityDesignation = signatureAuthorityDetails.designation;
+            this.promotiondata.authorityName = `${signatureAuthorityDetails.firstName ?? ''} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''}`;
+          }
+        }
       }
     })
   }
@@ -392,31 +433,6 @@ previusSalary:any
           }
       });
   }
-  
-  // authority details
-  onclickDesignation() {
-    // Parse localStorage data
-    let signatureAuthorityDetails = JSON.parse(localStorage.getItem("signatureAuthorityDetails") || '{}');
-    console.log('signatureAuthorityDetails:', signatureAuthorityDetails);
-
-    // Make sure authorityDetails is an array and not empty
-    if (Array.isArray(this.authorityDetails) && this.authorityDetails.length > 0) {
-      const selectedAuthority = this.authorityDetails[0]; // or use a specific index if needed
-
-      // Set the designation
-      this.authorityDesignation = selectedAuthority.designation;
-
-      // Set full name based on middleName availability
-      if (signatureAuthorityDetails.middleName) {
-        this.promotiondata.authorityName = `${selectedAuthority.firstName} ${selectedAuthority.middleName} ${selectedAuthority.lastName}`;
-      } else {
-        this.promotiondata.authorityName = `${selectedAuthority.firstName} ${selectedAuthority.lastName}`;
-      }
-    } else {
-      console.warn('authorityDetails is empty or not an array');
-    }
-  }
-
   // else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
   //   this.promotiondata.authorityName =''
   //   this.authorityDesignation=''

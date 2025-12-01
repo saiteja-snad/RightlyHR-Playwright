@@ -68,12 +68,18 @@ filterTabs(): void {
 }
 
   navigateToAccessedRoute(link: string): void {
-       const actualRoute = this.accessNav.navigateToAccessedRoute(link);
-    if (actualRoute) {
-      this.router.navigate([actualRoute]);
-    } else {
-      this.router.navigate(['/unauthorized']);
+    if (link == '/personalinfo/job/team') {
+      const actualRoute = this.accessNav.navigateToAccessedRoute(link);
+      if (actualRoute) {
+        this.router.navigate([actualRoute]);
+      } else {
+        this.router.navigate(['/unauthorized']);
+      }
     }
+    else {
+      this.router.navigateByUrl(link);
+    }
+
   }
 
   isActiveRoute(link: string): boolean {

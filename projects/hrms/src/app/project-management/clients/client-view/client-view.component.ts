@@ -357,7 +357,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   loadRoles() {
-    this.http.getData('ProjectRoles?isActive=true').subscribe({
+    this.http.getData('ProjectRoles').subscribe({
       next: (res: any) => {
         console.log('ROLES API RESPONSE:', res);
 

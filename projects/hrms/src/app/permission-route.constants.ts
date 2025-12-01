@@ -25,7 +25,6 @@ export const MY_INFO_JOB_ROUTES = [
   { permission: 'My Info Compensation Details.view', route: '/myinfo/job/compensation-details' },
   { permission: 'My Info Desk Details.view', route: '/myinfo/job/desk-details' },
   { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' },
-  { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' },
   { permission: 'My Info Contract Details.view', route: '/myinfo/job/contactor-info' },
   { permission: 'My Info Project Details.view', route: '/myinfo/job/project-info' },
 ];
@@ -520,6 +519,17 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
 ];
 
+export const Employee_TEAM_NUMBERS = [
+   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
+  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
+ 
+]
+
+export const MyINFO_TEAM_NUMBERS = [
+   { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
+  { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
+ 
+]
 export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
   { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },
   { permission: 'My Info Job Approval History.view', route: 'myinfo/approvals/job' },
@@ -546,6 +556,7 @@ export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
   { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team-members' },
+  { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/my-team-members' },
   { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/tranee-onboarding-requests' },
   { permission: 'Employee Info Documents Verification.view', route: '/personalinfo/job/onboarding-verification' }
 ];

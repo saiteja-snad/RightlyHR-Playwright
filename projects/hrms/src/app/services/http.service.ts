@@ -1068,6 +1068,20 @@ export class HttpService {
   clearClientTimesheetPhaseFilter() {
     this.clientTimesheetPhaseFilterSource.next([]);
   }
+
+    // store project in timsheet sunnary
+  private clientTimesheetProjectFilterSource = new BehaviorSubject<number[]>([]);
+
+  clientTimesheetProjectFilter$ =
+    this.clientTimesheetProjectFilterSource.asObservable();
+
+  setClientTimesheetProjectFilter(projectIds: number[]) {
+    this.clientTimesheetProjectFilterSource.next(projectIds || []);
+  }
+
+  clearClientTimesheetProjectFilter() {
+    this.clientTimesheetProjectFilterSource.next([]);
+  }
   // Resource filters
   private resourceRoleFilterSource = new BehaviorSubject<number[]>([]);
   resourceRoleFilter$ = this.resourceRoleFilterSource.asObservable();
@@ -1125,6 +1139,10 @@ export class HttpService {
   projectTimesheetPhaseFilter$ =
     this.projectTimesheetPhaseFilter.asObservable();
 
+  private projectTimesheetProjectFilter = new BehaviorSubject<number[]>([]);
+  projectTimesheetProjectFilter$ =
+    this.projectTimesheetProjectFilter.asObservable();
+
   private projectTimesheetFilterData = new BehaviorSubject<any>(null);
   projectTimesheetFilterData$ = this.projectTimesheetFilterData.asObservable();
 
@@ -1139,6 +1157,10 @@ export class HttpService {
 
   setProjectTimesheetPhaseFilter(ids: number[]) {
     this.projectTimesheetPhaseFilter.next(ids);
+  }
+
+   setProjectTimesheetProjectFilter(ids: number[]) {
+    this.projectTimesheetProjectFilter.next(ids);
   }
 
   setProjectTimesheetFilterData(data: any) {
@@ -1159,10 +1181,15 @@ export class HttpService {
     return this.projectTimesheetPhaseFilter.getValue();
   }
 
+    getCurrentProjectTimesheetProjectIds(): number[] {
+    return this.projectTimesheetProjectFilter.getValue();
+  }
+
   clearProjectTimesheetFilters() {
     this.projectTimesheetDepartmentIds.next([]);
     this.projectTimesheetRoleFilter.next([]);
     this.projectTimesheetPhaseFilter.next([]);
+    this.projectTimesheetProjectFilter.next([]);
     this.projectTimesheetFilterData.next(null);
   }
 

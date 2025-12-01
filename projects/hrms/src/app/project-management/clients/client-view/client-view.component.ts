@@ -91,6 +91,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   rolesList: any[] = [];
   selectedRoleIds: number[] = [];
+  selectedProjectIds: number[] = [];
 
   phasesList: any[] = [];
   selectedPhaseIds: number[] = [];
@@ -108,7 +109,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   allprojectslist = [] as any;
   selectedProjects: any[] = [];
-projectOptions: any[] = [];
+  projectOptions: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -139,7 +140,7 @@ projectOptions: any[] = [];
         this.getClientsData(clientID);
         this.getprojectbyid(clientID);
         this.setDefaultmounth();
-        this.AllProjectsList()
+        this.AllProjectsList();
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
@@ -290,13 +291,13 @@ projectOptions: any[] = [];
 
   onProjectSelectionChange() {
     this.http.setResourceProjectFilter(this.selectedProjects);
-}
+  }
 
   clearResourceFilters() {
     this.selectedResourceRoles = [];
     this.selectedResourcePhases = [];
     this.selectedResourceAuthorities = [];
-    this.selectedProjects = []
+    this.selectedProjects = [];
     this.http.setResourceRoleFilter([]);
     this.http.setResourcePhaseFilter([]);
     this.http.setResourceAuthorityFilter([]);
@@ -308,7 +309,7 @@ projectOptions: any[] = [];
       this.selectedResourceRoles.length > 0 ||
       this.selectedResourcePhases.length > 0 ||
       this.selectedResourceAuthorities.length > 0 ||
-      this.selectedProjects.length >0
+      this.selectedProjects.length > 0
     );
   }
 
@@ -327,34 +328,33 @@ projectOptions: any[] = [];
     });
   }
 
-AllProjectsList() {
-  if (!this.clientid) {
-    console.warn("Client ID not available yet");
-    return;
-  }
-
-  const params = { clientId: this.clientid };
-  console.log("Calling Project API with:", params);
-
-  this.http.getDataIncludeParams('Project', params).subscribe({
-    next: (data: any) => {
-      this.allprojectslist = data?.data || [];
-
-      // Map projects to p-multiSelect format: { label: string, value: any }
-      this.projectOptions = this.allprojectslist.map((project: any) => ({
-        label: project.projectName,
-        value: project.projectId   // or use projectName if you prefer string
-      }));
-
-      // Optional: Sort alphabetically
-      this.projectOptions.sort((a, b) => a.label.localeCompare(b.label));
-    },
-    error: (err) => {
-      console.error('Error fetching projects', err);
+  AllProjectsList() {
+    if (!this.clientid) {
+      console.warn('Client ID not available yet');
+      return;
     }
-  });
-}
 
+    const params = { clientId: this.clientid };
+    console.log('Calling Project API with:', params);
+
+    this.http.getDataIncludeParams('Project', params).subscribe({
+      next: (data: any) => {
+        this.allprojectslist = data?.data || [];
+
+        // Map projects to p-multiSelect format: { label: string, value: any }
+        this.projectOptions = this.allprojectslist.map((project: any) => ({
+          label: project.projectName,
+          value: project.projectId, // or use projectName if you prefer string
+        }));
+
+        // Optional: Sort alphabetically
+        this.projectOptions.sort((a, b) => a.label.localeCompare(b.label));
+      },
+      error: (err) => {
+        console.error('Error fetching projects', err);
+      },
+    });
+  }
 
   loadRoles() {
     this.http.getData('ProjectRoles?isActive=true').subscribe({
@@ -410,7 +410,10 @@ AllProjectsList() {
     const params = { clientId: id };
     this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (res: any) => {
-        this.phasesList = res?.data || [];
+        this.phasesList = (res?.data || []).map((item: any) => ({
+          ...item,
+          label: `${item.phaseName} - (${item.meta?.graphData?.code || ''})`,
+        }));
         this.loading = false;
       },
       error: () => {
@@ -469,6 +472,7 @@ AllProjectsList() {
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];
     this.selectedDepartmentIds = [];
+    this.selectedProjectIds = [];
     this.datepickerFormDataforsummary.patchValue({ dateRange: null });
     this.http.setDepartmentIds([]);
     this.http.clearProjectTypeFilter();
@@ -522,6 +526,7 @@ AllProjectsList() {
     this.selectedDepartmentIds = [];
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];
+    this.selectedProjectIds = [];
 
     // Notify main filter request
     this.http.setRequest(null);
@@ -651,7 +656,8 @@ AllProjectsList() {
       this.datepickerFormDataforsummary?.value?.dateRange?.length > 0 ||
       this.selectedDepartmentIds.length > 0 ||
       this.selectedRoleIds.length > 0 ||
-      this.selectedPhaseIds.length > 0
+      this.selectedPhaseIds.length > 0 ||
+      this.selectedProjectIds.length > 0
     );
   }
 
@@ -660,9 +666,10 @@ AllProjectsList() {
     this.selectedDepartmentIds = [];
     this.selectedRoleIds = [];
     this.selectedPhaseIds = [];
+    this.selectedProjectIds = [];
     this.http.clearRequestclienttimesheet();
     this.http.setRequestclienttimesheet(null);
-      this.setDefaultmounth();
+    this.setDefaultmounth();
   }
   opencontactModal(content: any) {
     this.modalService.open(content, {
@@ -929,10 +936,15 @@ AllProjectsList() {
         this.selectedRoleIds.length > 0 ? this.selectedRoleIds : undefined,
       phaseIds:
         this.selectedPhaseIds.length > 0 ? this.selectedPhaseIds : undefined,
+      projectIds:
+        this.selectedProjectIds.length > 0
+          ? this.selectedProjectIds
+          : undefined,
     };
     this.http.setProjectTimesheetDepartmentIds(this.selectedDepartmentIds);
     this.http.setProjectTimesheetRoleFilter(this.selectedRoleIds);
     this.http.setProjectTimesheetPhaseFilter(this.selectedPhaseIds);
+    this.http.setProjectTimesheetProjectFilter(this.selectedProjectIds);
     this.http.setRequest({ ...request, resetPagination: true });
   }
 
@@ -958,6 +970,10 @@ AllProjectsList() {
         this.selectedRoleIds.length > 0 ? this.selectedRoleIds : undefined,
       phaseIds:
         this.selectedPhaseIds.length > 0 ? this.selectedPhaseIds : undefined,
+      projectIds:
+        this.selectedProjectIds.length > 0
+          ? this.selectedProjectIds
+          : undefined,
     };
     this.http.setRequestclienttimesheet(request);
     // Send `request` to API if needed

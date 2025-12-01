@@ -107,6 +107,7 @@ export class ClientTimesheetSummaryComponent implements OnInit, OnDestroy {
 
   selectedRoleIds: number[] = [];
   selectedPhaseIds: number[] = [];
+  selectedProjectIds : number[] = [];
 
   constructor(
     private http: HttpService,
@@ -129,16 +130,25 @@ ngOnInit() {
     this.http.requestclienttimesheetdata$,
     this.http.selectedDepartmentIds$,
     this.http.clientTimesheetRoleFilter$,
-    this.http.clientTimesheetPhaseFilter$
+    this.http.clientTimesheetPhaseFilter$,
+    this.http.clientTimesheetProjectFilter$
   ]).pipe(
     debounceTime(150),
     distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
     takeUntil(this.destroy$)
-  ).subscribe(([dateRequest, deptIds, roleIds, phaseIds]) => {
+  ).subscribe(([dateRequest, deptIds, roleIds, phaseIds, projectIds]) => {
 
     const departments = Array.isArray(deptIds) ? deptIds : [];
     const roles = Array.isArray(roleIds) ? roleIds : [];
     const phases = Array.isArray(phaseIds) ? phaseIds : [];
+    const projects = Array.isArray(projectIds) ? projectIds : [];
+
+        console.log("Date Request:", dateRequest);
+    console.log("Selected Departments:", departments);
+    console.log("Selected Roles:", roles);
+    console.log("Selected Phases:", phases);
+    console.log("Selected Projects:", projects);
+
 
     const request: any = {
       ...(dateRequest || {}),
@@ -146,6 +156,7 @@ ngOnInit() {
       ...(departments.length > 0 ? { departmentIds: departments } : {}),
       ...(roles.length > 0 ? { roleIds: roles } : {}),
       ...(phases.length > 0 ? { phaseIds: phases } : {}),
+      ...(projects.length > 0 ? {projectIds : projects } : {}),
     };
 
     // Default date range: current month (if none provided)
@@ -288,6 +299,10 @@ ngOnInit() {
     if (request?.phaseIds && request.phaseIds.length > 0) {
       queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
     }
+
+     if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
+    }
     // Append query parameters if any exist
     if (queryParams.length > 0) {
       apiUrl += `?${queryParams.join('&')}`;
@@ -333,6 +348,9 @@ ngOnInit() {
 
     if (request?.phaseIds && request.phaseIds.length > 0) {
       queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
+    }
+     if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
     }
     // Append query parameters if any exist
     if (queryParams.length > 0) {
@@ -498,6 +516,10 @@ ngOnInit() {
     if (request?.phaseIds && request.phaseIds.length > 0) {
       queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
     }
+
+     if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
+    }
     // Append query parameters if any exist
     if (queryParams.length > 0) {
       apiUrl += `?${queryParams.join('&')}`;
@@ -568,6 +590,10 @@ ngOnInit() {
 
     if (request?.phaseIds && request.phaseIds.length > 0) {
       queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
+    }
+
+     if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
     }
     // Append query parameters if any exist
     if (queryParams.length > 0) {
@@ -642,6 +668,10 @@ ngOnInit() {
 
     if (request?.phaseIds && request.phaseIds.length > 0) {
       queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
+    }
+
+     if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
     }
     // Append query parameters if any exist
     if (queryParams.length > 0) {
@@ -904,6 +934,10 @@ ngOnInit() {
     queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
   }
 
+   if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
+    }
+
   // Append query parameters
   if (queryParams.length > 0) {
     apiUrl += `&${queryParams.join('&')}`;
@@ -1050,6 +1084,10 @@ ngOnInit() {
 
     if (request?.phaseIds && request.phaseIds.length > 0) {
       queryParams.push(`phaseIds=${request.phaseIds.join(',')}`);
+    }
+
+     if (request?.projectIds && request.projectIds.length > 0) {
+      queryParams.push(`projectId=${request.projectIds.join(',')}`);
     }
 
     // Append query parameters if any exist

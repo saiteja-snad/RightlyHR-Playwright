@@ -14,7 +14,7 @@
                                 </ng-template>
                             </div>
                         </div>
-        
+
                         <div class="d-flex gap-2 align-items-center">
                             <div class="custom-p-select-content custom-icon">
                                 <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
@@ -22,7 +22,7 @@
                                     [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
                                     class="form-select custom-select" (onChange)="onProjectChange($event)" />
                             </div>
-        
+
                             <div class="custom-p-select-content custom-icon">
                                 <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
                                     formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
@@ -31,18 +31,20 @@
                         </div>
                     </div>
                 </form>
-        
+
                 <div class="custom-table-content project-summary-table">
                     @if( projectSummeryData.length > 0){
                     <table class="w-100">
                         <thead>
                             <th>{{'Project Name'|translate}}</th>
+                            <th class="text-center">{{'Project Code'|translate}}</th>
                             <th class="text-center">{{'Total Hours'|translate}}</th>
                             <th class="text-center">{{'Status'|translate}}</th>
                         </thead>
                         <tbody>
                             <tr *ngFor="let roles of projectSummeryData">
                                 <td class="project-name">{{roles.project.projectName}}</td>
+                                <td class="text-center">{{ roles.projectColor?.graphData?.code || '-' }}</td>
                                 <td class="text-center"><span class="logged-hrs">{{roles.loggedHoursHHMM}}</span>/{{roles.allocatedHours}}hrs</td>
                                 <td class="text-center">
                                     <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>
@@ -112,13 +114,13 @@
                             (onChange)="onDeptProjectChange($event)" />
                     </div>
                 </div>
-        
+
                 <div class="rolewise-chart-grid graph-no-data-content">
                     <ng-container *ngIf="hasDepartmentWiseData; else noData">
                         <div>
                             <p-chart type="doughnut" [data]="departmentContributionData" [options]="departmentContributionOptions" />
                         </div>
-        
+
                         <div class="legends-view">
                             <div class="d-flex align-items-center gap-1" *ngFor="let item of projectResourcesLableData">
                                 <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
@@ -149,13 +151,13 @@
                         </ng-template>
                     </div>
                 </div>
-        
+
                 <div class="rolewise-chart-grid graph-no-data-content">
                     <ng-container *ngIf="hasProjectTypeData; else noData">
                         <div>
                             <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
                         </div>
-        
+
                         <div class="legends-view">
                             <div class="d-flex align-items-center gap-1" *ngFor="let item of projectTypeLableData">
                                 <div class="legend-circle" [ngStyle]="{ 'background-color': item.projectTypeColor?.graphData?.color }"></div>
@@ -195,7 +197,7 @@
                         </div>
                     </div>
                 </div>
-        
+
                 <div class="bar-chart graph-no-data-content">
                     <ng-container *ngIf="hasestimatedActualHoursData; else noData">
                         <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />

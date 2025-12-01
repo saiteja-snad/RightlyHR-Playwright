@@ -788,4 +788,8 @@ export class TimesheetsSummaryViewComponent implements OnInit, OnDestroy {
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
+
+  openMoreFiltersModal(content?: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
 }

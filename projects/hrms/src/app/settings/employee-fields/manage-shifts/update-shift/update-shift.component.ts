@@ -2,17 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-update-shift',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TabsModule, TranslateModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TabsModule, TranslateModule, InfoIconComponent,NgbPopoverModule],
   templateUrl: './update-shift.component.html',
   styleUrl: './update-shift.component.scss'
 })
@@ -98,6 +99,8 @@ ngOnInit(): void {
         breakTime: [item.allowedBreakTime, Validators.required],
         halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
         fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
+        punchBeginBefore: [item.punchBeginBefore || 0, Validators.required],
+        punchEndAfter: [item.punchEndAfter || 0]
       }));
     });
 
@@ -183,6 +186,8 @@ ngOnInit(): void {
       breakTime: [shiftData?.allowedBreakTime || 1, Validators.required],
       halfDayMinHrs: [shiftData?.halfDayMinHrs || 3, Validators.required],
       fullDayMinHrs: [shiftData?.fullDayMinHrs || 6, Validators.required],
+      punchBeginBefore: [shiftData?.punchBeginBefore || 0, Validators.required],
+      punchEndAfter: [shiftData?.punchEndAfter || 0]
     });
   }
 
@@ -215,6 +220,8 @@ ngOnInit(): void {
           breakTime: [item.allowedBreakTime, Validators.required],
           halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
           fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
+          punchBeginBefore: [item.punchBeginBefore || 0, Validators.required],
+          punchEndAfter: [item.punchEndAfter || 0]
         }));
       });
 
@@ -263,6 +270,8 @@ ngOnInit(): void {
           allowedBreakTime: shift.breakTime,
           halfDayMinHrs: shift.halfDayMinHrs,
           fullDayMinHrs: shift.fullDayMinHrs,
+          punchBeginBefore: shift.punchBeginBefore,
+          punchEndAfter: shift.punchEndAfter
         }))
       };
       this.http.postdata(`orgShifts/Update/Shift/OrgShift`, payload).subscribe({

@@ -73,7 +73,9 @@ view(id: any): void {
       breakTime: item.allowedBreakTime,
       halfDayMinHrs: item.halfDayMinHrs,
       fullDayMinHrs: item.fullDayMinHrs,
-      description: item.shiftDescription
+      description: item.shiftDescription,
+      punchBeginBefore: item.punchBeginBefore || 0,
+      punchEndAfter: item.punchEndAfter || 0
     }))
   };
 
@@ -98,7 +100,10 @@ view(id: any): void {
       latesAllowed: item.latesAllowed,
       breakTime: item.allowedBreakTime,
       halfDayMinHrs: item.halfDayMinHrs,
-      fullDayMinHrs: item.fullDayMinHrs
+      fullDayMinHrs: item.fullDayMinHrs,  
+      punchBeginBefore: item.punchBeginBefore || 0,
+      punchEndAfter: item.punchEndAfter || 0
+
     }))
   };
     localStorage.setItem('clonedShiftData', JSON.stringify(transformedShift));

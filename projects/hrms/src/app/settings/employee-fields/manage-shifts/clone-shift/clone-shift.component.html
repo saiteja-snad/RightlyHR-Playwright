@@ -211,11 +211,60 @@
                                     {{'Full Day is required'|translate}}</span>
                             </div>
                         </div>
+
+                        <!-- Punch Begin Before -->
+                        <div class="w-100">
+                            <div class="d-flex gap-1">
+                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Punch Begin Before (mins)' | translate}}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div>
+                                    <a type="button" [ngbPopover]="punchBeginBeforeDescription">
+                                        <app-info-icon />
+                                    </a>
+                                </div>
+                                <ng-template #punchBeginBeforeDescription>
+                                    <p class="mb-0">{{ 'How many minutes before shift start time employees can punch in. For example, if shift starts at 9:00 AM and this is set to 30 minutes, employees can punch in from 8:30 AM onwards.'}}</p>
+                                </ng-template>
+                            </div>
+                            <input type="number" class="form-control custom-input w-100" formControlName="punchBeginBefore"
+                                placeholder="Please enter punch begin before" min="0" (keydown)="blockInvalidKeys($event)"
+                                (paste)="blockNegativePaste($event)" />
+                            <div *ngIf="shift.get('punchBeginBefore')?.invalid && (shift.get('punchBeginBefore')?.dirty || shift.get('punchBeginBefore')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('punchBeginBefore')?.errors?.['required']">
+                                    {{'Punch Begin Before is required'|translate}}</span>
+                            </div>
+                        </div>
+
+                        <!-- Punch End After -->
+                        <div class="w-100">
+                            <div class="d-flex gap-1">
+                                <label for="punchEndAfter" class="form-label custom-label mb-2">{{'Punch End After (mins)' | translate}}
+                                </label>
+                                <div>
+                                    <a type="button" [ngbPopover]="punchEndAfterDescription">
+                                        <app-info-icon />
+                                    </a>
+                                </div>
+                                <ng-template #punchEndAfterDescription>
+                                    <p class="mb-0">{{ 'How many minutes after shift end time employees can punch out. For example, if shift ends at 6:00 PM and this is set to 60 minutes, employees can punch out until 7:00 PM. If not provided, it will default to next day shift start time minus punch begin before duration.'}}</p>
+                                </ng-template>
+                            </div>
+                            <input type="number" class="form-control custom-input w-100" formControlName="punchEndAfter"
+                                placeholder="Please enter punch end after" min="0" (keydown)="blockInvalidKeys($event)"
+                                (paste)="blockNegativePaste($event)" />
+                            <div *ngIf="shift.get('punchEndAfter')?.invalid && (shift.get('punchEndAfter')?.dirty || shift.get('punchEndAfter')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('punchEndAfter')?.errors?.['required']">
+                                    {{'Punch End After is required'|translate}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
     
-            <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
+            <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
         </div>
         <div class="d-flex gap-3 justify-content-end">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>

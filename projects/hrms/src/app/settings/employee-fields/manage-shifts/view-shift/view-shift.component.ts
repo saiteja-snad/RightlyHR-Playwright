@@ -2,15 +2,16 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-view-shift',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TabsModule, TranslateModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TabsModule, TranslateModule, InfoIconComponent,NgbPopoverModule],
   templateUrl: './view-shift.component.html',
   styleUrl: './view-shift.component.scss'
 })
@@ -85,6 +86,8 @@ patchShiftForm(data: any): void {
       breakTime: [{ value: item.breakTime || 0, disabled: true }],
       halfDayMinHrs: [{ value: item.halfDayMinHrs || 0, disabled: true }],
       fullDayMinHrs: [{ value: item.fullDayMinHrs || 0, disabled: true }],
+      punchBeginBefore: [{ value: item.punchBeginBefore || 0, disabled: true }],
+      punchEndAfter: [{ value: item.punchEndAfter || 0, disabled: true }]
     });
 
     shiftArray.push(shiftGroup);
@@ -146,6 +149,8 @@ patchShiftForm(data: any): void {
       breakTime: [shiftData?.allowedBreakTime || '', Validators.required],
       halfDayMinHrs: [shiftData?.halfDayMinHrs || '', Validators.required],
       fullDayMinHrs: [shiftData?.fullDayMinHrs || '', Validators.required],
+      punchBeginBefore: [shiftData?.punchBeginBefore || 0, Validators.required],
+      punchEndAfter: [shiftData?.punchEndAfter || 0, Validators.required]
     });
   }
 
@@ -177,6 +182,8 @@ patchShiftForm(data: any): void {
             breakTime: [item.allowedBreakTime],
             halfDayMinHrs: [item.halfDayMinHrs],
             fullDayMinHrs: [item.fullDayMinHrs],
+            punchBeginBefore: [item.punchBeginBefore || 0],
+            punchEndAfter: [item.punchEndAfter || 0]
           }));
         });
         this.shiftid = data.orgShiftsItems.forEach((items: any) => {

@@ -2,18 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-add-shift',
   imports: [RouterModule, Select, ReactiveFormsModule,
-    CommonModule, TabsModule, TranslateModule],
+    CommonModule, TabsModule, TranslateModule, InfoIconComponent,NgbPopoverModule],
   templateUrl: './add-shift.component.html',
   styleUrl: './add-shift.component.scss'
 })
@@ -86,7 +87,9 @@ export class AddShiftComponent {
       latesAllowed: [3, Validators.required],
       breakTime: [1, Validators.required],
       halfDayMinHrs: [3, Validators.required],
-      fullDayMinHrs: [6, Validators.required]
+      fullDayMinHrs: [6, Validators.required],
+      punchBeginBefore: [0, Validators.required],
+      punchEndAfter: [0],
     });
   }
 
@@ -136,6 +139,8 @@ export class AddShiftComponent {
           allowedBreakTime: shift.breakTime,
           halfDayMinHrs: shift.halfDayMinHrs,
           fullDayMinHrs: shift.fullDayMinHrs,
+          punchBeginBefore: shift.punchBeginBefore,
+          punchEndAfter: shift.punchEndAfter
         }))
       };
       this.http.postdata(`orgShifts/Post/Shift/OrgShift`, payload).subscribe({

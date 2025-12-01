@@ -2,18 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-clone-shift',
   imports: [RouterModule, Select, ReactiveFormsModule, CommonModule,
-    TabsModule, TranslateModule, TranslateModule],
+    TabsModule, TranslateModule, TranslateModule, NgbPopoverModule, InfoIconComponent],
   templateUrl: './clone-shift.component.html',
   styleUrl: './clone-shift.component.scss'
 })
@@ -84,6 +85,8 @@ export class CloneShiftComponent {
       breakTime: [item.breakTime || 0, Validators.required],
       halfDayMinHrs: [item.halfDayMinHrs || 0, Validators.required],
       fullDayMinHrs: [item.fullDayMinHrs || 0, Validators.required],
+      punchBeginBefore: [item.punchBeginBefore || 0, Validators.required],
+      punchEndAfter: [item.punchEndAfter || 0]
     }));
   });
 
@@ -144,6 +147,8 @@ export class CloneShiftComponent {
       breakTime: [shiftData?.allowedBreakTime || 1, Validators.required],
       halfDayMinHrs: [shiftData?.halfDayMinHrs || 3, Validators.required],
       fullDayMinHrs: [shiftData?.fullDayMinHrs || 6, Validators.required],
+      punchBeginBefore: [shiftData?.punchBeginBefore || 0, Validators.required],
+      punchEndAfter: [shiftData?.punchEndAfter || 0]
     });
   }
 
@@ -175,6 +180,8 @@ export class CloneShiftComponent {
             breakTime: [item.allowedBreakTime, Validators.required],
             halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
             fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
+            punchBeginBefore: [item.punchBeginBefore || 0, Validators.required],
+            punchEndAfter: [item.punchEndAfter || 0]
           }));
         });
       },
@@ -216,6 +223,8 @@ export class CloneShiftComponent {
           allowedBreakTime: shift.breakTime,
           halfDayMinHrs: shift.halfDayMinHrs,
           fullDayMinHrs: shift.fullDayMinHrs,
+          punchBeginBefore: shift.punchBeginBefore,
+          punchEndAfter: shift.punchEndAfter
         }))
       };
       this.http.postdata(`orgShifts/Post/Shift/OrgShift`, payload).subscribe({

@@ -52,6 +52,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   totalHours: any
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
+legendList = [
+  { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
+  { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
+  { key: 'wfh', label: 'WFH', color: '#FF1493' },
+  { key: 'leave', label: 'Leave', color: '#8A2BE2' }
+];
 
   genderTotal: number = 0;
   femaleCount: number = 0;
@@ -94,6 +100,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.gettodayloggedtime();
     this.getbrithday();
     this.loadEvents();
+    this.getteamavliabletly();
     this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
 
@@ -508,6 +515,73 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         console.error('Error fetching gender chart:', err);
       }
     });
+  }
+
+
+  teamSummary: any = {};
+  teamTotal: number = 0;
+
+  teamChartData: any = {};
+  teamChartOptions: any = {};
+
+
+  getteamavliabletly() {
+    this.http.getData(`v2/Employeedata/TeamAvailability/Summary/${this.empinfo.employeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.teamSummary = res.summary;
+
+          // Total = all except absent
+          this.teamTotal =
+            (this.teamSummary.inOffice || 0) +
+            (this.teamSummary.halfDay || 0) +
+            (this.teamSummary.wfh || 0) +
+            (this.teamSummary.leave || 0);
+
+          this.buildTeamChart();
+        },
+        error: (err: any) => {
+          console.error('Error fetching team availability:', err);
+        }
+      });
+  }
+
+  buildTeamChart() {
+    const summary = this.teamSummary;
+
+    // Keys to display (order matters)
+    const keys = ["inOffice", "halfDay", "wfh", "leave"];
+
+    // Convert keys into labels (formatted text)
+    const labels: string[] = keys.map(x =>
+      x.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase())
+    );
+
+    // Values for chart
+    const chartData = keys.map(k => summary[k] || 0);
+
+    // Matching colors (same order as keys)
+    const colors = ["#1E90FF", "#FFD700", "#FF1493", "#8A2BE2"];
+
+    this.teamChartData = {
+      labels,
+      datasets: [
+        {
+          data: chartData,
+          backgroundColor: colors,
+          borderWidth: 0
+        }
+      ]
+    };
+
+    this.teamChartOptions = {
+      cutout: "70%",
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      }
+    };
   }
 
 

@@ -13,7 +13,41 @@
             <div class="dashboard-grid my-3">
                 <!-- Team Availability -->
                 <div class="content-card">
-                    <p class="section-title">My Team Availability</p>
+                  <div class="d-flex justify-content-between align-content-center">
+                      <p class="section-title">My Team Availability</p>
+                    <span>{{ currentTime | date:'MMM d, yyyy' }}</span>
+                  </div>
+                    <div class=" total-leave-balance-graph-content">
+                        <!-- Donut Chart -->
+                        <div class="chart-content">
+                            <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions"
+                                styleClass="team-donut">
+                            </p-chart>
+
+                            <div class="total-count-content">
+                                <p class="count m-0 p-0 text-center">{{teamTotal}}</p>
+                                <p class="total-count-text text-center">Total</p>
+                            </div>
+                        </div>
+
+                        <!-- Right-side labels -->
+                        <div cclass="employee-type-grid">
+                            <div class="legend-item" *ngFor="let item of legendList">
+                                <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="mb-2 ps-2 cursor">
+
+                                    <div class="employee-type-text">
+                                        <p class="m-0">{{ item.label }}</p>
+                                        <p class="count-text m-0">{{teamSummary[item.key] || 0 }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
                 </div>
 
                 <!-- Today's Time Entry -->
@@ -53,8 +87,9 @@
                             </p-chart>
 
                             <div class="circle-value">
-                                    <span class="leaves-count"><b>{{  totalLeaves.used }}</b></span> <span class="total-allowed">/{{ totalLeaves.allowed }}</span>
-                               
+                                <span class="leaves-count"><b>{{ totalLeaves.used }}</b></span> <span
+                                    class="total-allowed">/{{ totalLeaves.allowed }}</span>
+
                             </div>
                         </div>
                     </div>

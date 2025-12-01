@@ -26,11 +26,9 @@ import { authGuard } from "../../auth/auth-guard/auth.guard";
 import { ProjectManagementLayoutComponent } from "../../project-management/project-management-layout/project-management-layout.component";
 import { CardsManagementLayoutComponent } from "../../cards-management/cards-management-layout/cards-management-layout.component";
 import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
-<<<<<<< HEAD
-import { EmployeeDashboardComponent } from "../../employee-dashboard/employee-dashboard/employee-dashboard.component";
-=======
 import { PendingApprovalsComponent } from "../../time-off/pending-approvals/pending-approvals.component";
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
+import { EmployeeDashboardComponent } from "../../employee-dashboard/employee-dashboard/employee-dashboard.component";
+
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },

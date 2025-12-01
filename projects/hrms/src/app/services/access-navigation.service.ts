@@ -831,11 +831,6 @@ export class AccessNavigationService {
         }
         break;
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
       case '/settings/it-configuration':
         if (this.rbac.allowedToAccess('IT Support Configuration.view')) {
           for (const item of SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS) {
@@ -1025,11 +1020,7 @@ export class AccessNavigationService {
       //     }
       //   }
       //   break;
-<<<<<<< HEAD
-      case '/settings/locking-configuration':
-        if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
-=======
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
+
 
       case '/settings/locking-configuration':
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
@@ -1068,10 +1059,7 @@ export class AccessNavigationService {
       //timesheet locking
       case '/settings/timesheet-locking-configuration':
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
-<<<<<<< HEAD
 
-=======
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1079,10 +1067,7 @@ export class AccessNavigationService {
           }
         }
         break;
-<<<<<<< HEAD
-=======
 
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
       case '/settings/timesheet-locking-configuration/pending-for-submission':
         if (this.rbac.allowedToAccess('Timesheet Locking Pending Tab.view')) {
           return (route = '/settings/timesheet-locking-configuration/pending-for-submission');
@@ -1094,10 +1079,7 @@ export class AccessNavigationService {
           return (route = '/settings/timesheet-locking-configuration/published');
         }
         break;
-<<<<<<< HEAD
-=======
 
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
       // assets
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {
@@ -1159,10 +1141,7 @@ export class AccessNavigationService {
           }
         }
         break;
-<<<<<<< HEAD
-=======
 
->>>>>>> f8b035860c71f86231fa87e64b716c85cf0b9f28
       case '/settings/timeoff-configurations/flexible-workhours-allocation':
         if (this.rbac.allowedToAccess('Flexible Work Hours Allocation Tab.view')) {
           for (const item of FLEXIBLE_WORKHOURS_ALLOCATION_TABS) {

@@ -440,9 +440,7 @@ getTeamManagersDetails() {
 
   get totalAvailableLeaves(): number {
     return this.categoryDetails.reduce((total, item) => {
-      if (item.category.noticeperiodAllowedType && item.noticePeriodLeaves > 0) {
-        return total + (item.noticePeriodLeaves - item.utilizedDays - item.booked);
-      } else if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+      if (item.category.isProbationAllowed && item.probationLeaves > 0) {
         return total + (item.probationLeaves - item.utilizedDays - item.booked);
       } else {
         return total + (item.allowedDays - item.utilizedDays - item.booked);

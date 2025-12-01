@@ -93,8 +93,44 @@
       </div>
 
       <div class="custom-main-popup-content">
+        <!-- Configuration Types -->
+           <div class="mb-3" >
+          <label class="form-label custom-label mb-2">
+            {{ 'Configuration Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="actiontypeOptions" optionLabel="label"
+              optionValue="value" formControlName="actionType"
+              placeholder="{{'Please select configuration type' | translate}}" [readonly]="isReadOnlyMode && !isEditMode">
+            </p-select>
+          </div>
+          <div *ngIf="fieldConfigForm.get('actionType')?.touched && fieldConfigForm.get('actionType')?.invalid"
+            class="error-msg">
+            <div *ngIf=" !isReadOnlyMode && fieldConfigForm.get('actionType')?.errors?.['required']">
+              {{ 'Configuration Type is required' | translate }}
+            </div>
+          </div>
+        </div>
+        <!-- Action Types -->
+           <div class="mb-3" *ngIf="fieldConfigForm.get('actionType')?.value === 'Action'">
+          <label class="form-label custom-label mb-2">
+            {{ 'Action' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="actionsOptions" optionLabel="label"
+              optionValue="value" formControlName="action"
+              placeholder="{{'Please select action' | translate}}" [readonly]="isReadOnlyMode && !isEditMode">
+            </p-select>
+          </div>
+          <div *ngIf="fieldConfigForm.get('action')?.touched && fieldConfigForm.get('action')?.invalid"
+            class="error-msg">
+            <div *ngIf=" !isReadOnlyMode && fieldConfigForm.get('action')?.errors?.['required']">
+              {{ 'Action is required' | translate }}
+            </div>
+          </div>
+        </div>
         <!-- Field Name -->
-        <div class="mb-3">
+        <div class="mb-3" *ngIf="fieldConfigForm.get('actionType')?.value === 'Field'">
           <label class="form-label custom-label mb-2">
             {{ 'Field Name' | translate }} <span class="error-msg" *ngIf="!isEditMode">*</span>
           </label>

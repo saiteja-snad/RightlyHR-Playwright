@@ -317,7 +317,14 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
   }
-
+  actionsDetails=[] as any;
+ openModalforaction(modal: any, request: any,){
+  console.log("request",request)
+  this.actionsDetails=request;
+  this.actionsDetails.fieldName=request.fieldName;
+  this.actionsDetails.moduleName=request.moduleName;
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+ }
   // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;

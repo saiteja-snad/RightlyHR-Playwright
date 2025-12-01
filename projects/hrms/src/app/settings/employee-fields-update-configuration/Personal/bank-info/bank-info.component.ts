@@ -60,6 +60,15 @@ export class BankInfoComponent {
     { label: 'Reporting Manager', value: 'RM' },
     { label: 'Team Manager', value: 'TM' },
   ];
+  actiontypeOptions = [
+    { label: 'Action', value: 'Action' },
+    { label: 'Field', value: 'Field' }
+  ];
+
+   actionsOptions = [
+    { label: 'Add', value: 'Add' },
+    { label: 'Delete', value: 'Delete' },
+  ];
   roles = [] as any;
 
   constructor(
@@ -72,20 +81,44 @@ export class BankInfoComponent {
     private authService: AuthService
   ) {}
   ngOnInit(): void {
-    this.fieldConfigForm = this.fb.group({
-      fieldNames: [[], Validators.required],
-      approvalRequired: [true],
-      approvalType: ['', Validators.required],
-      selectedEmployee: [''],
-      selectedRole: [''],
-      selectedManager: [''],
-    });
+    this.initializeForm();
     this.setupFormSubscriptions();
     this.getBankInfoFields();
     this.getAllEmployeeDetails();
     this.getAllRoles();
     this.getBankInfoFieldsConfigList();
   }
+  //function to initialize the form
+  initializeForm() {
+    this.fieldConfigForm = this.fb.group({
+      fieldNames: [[]],
+      approvalRequired: [true],
+      approvalType: ['', Validators.required],
+      selectedEmployee: [''],
+      selectedRole: [''],
+      selectedManager: [''],
+      actionType: ['', Validators.required],
+      action: ['', ],
+    });
+    this.handleActionTypeChange();
+  }
+handleActionTypeChange() {
+  this.fieldConfigForm.get('actionType')?.valueChanges.subscribe(value => {
+    const fieldNamesControl = this.fieldConfigForm.get('fieldNames');
+    const actionControl = this.fieldConfigForm.get('action');
+    if (value === 'Field') {
+      fieldNamesControl?.setValidators([Validators.required]);
+    } else {
+      fieldNamesControl?.clearValidators();
+    }
+    if (value === 'Action') {
+      actionControl?.setValidators([Validators.required]);
+    } else {
+      actionControl?.clearValidators();
+    }
+    fieldNamesControl?.updateValueAndValidity();
+  });
+}
   get allOptionsDisabled(): boolean {
   return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
 }
@@ -212,10 +245,11 @@ get isReadOnlyMode(): boolean {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
-           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
+          referenceCategory:formValue.action ?formValue.action:'Update'
         };
-
+       console.log('Update Request:', request);
         this.subscription = this.http
           .putData(
             `EmployeeInfoFieldConfig/${this.selectedFieldConfig.id}`,
@@ -264,6 +298,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           createdBy: loggedInUser.employeeId,
+          referenceCategory:formValue.action ?formValue.action:'Update'
         };
 
         this.subscription = this.http

@@ -2,7 +2,7 @@
     <div class="dashboard-left-content">
         <div class="welcome-text d-flex align-items-center gap-1">
             <div>{{ greetingMessage }},</div>
-            <div class="name">{{ employeedata.firstName }} {{ employeedata.middleName }} {{ employeedata.lastName }}!
+            <div class="name ">{{ employeedata.firstName }} {{ employeedata.middleName }} {{ employeedata.lastName }}!
             </div>
         </div>
         <!--Time-->
@@ -13,7 +13,7 @@
             @if(!avaliabletlyloading){
             <!-- Team Availability -->
             <div class="content-card">
-                <div class="flex-between-content mb-3">
+                <div class="flex-between-content mb-2">
                     <div class="section-title">My Team Availability</div>
                     <div class="section-title">{{ currentTime | date:'MMM d, yyyy' }}</div>
                 </div>
@@ -44,11 +44,11 @@
 
             <!-- Today's Time Entry -->
             <div class="content-card">
-                <div class="flex-between-content mb-3">
+                <div class="flex-between-content mb-2">
                     <div class="section-title">Today's Time Entry</div>
                 </div>
 
-                <div class="circle-chart-container mb-3">
+                <div class="circle-chart-container mb-2">
                     <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions"
                         styleClass="today-chart" />
                     <!-- Center Text -->
@@ -66,7 +66,7 @@
 
             <!-- Consumed Leave Types -->
             <div class="content-card">
-                <div class="flex-between-content mb-3">
+                <div class="flex-between-content mb-2">
                     <div class="section-title">Consumed Leave Types</div>
                     <div class="circle-leaves-graph">
                         <p-chart type="doughnut" [data]="totalLeavesChartData" [options]="totalLeavesChartOptions"
@@ -111,7 +111,7 @@
 
         <!-- Team Members Section -->
         <div class="content-card mb-3">
-            <div class="flex-between-content mb-3">
+            <div class="flex-between-content mb-2">
                 <div class="section-title">My Team Members</div>
                 <!-- <a class="view-all" (click)="nagvition()"><u>View All</u></a> -->
             </div>
@@ -147,7 +147,7 @@
 
         <!-- Gender Diversity -->
         <div class="content-card mb-3">
-            <div class="flex-between-content mb-3">
+            <div class="flex-between-content mb-2">
                 <div class="section-title">Gender Diversity</div>
                 <div class="total">Total: <span class="count">{{ genderTotal }}</span></div>
             </div>
@@ -158,7 +158,7 @@
 
         <!-- Weekly Work Logs -->
         <div class="content-card">
-            <div class="flex-between-content mb-3">
+            <div class="flex-between-content mb-2">
                 <div class="section-title">Weekly Work Logs</div>
                 <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
             </div>

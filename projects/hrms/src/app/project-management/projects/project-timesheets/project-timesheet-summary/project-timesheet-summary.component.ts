@@ -10,6 +10,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
+import dayjs from 'dayjs'
+
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover, NoDataFoundComponent, SkeletonModule],
@@ -137,29 +139,28 @@ ngOnInit(): void {
 
 
 private triggerLiveFilterRefresh(): void {
-  const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
-  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
-  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
-  const dateRange = this.http.getCurrentDateRange(); // your existing method
+  let dateRange = this.http.getCurrentDateRange();
 
-  console.log(deptIds)
-  console.log(roleIds)
-  console.log(phaseIds)
-  console.log(dateRange)
+  // EXACT FIX: If no date selected → force current month (Dec 1 – Dec 31)
+  if (!dateRange?.startDate || !dateRange?.endDate) {
+    const start = dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = dayjs().endOf('month').format('YYYY-MM-DD');
+    dateRange = { startDate: start, endDate: end };
+  }
+
+  const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds() || [];
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds() || [];
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds() || [];
 
   const request: any = {
-    dateRange: dateRange?.startDate && dateRange?.endDate
-      ? { startDate: dateRange.startDate, endDate: dateRange.endDate }
-      : undefined,
-    departmentIds: deptIds.length > 0 ? deptIds : undefined,
-    roleIds: roleIds.length > 0 ? roleIds : undefined,
-    phaseIds: phaseIds.length > 0 ? phaseIds : undefined,
+    dateRange: {
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate
+    },
+    ...(deptIds.length > 0 ? { departmentIds: deptIds } : {}),
+    ...(roleIds.length > 0 ? { roleIds: roleIds } : {}),
+    ...(phaseIds.length > 0 ? { phaseIds: phaseIds } : {})
   };
-
-  // Remove undefined keys
-  Object.keys(request).forEach(key => {
-    if (request[key] === undefined) delete request[key];
-  });
 
   this.refreshAllCharts(request);
 }

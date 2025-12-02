@@ -87,6 +87,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   previousSearchValue: string = '';
   requestSummary!: any;
   selectedLeaveStatus: any;
+  totalCount: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -386,6 +387,7 @@ onStatusApproveSelect(status: string) {
           this.signalService.compOffForYouTriggerSignal.set(true);
           this.signalService.compOffSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+           this.getApprovalStatusCounts();
           this.searchValue = null;
         },
       });
@@ -456,6 +458,7 @@ onStatusApproveSelect(status: string) {
             this.signalService.compOffForYouTriggerSignal.set(true);
             this.signalService.compOffSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+             this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
@@ -532,13 +535,20 @@ onStatusApproveSelect(status: string) {
             this.signalService.compOffForYouTriggerSignal.set(true);
             this.signalService.compOffSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
         });
     }
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=3&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

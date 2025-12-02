@@ -72,6 +72,7 @@ selectedLeaveStatus: any;
     { label: 25, value: 25 },
   ];
   rejectcomments: any;
+  totalCount: any;
 
   constructor(
     private modalService: NgbModal,
@@ -423,6 +424,7 @@ onStatusApproveSelect(status: string) {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.selectedProducts = [];
             this.searchValue = null;
 
@@ -497,6 +499,7 @@ onStatusApproveSelect(status: string) {
           this.signalService.regularizationForYouTriggerSignal.set(true);
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.selectedProducts = [];
           this.searchValue = null;
 
@@ -576,6 +579,7 @@ onStatusApproveSelect(status: string) {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.selectedProducts = [];
             this.searchValue = null;
 
@@ -583,7 +587,13 @@ onStatusApproveSelect(status: string) {
         });
     }
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.attendanceRegularizationModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

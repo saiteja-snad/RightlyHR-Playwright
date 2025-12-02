@@ -73,6 +73,7 @@ export class ExtraHoursForYourRoleComponent {
   ];
   selectedLeaveStatus: any;
   rejectcomments: any;
+  totalCount: any;
 
   constructor(
     private modalService: NgbModal,
@@ -500,6 +501,7 @@ export class ExtraHoursForYourRoleComponent {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.selectedProducts = [];
             this.searchValue = null;
 
@@ -574,6 +576,7 @@ export class ExtraHoursForYourRoleComponent {
           this.signalService.regularizationForYouTriggerSignal.set(true);
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.selectedProducts = [];
           this.searchValue = null;
 
@@ -654,6 +657,7 @@ export class ExtraHoursForYourRoleComponent {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.selectedProducts = [];
             this.searchValue = null;
 
@@ -661,7 +665,13 @@ export class ExtraHoursForYourRoleComponent {
         });
     }
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.permissionsModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
     this.approverComments = value;

@@ -86,6 +86,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   selectedLeaveStatus: any;
+  totalCount: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -388,6 +389,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.searchValue = null;
         },
       });
@@ -461,6 +463,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
           complete: () => {
             this.getAllPendingApprovals();
+             this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
@@ -537,13 +540,20 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
         });
     }
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.compoffModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

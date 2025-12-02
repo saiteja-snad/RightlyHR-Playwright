@@ -49,8 +49,7 @@
                     <div *ngIf="employeeForm.get('dateofAppraisal')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')">{{'Date is required'|
                             translate }}</div>
-                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end
-                            date'|translate }}</div>
+                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end date'|translate }}</div>
                     </div>
                 </div>
 
@@ -161,7 +160,8 @@
                                 and thus has given you a salary revision with great expectations.
                                 We would like you to take it as a challenge and prove your mettle.</p>
                             <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to
-                                Rs.{{appraisalData.salary}}/- w.e.f.
+                                Rs.{{ (employeeCompensationDetails?.compensationamount || 0) +
+                    (appraisalData?.variablePayAmount || 0) }}/- w.e.f.
                                 This revision will be effective from <u>{{employeeCompensationDetails.compeffectivedate
                                     | dateformat}}</u>.
                                 <!-- This will be in addition to your existing CTC, thereby increasing your CTC from Rs

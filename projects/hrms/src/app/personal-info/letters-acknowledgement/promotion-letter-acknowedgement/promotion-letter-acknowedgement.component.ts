@@ -212,7 +212,8 @@ currentDate = new Date();
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-            let res = data[0];
+            // let res = data[0];
+            let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
             if (data.length > 1) {
               this.previusSalary = data[1];
               this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
@@ -223,6 +224,7 @@ currentDate = new Date();
             this.employeeCompensationDetails = res;
             this.promotiondata.salary = res.compensationamount;
             this.promotiondata.compeffectivedate = res.compeffectivedate;
+            this.promotiondata.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
             //CTC calculation stated
             Employee.grossby = 12;
             Employee.grossSalary = Math.round(

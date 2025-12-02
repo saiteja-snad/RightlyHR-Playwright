@@ -29,7 +29,8 @@
                         has given you a salary revision with great expectations.
                         We would like you to take it as a challenge and prove your mettle.</p>
                     <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to Rs.
-                        {{promotiondata.salary}}/- w.e.f.
+                        {{ (employeeCompensationDetails?.compensationamount || 0) +
+                    (promotiondata?.variablePayAmount || 0) }}/- w.e.f.
                         This revision will be effective from <u>{{employeeCompensationDetails.compeffectivedate |
                             dateformat}}</u>.
                         <!-- This will be in addition to your existing CTC, thereby increasing your CTC from Rs

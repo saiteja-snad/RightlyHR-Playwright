@@ -1,10 +1,10 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { IExpense, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
-import { filter, Subscription, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TabsModule } from 'primeng/tabs';
@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-add-claimsandexpenses',
   imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
@@ -43,27 +44,64 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   removeindex: any
   expensetype = [] as Iexpensetype[];
   expenseemployeedata: IExpense[] = [];
+  private destroy$ = new Subject<boolean>();
+  selectedEmpId: number | null = null;
+  selectedEmpName: string | null = null;
+  selectedEmpFusionId: string | null = null;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
+  employeeiddetails = [] as any;
   navTabs: any[] = [
     { label: 'Create Expenses', link: '/claimsandexpenses/addexpense' },
   ];
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
-    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService,) { }
+    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService, private authService: AuthService,) {
+    effect(() => {
+      if (this.http.onBehlafOfExpensesSignal()) {
+        console.log('Expenses signal triggered');
+        this.http.onBehlafOfExpensesSignal.set(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+
     this.getEmployeeId()
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
     this.updateModuleInfo();
+    this.updateModuleInfoOnBehalfof()
     this.getexpensesheaderbyid(this.empinfo.employeeid)
     this.setDate()
+    this.getAllEmployeeId()
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
     });
+    const savedEmp = localStorage.getItem('selectedEmployee');
+    if (savedEmp) {
+      const emp = JSON.parse(savedEmp);
+      this.selectedEmpId = emp.employeeId;
+      this.selectedEmpName = emp.employeeName;
+      this.selectedEmpFusionId = emp.fusionEmpId;
+
+      // Also update service observable if needed
+
+      this.http.setOnBehalfOfExpensesSelectedEmp(emp);
+      this.getExpensesHeaderByEmployeeId(emp.employeeId);
+    }
+    this.http.onBehalfOfExpensesSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp) => {
+      if (emp) {
+        this.selectedEmpId = emp.employeeId;
+        this.selectedEmpName = emp.employeeName;
+        this.selectedEmpFusionId = emp.fusionEmpId;
+        console.log(this.empinfo.employeeId)
+      }
+    });
   }
+
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
@@ -73,7 +111,9 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       additional_details: [null]
     });
   }
-
+  get isOnBehalfAddPage(): boolean {
+    return this.router.url.includes('/on-behalf-of/on-behalf-of-expenses/add');
+  }
   createExpenseItem(): FormGroup {
     return this.fb.group({
       item_expense: [null, Validators.required],
@@ -99,11 +139,21 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/claimsandexpenses/expenses/draft'])
   }
 
+  navigateonBehalfof() {
+    this.router.navigate(['/on-behalf-of/on-behalf-of-expenses/waiting-for-approval'])
+  }
   initiateUpdateModuleInfo() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.updateModuleInfo();
+      });
+  }
+  initiateUpdateModuleInfoOnbehlafof() {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfoOnBehalfof();
       });
   }
 
@@ -115,13 +165,21 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
+  updateModuleInfoOnBehalfof() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/on-behalf-of/on-behalf-of-expenses/add': MODULE_INFOS.ONBEHALF_OF_ADD_EXPENSES_MODULE_INFO
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
 
-calculateTotalExpensesAmount(): void {
-  this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
-    const value = Number(item.get('expense_Amount')?.value) || 0;
-    return total + value;
-  }, 0);
-}
+  calculateTotalExpensesAmount(): void {
+    this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
+      const value = Number(item.get('expense_Amount')?.value) || 0;
+      return total + value;
+    }, 0);
+  }
   opendeletModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -390,6 +448,7 @@ calculateTotalExpensesAmount(): void {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
+               this.http.setnewcountDetailsforonBehalfof();
               this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.newExpenseForm.reset();
               this.router.navigate(['/claimsandexpenses/expenses/draft'])
@@ -507,6 +566,90 @@ calculateTotalExpensesAmount(): void {
     }
   }
 
+  submitOnBehalfExpense(form: FormGroup): void {
+    if (!form.valid) {
+      console.log('Form is invalid');
+      return;
+    }
+
+    this.spinnerLoader = true;
+
+    const payload = {
+      applied_date: new Date().toISOString(),
+      expenses_Title: form.value.expensesTitle,
+      expenseId: this.selectedexpensesid,
+      additional_details: form.value.additional_details,
+      status: 'Approved',
+      employeeId: this.selectedEmpId,
+      requestedBy: this.empinfo.employeeId,
+      expenseItem: form.value.expenseItems.map((item: any) => ({
+        expenseId: item.item_expense,
+        item_Name: item.item_Name,
+        item_Description: item.item_Description,
+        expense_Date: item.expense_Date,
+        expense_Amount: item.expense_Amount,
+        receipt_Number: item.receipt_Number,
+        status: 'Approved',
+        attachment_url: item.attachment_url,
+        isVerified: true,
+        onBehalfOfApproval: true,
+        verifiedBy: this.empinfo.employeeId?.toString(),
+      })),
+      attachment_url: undefined,
+    };
+
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    const empToRefresh = this.selectedEmpId || this.empinfo.employeeId;
+
+    // ---- FILE UPLOAD + SUBMIT ----
+    let submit$;
+
+    if (this.Myexpense) {
+      submit$ = this.http.uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filepath,
+        this.Myexpense
+      ).pipe(
+        switchMap((data: any) => {
+          payload.expenseItem.forEach((i: { attachment_url: any; }) => {
+            if (i.attachment_url === this.Myexpense.name) {
+              i.attachment_url = data.path;
+            }
+          });
+          return this.http.postdata(`Expenses_Header`, payload);
+        })
+      );
+    } else {
+      submit$ = this.http.postdata(`Expenses_Header`, payload);
+    }
+
+    submit$.subscribe({
+      next: () => {
+        this.conformationPopup.openSuccessModal('Expense request has been submitted');
+        this.newExpenseForm.reset();
+        (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+
+        // Navigate back
+        this.navigateonBehalfof();
+
+        // 🔥 MOST IMPORTANT — tell OnBehalf Dashboard to refresh summary
+        this.http.setOnBehalfExpensesUpdated(empToRefresh);
+
+        // 🔥 optional immediate fetch to update UI without waiting for event
+        this.getexpensesheaderbyid(empToRefresh);
+
+        this.spinnerLoader = false;
+      },
+      error: (error: any) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal(error.error.message);
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
+  }
+
   onAmountInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
@@ -538,6 +681,58 @@ calculateTotalExpensesAmount(): void {
           //this.filterAllExpenses();
         }, error(err) {
           console.log("expensesheadererror", err)
+        },
+      });
+  }
+
+  getAllEmployeeId() {
+    let loggedInUser = this.authService.getToken();
+    this.http
+      .getData('Employeedata/ActiveEmployees')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.employeeiddetails = data
+            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
+            .map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''
+                }${emp.lastName ?? ''}`.trim();
+              const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''
+                }${emp.lastName ?? ''} ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
+                }`.trim();
+              return {
+                ...emp,
+                fullName,
+                leaveRequestName,
+              };
+            })
+            // Alphabetical sorting by firstName
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', {
+                sensitivity: 'base',
+              })
+            );
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
+  }
+  getExpensesHeaderByEmployeeId(empId: any): void {
+    const year = new Date().getFullYear();
+    console.log('Employee ID passed:', empId);
+
+    this.http
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log('Expenses Header Response:', response);
+          this.expenesEmplyeedata = response;
+        },
+        error: (error: any) => {
+          console.error('Error fetching expense header by employee ID:', error);
         },
       });
   }

@@ -73,6 +73,7 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  ON_BEHALF_OF_EXPENSES_TABS,
   SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS,
   SETTINGS_TIMESHEET_LOCKING_TABS,
   MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES,
@@ -497,6 +498,15 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1407,6 +1417,15 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

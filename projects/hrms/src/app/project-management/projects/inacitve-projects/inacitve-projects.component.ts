@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,7 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Project } from '../../../Interfaces/projects.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { FormsModule } from '@angular/forms';
 import { ActiveprojectsPipe } from '../../../Pipes/activeprojects.pipe';
@@ -48,7 +48,8 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private offcanvasService: NgbOffcanvas
   ) {}
 
   ngOnInit() {
@@ -318,6 +319,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     // Convert back to hex
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
+
+    toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

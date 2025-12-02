@@ -5,7 +5,6 @@
     </div>
 
     <div class="d-flex align-items-center gap-3">
-
       <!-- Reset Filters -->
       <div class="d-flex gap-2 align-items-center"
         *ngIf="selectedDepartmentIds.length > 0 || selectedProjectTypes.length > 0 || selectedClients.length > 0">
@@ -14,40 +13,11 @@
         </button>
       </div>
 
-      <!-- Client Name Filter -->
-      <div class="d-flex gap-2 align-items-center">
-        <label class="form-label filter-labels mt-2">{{ 'Select Client' | translate }}</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
-            defaultLabel="Please select client" [filter]="true" filterBy="clientName"
-            class="form-select custom-select" (onChange)="onClientChange()"
-            (onClear)="selectedClients = []; getProjectsBasedOnRoute()">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <!-- Department Name -->
-      <div class="d-flex gap-2 align-items-center">
-        <label class="form-label filter-labels mt-2">{{ 'Select Department' | translate }}</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            defaultLabel="Please select department" [filter]="true" filterBy="departmentName"
-            class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
-            [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getProjectsBasedOnRoute()">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <!-- Project Type -->
-      <div class="d-flex gap-2 align-items-center">
-        <label class="form-label filter-labels mt-2">{{ 'Select Project Type' | translate }}</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
-            [(ngModel)]="selectedProjectTypes" defaultLabel="Please select project type" [filter]="true"
-            class="form-select custom-select" (onChange)="onProjectTypeChange()"
-            (onClear)="selectedProjectTypes = []; getProjectsBasedOnRoute()">
-          </p-multiSelect>
-        </div>
+      <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        </button>
       </div>
 
 
@@ -179,17 +149,18 @@
         <p class="popup-heading mb-0">{{'Update Project' | translate}}</p>
       </div>
     </div>
+
     <div class="custom-main-popup-content">
       <form [formGroup]="updateprojectform" autocomplete="off" (ngSubmit)="saveUpdatedProject()">
         <div class="row">
           <!-- Client Name -->
           <div class="col-md-6 mb-3">
-            <label for="updateclientName" class="form-label custom-label mb-2">Client Name<span
-                class="text-danger">*</span></label>
+            <label for="updateclientName" class="form-label custom-label mb-2">Client Name
+              <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="clients" [filter]="true" [resetFilterOnHide]="true" filterBy="clientName"
                 optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
-                placeholder="Please select client name" class="form-select custom-select"></p-select>
+                placeholder="Please select client name" class="form-select custom-select" />
             </div>
             <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched &&
               updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
@@ -197,18 +168,15 @@
 
           <!-- Project Code -->
           <div class="col-md-6 mb-3">
-            <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
-                class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"  formControlName="updatecode" maxlength="13"
-              placeholder="Please enter project code">
+            <label for="updatecode" class="form-label custom-label mb-2">Project Code<span class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+              formControlName="updatecode" maxlength="13" placeholder="Please enter project code">
+            <div class="error-msg" *ngIf="updateprojectform.get('updatecode')?.touched && 
+              updateprojectform.get('updatecode')?.errors?.['required']">Project Code is required</div>
             <div class="error-msg"
-              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['required']">
-              Project Code is required
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
+              Project Code cannot exceed 12 characters
             </div>
-            <div class="error-msg"
-            *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
-            Project Code cannot exceed 12 characters
-          </div>
           </div>
 
           <!-- Project Name -->
@@ -216,12 +184,10 @@
             <label for="updateprojectName" class="form-label custom-label mb-2">Project Name
               <span class="text-danger">*</span></label>
             <input type="text" id="updateprojectName" formControlName="updateprojectName" minlength="2" maxlength="100"
-              placeholder="Please enter project name"
-              (input)="formValidation.validateInput(updateprojectform.get('updateprojectName'))"
+              placeholder="Please enter project name" (input)="formValidation.validateInput(updateprojectform.get('updateprojectName'))"
               class="form-control custom-input">
             <div class="error-msg" *ngIf="updateprojectform.get('updateprojectName')?.touched">
-              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['required']">Project Name is required
-              </div>
+              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['required']">Project Name is required</div>
               <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['maxCharacters'] ||
               updateprojectform.get('updateprojectName')?.errors?.['minCharacters']" class="error-msg">
                 {{ 'Project Name must be between 2-100 characters' | translate }}
@@ -231,12 +197,12 @@
 
           <!-- Project Type -->
           <div class="col-md-6 mb-3">
-            <label for="updateprojectType" class="form-label custom-label mb-2">Project Type<span
-                class="text-danger">*</span></label>
+            <label for="updateprojectType" class="form-label custom-label mb-2">Project Type
+              <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="projecttypes" [filter]="true" [resetFilterOnHide]="true" filterBy="value"
                 optionLabel="value" optionValue="value" formControlName="updateprojectType"
-                placeholder="Please select project type" class="form-select custom-select"></p-select>
+                placeholder="Please select project type" class="form-select custom-select" />
             </div>
             <div class="error-msg" *ngIf="updateprojectform.get('updateprojectType')?.touched &&
             updateprojectform.get('updateprojectType')?.invalid">Project Type is required</div>
@@ -248,22 +214,19 @@
                 class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-                defaultLabel="Please select department name" formControlName="updatedepartment"
-                class="form-select custom-select"></p-multiSelect>
+                defaultLabel="Please select department name" formControlName="updatedepartment" class="form-select custom-select" />
             </div>
-            <div
-              *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
+            <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
               class="error-msg">
-              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is
-                required'|translate}}
-              </div>
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">
+                {{'Department name is required'|translate}}</div>
             </div>
           </div>
 
           <!-- Start Date -->
           <div class="col-md-6 mb-3">
-            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span
-                class="text-danger">*</span></label>
+            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date
+              <span class="text-danger">*</span></label>
             <input type="date" id="updatestartDate" formControlName="updatestartDate"
               class="form-control custom-input" />
             <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched &&
@@ -275,12 +238,11 @@
 
           <!-- End Date -->
           <div class="col-md-6 mb-3">
-            <label for="updateendDate" class="form-label custom-label mb-2">End Date<span
-                class="text-danger">*</span></label>
+            <label for="updateendDate" class="form-label custom-label mb-2">End Date
+              <span class="text-danger">*</span></label>
             <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate"
               class="form-control custom-input" />
-            <div class="error-msg"
-              *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
+            <div class="error-msg" *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
               End Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
@@ -370,18 +332,15 @@
             <label for="updateprojectDescription" class="form-label custom-label mb-2">Project Description</label>
             <textarea id="updateprojectDescription" formControlName="updateprojectDescription" maxlength="500"
               class="form-control custom-input" placeholder="Please enter project description"></textarea>
-            <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length ||
-              0}}/500</div>
+            <div class="textarea-count-text">{{ updateprojectform.get("updateprojectDescription")?.value?.length || 0}}/500</div>
           </div>
 
           <!-- Switches -->
           <div class="col-md-12 mb-3">
             <div class="d-flex gap-3 align-items-center">
               <div class="form-check form-switch">
-                <input id="projects-overtime-eligibility" class="form-check-input" type="checkbox"
-                  formControlName="updateovertimeEligible">
-                <label for="projects-overtime-eligibility" class="form-label custom-toggle-label">Overtime
-                  Eligibility</label>
+                <input id="projects-overtime-eligibility" class="form-check-input" type="checkbox" formControlName="updateovertimeEligible">
+                <label for="projects-overtime-eligibility" class="form-label custom-toggle-label">Overtime Eligibility</label>
               </div>
 
               <div class="form-check form-switch">
@@ -390,10 +349,8 @@
               </div>
 
               <div class="form-check form-switch">
-                <input id="project-allow-weekend-work" class="form-check-input" type="checkbox"
-                  formControlName="updateallowweekendWork">
-                <label for="project-allow-weekend-work" class="form-label custom-toggle-label">Allow Weekend
-                  Work</label>
+                <input id="project-allow-weekend-work" class="form-check-input" type="checkbox" formControlName="updateallowweekendWork">
+                <label for="project-allow-weekend-work" class="form-label custom-toggle-label">Allow Weekend Work</label>
               </div>
             </div>
           </div>
@@ -426,8 +383,7 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
-        translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -455,6 +411,60 @@
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
       <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Data Filters off canvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <!-- Client Name Filter -->
+      <div class="mb-3">
+        <label class="form-label filter-labels mb-3">{{'Select Client' | translate}}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
+            defaultLabel="Please select client" [filter]="true" filterBy="clientName" class="form-select custom-select"
+            (onChange)="onClientChange()" (onClear)="selectedClients = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Department Name -->
+      <div class="mb-3">
+        <label class="form-label filter-labels mb-3">{{'Select Department' | translate}}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+            defaultLabel="Please select department" [filter]="true" filterBy="departmentName"
+            class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
+            [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Project Type -->
+      <div class="mb-3">
+        <label class="form-label filter-labels mb-3">{{'Select Project Type' | translate}}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
+            [(ngModel)]="selectedProjectTypes" defaultLabel="Please select project type" [filter]="true"
+            class="form-select custom-select" (onChange)="onProjectTypeChange()"
+            (onClear)="selectedProjectTypes = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+          {{'Clear All' | translate}}</button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{'Close' | translate}}</button>
+      </div>
     </div>
   </div>
 </ng-template>

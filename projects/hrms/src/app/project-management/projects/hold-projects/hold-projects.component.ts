@@ -1,11 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Project } from '../../../Interfaces/projects.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { ActiveclientsPipe } from '../../../Pipes/activeclients.pipe';
@@ -62,13 +62,14 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
-    public rbac: RbacService
-  ) {}
+    public rbac: RbacService,
+    private offcanvasService: NgbOffcanvas
+  ) { }
 
   ngOnInit() {
     this.http.setDepartmentIds([]);
-  this.selectedDepartmentIds = [];
-  this.selectedProjectTypes = [];
+    this.selectedDepartmentIds = [];
+    this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getdatabaedonRoute();
     this.DepartmentList();
@@ -77,16 +78,16 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
 
     // Listen to department filter changes from service (shared across tabs)
     combineLatest([
-    this.http.selectedDepartmentIds$,
-    this.http.projectTypeFilter$
-  ])
-  .pipe(takeUntil(this.destroy$))
-  .subscribe(([deptIds, projectTypes]) => {
-    this.selectedDepartmentIds = deptIds || [];
-    this.selectedProjectTypes = projectTypes || [];
+      this.http.selectedDepartmentIds$,
+      this.http.projectTypeFilter$
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([deptIds, projectTypes]) => {
+        this.selectedDepartmentIds = deptIds || [];
+        this.selectedProjectTypes = projectTypes || [];
 
-    this.getdatabaedonRoute();
-  });
+        this.getdatabaedonRoute();
+      });
   }
 
   // Load Departments
@@ -101,7 +102,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
-   //get clients
+  //get clients
   clientList() {
     this.http.getData('Client/GetAll').subscribe({
       next: (res: any) => {
@@ -184,7 +185,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     return project.departments.map((d) => d.departmentName).join(', ');
   }
 
- getAllHoldProjects() {
+  getAllHoldProjects() {
     this.loading = true;
     let url = 'Project?status=hold';
 
@@ -194,7 +195,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     if (this.selectedProjectTypes.length > 0) {
       url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
     }
-     const clientIds = this.selectedClients
+    const clientIds = this.selectedClients
       .map((c: any) => c?.clientId)
       .filter((id): id is number => id != null);
 
@@ -225,7 +226,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       url += `&projectTypes=${this.selectedProjectTypes.join(',')}`;
     }
 
-     const clientIds = this.selectedClients
+    const clientIds = this.selectedClients
       .map((c: any) => c?.clientId)
       .filter((id): id is number => id != null);
 
@@ -335,11 +336,11 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.getdatabaedonRoute();
   }
 
-onClientChange() {
-  this.getdatabaedonRoute();
-}
+  onClientChange() {
+    this.getdatabaedonRoute();
+  }
 
-    getLighterColor(color: any, amount: number = 0.9): string {
+  getLighterColor(color: any, amount: number = 0.9): string {
     if (!color) return color || '#d8d8daff'; // Default color if none provided;
 
     // Remove # if present
@@ -357,6 +358,14 @@ onClientChange() {
 
     // Convert back to hex
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  }
+
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
   }
 
   ngOnDestroy() {

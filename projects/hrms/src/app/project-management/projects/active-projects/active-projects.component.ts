@@ -1,18 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
@@ -31,26 +25,13 @@ import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-man
 import { combineLatest } from 'rxjs';
 @Component({
   selector: 'app-active-projects',
-  imports: [
-    NoDataFoundComponent,
-    MultiSelectModule,
-    CommonModule,
-    FormsModule,
-    DataLoaderContentComponent,
-    TranslateModule,
-    RouterModule,
-    ConfirmationIconComponent,
-    ReactiveFormsModule,
-    Select,
-    ProjectManagementModuleInfoComponent,
-    ProjcetCreationComponent,
-    ActiveprojectsPipe,
-    ProjectsSideTabsForClientsComponent,
-    ProjectsSideTabsComponent,
-  ],
+  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, 
+    TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, 
+    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss',
 })
+
 export class ActiveProjectsComponent implements OnInit, OnDestroy {
   selectedProject: any;
   searchValue: any;
@@ -80,38 +61,25 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   departmentlist = [] as any;
   inactiveClientStatus: any;
   selectedDepartmentIds: any;
-
   selectedProjectTypes: any[] = [];
-
   selectedClients: any[] = [];
   clientDetails: any[] = [];
-  constructor(
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    private router: Router,
-    public formValidation: FormValidationsService,
-    private http: HttpService,
-    private conformationPopup: OpenModalService,
-    private route: ActivatedRoute,
-    public rbac: RbacService
-  ) {}
+
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router, 
+    public formValidation: FormValidationsService, private http: HttpService, private conformationPopup: OpenModalService, 
+    private route: ActivatedRoute, public rbac: RbacService, private offcanvasService: NgbOffcanvas) {}
 
   ngOnInit() {
     this.http.setDepartmentIds([]);
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    combineLatest([
-    this.http.selectedDepartmentIds$,
-    this.http.projectTypeFilter$
-  ])
-  .pipe(takeUntil(this.destroy$))
-  .subscribe(([deptIds, projectTypes]) => {
-    this.selectedDepartmentIds = deptIds || [];
-    this.selectedProjectTypes = projectTypes || [];
-
-    this.getProjectsBasedOnRoute();
-  });
+    combineLatest([this.http.selectedDepartmentIds$, this.http.projectTypeFilter$]).pipe(takeUntil(this.destroy$))
+    .subscribe(([deptIds, projectTypes]) => {
+      this.selectedDepartmentIds = deptIds || [];
+      this.selectedProjectTypes = projectTypes || [];
+      this.getProjectsBasedOnRoute();
+    });
     this.editProjectForm();
     this.getClientsData();
     this.getprojecttypesData();
@@ -119,11 +87,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.DepartmentList();
     this.clientList();
     // this.getAuthorityList();
-    this.updateprojectform
-      .get('updatestartDate')
-      ?.valueChanges.subscribe(() => {
-        this.StartndendDateValidation();
-      });
+    this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+    });
     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
     });
@@ -145,11 +111,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.http.getData('Client/GetAll').subscribe({
       next: (res: any) => {
         const data = res?.data || res || [];
-        this.clientDetails = data
-          .map((client: any) => ({
-            clientId: client.clientId,
-            clientName: client.clientName,
-          }))
+        this.clientDetails = data.map((client: any) => ({
+          clientId: client.clientId,
+          clientName: client.clientName,
+        }))
           .sort((a: any, b: any) => a.clientName.localeCompare(b.clientName));
       },
       error: () => {
@@ -176,6 +141,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.selectedProjectTypes = [];
     this.onProjectTypeChange();
   }
+
   getProjectsBasedOnRoute(): void {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/project-management/projects')) {
@@ -724,12 +690,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.selectedClients = [];
-
     // Force UI update
     this.selectedDepartmentIds = [...this.selectedDepartmentIds];
     this.selectedProjectTypes = [...this.selectedProjectTypes];
     this.selectedClients = [...this.selectedClients];
-
     this.getProjectsBasedOnRoute();
   }
 
@@ -755,6 +719,25 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   // Convert back to hex
   return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 }
+
+  // isFilterApplied(): boolean {
+  //   const formValue = this.datepickerForm?.value;
+  //   // Check if any filter (except date & employee) has value
+  //   return (
+  //     (formValue?.projectId && formValue?.projectId?.length > 0) ||
+  //     (formValue?.clientId && formValue?.clientId?.length > 0) ||
+  //     (formValue?.departmentId && formValue?.departmentId?.length > 0) ||
+  //     (formValue?.tmorrmId && formValue?.tmorrmId?.length > 0)
+  //   );
+  // }
+
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
 
   ngOnDestroy() {
     this.destroy$.next(true);

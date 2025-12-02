@@ -223,7 +223,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
                   headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
                   pendingApprovalHeader: padingapprovaldata?.header ?? null,
                   approvalItems: padingapprovaldata?.items ?? [],
-                  comments: padingapprovaldata?.comments ?? []
+                  comments: padingapprovaldata?.comments ?? [],
+                  approvalScope: fieldname?.approvalScope ?? ''
                 });
               });
           });
@@ -317,12 +318,39 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
   }
-  actionsDetails=[] as any;
+  actionsDetails={} as any;
  openModalforaction(modal: any, request: any,){
   console.log("request",request)
-  this.actionsDetails=request;
+  //this.actionsDetails=request;
+     let parsedOldValue = {};
+
+  if (request.oldValue) {
+    try {
+      parsedOldValue = JSON.parse(request.oldValue);
+    } catch (e) {
+      console.error("Parsing error for oldValue:", request.oldValue);
+    }
+  }
+
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
+   if (request.newValue) {
+    try {
+      parsedOldValue = JSON.parse(request.newValue);
+    } catch (e) {
+      console.error("Parsing error for oldValue:", request.newValue);
+    }
+  }
+
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
   this.actionsDetails.fieldName=request.fieldName;
   this.actionsDetails.moduleName=request.moduleName;
+  console.log("this.actionsDetails",this.actionsDetails)
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
  }
   // approve submit post method

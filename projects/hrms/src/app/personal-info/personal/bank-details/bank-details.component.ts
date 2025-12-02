@@ -36,6 +36,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   employedata = {} as IProbationEmployees;
   spinnerLoader = false;
   loading = false
+  isMyInfoRoute = false;
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -57,9 +58,11 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.isMyInfoRoute=false;
       this.getbankempid()
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+      this.isMyInfoRoute=true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getbankempid()
       this.getEmployeeId();
@@ -264,7 +267,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  createBankDetailsPayload(attachmentPath: string = ''): any {
+ createBankDetailsPayload(attachmentPath: string = ''): any {
     return {
       empId: parseInt(this.empinfo.employeeId),
       bankName: this.bankDetailsForm.get('bankName')?.value?.bankName1,
@@ -272,6 +275,10 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
       isPrimary: this.bankDetailsForm.get('isPrimary')?.value || false,
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: "Bank Info",
+      displayName: "Personal",
+      createdBy: this.empinfo.employeeId
     };
   }
 
@@ -396,22 +403,36 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  bankDelete(): void {
-    if (!this.bankid) {
-      console.error('Bank ID is not set. Cannot delete bank details.');
-      return;
-    }
-    this.subscription = this.http.getData(`BankDetail/deletebyid/${this.bankid}`).subscribe({
-      next: (data: any) => {
-        this.getbankempid(); // Refresh the bank details list
-        this.modalService.dismissAll(); // Close the modal
-        this.conformationPopup.openSuccessModal('Bank information deleted successfully')
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
-      }
-    });
+ bankDelete(): void {
+  if (!this.bankid) {
+    console.error('Bank ID is not set. Cannot delete bank details.');
+    return;
   }
+ 
+  const payload = {
+    bankId: this.bankid,
+    empId: this.empinfo.employeeId,    // Set from logged-in user context
+    requestedBy: this.empinfo.employeeId, // Logged-in user ID
+    selfUpdate: this.isMyInfoRoute,  // Setting true so approval is applied
+    moduleName: "Bank Info",
+    displayName: "Personal"
+  };
+ 
+  this.subscription = this.http.postdata(`BankDetail/delete`, payload).subscribe({
+    next: () => {
+      this.getbankempid(); // Refresh bank list
+      this.modalService.dismissAll(); // Close modal
+      this.conformationPopup.openSuccessModal(
+        'Bank information delete request submitted successfully.'
+      );
+    },
+    error: () => {
+      this.conformationPopup.openErrorModal(
+        'Failed to submit delete bank request. Please try again.'
+      );
+    }
+  });
+}
    openConfirmationModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

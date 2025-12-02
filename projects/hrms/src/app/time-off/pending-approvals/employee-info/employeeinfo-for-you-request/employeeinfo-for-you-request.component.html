@@ -86,10 +86,13 @@
                         {{ entry?.oldValue ? (entry?.oldValue | dateformat) : "-" }}
                        }
                        @else{
-                        {{ entry.oldValue ? entry.oldValue : "-" }}  
-                        <div class="d-inline-flex" (click)="openModalforaction(popupforaction,entry)">
+                        @if(entry?.approvalScope?.toLowerCase()==='action'){
+                          <div class="d-inline-flex" (click)="openModalforaction(popupforaction,entry)">
                       <app-info-icon />
                     </div>
+                        }@else{{{ entry.oldValue ? entry.oldValue : "-" }}}
+                          
+                        
                     <!-- <ng-template #desprictionContent>
                       <p class="mb-0 p-2">
                         {{entry.comments ? entry.comments:'-'}}
@@ -102,7 +105,12 @@
                         {{ entry?.newValue ? (entry?.newValue | dateformat) : "-" }}
                        }
                        @else{
-                        {{ entry.newValue ? entry.newValue : "-" }}
+                        @if(entry?.approvalScope?.toLowerCase()==='action'){
+                         <div class="d-inline-flex" (click)="openModalforaction(popupforaction,entry)">
+                         <app-info-icon /></div>
+                        }@else{{{ entry.newValue ? entry.newValue : "-" }}}
+                        
+                        
                        }
                       </td>                    
                       @if (showhideaction) {
@@ -337,16 +345,11 @@
                 </a>
             </div>
         </div>
-        <div class="custom-main-popup-content" *ngFor="let items of actionsDetails">
-            <div class="card p-3">
-                <div>
-                    <div class="mb-0">
-                        <p><b> gfhfgh{{items}}:</b> {{ items.comments }} </p>
-                        <p><b>ghfjgh{{items}}:</b> {{ items.addedName }}</p>
-                        <p><b>ghjghj{{items}}:</b> {{ items.addedDate | dateformat }}</p>
-                        <p><b>ghjghjghj{{items}}:</b> {{ items.addedByFusionEmpId }}</p>
+        <div class="custom-main-popup-content" >
+            <div class="p-1">
+                    <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> {{ item.value }}</span></p>
                     </div>
-                </div>
             </div>
         </div>
     </div>

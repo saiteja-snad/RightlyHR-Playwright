@@ -26,6 +26,7 @@ import { AuthService } from '../../../../services/auth.service';
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-identity-info',
@@ -38,6 +39,7 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
     ToggleSwitchModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
+    DropdownModule 
   ],
   templateUrl: './identity-info.component.html',
   styleUrl: './identity-info.component.scss',
@@ -66,7 +68,11 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     { label: 'Team Manager', value: 'TM' },
   ];
   roles = [] as any;
-
+   actionsOptions = [
+    { label: 'Add', value: 'ADD_IDENTITY' ,optionDisabled: false},
+    { label: 'Delete', value: 'DELETE_IDENTITY',optionDisabled: false },
+    { label: 'Update', value: 'UPDATE_IDENTITY',optionDisabled: false },
+  ];
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,

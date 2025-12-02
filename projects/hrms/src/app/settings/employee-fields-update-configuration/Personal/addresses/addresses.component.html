@@ -117,7 +117,7 @@
           <!-- Multi-select for create mode -->
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
-              optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames" (onChange)="change()"
+              optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames"
               placeholder="{{'Please select field names' | translate}}" [filter]="true" [readonly]="isReadOnlyMode">
             </p-multiSelect>
           </div>

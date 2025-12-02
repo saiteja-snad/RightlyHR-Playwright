@@ -285,7 +285,8 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           } else {
-            let res = data[0];
+            // let res = data[0];
+            let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
             if (data.length > 1) {
               this.previusSalary = data[1];
               this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
@@ -295,6 +296,7 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
             }
             this.employeeCompensationDetails = res;
             this.appraisalData.salary = res.compensationamount;
+            this.appraisalData.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
             this.appraisalData.compeffectivedate = res.compeffectivedate;
             //CTC calculation stated
             Employee.grossby = 12;

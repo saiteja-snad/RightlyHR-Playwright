@@ -91,11 +91,9 @@
       background: #fff2cc;
   }
 
-  .secondtable tr:nth-child(3) td:nth-child(3),
-  .secondtable tr:nth-child(3) td:nth-child(2) {
-
-      background: #fce4d6;
-  }
+  .secondtable tr:nth-child(4) td:nth-last-child(-n + 2) {
+    background: #fce4d6;
+}
 
 
   .letter-signature {

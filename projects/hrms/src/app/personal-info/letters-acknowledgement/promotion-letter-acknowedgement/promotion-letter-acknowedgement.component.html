@@ -11,25 +11,26 @@
                         {{promotionDate| dateformat}}
                     </div>
                     <br>{{gender}} {{promotiondata.firstName}} {{promotiondata.middleName}}
-                        {{promotiondata.lastName}}
+                    {{promotiondata.lastName}}
                     <br>Address
-                     @if(gender || promotiondata.firstName){
-                        <br>
-                        {{promotiondata.addressLine1}}
-                            <br>{{promotiondata.addressLine2}}
-                            <br>{{promotiondata.city}}
-                            <br>{{promotiondata.state}} - {{promotiondata.zipCode}}.
-                   
-                     }
-                    
-                    <p >Dear {{gender}} {{promotiondata.firstName}}
+                    @if(gender || promotiondata.firstName){
+                    <br>
+                    {{promotiondata.addressLine1}}
+                    <br>{{promotiondata.addressLine2}}
+                    <br>{{promotiondata.city}}
+                    <br>{{promotiondata.state}} - {{promotiondata.zipCode}}.
+
+                    }
+
+                    <p>Dear {{gender}} {{promotiondata.firstName}}
                         {{promotiondata.middleName}} {{promotiondata.lastName}},</p>
 
                     <p class="mb-4">Management has truly recognized your potential for growth with the company and thus
                         has given you a salary revision with great expectations.
                         We would like you to take it as a challenge and prove your mettle.</p>
                     <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to Rs.
-                        {{promotiondata.salary}}/- w.e.f.
+                        {{ (employeeCompensationDetails?.compensationamount || 0) +
+                        (promotiondata?.variablePayAmount || 0) }}/- w.e.f.
                         This revision will be effective from <u>{{employeeCompensationDetails.compeffectivedate |
                             dateformat}}</u>.
                         <!-- This will be in addition to your existing CTC, thereby increasing your CTC from Rs
@@ -59,9 +60,13 @@
                             <p class=" mb-0"><b> {{authorityDesignation}}</b></p>
                         </div>
                         <div class="w-50">
-                            <p><b>Employee Name:</b> {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}}</p>
-                            <div class="letter-signature mb-1"> {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}}</div>
-                            <div class="mb-1"><div><b>Employee Signature:</b></div></div>
+                            <p><b>Employee Name:</b> {{promotiondata.firstName}} {{promotiondata.middleName}}
+                                {{promotiondata.lastName}}</p>
+                            <div class="letter-signature mb-1"> {{promotiondata.firstName}} {{promotiondata.middleName}}
+                                {{promotiondata.lastName}}</div>
+                            <div class="mb-1">
+                                <div><b>Employee Signature:</b></div>
+                            </div>
                             <p class=" mb-1"><b>Date:</b> {{currentDate |dateformat}}</p>
                         </div>
                     </div>
@@ -268,6 +273,25 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><b>Variable Amount</b></td>
+                                    <td colspan="2">
+                                        <b> {{promotiondata.variablePayAmount }}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>CTC=Gross Salary +(Employer PF+ESI+Variable Amount)</b></td>
+                                    <td class="text-center p-0 pt-1  bold"><span
+                                            *ngIf="!promotiondata.grossSalary; else gross">
+                                        </span>
+                                        <ng-template #gross><b>{{ promotiondata.grossSalary }}</b></ng-template>
+                                    </td>
+                                    <td>
+                                        <span *ngIf="!promotiondata.salary; else grossper"></span>
+                                        <ng-template #grossper><b> {{(+promotiondata.salary || 0) +
+                                                (+promotiondata.variablePayAmount || 0)}}</b></ng-template>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
                                     <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer
                                             PF+ESI+Medical Insurance)</b></td>
                                     <td class="text-center p-0 pt-1 pb-1 bold"><span
@@ -280,16 +304,16 @@
                                         </span>
                                         <ng-template #grossper><b>{{promotiondata.salary}}</b></ng-template>
                                     </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>
                     <!-- </div> -->
-                            <div class="mb-3">
-                                <b>Additional Details Related to Salary Structure:</b>
-                            </div>
-                    <ul >
-                   
+                    <div class="mb-3">
+                        <b>Additional Details Related to Salary Structure:</b>
+                    </div>
+                    <ul>
+
                         <ol class="list-style-none mb-2 pt-2">
                             <li>a) TDS will be deducted from the Gross Salary after statutory deductions.</li>
                             <li>b) Employees are responsible for their Tax Planning.</li>
@@ -358,7 +382,8 @@
                 (click)="openpopup(confirmationpopup)">Accept
 
             </button>
-            <button class="custom-btn  btn-primary-reject" [disabled]="isRejecting || isacknowledged" (click)="openpopup(rejectModal)">
+            <button class="custom-btn  btn-primary-reject" [disabled]="isRejecting || isacknowledged"
+                (click)="openpopup(rejectModal)">
                 <span *ngIf="!isRejecting">Reject</span>
 
             </button>

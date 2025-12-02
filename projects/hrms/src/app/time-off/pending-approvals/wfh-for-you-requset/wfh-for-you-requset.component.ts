@@ -88,6 +88,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   selectedLeaveStatus: any;
+  totalCount: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -395,6 +396,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.searchValue = null;
             this.approveForm.reset();
@@ -473,6 +475,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -541,11 +544,19 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
           this.signalService.wfhForYouTriggerSignal.set(true);
           this.signalService.wfhSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.searchValue = null;
         },
       });
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.wfhModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

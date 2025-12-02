@@ -5,63 +5,25 @@
     </div>
 
     <!-- Resource Filters -->
-    <div class="d-flex gap-4 align-items-center"
-      *ngIf="isActive('/project-management/clients/details/resources') || isActive('/project-management/clients/details/inactive-resources')">
+    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/resources') 
+            || isActive('/project-management/clients/details/inactive-resources')">
       <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
-        Clear All
+        Clear All</button>
+    
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceFilterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
       </button>
-
-      <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Role</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value"
-            resetFilterOnHide="true" placeholder="Please select role" (onChange)="onResourceRoleChange()"
-            [(ngModel)]="selectedResourceRoles" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
+    
+      @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
+      <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
+        <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
       </div>
-
-      <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Phase</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value"
-            resetFilterOnHide="true" placeholder="Please select phase" (onChange)="onResourcePhaseChange()"
-            [(ngModel)]="selectedResourcePhases" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Authority</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value"
-            resetFilterOnHide="true" placeholder="Please select authority" (onChange)="onResourceAuthorityChange()"
-            [(ngModel)]="selectedResourceAuthorities" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <div class="d-flex align-items-center gap-2">
-        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Project</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select project" (onChange)="onProjectSelectionChange()" [(ngModel)]="selectedProjects"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-      </div>
+      }
     </div>
-
-
-    @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
-    <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
-      <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
-    </div>
-    }
-
+    
+    <!--Add Document button -->
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/documents')">
-
-
       @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'inactive'){
       <div *ngIf="isActive('/project-management/clients/details/documents')">
         <button type="button" class="custom-btn btn-primary" (click)="openModal(addDocumentmodal)">
@@ -70,103 +32,26 @@
       }
     </div>
 
-
-
-
-    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')">
+    <!-- project filters and add button -->
+    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects') 
+        || isActive('/project-management/clients/details/inactiveprojects') || isActive('/project-management/clients/details/hold')">
       <!-- Clear All Button -->
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-        Clear All
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
+    
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(projectFilterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
       </button>
-
-      @if(rbac.allowedToAccess('Client Projects.view')){
-      <!-- Department Name Field -->
-      <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
-        <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-          resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
-          (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
-      </div>
-      }
-
-      @if(rbac.allowedToAccess('Client Projects.view')) {
-      <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project Type</label>
-        <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
-          defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
-          (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
-        </p-multiSelect>
-      </div>
-      }
-
-
-
-
-      @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'inactive'){
-      <div>
+    
+      @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'inactive' && 
+      isActive('/project-management/clients/details/projects')){
         <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
           {{'Add Project' | translate }}
         </button>
-      </div>
       }
     </div>
 
-    <div class="d-flex gap-3 align-items-center"
-      *ngIf="isActive('/project-management/clients/details/inactiveprojects')">
-      <!-- Clear All Button -->
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-        Clear All
-      </button>
-
-      @if(rbac.allowedToAccess('Client Projects.view')){
-      <!-- Department Name Field -->
-      <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
-        <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-          resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
-          (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
-      </div>
-      }
-
-      @if(rbac.allowedToAccess('Client Projects.view')) {
-      <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project Type</label>
-        <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
-          defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
-          (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
-        </p-multiSelect>
-      </div>
-      }
-    </div>
-
-
-    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/hold')">
-      <!-- Clear All Button -->
-      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-        Clear All
-      </button>
-
-      @if(rbac.allowedToAccess('Client Projects.view')){
-      <!-- Department Name Field -->
-      <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
-        <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-          resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
-          (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments"></p-multiSelect>
-      </div>
-      }
-
-      @if(rbac.allowedToAccess('Client Projects.view')) {
-      <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project Type</label>
-        <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
-          defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
-          (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes">
-        </p-multiSelect>
-      </div>
-      }
-    </div>
-
+    <!-- Add contact-->
     @if(rbac.allowedToAccess('Contact Information.create') && this.inactiveClientStatus !== 'Inactive'){
     <div *ngIf="isActive('/project-management/clients/details/contact-info')">
       <button type="button" class="custom-btn btn-primary" (click)="opencontactModal(addContactmodal)">
@@ -176,116 +61,29 @@
     }
 
     @if(isActive('/project-management/clients/details/timesheet/resource-summary')){
-    <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-      <div class="d-flex gap-3 align-items-center">
-        @if(isFilterApplied()) {
-        <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
-        }
-        <div class="custom-date-range-picker">
-          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-            [showIcon]="true" [readonlyInput]="true">
-          </p-datepicker>
-        </div>
-
-        <div class="custom-p-select-content">
-          <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
-            filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
-            class="form-select custom-select">
-          </p-select>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
-            placeholder="Please select department" [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true"
-            [showToggleAll]="true" resetFilterOnHide="true" selectedItemsLabel="{0} roles"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId"
-            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
-            [filter]="true" resetFilterOnHide="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select project" [(ngModel)]="selectedProjects" [ngModelOptions]="{standalone: true}"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <div>
-          <button class="custom-btn btn-primary" type="submit" [disabled]="!isFormCompletelyValid()">Apply</button>
-        </div>
-      </div>
-    </form>
+    <div class="d-flex align-items-center gap-3">
+      @if(isFilterApplied()) {
+      <button type="button" class="clear-all-btn" (click)="resetForm()">{{ "Clear All" | translate }}</button>
+      }
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceSummaryfilterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+      </button>
+    </div>
     }
 
     @if(isActive('/project-management/clients/details/timesheet/summary')){
-    <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
-      <div class="d-flex gap-3 align-items-center">
-        @if(isTimesheetFilterApplied()) {
-        <button type="button" class="clear-all-btn" (click)="clearTimesheetFilters()">{{'Clear All' |
-          translate}}</button>
-        }
-        <div class="custom-date-range-picker">
-          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-            [showIcon]="true" [readonlyInput]="true">
-          </p-datepicker>
-        </div>
-
-        <div class="custom-p-multiSelect-content">
-          <label class="form-label custom-label text-nowrap filter-labels m-2">Select Department</label>
-          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
-            [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
-            placeholder="Please select department" [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} depts"
-            resetFilterOnHide="true" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-        <!-- <div class="custom-p-multiSelect-content">
-          <label class="form-label custom-label text-nowrap filter-labels m-2">Select Role</label>
-          <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
-            [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
-            selectedItemsLabel="{0} roles" class="form-select custom-select">
-          </p-multiSelect>
-        </div> -->
-
-        <div class="custom-p-multiSelect-content">
-          <label class="form-label custom-label text-nowrap filter-labels m-2">Select Phase</label>
-          <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId" resetFilterOnHide="true"
-            [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
-            [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} phases" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-
-
-        <div class="custom-p-multiSelect-content">
-        <label class="form-label custom-label text-nowrap filter-labels m-2">Select Project</label>
-          <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-            placeholder="Please select project" [(ngModel)]="selectedProjectIds" [ngModelOptions]="{standalone: true}"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-        <div>
-          <button class="custom-btn btn-primary" type="submit">Apply</button>
-        </div>
-      </div>
-    </form>
+    <div class="d-flex align-items-center gap-3">
+      @if(isTimesheetFilterApplied()) {
+      <button type="button" class="clear-all-btn" (click)="clearTimesheetFilters()">{{ "Clear All" | translate }}</button>
+      }
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(summaryFilterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+      </button>
+    </div>
     }
   </div>
-
 
   <div class="main-content d-flex w-100 gap-3 w-100">
     <div class="component-left-tabs-container">
@@ -389,6 +187,245 @@
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
       <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Resources Data Filters -->
+<ng-template #resourceFilterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Role</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourceRoleOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select role" (onChange)="onResourceRoleChange()" [(ngModel)]="selectedResourceRoles"
+            class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+    
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Phase</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourcePhaseOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select phase" (onChange)="onResourcePhaseChange()" [(ngModel)]="selectedResourcePhases"
+            class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+    
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Authority</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourceAuthorityOptions" optionLabel="label" optionValue="value"
+            resetFilterOnHide="true" placeholder="Please select authority" (onChange)="onResourceAuthorityChange()"
+            [(ngModel)]="selectedResourceAuthorities" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+    
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+            placeholder="Please select project" (onChange)="onProjectSelectionChange()" [(ngModel)]="selectedProjects"
+            class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+    
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearResourceFilters()">
+          {{'Clear All' | translate}}</button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{'Close' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Projects Data Filters -->
+<ng-template #projectFilterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <!-- Department Name Field -->
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+            resetFilterOnHide="true" defaultLabel="Please select department name" class="form-select custom-select"
+            (onChange)="onDepartmentChangelist($event)" [(ngModel)]="selectedDepartments" />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project Type</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projectTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
+            defaultLabel="Please select project type" [filter]="true" class="form-select custom-select"
+            (onChange)="onProjectTypeChange($event)" [(ngModel)]="selectedProjectTypes" />
+        </div>
+      </div>
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+          {{'Clear All' | translate}}</button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{'Close' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Resources Summary Data Filters -->
+<ng-template #resourceSummaryfilterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select date range</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select resource</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
+              filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
+              class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+              resetFilterOnHide="true" [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
+              placeholder="Please select department" [filter]="true" [showToggleAll]="true"
+              selectedItemsLabel="{0} depts" class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select role</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
+              [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true"
+              [showToggleAll]="true" resetFilterOnHide="true" selectedItemsLabel="{0} roles"
+              class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select phase</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId"
+              [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
+              [filter]="true" resetFilterOnHide="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
+              class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select project</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+              placeholder="Please select project" [(ngModel)]="selectedProjects" [ngModelOptions]="{standalone: true}"
+              class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas();resetForm()">
+            {{'Close' | translate}}</button>
+          <button type="submit" class="custom-btn btn-primary w-100"
+            [disabled]="!isFormCompletelyValid()">Apply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Summary Data Filters -->
+<ng-template #summaryFilterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select date range</label>
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Department</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+              [(ngModel)]="selectedDepartmentIds" [ngModelOptions]="{standalone: true}"
+              placeholder="Please select department" [filter]="true" [showToggleAll]="true"
+              selectedItemsLabel="{0} depts" resetFilterOnHide="true" class="form-select custom-select" />
+          </div>
+        </div>
+
+        <!-- <div class="custom-p-multiSelect-content">
+              <label class="form-label custom-label text-nowrap filter-labels m-2">Select Role</label>
+              <p-multiSelect [options]="rolesList" optionLabel="roleName" optionValue="id" [(ngModel)]="selectedRoleIds"
+                [ngModelOptions]="{standalone: true}" placeholder="Please select role" [filter]="true" [showToggleAll]="true" resetFilterOnHide="true"
+                selectedItemsLabel="{0} roles" class="form-select custom-select">
+              </p-multiSelect>
+            </div> -->
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Phase</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId" resetFilterOnHide="true"
+              [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
+              [filter]="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
+              class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
+              placeholder="Please select project" [(ngModel)]="selectedProjectIds" [ngModelOptions]="{standalone: true}"
+              class="form-select custom-select" />
+          </div>
+        </div>
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button type="button" class="custom-btn btn-secondary w-100"
+            (click)="closeCanvas();clearTimesheetFilters()">{{'Close' | translate}}</button>
+          <button type="submit" class="custom-btn btn-primary w-100">Apply</button>
+        </div>
+      </form>
     </div>
   </div>
 </ng-template>

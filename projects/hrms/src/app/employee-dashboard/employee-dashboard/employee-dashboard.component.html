@@ -118,10 +118,10 @@
 
             <div class="member-list-container">
                 <p-tabs scrollable>
-                    <p-tablist>
+                    <p-tablist p-tablistNav>
                         <ng-container *ngIf="!loading; else tabsSkeleton">
                             @for (emp of teamMembers; track $index) {
-                            <p-tab>
+                            <p-tab p-tablistTab>
                                 <div class="custom-border-content">
                                     <div class="member-card text-center">
                                         <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />

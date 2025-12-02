@@ -23,8 +23,8 @@ import { Project } from '../../../Interfaces/projects.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-client-view',
-  imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ClientTabsComponent, 
-    RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent, 
+  imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ClientTabsComponent,
+    RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent,
     MultiSelectModule, ResourceCreationComponent, Select, FormsModule, MultiSelectModule],
   templateUrl: './client-view.component.html',
   styleUrl: './client-view.component.scss',
@@ -80,8 +80,8 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   selectedProjects: any[] = [];
   projectOptions: any[] = [];
 
-  constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, 
-    private http: HttpService, private modalService: NgbModal, private authService: AuthService, 
+  constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute,
+    private http: HttpService, private modalService: NgbModal, private authService: AuthService,
     private conformationPopup: OpenModalService, public rbac: RbacService, private offcanvasService: NgbOffcanvas) {}
 
   ngOnInit() {
@@ -850,6 +850,48 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
+
+  // 1. Resources Tab (Active + Inactive Resources)
+isFilterAppliedForResources(): boolean {
+  return this.selectedResourceRoles.length > 0 ||
+         this.selectedResourcePhases.length > 0 ||
+         this.selectedResourceAuthorities.length > 0 ||
+         this.selectedProjects.length > 0;
+}
+
+// 2. Projects Tab (Active, Inactive, Hold)
+isFilterAppliedForProjects(): boolean {
+  return this.selectedDepartments.length > 0 ||
+         this.selectedProjectTypes.length > 0
+}
+
+// 3. Timesheet → Resource Summary (Detailed View)
+isFilterAppliedDetailedSummary(): boolean {
+  const formValue = this.datepickerForm.value;
+
+  const hasDateRange = formValue.dateRange && formValue.dateRange.length === 2;
+  const hasProject = !!formValue.projectId;
+  const hasResource = !!formValue.resourceId;
+  const hasDept = this.selectedDepartmentIds.length > 0;
+  const hasRole = this.selectedRoleIds.length > 0;
+  const hasPhase = this.selectedPhaseIds.length > 0;
+  const hasProjectFilter = this.selectedProjectIds.length > 0;
+
+  return hasDateRange || hasProject || hasResource || hasDept || hasRole || hasPhase || hasProjectFilter;
+}
+
+// 4. Timesheet → Summary (Charts View)
+isFilterAppliedForResourceSummary(): boolean {
+  const formValue = this.datepickerFormDataforsummary?.value;
+
+  const hasDateRange = formValue?.dateRange && formValue.dateRange.length === 2;
+  const hasDept = this.selectedDepartmentIds.length > 0;
+  const hasRole = this.selectedRoleIds.length > 0;
+  const hasPhase = this.selectedPhaseIds.length > 0;
+  const hasProject = this.selectedProjectIds.length > 0;
+
+  return hasDateRange || hasDept || hasRole || hasPhase || hasProject;
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

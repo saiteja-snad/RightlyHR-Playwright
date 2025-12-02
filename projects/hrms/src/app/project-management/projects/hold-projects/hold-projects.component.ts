@@ -19,7 +19,7 @@ import { ActiveprojectsPipe } from '../../../Pipes/activeprojects.pipe';
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { combineLatest } from 'rxjs';
-
+import { Chip } from 'primeng/chip';
 
 @Component({
   selector: 'app-hold-projects',
@@ -36,6 +36,7 @@ import { combineLatest } from 'rxjs';
     ActiveprojectsPipe,
     ProjectsSideTabsForClientsComponent,
     MultiSelectModule,
+    Chip,
   ],
   templateUrl: './hold-projects.component.html',
   styleUrl: './hold-projects.component.scss',
@@ -55,7 +56,6 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   selectedClients: any[] = [];
   clientDetails: any[] = [];
 
-
   constructor(
     private router: Router,
     private http: HttpService,
@@ -64,7 +64,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public rbac: RbacService,
     private offcanvasService: NgbOffcanvas
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.http.setDepartmentIds([]);
@@ -74,12 +74,12 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.getdatabaedonRoute();
     this.DepartmentList();
     this.getprojecttypesData();
-    this.clientList()
+    this.clientList();
 
     // Listen to department filter changes from service (shared across tabs)
     combineLatest([
       this.http.selectedDepartmentIds$,
-      this.http.projectTypeFilter$
+      this.http.projectTypeFilter$,
     ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([deptIds, projectTypes]) => {
@@ -200,19 +200,22 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
     }
 
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.projectsData = res?.data ?? [];
-        this.loading = false;
-      },
-      error: () => {
-        this.projectsData = [];
-        this.loading = false;
-      }
-    });
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.projectsData = res?.data ?? [];
+          this.loading = false;
+        },
+        error: () => {
+          this.projectsData = [];
+          this.loading = false;
+        },
+      });
   }
 
   getprojectbyid(clientID: any): void {
@@ -234,16 +237,19 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
     }
 
-    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.projectsData = res?.data ?? [];
-        this.inactiveClientStatus = res?.data?.[0]?.client?.status?.toLowerCase();
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.projectsData = res?.data ?? [];
+          this.inactiveClientStatus =
+            res?.data?.[0]?.client?.status?.toLowerCase();
+          this.loading = false;
+        },
+        error: () => (this.loading = false),
+      });
   }
-
 
   openModalstatus(modal: any, project: Project) {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
@@ -357,15 +363,81 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
 
     // Convert back to hex
-    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+    return `#${newR.toString(16).padStart(2, '0')}${newG
+      .toString(16)
+      .padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
 
   toggleFilters(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
   }
 
   closeCanvas() {
     this.offcanvasService.dismiss();
+  }
+
+  // 1. Show red dot on Filters button
+  isFilterApplied(): boolean {
+    return (
+      this.selectedClients.length > 0 ||
+      this.selectedDepartmentIds.length > 0 ||
+      this.selectedProjectTypes.length > 0
+    );
+  }
+
+  // 2. Build chips list
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+
+    // Clients
+    this.selectedClients.forEach((client: any) => {
+      filters.push({ type: 'client', label: client.clientName, value: client });
+    });
+
+    // Departments
+    this.selectedDepartmentIds.forEach((id: any) => {
+      const dept = this.departmentlist.find((d: any) => d.sno === id);
+      if (dept) {
+        filters.push({
+          type: 'department',
+          label: dept.departmentName,
+          value: id,
+        });
+      }
+    });
+
+    // Project Types
+    this.selectedProjectTypes.forEach((type: string) => {
+      filters.push({ type: 'projectType', label: type, value: type });
+    });
+
+    return filters;
+  }
+
+  // 3. Remove single chip
+  removeFilter(filter: any) {
+    if (filter.type === 'client') {
+      this.selectedClients = this.selectedClients.filter(
+        (c: any) => c !== filter.value
+      );
+    } else if (filter.type === 'department') {
+      this.selectedDepartmentIds = this.selectedDepartmentIds.filter(
+        (id: any) => id !== filter.value
+      );
+      this.http.setDepartmentIds(
+        this.selectedDepartmentIds.length > 0 ? this.selectedDepartmentIds : []
+      );
+    } else if (filter.type === 'projectType') {
+      this.selectedProjectTypes = this.selectedProjectTypes.filter(
+        (t: string) => t !== filter.value
+      );
+    }
+
+    this.getdatabaedonRoute(); // Reload data
   }
 
   ngOnDestroy() {

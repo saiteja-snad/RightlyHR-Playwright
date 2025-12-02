@@ -6,19 +6,29 @@
     <!-- FILTERS ROW (NEW) -->
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <!-- Reset Filters -->
-      <div class="d-flex gap-2 align-items-center"
-        *ngIf="selectedDepartmentIds.length > 0 || selectedProjectTypes.length > 0 || selectedClients.length > 0">
-        <button type="button" class="clear-all-button" (click)="clearAllFilters()">
-          {{ 'Clear All' | translate }}
-        </button>
-      </div>
 
       <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
         <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
           <i class="bi bi-funnel me-2"></i>Filters
-          <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Filter Chips Display - NEW -->
+  <div class="fliter-chip-content mb-2" *ngIf="isActive('/project-management/projects/hold') && getSelectedFilters().length > 0">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+        (onRemove)="removeFilter(filter)" />
+
+      <!-- +X More chip -->
+      <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+        label="+{{ getSelectedFilters().length - 3 }} More" (click)="toggleFilters(filterContent)" />
+
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+        {{ 'Clear All' | translate }}
+      </button>
     </div>
   </div>
 

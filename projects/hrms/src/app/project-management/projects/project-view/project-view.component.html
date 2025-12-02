@@ -11,10 +11,10 @@
         <button type="button" class="custom-btn btn-secondary position-relative"
           (click)="toggleFilters(activephasefilterContent)">
           <i class="bi bi-funnel me-2"></i>Filters
-          <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+          <span *ngIf="isFilterAppliedForActivePhases()" class="filter-indicator"></span>
         </button>
       </div>
-    
+
       @if(rbac.allowedToAccess('Project Phases Tab.create')){
       <button type="button" class="custom-btn btn-primary" (click)="openPhaseModal()">{{ "Add Phase / Milestone" }}</button>
       }
@@ -28,7 +28,7 @@
         <button type="button" class="custom-btn btn-secondary position-relative"
           (click)="toggleFilters(inactivephasefilterContent)">
           <i class="bi bi-funnel me-2"></i>Filters
-          <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+          <span *ngIf="isFilterAppliedForInActivePhases()" class="filter-indicator"></span>
         </button>
       </div>
     </div>
@@ -36,7 +36,7 @@
     <!--Hold Phases -->
     <div class="d-flex align-items-center gap-3" *ngIf="isActive('/project-management/projects/details/hold-phases')">
       <button type="button" class="clear-all-btn" (click)="clearPhaseFilters()">Clear All</button>
-    
+
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Date Range</label>
         <div class="custom-date-range-picker">
@@ -68,16 +68,16 @@
     </div>
 
     <!-- Resource Filters -->
-    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/projects/details/resources') || 
+    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/projects/details/resources') ||
       isActive('/project-management/projects/details/inactive-resources')">
       <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
         Clear All</button>
-    
+
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourcefilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedForProjectResources()" class="filter-indicator"></span>
       </button>
-    
+
       @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'inactive' &&
       isActive('/project-management/projects/details/resources')){
       <button type="button" class="custom-btn btn-primary" (click)="openResourceModal()">{{ "Add Resources" }}</button>
@@ -91,7 +91,7 @@
       }
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceSummaryfilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedForDetailedSummary()" class="filter-indicator"></span>
       </button>
     </div>
     }
@@ -103,7 +103,7 @@
       }
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(summaryFilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedForResourceSummary()" class="filter-indicator"></span>
       </button>
     </div>
     }
@@ -135,6 +135,15 @@
     </div>
 
     <div class="offcanvas-filter-content">
+            <div class="mb-3">
+              <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
+              <div class="custom-date-range-picker">
+                <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                  resetFilterOnHide="true" placeholder="Please select date range" (onClose)="onPhaseDateChange()"
+                  (onClearClick)="onPhaseDateClear()" />
+              </div>
+            </div>
+
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Status</label>
         <div class="custom-p-multiSelect-content">
@@ -142,15 +151,6 @@
             placeholder="Please select status" [filter]="true" (onChange)="onPhaseStatusChange($event)"
             (onClear)="onPhaseStatusChange($event)" [(ngModel)]="selectedActivePhaseStatuses"
             class="form-select custom-select" />
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
-        <div class="custom-date-range-picker">
-          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-            resetFilterOnHide="true" placeholder="Please select date range" (onClose)="onPhaseDateChange()"
-            (onClearClick)="onPhaseDateClear()" />
         </div>
       </div>
 
@@ -181,6 +181,15 @@
     </div>
 
     <div class="offcanvas-filter-content">
+            <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
+        <div class="custom-date-range-picker">
+          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+            placeholder="Please select date range" (onClose)="onPhaseDateChange()"
+            (onClearClick)="onPhaseDateClear()" />
+        </div>
+      </div>
+
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Status</label>
         <div class="custom-p-multiSelect-content">
@@ -188,15 +197,6 @@
             resetFilterOnHide="true" placeholder="Please select status" [filter]="true"
             (onChange)="onPhaseStatusChange($event)" (onClear)="onPhaseStatusChange($event)"
             [(ngModel)]="selectedInActivePhaseStatuses" class="form-select custom-select" />
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Date Range</label>
-        <div class="custom-date-range-picker">
-          <p-datepicker [(ngModel)]="phaseDateRange" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-            placeholder="Please select date range" (onClose)="onPhaseDateChange()"
-            (onClearClick)="onPhaseDateClear()" />
         </div>
       </div>
 
@@ -281,7 +281,7 @@
               [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
-    
+
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select resource</label>
           <div class="custom-p-select-content">
@@ -290,7 +290,7 @@
               class="form-select custom-select" />
           </div>
         </div>
-    
+
         <!-- Department Multi-Select -->
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select department</label>
@@ -301,7 +301,7 @@
               class="form-select custom-select" />
           </div>
         </div>
-    
+
         <!-- Role Multi-Select -->
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select role</label>
@@ -311,7 +311,7 @@
               class="form-select custom-select" [ngModelOptions]="{standalone: true}" />
           </div>
         </div>
-    
+
         <!-- Phase Multi-Select -->
         <div class="mb-3">
           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select phase</label>
@@ -321,7 +321,7 @@
               class="form-select custom-select" [ngModelOptions]="{standalone: true}" />
           </div>
         </div>
-    
+
         <div class="d-flex offcanvas-footer-content gap-3">
           <button type="button" class="custom-btn btn-secondary w-100" (click)="closeCanvas()">{{'Close' | translate}}</button>
           <button type="submit" class="custom-btn btn-primary w-100">Apply</button>

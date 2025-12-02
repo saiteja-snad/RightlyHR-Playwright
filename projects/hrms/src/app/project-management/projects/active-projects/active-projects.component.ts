@@ -23,11 +23,12 @@ import { ProjectsSideTabsComponent } from '../../../shared/project-management-ta
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 import { combineLatest } from 'rxjs';
+import { Chip } from 'primeng/chip';
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent, 
-    TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, 
-    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent],
+  imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent,
+    TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent,
+    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss',
 })
@@ -65,8 +66,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   selectedClients: any[] = [];
   clientDetails: any[] = [];
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router, 
-    public formValidation: FormValidationsService, private http: HttpService, private conformationPopup: OpenModalService, 
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
+    public formValidation: FormValidationsService, private http: HttpService, private conformationPopup: OpenModalService,
     private route: ActivatedRoute, public rbac: RbacService, private offcanvasService: NgbOffcanvas) {}
 
   ngOnInit() {
@@ -737,6 +738,53 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   closeCanvas() {
     this.offcanvasService.dismiss();
+  }
+
+
+    // 1. Show red dot on Filters button
+  isFilterApplied(): boolean {
+    return this.selectedClients.length > 0 ||
+           this.selectedDepartmentIds.length > 0 ||
+           this.selectedProjectTypes.length > 0;
+  }
+
+  // 2. Build chips list
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+
+    // Clients
+    this.selectedClients.forEach((client: any) => {
+      filters.push({ type: 'client', label: client.clientName, value: client });
+    });
+
+    // Departments
+    this.selectedDepartmentIds.forEach((id: any) => {
+      const dept = this.departmentlist.find((d: any) => d.sno === id);
+      if (dept) {
+        filters.push({ type: 'department', label: dept.departmentName, value: id });
+      }
+    });
+
+    // Project Types
+    this.selectedProjectTypes.forEach((type: string) => {
+      filters.push({ type: 'projectType', label: type, value: type });
+    });
+
+    return filters;
+  }
+
+  // 3. Remove single chip
+  removeFilter(filter: any) {
+    if (filter.type === 'client') {
+      this.selectedClients = this.selectedClients.filter((c: any) => c !== filter.value);
+    } else if (filter.type === 'department') {
+      this.selectedDepartmentIds = this.selectedDepartmentIds.filter((id: any) => id !== filter.value);
+      this.http.setDepartmentIds(this.selectedDepartmentIds); // Important!
+    } else if (filter.type === 'projectType') {
+      this.selectedProjectTypes = this.selectedProjectTypes.filter((t: string) => t !== filter.value);
+    }
+
+    this.getProjectsBasedOnRoute(); // Reload data
   }
 
   ngOnDestroy() {

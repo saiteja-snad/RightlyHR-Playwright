@@ -22,8 +22,8 @@ import { Select } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-project-view',
-  imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule, 
-    TranslateModule, CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select, 
+  imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule,
+    TranslateModule, CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select,
     PhasesCreationComponent, MultiSelectModule, FormsModule],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss',
@@ -562,6 +562,59 @@ export class ProjectViewComponent implements OnInit {
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
+
+  // 1. Active Phases Filter Indicator
+// 1. Active Phases Filter Indicator (Fixed & Safe)
+isFilterAppliedForActivePhases(): boolean {
+  const hasStatus = this.selectedActivePhaseStatuses.length > 0;
+  const hasDateRange = this.phaseDateRange.length === 2 &&
+                       this.phaseDateRange[0] != null &&
+                       this.phaseDateRange[1] != null;
+
+  return hasStatus || hasDateRange;
+}
+
+// 2. Inactive Phases Filter Indicator (Fixed & Safe)
+isFilterAppliedForInActivePhases(): boolean {
+  const hasStatus = this.selectedInActivePhaseStatuses.length > 0;
+  const hasDateRange = this.phaseDateRange.length === 2 &&
+                       this.phaseDateRange[0] != null &&
+                       this.phaseDateRange[1] != null;
+
+  return hasStatus || hasDateRange;
+}
+
+// 3. Project Resources (Active + Inactive) Filter Indicator
+isFilterAppliedForProjectResources(): boolean {
+  return this.selectedResourceRoles.length > 0 ||
+         this.selectedResourcePhases.length > 0 ||
+         this.selectedResourceAuthorities.length > 0;
+}
+
+// 4. Resource Summary (Detailed Timesheet View) — includes date + resource + dept + role + phase
+isFilterAppliedForDetailedSummary(): boolean {
+  const formValue = this.datepickerFormData.value;
+
+  const hasDateRange = formValue.dateRange && formValue.dateRange.length === 2;
+  const hasResource = !!formValue.resourceId;
+  const hasDepartment = this.selectedDepartmentIds.length > 0;
+  const hasRole = this.selectedResourceRoles.length > 0;
+  const hasPhase = this.selectedResourcePhases.length > 0;
+
+  return hasDateRange || hasResource || hasDepartment || hasRole || hasPhase;
+}
+
+// 5. Project Timesheet Summary (Charts) — includes date + dept + role + phase
+isFilterAppliedForResourceSummary(): boolean {
+  const formValue = this.datepickerFormDataforsummary?.value;
+
+  const hasDateRange = formValue?.dateRange && formValue.dateRange.length === 2;
+  const hasDepartment = this.selectedDepartmentIds.length > 0;
+  const hasRole = this.selectedResourceRoles.length > 0;
+  const hasPhase = this.selectedResourcePhases.length > 0;
+
+  return hasDateRange || hasDepartment || hasRole || hasPhase;
+}
 
   ngOnDestroy() {
     this.destroy$.next(true);

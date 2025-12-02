@@ -21,6 +21,7 @@
                     <!-- <th>Employee ID</th> -->
                     <th>Name</th>
                     <th class="text-center">Phases / Milestones</th>
+                    <th class="text-center">Project Code</th>
                     <!-- <th>Designation</th> -->
                     <th class="text-center">Role</th>
                     <!-- <th>Email</th>
@@ -42,6 +43,7 @@
                             <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
+                            <td class="text-center">{{ data?.project?.meta?.graphData?.code|| '-'}}</td>
                             <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
                             <td class="text-center">{{ data?.role || '-' }}</td>
                             <!-- <td>{{ data?.employee?.workMail || '-' }}</td>

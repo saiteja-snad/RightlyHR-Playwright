@@ -25,6 +25,7 @@
                     <!-- <th>Email</th> -->
                     <!-- <th>Phone Number</th> -->
                     <th class="text-center">Phases / Milestones</th>
+                    <th class="text-center">Project Code</th>
                     <th>Project Assigned</th>
                     <th class="text-center">Start Date</th>
                     <th class="text-center">End Date</th>
@@ -46,6 +47,7 @@
                             <!-- <td>{{ data?.employee?.workMail || '-' }}</td> -->
                             <!-- <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td> -->
                             <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
+                             <td class="text-center">{{ data?.project?.meta?.graphData?.code|| '-'}}</td>
                             <td>{{ data?.project?.projectName || '-' }}</td>
                             <td class="text-center">{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td class="text-center">{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
@@ -123,7 +125,7 @@
                                 (onChange)="onClickEmployee($event)" resetFilterOnHide="true" [readonly]="true"
                                 [ngClass]="{ 'readonly-select': true }"></p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched &&
                         updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
                     </div>
 
@@ -133,7 +135,7 @@
                             Designation<span class="text-danger">*</span></label>
                         <input type="text" id="designation" formControlName="designation"
                             class="form-control custom-input" placeholder="Designation" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('designation')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('designation')?.touched &&
                         updateResourceForm.get('designation')?.invalid">Designation is required</div>
                     </div>
 
@@ -147,7 +149,7 @@
                                 placeholder="Please select project name" class="form-select custom-select"
                                 (onChange)="selectProject($event.value)"></p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched &&
                         updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
                     </div>
 
@@ -175,7 +177,7 @@
                         <div class="error-msg">
                             <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
-                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']
                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
                                 {{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
@@ -223,16 +225,16 @@
                                 class="custom-select w-100" resetFilterOnHide="true">
                             </p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched &&
                         updateResourceForm.get('resourceAuthority')?.invalid">Timesheet Approval Authority is required</div>
                     </div>
-                    
+
                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceEmail" class="form-label custom-label mb-2">Email<span class="text-danger">*</span></label>
-                        <input type="email" id="resourceEmail" formControlName="resourceEmail" class="form-control custom-input" 
+                        <input type="email" id="resourceEmail" formControlName="resourceEmail" class="form-control custom-input"
                         placeholder="Enter email address" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched &&
                         updateResourceForm.get('resourceEmail')?.invalid">Email is required</div>
                     </div>
 
@@ -241,7 +243,7 @@
                         <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
                         <input type="text" id="resourcePhone" formControlName="resourcePhone"
                             class="form-control custom-input" placeholder="Please enter phone number" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched &&
                         updateResourceForm.get('resourcePhone')?.invalid">Phone Number is required</div>
                     </div>
 
@@ -250,9 +252,9 @@
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="startDate" formControlName="startDate" [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null" (change)="oncheckdates(updateResourceForm.get('startDate')?.value)" 
+                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null" (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
                             class="form-control custom-input" />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched &&
                         updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>

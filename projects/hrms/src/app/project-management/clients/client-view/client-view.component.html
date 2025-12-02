@@ -5,23 +5,23 @@
     </div>
 
     <!-- Resource Filters -->
-    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/resources') 
+    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/resources')
             || isActive('/project-management/clients/details/inactive-resources')">
       <button type="button" class="clear-all-btn" (click)="clearResourceFilters()" *ngIf="isResourceFilterApplied()">
         Clear All</button>
-    
+
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceFilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedForResources()" class="filter-indicator"></span>
       </button>
-    
+
       @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'inactive'){
       <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
         <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
       </div>
       }
     </div>
-    
+
     <!--Add Document button -->
     <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/documents')">
       @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'inactive'){
@@ -33,17 +33,17 @@
     </div>
 
     <!-- project filters and add button -->
-    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects') 
+    <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')
         || isActive('/project-management/clients/details/inactiveprojects') || isActive('/project-management/clients/details/hold')">
       <!-- Clear All Button -->
       <button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
-    
+
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(projectFilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedForProjects()" class="filter-indicator"></span>
       </button>
-    
-      @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'inactive' && 
+
+      @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'inactive' &&
       isActive('/project-management/clients/details/projects')){
         <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
           {{'Add Project' | translate }}
@@ -67,7 +67,7 @@
       }
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(resourceSummaryfilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedDetailedSummary()" class="filter-indicator"></span>
       </button>
     </div>
     }
@@ -79,7 +79,7 @@
       }
       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(summaryFilterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
+        <span *ngIf="isFilterAppliedForResourceSummary()" class="filter-indicator"></span>
       </button>
     </div>
     }
@@ -209,7 +209,7 @@
           </p-multiSelect>
         </div>
       </div>
-    
+
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Phase</label>
         <div class="custom-p-multiSelect-content">
@@ -219,7 +219,7 @@
           </p-multiSelect>
         </div>
       </div>
-    
+
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Authority</label>
         <div class="custom-p-multiSelect-content">
@@ -229,7 +229,7 @@
           </p-multiSelect>
         </div>
       </div>
-    
+
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Project</label>
         <div class="custom-p-multiSelect-content">
@@ -239,7 +239,7 @@
           </p-multiSelect>
         </div>
       </div>
-    
+
       <div class="d-flex offcanvas-footer-content gap-3">
         <button type="button" class="custom-btn btn-secondary w-100" (click)="clearResourceFilters()">
           {{'Clear All' | translate}}</button>
@@ -341,15 +341,6 @@
             <p-multiSelect [options]="phasesList" optionLabel="label" optionValue="phaseId"
               [(ngModel)]="selectedPhaseIds" [ngModelOptions]="{standalone: true}" placeholder="Please select phase"
               [filter]="true" resetFilterOnHide="true" [showToggleAll]="true" selectedItemsLabel="{0} phases"
-              class="form-select custom-select" />
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select project</label>
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="projectOptions" optionLabel="label" optionValue="value" resetFilterOnHide="true"
-              placeholder="Please select project" [(ngModel)]="selectedProjects" [ngModelOptions]="{standalone: true}"
               class="form-select custom-select" />
           </div>
         </div>

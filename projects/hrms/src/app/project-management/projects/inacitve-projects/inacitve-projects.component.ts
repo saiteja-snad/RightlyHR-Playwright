@@ -18,12 +18,25 @@ import { ProjectsSideTabsComponent } from '../../../shared/project-management-ta
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { combineLatest } from 'rxjs';
+import { Chip } from 'primeng/chip';
 
 @Component({
   selector: 'app-inacitve-projects',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe,
-    ProjectsSideTabsComponent, ProjectsSideTabsForClientsComponent, MultiSelectModule],
+  imports: [
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    FormsModule,
+    TranslateModule,
+    CommonModule,
+    RouterModule,
+    ProjectManagementModuleInfoComponent,
+    ConfirmationIconComponent,
+    ActiveprojectsPipe,
+    ProjectsSideTabsComponent,
+    ProjectsSideTabsForClientsComponent,
+    MultiSelectModule,
+    Chip,
+  ],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss',
 })
@@ -62,16 +75,16 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
     // Listen to department filter changes from service (shared across tabs)
     combineLatest([
-    this.http.selectedDepartmentIds$,
-    this.http.projectTypeFilter$
-  ])
-  .pipe(takeUntil(this.destroy$))
-  .subscribe(([deptIds, projectTypes]) => {
-    this.selectedDepartmentIds = deptIds || [];
-    this.selectedProjectTypes = projectTypes || [];
+      this.http.selectedDepartmentIds$,
+      this.http.projectTypeFilter$,
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([deptIds, projectTypes]) => {
+        this.selectedDepartmentIds = deptIds || [];
+        this.selectedProjectTypes = projectTypes || [];
 
-    this.getdatabaedonRoute();
-  });
+        this.getdatabaedonRoute();
+      });
     this.getdatabaedonRoute();
     this.clientList();
   }
@@ -156,7 +169,9 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
   navigateView(projectId: number) {
     localStorage.setItem('projectProjectId', projectId.toString());
-    this.router.navigate(['project-management/projects/details'], { queryParams: { id: projectId } });
+    this.router.navigate(['project-management/projects/details'], {
+      queryParams: { id: projectId },
+    });
   }
 
   getDepartmentNames(project: Project): string {
@@ -317,17 +332,82 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     const newB = Math.min(255, Math.floor(b + (255 - b) * amount));
 
     // Convert back to hex
-    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+    return `#${newR.toString(16).padStart(2, '0')}${newG
+      .toString(16)
+      .padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
 
-    toggleFilters(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      keyboard: false,
+    });
   }
 
   closeCanvas() {
     this.offcanvasService.dismiss();
   }
 
+  // 1. Show red dot on Filters button
+  isFilterApplied(): boolean {
+    return (
+      this.selectedClients.length > 0 ||
+      this.selectedDepartmentIds.length > 0 ||
+      this.selectedProjectTypes.length > 0
+    );
+  }
+
+  // 2. Build chips list
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+
+    // Clients
+    this.selectedClients.forEach((client: any) => {
+      filters.push({ type: 'client', label: client.clientName, value: client });
+    });
+
+    // Departments
+    this.selectedDepartmentIds.forEach((id: any) => {
+      const dept = this.departmentlist.find((d: any) => d.sno === id);
+      if (dept) {
+        filters.push({
+          type: 'department',
+          label: dept.departmentName,
+          value: id,
+        });
+      }
+    });
+
+    // Project Types
+    this.selectedProjectTypes.forEach((type: string) => {
+      filters.push({ type: 'projectType', label: type, value: type });
+    });
+
+    return filters;
+  }
+
+  // 3. Remove single chip
+  removeFilter(filter: any) {
+    if (filter.type === 'client') {
+      this.selectedClients = this.selectedClients.filter(
+        (c: any) => c !== filter.value
+      );
+    } else if (filter.type === 'department') {
+      this.selectedDepartmentIds = this.selectedDepartmentIds.filter(
+        (id: any) => id !== filter.value
+      );
+      this.http.setDepartmentIds(
+        this.selectedDepartmentIds.length > 0 ? this.selectedDepartmentIds : []
+      );
+    } else if (filter.type === 'projectType') {
+      this.selectedProjectTypes = this.selectedProjectTypes.filter(
+        (t: string) => t !== filter.value
+      );
+    }
+
+    this.getdatabaedonRoute(); // Reload data
+  }
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

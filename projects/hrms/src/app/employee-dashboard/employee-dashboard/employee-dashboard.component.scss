@@ -291,7 +291,7 @@
 
 .daliy-events-content {
     background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-    min-height: 9rem !important;
+    min-height: 8rem !important;
     position: relative;
     overflow: hidden;
 
@@ -315,7 +315,7 @@
         justify-content: center;
         align-items: center;
         position: relative;
-        padding: 2.5rem 0.75rem 0.75rem;
+        padding: 1rem 0.75rem 0.75rem;
 
         .celebration-img {
             position: absolute;
@@ -411,7 +411,7 @@
 }
 
 .birthday-event-list-content {
-    height: 17dvh;
+    height: 18dvh;
     max-height: 20dvh;
     overflow-y: auto;
 }

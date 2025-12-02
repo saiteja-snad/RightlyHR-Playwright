@@ -96,7 +96,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="addressTypeOptions" optionLabel="label" (onChange)="filterFieldsByAddressType()"
-              optionValue="value" formControlName="addressType" [readonly]="isReadOnlyMode && !isEditMode"
+              optionValue="value" formControlName="addressType" [readonly]="isEditMode"
               placeholder="{{'Please select address type' | translate}}">
             </p-select>
           </div>
@@ -117,7 +117,7 @@
           <!-- Multi-select for create mode -->
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
             <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
-              optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames"
+              optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames" (onChange)="change()"
               placeholder="{{'Please select field names' | translate}}" [filter]="true" [readonly]="isReadOnlyMode">
             </p-multiSelect>
           </div>
@@ -216,7 +216,7 @@
             {{ 'Cancel' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary" (click)="saveFieldConfig(modal)"
-            [disabled]="fieldConfigForm.invalid">
+            [disabled]="fieldConfigForm.invalid ||isReadOnlyMode">
             {{ (isEditMode ? 'Update' : 'Save') | translate }}
           </button>
         </div>

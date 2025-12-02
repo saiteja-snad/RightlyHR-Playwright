@@ -76,15 +76,19 @@ export class AddressesComponent {
     private authService: AuthService
   ) {}
   ngOnInit(): void {
-    this.fieldConfigForm = this.fb.group({
-      addressType: ['', Validators.required],
-      fieldNames: [[], Validators.required],
-      approvalRequired: [true],
-      approvalType: ['', Validators.required],
-      selectedEmployee: [''],
-      selectedRole: [''],
-      selectedManager: [''],
-    });
+    this.initializeFormControls();
+    this.fieldConfigForm.get('fieldNames')?.valueChanges.subscribe(val => {
+    const approval = this.fieldConfigForm.get('approvalType');
+
+    // If field names selected → approval type must be required
+    if (val && val.length > 0) {
+      approval?.setValidators([Validators.required]);
+    } else {
+      approval?.clearValidators();
+    }
+
+    approval?.updateValueAndValidity();
+  });
     this.getAddressesFields();
     this.setupFormSubscriptions();
     this.getAllEmployeeDetails();
@@ -96,6 +100,51 @@ export class AddressesComponent {
 // });
 
   }
+  //function to intialize form control
+  initializeFormControls() {
+ this.fieldConfigForm = this.fb.group({
+      addressType: ['', Validators.required],
+      fieldNames: [[], Validators.required],
+      approvalRequired: [true],
+      approvalType: [null, Validators.required],
+      selectedEmployee: [''],
+      selectedRole: [''],
+      selectedManager: [''],
+    });
+    this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {
+    this.updateConditionalValidators(value);
+  });
+ 
+  }
+  //function to handle approval type changes
+updateConditionalValidators(type: string) {
+
+  const role = this.fieldConfigForm.get('selectedRole');
+  const emp = this.fieldConfigForm.get('selectedEmployee');
+  const mgr = this.fieldConfigForm.get('selectedManager');
+
+  // clear previous validators
+  role?.clearValidators();
+  emp?.clearValidators();
+  mgr?.clearValidators();
+
+  if (type === 'ROLE') {
+    role?.setValidators([Validators.required]);
+  }
+
+  if (type === 'EMP') {
+    emp?.setValidators([Validators.required]);
+  }
+
+  if (type === 'MANAGER') {
+    mgr?.setValidators([Validators.required]);
+  }
+
+  role?.updateValueAndValidity();
+  emp?.updateValueAndValidity();
+  mgr?.updateValueAndValidity();
+}
+
 
 //   isFieldAlreadyUsedForSelectedAddressType(fieldName: string): boolean {
 //   const selectedAddressType = this.fieldConfigForm.get('addressType')?.value;
@@ -158,8 +207,8 @@ allFieldOptions: any[] = [];
       this.fieldConfigForm.get('fieldName')?.reset();
     });
 
+    this.fieldOptions=[];
   const selectedType = this.fieldConfigForm.get('addressType')?.value;
-
   if (!selectedType) {
     this.fieldOptions = [];
     return;
@@ -170,6 +219,7 @@ allFieldOptions: any[] = [];
   this.fieldOptions = this.allFieldOptions.filter((f: any) =>
     f.fieldName.startsWith(prefix)
   );
+  console.log(this.fieldConfigForm)
 }
 
 
@@ -309,6 +359,9 @@ allFieldOptions: any[] = [];
               this.conformationPopup.openErrorModal(errorMessage);
               this.loader = false;
             },
+             complete: () => {
+            this.fieldConfigForm.reset({ fieldNames: [] });
+            },
           });
       } else {
         // Create operation
@@ -363,6 +416,9 @@ allFieldOptions: any[] = [];
               this.conformationPopup.openErrorModal(errorMessage);
               this.loader = false;
             },
+            complete: () => {
+            this.fieldConfigForm.reset({ fieldNames: [] });
+            },
           });
       }
     }
@@ -415,13 +471,19 @@ allFieldOptions: any[] = [];
     this.isEditMode = false;
     this.selectedFieldConfig = null;
     this.fieldConfigForm.reset();
+    this.clearApprovalValidators();
     this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
       centered: true,
     });
   }
-
+change(){
+  console.log(this.fieldConfigForm);
+ this.fieldConfigForm.get('approvalType')?.setValue(null);
+  this.fieldConfigForm.get('approvalType')?.markAsTouched();
+  this.fieldConfigForm.get('approvalType')?.updateValueAndValidity();
+}
   // Method to open update field configuration dialog
   openUpdateFieldConfigDialog(fieldConfig: any) {
     this.isEditMode = true;

@@ -88,8 +88,8 @@ export class AddShiftComponent {
       breakTime: [1, Validators.required],
       halfDayMinHrs: [3, Validators.required],
       fullDayMinHrs: [6, Validators.required],
-      punchBeginBefore: [0, Validators.required],
-      punchEndAfter: [0],
+      punchBeginBefore: [0, [Validators.required, Validators.max(960)]],
+      punchEndAfter: [0, [Validators.max(960)]],
     });
   }
 

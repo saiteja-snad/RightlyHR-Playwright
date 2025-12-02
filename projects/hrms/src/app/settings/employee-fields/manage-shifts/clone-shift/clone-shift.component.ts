@@ -85,8 +85,8 @@ export class CloneShiftComponent {
       breakTime: [item.breakTime || 0, Validators.required],
       halfDayMinHrs: [item.halfDayMinHrs || 0, Validators.required],
       fullDayMinHrs: [item.fullDayMinHrs || 0, Validators.required],
-      punchBeginBefore: [item.punchBeginBefore || 0, Validators.required],
-      punchEndAfter: [item.punchEndAfter || 0]
+      punchBeginBefore: [item.punchBeginBefore || 0, [Validators.required, Validators.max(960)]],
+      punchEndAfter: [item.punchEndAfter || 0, [Validators.max(960)]]
     }));
   });
 
@@ -147,8 +147,8 @@ export class CloneShiftComponent {
       breakTime: [shiftData?.allowedBreakTime || 1, Validators.required],
       halfDayMinHrs: [shiftData?.halfDayMinHrs || 3, Validators.required],
       fullDayMinHrs: [shiftData?.fullDayMinHrs || 6, Validators.required],
-      punchBeginBefore: [shiftData?.punchBeginBefore || 0, Validators.required],
-      punchEndAfter: [shiftData?.punchEndAfter || 0]
+      punchBeginBefore: [shiftData?.punchBeginBefore || 0, [Validators.required, Validators.max(960)]],
+      punchEndAfter: [shiftData?.punchEndAfter || 0, [Validators.max(960)]]
     });
   }
 
@@ -180,8 +180,8 @@ export class CloneShiftComponent {
             breakTime: [item.allowedBreakTime, Validators.required],
             halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
             fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
-            punchBeginBefore: [item.punchBeginBefore || 0, Validators.required],
-            punchEndAfter: [item.punchEndAfter || 0]
+            punchBeginBefore: [item.punchBeginBefore || 0, [Validators.required, Validators.max(960)]],
+            punchEndAfter: [item.punchEndAfter || 0, [Validators.max(960)]]
           }));
         });
       },

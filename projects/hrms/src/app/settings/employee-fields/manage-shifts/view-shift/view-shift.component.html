@@ -159,18 +159,18 @@
                         <!-- Punch Begin Before -->
                         <div class="w-100">
                             <div class="d-flex gap-1">
-                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Punch Begin Before (mins)' | translate}}</label>
+                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Pre-Shift Buffer (mins)' | translate}}</label>
                                 <div>
                                     <a type="button" [ngbPopover]="punchBeginBeforeDescription">
                                         <app-info-icon />
                                     </a>
                                 </div>
                                 <ng-template #punchBeginBeforeDescription>
-                                    <p class="mb-0">{{ 'How many minutes before shift start time employees can punch in. For example, if shift starts at 9:00 AM and this is set to 30 minutes, employees can punch in from 8:30 AM onwards.'}}</p>
+                                    <p class="mb-0">{{ 'Minutes allowed before shift start for considering punch-in as valid'}}</p>
                                 </ng-template>
                             </div>
                             <input type="number" class="form-control custom-input w-100" [readonly]="isDisabled"
-                                formControlName="punchBeginBefore" placeholder="Punch begin before" />
+                                formControlName="punchBeginBefore" placeholder="Please enter pre-shift buffer" />
                         </div>
 
                         <!-- Punch End After -->

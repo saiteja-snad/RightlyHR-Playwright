@@ -213,10 +213,10 @@
                             </div>
                         </div>
 
-                        <!-- Punch Begin Before -->
+                        <!-- Pre-Shift Buffer -->
                         <div class="w-100">
                             <div class="d-flex gap-1">
-                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Punch Begin Before (mins)' | translate}}
+                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Pre-Shift Buffer (mins)' | translate}}
                                     <span class="text-danger">*</span>
                                 </label>
                                 <div>
@@ -225,23 +225,25 @@
                                     </a>
                                 </div>
                                 <ng-template #punchBeginBeforeDescription>
-                                    <p class="mb-0">{{ 'How many minutes before shift start time employees can punch in. For example, if shift starts at 9:00 AM and this is set to 30 minutes, employees can punch in from 8:30 AM onwards.'}}</p>
+                                    <p class="mb-0">{{ 'Minutes allowed before shift start for considering punch-in as valid'}}</p>
                                 </ng-template>
                             </div>
                             <input type="number" class="form-control custom-input w-100" formControlName="punchBeginBefore"
-                                placeholder="Please enter punch begin before" min="0" (keydown)="blockInvalidKeys($event)"
+                                placeholder="Please enter pre-shift buffer" min="0" max="960" (keydown)="blockInvalidKeys($event)"
                                 (paste)="blockNegativePaste($event)" [maxlength]="3" />
                             <div *ngIf="shift.get('punchBeginBefore')?.invalid && (shift.get('punchBeginBefore')?.dirty || shift.get('punchBeginBefore')?.touched)"
                                 class="error-msg">
-                                <span *ngIf="shift.get('punchBeginBefore')?.errors?.['required']">{{'Punch Begin Before is required'
+                                <span *ngIf="shift.get('punchBeginBefore')?.errors?.['required']">{{'Pre-Shift Buffer is required'
+                                    |translate}}</span>
+                                <span *ngIf="shift.get('punchBeginBefore')?.errors?.['max']">{{'Pre-Shift Buffer cannot exceed 960 minutes'
                                     |translate}}</span>
                             </div>
                         </div>
 
-                        <!-- Punch End After -->
+                        <!-- Post-Shift Buffer -->
                         <div class="w-100">
                             <div class="d-flex gap-1">
-                                <label for="punchEndAfter" class="form-label custom-label mb-2">{{'Punch End After (mins)' | translate}}
+                                <label for="punchEndAfter" class="form-label custom-label mb-2">{{'Post-Shift Buffer (mins)' | translate}}
                                 </label>
                                 <div>
                                     <a type="button" [ngbPopover]="punchEndAfterDescription">
@@ -249,15 +251,17 @@
                                     </a>
                                 </div>
                                 <ng-template #punchEndAfterDescription>
-                                    <p class="mb-0">{{ 'How many minutes after shift end time employees can punch out. For example, if shift ends at 6:00 PM and this is set to 60 minutes, employees can punch out until 7:00 PM. If not provided, it will default to next day shift start time minus punch begin before duration.'}}</p>
+                                    <p class="mb-0">{{ 'Minutes allowed after shift end for considering punch-out as valid'}}</p>
                                 </ng-template>
                             </div>
                             <input type="number" class="form-control custom-input w-100" formControlName="punchEndAfter"
-                                placeholder="Please enter punch end after" min="0" (keydown)="blockInvalidKeys($event)"
+                                placeholder="Please enter post-shift buffer" min="0" max="960" (keydown)="blockInvalidKeys($event)"
                                 (paste)="blockNegativePaste($event)" [maxlength]="3" />
                             <div *ngIf="shift.get('punchEndAfter')?.invalid && (shift.get('punchEndAfter')?.dirty || shift.get('punchEndAfter')?.touched)"
                                 class="error-msg">
-                                <span *ngIf="shift.get('punchEndAfter')?.errors?.['required']">{{'Punch End After is required'
+                                <span *ngIf="shift.get('punchEndAfter')?.errors?.['required']">{{'Post-Shift Buffer is required'
+                                    |translate}}</span>
+                                <span *ngIf="shift.get('punchEndAfter')?.errors?.['max']">{{'Post-Shift Buffer cannot exceed 960 minutes'
                                     |translate}}</span>
                             </div>
                         </div>

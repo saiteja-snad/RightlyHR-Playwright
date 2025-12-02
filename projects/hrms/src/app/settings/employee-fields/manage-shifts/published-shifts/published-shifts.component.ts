@@ -7,10 +7,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-published-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, DataLoaderContentComponent, InfoIconComponent,NgbPopoverModule],
   templateUrl: './published-shifts.component.html',
   styleUrl: './published-shifts.component.scss'
 })

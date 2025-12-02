@@ -203,10 +203,7 @@ allFieldOptions: any[] = [];
   }
 
   filterFieldsByAddressType() {
-    this.fieldConfigForm.get('addressType')?.valueChanges.subscribe(() => {
-      this.fieldConfigForm.get('fieldName')?.reset();
-    });
-
+    this.fieldConfigForm.get('fieldNames')?.reset();
     this.fieldOptions=[];
   const selectedType = this.fieldConfigForm.get('addressType')?.value;
   if (!selectedType) {

@@ -1418,7 +1418,7 @@
                             per.fields === 'Approved (Time Off)' || per.fields === 'Processed (Time Off)' ||
                             per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' ||
                             per.fields === 'Cancelled (Time Off)' || per.fields === 'My Team (Regularization)' ||
-                            per.fields === 'All Employees (Time Off)'">
+                            per.fields === 'All Employees (Time Off)'|| per.fields === 'My Team (Time Off)'   ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

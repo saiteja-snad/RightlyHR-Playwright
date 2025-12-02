@@ -692,6 +692,7 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
       candidateStatus: 'Generated',
+      addressType:this.employeeForm.get('SelectDropDown')?.value || '',
 
     };
     this.subscription = this.http

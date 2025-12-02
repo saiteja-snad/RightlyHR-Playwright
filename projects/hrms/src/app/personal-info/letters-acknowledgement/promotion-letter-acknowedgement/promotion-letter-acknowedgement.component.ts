@@ -82,6 +82,7 @@ currentDate = new Date();
     this.promotiondata.dateOfJoining = this.formatDatewithDate(
       this.promotiondata.dateOfJoining
     );
+    console.log(this.letterdata)
      if (this.letterdata) {
       this.promotiondata.addressType = this.letterdata.addressType;
       this.promotiondata.docType = this.letterdata.docType;
@@ -114,6 +115,7 @@ currentDate = new Date();
           next: (data: any) => {
             console.log(data);
             this.employeeaddress = data as IAddress[];
+            console.log(this.promotiondata.addressType,this.employeeaddress?.employeeAddresses)
             if (this.employeeaddress?.employeeAddresses?.length > 0) {
               this.address = this.employeeaddress.employeeAddresses.find(
                 (address: IAddress) =>

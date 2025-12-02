@@ -66,8 +66,8 @@ export class BankInfoComponent {
   ];
 
    actionsOptions = [
-    { label: 'Add', value: 'Add' },
-    { label: 'Delete', value: 'Delete' },
+    { label: 'Add', value: 'ADD_BANK' },
+    { label: 'Delete', value: 'DELETE_BANK' },
   ];
   roles = [] as any;
 
@@ -247,7 +247,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
-          referenceCategory:formValue.action ?formValue.action:'Update'
+          // referenceCategory:formValue.action ?formValue.action:'Update'
         };
        console.log('Update Request:', request);
         this.subscription = this.http
@@ -281,8 +281,16 @@ get isReadOnlyMode(): boolean {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope: this.fieldConfigForm.get('actionType')?.value?this.fieldConfigForm.get('actionType')?.value:''
           };
         });
+        if(items.length===0 && this.fieldConfigForm.get('actionType')?.value === 'Action'){
+          items.push({
+            ColumnName: this.fieldConfigForm.get('action')?.value?this.fieldConfigForm.get('action')?.value:'',
+            SourceFieldName: '',
+            ApprovalScope: this.fieldConfigForm.get('actionType')?.value?this.fieldConfigForm.get('actionType')?.value:''
+          })
+        }
         const request = {
           Items:items,
           moduleName:
@@ -298,7 +306,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           createdBy: loggedInUser.employeeId,
-          referenceCategory:formValue.action ?formValue.action:'Update'
+          // referenceCategory:formValue.action ?formValue.action:'Update'
         };
 
         this.subscription = this.http
@@ -376,12 +384,16 @@ get isReadOnlyMode(): boolean {
       centered: true,
     });
   }
-
+toTitleCase(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
   // Method to open update field configuration dialog
   openUpdateFieldConfigDialog(fieldConfig: any) {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
+      actionType:this.toTitleCase(fieldConfig.approvalScope),
+      action:fieldConfig.columnName,
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
       approvalType:

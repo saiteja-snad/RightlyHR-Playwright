@@ -154,6 +154,10 @@ allFieldOptions: any[] = [];
   }
 
   filterFieldsByAddressType() {
+    this.fieldConfigForm.get('addressType')?.valueChanges.subscribe(() => {
+      this.fieldConfigForm.get('fieldName')?.reset();
+    });
+
   const selectedType = this.fieldConfigForm.get('addressType')?.value;
 
   if (!selectedType) {
@@ -281,6 +285,7 @@ allFieldOptions: any[] = [];
               : '',
           referenceCategory: referenceCategory,
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope:'Field'
         };
 
         this.subscription = this.http
@@ -315,6 +320,7 @@ allFieldOptions: any[] = [];
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope:'Field'
           };
         });
         const request = {
@@ -336,6 +342,7 @@ allFieldOptions: any[] = [];
               : '',
           referenceCategory: referenceCategory,
           createdBy: loggedInUser.employeeId,
+
         };
 
         this.subscription = this.http

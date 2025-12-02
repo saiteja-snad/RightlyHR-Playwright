@@ -460,7 +460,7 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
-          return (route = 'time-off/global-permissions');
+          return (route = 'on-behalf-of/global-permissions');
         }
 
 
@@ -1426,9 +1426,9 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/time-off/global-permissions':
+      case '/on-behalf-of/global-permissions':
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
-          return (route = '/time-off/global-permissions');
+          return (route = '/on-behalf-of/global-permissions');
         }
         break;
 

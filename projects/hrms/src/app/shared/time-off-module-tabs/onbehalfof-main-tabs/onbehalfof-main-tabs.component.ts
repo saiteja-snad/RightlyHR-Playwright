@@ -33,6 +33,8 @@ export class OnbehalfofMainTabsComponent {
       { label: 'WFH', link: '/on-behalf-of/on-behalf-of-wfh', icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'On Behalf Of WFH', action: 'view' } },
       { label: 'RemoteLogin', link: '/on-behalf-of/on-behalf-of-remotelogin', icon: '/time-off-icon/RemoteLogin-icon.png', 
         permission: { feature: 'On Behalf Of RemoteLogin', action: 'view' } },
+              { label: 'Global-Permissions', link: '/on-behalf-of/global-permissions',icon:'/time-off-icon/Global-Permissions-icon.png', permission: { feature: 'Global Permissions Module', action: 'view' } }
+
       // { label: 'Regularization', link: '/time-off/regularization', icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },
     ];
     this.filterTabsByRbac();

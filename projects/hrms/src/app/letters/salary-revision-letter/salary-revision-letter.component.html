@@ -161,7 +161,7 @@
                                 We would like you to take it as a challenge and prove your mettle.</p>
                             <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to
                                 Rs.{{ (employeeCompensationDetails?.compensationamount || 0) +
-                    (appraisalData?.variablePayAmount || 0) }}/- w.e.f.
+                                (appraisalData?.variablePayAmount || 0) }}/- w.e.f.
                                 This revision will be effective from <u>{{employeeCompensationDetails.compeffectivedate
                                     | dateformat}}</u>.
                                 <!-- This will be in addition to your existing CTC, thereby increasing your CTC from Rs
@@ -424,19 +424,25 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer
-                                                    PF+ESI+Medical Insurance)</b></td>
-                                            <td class="text-center p-0 pt-1 pb-1 bold"><span
-                                                    *ngIf="!appraisalData.grossSalary;else gross">
-                                                </span>
-                                                <ng-template #gross><b>{{appraisalData.grossSalary}}</b></ng-template>
-                                            </td>
-                                            <td class="text-center p-0 pt-1 pb-1 bold"><span
-                                                    *ngIf="!appraisalData.salary;else grossper">
-                                                </span>
-                                                <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
+                                            <td><b>Variable Amount</b></td>
+                                            <td colspan="2">
+                                                <b> {{appraisalData.variablePayAmount }}</b>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td><b>CTC=Gross Salary +(Employer PF+ESI+Variable Amount)</b></td>
+                                            <td class="text-center p-0 pt-1  bold"><span
+                                                    *ngIf="!appraisalData.grossSalary; else gross">
+                                                </span>
+                                                <ng-template #gross><b>{{ appraisalData.grossSalary }}</b></ng-template>
+                                            </td>
+                                            <td>
+                                                <span *ngIf="!appraisalData.salary; else grossper"></span>
+                                                <ng-template #grossper><b> {{(+appraisalData.salary || 0) +
+                                                        (+appraisalData.variablePayAmount || 0)}}</b></ng-template>
+                                            </td>
+                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>

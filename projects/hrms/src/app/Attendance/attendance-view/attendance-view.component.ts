@@ -407,7 +407,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     
     this.subscription = this.http
       .getData(
-        `v2/AttendanceData/employees/${employeeId}/attendance?startDate=${startDate}&endDate=${endDate}`
+        `v2/AttendanceData/employee/${employeeId}?fromdate=${startDate}&todate=${endDate}`
       )
       .subscribe({
         next: (response: any) => {

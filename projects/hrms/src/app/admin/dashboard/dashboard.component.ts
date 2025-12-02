@@ -346,7 +346,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const endDate = startDate; // Same day for both start and end
     
     this.subscription = this.http.getData(
-      `v2/AttendanceData/employees/${empId}/attendance?startDate=${startDate}&endDate=${endDate}`
+      `v2/AttendanceData/employee/${empId}?fromdate=${startDate}&todate=${endDate}`
     )
       .subscribe({
         next: (data: any) => {

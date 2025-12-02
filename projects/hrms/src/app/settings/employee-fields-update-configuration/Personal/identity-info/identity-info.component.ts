@@ -84,12 +84,13 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
   ) {}
   ngOnInit(): void {
     this.fieldConfigForm = this.fb.group({
-      fieldNames: [[], Validators.required],
+      fieldNames: [[]],
       approvalRequired: [true],
       approvalType: ['', Validators.required],
       selectedEmployee: [''],
       selectedRole: [''],
       selectedManager: [''],
+      action:['',Validators.required]
     });
     this.getIdentityInfoFields();
     this.setupFormSubscriptions();
@@ -97,8 +98,12 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     this.getAllRoles();
     this.getIdentityInfoFieldsConfigList();
   }
-  get allOptionsDisabled(): boolean {
-  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+ get allOptionsDisabled(): boolean {
+ if (!this.identityInfoFieldsConfigList || !this.actionsOptions) return false;
+
+  return this.actionsOptions.every((option: any) =>
+    this.identityInfoFieldsConfigList.some((item: any) => item.columnName === option.value)
+  );
 }
 
 get isReadOnlyMode(): boolean {
@@ -144,6 +149,9 @@ get isReadOnlyMode(): boolean {
         next: (data: any) => {
           if (data.data.length > 0) {
             this.identityInfoFieldsConfigList = data.data;
+            const Values = this.identityInfoFieldsConfigList.map((x: any) => x.columnName);
+            this.actionsOptions = this.actionsOptions.map((opt: any) => ({ ...opt,
+              optionDisabled: Values.includes(opt.value)}));
           } else {
             this.identityInfoFieldsConfigList = [];
             console.log('No data found.');
@@ -225,6 +233,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope: 'Action'
         };
 
         this.subscription = this.http
@@ -259,8 +268,16 @@ get isReadOnlyMode(): boolean {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope: 'Action'
           };
         });
+        if(items.length===0){
+          items.push({
+            ColumnName: this.fieldConfigForm.get('action')?.value?this.fieldConfigForm.get('action')?.value:'',
+            SourceFieldName: '',
+            ApprovalScope: 'Action'
+          })
+        }
         const request = {
           Items:items,
           moduleName:
@@ -348,6 +365,7 @@ get isReadOnlyMode(): boolean {
     this.isEditMode = false;
     this.selectedFieldConfig = null;
     this.fieldConfigForm.reset();
+    this.fieldConfigForm.get('action')?.enable();
     this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
@@ -360,6 +378,7 @@ get isReadOnlyMode(): boolean {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
+      action:fieldConfig.columnName,
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
      approvalType:
@@ -380,6 +399,7 @@ get isReadOnlyMode(): boolean {
     : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
+    this.fieldConfigForm.get('action')?.disable();
     this.fieldConfigForm.get('fieldNames')?.disable();
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',

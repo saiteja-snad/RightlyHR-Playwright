@@ -202,7 +202,9 @@ export class ProjectViewComponent implements OnInit {
     this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (res: any) => {
         this.resourcePhaseOptions = (res?.data || []).map((item: any) => ({
-          label: item.phaseName,
+           label: item.project?.meta?.graphData?.code
+            ? `${item.phaseName} - (${item.project.meta.graphData.code})`
+            : item.phaseName,
           value: item.phaseId,
         }));
       },

@@ -16,6 +16,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { IAddress } from '../../../Interfaces/letters-model';
 @Component({
   selector: 'app-promotion-letter-acknowedgement',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, ConfirmationIconComponent],
@@ -50,7 +51,7 @@ previusSalary:any
   AppraisalFile!: File;
     jobErrorMessage!: string;
   @Input() letterdata: any;
-
+currentDate = new Date();
   constructor(
     private http: HttpService,
     private router: Router,
@@ -73,7 +74,6 @@ previusSalary:any
   }
 
   Onclick(employeeId: any) {
-    console.log('Employee ID:', employeeId);
     this.promotiondata = {};
     this.promotiondata = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == this.Employeeinfo.fusionEmpId
@@ -81,14 +81,17 @@ previusSalary:any
     this.promotiondata.dateOfJoining = this.formatDatewithDate(
       this.promotiondata.dateOfJoining
     );
- 
-    console.log('Promotion Data:', this.promotiondata);
+     if (this.letterdata) {
+      this.promotiondata.addressType = this.letterdata.addressType;
+      this.promotiondata.docType = this.letterdata.docType;
+    }
     // this.getEmployeeId()
     this.getdatepromotion();
     this.getJobDetails(this.promotiondata);
     // this.getCompensationById(this.promotiondata);
     this.getCompensationByIdsalery(this.promotiondata);
     this.getIssuedEmployeebyId(this.promotiondata);
+    this.getEmployeeAddress(this.promotiondata.employeeId);
     this.getAuthorityDetails();
      if (this.promotiondata.gender == 'Male') {
       return (this.gender = 'Mr.');
@@ -98,6 +101,33 @@ previusSalary:any
   
     //  this.onclickDesignation();
   }
+   //function to get the address
+    address = {} as IAddress;
+    employeeaddress = [] as any;
+    getEmployeeAddress(Value: any) {
+      const EmployeeId = Value;
+      this.subscription = this.http
+        .getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`)
+        .subscribe({
+          next: (data: any) => {
+            this.employeeaddress = data as IAddress[];
+            if (this.employeeaddress?.employeeAddresses?.length > 0) {
+              this.address = this.employeeaddress.employeeAddresses.find(
+                (address: IAddress) =>
+                  address.type.toLowerCase() ==
+                  this.promotiondata.addressType.toLowerCase()
+              );
+              this.promotiondata.addressLine1 = this.address.addressLine1;
+              this.promotiondata.addressLine2 = this.address.addressLine2;
+              this.promotiondata.city = this.address.city;
+              this.promotiondata.state = this.address.state;
+              this.promotiondata.country = this.address.country;
+              this.promotiondata.zipCode = this.address.zipCode;
+            }
+  
+          },
+        });
+    }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
@@ -108,12 +138,9 @@ previusSalary:any
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.employeeiddetails = data;
           this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUserData") || '{}');
-          console.log('Employee Info:', this.Employeeinfo);
           this.Onclick(this.Employeeinfo.employeeId);
-          console.log(this.employeeiddetails);
         },
         error: (reason: any) => {
 
@@ -125,7 +152,6 @@ previusSalary:any
   //function for issed by
   getIssuedEmployeebyId(Employee: any) {
     this.employeedata = Employee.firstName + " " + Employee.lastName
-    console.log(this.employeedata);
   }
 
   //get offer letter Authority list 
@@ -133,11 +159,16 @@ previusSalary:any
     let offertype = 'Salary Revision Letter'
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.authorityDetails = data;
-        console.log('Authority Details:', this.authorityDetails);
-
-        this.onclickDesignation();
+          if (this.letterdata.authoritySignature) {
+          if (this.authorityDetails?.length > 0) {
+            const signatureAuthorityDetails = this.authorityDetails.find(
+              (c: any) => (c.employeeId == this.letterdata.authoritySignature)
+            );
+            this.authorityDesignation = signatureAuthorityDetails.designation;
+            this.promotiondata.authorityName = `${signatureAuthorityDetails.firstName ?? ''} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''}`;
+          }
+        }
       }
     })
   }
@@ -152,30 +183,20 @@ previusSalary:any
 
     this.subscription = this.http.getData(`JobDetails/Empname/${this.Employeeinfo.employeeId}`).subscribe({
       next: (data: any) => {
-        console.log('Job Details:', data);
-        ///let jobdetails = data.reverse();
+        //let jobdetails = data.reverse();
         Employee.jobRole = data.reverse()[0].jobRole;
         this.getjobrole = Employee.jobRole;
-        console.log('Job Role:', Employee.jobRole);
       }
     })
   }
      docType :any;
   //get date promotion
   getdatepromotion() {
-   
    const letterType = 'Salary Revision Letter';
-    //let EmployeeId = parseInt(this.promotiondata.employeeId)
-    //console.log(EmployeeId);
-
     this.subscription = this.http.getData(`AppraisalLetter/getgeneratedappraisalpromotionletter?employeeId=${this.Employeeinfo.employeeId}&letterType=${encodeURIComponent(letterType)}`).subscribe({
       next: (data: any) => {
-        console.log('date Details:', data);
-        ///let jobdetails = data.reverse();
         this.promotionDate = data.issuedDate;
         this.docType = data.docType;
-
-        console.log('Issued Date:', this.promotionDate);
       }
     })
 
@@ -191,7 +212,8 @@ previusSalary:any
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-            let res = data[0];
+            // let res = data[0];
+            let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
             if (data.length > 1) {
               this.previusSalary = data[1];
               this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
@@ -202,6 +224,7 @@ previusSalary:any
             this.employeeCompensationDetails = res;
             this.promotiondata.salary = res.compensationamount;
             this.promotiondata.compeffectivedate = res.compeffectivedate;
+            this.promotiondata.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
             //CTC calculation stated
             Employee.grossby = 12;
             Employee.grossSalary = Math.round(
@@ -392,31 +415,6 @@ previusSalary:any
           }
       });
   }
-  
-  // authority details
-  onclickDesignation() {
-    // Parse localStorage data
-    let signatureAuthorityDetails = JSON.parse(localStorage.getItem("signatureAuthorityDetails") || '{}');
-    console.log('signatureAuthorityDetails:', signatureAuthorityDetails);
-
-    // Make sure authorityDetails is an array and not empty
-    if (Array.isArray(this.authorityDetails) && this.authorityDetails.length > 0) {
-      const selectedAuthority = this.authorityDetails[0]; // or use a specific index if needed
-
-      // Set the designation
-      this.authorityDesignation = selectedAuthority.designation;
-
-      // Set full name based on middleName availability
-      if (signatureAuthorityDetails.middleName) {
-        this.promotiondata.authorityName = `${selectedAuthority.firstName} ${selectedAuthority.middleName} ${selectedAuthority.lastName}`;
-      } else {
-        this.promotiondata.authorityName = `${selectedAuthority.firstName} ${selectedAuthority.lastName}`;
-      }
-    } else {
-      console.warn('authorityDetails is empty or not an array');
-    }
-  }
-
   // else if(signatureAuthorityDetails==undefined||signatureAuthorityDetails==null){
   //   this.promotiondata.authorityName =''
   //   this.authorityDesignation=''
@@ -563,13 +561,6 @@ previusSalary:any
   //to format string date to actual date
   private formatDatebyDatestring(data: string) {
     let stringarray = data.split('/');
-    console.log(
-      new Date(
-        `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(
-          stringarray[0]
-        )}`
-      )
-    );
     return new Date(
       `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(stringarray[0])
       }`
@@ -591,10 +582,8 @@ previusSalary:any
           if (data) {
             this.spinnerLoader = false;
             this.result.documentUrl = data.path;
-            console.log(data);
           }
           let loggedInUser = this.authService.getToken();
-          console.log(loggedInUser);
           // let emaildetails = {
           //   personEmail: this.promotiondata.workEmail,
           //   senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
@@ -672,7 +661,6 @@ previusSalary:any
       .subscribe({
         next: (data: any) => {
           this.isRejecting = false;
-          console.log(data);
           this.isacknowledged = true;
           this.isRejecting = false;
           this.modalService.dismissAll();
@@ -714,7 +702,6 @@ previusSalary:any
       .subscribe({
         next: (data: any) => {
           this.isRejecting = false;
-          console.log(data);
           this.isacknowledged = true;
           this.isRejecting = false;
           this.modalService.dismissAll();

@@ -301,7 +301,7 @@
                     
                 </div>
                 @if(selectedleave && selectedleave.category){
-                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }} {{ remainingLeaves === 1 || remainingLeaves === 0.5 ? 'Day' : 'Days' }}</p>
                 }
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">

@@ -24,7 +24,8 @@ import { IExpense, ISummary } from '../../../Interfaces/claimsandexpenses.model'
 @Component({
   selector: 'app-on-behalf-of-expenses',
   imports: [OnBehalfOfExpensesTabsComponent, FormsModule, RouterModule, Select, ModuleInformationComponent, Skeleton,
-    NgbPopoverModule, ModuleInfoIconComponent, TranslateModule, DatePicker, ReactiveFormsModule, TabsModule, CommonModule, ChartModule, InfoIconComponent], templateUrl: './on-behalf-of-expenses.component.html',
+    NgbPopoverModule, ModuleInfoIconComponent, TranslateModule, DatePicker, ReactiveFormsModule, TabsModule, CommonModule, ChartModule, InfoIconComponent],
+     templateUrl: './on-behalf-of-expenses.component.html',
   styleUrl: './on-behalf-of-expenses.component.scss'
 })
 export class OnBehalfOfExpensesComponent {

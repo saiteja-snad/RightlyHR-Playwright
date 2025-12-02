@@ -696,6 +696,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/theme':
+        if (this.rbac.allowedToAccess('Themes.view')) {
+          return (route = '/theme');
+        }
+        break;
+
       case '/skill-management':
         if (this.rbac.allowedToAccess('Skill Set Management.view')) {
           for (const item of SKILL_MANAGEMENT_TABS) {
@@ -745,7 +751,7 @@ export class AccessNavigationService {
         }
         break;
 
-     
+
 
       case '/myinfo/onboarding-request':
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
@@ -1741,7 +1747,7 @@ export class AccessNavigationService {
         }
         break;
 
-         case '/pending-approvals/employeeinfo-request':
+      case '/pending-approvals/employeeinfo-request':
         if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
           for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1750,7 +1756,7 @@ export class AccessNavigationService {
           }
         }
         break;
-     
+
       case '/personalinfo/personal':
         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||
           this.rbac.allowedToAccess('My Info Personal Tab.view')) {
@@ -1807,9 +1813,9 @@ export class AccessNavigationService {
         }
         break;
 
-    
 
-        
+
+
       case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {

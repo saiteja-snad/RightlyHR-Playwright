@@ -207,7 +207,7 @@
         </div>
         <!-- Daily events Panel -->
         <div class="content-card daliy-events-content">
-               <div class="party-image-content"><img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+               <div  *ngIf="eventItems?.length && hasRealEvents" class="party-image-content"><img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
             </div>
             @if(!eventsLoader){
             <div class="events-content">

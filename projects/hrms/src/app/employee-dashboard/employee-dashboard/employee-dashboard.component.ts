@@ -29,6 +29,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   currentTime: Date = new Date();
   loading = false;
   avaliabletlyloading = false;
+  hasRealEvents: boolean = false;
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -387,6 +388,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           ...marriageAnniversariesEvent
         ];
         this.eventsLoader = false;
+        this.hasRealEvents = events.length > 0;
         if (events.length) {
           this.eventItems = events;
         } else {

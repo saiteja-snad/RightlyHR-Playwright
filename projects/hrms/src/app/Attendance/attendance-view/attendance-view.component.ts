@@ -116,12 +116,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   extra_logs = [] as any;
   regularization_list = [] as any;
   currentDate: any;
-  date!: Date | Date[];
+  date!: Date;
   attendanceSummaryData: any;
   attendanceSummaryOptions: any;
   maxMonth: Date = new Date();
   extraHoursForm!: FormGroup;
-  attendanceDateForm!: FormGroup;
 
   constructor(
     private authService: AuthService,
@@ -135,14 +134,18 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    // Get current date
+    const now = moment().startOf('month');
+    this.date = now.toDate();
     this.currentDate = moment().date();
+    // Get current month (1-based)
     this.currentMonth = moment().month() + 1;
     this.selectedMonth = this.currentMonth;
+    // Get current year
     this.currentYear = moment().year();
     this.selectedYear = this.currentYear;
+    this.maxMonth = new Date();
     this.empdata = this.authService.getToken();
-    
-    this.initializeAttendanceDateForm();
     this.getAttendnaceData(this.empdata);
     this.getAttendanceCriteria();
     this.getAllEmployeeDetails();
@@ -191,34 +194,13 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  initializeAttendanceDateForm() {
-    const startOfMonth = moment().startOf('month').toDate();
-    const endOfMonth = moment().endOf('month').toDate();
-    
-    this.attendanceDateForm = this.fb.group({
-      dateRange: [[startOfMonth, endOfMonth]]
-    });
-  }
-
-  onSubmitAttendance() {
-    const dateRange = this.attendanceDateForm.get('dateRange')?.value;
-    if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
+  checkdates(Value: any) {
+    if (Value) {
+      const selectedDate = moment(Value);
+      this.selectedYear = selectedDate.year();
+      this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
       this.getAttendnaceData(this.getSelectedEmployee());
     }
-  }
-
-  isAttendanceFilterApplied(): boolean {
-    const dateRange = this.attendanceDateForm.get('dateRange')?.value;
-    return dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1];
-  }
-
-  resetAttendanceForm() {
-    const startOfMonth = moment().startOf('month').toDate();
-    const endOfMonth = moment().endOf('month').toDate();
-    this.attendanceDateForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth]
-    });
-    this.getAttendnaceData(this.getSelectedEmployee());
   }
 
   //function to check the date
@@ -419,19 +401,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
       }${employee.lastName ? ' ' + employee.lastName : ''}`;
     
-    // Get start and end dates from form
-    let startDate: string;
-    let endDate: string;
-    
-    const dateRange = this.attendanceDateForm.get('dateRange')?.value;
-    if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
-      startDate = moment(dateRange[0]).format('YYYY-MM-DD');
-      endDate = moment(dateRange[1]).format('YYYY-MM-DD');
-    } else {
-      // Fallback to current month
-      startDate = moment().startOf('month').format('YYYY-MM-DD');
-      endDate = moment().endOf('month').format('YYYY-MM-DD');
-    }
+    // Calculate start and end dates for the selected month
+    const startDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month').format('YYYY-MM-DD');
+    const endDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).endOf('month').format('YYYY-MM-DD');
     
     this.subscription = this.http
       .getData(
@@ -451,6 +423,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
           this.initChart();
+          // this.attendanceData.next(response.data);
         },
         error: (err: any) => {
           this.dataLoader = false;

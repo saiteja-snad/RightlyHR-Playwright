@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { filter, forkJoin, Observable, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
+import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { MODULE_INFOS } from '../../shared/modules-info';
@@ -339,8 +340,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getAttendenceLogsOfLoginedUser( empId: number, currentYear: number, currentMonth: number, currentDay: number ) {
     this.attendanceLoader = true;
+    
+    // Calculate start and end dates for the current day
+    const startDate = moment().year(currentYear).month(currentMonth - 1).date(currentDay).format('YYYY-MM-DD');
+    const endDate = startDate; // Same day for both start and end
+    
     this.subscription = this.http.getData(
-      `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
+      `v2/AttendanceData/employees/${empId}/attendance?startDate=${startDate}&endDate=${endDate}`
     )
       .subscribe({
         next: (data: any) => {

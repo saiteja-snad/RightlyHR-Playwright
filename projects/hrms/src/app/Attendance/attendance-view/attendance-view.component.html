@@ -8,16 +8,17 @@
         </div>
 
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <form [formGroup]="attendanceDateForm" >
-                <div class="d-flex gap-3 align-items-center">
-                    <button type="button" class="clear-all-btn" (click)="resetAttendanceForm()">Clear All</button>
-                    <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" placeholder="Select date range" 
-                        [showIcon]="true" selectionMode="range" [readonlyInput]="true" 
-                         (onSelect)="onSubmitAttendance()"></p-datepicker>
-                    </div>
+            <label class="form-label custom-label filter-labels m-0">Select</label>
+            <div class="custom-year-month-picker">
+                <!-- <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
+                    (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
+                    dateFormat="mm/yy" [readonlyInput]="true" /> -->
+                <div class="custom-year-month-picker">
+                    <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)" 
+                    [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true" 
+                    [maxDate]="maxMonth"></p-datepicker>
                 </div>
-            </form>
+            </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
             <label class="form-label custom-label filter-labels m-0">Select Employee</label>

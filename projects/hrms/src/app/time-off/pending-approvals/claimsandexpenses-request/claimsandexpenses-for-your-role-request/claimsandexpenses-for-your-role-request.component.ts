@@ -24,6 +24,7 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
+import { Router, RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -81,6 +82,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   verifyForm!: FormGroup;
 
   selectedLeaveStatus: any;
+  totalCount: any;
 
 
   constructor(
@@ -92,6 +94,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     private sanitizer: DomSanitizer,
     public rbac: RbacService,
     public formsValidation: FormValidationsService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -246,7 +249,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+            this.http.triggerActionSignal();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -292,7 +299,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+            this.http.triggerActionSignal();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -333,10 +344,21 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.http.triggerActionSignal();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
         },
       });
   }
+  getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+    });
+  }
+ 
 
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {

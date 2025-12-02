@@ -922,4 +922,10 @@ clearTeamDateRange() {
   setDepartmentIds(ids: number[]) {
     this.departmentIdsSource.next(ids);
   }
+
+  // update count
+pendingApprovalCount$ = new BehaviorSubject<any[]>([]);
+updatePendingApprovalCounts(counts: any[]) {
+  this.pendingApprovalCount$.next(counts);
+}
 }

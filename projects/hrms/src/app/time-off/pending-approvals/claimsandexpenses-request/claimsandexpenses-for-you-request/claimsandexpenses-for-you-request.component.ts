@@ -81,6 +81,7 @@ export class ClaimsandexpensesForYouRequestComponent
     verifyForm!: FormGroup;
 
   selectedLeaveStatus: any;
+  totalCount: any;
 
 
   constructor(
@@ -158,7 +159,12 @@ export class ClaimsandexpensesForYouRequestComponent
         },
       });
   }
-
+ getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+    });
+  }
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
@@ -236,7 +242,11 @@ export class ClaimsandexpensesForYouRequestComponent
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+             this.http.triggerActionSignal();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -282,7 +292,11 @@ export class ClaimsandexpensesForYouRequestComponent
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+            this.http.triggerActionSignal();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -323,7 +337,11 @@ export class ClaimsandexpensesForYouRequestComponent
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
-          this.getAllPendingApprovals();
+           this.http.triggerActionSignal();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
         },
       });
   }

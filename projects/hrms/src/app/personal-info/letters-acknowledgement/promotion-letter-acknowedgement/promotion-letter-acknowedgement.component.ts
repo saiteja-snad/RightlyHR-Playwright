@@ -74,7 +74,6 @@ currentDate = new Date();
   }
 
   Onclick(employeeId: any) {
-    console.log('Employee ID:', employeeId);
     this.promotiondata = {};
     this.promotiondata = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == this.Employeeinfo.fusionEmpId
@@ -82,12 +81,10 @@ currentDate = new Date();
     this.promotiondata.dateOfJoining = this.formatDatewithDate(
       this.promotiondata.dateOfJoining
     );
-    console.log(this.letterdata)
      if (this.letterdata) {
       this.promotiondata.addressType = this.letterdata.addressType;
       this.promotiondata.docType = this.letterdata.docType;
     }
-    console.log('Promotion Data:', this.promotiondata);
     // this.getEmployeeId()
     this.getdatepromotion();
     this.getJobDetails(this.promotiondata);
@@ -113,9 +110,7 @@ currentDate = new Date();
         .getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`)
         .subscribe({
           next: (data: any) => {
-            console.log(data);
             this.employeeaddress = data as IAddress[];
-            console.log(this.promotiondata.addressType,this.employeeaddress?.employeeAddresses)
             if (this.employeeaddress?.employeeAddresses?.length > 0) {
               this.address = this.employeeaddress.employeeAddresses.find(
                 (address: IAddress) =>
@@ -143,12 +138,9 @@ currentDate = new Date();
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.employeeiddetails = data;
           this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUserData") || '{}');
-          console.log('Employee Info:', this.Employeeinfo);
           this.Onclick(this.Employeeinfo.employeeId);
-          console.log(this.employeeiddetails);
         },
         error: (reason: any) => {
 
@@ -160,7 +152,6 @@ currentDate = new Date();
   //function for issed by
   getIssuedEmployeebyId(Employee: any) {
     this.employeedata = Employee.firstName + " " + Employee.lastName
-    console.log(this.employeedata);
   }
 
   //get offer letter Authority list 
@@ -168,15 +159,12 @@ currentDate = new Date();
     let offertype = 'Salary Revision Letter'
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.authorityDetails = data;
-        console.log('Authority Details:', this.authorityDetails);
           if (this.letterdata.authoritySignature) {
           if (this.authorityDetails?.length > 0) {
             const signatureAuthorityDetails = this.authorityDetails.find(
               (c: any) => (c.employeeId == this.letterdata.authoritySignature)
             );
-            console.log(signatureAuthorityDetails)
             this.authorityDesignation = signatureAuthorityDetails.designation;
             this.promotiondata.authorityName = `${signatureAuthorityDetails.firstName ?? ''} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''}`;
           }
@@ -195,30 +183,20 @@ currentDate = new Date();
 
     this.subscription = this.http.getData(`JobDetails/Empname/${this.Employeeinfo.employeeId}`).subscribe({
       next: (data: any) => {
-        console.log('Job Details:', data);
-        ///let jobdetails = data.reverse();
+        //let jobdetails = data.reverse();
         Employee.jobRole = data.reverse()[0].jobRole;
         this.getjobrole = Employee.jobRole;
-        console.log('Job Role:', Employee.jobRole);
       }
     })
   }
      docType :any;
   //get date promotion
   getdatepromotion() {
-   
    const letterType = 'Salary Revision Letter';
-    //let EmployeeId = parseInt(this.promotiondata.employeeId)
-    //console.log(EmployeeId);
-
     this.subscription = this.http.getData(`AppraisalLetter/getgeneratedappraisalpromotionletter?employeeId=${this.Employeeinfo.employeeId}&letterType=${encodeURIComponent(letterType)}`).subscribe({
       next: (data: any) => {
-        console.log('date Details:', data);
-        ///let jobdetails = data.reverse();
         this.promotionDate = data.issuedDate;
         this.docType = data.docType;
-
-        console.log('Issued Date:', this.promotionDate);
       }
     })
 
@@ -581,13 +559,6 @@ currentDate = new Date();
   //to format string date to actual date
   private formatDatebyDatestring(data: string) {
     let stringarray = data.split('/');
-    console.log(
-      new Date(
-        `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(
-          stringarray[0]
-        )}`
-      )
-    );
     return new Date(
       `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(stringarray[0])
       }`
@@ -609,10 +580,8 @@ currentDate = new Date();
           if (data) {
             this.spinnerLoader = false;
             this.result.documentUrl = data.path;
-            console.log(data);
           }
           let loggedInUser = this.authService.getToken();
-          console.log(loggedInUser);
           // let emaildetails = {
           //   personEmail: this.promotiondata.workEmail,
           //   senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
@@ -690,7 +659,6 @@ currentDate = new Date();
       .subscribe({
         next: (data: any) => {
           this.isRejecting = false;
-          console.log(data);
           this.isacknowledged = true;
           this.isRejecting = false;
           this.modalService.dismissAll();
@@ -732,7 +700,6 @@ currentDate = new Date();
       .subscribe({
         next: (data: any) => {
           this.isRejecting = false;
-          console.log(data);
           this.isacknowledged = true;
           this.isRejecting = false;
           this.modalService.dismissAll();

@@ -302,6 +302,15 @@ export class AccessNavigationService {
         }
         break;
 
+
+
+      case '/employee-dashboard':
+        if (this.rbac.allowedToAccess('Employee Dashboard.view')) {
+          return (route = '/employee-dashboard');
+        }
+        break;
+
+
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {
@@ -1012,6 +1021,7 @@ export class AccessNavigationService {
       //   }
       //   break;
 
+
       case '/settings/locking-configuration':
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           for (const item of SETTINGS_AttendanceLock_TABS) {
@@ -1049,6 +1059,7 @@ export class AccessNavigationService {
       //timesheet locking
       case '/settings/timesheet-locking-configuration':
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
+
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;

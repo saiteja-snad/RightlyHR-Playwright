@@ -241,6 +241,7 @@ export const permissionsData = [
 
   //New Side Nav Section
   { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Events', View: false, Update: false, Create: false, Delete: false },

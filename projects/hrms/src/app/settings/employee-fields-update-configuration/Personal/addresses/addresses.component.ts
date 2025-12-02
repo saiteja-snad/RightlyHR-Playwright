@@ -210,16 +210,11 @@ export class AddressesComponent {
       this.fieldOptions = [];
       return;
     }
-
     const prefix = selectedType === 'CURRENT' ? 'Current' : 'Permanent';
-
     this.fieldOptions = this.allFieldOptions.filter((f: any) =>
       f.fieldName.startsWith(prefix)
     );
-    console.log(this.fieldConfigForm)
   }
-
-
   getAddressesFieldsConfigList() {
     this.loader = true;
     const params = {

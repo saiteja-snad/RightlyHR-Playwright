@@ -21,6 +21,7 @@ import { jobRoleDATA } from '../../../employee-fields/job/jobrole/jobrole-model'
 import { IRoles } from '../../../roles-permissions/permissions/permission.model';
 import { AuthService } from '../../../../services/auth.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-bank-info',
@@ -33,6 +34,7 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
     ToggleSwitchModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
+    DropdownModule 
   ],
   templateUrl: './bank-info.component.html',
   styleUrl: './bank-info.component.scss',
@@ -66,8 +68,9 @@ export class BankInfoComponent {
   ];
 
    actionsOptions = [
-    { label: 'Add', value: 'ADD_BANK' },
-    { label: 'Delete', value: 'DELETE_BANK' },
+    { label: 'Add', value: 'ADD_BANK' ,optionDisabled: false},
+    { label: 'Delete', value: 'DELETE_BANK',optionDisabled: false },
+    { label: 'Update', value: 'UPDATE_BANK',optionDisabled: false },
   ];
   roles = [] as any;
 
@@ -97,10 +100,10 @@ export class BankInfoComponent {
       selectedEmployee: [''],
       selectedRole: [''],
       selectedManager: [''],
-      actionType: ['', Validators.required],
+      // actionType: ['', Validators.required],
       action: ['', ],
     });
-    this.handleActionTypeChange();
+    //this.handleActionTypeChange();
   }
 handleActionTypeChange() {
   this.fieldConfigForm.get('actionType')?.valueChanges.subscribe(value => {
@@ -119,8 +122,12 @@ handleActionTypeChange() {
     fieldNamesControl?.updateValueAndValidity();
   });
 }
-  get allOptionsDisabled(): boolean {
-  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
+ get allOptionsDisabled(): boolean {
+ if (!this.bankInfoFieldsConfigList || !this.actionsOptions) return false;
+
+  return this.actionsOptions.every((option: any) =>
+    this.bankInfoFieldsConfigList.some((item: any) => item.columnName === option.value)
+  );
 }
 
 get isReadOnlyMode(): boolean {
@@ -166,6 +173,9 @@ get isReadOnlyMode(): boolean {
         next: (data: any) => {
           if (data.data.length > 0) {
             this.bankInfoFieldsConfigList = data.data;
+            const bankValues = this.bankInfoFieldsConfigList.map((x: any) => x.columnName);
+            this.actionsOptions = this.actionsOptions.map((opt: any) => ({ ...opt,
+              optionDisabled: bankValues.includes(opt.value)}));
           } else {
             this.bankInfoFieldsConfigList = [];
             console.log('No data found.');
@@ -247,6 +257,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope: 'Action'
           // referenceCategory:formValue.action ?formValue.action:'Update'
         };
        console.log('Update Request:', request);
@@ -281,14 +292,14 @@ get isReadOnlyMode(): boolean {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
-            ApprovalScope: this.fieldConfigForm.get('actionType')?.value?this.fieldConfigForm.get('actionType')?.value:''
+            ApprovalScope: 'Action'
           };
         });
-        if(items.length===0 && this.fieldConfigForm.get('actionType')?.value === 'Action'){
+        if(items.length===0){
           items.push({
             ColumnName: this.fieldConfigForm.get('action')?.value?this.fieldConfigForm.get('action')?.value:'',
             SourceFieldName: '',
-            ApprovalScope: this.fieldConfigForm.get('actionType')?.value?this.fieldConfigForm.get('actionType')?.value:''
+            ApprovalScope: 'Action'
           })
         }
         const request = {
@@ -378,6 +389,7 @@ get isReadOnlyMode(): boolean {
     this.isEditMode = false;
     this.selectedFieldConfig = null;
     this.fieldConfigForm.reset();
+    this.fieldConfigForm.get('action')?.enable();
     this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
@@ -392,7 +404,6 @@ toTitleCase(value: string) {
     this.isEditMode = true;
     this.selectedFieldConfig = fieldConfig;
     this.fieldConfigForm.patchValue({
-      actionType:this.toTitleCase(fieldConfig.approvalScope),
       action:fieldConfig.columnName,
       fieldNames: [fieldConfig.columnName],
       approvalRequired: true,
@@ -413,6 +424,7 @@ toTitleCase(value: string) {
     ? fieldConfig.approvalEntity
     : '',
     });
+    this.fieldConfigForm.get('action')?.disable();
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
     this.modalService.open(this.fieldConfigpopup, {
@@ -500,6 +512,7 @@ toTitleCase(value: string) {
   // Reset field config form
   resetFieldConfigForm() {
     this.fieldConfigForm.reset();
+    this.fieldConfigForm.get('action')?.enable();
     this.fieldConfigForm.get('fieldNames')?.enable();
     this.clearApprovalValidators();
     this.isEditMode = false;

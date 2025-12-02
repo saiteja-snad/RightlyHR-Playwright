@@ -94,14 +94,14 @@
 
       <div class="custom-main-popup-content">
         <!-- Configuration Types -->
-           <div class="mb-3" >
+           <!-- <div class="mb-3" >
           <label class="form-label custom-label mb-2">
             {{ 'Configuration Type' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
             <p-select class="form-select custom-input" [options]="actiontypeOptions" optionLabel="label"
               optionValue="value" formControlName="actionType"
-              placeholder="{{'Please select configuration type' | translate}}" [readonly]="isReadOnlyMode && !isEditMode">
+              placeholder="{{'Please select configuration type' | translate}}" [readonly]="isEditMode">
             </p-select>
           </div>
           <div *ngIf="fieldConfigForm.get('actionType')?.touched && fieldConfigForm.get('actionType')?.invalid"
@@ -110,17 +110,17 @@
               {{ 'Configuration Type is required' | translate }}
             </div>
           </div>
-        </div>
+        </div> -->
         <!-- Action Types -->
-           <div class="mb-3" *ngIf="fieldConfigForm.get('actionType')?.value === 'Action'">
+           <div class="mb-3">
           <label class="form-label custom-label mb-2">
             {{ 'Action' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select class="form-select custom-input" [options]="actionsOptions" optionLabel="label"
-              optionValue="value" formControlName="action"
-              placeholder="{{'Please select action' | translate}}" [readonly]="isReadOnlyMode && !isEditMode">
-            </p-select>
+            <p-dropdown class="form-select custom-input" [options]="actionsOptions" optionLabel="label"
+              optionValue="value" formControlName="action" optionDisabled="optionDisabled"
+              placeholder="{{'Please select action' | translate}}" [readonly]="isReadOnlyMode">
+            </p-dropdown>
           </div>
           <div *ngIf="fieldConfigForm.get('action')?.touched && fieldConfigForm.get('action')?.invalid"
             class="error-msg">
@@ -130,18 +130,16 @@
           </div>
         </div>
         <!-- Field Name -->
-        <div class="mb-3" *ngIf="fieldConfigForm.get('actionType')?.value === 'Field'">
+        <!-- <div class="mb-3" *ngIf="fieldConfigForm.get('actionType')?.value === 'Field'">
           <label class="form-label custom-label mb-2">
             {{ 'Field Name' | translate }} <span class="error-msg" *ngIf="!isEditMode">*</span>
           </label>
-          <!-- Multi-select for create mode -->
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
              <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
-              optionValue="fieldName"  optionDisabled="optionDisabled" formControlName="fieldNames"
+              optionValue="fieldName"  optionDisabled="optionDisabled" formControlName="fieldNames" 
               placeholder="{{'Please select field names' | translate}}" [filter]="true" [readonly]="isReadOnlyMode">
             </p-multiSelect>
           </div>
-          <!-- Read-only input for update mode -->
           <input type="text" class="form-control custom-input" [value]="selectedFieldConfig?.columnName" readonly
             *ngIf="isEditMode">
           <div
@@ -151,7 +149,7 @@
               {{ 'Field Name is required' | translate }}
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Approval Type -->
         <div class="mb-3" >

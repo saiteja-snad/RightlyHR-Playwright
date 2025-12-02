@@ -16,12 +16,14 @@ input:focus {
 }
 
 .salary-details-table {
- table,
+
+    table,
     th,
     td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
+        
     }
 
     th,
@@ -30,11 +32,13 @@ input:focus {
         text-align: center;
         color: #000;
         font-size: var(--fontsize16) !important;
+     
     }
 
     th {
         font-weight: bold;
     }
+
     .mytable,
     .secondtable {
         th {

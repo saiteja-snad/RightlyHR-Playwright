@@ -125,14 +125,14 @@
                                         </tr>
 
                                         <tr>
-                                            <td class="bold text-center"><b>Total Gross Salary</b>
+                                            <td class="text-center"><b>Total Gross Salary</b>
                                             </td>
-                                            <td class="text-center bold"><span
+                                            <td class="text-center "><span
                                                     *ngIf="!appraisalData.totalGrossSalary;else totalgross"> </span>
                                                 <ng-template
                                                     #totalgross> <b>{{appraisalData.totalGrossSalary}}</b></ng-template>
                                             </td>
-                                            <td class="text-center bold"><span
+                                            <td class="text-center"><span
                                                     *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
                                                 </span>
                                                 <ng-template
@@ -192,7 +192,7 @@
                                         <tr>
                                             <td class="text-center"><b>Total Deductions (PF+ESI+PT+Medical Insurance)</b>
                                             </td>
-                                            <td class="text-center bold"><span
+                                            <td class="text-center"><span
                                                     *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
                                                 <ng-template #totdec><b>{{appraisalData.totalDeduction}}</b></ng-template>
                                             </td>
@@ -229,9 +229,9 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td style="width:59%;" class="p-0 pt-1 pb-1 text-center">Employer PF
+                                            <td style="width:58%;" class="p-0 pt-1 pb-1 text-center">Employer PF
                                                 Contribution</td>
-                                            <td style="width:21%;" class="text-center p-0 pt-1 pb-1"><span
+                                            <td style="width:16%;" class="text-center p-0 pt-1 pb-1"><span
                                                     *ngIf="!appraisalData.pfContribution;else pfempr"> </span>
                                                 <ng-template #pfempr>{{appraisalData.pfContribution}}</ng-template>
                                             </td>

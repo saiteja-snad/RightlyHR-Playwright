@@ -20,6 +20,7 @@ import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-man
 import { MultiSelectModule } from 'primeng/multiselect';
 import { combineLatest } from 'rxjs';
 import { Chip } from 'primeng/chip';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-hold-projects',
@@ -37,6 +38,7 @@ import { Chip } from 'primeng/chip';
     ProjectsSideTabsForClientsComponent,
     MultiSelectModule,
     Chip,
+    PaginatorModule,
   ],
   templateUrl: './hold-projects.component.html',
   styleUrl: './hold-projects.component.scss',
@@ -55,6 +57,19 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   selectedProjectTypes: any[] = [];
   selectedClients: any[] = [];
   clientDetails: any[] = [];
+
+  // Pagination
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
 
   constructor(
     private router: Router,
@@ -139,11 +154,15 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   onDepartmentChangelist(event: any) {
     const selectedIds = event.value || [];
     this.http.setDepartmentIds(selectedIds.length > 0 ? selectedIds : null);
+    this.page = 1;
+    this.first = 0;
   }
 
   // Project Type filter change
   onProjectTypeChange() {
-    this.getdatabaedonRoute(); // Re-fetch with new filters
+    this.page = 1;
+    this.first = 0;
+    this.getdatabaedonRoute();
   }
 
   getdatabaedonRoute(): void {
@@ -187,7 +206,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
 
   getAllHoldProjects() {
     this.loading = true;
-    let url = 'Project?status=hold';
+    let url = `Project?status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
     if (this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
@@ -200,7 +219,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`;
     }
 
     this.http
@@ -209,10 +228,12 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.projectsData = res?.data ?? [];
+          this.collectionSize = res?.pagination?.totalRecords || 0;
           this.loading = false;
         },
         error: () => {
           this.projectsData = [];
+          this.collectionSize = 0;
           this.loading = false;
         },
       });
@@ -220,7 +241,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true;
-    let url = `Project?clientId=${clientID}&status=hold`;
+    let url = `Project?clientId=${clientID}&status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
     if (this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
@@ -234,7 +255,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`;
     }
 
     this.http
@@ -243,11 +264,16 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.projectsData = res?.data ?? [];
+          this.collectionSize = res?.pagination?.totalRecords || 0;
           this.inactiveClientStatus =
             res?.data?.[0]?.client?.status?.toLowerCase();
           this.loading = false;
         },
-        error: () => (this.loading = false),
+        error: () => {
+          this.projectsData = [];
+          this.collectionSize = 0;
+          this.loading = false;
+        },
       });
   }
 
@@ -333,8 +359,8 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.selectedClients = [];
-
-    // Force UI update
+    this.page = 1;
+    this.first = 0;
     this.selectedDepartmentIds = [...this.selectedDepartmentIds];
     this.selectedProjectTypes = [...this.selectedProjectTypes];
     this.selectedClients = [...this.selectedClients];
@@ -343,6 +369,8 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   }
 
   onClientChange() {
+    this.page = 1;
+    this.first = 0;
     this.getdatabaedonRoute();
   }
 
@@ -437,7 +465,24 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
       );
     }
 
-    this.getdatabaedonRoute(); // Reload data
+    this.page = 1;
+    this.first = 0;
+    this.getdatabaedonRoute();
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getdatabaedonRoute();
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getdatabaedonRoute();
   }
 
   ngOnDestroy() {

@@ -19,6 +19,7 @@ import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-man
 import { MultiSelectModule } from 'primeng/multiselect';
 import { combineLatest } from 'rxjs';
 import { Chip } from 'primeng/chip';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-inacitve-projects',
@@ -36,6 +37,7 @@ import { Chip } from 'primeng/chip';
     ProjectsSideTabsForClientsComponent,
     MultiSelectModule,
     Chip,
+    PaginatorModule,
   ],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss',
@@ -54,6 +56,19 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   selectedDepartmentIds: any[] = [];
   selectedProjectTypes: any[] = [];
   selectedClients: any[] = [];
+
+  // Pagination
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
 
   constructor(
     private router: Router,
@@ -136,11 +151,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   onDepartmentChangelist(event: any) {
     const selectedIds = event.value || [];
     this.http.setDepartmentIds(selectedIds.length > 0 ? selectedIds : null);
+    this.page = 1;
+    this.first = 0;
   }
 
   // Project Type filter change
   onProjectTypeChange() {
-    this.getdatabaedonRoute(); // Re-fetch with new filters
+    this.page = 1;
+    this.first = 0;
+    this.getdatabaedonRoute();
   }
 
   getdatabaedonRoute(): void {
@@ -183,7 +202,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
   getAllInactiveProjects() {
     this.loading = true;
-    let url = 'Project?status=Inactive';
+    let url = `Project?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
     // Apply Department Filter
     if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
@@ -200,7 +219,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`;
     }
 
     this.http
@@ -209,11 +228,13 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.projectsData = res?.data ?? [];
+          this.collectionSize = res?.pagination?.totalRecords || 0;
           this.loading = false;
         },
         error: (err) => {
           console.error('Error fetching inactive projects:', err);
           this.projectsData = [];
+          this.collectionSize = 0;
           this.loading = false;
         },
       });
@@ -221,7 +242,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true;
-    let url = `Project?clientId=${clientID}&status=Inactive`;
+    let url = `Project?clientId=${clientID}&status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
     if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
@@ -234,7 +255,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`;
     }
 
     this.http
@@ -243,12 +264,15 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.projectsData = res?.data ?? [];
+          this.collectionSize = res?.pagination?.totalRecords || 0;
           this.inactiveClientStatus =
             res?.data?.[0]?.client?.status?.toLowerCase();
           this.loading = false;
         },
         error: (err) => {
           console.error('Error fetching projects for client:', err);
+          this.projectsData = [];
+          this.collectionSize = 0;
           this.loading = false;
         },
       });
@@ -302,8 +326,8 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.selectedClients = [];
-
-    // Force UI update
+    this.page = 1;
+    this.first = 0;
     this.selectedDepartmentIds = [...this.selectedDepartmentIds];
     this.selectedProjectTypes = [...this.selectedProjectTypes];
     this.selectedClients = [...this.selectedClients];
@@ -312,6 +336,8 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   }
 
   onClientChange() {
+    this.page = 1;
+    this.first = 0;
     this.getdatabaedonRoute();
   }
 
@@ -406,7 +432,24 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
       );
     }
 
-    this.getdatabaedonRoute(); // Reload data
+    this.page = 1;
+    this.first = 0;
+    this.getdatabaedonRoute();
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getdatabaedonRoute();
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getdatabaedonRoute();
   }
   ngOnDestroy() {
     this.destroy$.next(true);

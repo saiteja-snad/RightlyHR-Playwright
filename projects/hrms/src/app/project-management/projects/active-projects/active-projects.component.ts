@@ -24,11 +24,12 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { ProjectsSideTabsForClientsComponent } from '../../../shared/project-management-tabs/projects-side-tabs-for-clients/projects-side-tabs-for-clients.component';
 import { combineLatest } from 'rxjs';
 import { Chip } from 'primeng/chip';
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, MultiSelectModule, CommonModule, FormsModule, DataLoaderContentComponent,
     TranslateModule, RouterModule, ConfirmationIconComponent, ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent,
-    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip],
+    ProjcetCreationComponent, ActiveprojectsPipe, ProjectsSideTabsForClientsComponent, ProjectsSideTabsComponent, Chip, PaginatorModule],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss',
 })
@@ -65,6 +66,19 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   selectedProjectTypes: any[] = [];
   selectedClients: any[] = [];
   clientDetails: any[] = [];
+
+  // Pagination
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize = 0;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService, private conformationPopup: OpenModalService,
@@ -125,21 +139,27 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentChangelist(event: any) {
-    const selectedIds = event.value; // This gives an array when multiple departments selected
+    const selectedIds = event.value;
     if (Array.isArray(selectedIds)) {
       this.http.setDepartmentIds(selectedIds);
     } else {
       this.http.setDepartmentIds([selectedIds]);
     }
+    this.page = 1;
+    this.first = 0;
   }
 
   onProjectTypeChange() {
-    this.getProjectsBasedOnRoute(); // Re-fetch projects with new filters
+    this.page = 1;
+    this.first = 0;
+    this.getProjectsBasedOnRoute();
   }
 
   // Optional: Clear project type filter when needed
   clearProjectTypeFilter() {
     this.selectedProjectTypes = [];
+    this.page = 1;
+    this.first = 0;
     this.onProjectTypeChange();
   }
 
@@ -293,7 +313,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   getAllActiveProjects() {
     this.loading = true;
-    let url = 'Project?status=Active';
+    let url = `Project?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
@@ -307,7 +328,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`;
     }
 
     this.http
@@ -315,12 +336,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.projectsData = res?.data ?? []; // Extract "data" array
+          this.projectsData = res?.data ?? [];
+          this.collectionSize = res?.pagination?.totalRecords || 0;
         },
         error: (err) => {
           console.error('Error fetching projects data:', err);
           this.loading = false;
           this.projectsData = [];
+          this.collectionSize = 0;
         },
         complete: () => {
           this.loading = false;
@@ -330,7 +353,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   getprojectbyid(clientID: any): void {
     this.loading = true;
-    let url = `Project?clientId=${clientID}&status=Active`;
+    let url = `Project?clientId=${clientID}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
@@ -342,7 +366,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       .filter((id): id is number => id != null);
 
     if (clientIds.length > 0) {
-      url += `&clientId=${clientIds.join(',')}`; // ← Now correctly sends "57,56"
+      url += `&clientId=${clientIds.join(',')}`;
     }
     this.http
       .getData(url)
@@ -351,11 +375,14 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           this.loading = false;
           this.projectsData = res?.data ?? [];
+          this.collectionSize = res?.pagination?.totalRecords || 0;
           this.inactiveClientStatus =
             res?.data?.[0]?.client?.status.toLowerCase();
         },
         error: (err) => {
           this.loading = false;
+          this.projectsData = [];
+          this.collectionSize = 0;
           console.error('Error fetching clients:', err);
         },
       });
@@ -691,7 +718,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.selectedClients = [];
-    // Force UI update
+    this.page = 1;
+    this.first = 0;
     this.selectedDepartmentIds = [...this.selectedDepartmentIds];
     this.selectedProjectTypes = [...this.selectedProjectTypes];
     this.selectedClients = [...this.selectedClients];
@@ -699,6 +727,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   onClientChange() {
+    this.page = 1;
+    this.first = 0;
     this.getProjectsBasedOnRoute();
   }
   getLighterColor(color: any, amount: number = 0.9): string {
@@ -779,12 +809,29 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       this.selectedClients = this.selectedClients.filter((c: any) => c !== filter.value);
     } else if (filter.type === 'department') {
       this.selectedDepartmentIds = this.selectedDepartmentIds.filter((id: any) => id !== filter.value);
-      this.http.setDepartmentIds(this.selectedDepartmentIds); // Important!
+      this.http.setDepartmentIds(this.selectedDepartmentIds);
     } else if (filter.type === 'projectType') {
       this.selectedProjectTypes = this.selectedProjectTypes.filter((t: string) => t !== filter.value);
     }
 
-    this.getProjectsBasedOnRoute(); // Reload data
+    this.page = 1;
+    this.first = 0;
+    this.getProjectsBasedOnRoute();
+  }
+
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getProjectsBasedOnRoute();
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getProjectsBasedOnRoute();
   }
 
   ngOnDestroy() {

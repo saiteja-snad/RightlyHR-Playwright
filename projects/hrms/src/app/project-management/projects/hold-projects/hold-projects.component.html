@@ -69,7 +69,7 @@
       </ng-container>
 
       <ng-template #maincontent>
-        <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
+        <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients'), 'has-data': projectsData.length > 0}">
           <table class="w-100">
             <thead>
               @if(!isActive('/project-management/clients')){
@@ -146,6 +146,23 @@
               </ng-template>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-content" *ngIf="projectsData.length > 0">
+          <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+              <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+              </select>
+              <span class="pagination-label text-nowrap">
+                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+              </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+              (onPageChange)="onPageChange($event)"></p-paginator>
+          </div>
         </div>
       </ng-template>
       <!-- </div>

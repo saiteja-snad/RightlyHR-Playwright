@@ -21,6 +21,8 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
+import { combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
@@ -100,30 +102,66 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
   allocatedVsActualLoader = false;
   billableVsNonbillableLoader = false;
 
+  selectedDepartmentIds: number[] = [];
+selectedResourceRoles: number[] = [];
+selectedResourcePhases: number[] = [];
+
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
-  ngOnInit() {
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
-    this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
-      if (request) {
-        if (request.resetPagination) {
-          this.page = 1;
-          this.first = 0;
-        }
-        this.resourceDataids = {
-          ...this.resourceDataids, // keep clientId & projectId from localStorage
-          employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
-          dateRange: request.dateRange
-        };
-        this.getProjectSummary();
-      } else {
-        this.getProjectSummary();
-      }
-    });
-    //this.getProjectSummary();
-    // this.setDefaultmounth();
-  }
+ngOnInit() {
+  this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+
+  // SINGLE COMBINED STREAM — this is the magic fix
+  combineLatest([
+    this.http.request$,                          // contains resourceId + dateRange + resetPagination
+    this.http.projectTimesheetDepartmentIds$,
+    this.http.projectTimesheetRoleFilter$,
+    this.http.projectTimesheetPhaseFilter$,
+    this.http.getDateRangeObservable()           // fallback date range
+  ]).pipe(
+    debounceTime(100),                 // wait 100ms after last emission
+    distinctUntilChanged((prev, curr) => {
+      // Optional: prevent unnecessary calls if values didn't actually change
+      return JSON.stringify(prev) === JSON.stringify(curr);
+    }),
+    takeUntil(this.destroy$)
+  ).subscribe(([request, deptIds, roleIds, phaseIds, dateRange]) => {
+    // Merge everything into resourceDataids
+
+    this.resourceDataids = {
+      ...this.resourceDataids,
+      employeeId: request?.resourceId || this.resourceDataids.employeeId,
+      dateRange: request?.dateRange || dateRange || this.resourceDataids.dateRange
+    };
+
+    // Update local filter arrays (for future API param building)
+    this.selectedDepartmentIds = deptIds || [];
+    this.selectedResourceRoles = roleIds || [];
+    this.selectedResourcePhases = phaseIds || [];
+
+    // Reset pagination only when explicitly requested
+    if (request?.resetPagination) {
+      this.page = 1;
+      this.first = 0;
+    }
+
+    // ONE CALL ONLY
+    this.refreshData();
+  });
+
+  // Initial load (will trigger the combined stream once)
+  this.refreshData();
+}
+
+
+private refreshData() {
+  // this.page = 1;
+  // this.first = 0;
+  this.getProjectSummary();
+  this.estimatedActualChart();
+  this.billableVSNonBillable();
+}
 
   // setDefaultmounth() {
   //   const startOfMonth = dayjs().startOf('month').toDate();
@@ -133,7 +171,7 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-  // called for pagination 
+  // called for pagination
   onRowsChange() {
     this.page = 1;
     this.first = 0;
@@ -162,6 +200,10 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
+
+    const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
     // Reset pagination if filters exist
     // if (this.resourceDataids?.dateRange  && Object.keys(this.resourceDataids?.dateRange ).length > 0) {
     //   var page  = 1;
@@ -171,7 +213,12 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
     var pagesize = this.pageSize;
     // }
     // Reset pagination if filters exist
-    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=${page}&pageSize=${pagesize}`;
+    let url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=${page}&pageSize=${pagesize}`;
+
+    if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
+  if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
+
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -238,25 +285,127 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
- estimatedActualChart() {
+//  estimatedActualChart() {
+//   this.allocatedVsActualLoader = true;
+
+//   const { startDate, endDate } = this.resourceDataids?.dateRange || {};
+//   const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+//   const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+//   const { projectId, employeeId } = this.resourceDataids;
+
+//   const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+
+//   this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+//     next: (res: any) => {
+//       const chart = res?.data?.chart;
+//       if (!chart) {
+//         this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+//         return;
+//       }
+
+//       // Convert HH:MM to numeric hours
+//       const convertHHMMToNumber = (hhmm: string): number => {
+//         if (!hhmm) return 0;
+//         const [h, m] = hhmm.split(':').map(Number);
+//         return Number((h + m / 60).toFixed(2));
+//       };
+
+//       // Labels
+//       const labels = ['Allocated', 'Actual'];
+
+//       // Numeric values for Pie chart drawing
+//       const numericHours = [
+//         chart.allocated,
+//         convertHHMMToNumber(chart.actualHoursHHMM)
+//       ];
+
+//       // HH:MM values for display
+//       const displayHHMM = [
+//         `${chart.allocated}:00`,       // allocated returned as 300 (convert to "300:00")
+//         chart.actualHoursHHMM          // "25:00"
+//       ];
+
+//       const colors = ['#EE7956', '#5A00D8'];
+
+//       // Legend display (HH:MM format)
+//       this.estimatedVsActualData = labels.map((label, index) => ({
+//         label,
+//         value: displayHHMM[index],
+//         color: colors[index]
+//       }));
+
+//       // Assign Pie data
+//       this.estimatedVsActualGraphData = {
+//         labels,
+//         datasets: [
+//           {
+//             data: numericHours,
+//             backgroundColor: colors,
+//           }
+//         ]
+//       };
+
+//       // Tooltip override → show HH:MM format
+//       this.estimatedVsActualGraphOptions = {
+//         responsive: true,
+//         plugins: {
+//           legend: { display: false },
+//           tooltip: {
+//             callbacks: {
+//               label: (context: any) => {
+//                 const idx = context.dataIndex;
+//                 return `${labels[idx]}: ${displayHHMM[idx]} Hrs`;
+//               }
+//             }
+//           }
+//         }
+//       };
+
+//       this.allocatedVsActualLoader = false;
+//     },
+
+//     error: (err) => {
+//       this.loading = false;
+//       console.error('Error fetching estimated vs actual chart data:', err);
+//       this.estimatedVsActualGraphData = { labels: [], datasets: [] };
+//       this.allocatedVsActualLoader = false;
+//     }
+//   });
+// }
+
+estimatedActualChart() {
   this.allocatedVsActualLoader = true;
 
   const { startDate, endDate } = this.resourceDataids?.dateRange || {};
   const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
   const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
+
+  const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
+
   const { projectId, employeeId } = this.resourceDataids;
 
-  const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+  let url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=employee`;
+
+  if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
+  if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
 
   this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
     next: (res: any) => {
+      this.loading = false;
+      this.allocatedVsActualLoader = false;
+
       const chart = res?.data?.chart;
       if (!chart) {
         this.estimatedVsActualGraphData = { labels: [], datasets: [] };
         return;
       }
 
-      // Convert HH:MM to numeric hours
+      // --------------------------
+      // HH:MM → Number Conversion
+      // --------------------------
       const convertHHMMToNumber = (hhmm: string): number => {
         if (!hhmm) return 0;
         const [h, m] = hhmm.split(':').map(Number);
@@ -266,39 +415,45 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
       // Labels
       const labels = ['Allocated', 'Actual'];
 
-      // Numeric values for Pie chart drawing
+      // Numeric values for Pie chart
       const numericHours = [
-        chart.allocated,
-        convertHHMMToNumber(chart.actualHoursHHMM)
+        chart.allocated,                               // numeric allocated
+        convertHHMMToNumber(chart.actualHoursHHMM)     // convert HH:MM → number
       ];
 
-      // HH:MM values for display
+      // HH:MM display values
       const displayHHMM = [
-        `${chart.allocated}:00`,       // allocated returned as 300 (convert to "300:00")
-        chart.actualHoursHHMM          // "25:00"
+        `${chart.allocated}:00`,                       // allocated as HH:00
+        chart.actualHoursHHMM                          // actual in HH:MM
       ];
 
       const colors = ['#EE7956', '#5A00D8'];
 
-      // Legend display (HH:MM format)
+      // ----------------------------------
+      // Save legend data with HH:MM values
+      // ----------------------------------
       this.estimatedVsActualData = labels.map((label, index) => ({
         label,
-        value: displayHHMM[index],
+        value: displayHHMM[index],  // HH:MM for legend
         color: colors[index]
       }));
 
-      // Assign Pie data
+      // -----------------------------
+      // Assign Pie Chart Data (numeric)
+      // -----------------------------
       this.estimatedVsActualGraphData = {
         labels,
         datasets: [
           {
             data: numericHours,
-            backgroundColor: colors,
+            backgroundColor: colors
           }
         ]
       };
 
-      // Tooltip override → show HH:MM format
+      // -----------------------------
+      // Tooltip Override → HH:MM format
+      // -----------------------------
       this.estimatedVsActualGraphOptions = {
         responsive: true,
         plugins: {
@@ -313,8 +468,6 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
           }
         }
       };
-
-      this.allocatedVsActualLoader = false;
     },
 
     error: (err) => {
@@ -327,13 +480,23 @@ export class ResourceViewSummaryComponent implements OnInit, OnDestroy {
 }
 
 
+
   billableVSNonBillable() {
     this.billableVsNonbillableLoader = true;
     const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
-    const url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=emp`;
+
+    const deptIds = this.http.getCurrentProjectTimesheetDepartmentIds();
+  const roleIds = this.http.getCurrentProjectTimesheetRoleIds();
+  const phaseIds = this.http.getCurrentProjectTimesheetPhaseIds();
+
+    let url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&startDate=${start}&endDate=${end}&groupBy=emp`;
+
+    if (deptIds.length > 0) url += `&departmentIds=${deptIds.join(',')}`;
+  if (roleIds.length > 0) url += `&roleIds=${roleIds.join(',')}`;
+  if (phaseIds.length > 0) url += `&phaseIds=${phaseIds.join(',')}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];

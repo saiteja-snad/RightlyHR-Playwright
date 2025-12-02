@@ -1,12 +1,17 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+  HttpResponse,
+} from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
+import moment from 'moment';
 @Injectable({
   providedIn: 'root',
 })
-
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
   tirggerCountSignal = signal<{
@@ -116,7 +121,6 @@ export class HttpService {
     this.expensescount.next();
   }
 
-
   clientcount = new Subject<void>();
   clientcountfuntion$ = this.clientcount.asObservable();
   setnewcountDetailsfornewclient() {
@@ -141,13 +145,11 @@ export class HttpService {
     this.projectresourcecount.next();
   }
 
-
   projectdocumentscount = new Subject<void>();
   projectcountdocuments$ = this.projectdocumentscount.asObservable();
   setnewcountfornewdocumentscount() {
     this.projectdocumentscount.next();
   }
-
 
   //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
@@ -156,11 +158,11 @@ export class HttpService {
     this.separationDetailes.next();
   }
 
-
   // function for employeid timesheet
   private selectedEmployeeIdTimesheet = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
-  selectedEmployeeIdTimesheet$ = this.selectedEmployeeIdTimesheet.asObservable();
+  selectedEmployeeIdTimesheet$ =
+    this.selectedEmployeeIdTimesheet.asObservable();
   // Method to update the employeeId
   setEmployeeIdTimesheet(id: any, phaseId: number, request: any): void {
     this.selectedEmployeeIdTimesheet.next({ id, phaseId, request });
@@ -195,7 +197,7 @@ export class HttpService {
     this.refreshTrigger.next();
   }
 
-  // OnBehalf Of 
+  // OnBehalf Of
   onBehalfOfTriggerSignal = signal<boolean>(false);
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
@@ -206,9 +208,6 @@ export class HttpService {
 
   onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
   onBehalfOfRemoteLoginSelectedEmp$ = new BehaviorSubject<any>(null);
-
-
-
 
   // function for employeid TIMEOFF
   private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
@@ -322,11 +321,13 @@ export class HttpService {
 
   //to get template on offer letter
   getTemplate(): Observable<ArrayBuffer> {
-    return this.http.get('../assets/offer.docx', { responseType: 'arraybuffer', }).pipe(
-      catchError((error) => {
-        throw error; // You can handle the error more specifically here
-      })
-    );
+    return this.http
+      .get('../assets/offer.docx', { responseType: 'arraybuffer' })
+      .pipe(
+        catchError((error) => {
+          throw error; // You can handle the error more specifically here
+        })
+      );
   }
 
   getDatabyid(url: string, _params?: any) {
@@ -387,7 +388,10 @@ export class HttpService {
   uploadFileWithQuery(url: string, directoryPath: string, file: any) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`, formData);
+    return this.http.post(
+      `${this.ApiUrl}${url}?directoryPath=${directoryPath}`,
+      formData
+    );
   }
 
   uploadfile(url: string, data: any) {
@@ -402,7 +406,10 @@ export class HttpService {
       observe: 'response' as const,
       responseType: 'blob' as const,
     };
-    return this.http.get(`${this.ApiUrl}${url}?fileName=${directoryPath}`, options);
+    return this.http.get(
+      `${this.ApiUrl}${url}?fileName=${directoryPath}`,
+      options
+    );
   }
 
   DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
@@ -415,7 +422,8 @@ export class HttpService {
     let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
 
     if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
-    if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
+    if (searchQuery)
+      apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
     if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
     if (skillSearch) apiUrl += `&skillSearch=${encodeURIComponent(skillSearch)}`;
     if (departmentIds) apiUrl += `&departmentIds=${encodeURIComponent(departmentIds)}`;
@@ -433,7 +441,8 @@ export class HttpService {
   postDatareport(url: string, data: any): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      Accept:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     return this.http.post(`${this.ApiUrl}${url}`, data, {
       headers,
@@ -458,8 +467,15 @@ export class HttpService {
     return this.http.post<any>(`${this.ApiUrl}${url}`, data);
   }
 
-  getstatusdesk(url: string, selectedLocationId: any, selectedSubLocationId: any, status: string,
-    page: number, pageSize: number, searchQuery: string): any {
+  getstatusdesk(
+    url: string,
+    selectedLocationId: any,
+    selectedSubLocationId: any,
+    status: string,
+    page: number,
+    pageSize: number,
+    searchQuery: string
+  ): any {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
@@ -507,8 +523,16 @@ export class HttpService {
     return this.http.get(dataUrl);
   }
 
-  postProbation(url: string, employeeId: number, referenceId: number, raisedbyempId: number) {
-    let params = new HttpParams().set('employeeId', employeeId).set('referenceId', referenceId).set('currentApproverId', raisedbyempId);
+  postProbation(
+    url: string,
+    employeeId: number,
+    referenceId: number,
+    raisedbyempId: number
+  ) {
+    let params = new HttpParams()
+      .set('employeeId', employeeId)
+      .set('referenceId', referenceId)
+      .set('currentApproverId', raisedbyempId);
     return this.http.post(`${this.ApiUrl}${url}`, null, { params });
   }
 
@@ -542,7 +566,9 @@ export class HttpService {
   }
 
   getUserDetails(email: string) {
-    return this.http.get(`${this.ApiUrl}Employeedata/GetemployeebyemailID?emailid=${email}`);
+    return this.http.get(
+      `${this.ApiUrl}Employeedata/GetemployeebyemailID?emailid=${email}`
+    );
   }
 
   getDatabytype(url: string, _params?: any) {
@@ -574,7 +600,7 @@ export class HttpService {
     pagenum: number,
     pagesize: number,
     searchparam?: string,
-    status?: string,
+    status?: string
   ): Observable<any> {
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
@@ -604,7 +630,11 @@ export class HttpService {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
-  downloadMonthlyAttendanceReport(url: string, month: string | null, year: number): Observable<Blob> {
+  downloadMonthlyAttendanceReport(
+    url: string,
+    month: string | null,
+    year: number
+  ): Observable<Blob> {
     const apiurl = `${this.ApiUrl}${url}?month=${month}&year=${year}`;
     // Make the GET request and return the file as a Blob
     return this.http.get(apiurl, {
@@ -615,7 +645,7 @@ export class HttpService {
     const apiurl = `${this.ApiUrl}${url}`;
     return this.http.get(apiurl, {
       responseType: 'blob',
-      observe: 'response'  // 👈 allows access to headers
+      observe: 'response', // 👈 allows access to headers
     });
   }
 
@@ -666,11 +696,23 @@ export class HttpService {
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
 
-  getAssesnmentFormById(url: string, reviewcycleitemid: number, employeeId: number): Observable<any> {
-    return this.http.get<any>(`${this.ApiUrl}${url.replace('{reviewcycleitemid}', reviewcycleitemid.toString())}?employeeId=${employeeId}`);
+  getAssesnmentFormById(
+    url: string,
+    reviewcycleitemid: number,
+    employeeId: number
+  ): Observable<any> {
+    return this.http.get<any>(
+      `${this.ApiUrl}${url.replace(
+        '{reviewcycleitemid}',
+        reviewcycleitemid.toString()
+      )}?employeeId=${employeeId}`
+    );
   }
 
-  getAllPendingApprovalsCount(moduleId?: number, employeeId?: number): Observable<ApprovalStatusCount[]> {
+  getAllPendingApprovalsCount(
+    moduleId?: number,
+    employeeId?: number
+  ): Observable<ApprovalStatusCount[]> {
     let params = new HttpParams();
     if (moduleId !== undefined && moduleId !== null) {
       params = params.set('moduleId', moduleId.toString());
@@ -744,35 +786,51 @@ export class HttpService {
   }
 
   getFilterCompoffDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`
+    );
   }
 
   getFilterRemoteLoginDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getRemoteLoginRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getRemoteLoginRequests/${employeeId}?year=${params}`
+    );
   }
 
   getFilterWFHDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`
+    );
   }
 
   getFilterOnBehalfWFHDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`
+    );
   }
 
   getFilterOnBehalfRemoteLoginDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfRemoteLoginRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getOnBehlfOfRemoteLoginRequests/${employeeId}?year=${params}`
+    );
   }
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`
+    );
   }
 
   getFilterExtraHoursDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}RegularizationRequests/loggedextrahours/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}RegularizationRequests/loggedextrahours/${employeeId}?year=${params}`
+    );
   }
 
   getFilterPermissionDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`
+    );
   }
 
   // to store clientid in timesheet module project management
@@ -802,8 +860,9 @@ export class HttpService {
     this.requestSource.next(request);
   }
 
-  private requestclienttimesheetdataSubject = new BehaviorSubject<any>(null);// holds last submitted request
-  requestclienttimesheetdata$ = this.requestclienttimesheetdataSubject.asObservable();
+  private requestclienttimesheetdataSubject = new BehaviorSubject<any>(null); // holds last submitted request
+  requestclienttimesheetdata$ =
+    this.requestclienttimesheetdataSubject.asObservable();
 
   setRequestclienttimesheet(request: any) {
     this.requestclienttimesheetdataSubject.next(request);
@@ -831,9 +890,12 @@ export class HttpService {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
   // DATE RANGE
-  private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+  private dateRangeSubject = new BehaviorSubject<{
+    startDate: string | null;
+    endDate: string | null;
+  } | null>(null);
 
-  // Set date range 
+  // Set date range
   setDateRange(startDate: string | null, endDate: string | null) {
     this.dateRangeSubject.next({ startDate, endDate });
   }
@@ -847,16 +909,26 @@ export class HttpService {
   getCurrentDateRange() {
     return this.dateRangeSubject.getValue();
   }
-// team timesheet summery
- //  Set data (e.g., after selecting date range and employee)
-   private teamdateRangeSubject = new BehaviorSubject<any>({
+  // team timesheet summery
+  //  Set data (e.g., after selecting date range and employee)
+  private teamdateRangeSubject = new BehaviorSubject<any>({
     startDate: null,
     endDate: null,
     employeeId: null,
-    employeeName: null
+    employeeName: null,
   });
-  setteamDateRange(startDate: string | null , endDate: string | null , employeeId?: string | null, employeeName?: string) {
-    this.teamdateRangeSubject.next({ startDate, endDate, employeeId, employeeName });
+  setteamDateRange(
+    startDate: string | null,
+    endDate: string | null,
+    employeeId?: string | null,
+    employeeName?: string
+  ) {
+    this.teamdateRangeSubject.next({
+      startDate,
+      endDate,
+      employeeId,
+      employeeName,
+    });
   }
 
   //  Get as observable (subscribe in other component)
@@ -868,9 +940,29 @@ export class HttpService {
   getteamCurrentDateRange() {
     return this.teamdateRangeSubject.getValue();
   }
-clearTeamDateRange() {
-  this.teamdateRangeSubject.next({ startDate: null, endDate: null, employeeId: null,employeeName: null });
-}
+  clearTeamDateRange() {
+    this.teamdateRangeSubject.next({
+      startDate: null,
+      endDate: null,
+      employeeId: null,
+      employeeName: null,
+    });
+  }
+
+  private timesheetFiltersSubject = new BehaviorSubject<any>(null);
+
+  setTimesheetFilters(filters: any) {
+    this.timesheetFiltersSubject.next(filters);
+  }
+
+  getTimesheetFilters() {
+    return this.timesheetFiltersSubject.asObservable();
+  }
+
+  clearTimesheetFilters() {
+    this.timesheetFiltersSubject.next(null);
+  }
+
   //  Example API call
   getDatEdATA(url: string) {
     return this.http.get(url);
@@ -887,5 +979,275 @@ clearTeamDateRange() {
 
   setDepartmentIds(ids: number[]) {
     this.departmentIdsSource.next(ids);
+  }
+
+  //store project types
+  private projectTypeFilterSource = new BehaviorSubject<string[]>([]);
+  projectTypeFilter$ = this.projectTypeFilterSource.asObservable();
+
+  setProjectTypeFilter(types: string[]) {
+    this.projectTypeFilterSource.next(types || []);
+  }
+
+  clearProjectTypeFilter() {
+    this.projectTypeFilterSource.next([]);
+  }
+
+  // store phases statuses
+  private phaseStatusFilterSource = new BehaviorSubject<string[]>([]);
+
+  phaseStatusFilter$ = this.phaseStatusFilterSource.asObservable();
+
+  setPhaseStatusFilter(statuses: string[]) {
+    this.phaseStatusFilterSource.next(statuses || []);
+  }
+
+  clearPhaseStatusFilter() {
+    this.phaseStatusFilterSource.next([]);
+  }
+
+  // store date time statuses
+  private phaseDateFilterSource = new BehaviorSubject<{
+    startDate: string | null;
+    endDate: string | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+
+  phaseDateFilter$ = this.phaseDateFilterSource.asObservable();
+
+  setPhaseDateFilter(filter: {
+    startDate: string | null;
+    endDate: string | null;
+  }) {
+    this.phaseDateFilterSource.next(filter);
+  }
+
+  clearPhaseDateFilter() {
+    this.phaseDateFilterSource.next({ startDate: null, endDate: null });
+  }
+
+  // store Timesheet Approval Authority
+  private phaseAuthorityFilterSource = new BehaviorSubject<number[]>([]);
+
+  phaseAuthorityFilter$ = this.phaseAuthorityFilterSource.asObservable();
+
+  setPhaseAuthorityFilter(authorityIds: number[]) {
+    this.phaseAuthorityFilterSource.next(authorityIds || []);
+  }
+
+  clearPhaseAuthorityFilter() {
+    this.phaseAuthorityFilterSource.next([]);
+  }
+
+  //store role in timesheet summary
+  private clientTimesheetRoleFilterSource = new BehaviorSubject<number[]>([]);
+
+  clientTimesheetRoleFilter$ =
+    this.clientTimesheetRoleFilterSource.asObservable();
+
+  setClientTimesheetRoleFilter(roleIds: number[]) {
+    this.clientTimesheetRoleFilterSource.next(roleIds || []);
+  }
+
+  clearClientTimesheetRoleFilter() {
+    this.clientTimesheetRoleFilterSource.next([]);
+  }
+
+  // store phase in timsheet sunnary
+  private clientTimesheetPhaseFilterSource = new BehaviorSubject<number[]>([]);
+
+  clientTimesheetPhaseFilter$ =
+    this.clientTimesheetPhaseFilterSource.asObservable();
+
+  setClientTimesheetPhaseFilter(phaseIds: number[]) {
+    this.clientTimesheetPhaseFilterSource.next(phaseIds || []);
+  }
+
+  clearClientTimesheetPhaseFilter() {
+    this.clientTimesheetPhaseFilterSource.next([]);
+  }
+
+    // store project in timsheet sunnary
+  private clientTimesheetProjectFilterSource = new BehaviorSubject<number[]>([]);
+
+  clientTimesheetProjectFilter$ =
+    this.clientTimesheetProjectFilterSource.asObservable();
+
+  setClientTimesheetProjectFilter(projectIds: number[]) {
+    this.clientTimesheetProjectFilterSource.next(projectIds || []);
+  }
+
+  clearClientTimesheetProjectFilter() {
+    this.clientTimesheetProjectFilterSource.next([]);
+  }
+  // Resource filters
+  private resourceRoleFilterSource = new BehaviorSubject<number[]>([]);
+  resourceRoleFilter$ = this.resourceRoleFilterSource.asObservable();
+
+  setResourceRoleFilter(roleIds: number[]) {
+    this.resourceRoleFilterSource.next(roleIds || []);
+  }
+
+  clearResourceRoleFilter() {
+    this.resourceRoleFilterSource.next([]);
+  }
+
+  private resourcePhaseFilterSource = new BehaviorSubject<number[]>([]);
+  resourcePhaseFilter$ = this.resourcePhaseFilterSource.asObservable();
+
+  setResourcePhaseFilter(phaseIds: number[]) {
+    this.resourcePhaseFilterSource.next(phaseIds || []);
+  }
+
+  clearResourcePhaseFilter() {
+    this.resourcePhaseFilterSource.next([]);
+  }
+
+  private resourceAuthorityFilterSource = new BehaviorSubject<number[]>([]);
+  resourceAuthorityFilter$ = this.resourceAuthorityFilterSource.asObservable();
+
+  setResourceAuthorityFilter(authorityIds: number[]) {
+    this.resourceAuthorityFilterSource.next(authorityIds || []);
+  }
+
+  clearResourceAuthorityFilter() {
+    this.resourceAuthorityFilterSource.next([]);
+  }
+
+  private resourceProjectFilterSource = new BehaviorSubject<number[]>([]);
+  resourceProjectFilter$ = this.resourceProjectFilterSource.asObservable();
+
+  setResourceProjectFilter(projectIds: number[]) {
+    this.resourceProjectFilterSource.next(projectIds || []);
+  }
+
+  clearResourceProjectFilter() {
+    this.resourceProjectFilterSource.next([]);
+  }
+
+  // Project Timesheet Summary Filters
+  private projectTimesheetDepartmentIds = new BehaviorSubject<number[]>([]);
+  projectTimesheetDepartmentIds$ =
+    this.projectTimesheetDepartmentIds.asObservable();
+
+  private projectTimesheetRoleFilter = new BehaviorSubject<number[]>([]);
+  projectTimesheetRoleFilter$ = this.projectTimesheetRoleFilter.asObservable();
+
+  private projectTimesheetPhaseFilter = new BehaviorSubject<number[]>([]);
+  projectTimesheetPhaseFilter$ =
+    this.projectTimesheetPhaseFilter.asObservable();
+
+  private projectTimesheetProjectFilter = new BehaviorSubject<number[]>([]);
+  projectTimesheetProjectFilter$ =
+    this.projectTimesheetProjectFilter.asObservable();
+
+  private projectTimesheetFilterData = new BehaviorSubject<any>(null);
+  projectTimesheetFilterData$ = this.projectTimesheetFilterData.asObservable();
+
+  // Setters
+  setProjectTimesheetDepartmentIds(ids: number[]) {
+    this.projectTimesheetDepartmentIds.next(ids);
+  }
+
+  setProjectTimesheetRoleFilter(ids: number[]) {
+    this.projectTimesheetRoleFilter.next(ids);
+  }
+
+  setProjectTimesheetPhaseFilter(ids: number[]) {
+    this.projectTimesheetPhaseFilter.next(ids);
+  }
+
+   setProjectTimesheetProjectFilter(ids: number[]) {
+    this.projectTimesheetProjectFilter.next(ids);
+  }
+
+  setProjectTimesheetFilterData(data: any) {
+    this.projectTimesheetFilterData.next(data);
+  }
+
+  // Add these methods to your HttpService
+
+  getCurrentProjectTimesheetDepartmentIds(): number[] {
+    return this.projectTimesheetDepartmentIds.getValue();
+  }
+
+  getCurrentProjectTimesheetRoleIds(): number[] {
+    return this.projectTimesheetRoleFilter.getValue();
+  }
+
+  getCurrentProjectTimesheetPhaseIds(): number[] {
+    return this.projectTimesheetPhaseFilter.getValue();
+  }
+
+    getCurrentProjectTimesheetProjectIds(): number[] {
+    return this.projectTimesheetProjectFilter.getValue();
+  }
+
+  clearProjectTimesheetFilters() {
+    this.projectTimesheetDepartmentIds.next([]);
+    this.projectTimesheetRoleFilter.next([]);
+    this.projectTimesheetPhaseFilter.next([]);
+    this.projectTimesheetProjectFilter.next([]);
+    this.projectTimesheetFilterData.next(null);
+  }
+
+  getProjectResources(
+    url: string,
+    clientId?: number,
+    projectId?: number,
+    departmentId?: number,
+    reportingManagerId?: number,
+    statuses?: string
+  ) {
+    let params = new HttpParams();
+    if (clientId) {
+      params = params.set('clientId', clientId);
+    }
+    if (projectId) {
+      params = params.set('projectIds', projectId);
+    }
+    if (departmentId) {
+      params = params.set('departmentIds', departmentId);
+    }
+    if (reportingManagerId) {
+      params = params.set('managerIds', reportingManagerId);
+    }
+    if (statuses) {
+      params = params.set('statuses', statuses);
+    }
+    return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
+  }
+  getProjectSummary(apiUrl: string, payload: any) {
+    let params = new HttpParams();
+
+    // Handle Date Range
+    if (payload.dateRange && payload.dateRange[0] && payload.dateRange[1]) {
+      const startDate = moment(payload.dateRange[0]).format('YYYY-MM-DD');
+      const endDate = moment(payload.dateRange[1]).format('YYYY-MM-DD');
+
+      params = params.set('startDate', startDate);
+      params = params.set('endDate', endDate);
+    }
+
+    // Multi-values (comma separated)
+    if (payload.clientId?.length) {
+      params = params.set('clientId', payload.clientId.join(','));
+    }
+
+    if (payload.projectId?.length) {
+      params = params.set('projectIds', payload.projectId.join(','));
+    }
+
+    if (payload.departmentId?.length) {
+      params = params.set('departmentIds', payload.departmentId.join(','));
+    }
+
+    if (payload.tmorrmId?.length) {
+      params = params.set('managerIds', payload.tmorrmId.join(','));
+    }
+
+    return this.http.get<any>(`${this.ApiUrl}${apiUrl}`, { params });
   }
 }

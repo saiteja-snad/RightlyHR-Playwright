@@ -2762,3 +2762,65 @@ input[type=number]::-webkit-outer-spin-button {
     }
   }
 }
+
+// custom offcanvas filter
+.custom-filter-container {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    overflow-y: auto;
+
+    .offcanvas-filter-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+
+        .filter-header {
+            font-weight: 700;
+            font-size: var(--fontsize16);
+            vertical-align: middle;
+            color: var(--primary-color);
+        }
+    }
+
+    .offcanvas-filter-header-border {
+        border-bottom: 1.5px solid transparent;
+        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
+                #94B1DE 50.67%, var(--white-color) 108.91%);
+        border-image-slice: 1;
+        vertical-align: middle;
+    }
+
+    .offcanvas-filter-content {
+        padding: 1rem;
+    }
+
+    .offcanvas-footer-content {
+        display: flex;
+        position: absolute;
+        z-index: 1;
+        bottom: 1rem;
+        width: calc(100% - 2rem);
+        gap: 1rem;
+    }
+
+    .close-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+.fliter-chip-content {
+    .p-chip {
+        font-size: var(--fontsize12) !important;
+        padding: 0.25rem 1rem !important;
+        color: var(--primary-color) !important;
+        background-color: white !important;
+        border: 1px solid var(--primary-color) !important;
+    }
+
+    .more-chip {
+        cursor: pointer !important;
+    }
+}

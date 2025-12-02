@@ -41,7 +41,7 @@
     border: 1px solid #FFFFFF;
     padding: 0.5rem;
     border-radius: 0.5rem;
-    background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
+   background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
 
     .legend-circle {
         width: 10px;
@@ -235,7 +235,7 @@
     height: 100%;
     border: 1px solid #FFFFFF;
     border-radius: 0.5rem;
-    background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
+   background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
 }
 
 .time-sheet-summary-container {

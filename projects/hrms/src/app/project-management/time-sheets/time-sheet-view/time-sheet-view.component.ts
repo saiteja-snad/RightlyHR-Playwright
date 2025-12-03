@@ -20,6 +20,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { Router } from '@angular/router';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
@@ -83,6 +84,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   errorOccurred = false;
   errormodaldata: any;
   lockMessages: any;
+  totalCount: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,public formValidation:FormValidationsService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
@@ -1716,6 +1718,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedPhaseName = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        this.getApprovalStatusCounts();
       },
       error: (err) => {
         this.modalService.dismissAll();
@@ -1739,7 +1742,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       { queryParams: { id: this.loggedinuser?.employeeId } }
     );
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.timesheetModuleId}&EmployeeId=${this.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   canDelete(project?: AbstractControl, index?: number): boolean {
     if (!project) return false;
     const projectId = project.get('projectId')?.value ?? null;

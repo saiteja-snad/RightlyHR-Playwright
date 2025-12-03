@@ -22,6 +22,7 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.component';
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -62,8 +63,10 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   isLoading = false;
   profileForm!: FormGroup;
   isDataLoaded = false;
+  totalCount:any;
  @ViewChild('NoticePopup') NoticePopup?: TemplateRef<any>;
   constructor(
+    private authService: AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private conformationPopup: OpenModalService,
@@ -538,6 +541,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
               'Recall Request raised successfully'
             );
             this.fetchSeparationDetails();
+            this.getApprovalStatusCounts();
           }
         },
         error: (err: any) => {
@@ -612,6 +616,15 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.conformationPopup.openErrorModal(err.error.message);
         },
       });
+  }
+   getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.RecallrequestmoduleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
   }
   openModalraise() {
     this.modalService.open(RaiseseparationComponent, { centered: true, backdrop: 'static', keyboard: false, size: 'lg' })

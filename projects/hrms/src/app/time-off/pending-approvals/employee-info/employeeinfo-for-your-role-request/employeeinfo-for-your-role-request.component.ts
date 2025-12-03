@@ -75,6 +75,7 @@ export class EmployeeinfoForYourRoleRequestComponent {
   allPendingApprovals: any;
   allPendingApprovalItems: any;
  selectedLeaveStatus: any;
+  totalCount: any;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
@@ -412,6 +413,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
            this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
              this.getAllPendingApprovals();
+             this.getApprovalStatusCounts();
         },
       });
     }
@@ -500,12 +502,21 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
          
 
         },
       });
     }
   }
+   getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.pendingapprovalemployeid}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.dataload = true;

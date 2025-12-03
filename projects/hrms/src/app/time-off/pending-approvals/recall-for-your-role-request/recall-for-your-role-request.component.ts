@@ -67,7 +67,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   recallAcceptForm!: FormGroup;
   rejectSeparationForm!: FormGroup;
   selectedLeaveStatus: any;
-
+totalCount:any;
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -263,7 +263,15 @@ onStatusApproveSelect(status: string) {
   formatDate(date: any) {
     return date?.split('T')[0];
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.RecallrequestmoduleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   handleAccept() {
     let loggedinuser = this.authService.getToken();
     this.isLoading = true;
@@ -309,6 +317,7 @@ onStatusApproveSelect(status: string) {
         },
         complete: () => {
           this.isLoading = false;
+            this.getApprovalStatusCounts()
         },
       });
   }
@@ -354,6 +363,7 @@ onStatusApproveSelect(status: string) {
         },
         complete: () => {
           this.isLoading = false;
+            this.getApprovalStatusCounts()
         },
       });
   }
@@ -416,6 +426,7 @@ onStatusApproveSelect(status: string) {
         },
         complete: () => {
           this.isLoading = false;
+            this.getApprovalStatusCounts()
         },
       });
   }

@@ -67,7 +67,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   recallAcceptForm!: FormGroup;
   rejectSeparationForm!: FormGroup;
   selectedLeaveStatus: any;
-
+totalCount:any;
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -291,6 +291,7 @@ onStatusApproveSelect(status: string) {
         },
         complete: () => {
           this.isLoading = false;
+            this.getApprovalStatusCounts();
         },
       });
   }
@@ -336,6 +337,7 @@ onStatusApproveSelect(status: string) {
         },
         complete: () => {
           this.isLoading = false;
+            this.getApprovalStatusCounts();
         },
       });
   }
@@ -398,10 +400,19 @@ onStatusApproveSelect(status: string) {
         },
         complete: () => {
           this.isLoading = false;
+          this.getApprovalStatusCounts();
         },
       });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.RecallrequestmoduleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

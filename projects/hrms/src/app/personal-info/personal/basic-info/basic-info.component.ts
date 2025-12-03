@@ -22,6 +22,7 @@ import { Skeleton } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import moment from 'moment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-basic-info',
@@ -57,6 +58,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   fieldOptions = [] as any;
   getFieldsApprovalStatusList: any[] = [];
   activeMessage: string = '';
+  totalCount: any;
 
 
   constructor(
@@ -426,7 +428,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
               'Basic information updated successfully'
             );
             this.getEmployeeId();
-            this.getFieldsApprovalStatus(); // Refresh pending status
+            this.getFieldsApprovalStatus();
+           this.getApprovalStatusCounts(); // Refresh pending status
             this.http.setBasicDetails();
             this.basicInfoForm.disable();
             this.buttons = false;
@@ -451,7 +454,15 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+ getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.pendingapprovalemployeid}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
+ 
   // Fetch titles from the API
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({

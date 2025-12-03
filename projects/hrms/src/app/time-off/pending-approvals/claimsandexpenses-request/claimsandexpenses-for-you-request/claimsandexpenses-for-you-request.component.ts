@@ -113,6 +113,13 @@ export class ClaimsandexpensesForYouRequestComponent
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
+   onStatusVerifySelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'verified') {
+      this.verifyForm.get('comments')?.setValue('Verified');
+    }
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250)]],

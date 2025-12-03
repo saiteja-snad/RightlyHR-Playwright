@@ -38,6 +38,8 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   loading = false
   isMyInfoRoute = false;
   getFieldsApprovalStatusList: any[] = [];
+  disableDelete: boolean = false;
+  disableUpdate: boolean = false;
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -46,6 +48,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
     this.getFieldsApprovalStatus();
+    
   }
 
 
@@ -428,6 +431,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   this.subscription = this.http.postdata(`BankDetail/delete`, payload).subscribe({
     next: () => {
       this.getbankempid(); // Refresh bank list
+      this.getFieldsApprovalStatus();
       this.modalService.dismissAll(); // Close modal
       this.conformationPopup.openSuccessModal(
         'Bank information delete request submitted successfully.'
@@ -452,7 +456,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
  getFieldsApprovalStatus() {
     const params = {
       displayName: 'Personal',
-      moduleName: 'Basic Info',
+      moduleName: 'Bank Info',
       employeeId: parseInt(this.empinfo.employeeId),
     };
     this.subscription = this.http
@@ -464,6 +468,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data.data.length > 0) {
             this.getFieldsApprovalStatusList = data.data;
+            this.disablePendingFields();
           } else {
             console.log('No data found.');
           }
@@ -478,8 +483,9 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     const pendingFields = this.getFieldsApprovalStatusList
       .filter((item) => item.approvalStatus === 'Pending')
       .map((item) => item.fieldName);
-
-    
+    this.disableDelete = pendingFields.includes('Delete');
+    this.disableUpdate = pendingFields.includes('Update');
+    console.log('Fields with pending approval:', this.disableDelete);
   }
   ngOnDestroy(): void {
     if (this.subscription) {

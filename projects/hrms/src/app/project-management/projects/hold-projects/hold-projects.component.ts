@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -50,6 +50,7 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   projectsData: Project[] = [];
   empinfo: any = {};
   searchValue: any;
+  searchSubject = new Subject<string>();
   inactiveClientStatus: any;
   departmentlist: any[] = [];
   projecttypes: any[] = [];
@@ -86,6 +87,17 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.page = 1;
+      this.first = 0;
+      this.getdatabaedonRoute();
+    });
+    
     this.getdatabaedonRoute();
     this.DepartmentList();
     this.getprojecttypesData();
@@ -208,6 +220,10 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
     this.loading = true;
     let url = `Project?status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
+    if (this.searchValue?.trim()) {
+      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    }
+
     if (this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
     }
@@ -242,6 +258,10 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   getprojectbyid(clientID: any): void {
     this.loading = true;
     let url = `Project?clientId=${clientID}&status=hold&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+
+    if (this.searchValue?.trim()) {
+      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    }
 
     if (this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
@@ -353,6 +373,10 @@ export class HoldProjectsComponent implements OnInit, OnDestroy {
   }
   isActive(route: string): boolean {
     return this.router.url.includes(route);
+  }
+
+  onSearchChange() {
+    this.searchSubject.next(this.searchValue || '');
   }
 
   clearAllFilters() {

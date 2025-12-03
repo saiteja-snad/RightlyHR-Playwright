@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { HttpService } from '../../../services/http.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Project } from '../../../Interfaces/projects.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -49,6 +49,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   projectsData: Project[] = [];
   empinfo: any = {};
   searchValue: any;
+  searchSubject = new Subject<string>();
   inactiveClientStatus: any;
   departmentlist: any[] = [];
   clientDetails: any[] = [];
@@ -85,6 +86,17 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.page = 1;
+      this.first = 0;
+      this.getdatabaedonRoute();
+    });
+    
     this.DepartmentList();
     this.getprojecttypesData();
 
@@ -204,6 +216,10 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     this.loading = true;
     let url = `Project?status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
 
+    if (this.searchValue?.trim()) {
+      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    }
+
     // Apply Department Filter
     if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
@@ -243,6 +259,10 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   getprojectbyid(clientID: any): void {
     this.loading = true;
     let url = `Project?clientId=${clientID}&status=Inactive&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+
+    if (this.searchValue?.trim()) {
+      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    }
 
     if (this.selectedDepartmentIds && this.selectedDepartmentIds.length > 0) {
       url += `&departmentIds=${this.selectedDepartmentIds.join(',')}`;
@@ -320,6 +340,10 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
 
   isActive(route: string): boolean {
     return this.router.url.includes(route);
+  }
+
+  onSearchChange() {
+    this.searchSubject.next(this.searchValue || '');
   }
 
   clearAllFilters() {

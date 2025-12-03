@@ -9,7 +9,7 @@ import { Select } from 'primeng/select';
 import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Project } from '../../../Interfaces/projects.model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -37,6 +37,7 @@ import { PaginatorModule } from 'primeng/paginator';
 export class ActiveProjectsComponent implements OnInit, OnDestroy {
   selectedProject: any;
   searchValue: any;
+  searchSubject = new Subject<string>();
   projecttypes: any[] = [];
   loading: boolean = false;
   selectedProjectId: number | null = null;
@@ -89,6 +90,17 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.selectedDepartmentIds = [];
     this.selectedProjectTypes = [];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.page = 1;
+      this.first = 0;
+      this.getProjectsBasedOnRoute();
+    });
+    
     combineLatest([this.http.selectedDepartmentIds$, this.http.projectTypeFilter$]).pipe(takeUntil(this.destroy$))
     .subscribe(([deptIds, projectTypes]) => {
       this.selectedDepartmentIds = deptIds || [];
@@ -315,6 +327,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.loading = true;
     let url = `Project?status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     
+    if (this.searchValue?.trim()) {
+      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    }
+    
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
     }
@@ -354,6 +370,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   getprojectbyid(clientID: any): void {
     this.loading = true;
     let url = `Project?clientId=${clientID}&status=Active&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    
+    if (this.searchValue?.trim()) {
+      url += `&searchTerm=${encodeURIComponent(this.searchValue.trim())}`;
+    }
     
     if (this.selectedDepartmentIds) {
       url += `&departmentIds=${this.selectedDepartmentIds}`;
@@ -712,6 +732,10 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       return date.toISOString().split('T')[0]; // format YYYY-MM-DD
     }
     return null;
+  }
+
+  onSearchChange() {
+    this.searchSubject.next(this.searchValue || '');
   }
 
   clearAllFilters() {

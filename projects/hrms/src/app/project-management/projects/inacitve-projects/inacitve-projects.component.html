@@ -54,7 +54,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
           <i class="bi bi-search"></i>
         </span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
           placeholder="Search by client name / project name / project type" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
@@ -81,9 +81,8 @@
             }
           </thead>
           <tbody>
-            <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
-              <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
-                <tr *ngFor="let project of filteredProjects; let i = index">
+            <ng-container *ngIf="projectsData.length > 0; else noDataTemplate">
+                <tr *ngFor="let project of projectsData; let i = index">
                   @if(!isActive('/project-management/clients')){
                   <td>{{ project.client.clientName }}</td>
                   }
@@ -123,7 +122,6 @@
                   </td>
                   }
                 </tr>
-              </ng-container>
             </ng-container>
             <ng-template #noDataTemplate>
               <tr>

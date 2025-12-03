@@ -68,10 +68,11 @@ export class IdentityInfoComponent implements OnInit, OnDestroy {
     { label: 'Team Manager', value: 'TM' },
   ];
   roles = [] as any;
+  
    actionsOptions = [
-    { label: 'Add', value: 'ADD_IDENTITY' ,optionDisabled: false},
-    { label: 'Delete', value: 'DELETE_IDENTITY',optionDisabled: false },
-    { label: 'Update', value: 'UPDATE_IDENTITY',optionDisabled: false },
+    { label: 'Add', value: 'Add' ,optionDisabled: false},
+    { label: 'Delete', value: 'Delete',optionDisabled: false },
+    { label: 'Update', value: 'Update',optionDisabled: false },
   ];
   constructor(
     private modalService: NgbModal,

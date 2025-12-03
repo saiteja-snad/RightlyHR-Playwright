@@ -68,9 +68,9 @@ export class BankInfoComponent {
   ];
 
    actionsOptions = [
-    { label: 'Add', value: 'ADD_BANK' ,optionDisabled: false},
-    { label: 'Delete', value: 'DELETE_BANK',optionDisabled: false },
-    { label: 'Update', value: 'UPDATE_BANK',optionDisabled: false },
+    { label: 'Add', value: 'Add' ,optionDisabled: false},
+    { label: 'Delete', value: 'Delete',optionDisabled: false },
+    { label: 'Update', value: 'Update',optionDisabled: false },
   ];
   roles = [] as any;
 

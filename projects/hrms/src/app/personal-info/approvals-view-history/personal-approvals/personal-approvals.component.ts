@@ -231,7 +231,6 @@ export class PersonalApprovalsComponent implements OnInit {
         });
       }
     });
-
     this.moduleData = Array.from(moduleMap.entries()).map(
       ([moduleName, items]) => ({
         moduleName,

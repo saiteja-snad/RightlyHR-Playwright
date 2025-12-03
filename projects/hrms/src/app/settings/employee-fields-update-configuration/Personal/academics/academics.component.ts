@@ -63,10 +63,11 @@ export class AcademicsComponent {
     { label: 'Team Manager', value: 'TM' },
   ];
   roles = [] as any;
-  actionsOptions = [
-    { label: 'Add', value: 'ADD_ACADEMIC' ,optionDisabled: false},
-    { label: 'Delete', value: 'DELETE_ACADEMIC',optionDisabled: false },
-    { label: 'Update', value: 'UPDATE_ACADEMIC',optionDisabled: false },
+
+   actionsOptions = [
+    { label: 'Add', value: 'Add' ,optionDisabled: false},
+    { label: 'Delete', value: 'Delete',optionDisabled: false },
+    { label: 'Update', value: 'Update',optionDisabled: false },
   ];
   constructor(
     private modalService: NgbModal,

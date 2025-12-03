@@ -37,6 +37,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   loading = false
   isMyInfoRoute = false;
+  getFieldsApprovalStatusList: any[] = [];
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -44,7 +45,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.initializeBankDetailsForm();
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
-
+    this.getFieldsApprovalStatus();
   }
 
 
@@ -256,6 +257,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       next: () => {
         this.spinnerLoader = false
         this.getbankempid()
+        this.getFieldsApprovalStatus();
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank information added successfully')
@@ -353,6 +355,9 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         ifscCode: formData.ifscCodeupdate,
         isPrimary: formData.isPrimaryupdate || false,
         isDeleted: false,
+        selfUpdate: this.isMyInfoRoute,
+        moduleName: "Bank Info",
+        displayName: "Personal",
       };
       // Check if a new attachment is selected
       if (this.bankdocument instanceof File) {
@@ -389,6 +394,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank information updated successfully');
+        this.getFieldsApprovalStatus();
         this.getbankempid(); // Refresh the bank details list
       },
       error: (reason: any) => {
@@ -442,7 +448,55 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.bankDetailsUpdateForm.reset();
     this.bankDetailsForm.reset()
   }
+ getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Basic Info',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+    // Add this new method
+  // private disablePendingFields(): void {
+  //   const pendingFields = this.getFieldsApprovalStatusList
+  //     .filter((item) => item.approvalStatus === 'Pending')
+  //     .map((item) => item.fieldName);
 
+  //   pendingFields.forEach((fieldName) => {
+  //     const controlMap: { [key: string]: string } = {
+  //       'First Name': 'firstName',
+  //       'Last Name': 'lastName',
+  //       'Middle Name': 'middleName',
+  //       Salutation: 'salutation',
+  //       Gender: 'gender',
+  //       'Date of Birth': 'dob',
+  //       'Blood Group': 'bloodGroup',
+  //       'Marital Status': 'maritalStatus',
+  //       'Married Date': 'marriageDate',
+  //     };
+
+  //     const controlName = controlMap[fieldName];
+  //     if (controlName && this.basicInfoForm.get(controlName)) {
+  //       this.basicInfoForm.get(controlName)?.disable();
+  //     }
+  //   });
+  // }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

@@ -86,7 +86,7 @@
                         {{ entry?.oldValue ? (entry?.oldValue | dateformat) : "-" }}
                        }
                        @else{
-                        @if(entry?.approvalScope?.toLowerCase()==='action'){
+                        @if(entry?.approvalScope?.toLowerCase()==='action'&& entry.oldValue){
                           <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
                       <app-info-icon />
                     </div>
@@ -106,7 +106,7 @@
                         {{ entry?.newValue ? (entry?.newValue | dateformat) : "-" }}
                        }
                        @else{
-                        @if(entry?.approvalScope?.toLowerCase()==='action'){
+                        @if(entry?.approvalScope?.toLowerCase()==='action' && entry.newValue){
                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
                          <app-info-icon /></div>
                         }@else{{{ entry.newValue ? entry.newValue : "-" }}}

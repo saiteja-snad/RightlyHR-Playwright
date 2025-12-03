@@ -590,6 +590,11 @@ export const permissionsData = [
   { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
 
+{ fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+
+
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },

@@ -319,7 +319,9 @@
         <ngx-doc-viewer [url]="expenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
       </p>
       <ng-template #imageView>
+         <div class="popup-view-image-content">
         <img [src]="expenseImageUrl" alt="My Image" class="modal-image" />
+      </div>
       </ng-template>
     </div>
   </div>

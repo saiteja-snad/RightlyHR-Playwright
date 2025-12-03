@@ -15,10 +15,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.component";
 import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
 import { GearIconComponent } from "../../icons/gear-icon/gear-icon.component";
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent, 
-    ItSupportIconComponent, GearIconComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent,
+    ItSupportIconComponent, GearIconComponent, ProfileIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

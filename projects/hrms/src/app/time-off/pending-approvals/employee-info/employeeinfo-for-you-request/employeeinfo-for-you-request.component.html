@@ -87,7 +87,7 @@
                        }
                        @else{
                         @if(entry?.approvalScope?.toLowerCase()==='action'){
-                          <div class="d-inline-flex" (click)="openModalforaction(popupforaction,entry)">
+                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
                       <app-info-icon />
                     </div>
                         }@else{{{ entry.oldValue ? entry.oldValue : "-" }}
@@ -107,11 +107,9 @@
                        }
                        @else{
                         @if(entry?.approvalScope?.toLowerCase()==='action'){
-                         <div class="d-inline-flex" (click)="openModalforaction(popupforaction,entry)">
+                         <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
                          <app-info-icon /></div>
                         }@else{{{ entry.newValue ? entry.newValue : "-" }}}
-                        
-                        
                        }
                       </td>                    
                       @if (showhideaction) {

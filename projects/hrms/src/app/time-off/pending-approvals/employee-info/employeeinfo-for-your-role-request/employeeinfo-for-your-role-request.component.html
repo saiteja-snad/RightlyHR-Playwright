@@ -1,3 +1,4 @@
+
 <div class="custom-accordians">
   <div class="custom-accordian-data-content">
 
@@ -82,20 +83,35 @@
                       <td>{{ entry.requestedDate | dateformat }}</td>
                       <td>
                         @if(showdate(entry)){
-                        {{ entry.oldValue ? (entry.oldValue | dateformat) : "-" }}
+                        {{ entry?.oldValue ? (entry?.oldValue | dateformat) : "-" }}
                        }
                        @else{
-                        {{ entry.oldValue ? entry.oldValue : "-" }}
+                        @if(entry?.approvalScope?.toLowerCase()==='action'){
+                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
+                      <app-info-icon />
+                    </div>
+                        }@else{{{ entry.oldValue ? entry.oldValue : "-" }}
+                      }
+                          
+                        
+                    <!-- <ng-template #desprictionContent>
+                      <p class="mb-0 p-2">
+                        {{entry.comments ? entry.comments:'-'}}
+                     </p>
+                    </ng-template> -->
                        }
                       </td>
                       <td>
                         @if(showdatefornew(entry)){
-                        {{ entry.newValue ? (entry.newValue | dateformat) : "-" }}
+                        {{ entry?.newValue ? (entry?.newValue | dateformat) : "-" }}
                        }
                        @else{
-                        {{ entry.newValue ? entry.newValue : "-" }}
+                        @if(entry?.approvalScope?.toLowerCase()==='action'){
+                         <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
+                         <app-info-icon /></div>
+                        }@else{{{ entry.newValue ? entry.newValue : "-" }}}
                        }
-                      </td>                     
+                      </td>                    
                       @if (showhideaction) {
                         <td>
                           <div class="d-flex justify-content-center gap-3">
@@ -149,7 +165,7 @@
   </div>
 </div>
 
-@if(empinfodata.length > 0&&collectionSize > 0){
+@if(empinfodata.length>0 &&collectionSize > 0){
 <div class="pagination-content">
     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
         <div class="d-flex align-items-center gap-3 p-2">
@@ -316,4 +332,58 @@
         </div>
     </div>
 </ng-template>
+<ng-template #popupforaction let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{actionsDetails.fieldName}} ({{actionsDetails.moduleName}})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content" >
+            <div class="p-1">
+                    <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
+                          @if(item.key==='Document'){
+                            <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
+                              <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                            </a>
+                          }@else{
+                      {{ item.value }}
+                          }
+                          </span></p>
+                    </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
 
+<!--View Popup-->
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchment(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+          <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+        </div>
+        <ng-template #imageView>
+          <img [src]="ImageUrl" alt="My Image" class="modal-image" />
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-template>

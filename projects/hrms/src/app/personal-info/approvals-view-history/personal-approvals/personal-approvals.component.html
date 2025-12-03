@@ -37,7 +37,7 @@
                        }
                        @else{
                          @if(item?.approvalScope?.toLowerCase()==='action'){
-                          <div class="d-inline-flex" (click)="openModalforaction(popupforaction,item)">
+                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,item)">
                       <app-info-icon />
                     </div>
                         }@else{{{ item.oldValue ? item.oldValue : "-" }}
@@ -57,7 +57,7 @@
                        }
                        @else{
                          @if(item?.approvalScope?.toLowerCase()==='action'){
-                          <div class="d-inline-flex" (click)="openModalforaction(popupforaction,item)">
+                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,item)">
                       <app-info-icon />
                     </div>
                         }@else{{{ item.newValue ? item.newValue : "-" }}
@@ -90,7 +90,7 @@
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">
                      <div class=" align-items-center gap-1">
                     {{ item.approvalStatus.toLowerCase() }}  @if(item?.comments && item?.comments !== '-'){
-                    <div [ngbPopover]="desprictionContent" class="d-inline-flex">
+                    <div [ngbPopover]="desprictionContent" class="d-inline-flex cursor">
                       <app-info-icon />
                     </div>
                     <ng-template #desprictionContent>

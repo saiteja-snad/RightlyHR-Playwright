@@ -350,7 +350,7 @@
             <div class="p-1">
                     <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
                          <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
-                          @if(item.key==='DocUrl'){
+                          @if(item.key==='Document'){
                             <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
                               <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
                             </a>

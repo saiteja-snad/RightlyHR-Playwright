@@ -15,6 +15,9 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from '../../../../environments/environment';
 
 
 interface ApprovalItem {
@@ -27,6 +30,8 @@ interface ApprovalItem {
   headerId: number;
   sourceFieldName:string;
   comments?:string;
+  approvalScope?:string;
+  moduleName?:string;
 }
 
 interface ModuleData {
@@ -48,7 +53,8 @@ interface ModuleData {
     NoDataFoundComponent,
     DateformatPipe,
     InfoIconComponent,
-    NgbPopoverModule
+    NgbPopoverModule,
+    NgxDocViewerModule
 ],
   templateUrl: './personal-approvals.component.html',
   styleUrls: ['./personal-approvals.component.scss'],
@@ -66,18 +72,20 @@ export class PersonalApprovalsComponent implements OnInit {
 
   @ViewChild('cancelModal') cancelModal!: TemplateRef<any>;
   @ViewChild('confirmationModal') confirmationModal!: TemplateRef<any>;
-
   private employeeId!: number;
-
   private modalRef!: NgbModalRef;
-
+  ImageUrl: any;
+  ViewURL:any;
+   @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   constructor(
     public rbac: RbacService,
     private http: HttpService,
     private modalService: NgbModal,
     private fb: FormBuilder,
     private conformationPopup: OpenModalService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {
     this.initForm();
   }
@@ -87,7 +95,41 @@ export class PersonalApprovalsComponent implements OnInit {
     this.employeeId = this.empdata?.employeeId;
     this.fetchApprovalHistory();
   }
+ actionsDetails={} as any;
+ openModalforaction(modal: any, request: any,){
+  console.log("request",request)
+  //this.actionsDetails=request;
+     let parsedOldValue = {};
 
+  if (request.oldValue) {
+    try {
+      parsedOldValue = JSON.parse(request.oldValue);
+    } catch (e) {
+      console.error("Parsing error for oldValue:", request.oldValue);
+    }
+  }
+
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
+   if (request.newValue) {
+    try {
+      parsedOldValue = JSON.parse(request.newValue);
+    } catch (e) {
+      console.error("Parsing error for oldValue:", request.newValue);
+    }
+  }
+
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
+  this.actionsDetails.fieldName=request.fieldName;
+  this.actionsDetails.moduleName=request.moduleName;
+  console.log("this.actionsDetails",this.actionsDetails)
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+ }
   shouldShowTooltip(element: HTMLElement): boolean {
     if (!element) return false;
     return element.offsetWidth < element.scrollWidth;
@@ -175,7 +217,9 @@ export class PersonalApprovalsComponent implements OnInit {
                 itemId: item.itemId,
                 headerId: header.headerId,
                 sourceFieldName:item.sourceFieldName,
-                comments:item.comments
+                comments:item.comments,
+                approvalScope:item.approvalScope,
+                moduleName:item.moduleName
               });
             });
           });
@@ -301,7 +345,42 @@ export class PersonalApprovalsComponent implements OnInit {
         return '';
     }
   }
+   onViewAttachement(url: any,) {
+    const lowerUrl = url?.toLowerCase();
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.ViewURL = null;
+          this.toggleViewModal();
+        },
+        error: (err) => console.error('Error downloading image:', err),
+      });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
+    } else {
+      // fallback for other types if needed
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal();
+    }
+  }
 
+  toggleViewModal() {
+    this.modalService.dismissAll();
+    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+  }
+
+  closeonlyattemchment(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

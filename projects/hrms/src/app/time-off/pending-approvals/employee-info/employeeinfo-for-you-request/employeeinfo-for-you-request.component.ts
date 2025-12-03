@@ -20,11 +20,13 @@ import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { SignalsService } from '../../../../services/signals.service';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-employeeinfo-for-you-request',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe,NgxDocViewerModule],
   templateUrl: './employeeinfo-for-you-request.component.html',
   styleUrl: './employeeinfo-for-you-request.component.scss'
 })
@@ -76,9 +78,12 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
   allPendingApprovalItems: any;
      selectedLeaveStatus: any;
   //emp: any;
-
+ImageUrl: any;
+ ViewURL:any;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+    @ViewChild('popupforaction') private popupforaction!: NgbModal;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
+   private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -610,7 +615,44 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
     }
     return false
   }
+
+    onViewAttachement(url: any,) {
+    const lowerUrl = url?.toLowerCase();
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.ViewURL = null;
+          this.toggleViewModal();
+        },
+        error: (err) => console.error('Error downloading image:', err),
+      });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
+    } else {
+      // fallback for other types if needed
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal();
+    }
+  }
+
+  toggleViewModal() {
+    this.modalService.dismissAll();
+    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+  }
   // destroy the component
+
+  closeonlyattemchment(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

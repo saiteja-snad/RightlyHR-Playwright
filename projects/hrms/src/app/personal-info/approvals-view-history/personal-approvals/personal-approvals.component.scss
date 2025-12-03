@@ -118,3 +118,17 @@
   position: relative;
   min-height: 600px;
 }
+.view-icon {
+    width: 2rem;
+}
+.sub-name {
+    font-size: var(--fontsize13);
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.heading-name {
+    font-size: var(--fontsize13);
+    color: #8D9BB1;
+}

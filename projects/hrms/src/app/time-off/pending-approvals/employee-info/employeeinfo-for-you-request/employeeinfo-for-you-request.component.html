@@ -90,7 +90,8 @@
                           <div class="d-inline-flex" (click)="openModalforaction(popupforaction,entry)">
                       <app-info-icon />
                     </div>
-                        }@else{{{ entry.oldValue ? entry.oldValue : "-" }}}
+                        }@else{{{ entry.oldValue ? entry.oldValue : "-" }}
+                      }
                           
                         
                     <!-- <ng-template #desprictionContent>
@@ -348,9 +349,43 @@
         <div class="custom-main-popup-content" >
             <div class="p-1">
                     <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
-                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> {{ item.value }}</span></p>
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
+                          @if(item.key==='DocUrl'){
+                            <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
+                              <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                            </a>
+                          }@else{
+                      {{ item.value }}
+                          }
+                          </span></p>
                     </div>
             </div>
         </div>
     </div>
+</ng-template>
+
+<!--View Popup-->
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchment(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+          <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+        </div>
+        <ng-template #imageView>
+          <img [src]="ImageUrl" alt="My Image" class="modal-image" />
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </ng-template>

@@ -340,6 +340,16 @@ ImageUrl: any;
     ...request,
     oldValue: parsedOldValue
   };
+  this.actionsDetails.fieldName=request.fieldName;
+  this.actionsDetails.moduleName=request.moduleName;
+  console.log("this.actionsDetails",this.actionsDetails)
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+ }
+
+  openModalfornewvalueAction(modal: any, request: any,){
+  console.log("request",request)
+  //this.actionsDetails=request;
+     let parsedOldValue = {};
    if (request.newValue) {
     try {
       parsedOldValue = JSON.parse(request.newValue);

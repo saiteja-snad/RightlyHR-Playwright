@@ -107,11 +107,11 @@
                        }
                        @else{
                         @if(entry?.approvalScope?.toLowerCase()==='action' && entry.newValue){
-                         <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,entry)">
+                         <div class="d-inline-flex cursor" (click)="openModalfornewvalueAction(popupforaction,entry)">
                          <app-info-icon /></div>
                         }@else{{{ entry.newValue ? entry.newValue : "-" }}}
                        }
-                      </td>                    
+                      </td>                     
                       @if (showhideaction) {
                         <td>
                           <div class="d-flex justify-content-center gap-3">

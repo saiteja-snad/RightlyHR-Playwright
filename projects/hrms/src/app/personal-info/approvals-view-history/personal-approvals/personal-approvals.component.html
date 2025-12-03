@@ -57,7 +57,7 @@
                        }
                        @else{
                          @if(item?.approvalScope?.toLowerCase()==='action' && item.newValue && item.newValue!='-'){
-                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforaction,item)">
+                          <div class="d-inline-flex cursor" (click)="openModalfornewvalueAction(popupforaction,item)">
                       <app-info-icon />
                     </div>
                         }@else{{{ item.newValue ? item.newValue : "-" }}

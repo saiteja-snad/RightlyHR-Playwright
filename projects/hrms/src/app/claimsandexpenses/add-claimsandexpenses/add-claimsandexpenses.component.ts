@@ -54,6 +54,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     { label: 'Create Expenses', link: '/claimsandexpenses/addexpense' },
   ];
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
+  totalCount: any;
 
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
     private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService, private authService: AuthService,) {
@@ -434,6 +435,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.getexpensesheaderbyid(this.empinfo.employeeId);
+               this.getApprovalStatusCounts()
             }
           },
           error: (error: any) => {
@@ -455,6 +457,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
+               this.getApprovalStatusCounts();
               this.spinnerLoader = false;
             }
           },
@@ -621,6 +624,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       );
     } else {
       submit$ = this.http.postdata(`Expenses_Header`, payload);
+         this.getApprovalStatusCounts();
     }
 
     submit$.subscribe({
@@ -637,6 +641,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
         // 🔥 optional immediate fetch to update UI without waiting for event
         this.getexpensesheaderbyid(empToRefresh);
+           this.getApprovalStatusCounts();
 
         this.spinnerLoader = false;
       },
@@ -646,10 +651,16 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.spinnerLoader = false;
+           this.getApprovalStatusCounts();
       }
     });
   }
-
+ getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+    });
+  }
   onAmountInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');

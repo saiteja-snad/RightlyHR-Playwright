@@ -10,7 +10,7 @@
         <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
 
         <div class="dashboard-grid my-3">
-            @if(!avaliabletlyloading){
+            @if(avaliabletlyloading){
             <!-- Team Availability -->
             <div class="content-card">
                 <div class="flex-between-content mb-2">
@@ -94,17 +94,17 @@
             @else {
             <!-- Column 1 -->
             <div class="content-card">
-                <p-skeleton height="13rem" borderRadius="12px"></p-skeleton>
+                <p-skeleton height="11.3rem" borderRadius="12px"></p-skeleton>
             </div>
 
             <!-- Column 2 -->
             <div class="content-card">
-                <p-skeleton height="13rem" borderRadius="12px"></p-skeleton>
+                <p-skeleton height="11.3rem" borderRadius="12px"></p-skeleton>
             </div>
 
             <!-- Column 3 -->
             <div class="content-card">
-                <p-skeleton height="13rem" borderRadius="12px"></p-skeleton>
+                <p-skeleton height="11.3rem" borderRadius="12px"></p-skeleton>
             </div>
             }
         </div>

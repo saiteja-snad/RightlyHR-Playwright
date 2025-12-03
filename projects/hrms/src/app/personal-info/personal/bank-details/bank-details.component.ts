@@ -358,6 +358,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         selfUpdate: this.isMyInfoRoute,
         moduleName: "Bank Info",
         displayName: "Personal",
+        createdBy: this.empinfo.employeeId
       };
       // Check if a new attachment is selected
       if (this.bankdocument instanceof File) {
@@ -473,30 +474,13 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       });
   }
     // Add this new method
-  // private disablePendingFields(): void {
-  //   const pendingFields = this.getFieldsApprovalStatusList
-  //     .filter((item) => item.approvalStatus === 'Pending')
-  //     .map((item) => item.fieldName);
+  disablePendingFields(): void {
+    const pendingFields = this.getFieldsApprovalStatusList
+      .filter((item) => item.approvalStatus === 'Pending')
+      .map((item) => item.fieldName);
 
-  //   pendingFields.forEach((fieldName) => {
-  //     const controlMap: { [key: string]: string } = {
-  //       'First Name': 'firstName',
-  //       'Last Name': 'lastName',
-  //       'Middle Name': 'middleName',
-  //       Salutation: 'salutation',
-  //       Gender: 'gender',
-  //       'Date of Birth': 'dob',
-  //       'Blood Group': 'bloodGroup',
-  //       'Marital Status': 'maritalStatus',
-  //       'Married Date': 'marriageDate',
-  //     };
-
-  //     const controlName = controlMap[fieldName];
-  //     if (controlName && this.basicInfoForm.get(controlName)) {
-  //       this.basicInfoForm.get(controlName)?.disable();
-  //     }
-  //   });
-  // }
+    
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

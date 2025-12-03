@@ -19,6 +19,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { Router } from '@angular/router';
+import { EncriptdecriptService } from '../../../services/encriptdecript.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-time-sheet-view',
@@ -84,7 +85,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   errormodaldata: any;
   lockMessages: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,public formValidation:FormValidationsService,
-    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
+    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router, private encryptionService: EncriptdecriptService) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -249,14 +250,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           //  Future or current effective date
           this.lockMessages.push({
             type: 'upcoming',
-            text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>. 
+            text: `Timesheet for the period <b>(${startStr} – ${endStr})</b> will be locked on <b>${effStr}</b>.
                  Please ensure timesheet entries are submitted before <b>${effStr}</b>.`
           });
         } else {
           // Past effective date (already locked)
           this.lockMessages.push({
             type: 'locked',
-            text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>. 
+            text: `Timesheet submission is locked for <b>(${startStr} – ${endStr})</b>.
                  Please contact HR/Admin for assistance.`
           });
         }
@@ -549,7 +550,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           // No filter
           this.getEmployeeInfo = response.map((employee: any) => ({
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           }));
         }
@@ -1734,9 +1735,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   navigation() {
+    const formData = {
+      resourceId: this.empdata?.employeeId,
+      dateRange: [this.start, this.end]
+    };
+    const encryptedData = this.encryptionService.encrypt(formData);
     this.router.navigate(
       ['project-management/timesheet/mysummary'],
-      { queryParams: { id: this.loggedinuser?.employeeId } }
+      { queryParams: { data: encryptedData } }
     );
   }
 

@@ -93,7 +93,7 @@
                     <div *ngIf="addForm.get('projectType')?.errors?.['pattern']" class="error-msg">
                         {{ 'Field cannot start with a space' | translate }}
                     </div>
-                    <div *ngIf="addForm.get('projectType')?.errors?.['maxCharacters'] || 
+                    <div *ngIf="addForm.get('projectType')?.errors?.['maxCharacters'] ||
                                 addForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
                         {{ 'Project Type must be between 2-50 characters' | translate }}
                     </div>
@@ -166,7 +166,7 @@
                     <div *ngIf="updateForm.get('projectType')?.errors?.['pattern']" class="error-msg">
                         {{ 'Field cannot start with a space' | translate }}
                     </div>
-                    <div *ngIf="updateForm.get('projectType')?.errors?.['maxCharacters'] || 
+                    <div *ngIf="updateForm.get('projectType')?.errors?.['maxCharacters'] ||
                                 updateForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
                         {{ 'Project Type must be between 2-50 characters' | translate }}
                     </div>

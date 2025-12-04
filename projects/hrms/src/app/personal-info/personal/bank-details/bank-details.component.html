@@ -42,6 +42,10 @@
                         <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         @if( canAccess('update','bank') || canAccess('delete','bank')){
                         <td class="text-center">
+                            @if(disablePendingFields(bankiteams.bankId)){
+                             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+                             popoverClass="pending-popover" (click)="setActiveMessage(bankiteams.bankId)"></i>
+                            }@else{ 
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -50,26 +54,21 @@
                                     @if( canAccess('update','bank')){
                                     <li >
                                         <button class="dropdown-item"
-                                        [class.disabled]="disableUpdate ||disableDelete"
-                                        [ngStyle]="disableUpdate ||disableDelete ? {'opacity': '0.5', 'pointer-events': 'none'} : {}" 
-                                        [disabled]="disableUpdate ||disableDelete"
-                                        (click)="(!disableDelete||!disableUpdate) &&openModalupdate(updateBankmodal, bankiteams)">
+                                        (click)="openModalupdate(updateBankmodal, bankiteams)">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </button>
                                     </li>
                                     }
                                     @if( canAccess('delete','bank')){
                                     <li >
-                                        <button type="button" class="dropdown-item"
-                                        [class.disabled]="disableDelete"
-                                        [ngStyle]="disableDelete ? {'opacity': '0.5', 'pointer-events': 'none'} : {}" 
-                                        [disabled]="disableDelete" (click)="!disableDelete && opendeletModal(deleteconformation,bankiteams)">
+                                        <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,bankiteams)">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </button>
                                     </li>
                                     }
                                 </ul>
                             </div>
+                        }
                         </td>
                         }
                     </tr>
@@ -399,4 +398,7 @@
             <button type="submit" class="custom-btn btn-primary" (click)="bankDelete()">Yes</button>
         </div>
     </div>
+</ng-template>
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
 </ng-template>

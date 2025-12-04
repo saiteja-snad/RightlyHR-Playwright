@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent,NgbPopoverModule],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
@@ -41,8 +41,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   selectedIdentityTypetoUpdate: any;
   isMyInfoRoute = false;
   getFieldsApprovalStatusList: any[] = [];
-  disableDelete: boolean = false;
-  disableUpdate: boolean = false;
+  activeMessage: string = '';
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -342,7 +341,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         this.modalService.dismissAll()
         this.identityForm.reset();
-        this.getIdentityByEmpid()
+        this.getIdentityByEmpid();
+        this.getFieldsApprovalStatus();
         this.conformationPopup.openSuccessModal('Identity information added successfully');
       },
       error: (error) => {
@@ -467,6 +467,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         // Close the modal and refresh the data
         this.getIdentityByEmpid();
+        this.getFieldsApprovalStatus();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Identity information updated successfully');
       },
@@ -504,8 +505,9 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Identity deleted successfully:', data);
-          this.modalService.dismissAll()
+          this.modalService.dismissAll();
           this.getIdentityByEmpid();
+          this.getFieldsApprovalStatus();
           this.conformationPopup.openSuccessModal('Identity information deleted successfully');
         },
         error: (err: any) => {
@@ -534,7 +536,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data.data.length > 0) {
             this.getFieldsApprovalStatusList = data.data;
-            this.disablePendingFields();
+            //this.disablePendingFields();
           } else {
             console.log('No data found.');
           }
@@ -545,14 +547,28 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       });
   }
     // Add this new method
-  disablePendingFields(): void {
-    const pendingFields = this.getFieldsApprovalStatusList
-      .filter((item) => item.approvalStatus === 'Pending')
-      .map((item) => item.fieldName);
-    this.disableDelete = pendingFields.includes('Delete');
-    this.disableUpdate = pendingFields.includes('Update');
-    console.log('Fields with pending approval:', this.disableDelete);
+ disablePendingFields(referenceid: any): boolean {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item =>
+      String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+  return pendingFields.length > 0;
+}
+    getPendingApprovalMessage(referenceid: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
   }
+
+  setActiveMessage(referenceid:any) {
+  this.activeMessage = this.getPendingApprovalMessage(referenceid);
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

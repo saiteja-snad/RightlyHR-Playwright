@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { Ibank, Ibankdetails } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent,NgbPopoverModule],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
@@ -38,8 +38,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   loading = false
   isMyInfoRoute = false;
   getFieldsApprovalStatusList: any[] = [];
-  disableDelete: boolean = false;
-  disableUpdate: boolean = false;
+  activeMessage: string = '';
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -468,7 +467,6 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data.data.length > 0) {
             this.getFieldsApprovalStatusList = data.data;
-            this.disablePendingFields();
           } else {
             console.log('No data found.');
           }
@@ -479,14 +477,27 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       });
   }
     // Add this new method
-  disablePendingFields(): void {
-    const pendingFields = this.getFieldsApprovalStatusList
-      .filter((item) => item.approvalStatus === 'Pending')
-      .map((item) => item.fieldName);
-    this.disableDelete = pendingFields.includes('Delete');
-    this.disableUpdate = pendingFields.includes('Update');
-    console.log('Fields with pending approval:', this.disableDelete);
+ disablePendingFields(referenceid: any): boolean {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item =>
+      String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+  return pendingFields.length > 0;
+}
+    getPendingApprovalMessage(referenceid: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
   }
+    setActiveMessage(referenceid:any) {
+  this.activeMessage = this.getPendingApprovalMessage(referenceid);
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

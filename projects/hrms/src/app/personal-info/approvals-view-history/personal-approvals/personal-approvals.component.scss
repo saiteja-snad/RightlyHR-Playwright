@@ -142,3 +142,16 @@
     border: 2px solid var(--accordian-table-border-color);
     border-bottom: 2px solid var(--accordian-table-border-color) !important;
 }
+.back-ground {
+    background-color: #ffe7a1 !important;
+    display: inline-block !important;
+    padding: 4px;
+    border-radius: 4px;
+   
+}
+
+.font-highlight {
+    font-size: var(--fontsize12);
+    font-weight: 700;
+    color: #184066 !important;
+}

@@ -349,37 +349,29 @@ ImageUrl: any;
  }
 mergedValues: any[] = [];
 openModalfornewvalueAction(modal: any, request: any) {
-
-  console.log("request", request);
-
   // Parse oldValue and newValue
   let parsedOldValue = {};
   let parsedNewValue = {};
-
   if (request.oldValue) {
     parsedOldValue = JSON.parse(request.oldValue);
   }
   if (request.newValue) {
     parsedNewValue = JSON.parse(request.newValue);
   }
-
   // Parse meta (ChangedFields)
   let parsedMeta: any = {};
   if (request.meta) {
     parsedMeta = JSON.parse(request.meta);
   }
-
   this.actionsDetails = {
     ...request,
     oldValue: parsedOldValue,
     newValue: parsedNewValue,
     changedFields: parsedMeta?.ChangedFields ?? {}  // <<--- Correct extraction
   };
-
   const oldVal = this.actionsDetails.oldValue ?? {};
   const newVal = this.actionsDetails.newValue ?? {};
   const changedFields = this.actionsDetails.changedFields ?? {}; // <<--- Correct reference
-
   // Merge keys
   const keys = new Set([
     ...Object.keys(oldVal),
@@ -393,9 +385,6 @@ openModalfornewvalueAction(modal: any, request: any) {
     newValue: newVal[key],
     isChanged: this.isFieldChanged(key, changedFields)
   }));
-
-  console.log("mergedValues:", this.mergedValues);
-
   this.modalService.open(modal, { centered: true, backdrop: 'static' });
 }
 isFieldChanged(objectKey: string, changedFields: any): boolean {

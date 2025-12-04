@@ -186,6 +186,16 @@
 .view-icon {
     width: 2rem;
 }
-.cursor{
-    cursor: pointer;
+.back-ground {
+    background-color: #ffe7a1 !important;
+    display: inline-block !important;
+    padding: 4px;
+    border-radius: 4px;
+   
+}
+
+.font-highlight {
+    font-size: var(--fontsize12);
+    font-weight: 700;
+    color: #184066 !important;
 }

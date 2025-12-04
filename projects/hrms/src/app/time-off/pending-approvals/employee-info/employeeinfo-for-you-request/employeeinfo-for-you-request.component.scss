@@ -91,7 +91,8 @@
         background-color: var(--body-bg-color) !important;
     }
 
-    th, td {
+    th,
+    td {
         text-align: center !important;
     }
 }
@@ -169,9 +170,11 @@
         }
     }
 }
+
 .custom-p-multi-select-table .p-datatable-table-container {
-    height: 40vh!important;
+    height: 40vh !important;
 }
+
 .sub-name {
     font-size: var(--fontsize13);
     font-weight: 600;
@@ -183,9 +186,25 @@
     font-size: var(--fontsize13);
     color: #8D9BB1;
 }
+
 .view-icon {
     width: 2rem;
 }
-.cursor{
+
+.cursor {
     cursor: pointer;
+}
+
+.back-ground {
+    background-color: #ffe7a1 !important;
+    display: inline-block !important;
+    padding: 4px;
+    border-radius: 4px;
+   
+}
+
+.font-highlight {
+    font-size: var(--fontsize12);
+    font-weight: 700;
+    color: #184066 !important;
 }

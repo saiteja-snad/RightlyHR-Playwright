@@ -216,46 +216,48 @@
                 </a>
             </div>
         </div>
-         <div class="custom-main-popup-content">
-            <div class="popup-table-wrapper">
-                <div class="popup-table-scroll-container">
-                    <table class="popup-table">
-                        <thead>
-                            <tr >
-                                <th>Field Requested</th>
-                                <th>Current Data</th>
-                                <th>Requested Data</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let row of mergedValues">
-                            <td>{{ row.key }}</td>
-                            <!-- Old Value -->
-                            <td>
-                              @if (row.key === 'Document' && row.oldValue) {
-                              <a class="view-btn" (click)="onViewAttachement(row.oldValue)">
-                                <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
-                              </a>
-                              } @else {
-                              {{ row.oldValue ? row.oldValue:'-' }}
-                              }
-                            </td>
-                            <!-- New Value -->
-                            <td>
-                              @if (row.key === 'Document' && row.newValue) {
-                              <a class="view-btn" (click)="onViewAttachement(row.newValue)">
-                                <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
-                              </a>
-                              } @else {
-                              {{ row.newValue ? row.newValue :'-' }}
-                              }
-                            </td>
-                          </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+          <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Field Requested</th>
+                <th>Current Data</th>
+                <th>Requested Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of mergedValues">
+                <td>{{ row.key }}</td>
+                <!-- Old Value -->
+                <td>
+                  @if (row.key === 'Document' && row.oldValue) {
+                  <a class="view-btn" (click)="onViewAttachement(row.oldValue)"
+                    [ngClass]="{ 'back-ground': row.isChanged }">
+                    <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
+                  </a>
+                  } @else {
+                  <span [ngClass]="{ 'font-highlight': row.isChanged }">{{ row.oldValue ? row.oldValue:'-' }}</span>
+                  }
+                </td>
+                <!-- New Value -->
+                <td>
+                  @if (row.key === 'Document' && row.newValue) {
+                  <a class="view-btn" (click)="onViewAttachement(row.newValue)"
+                    [ngClass]="{ 'back-ground': row.isChanged }">
+                    <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
+                  </a>
+                  } @else {
+                  <span [ngClass]="{ 'font-highlight': row.isChanged }"> {{ row.newValue ? row.newValue :'-' }}</span>
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
     </div>
 </ng-template>
 

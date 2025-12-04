@@ -229,7 +229,8 @@ ImageUrl: any;
                   pendingApprovalHeader: padingapprovaldata?.header ?? null,
                   approvalItems: padingapprovaldata?.items ?? [],
                   comments: padingapprovaldata?.comments ?? [],
-                  approvalScope: fieldname?.approvalScope ?? ''
+                  approvalScope: fieldname?.approvalScope ?? '',
+                  meta: fieldname?.meta ?? ''
                 });
               });
           });
@@ -347,47 +348,66 @@ ImageUrl: any;
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
  }
 mergedValues: any[] = [];
-  openModalfornewvalueAction(modal: any, request: any,){
-  console.log("request",request)
-  //this.actionsDetails=request;
-     let parsedOldValue = {};
-     let parsednewValue = {};
-   if (request.oldValue) {
-    try {
-      parsedOldValue = JSON.parse(request.oldValue);
-    } catch (e) {
-      console.error("Parsing error for oldValue:", request.oldValue);
-    }
+openModalfornewvalueAction(modal: any, request: any) {
+
+  console.log("request", request);
+
+  // Parse oldValue and newValue
+  let parsedOldValue = {};
+  let parsedNewValue = {};
+
+  if (request.oldValue) {
+    parsedOldValue = JSON.parse(request.oldValue);
   }
-   if (request.newValue) {
-    try {
-      parsednewValue = JSON.parse(request.newValue);
-    } catch (e) {
-      console.error("Parsing error for oldValue:", request.newValue);
-    }
+  if (request.newValue) {
+    parsedNewValue = JSON.parse(request.newValue);
   }
+
+  // Parse meta (ChangedFields)
+  let parsedMeta: any = {};
+  if (request.meta) {
+    parsedMeta = JSON.parse(request.meta);
+  }
+
   this.actionsDetails = {
     ...request,
     oldValue: parsedOldValue,
-    newValue: parsednewValue
+    newValue: parsedNewValue,
+    changedFields: parsedMeta?.ChangedFields ?? {}  // <<--- Correct extraction
   };
-  this.actionsDetails.fieldName=request.fieldName;
-  this.actionsDetails.moduleName=request.moduleName;
+
   const oldVal = this.actionsDetails.oldValue ?? {};
   const newVal = this.actionsDetails.newValue ?? {};
+  const changedFields = this.actionsDetails.changedFields ?? {}; // <<--- Correct reference
 
+  // Merge keys
   const keys = new Set([
     ...Object.keys(oldVal),
-    ...Object.keys(newVal)
+    ...Object.keys(newVal),
   ]);
 
+  // Build merged list
   this.mergedValues = Array.from(keys).map(key => ({
     key,
     oldValue: oldVal[key],
-    newValue: newVal[key]
+    newValue: newVal[key],
+    isChanged: this.isFieldChanged(key, changedFields)
   }));
+
+  console.log("mergedValues:", this.mergedValues);
+
   this.modalService.open(modal, { centered: true, backdrop: 'static' });
- }
+}
+isFieldChanged(objectKey: string, changedFields: any): boolean {
+  if (!changedFields) return false;
+
+  const normalizedKey = objectKey.replace(/\s+/g, "").toLowerCase();
+  const changedKeys = Object.keys(changedFields).map(k =>
+    k.replace(/\s+/g, "").toLowerCase()
+  );
+
+  return changedKeys.includes(normalizedKey);
+}
   // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;

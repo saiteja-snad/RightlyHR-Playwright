@@ -359,7 +359,7 @@
                           <tr *ngFor="let row of mergedValues">
                             <td>{{ row.key }}</td>
                             <!-- Old Value -->
-                            <td>
+                            <td [ngClass]="row.isChanged ? 'fw-bold' : ''">
                               @if (row.key === 'Document' && row.oldValue) {
                               <a class="view-btn" (click)="onViewAttachement(row.oldValue)">
                                 <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
@@ -369,7 +369,7 @@
                               }
                             </td>
                             <!-- New Value -->
-                            <td>
+                            <td [ngClass]="row.isChanged ? 'fw-bold' : ''">
                               @if (row.key === 'Document' && row.newValue) {
                               <a class="view-btn" (click)="onViewAttachement(row.newValue)">
                                 <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">

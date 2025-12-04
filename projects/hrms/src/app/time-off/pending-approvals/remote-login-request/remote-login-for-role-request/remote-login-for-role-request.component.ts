@@ -571,7 +571,7 @@ export class RemoteLoginForRoleRequestComponent implements OnInit, OnDestroy {
       });
   }
 getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.remoteLoginModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
        this.http.updatePendingApprovalCounts(this.totalCount);
     });

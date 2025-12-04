@@ -222,7 +222,8 @@
     width: 18.75rem;
     padding: 0.75rem;
     border-radius: 0.5rem;
-    background: linear-gradient(139.07deg, #FFFFFF 2.89%, #E8EEF4 56.98%, #FAECE8 75.03%, #DAE9EF 87.05%, #F4DAF2 99.07%);
+    background: linear-gradient(139.07deg, var(--dispaly-card-bg-gradient-one) 2.89%, var(--dispaly-card-bg-gradient-two) 56.98%,
+            var(--dispaly-card-bg-gradient-three) 75.03%, var(--dispaly-card-bg-gradient-four) 87.05%, var(--dispaly-card-bg-gradient-five) 99.07%);
     border: 2px solid #FFFFFF;
 
     .custom-party-image {
@@ -419,7 +420,7 @@
     height: 18dvh;
     max-height: 20dvh;
     overflow-y: auto;
-   
+
 }
 
 .leave-list-content {

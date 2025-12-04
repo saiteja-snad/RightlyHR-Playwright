@@ -94,6 +94,13 @@ export class AcademicsComponent {
     this.getAllRoles();
     this.getAcademicsFieldsConfigList();
   }
+  gettingactions(){
+    this.actionsOptions = [
+    { label: 'Add', value: 'Add' ,optionDisabled: false},
+    { label: 'Delete', value: 'Delete',optionDisabled: false },
+    { label: 'Update', value: 'Update',optionDisabled: false },
+  ];
+  }
  get allOptionsDisabled(): boolean {
  if (!this.academicsFieldsConfigList || !this.actionsOptions) return false;
 
@@ -149,12 +156,14 @@ get isReadOnlyMode(): boolean {
             this.actionsOptions = this.actionsOptions.map((opt: any) => ({ ...opt,
               optionDisabled: Values.includes(opt.value)}));
           } else {
+            this.gettingactions();
             this.academicsFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+          this.gettingactions();
            if (err.status === 404) {
           this.academicsFieldsConfigList = [];
         }

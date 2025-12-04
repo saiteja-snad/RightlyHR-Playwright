@@ -91,6 +91,13 @@ export class BankInfoComponent {
     this.getAllRoles();
     this.getBankInfoFieldsConfigList();
   }
+  gettingactions(){
+    this.actionsOptions = [
+    { label: 'Add', value: 'Add' ,optionDisabled: false},
+    { label: 'Delete', value: 'Delete',optionDisabled: false },
+    { label: 'Update', value: 'Update',optionDisabled: false },
+  ];
+  }
   //function to initialize the form
   initializeForm() {
     this.fieldConfigForm = this.fb.group({
@@ -177,12 +184,14 @@ get isReadOnlyMode(): boolean {
             this.actionsOptions = this.actionsOptions.map((opt: any) => ({ ...opt,
               optionDisabled: bankValues.includes(opt.value)}));
           } else {
+            this.gettingactions();
             this.bankInfoFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
+          this.gettingactions();
           if (err.status === 404) {
           this.bankInfoFieldsConfigList = [];
         }
@@ -366,11 +375,11 @@ get isReadOnlyMode(): boolean {
       .subscribe({
         next: () => {
           modal.close();
-          this.getBankInfoFields();
-          this.getBankInfoFieldsConfigList();
-          this.conformationPopup.openSuccessModal(
+           this.conformationPopup.openSuccessModal(
             'Field configuration deleted successfully'
           );
+          this.getBankInfoFields();
+          this.getBankInfoFieldsConfigList();
           this.loader = false;
         },
         error: (error: any) => {

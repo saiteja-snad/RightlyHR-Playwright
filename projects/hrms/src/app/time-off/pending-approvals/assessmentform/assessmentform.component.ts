@@ -58,6 +58,7 @@ export class AssessmentformComponent {
   Status: any;
   employeedata = {} as any;
   selectedLeaveStatus: any;
+  totalCount: any;
 
   constructor(private router: Router, private http: HttpService, private authService: AuthService, config: NgbModalConfig, 
     private modalService: NgbModal, private openModalService: OpenModalService, public rbac: RbacService,) {
@@ -574,6 +575,7 @@ export class AssessmentformComponent {
       next: (data: any) => {
         if (data) {
           this.responseId = data.responseId;
+             this.getApprovalStatusCounts();
           this.FormDownload();
           this.closeModal();
           this.modalService.open(content, { centered: true })
@@ -645,6 +647,7 @@ export class AssessmentformComponent {
         this.openModalService.openErrorModal(reason.error.message);
       },
       complete: () => {
+           this.getApprovalStatusCounts();
         setTimeout(() => {
           window.location.reload();
         }, 2000);
@@ -700,6 +703,7 @@ export class AssessmentformComponent {
         this.openModalService.openErrorModal(reason.error.message);
       },
       complete: () => {
+        this.getApprovalStatusCounts();
         setTimeout(() => {
           window.location.reload();
         }, 2000);
@@ -757,7 +761,15 @@ export class AssessmentformComponent {
       },
     });
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.traineeoffboardingModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   // Function to handle toggling Early Relieving option
   toggleApprove() {
     if (!this.approve) {

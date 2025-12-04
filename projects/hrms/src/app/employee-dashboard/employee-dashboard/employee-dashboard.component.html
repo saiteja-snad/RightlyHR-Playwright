@@ -111,6 +111,7 @@
         </div>
 
         <!-- Team Members Section -->
+
         <div class="content-card mb-3">
             <div class="flex-between-content mb-2">
                 <div class="section-title">My Team Members</div>
@@ -147,6 +148,7 @@
         </div>
 
         <!-- Gender Diversity -->
+        @if(!genderCountLoader){
         <div class="content-card mb-3">
             <div class="flex-between-content mb-2">
                 <div class="section-title">Gender Diversity</div>
@@ -156,6 +158,13 @@
                 <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" />
             </div>
         </div>
+        }
+        @else {
+        <div class="content-card mb-3">
+            <p-skeleton height="10.3rem" borderRadius="12px"></p-skeleton>
+        </div>
+        }
+
 
         <!-- Weekly Work Logs -->
         @if(!weaklyloghrsloader){

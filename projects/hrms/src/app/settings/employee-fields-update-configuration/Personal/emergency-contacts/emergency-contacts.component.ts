@@ -224,6 +224,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope: 'Field'
         };
 
         this.subscription = this.http

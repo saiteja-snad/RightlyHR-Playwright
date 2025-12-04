@@ -98,7 +98,7 @@
 
 .popup-table-wrapper .popup-table-scroll-container {
     max-height: 30vh;
-    overflow: hidden;
+    overflow: auto;
     border-radius: 0.5rem;
     border: 2px solid var(--accordian-table-border-color);
     border-bottom: 2px solid var(--accordian-table-border-color) !important;

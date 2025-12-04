@@ -237,7 +237,7 @@ get isReadOnlyMode(): boolean {
           requiresApproval: true,
           approvalType: approvalTypeToSend,
           approvalAuthority: approvalAuthority.toString(),
-           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
+          approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
           ApprovalScope: 'Action'
         };

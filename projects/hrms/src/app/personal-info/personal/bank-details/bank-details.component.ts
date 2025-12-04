@@ -15,9 +15,10 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent,NgbPopoverModule],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })

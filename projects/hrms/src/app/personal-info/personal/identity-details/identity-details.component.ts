@@ -15,10 +15,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent,NgbPopoverModule],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })

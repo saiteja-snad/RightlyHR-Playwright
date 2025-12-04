@@ -42,8 +42,8 @@
                         !== 'trainee inactive')){
                         <td class="text-center">
                             @if(disablePendingFields(identityDetails.identityId)){
-                             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-                             popoverClass="pending-popover" (click)="setActiveMessage(identityDetails.identityId)"></i>
+                                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                             popoverClass="pending-popover" (click)="setActiveMessage(identityDetails.identityId)"/>
                             }@else{ 
                             <div class="dropdown" *ngIf="!identityDetails.referenceId">
                                 <span type="button" data-bs-toggle="dropdown">

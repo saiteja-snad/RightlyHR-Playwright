@@ -43,8 +43,8 @@
                         @if( canAccess('update','bank') || canAccess('delete','bank')){
                         <td class="text-center">
                             @if(disablePendingFields(bankiteams.bankId)){
-                             <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-                             popoverClass="pending-popover" (click)="setActiveMessage(bankiteams.bankId)"></i>
+                                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                             popoverClass="pending-popover" (click)="setActiveMessage(bankiteams.bankId)"/>
                             }@else{ 
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">

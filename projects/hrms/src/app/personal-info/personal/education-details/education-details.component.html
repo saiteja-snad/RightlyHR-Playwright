@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Academic Qualifications </span></div>
     @if(canAccess('create','education')){
@@ -48,6 +48,10 @@
             'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
             employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
             <td class="text-center">
+              @if(disablePendingFields(edacationDetails.id)){
+                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                popoverClass="pending-popover" (click)="setActiveMessage(edacationDetails.id)"/>
+              }@else{
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -68,6 +72,7 @@
                   }
                 </ul>
               </div>
+              }
             </td>
             }}
           </tr>
@@ -378,4 +383,7 @@
       <button type="submit" class="custom-btn btn-primary" (click)="educationDelete()">Yes</button>
     </div>
   </div>
+</ng-template>
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
 </ng-template>

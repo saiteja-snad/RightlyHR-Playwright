@@ -22,6 +22,7 @@ ngOnInit(){
     { label: 'Comp Off Entitlement', link: '/time-off/on-behalf-of-approvals/entitlement',permission: { feature: 'Comp Off (On Behalf Of Approvals)', action: 'view' } },
     { label: 'WFH', link: '/time-off/on-behalf-of-approvals/wfh',permission: { feature: 'WFH (On Behalf Of Approvals)', action: 'view' } },
     { label: 'Permissions', link: '/time-off/on-behalf-of-approvals/permissions',permission: { feature: 'Permission (On Behalf Of Approvals)', action: 'view' } },
+    { label: 'Regularization', link: '/time-off/on-behalf-of-approvals/regularization',permission: { feature: 'Regularization (On Behalf Of Approvals)', action: 'view' } },
   ];
    this.loading = false;
 }

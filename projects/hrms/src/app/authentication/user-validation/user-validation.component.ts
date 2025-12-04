@@ -179,7 +179,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     // Step 2: Check My Info permissions
     for (const item of myInfoPermissions) {
       if (this.rbac.allowedToAccess(item.permission)) {
-        const myInfoRoute = this.goToAccessibleRoute('/employee-dashboard');
+        const myInfoRoute = this.goToAccessibleRoute('/myinfo');
         if (myInfoRoute) {
           this.router.navigate([myInfoRoute]);
           return;

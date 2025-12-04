@@ -210,7 +210,7 @@ onStatusApproveSelect(status: string) {
  getApprovalStatusCounts() {
       let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.nodueModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
        this.http.updatePendingApprovalCounts(this.totalCount);
    //Map counts to tabs

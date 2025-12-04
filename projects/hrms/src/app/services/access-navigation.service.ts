@@ -245,6 +245,12 @@ export class AccessNavigationService {
               return (route =
                 '/settings/timeoff-configurations/flexible-leave-allocation');
             }
+            if (
+              this.rbac.allowedToAccess('Load Entitlements Tab.view')
+            ) {
+              return (route =
+                '/settings/timeoff-configurations/loadentitlements');
+            }
 
             if (
               this.rbac.allowedToAccess(
@@ -736,7 +742,7 @@ export class AccessNavigationService {
         }
         break;
 
-     
+
 
       case '/myinfo/onboarding-request':
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
@@ -1121,6 +1127,14 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/settings/timeoff-configurations/loadentitlements':
+        if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
+          return (route =
+            '/settings/timeoff-configurations/loadentitlements');
+        }
+        break;
+
+
       case '/settings/timeoff-configurations/flexible-wfh-allocation':
         if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
           for (const item of FLEXIBLE_WFH_ALLOCATION_TABS) {
@@ -1287,6 +1301,12 @@ export class AccessNavigationService {
                 this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')
               ) {
                 return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
+              }
+              if (
+                this.rbac.allowedToAccess('Load Entitlements Tab.view')
+              ) {
+                return (route =
+                  '/settings/timeoff-configurations/loadentitlements');
               }
 
               if (this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')) {
@@ -1730,7 +1750,7 @@ export class AccessNavigationService {
         }
         break;
 
-         case '/pending-approvals/employeeinfo-request':
+      case '/pending-approvals/employeeinfo-request':
         if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
           for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1739,7 +1759,7 @@ export class AccessNavigationService {
           }
         }
         break;
-     
+
       case '/personalinfo/personal':
         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||
           this.rbac.allowedToAccess('My Info Personal Tab.view')) {
@@ -1796,9 +1816,9 @@ export class AccessNavigationService {
         }
         break;
 
-    
 
-        
+
+
       case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {

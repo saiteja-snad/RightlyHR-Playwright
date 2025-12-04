@@ -4,6 +4,16 @@
             <app-client-resource-tab />
         </div>
 
+        <!--Input search-->
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="search" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
+                placeholder="Search by employee name / project name / role" aria-label="Search"
+                aria-describedby="basic-addon1">
+        </div>
+
         <div class="custom-table-content">
             @if (!loading) {
             <table class="w-100">
@@ -11,6 +21,7 @@
                     <!-- <th>Employee ID</th> -->
                     <th>Name</th>
                     <th class="text-center">Phases / Milestones</th>
+                    <th class="text-center">Project Code</th>
                     <!-- <th>Designation</th> -->
                     <th class="text-center">Role</th>
                     <!-- <th>Email</th>
@@ -32,6 +43,7 @@
                             <!-- <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td> -->
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td class="text-center">{{ data?.phase?.phaseName || '-'}}</td>
+                            <td class="text-center">{{ data?.project?.meta?.graphData?.code|| '-'}}</td>
                             <!-- <td>{{ data?.employee?.designation || '-' }}</td> -->
                             <td class="text-center">{{ data?.role || '-' }}</td>
                             <!-- <td>{{ data?.employee?.workMail || '-' }}</td>
@@ -114,7 +126,7 @@
                                 placeholder="Please select project name" class="form-select custom-select"
                                 (onChange)="selectProject($event.value)"></p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('projectName')?.touched &&
                         updateResourceForm.get('projectName')?.invalid">Project Name is required</div>
                     </div>
 
@@ -157,7 +169,7 @@
                                 [ngClass]="{ 'readonly-select': true }">
                             </p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched &&
                         updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
                     </div>
 
@@ -167,7 +179,7 @@
                             Designation<span class="text-danger">*</span></label>
                         <input type="text" id="designation" formControlName="designation"
                             class="form-control custom-input" placeholder="Designation" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('designation')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('designation')?.touched &&
                         updateResourceForm.get('designation')?.invalid">Designation is required</div>
                     </div>
 
@@ -177,7 +189,7 @@
                             <span class="text-danger">*</span></label>
                         <input type="email" id="resourceEmail" formControlName="resourceEmail"
                             class="form-control custom-input" placeholder="Enter email address" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched &&
                         updateResourceForm.get('resourceEmail')?.invalid">Email is required</div>
                     </div>
 
@@ -186,7 +198,7 @@
                         <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
                         <input type="text" id="resourcePhone" formControlName="resourcePhone"
                             class="form-control custom-input" placeholder="Please enter phone number" readonly />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched &&
                         updateResourceForm.get('resourcePhone')?.invalid">Phone Number is required</div>
                     </div>
 
@@ -202,16 +214,16 @@
                         <div class="error-msg">
                             <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
-                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']
                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
                             {{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
                     </div>
 
-               
 
 
-              
+
+
 
                     <!-- Start Date -->
                     <div class="col-md-6 mb-3">
@@ -221,7 +233,7 @@
                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
                             [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)" class="form-control custom-input" />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched &&
                         updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
                         <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
                     </div>
@@ -238,7 +250,7 @@
                             End Date is required
                         </div>
                     </div>
-                    
+
                     <!-- Authority Name -->
                     <div class="col-md-6 mb-3">
                         <div class="d-flex gap-2">
@@ -264,10 +276,10 @@
                                 class="custom-select w-100" resetFilterOnHide="true">
                             </p-select>
                         </div>
-                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched && 
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched &&
                         updateResourceForm.get('resourceAuthority')?.invalid">Timesheet Approval Authority is required</div>
                     </div>
-                    
+
                     <!-- Resource Allocation Hours -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceAllocationhrs" class="form-label custom-label mb-2">Allocation Hours
@@ -356,7 +368,7 @@
 <ng-template #reasonModal let-modal>
     <form [formGroup]="reasonForm" (ngSubmit)="submitReason(modal)">
         <div class="result-popup-content" ngbAutofocus>
-            
+
             <div>
                 <img src="icons/conformation.png" alt="icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{ modalData?.title }}</p>

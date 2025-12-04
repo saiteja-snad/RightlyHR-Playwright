@@ -1,90 +1,120 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Project Management<span class="ms-1">
-                    <i class="bi bi-chevron-double-right"></i></span></div>
-
+            <div class="commpoment-name">Project Management
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
             @if(isShowtimesheetforteamRoute()){
             <div class="commpoment-name">
                 <a (click)="navigatetoteam()"><u>Team Timesheet</u></a>
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             }
-
             @if(isShowtimesheetformyRoute()){
             <div class="commpoment-name">
                 <a (click)="navigatetomy()"><u>My Timesheet</u></a>
                 <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             }
-
-            <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}}
-                {{employename?.lastName}}</div>
-
+            <div class="component-header">{{employename?.firstName}} {{employename?.middleName || ''}} {{employename?.lastName}}</div>
             <div>
                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
 
-        <div class="d-flex align-items-center gap-3">
-            <div class="total-hrs">{{"Total Logged Hours"}}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span>
-            </div>
-            @if(isFilterApplied()) {
-            <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
-            }
-
-            <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-                <div class="d-flex gap-3 align-items-center">
+        <form [formGroup]="datepickerForm">
+            <div class="d-flex align-items-center gap-3">
+                <div class="total-hrs">{{"Total Logged Hours" }}:<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+                <!-- Clear All button for mysummary route -->
+                @if(isShowtimesheetformyRoute()) {
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                }
+                <!-- Date Picker Outside Offcanvas -->
+                <div class="d-flex gap-2 align-items-center">
                     <div class="custom-date-range-picker">
-                        <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'"
                             selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                     </div>
-
-                    <div *ngIf="this.employeeId !== this.empdata?.employeeId">
-                        <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
-                        <div class="d-flex align-items-center gap-2">
-                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                                {{'Select Employee'| translate}}</label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
-                                    formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value"
-                                    [resetFilterOnHide]="true" placeholder="Please select employee"
-                                    class="form-select custom-select"></p-select>
-                            </div>
-                        </div>
-                        } -->
-                        @if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
-                        <div class="d-flex align-items-center gap-2">
-                            <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                                {{'Select Employee'| translate}}</label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
-                                    optionValue="value" formControlName="resourceId" [resetFilterOnHide]="true"
-                                    placeholder="Please select employee" class="form-select custom-select"
-                                    required></p-select>
-                            </div>
-                        </div>
-                        }
-                        @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
-                        <div class="d-flex align-items-center gap-2">
-                            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
-                            <div class="custom-p-select-content">
-                                <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
-                                    name="myteamemployees" optionValue="id" placeholder="Please select employee"
-                                    formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true"
-                                    class="form-select custom-select" [autoDisplayFirst]="false" required>
-                                </p-select>
-                            </div>
-                        </div>
-                        }
-                    </div>
-
-                    <div>
-                        <button class="custom-btn btn-primary" (mousedown)="$event.preventDefault()"
-                            type="submit">Apply</button>
-                    </div>
                 </div>
-            </form>
+                <div *ngIf="this.employeeId !== this.empdata?.employeeId">
+                    <!-- @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Employee'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label"
+                                formControlName="resourceId" [resetFilterOnHide]="true" optionValue="value" [resetFilterOnHide]="true"
+                                placeholder="Please select employee" class="form-select custom-select"></p-select>
+                        </div>
+                    </div>
+                    } -->
+                    @if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('All Employees (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Employee'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"
+                                formControlName="resourceId" [resetFilterOnHide]="true"
+                                [placeholder]="activeEmplist.length === 0 ? 'No results found' : 'Please select employee'"
+                                class="form-select custom-select" required></p-select>
+                        </div>
+                    </div>
+                    }
+                    @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
+                                optionValue="id" [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Please select employee'"
+                                formControlName="resourceId" [filter]="true" [resetFilterOnHide]="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" required>
+                            </p-select>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div>
+                    <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
+                        {{'Apply' | translate}}
+                    </button>
+                </div>
+                <!-- Hide Filters button for mysummary route -->
+                <div *ngIf="!isShowtimesheetformyRoute() && rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+                    <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+                        <i class="bi bi-funnel me-2"></i>Filters
+                        <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- @else if(!isShowtimesheetformyRoute() && rbac.allowedToAccess('My Team (Timesheet).view')) {
+            <div class="d-flex gap-2 align-items-center">
+                <label class="form-label filter-labels mt-2">{{'My Team' | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="resourcesList" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
+                        optionLabel="fullName" optionValue="id" formControlName="resourceId"
+                        [placeholder]="resourcesList.length === 0 ? 'No results found' : 'Select employee'"
+                        class="form-select custom-select" />
+                </div>
+            </div>
+            } -->
+
+            <!-- <button type="button" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="isApplyDisabled()">
+                {{'Apply' | translate}}
+            </button> -->
+            <!-- </div> -->
+        </form>
+    </div>
+
+    <!-- Filter Chips Display -->
+    <div class="fliter-chip-content mb-2" *ngIf="getSelectedFilters().length > 0">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+                (onRemove)="removeFilter(filter)" />
+            <!-- Show “X more” chip if filters > 3 -->
+            <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+                label="+{{getSelectedFilters().length - 3}} More" (click)="toggleFilters(filterContent)" />
+            <button type="button" class="clear-all-btn" (click)="resetForm()">{{ 'Clear All' | translate }}</button>
         </div>
     </div>
 
@@ -205,9 +235,9 @@
                         <ng-container *ngIf="(approvedPercent + submittedPercent + rejectedPercent) > 0; else noData">
                             <div class="stacked-progress-container">
                                 <!-- overlay color bar -->
-                                <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' 
-                                + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                                + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' 
+                                <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, '
+                                + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' '
+                                + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, '
                                 + rejectedColor + ' 100%)'"></div>
                                 <div class="progress-labels">
                                     <div class="label" [style.color]="approvedColor">Approved: <span class="hrs">{{
@@ -314,13 +344,13 @@
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">{{'Timesheet Breakdown' | translate}} - {{employename?.firstName}}
-                    {{employename?.middleName || ''}}
-                    {{employename?.lastName}} ({{selectedEntries[0]?.entryDate | dateformat }})</p>
+                    {{employename?.middleName || ''}} {{employename?.lastName}} ({{selectedEntries[0]?.entryDate | dateformat }})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+
         <div class="custom-main-popup-content">
             <div class="popup-table-wrapper">
                 <div class="popup-table-scroll-container">
@@ -339,11 +369,9 @@
                             <tr *ngFor="let entry of selectedEntries">
                                 <td>
                                     <div class="d-flex align-items-center justify-content-center flex-column">
-
-                                        <div class="project-name-chip text-truncate mb-1" type="button"
-                                            [ngbPopover]="projectname"><b
-                                                [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{
-                                                entry.projectName }}</b></div>
+                                        <div class="project-name-chip text-truncate mb-1" type="button" [ngbPopover]="projectname">
+                                            <b [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">{{ entry.projectName }}</b>
+                                        </div>
                                         <ng-template #projectname>
                                             <p class="mb-0" [style.color]="entry?.meta?.graphData?.color  ?? '#0B3A83'">
                                                 <b>{{ entry.projectName }}</b>
@@ -351,54 +379,39 @@
                                         </ng-template>
 
                                         <div class="d-flex flex-wrap align-items-center  justify-content-center gap-2">
-
-                                            <div class="timesheet-chip chip-truncate  text-truncate" type="button"
-                                                [ngbPopover]="clientname"
+                                            <div class="timesheet-chip chip-truncate  text-truncate" type="button" [ngbPopover]="clientname"
                                                 [style.background]="getLighterColor(entry?.clientMeta?.graphData?.color) "
                                                 [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'"
                                                 [style.border-color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
-                                                {{
-                                                entry.clientName }}</div>
-
+                                                {{ entry.clientName }}</div>
                                             <ng-template #clientname>
-                                                <p class="mb-0 text-popover"
-                                                    [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
+                                                <p class="mb-0 text-popover" [style.color]="entry?.clientMeta?.graphData?.color  ?? '#0B3A83'">
                                                     <b>{{ entry.clientName }}</b>
                                                 </p>
                                             </ng-template>
-
-
-                                            <div *ngIf="entry?.phaseName"
-                                                class="timesheet-chip chip-truncate  text-truncate" type="button"
-                                                [ngbPopover]="phasename"
-                                                [style.background]="getLighterColor(entry?.phaseMeta?.graphData?.color) "
+                                            <div *ngIf="entry?.phaseName" class="timesheet-chip chip-truncate text-truncate" type="button" [ngbPopover]="phasename"
+                                                [style.background]="getLighterColor(entry?.phaseMeta?.graphData?.color)"
                                                 [style.color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'"
                                                 [style.border-color]="entry?.phaseMeta?.graphData?.color ?? '#0B3A83'">
                                                 {{ entry?.phaseName }}
                                             </div>
-
                                             <ng-template #phasename>
-                                                <p class="mb-0 text-popover"
-                                                    [style.color]="entry?.phaseMeta?.graphData?.color  ?? '#0B3A83'">
-                                                   <b> {{ entry.phaseName }}</b>
+                                                <p class="mb-0 text-popover" [style.color]="entry?.phaseMeta?.graphData?.color  ?? '#0B3A83'">
+                                                    <b> {{ entry.phaseName }}</b>
                                                 </p>
                                             </ng-template>
-
                                         </div>
                                     </div>
                                 </td>
-
                                 <td>{{ entry.loggedHours }} hrs</td>
                                 <td>
-                                    <ng-container
-                                        *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
+                                    <ng-container *ngIf="entry.finalApproverName || entry.approverDesignation; else noValue">
                                         {{ entry.finalApproverName || '-' }} ({{ entry.approverDesignation || '-' }})
                                     </ng-container>
                                     <ng-template #noValue>-</ng-template>
                                 </td>
                                 <td class="text-center">
-                                    <div *ngIf="entry.summary; else noRequestedComments" type="button"
-                                        [ngbPopover]="requestedComments">
+                                    <div *ngIf="entry.summary; else noRequestedComments" type="button" [ngbPopover]="requestedComments">
                                         <app-info-icon />
                                     </div>
                                     <ng-template #requestedComments>
@@ -406,8 +419,7 @@
                                     </ng-template>
                                     <ng-template #noRequestedComments><span>-</span></ng-template>
                                 </td>
-                                <td
-                                    [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected', 
+                                <td [ngClass]="{'approved': entry.status === 'Processed', 'rejected': entry.status === 'Rejected',
                                     'waiting': entry.status === 'Waiting for Approval', 'draft': entry.status === 'draft'}">
                                     {{ entry.status.toLowerCase() == "processed" ? "Approved" : entry.status }}
                                 </td>
@@ -423,4 +435,84 @@
 
 <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>
+
+<!-- Data Filters off canvas -->
+<ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Filters' | translate}}</p>
+            <a (click)="closeCanvas()" class="cursor"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+    
+        <div class="offcanvas-filter-content">
+            <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                    <label class="form-label custom-label filter-labels mb-3">{{'Select Client'| translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="clientDetails" [filter]="true" filterBy="clientName"
+                            [resetFilterOnHide]="true" optionLabel="clientName" optionValue="clientId"
+                            formControlName="clientId" (onChange)="getAllEmployeeDetails()" placeholder="Please select client"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+        
+                <div class="mb-3">
+                    <label class="form-label custom-label filter-labels mb-3">{{'Select Project'| translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="projectDetails" [filter]="true" filterBy="projectName"
+                            [resetFilterOnHide]="true" optionLabel="projectName" optionValue="projectId"
+                            formControlName="projectId" (onChange)="getAllEmployeeDetails()" placeholder="Please select project"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+        
+                <div class="mb-3">
+                    <label class="form-label custom-label filter-labels mb-3">{{'Select Department'| translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
+                            [resetFilterOnHide]="true" optionLabel="departmentName" optionValue="sno"
+                            formControlName="departmentId" (onChange)="getAllEmployeeDetails()"
+                            placeholder="Please select department" class="form-select custom-select" />
+                    </div>
+                </div>
+        
+                <div class="mb-3">
+                    <label class="form-label custom-label filter-labels mb-3">{{'Select RM/TM' | translate}}</label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"
+                            optionLabel="fullName" optionValue="employeeId" formControlName="tmorrmId"
+                            (onChange)="getAllEmployeeDetails()" placeholder="Please select rm/tm"
+                            class="form-select custom-select" />
+                    </div>
+                </div>
+        
+                <div class="offcanvas-footer-content gap-3">
+                    <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">
+                        {{'Clear All' | translate}}</button>
+                    <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+                        {{'Close' | translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!--Apllied Filters-->
+<ng-template #appliedFilters let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading m-0">Apllied Filters</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content d-flex flex-wrap gap-2">
+            <div *ngFor="let filter of getSelectedFilters() | slice:3">
+                <p-chip [label]="filter.label" [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red" />
+            </div>
+        </div>
+    </div>
 </ng-template>

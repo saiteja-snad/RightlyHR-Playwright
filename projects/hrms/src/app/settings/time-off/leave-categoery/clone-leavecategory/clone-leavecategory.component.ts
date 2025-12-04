@@ -104,10 +104,11 @@ export class CloneLeavecategoryComponent {
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
       noticePeriodAllowedValue: [null, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
+      noticePeriodFrequencyType: [{ value: null, disabled: true }],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
       probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]],
-      probationFrequencyType: [null, Validators.required],
+      probationFrequencyType: [{ value: null, disabled: true }],
     });
     this.validateAllowedDays()
   }
@@ -291,28 +292,42 @@ export class CloneLeavecategoryComponent {
 
     this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
+      const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
       if (value) {
         daysControl?.enable();
         daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        typeControl?.enable();
+        typeControl?.setValidators([Validators.required]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
         daysControl?.setValue(0);
+        typeControl?.disable();
+        typeControl?.clearValidators();
+        typeControl?.setValue(null);
       }
       daysControl?.updateValueAndValidity();
+      typeControl?.updateValueAndValidity();
     });
 
     this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('probationDays');
+      const typeControl = this.leavePolicyForm.get('probationFrequencyType');
       if (value) {
         daysControl?.enable();
         daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        typeControl?.enable();
+        typeControl?.setValidators([Validators.required]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
         daysControl?.setValue(0);
+        typeControl?.disable();
+        typeControl?.clearValidators();
+        typeControl?.setValue(null);
       }
       daysControl?.updateValueAndValidity();
+      typeControl?.updateValueAndValidity();
     });
   }
 
@@ -361,6 +376,7 @@ export class CloneLeavecategoryComponent {
       encashAllowedValue: data.encashAllowedValue,
       noticeperiodAllowedType: data.noticeperiodAllowedType,
       noticePeriodAllowedValue: data.noticePeriodAllowedValue,
+      noticePeriodFrequencyType: data.noticePeriodFrequencyType,
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
       probationFrequencyType: data.probationFrequencyType
@@ -407,9 +423,10 @@ export class CloneLeavecategoryComponent {
       encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
       noticeperiodAllowedType: this.leavePolicyForm.value.noticeperiodAllowedType,
       noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
+      noticePeriodFrequencyType: this.leavePolicyForm.value.noticePeriodFrequencyType,
       isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
-      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType ?? 0,
+      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: "Pending for submission",

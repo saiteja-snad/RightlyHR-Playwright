@@ -270,6 +270,7 @@ export const permissionsData = [
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet Filters Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -638,6 +639,7 @@ export const permissionsData = [
   { fields: 'My Info Job Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info My Team Members Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Personal Sub Tabs Section
@@ -718,6 +720,7 @@ export const permissionsData = [
   { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Contract Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee My Skills', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info My Team Members Tab', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Job Sub Tabs Section
   { fields: 'Employee Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },

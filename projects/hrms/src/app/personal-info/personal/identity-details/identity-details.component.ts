@@ -39,6 +39,10 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false
   loading = false
   selectedIdentityTypetoUpdate: any;
+  isMyInfoRoute = false;
+  getFieldsApprovalStatusList: any[] = [];
+  disableDelete: boolean = false;
+  disableUpdate: boolean = false;
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -48,7 +52,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.initializeupdateForm();
     this.vadationfotidentitytype()
-    this.vadationfoforupdatetidentitytype()
+    this.vadationfoforupdatetidentitytype();
+    this.getFieldsApprovalStatus();
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -61,10 +66,12 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
       this.getIdentityByEmpid();
+      this.isMyInfoRoute = false;
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
       this.getIdentityByEmpid();
+      this.isMyInfoRoute = true;
     }
   }
 
@@ -351,7 +358,10 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityType: this.identityForm.get('identityType')?.value?.identityType1,
       identityNumber: this.identityForm.get('identityNumber')?.value,
       attachment: attachmentPath || '',
-
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: "Identity Info",
+      displayName: "Personal",
+      createdBy: this.empinfo.employeeId
     };
   }
 
@@ -413,7 +423,11 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         identityNumber: formData.identityupdateNumber,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
-        isDeleted: false
+        isDeleted: false,
+        selfUpdate: this.isMyInfoRoute,
+        moduleName: "Identity Info",
+        displayName: "Personal",
+        createdBy: this.empinfo.employeeId
       };
 
       // Check if a new attachment is selected
@@ -469,7 +483,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
 
   opendeletModal(content: any, identityDetails: any): void {
-    this.selectedIdentityId = identityDetails.identityId; // Store the selected identityId
+    this.selectedIdentityId = identityDetails; // Store the selected identityId
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -478,9 +492,15 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       console.error('No identityId selected for deletion');
       return;
     }
-
-    this.subscription = this.http
-      .getData(`IdentityTable/deletebyid/${this.selectedIdentityId}`)
+    const payload = {
+      identityId: this.selectedIdentityId.identityId,
+      empId: this.selectedIdentityId.empId,
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: "Identity Info",
+      displayName: "Personal",
+      requestedBy: this.empinfo.employeeId
+    };
+    this.subscription = this.http.DeleteData(`IdentityTable/delete`,payload)
       .subscribe({
         next: (data: any) => {
           console.log('Identity deleted successfully:', data);
@@ -499,7 +519,40 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.identityForm.reset();
     this.modalService.dismissAll()
   }
-
+ getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Identity Info',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+            this.disablePendingFields();
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+    // Add this new method
+  disablePendingFields(): void {
+    const pendingFields = this.getFieldsApprovalStatusList
+      .filter((item) => item.approvalStatus === 'Pending')
+      .map((item) => item.fieldName);
+    this.disableDelete = pendingFields.includes('Delete');
+    this.disableUpdate = pendingFields.includes('Update');
+    console.log('Fields with pending approval:', this.disableDelete);
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

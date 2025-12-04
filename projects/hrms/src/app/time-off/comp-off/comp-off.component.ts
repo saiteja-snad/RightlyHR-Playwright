@@ -20,6 +20,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-comp-off',
   imports: [
@@ -66,9 +68,11 @@ export class CompOffComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  totalCount: any;
 
   constructor(
     private modalService: NgbModal,
+     private authService:AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -368,12 +372,22 @@ export class CompOffComponent implements OnInit, OnDestroy {
           }
         },
         complete: () => {
+          this.getApprovalStatusCounts();
           this.spinnerLoader = false;
         },
       });
     }
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.compoffModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   updateDuration() {
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
       const formattedStartTime = moment(this.compoffdata.startTimeProp).format('HH:mm');

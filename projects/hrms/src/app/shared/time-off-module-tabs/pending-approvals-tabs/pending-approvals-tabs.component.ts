@@ -43,7 +43,7 @@ export class PendingApprovalsTabsComponent {
 
   // Load initial data
     this.navTabs = [
-      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' }, moduleIds: [2, 1, 11, 3, 18, 31, 17] },
+      { label: 'Time-Off', link: '/pending-approvals/time-off', icon: '/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Time Off main Tab', action: 'view' }, moduleIds: [1,2,3,11,18,31,17] },
       { label: 'Onboarding', link: '/pending-approvals/on-boarding', icon: '/images/onboarding.png', permission: { feature: 'Onboarding main Tab', action: 'view' }, moduleIds: [20, 15] },
       { label: 'Contractors', link: '/pending-approvals/contractors', icon: '/my-info-icons/contractor.png', permission: { feature: 'Contractors main Tab', action: 'view' }, moduleIds: [25, 26] },
       { label: 'Offboarding', link: '/pending-approvals/off-boarding', icon: '/images/sepration-request.png', permission: { feature: 'Offboarding main Tab', action: 'view' }, moduleIds: [13, 14] },

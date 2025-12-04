@@ -19,6 +19,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { Table, TableModule } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-regularization-for-you-request',
   imports: [
@@ -76,6 +77,7 @@ selectedLeaveStatus: any;
 
   constructor(
     private modalService: NgbModal,
+     private authService:AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -588,7 +590,9 @@ onStatusApproveSelect(status: string) {
     }
   }
 getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.attendanceRegularizationModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.attendanceRegularizationModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
        this.http.updatePendingApprovalCounts(this.totalCount);
    //Map counts to tabs

@@ -34,6 +34,7 @@ import { Table, TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-compoff-for-you-request',
@@ -90,6 +91,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   totalCount: any;
   constructor(
     private modalService: NgbModal,
+     private authService:AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -543,7 +545,9 @@ onStatusApproveSelect(status: string) {
     }
   }
 getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=3&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.compoffModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
        this.http.updatePendingApprovalCounts(this.totalCount);
    //Map counts to tabs

@@ -95,50 +95,49 @@ export class PersonalApprovalsComponent implements OnInit {
     this.employeeId = this.empdata?.employeeId;
     this.fetchApprovalHistory();
   }
-   actionsDetails={} as any;
+actionsDetails={} as any;
  openModalforaction(modal: any, request: any,){
-  console.log("request",request)
-  //this.actionsDetails=request;
-     let parsedOldValue = {};
-
-  if (request.oldValue) {
-    try {
+  let parsedOldValue = {};
+  if (request.oldValue && request.oldValue!='-') {
       parsedOldValue = JSON.parse(request.oldValue);
-    } catch (e) {
-      console.error("Parsing error for oldValue:", request.oldValue);
-    }
   }
-
   this.actionsDetails = {
     ...request,
     oldValue: parsedOldValue
   };
   this.actionsDetails.fieldName=request.fieldName;
   this.actionsDetails.moduleName=request.moduleName;
-  console.log("this.actionsDetails",this.actionsDetails)
-    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+  this.modalService.open(modal, { centered: true, backdrop: 'static' });
  }
-
+  mergedValues: any[] = [];
   openModalfornewvalueAction(modal: any, request: any,){
-  console.log("request",request)
-  //this.actionsDetails=request;
      let parsedOldValue = {};
-   if (request.newValue) {
-    try {
-      parsedOldValue = JSON.parse(request.newValue);
-    } catch (e) {
-      console.error("Parsing error for oldValue:", request.newValue);
-    }
+     let parsednewValue = {};
+   if (request.oldValue && request.oldValue!='-') {
+      parsedOldValue = JSON.parse(request.oldValue);
   }
-
+   if (request.newValue && request.newValue!='-') {
+      parsednewValue = JSON.parse(request.newValue);
+  }
   this.actionsDetails = {
     ...request,
-    oldValue: parsedOldValue
+    oldValue: parsedOldValue ??{},
+    newValue: parsednewValue ??{}
   };
   this.actionsDetails.fieldName=request.fieldName;
   this.actionsDetails.moduleName=request.moduleName;
-  console.log("this.actionsDetails",this.actionsDetails)
-    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+  const oldVal = this.actionsDetails.oldValue ?? {};
+  const newVal = this.actionsDetails.newValue ?? {};
+  const keys = new Set([
+    ...Object.keys(oldVal),
+    ...Object.keys(newVal)
+  ]);
+  this.mergedValues = Array.from(keys).map(key => ({
+    key,
+    oldValue: oldVal[key],
+    newValue: newVal[key]
+  }));
+  this.modalService.open(modal, { centered: true, backdrop: 'static' });
  }
   shouldShowTooltip(element: HTMLElement): boolean {
     if (!element) return false;

@@ -282,6 +282,7 @@ getFieldsApprovalStatusList: any[] = [];
     selfUpdate: this.isMyInfoRoute,
     moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
     displayName: this.isMyInfoRoute ? 'Personal' : undefined,
+    workEmail:this.contactForm.get('workMail')?.value || this.employedata.workEmail,
   };
 
   // Only include non-pending fields

@@ -372,7 +372,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.attendanceRegularizationModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
        this.http.updatePendingApprovalCounts(this.totalCount);
    //Map counts to tabs
@@ -623,6 +623,7 @@ getApprovalStatusCounts() {
             this.conformationPopup.openErrorModal(errorMessage);
           },
           complete: () => {
+            this.getApprovalStatusCounts();
             this.extraHrsLoader = false;
             this.extraHoursForm.reset();
           },

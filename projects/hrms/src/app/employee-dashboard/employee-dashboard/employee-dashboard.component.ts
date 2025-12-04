@@ -16,9 +16,10 @@ import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
 import { TabsModule } from 'primeng/tabs';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule],
+  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, ProfileIconComponent],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,

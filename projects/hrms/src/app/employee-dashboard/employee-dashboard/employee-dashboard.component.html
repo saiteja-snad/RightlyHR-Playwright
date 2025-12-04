@@ -126,7 +126,14 @@
                             <p-tab p-tablistTab>
                                 <div class="custom-border-content">
                                     <div class="member-card text-center">
-                                        <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
+
+                                        <ng-container *ngIf="emp.photo; else showProfileIcon">
+                                            <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
+                                        </ng-container>
+
+                                        <ng-template #showProfileIcon>
+                                            <app-profile-icon [iconWidth]="'45'" [iconHeight]="'45'"  class=" mb-2" />
+                                        </ng-template>
                                         <div class="name text-wrap">{{ emp.name }}</div>
                                         <div class="role text-wrap">{{ emp.role }}</div>
                                     </div>

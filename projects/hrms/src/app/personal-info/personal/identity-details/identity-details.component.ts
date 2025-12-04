@@ -504,7 +504,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.DeleteData(`IdentityTable/delete`,payload)
       .subscribe({
         next: (data: any) => {
-          console.log('Identity deleted successfully:', data);
           this.modalService.dismissAll();
           this.getIdentityByEmpid();
           this.getFieldsApprovalStatus();

@@ -433,7 +433,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       this.getFieldsApprovalStatus();
       this.modalService.dismissAll(); // Close modal
       this.conformationPopup.openSuccessModal(
-        'Bank information delete request submitted successfully.'
+        'Bank information deleted successfully.'
       );
     },
     error: () => {

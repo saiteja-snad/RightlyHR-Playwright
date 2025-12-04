@@ -78,7 +78,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/employee-fields-update-configurations/job')) {
       this.moduleName = 'Employee Fields Update Configurations';
       this.componentName = 'Job';
-    } 
+    }
     else if (url.startsWith('/settings/employee-fields-update-configurations/documents')) {
       this.moduleName = 'Employee Fields Update Configurations';
       this.componentName = 'Documents';
@@ -119,10 +119,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Load Entitlements';
     }
-   else if(url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')){
-    this.moduleName='Time Off';
-    this.componentName='Flexible WFH Allocation';
-   }
+    else if (url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Flexible WFH Allocation';
+    }
     // Assets Configuration
     else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
       this.moduleName = 'Assets Configuration';
@@ -187,7 +187,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Letter Configurations';
     }
-         else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
+    else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Frequency Configurations';
     }
@@ -208,7 +208,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Attendance Configuration';
       this.componentName = 'Published';
     }
-     else if (url.startsWith('/settings/project-management-config/project-role')) {
+    else if (url.startsWith('/settings/project-management-config/project-role')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
     }
@@ -236,10 +236,14 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Timesheet Configuration';
       this.componentName = 'Published';
     }
-    else if(url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')){
-    this.moduleName='Time Off';
-    this.componentName='Flexible Work Hours Allocation';
-   }
+    else if (url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Flexible Work Hours Allocation';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/loadentitlements')) {
+      this.moduleName = 'Load Entitlements';
+      this.componentName = 'Load Entitlements Configuration';
+    }
   }
 
   navigateToSettings() {

@@ -264,10 +264,11 @@
                       </a>
                     </li>
                     @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                    @if (expenseheaderiteams.approvalHeader?.currentapprovalStage ===
-                    expenseheaderiteams.approvalHeader?.finalapprovalStage) {
+                    <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === -->
+                    <!-- expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
                     <!-- Show Verify only if not yet verified -->
-                    @if (!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                    <!-- @if (!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) { -->
+                     @if (!(item?.isVerified == true || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
                     <li>
                       <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
                         <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
@@ -275,7 +276,7 @@
                     </li>
                     }
                     }
-                    }
+                    <!-- } -->
 
                     @if(rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
                     @if( expenseheaderiteams.approvalHeader?.currentapprovalStage ===

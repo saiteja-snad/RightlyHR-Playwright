@@ -253,9 +253,9 @@
                       </a>
                     </li>
                     @if (rbac.allowedToAccess('For Role (Claims and Expenses).update')) {
-                    @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) {
-
-                    @if (!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                    <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
+                  @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                    <!-- @if ((item?.isVerified === false )) { -->
                     <li>
                       <a class="dropdown-item" (click)="openVerifyModal(item, Verify)">
                         <i class="bi bi-check-circle me-2"></i>{{ 'Verify' | translate }}
@@ -264,12 +264,13 @@
                     }
 
                     }
-                    }
+                    <!-- } -->
 
                     @if (rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-                    @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) {
+                    <!-- @if (expenseheaderiteams.approvalHeader?.currentapprovalStage === expenseheaderiteams.approvalHeader?.finalapprovalStage) { -->
 
-                    @if (!(item?.isVerified || verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                    @if (!(item?.isVerified === true|| verifiedExpenseIds?.includes(item?.expenseitem_id ?? 0))) {
+                      <!-- @if ((item?.isVerified === false)) { -->
                     <li>
                       <a class="dropdown-item" (click)="openRejectModal(rejectmodal, expenseheaderiteams)">
                         <i class="bi bi-x-circle me-2"></i>{{ 'Reject' | translate }}
@@ -278,7 +279,7 @@
                     }
 
                     }
-                    }
+                    <!-- } -->
 
                   </ul>
                 </div>

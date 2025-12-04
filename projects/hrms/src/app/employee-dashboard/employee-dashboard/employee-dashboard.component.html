@@ -85,7 +85,8 @@
                             <div class="progress-container">
                                 <div class="progress-bar" [style.width.%]="leave.percentage"></div>
                             </div>
-                            <div ><b class="leave-count" >{{ leave.used }}</b><span class="totaled-allowed">/{{ leave.allowed }}</span></div>
+                            <div><b class="leave-count">{{ leave.used }}</b><span class="totaled-allowed">/{{
+                                    leave.allowed }}</span></div>
                         </div>
                     </div>
                 </div>
@@ -157,10 +158,12 @@
         </div>
 
         <!-- Weekly Work Logs -->
+        @if(!weaklyloghrsloader){
         <div class="content-card">
             <div class="flex-between-content mb-2">
                 <div class="section-title">Weekly Work Logs</div>
-                <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
+                <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View
+                    Attendance</button>
             </div>
             <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>
             <div class="week-grid">
@@ -170,6 +173,12 @@
                 </div>
             </div>
         </div>
+        }
+        @else {
+        <div class="content-card">
+            <p-skeleton height="10.3rem" borderRadius="12px"></p-skeleton>
+        </div>
+        }
     </div>
 
     <div class="dashboard-right-content">
@@ -207,7 +216,8 @@
         </div>
         <!-- Daily events Panel -->
         <div class="content-card daliy-events-content">
-               <div  *ngIf="eventItems?.length && hasRealEvents" class="party-image-content"><img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+            <div *ngIf="eventItems?.length && hasRealEvents" class="party-image-content"><img src="icons\brithday.png"
+                    alt="Brithday Icon" class="party-image">
             </div>
             @if(!eventsLoader){
             <div class="events-content">
@@ -243,7 +253,9 @@
                 </div>
             </div>
             }@else {
-            <p-skeleton height="11rem" />
+            <div class="events-content">
+                <p-skeleton height="11rem" />
+            </div>
             }
         </div>
     </div>

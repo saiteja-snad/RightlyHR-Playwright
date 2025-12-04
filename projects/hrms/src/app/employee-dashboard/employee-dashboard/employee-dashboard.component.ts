@@ -30,6 +30,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   loading = false;
   avaliabletlyloading = false;
   hasRealEvents: boolean = false;
+  weaklyloghrsloader= false;
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -683,8 +684,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
 
   getWeeklyWorkLogHours() {
-    this.http
-      .getData(
+    this.weaklyloghrsloader= true;
+    this.http.getData(
         `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -701,8 +702,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           this.totalHours = this.sumDurations(
             attendance.map((item: any) => item.duration.totalDuration)
           );
+          this.weaklyloghrsloader= false;
         },
-        error: (err) => console.log(err),
+        error: (err) => {
+          this.weaklyloghrsloader= false;
+          console.log(err);
+        }
       });
   }
 

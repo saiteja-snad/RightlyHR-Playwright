@@ -17,6 +17,7 @@ import { environment } from '../../../environments/environment';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -32,7 +33,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     Select,
     ModuleInformationComponent,
     NgbPopoverModule,
-    FormsModule
+    FormsModule,
+    ModuleInfoIconComponent,
 ],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',

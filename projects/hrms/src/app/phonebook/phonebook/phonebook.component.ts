@@ -13,9 +13,11 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-phonebook',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, ModuleInformationComponent, NgbPopoverModule],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, ModuleInformationComponent, NgbPopoverModule, ProfileIconComponent,ModuleInfoIconComponent],
   templateUrl: './phonebook.component.html',
   styleUrl: './phonebook.component.scss'
 })

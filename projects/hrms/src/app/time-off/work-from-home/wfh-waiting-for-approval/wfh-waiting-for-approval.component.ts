@@ -19,6 +19,7 @@ import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-wfh-waiting-for-approval',
   imports: [
@@ -32,8 +33,9 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    InfoIconComponent
-  ],
+    InfoIconComponent,
+    ConfirmationIconComponent
+],
   templateUrl: './wfh-waiting-for-approval.component.html',
   styleUrl: './wfh-waiting-for-approval.component.scss',
 })

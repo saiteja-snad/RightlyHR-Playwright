@@ -15,10 +15,12 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-compensation',
-  imports: [CommonModule, ReactiveFormsModule, Select,TranslateModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, TranslateModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './compensation.component.html',
   styleUrl: './compensation.component.scss'
 })

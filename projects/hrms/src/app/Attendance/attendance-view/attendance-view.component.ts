@@ -29,6 +29,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { AccordionModule } from 'primeng/accordion';
 import { ChartModule } from 'primeng/chart';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-attendance-view',
@@ -43,6 +44,7 @@ import { ChartModule } from 'primeng/chart';
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
+    ModuleInfoIconComponent,
     Select,
     DataLoaderContentComponent,
     TohoursPipe,

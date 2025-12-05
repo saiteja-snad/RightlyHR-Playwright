@@ -22,5 +22,5 @@
 
 .card-active {
     box-shadow: none !important;
-    background: linear-gradient(180deg, #FFFFFF 0%, #CFDBEE 100%) !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
 }

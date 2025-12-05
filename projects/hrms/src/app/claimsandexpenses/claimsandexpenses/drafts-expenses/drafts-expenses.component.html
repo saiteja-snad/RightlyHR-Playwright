@@ -38,7 +38,7 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li *ngIf="!selectemp"><a class="dropdown-item"
                                             (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
-                                            <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
+                                               <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item"
@@ -269,7 +269,7 @@
                                         <a type="button" class="download-text"
                                             *ngIf="isImageFile(item.get('attachment_url')?.value)"
                                             (click)="onViewAttachement(item.get('attachment_url')?.value)">
-                                            <i class="bi bi-eye-fill me-2"></i>View
+                                              <app-document-view-icon />View
                                         </a>
                                     </div>
                                 </div>

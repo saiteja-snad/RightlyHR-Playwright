@@ -10,10 +10,11 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-pending-dsts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, DataLoaderContentComponent],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, DataLoaderContentComponent, SettingsUpdateIconComponent],
   templateUrl: './pending-dsts.component.html',
   styleUrl: './pending-dsts.component.scss',
 })

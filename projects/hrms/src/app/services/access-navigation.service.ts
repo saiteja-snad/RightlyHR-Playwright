@@ -302,6 +302,15 @@ export class AccessNavigationService {
         }
         break;
 
+
+
+      case '/employee-dashboard':
+        if (this.rbac.allowedToAccess('Employee Dashboard.view')) {
+          return (route = '/employee-dashboard');
+        }
+        break;
+
+
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {
@@ -687,6 +696,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/theme':
+        if (this.rbac.allowedToAccess('Themes.view')) {
+          return (route = '/theme');
+        }
+        break;
+
       case '/skill-management':
         if (this.rbac.allowedToAccess('Skill Set Management.view')) {
           for (const item of SKILL_MANAGEMENT_TABS) {
@@ -736,7 +751,7 @@ export class AccessNavigationService {
         }
         break;
 
-     
+
 
       case '/myinfo/onboarding-request':
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
@@ -1012,6 +1027,7 @@ export class AccessNavigationService {
       //   }
       //   break;
 
+
       case '/settings/locking-configuration':
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           for (const item of SETTINGS_AttendanceLock_TABS) {
@@ -1049,6 +1065,7 @@ export class AccessNavigationService {
       //timesheet locking
       case '/settings/timesheet-locking-configuration':
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
+
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1730,7 +1747,7 @@ export class AccessNavigationService {
         }
         break;
 
-         case '/pending-approvals/employeeinfo-request':
+      case '/pending-approvals/employeeinfo-request':
         if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
           for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1739,7 +1756,7 @@ export class AccessNavigationService {
           }
         }
         break;
-     
+
       case '/personalinfo/personal':
         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||
           this.rbac.allowedToAccess('My Info Personal Tab.view')) {
@@ -1796,9 +1813,9 @@ export class AccessNavigationService {
         }
         break;
 
-    
 
-        
+
+
       case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {

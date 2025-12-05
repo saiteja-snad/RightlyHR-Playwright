@@ -9,7 +9,7 @@
       @if(!buttons && ( employedata?.empstatus?.toLowerCase() !== 'inactive' &&
       employedata?.empstatus?.toLowerCase()!=='trainee inactive' )){
       <div>
-        <a (click)="enableForm()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
+        <a (click)="enableForm()"><app-edit-icon /></a>
       </div>
       }
       }
@@ -28,8 +28,9 @@
 
         <div class="col-lg-4 col-md-6 mb-3">
           <label for="location" class="form-label custom-label mb-2">Work Number@if(isFieldPendingApproval('Work Number')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Work Number')"></i>
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Work Number')" />
+        
             }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -62,8 +63,9 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span>@if(isFieldPendingApproval('Phone Number')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Phone Number')"></i>
+                <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Phone Number')" />
+       
             }</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -106,8 +108,9 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
               class="text-danger">*</span>@if(isFieldPendingApproval('Personal Email')) {
-            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
-              popoverClass="pending-popover" (click)="setActiveMessage('Personal Email')"></i>
+                <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Personal Email')" />
+
             }</label>
           <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
             placeholder="Please enter personal email">

@@ -11,7 +11,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-published-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, DataLoaderContentComponent, InfoIconComponent,NgbPopoverModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, DataLoaderContentComponent, InfoIconComponent,NgbPopoverModule,DocumentViewIconComponent],
   templateUrl: './published-shifts.component.html',
   styleUrl: './published-shifts.component.scss'
 })

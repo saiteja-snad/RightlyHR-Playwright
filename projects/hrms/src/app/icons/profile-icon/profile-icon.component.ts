@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+
 @Component({
   selector: 'app-profile-icon',
   imports: [CommonModule],

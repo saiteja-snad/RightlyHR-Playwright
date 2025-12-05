@@ -23,9 +23,11 @@ import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
 import { combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
+
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [ReactiveFormsModule, ChartModule, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
+  imports: [ReactiveFormsModule, ChartModule, ModuleInfoIconComponent, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,
     DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, Paginator, SkeletonModule],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss',

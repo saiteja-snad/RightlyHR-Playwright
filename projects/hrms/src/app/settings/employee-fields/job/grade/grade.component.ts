@@ -15,10 +15,12 @@ import { gradeDATA } from './grade-modeL';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 
 @Component({
   selector: 'app-grade',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './grade.component.html',
   styleUrl: './grade.component.scss',
 })

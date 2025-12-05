@@ -7,10 +7,11 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-my-performance-review',
-  imports: [RouterOutlet, MyPerformanceTabsComponent, TranslateModule, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent],
+  imports: [RouterOutlet, MyPerformanceTabsComponent, TranslateModule, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent,ModuleInfoIconComponent],
   templateUrl: './my-performance-review.component.html',
   styleUrl: './my-performance-review.component.scss',
     encapsulation: ViewEncapsulation.None,

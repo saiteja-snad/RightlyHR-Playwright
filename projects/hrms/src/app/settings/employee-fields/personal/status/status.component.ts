@@ -9,9 +9,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
+import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 @Component({
   selector: 'app-status',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss'
 })

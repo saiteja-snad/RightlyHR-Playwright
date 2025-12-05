@@ -21,7 +21,7 @@ import { SignalsService } from '../../services/signals.service';
   styleUrl: './user-validation.component.scss'
 })
 
-export class UserValidationComponent implements OnInit, OnDestroy{
+export class UserValidationComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   name!: string;
   loginReposne: any
@@ -48,7 +48,7 @@ export class UserValidationComponent implements OnInit, OnDestroy{
   }
 
   async postLogin() {
-     
+
     const tokens = await this.auth.getTokenResponse();
     const storedRes = localStorage.getItem('currentUser');
 
@@ -69,7 +69,7 @@ export class UserValidationComponent implements OnInit, OnDestroy{
         next: (res: any) => {
           this.auth.storeAuthResponse(res);
           this.getUserDetails(res.email);
-        },  
+        },
         error: (err) => {
           this.signal.authSignal.set(err.error?.message || 'Social login failed. Please try again');
           this.router.navigate(['/unauthorized']);
@@ -179,7 +179,7 @@ export class UserValidationComponent implements OnInit, OnDestroy{
     // Step 2: Check My Info permissions
     for (const item of myInfoPermissions) {
       if (this.rbac.allowedToAccess(item.permission)) {
-        const myInfoRoute = this.goToAccessibleRoute('/myinfo');
+        const myInfoRoute = this.goToAccessibleRoute('/employee-dashboard');
         if (myInfoRoute) {
           this.router.navigate([myInfoRoute]);
           return;

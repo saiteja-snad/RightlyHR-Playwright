@@ -38,7 +38,7 @@
                     @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                     <td class="text-center">
                         <span (click)="onSelectDownload(appointmentLetter)">
-                            <img src="/icons/Download.png" alt="Icon" class="download-icon">
+                              <app-download-icon />
                         </span>
                     </td>}
                 </tr>

@@ -21,50 +21,49 @@
         </thead>
 
         <tbody>
-  @if (basicInfoFieldsConfigList.length > 0) {
-    @for (configItem of basicInfoFieldsConfigList; track configItem.id) {
-      <tr>
-        <td>{{ configItem.columnName || 'N/A' }}</td>
-        <td class="text-center">{{ configItem.requiresApproval ? 'Yes' : 'No' }}</td>
-        <td class="text-center">{{ getApprovalTypeDisplay(configItem) }}</td>
+          @if (basicInfoFieldsConfigList.length > 0) {
+          @for (configItem of basicInfoFieldsConfigList; track configItem.id) {
+          <tr>
+            <td>{{ configItem.columnName || 'N/A' }}</td>
+            <td class="text-center">{{ configItem.requiresApproval ? 'Yes' : 'No' }}</td>
+            <td class="text-center">{{ getApprovalTypeDisplay(configItem) }}</td>
 
-        <td class="text-center"
-          *ngIf="rbac.allowedToAccess('Basic Info.update') || rbac.allowedToAccess('Basic Info.delete')">
+            <td class="text-center"
+              *ngIf="rbac.allowedToAccess('Basic Info.update') || rbac.allowedToAccess('Basic Info.delete')">
 
-          <div class="dropdown">
-            <span type="button" data-bs-toggle="dropdown">
-              <i class="bi bi-three-dots-vertical"></i>
-            </span>
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
 
-            <ul class="dropdown-menu custom-dropdown-menu">
-              <li (click)="openUpdateFieldConfigDialog(configItem)"
-                  *ngIf="rbac.allowedToAccess('Basic Info.update')">
-                <a class="dropdown-item">
-                  <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
-                </a>
-              </li>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openUpdateFieldConfigDialog(configItem)"
+                    *ngIf="rbac.allowedToAccess('Basic Info.update')">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                    </a>
+                  </li>
 
-              <li (click)="opendelete(configItem)"
-                  *ngIf="rbac.allowedToAccess('Basic Info.delete')">
-                <a class="dropdown-item">
-                  <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
-                </a>
-              </li>
-            </ul>
+                  <li (click)="opendelete(configItem)" *ngIf="rbac.allowedToAccess('Basic Info.delete')">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>{{ 'Delete' | translate }}
+                    </a>
+                  </li>
+                </ul>
 
-          </div>
-        </td>
-      </tr>
-    }
-  }
-  @else {
-    <tr>
-      <td colspan="4">
-        <app-no-data-found></app-no-data-found>
-      </td>
-    </tr>
-  }
-</tbody>
+              </div>
+            </td>
+          </tr>
+          }
+          }
+          @else {
+          <tr>
+            <td colspan="4">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+          }
+        </tbody>
 
       </table>
       }
@@ -100,11 +99,11 @@
           </label>
           <!-- Multi-select for create mode -->
           <div class="custom-p-multiSelect-content" *ngIf="!isEditMode">
-            <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName" optionValue="fieldName"
-              optionDisabled="optionDisabled" formControlName="fieldNames"
+            <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
+              optionValue="fieldName" optionDisabled="optionDisabled" formControlName="fieldNames"
               placeholder="{{ 'Please select field names' | translate }}" [filter]="true" [readonly]="isReadOnlyMode">
             </p-multiSelect>
-             
+
           </div>
           <!-- Read-only input for update mode -->
           <input type="text" class="form-control custom-input" [value]="selectedFieldConfig?.columnName" readonly
@@ -119,7 +118,7 @@
         </div>
 
         <!-- Approval Type -->
-        <div class="mb-3" >
+        <div class="mb-3">
           <label class="form-label custom-label mb-2">
             {{ 'Approval Type' | translate }} <span class="error-msg">*</span>
           </label>
@@ -129,7 +128,7 @@
               placeholder="{{'Please select approval type' | translate}}">
             </p-select>
           </div>
-          <div *ngIf="fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid" 
+          <div *ngIf="fieldConfigForm.get('approvalType')?.touched && fieldConfigForm.get('approvalType')?.invalid"
             class="error-msg">
             <div *ngIf="!isReadOnlyMode &&fieldConfigForm.get('approvalType')?.errors?.['required']">
               {{ 'Approval Type is required' | translate }}
@@ -138,8 +137,7 @@
         </div>
 
         <!-- Role Selection (when approval type is role) -->
-        <div
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' ">
+        <div *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Role' | translate }} <span class="error-msg">*</span>
           </label>
@@ -156,9 +154,8 @@
           </div>
         </div>
 
-     <!-- Role Selection (when approval type is employee) -->
-        <div class="mb-3"
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
+        <!-- Role Selection (when approval type is employee) -->
+        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Employee' | translate }} <span class="error-msg">*</span>
           </label>
@@ -177,14 +174,14 @@
         </div>
 
         <!-- Manager Selection (when approval type is manager) -->
-        <div class="mb-3"
-          *ngIf="fieldConfigForm.get('approvalType')?.value === 'MANAGER' ">
+        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalType')?.value === 'MANAGER' ">
           <label class="form-label custom-label mb-2">
             {{ 'Select Manager Type' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select class="form-select custom-input" [options]="managerOptions" optionLabel="label" optionValue="value"
-              formControlName="selectedManager" placeholder="{{'Please select manager' | translate}}" >
+            <p-select class="form-select custom-input" [options]="managerOptions" optionLabel="label"
+              optionValue="value" formControlName="selectedManager"
+              placeholder="{{'Please select manager' | translate}}">
             </p-select>
           </div>
           <div
@@ -195,7 +192,7 @@
             </div>
           </div>
         </div>
-       <div *ngIf="isReadOnlyMode && !isEditMode" class="error-msg">Note: All fields are configured</div>
+        <div *ngIf="isReadOnlyMode && !isEditMode" class="error-msg">Note: All fields are configured</div>
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">

@@ -11,10 +11,12 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
 import dayjs from 'dayjs'
+import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
+
 
 @Component({
   selector: 'app-project-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule, ChartModule, NgbPopover, NoDataFoundComponent, SkeletonModule],
+  imports: [CommonModule, SelectModule, TranslateModule,ModuleInfoIconComponent, ChartModule, NgbPopover, NoDataFoundComponent, SkeletonModule],
   templateUrl: './project-timesheet-summary.component.html',
   styleUrl: './project-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None

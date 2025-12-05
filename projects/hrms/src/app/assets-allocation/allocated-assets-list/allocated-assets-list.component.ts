@@ -14,9 +14,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-allocated-assets-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, ConfirmationIconComponent],
   templateUrl: './allocated-assets-list.component.html',
   styleUrl: './allocated-assets-list.component.scss',
   providers: [DatePipe]

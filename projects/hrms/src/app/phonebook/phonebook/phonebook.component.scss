@@ -11,21 +11,22 @@
         width: 100%;
         height: max-content;
         border-radius: 0.625rem;
-        border: 1px solid #DCE3E9;
-        background: linear-gradient(360deg, #FFFFFF 0%, #ECF0F4 150%);
+        border: 1px solid var(--content-border-color);
+        background: linear-gradient(360deg, #FFFFFF 0%, var(--module-accordian-bg-color) 150%);
 
         .profile-content {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 0.75rem;
-            border-bottom: 1px solid #DCE3E9;
+            border-bottom: 1px solid var(--content-border-color);
         }
 
         .profile-icon {
             width: 1.75rem;
             height: 1.75rem;
             border-radius: 50%;
+            object-fit: cover;
         }
 
         .name {
@@ -60,6 +61,7 @@
             font-size: var(--fontsize12);
             vertical-align: middle;
             align-items: center;
+            line-break: anywhere;
         }
 
         .link-text {

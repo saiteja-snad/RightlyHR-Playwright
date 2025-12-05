@@ -45,6 +45,10 @@ export class SidenavComponent implements OnInit {
       label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' }
     },
+       {
+      label: 'Personalization', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
+      route: '/theme', permission: { feature: 'Themes', action: 'view' },
+    },
     //pms
     {
       label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms.png',
@@ -219,7 +223,11 @@ export class SidenavComponent implements OnInit {
       this.updateFilteredModules();
       if (module.route === '/organization-chart') {
         this.router.navigate(['/organization-chart']);
-      } else {
+      } else if (module.route === '/theme') {
+        this.router.navigate(['/theme']);
+      }
+      
+      else {
         this.goToAccessibleRoute(module.route);
       }
     }

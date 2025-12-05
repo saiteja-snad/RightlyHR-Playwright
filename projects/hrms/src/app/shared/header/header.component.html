@@ -14,7 +14,7 @@
 
             <div class="break-line-content"></div>
             }
-            
+
             <!--It Support-->
             @if(this.rbac.allowedToAccess('IT Support.view')){
             <div (click)="goToAccessibleRoute('/it-support');" class="cursor">
@@ -46,13 +46,21 @@
                             <p class="m-0 job-role">{{jobRole}}</p>
                         </div>
                         <div>
-                            <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
-                                class="profile-img">
+                            <ng-container *ngIf="imageUrl; else showProfileIcon">
+                                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
+                                    class="profile-img">
+                            </ng-container>
+
+                            <ng-template #showProfileIcon>
+                                <app-profile-icon [iconWidth]="'30'" [iconHeight]="'30'" />
+                            </ng-template>
                         </div>
+
                     </div>
                     <ul class="dropdown-menu">
                         <div class="dropdown-content">
                             <div class="image-content">
+
                                 <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
                                     class="profile-image">
                                 <div class="edit-icon-content"></div>
@@ -227,7 +235,8 @@
             <p class="confirmation-text">{{'Are you sure you want to log out?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader" (click)="close()">{{'No'| translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader" (click)="close()">{{'No'|
+                translate}}</button>
             <button type="submit" class="custom-btn btn-primary" [disabled]="spinnerLoader" (click)="onLogout()">
                 @if(spinnerLoader){
                 <div class="button-loader-content">

@@ -15,9 +15,12 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })

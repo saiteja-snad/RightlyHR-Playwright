@@ -172,3 +172,7 @@
 .custom-p-multi-select-table .p-datatable-table-container {
     height: 40vh!important;
 }
+
+input[type=checkbox] {
+  accent-color: var(--primary-color) !important;
+}

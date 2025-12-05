@@ -45,13 +45,12 @@
                             <div class="d-flex gap-4">
                                 <div *ngIf="rbac.allowedToAccess('Asset Catagory.update')">
                                     <a (click)="openupdate(updateassetcatgey, asset)">
-                                        <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                           <app-settings-update-icon />
                                     </a>
                                 </div>
                                 <div *ngIf="rbac.allowedToAccess('Asset Catagory.delete')">
                                     <a (click)="opendelete(deleteconformation,asset)">
-                                        <img src="/settings-icon/trash-2.png" alt="edit icon"
-                                            class="settings-common-icon">
+                                            <app-settings-delete-icon />
                                     </a>
                                 </div>
                             </div>

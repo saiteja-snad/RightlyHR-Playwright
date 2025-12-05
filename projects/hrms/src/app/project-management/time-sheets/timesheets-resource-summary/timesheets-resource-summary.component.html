@@ -103,8 +103,8 @@
                   <div class="summary-header d-inline-flex gap-2">
                     <div>Projects Summary</div>
                     <div>
-                      <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
-                        class="module-icon">
+                      <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
+                        class="module-icon" />
                       <ng-template #resourceSummaryContent>
                         <div class="module-info-text">{{projectsummaryinfo}}</div>
                       </ng-template>
@@ -162,7 +162,7 @@
               <div class="summary-header d-flex gap-2 mb-2">
                 <div>Project-wise Time Allocation</div>
                 <div>
-                  <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectTypedata" class="module-icon">
+                  <app-module-info-icon placement="bottom" [ngbPopover]="projectTypedata" class="module-icon" />
                   <ng-template #projectTypedata>
                     <div class="module-info-text">{{timeAllocatedInfo}}</div>
                   </ng-template>
@@ -240,7 +240,8 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                   <div>Allocated vs Actual Hours</div>
                   <div>
-                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedContent" class="module-icon">
+                    <app-module-info-icon placement="bottom" [ngbPopover]="estimatedContent"
+                      class="module-icon" />
                     <!--Module Information-->
                     <ng-template #estimatedContent>
                       <div class="module-info-text">{{AllocatedActualhours}}</div>
@@ -279,8 +280,8 @@
                 <div class="summary-header d-flex gap-2">
                   <div>Billable vs Non-Billable Hours</div>
                   <div>
-                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billablevsNonBillableHoursdata"
-                      class="module-icon">
+                    <app-module-info-icon placement="bottom" [ngbPopover]="billablevsNonBillableHoursdata"
+                      class="module-icon" />
                     <ng-template #billablevsNonBillableHoursdata>
                       <div class="module-info-text">{{BillablevsNonBillableHoursInfo}}</div>
                     </ng-template>
@@ -415,19 +416,19 @@
 
 <!--Apllied Filters-->
 <ng-template #appliedFilters let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-            <div>
-                <p class="popup-heading m-0">Apllied Filters</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content d-flex flex-wrap gap-2">
-            <div *ngFor="let filter of getSelectedFilters() | slice:3">
-                <p-chip [label]="filter.label" [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red" />
-            </div>
-        </div>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading m-0">Apllied Filters</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
+    <div class="custom-main-popup-content d-flex flex-wrap gap-2">
+      <div *ngFor="let filter of getSelectedFilters() | slice:3">
+        <p-chip [label]="filter.label" [removable]="true" (onRemove)="removeFilter(filter)" class="custom-chip-red" />
+      </div>
+    </div>
+  </div>
 </ng-template>

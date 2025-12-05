@@ -32,7 +32,6 @@ import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.com
     FormsModule,
     PaginatorModule,
     DropdownModule,
-    DateformatPipe,
     NgxDocViewerModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,

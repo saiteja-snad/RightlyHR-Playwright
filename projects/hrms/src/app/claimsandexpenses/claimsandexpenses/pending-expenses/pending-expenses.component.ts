@@ -14,9 +14,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent, DocumentViewIconComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })

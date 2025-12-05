@@ -10,10 +10,12 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
+
 import { OpenModalService } from '../../../../services/open-modal.service';
 @Component({
    selector: 'app-pending-weekends',
-   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, SettingsUpdateIconComponent],
    templateUrl: './pending-weekends.component.html',
    styleUrl: './pending-weekends.component.scss'
 })

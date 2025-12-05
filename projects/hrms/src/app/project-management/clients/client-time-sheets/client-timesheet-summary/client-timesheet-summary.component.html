@@ -8,12 +8,14 @@
                         <div class="summary-header d-inline-flex gap-2 mb-2">
                             <div>Project Summary</div>
                             <div>
-                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent" class="module-icon">
+                                <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
+                                    class="module-icon" />
                                 <ng-template #resourceSummaryContent>
                                     <div class="module-info-text">{{projectsummaryinfo}}</div>
                                 </ng-template>
                             </div>
                         </div>
+
 
                         <div class="d-flex gap-2 align-items-center">
                             <div class="custom-p-select-content custom-icon">
@@ -24,8 +26,9 @@
                             </div>
 
                             <div class="custom-p-select-content custom-icon">
-                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                                    formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
+                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value"
+                                    [filter]="false" formControlName="status" placeholder="Please select status"
+                                    [showClear]="!!datepickerForm.get('status')?.value"
                                     class="form-select custom-select" (onChange)="onStatusChange($event)" />
                             </div>
                         </div>
@@ -44,8 +47,9 @@
                         <tbody>
                             <tr *ngFor="let roles of projectSummeryData">
                                 <td class="project-name">{{roles.project.projectName}}</td>
-                                <td class="text-center">{{ roles.projectColor?.graphData?.code || '-' }}</td>
-                                <td class="text-center"><span class="logged-hrs">{{roles.loggedHoursHHMM}}</span>/{{roles.allocatedHours}}hrs</td>
+                                <td class="text-center">
+                                    <span class="logged-hrs">{{roles.loggedHoursHHMM}}</span>/{{roles.allocatedHours}}hrs
+                                </td>
                                 <td class="text-center">
                                     <span class="status-badge" [ngClass]="getStatusClass(roles.status)">{{ roles.status }}</span>
                                 </td>
@@ -72,7 +76,8 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project wise Resource Count</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="ProjectwiseResourceContent" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="ProjectwiseResourceContent"
+                            class="module-icon" />
                         <ng-template #ProjectwiseResourceContent>
                             <div class="module-info-text">{{ProjectwiseResourceCountInfo}}</div>
                         </ng-template>
@@ -100,7 +105,8 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Department wise Contribution</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="departmentwiseContributionContent" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="departmentwiseContributionContent"
+                                class="module-icon" />
                             <ng-template #departmentwiseContributionContent>
                                 <div class="module-info-text">{{DepartmentwiseContributionInfo}}</div>
                             </ng-template>
@@ -145,7 +151,7 @@
                 <div class="summary-header d-flex gap-2 mb-2">
                     <div>Project Type</div>
                     <div>
-                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectTypedata" class="module-icon">
+                        <app-module-info-icon placement="bottom" [ngbPopover]="projectTypedata" class="module-icon" />
                         <ng-template #projectTypedata>
                             <div class="module-info-text">{{ProjectTypeInfo}}</div>
                         </ng-template>
@@ -183,7 +189,7 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Estimated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedActualHoursdata" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="estimatedActualHoursdata" class="module-icon" />
                             <ng-template #estimatedActualHoursdata>
                                 <div class="module-info-text">{{EstimatedActualHoursInfo}}</div>
                             </ng-template>
@@ -219,7 +225,7 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Billable vs Non-Billable Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="billablevsNonBillableHoursdata" class="module-icon" />
                             <ng-template #billablevsNonBillableHoursdata>
                                 <div class="module-info-text">{{BillablevsNonBillableHoursInfo}}</div>
                             </ng-template>
@@ -255,7 +261,7 @@
                     <div class="summary-header d-flex gap-2 mb-2">
                         <div>Project Burndown Chart</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectBurndownChartdata" class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="projectBurndownChartdata" class="module-icon" />
                             <ng-template #projectBurndownChartdata>
                                 <div class="module-info-text">{{ProjectBurndownChartInfo}}</div>
                             </ng-template>

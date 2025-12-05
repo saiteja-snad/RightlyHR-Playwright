@@ -16,9 +16,10 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DownloadExpenseComponent } from '../../download-expense/download-expense.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent, DocumentViewIconComponent],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })

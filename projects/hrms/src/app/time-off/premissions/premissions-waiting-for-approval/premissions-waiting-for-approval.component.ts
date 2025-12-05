@@ -20,6 +20,7 @@ import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-premissions-waiting-for-approval',
   imports: [
@@ -33,8 +34,9 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    InfoIconComponent
-  ],
+    InfoIconComponent,
+    ConfirmationIconComponent
+],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss',
 })

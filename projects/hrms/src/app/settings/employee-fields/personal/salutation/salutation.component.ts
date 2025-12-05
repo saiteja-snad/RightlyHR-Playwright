@@ -10,10 +10,12 @@ import { Subscription } from 'rxjs';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
+import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-salutation',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './salutation.component.html',
   styleUrl: './salutation.component.scss'
 })

@@ -1,0 +1,250 @@
+<div class="employee-dashboard-container">
+    <div class="dashboard-left-content">
+        <div class="welcome-text d-flex align-items-center gap-1">
+            <div>{{ greetingMessage }},</div>
+            <div class="name">{{ employeedata.firstName }} {{ employeedata.middleName }} {{ employeedata.lastName }}!
+            </div>
+        </div>
+        <!--Time-->
+        <!-- <div class="time text-nowrap mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div> -->
+        <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
+
+        <div class="dashboard-grid my-3">
+            @if(!avaliabletlyloading){
+            <!-- Team Availability -->
+            <div class="content-card">
+                <div class="flex-between-content mb-2">
+                    <div class="section-title">My Team Availability</div>
+                    <div class="date-lable">{{ currentTime | date:'MMM d, yyyy' }}</div>
+                </div>
+
+                <div class="total-leave-balance-graph-content flex-between-content gap-3">
+                    <!-- Donut Chart -->
+                    <div class="chart-content">
+                        <p-chart type="doughnut" [data]="teamChartData" [options]="teamChartOptions" />
+                        <div class="total-count-content">
+                            <p class="count m-0 p-0 text-center">{{teamTotal}}</p>
+                            <p class="total-count-text text-center">Total</p>
+                        </div>
+                    </div>
+
+                    <!-- Right-side labels -->
+                    <div class="employee-type-grid w-100">
+                        <div class="legend-item" *ngFor="let item of legendList">
+                            <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="mb-2 ps-2 cursor">
+                                <div class="employee-type-text">
+                                    <p class="m-0">{{ item.label }}</p>
+                                    <p class="count-text m-0">{{teamSummary[item.key] || 0 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Time Entry -->
+            <div class="content-card">
+                <div class="flex-between-content mb-3">
+                    <div class="section-title">Today's Time Entry</div>
+                </div>
+
+                <div class="circle-chart-container mb-3">
+                    <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions"
+                        styleClass="today-chart" />
+                    <!-- Center Text -->
+                    <div class="chart-center-label">
+                        <div class="time-value">{{ todayDurationLabel }}</div>
+                        <div class="time-text">Work Time</div>
+                    </div>
+                </div>
+
+                <div class="flex-between-content justify-content-center">
+                    <div class="previous-time-text">Previous Day Entry :</div>
+                    <div class="previous-duration">{{ previousDurationLabel }}</div>
+                </div>
+            </div>
+
+            <!-- Consumed Leave Types -->
+            <div class="content-card">
+                <div class="flex-between-content mb-3">
+                    <div class="section-title">Consumed Leave Types</div>
+                    <div class="circle-leaves-graph">
+                        <p-chart type="doughnut" [data]="totalLeavesChartData" [options]="totalLeavesChartOptions"
+                            styleClass="today-chart" />
+                        <div class="circle-value">
+                            <span class="leaves-count"><b>{{ totalLeaves.used }}</b></span>
+                            <span class="total-allowed">/{{ totalLeaves.allowed }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="leave-list-content">
+                    <div *ngFor="let leave of leavesList">
+                        <div class="leave-row">
+                            <div class="leave-name">{{ leave.name }}</div>
+                            <div class="progress-container">
+                                <div class="progress-bar" [style.width.%]="leave.percentage"></div>
+                            </div>
+                            <div ><b class="leave-count" >{{ leave.used }}</b><span class="totaled-allowed">/{{ leave.allowed }}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            @else {
+            <!-- Column 1 -->
+            <div class="content-card">
+                <p-skeleton height="11.3rem" borderRadius="12px"></p-skeleton>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="content-card">
+                <p-skeleton height="11.3rem" borderRadius="12px"></p-skeleton>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="content-card">
+                <p-skeleton height="11.3rem" borderRadius="12px"></p-skeleton>
+            </div>
+            }
+        </div>
+
+        <!-- Team Members Section -->
+        <div class="content-card mb-3">
+            <div class="flex-between-content mb-2">
+                <div class="section-title">My Team Members</div>
+                <!-- <a class="view-all" (click)="nagvition()"><u>View All</u></a> -->
+            </div>
+
+            <div class="member-list-container">
+                <p-tabs scrollable>
+                    <p-tablist p-tablistNav>
+                        <ng-container *ngIf="!loading; else tabsSkeleton">
+                            @for (emp of teamMembers; track $index) {
+                            <p-tab p-tablistTab>
+                                <div class="custom-border-content">
+                                    <div class="member-card text-center">
+                                        <img [src]="emp.photo ?? 'images/alternate.png'" class="profile-img mb-2" />
+                                        <div class="name text-wrap">{{ emp.name }}</div>
+                                        <div class="role text-wrap">{{ emp.role }}</div>
+                                    </div>
+                                </div>
+                            </p-tab>
+                            }
+                        </ng-container>
+                        <ng-template #tabsSkeleton>
+                            <p-tab *ngFor="let i of [1, 2, 3, 4,5,6,7,8,9]">
+                                <div class="member-card text-center py-3">
+                                    <p-skeleton shape="circle" size="2.5rem" styleClass="mb-3 mx-auto"></p-skeleton>
+                                    <p-skeleton width="8rem" height="1rem" styleClass="mx-auto"></p-skeleton>
+                                </div>
+                            </p-tab>
+                        </ng-template>
+                    </p-tablist>
+                </p-tabs>
+            </div>
+        </div>
+
+        <!-- Gender Diversity -->
+        <div class="content-card mb-3">
+            <div class="flex-between-content mb-2">
+                <div class="section-title">Gender Diversity</div>
+                <div class="total">Total: <span class="count">{{ genderTotal }}</span></div>
+            </div>
+            <div class="gender-graph">
+                <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" />
+            </div>
+        </div>
+
+        <!-- Weekly Work Logs -->
+        <div class="content-card">
+            <div class="flex-between-content mb-2">
+                <div class="section-title">Weekly Work Logs</div>
+                <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
+            </div>
+            <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>
+            <div class="week-grid">
+                <div class="text-center day-item py-4" *ngFor="let day of weeklyWorkLogs">
+                    <div class="work-time">{{ day.time }}</div>
+                    <div class="day-name">{{ day.day }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-right-content">
+        <!-- Upcoming Work Anniversary's Panel -->
+        <div class="content-card work-anniversary-content mb-3">
+            <div class="section-title mb-3">Upcoming Work Anniversaries</div>
+            <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon" class="custom-party-image">
+            </div>
+            <div class="px-4 event-list-content">
+                <div *ngFor="let item of anniversaries" class="mb-2">
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-work-anniversary"></div>
+                        <div class="content-text content-name">{{ item.firstName }} {{ item.lastName }} ,
+                            {{ getSuffix(item.anniversaryYearCount) }} Work Anniversary</div>
+                    </div>
+                    <div class="content-text content-date">{{ item.dateOfJoining | dateformat}}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Upcoming Birthday's Panel -->
+        <div class="content-card  birthday-content mb-3">
+            <div class="section-title mb-3">Upcoming Birthdays</div>
+            <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon" class="custom-party-image">
+            </div>
+            <div class="px-4 birthday-event-list-content">
+                <div *ngFor="let item of employeesBirthdays" class="mb-2">
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-birthday"></div>
+                        <div class="content-text content-name">{{ item.firstName }} {{item.middleName}}
+                            {{item.lastName}}</div>
+                    </div>
+                    <div class="content-text content-date">{{ item.dob | dateformat }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Daily events Panel -->
+        <div class="content-card daliy-events-content">
+               <div  *ngIf="eventItems?.length && hasRealEvents" class="party-image-content"><img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
+            </div>
+            @if(!eventsLoader){
+            <div class="events-content">
+                <div class="carousel-content">
+                    <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false"
+                        [circular]="true" [autoplayInterval]="3000">
+                        <ng-template pTemplate="item" let-item>
+                            <div class="accordian-text">
+                                <ng-container [ngSwitch]="item.type">
+                                    <div *ngSwitchCase="'Birthday'">
+                                        <p class="event-name mb-2">{{ item.name }}</p>
+                                        <p class="m-0">{{'Celebrating Birthday today...'| translate}}</p>
+                                    </div>
+                                    <div *ngSwitchCase="'Work Anniversary'">
+                                        <p class="event-name mb-2">{{ item.name }}</p>
+                                        <p class="m-0">{{'Celebrating Work Anniversary today...'| translate}}
+                                        </p>
+                                    </div>
+                                    <div *ngSwitchCase="'New Joinee'">
+                                        <p class="event-name mb-2">{{ item.name }}</p>
+                                        <p class="m-0">{{'Welcome Onboard...'| translate}}</p>
+                                    </div>
+                                    <div *ngSwitchCase="'Marriage Anniversary'">
+                                        <p class="event-name mb-2">{{ item.name }}</p>
+                                        <p class="m-0">{{'Celebrating their Marriage Anniversary today...'|
+                                            translate}}</p>
+                                    </div>
+                                    <div *ngSwitchDefault class="event-name">{{ item.quotationname }}</div>
+                                </ng-container>
+                            </div>
+                        </ng-template>
+                    </p-carousel>
+                </div>
+            </div>
+            }@else {
+            <p-skeleton height="11rem" />
+            }
+        </div>
+    </div>
+</div>

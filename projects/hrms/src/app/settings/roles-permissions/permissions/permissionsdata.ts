@@ -241,6 +241,7 @@ export const permissionsData = [
 
   //New Side Nav Section
   { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
@@ -260,6 +261,7 @@ export const permissionsData = [
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contacts Directory', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Skill Set Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },

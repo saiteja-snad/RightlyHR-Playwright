@@ -8,6 +8,7 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { DocumentViewIconComponent } from '../../../../icons/document-view-icon/document-view-icon.component';
 
 @Component({
   selector: 'app-published-shifts',

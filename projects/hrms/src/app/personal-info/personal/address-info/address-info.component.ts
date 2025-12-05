@@ -14,7 +14,7 @@ import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component"
 
 @Component({
   selector: 'app-address-info',
-  imports: [CommonModule, ReactiveFormsModule, Skeleton, EditIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Skeleton, EditIconComponent,NgbPopoverModule],
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })

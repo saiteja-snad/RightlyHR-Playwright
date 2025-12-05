@@ -43,6 +43,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   isMyInfoRoute = false;
   getFieldsApprovalStatusList: any[] = [];
   activeMessage: string = '';
+  addedRecords=[] as any;
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -536,6 +537,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data.data.length > 0) {
             this.getFieldsApprovalStatusList = data.data;
+            this.addedRecords=this.getFieldsApprovalStatusList.filter((item:any)=>item.approvalStatus?.toLowerCase()==='pending' && item.fieldName==='Add');
             //this.disablePendingFields();
           } else {
             console.log('No data found.');

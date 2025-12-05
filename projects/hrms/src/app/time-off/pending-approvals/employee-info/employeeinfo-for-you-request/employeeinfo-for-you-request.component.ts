@@ -81,7 +81,8 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
 ImageUrl: any;
  ViewURL:any;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
-    @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
    private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
@@ -655,7 +656,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
     return false
   }
 
-    onViewAttachement(url: any,) {
+    onViewAttachement(url: any,content:any) {
     const lowerUrl = url?.toLowerCase();
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
@@ -664,25 +665,25 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           const objectURL = URL.createObjectURL(blob);
           this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           this.ViewURL = null;
-          this.toggleViewModal();
+          this.toggleViewModal(content);
         },
         error: (err) => console.error('Error downloading image:', err),
       });
     } else if (lowerUrl?.endsWith('pdf')) {
       this.ImageUrl = null;
       this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
-      this.toggleViewModal();
+      this.toggleViewModal(content);
     } else {
       // fallback for other types if needed
       this.ImageUrl = null;
       this.ViewURL = `${environment.viewUrl}${url}`;
-      this.toggleViewModal();
+      this.toggleViewModal(content);
     }
   }
 
-  toggleViewModal() {
+  toggleViewModal(content:any) {
     this.modalService.dismissAll();
-    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
   }
   // destroy the component
 
@@ -692,7 +693,12 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
     this.ViewURL = null;
     this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
   }
-
+ closeonlyattemchmentforcurrent(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforcurrentaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

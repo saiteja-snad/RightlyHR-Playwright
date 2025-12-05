@@ -341,7 +341,7 @@
                 <!-- Old Value -->
                 <td>
                   @if (row.key === 'Document' && row.oldValue) {
-                  <a class="view-btn" (click)="onViewAttachement(row.oldValue)"
+                  <a class="view-btn" (click)="onViewAttachement(row.oldValue,viewattamchment)"
                     [ngClass]="{ 'back-ground': row.isChanged }">
                     <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
                   </a>
@@ -352,7 +352,7 @@
                 <!-- New Value -->
                 <td>
                   @if (row.key === 'Document' && row.newValue) {
-                  <a class="view-btn" (click)="onViewAttachement(row.newValue)"
+                  <a class="view-btn" (click)="onViewAttachement(row.newValue,viewattamchment)"
                     [ngClass]="{ 'back-ground': row.isChanged }">
                     <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
                   </a>
@@ -440,7 +440,7 @@
                 <!-- Old Value -->
                 <td>
                   @if(item.key==='Document'){
-                  <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
+                  <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value,viewattamchmentforcurrent)">
                     <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
                   </a>
                   }@else{
@@ -451,6 +451,32 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #viewattamchmentforcurrent let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchmentforcurrent(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+          <div class="popup-view-image-content">
+            <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+          </div>
+        </div>
+        <ng-template #imageView>
+          <img [src]="ImageUrl" alt="My Image" class="modal-image" />
+        </ng-template>
       </div>
     </div>
   </div>

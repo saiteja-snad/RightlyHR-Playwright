@@ -199,3 +199,8 @@
     font-weight: 700;
     color: #184066 !important;
 }
+.Image-content-view {
+    width: 100%;
+    height: calc(100dvh - 20rem);
+    overflow: auto;
+}

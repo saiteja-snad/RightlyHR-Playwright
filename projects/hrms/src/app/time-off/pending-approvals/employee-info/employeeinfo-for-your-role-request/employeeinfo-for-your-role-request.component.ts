@@ -78,10 +78,10 @@ export class EmployeeinfoForYourRoleRequestComponent {
   allPendingApprovalItems: any;
      selectedLeaveStatus: any;
   //emp: any;
-ImageUrl: any;
+ ImageUrl: any;
  ViewURL:any;
-  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
-    @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
    private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
@@ -216,7 +216,8 @@ ImageUrl: any;
                   pendingApprovalHeader: padingapprovaldata?.header ?? null,
                   approvalItems: padingapprovaldata?.items ?? [],
                   comments: padingapprovaldata?.comments ?? [],
-                  approvalScope: fieldname?.approvalScope ?? ''
+                  approvalScope: fieldname?.approvalScope ?? '',
+                  meta: fieldname?.meta ?? ''
                 });
               });
           });
@@ -337,36 +338,55 @@ ImageUrl: any;
   console.log("this.actionsDetails",this.actionsDetails)
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
  }
-  mergedValues: any[] = [];
-  openModalfornewvalueAction(modal: any, request: any,){
-     let parsedOldValue = {};
-     let parsednewValue = {};
-   if (request.oldValue) {
-      parsedOldValue = JSON.parse(request.oldValue);
+mergedValues: any[] = [];
+openModalfornewvalueAction(modal: any, request: any) {
+  // Parse oldValue and newValue
+  let parsedOldValue = {};
+  let parsedNewValue = {};
+  if (request.oldValue) {
+    parsedOldValue = JSON.parse(request.oldValue);
   }
-   if (request.newValue) {
-      parsednewValue = JSON.parse(request.newValue);
+  if (request.newValue) {
+    parsedNewValue = JSON.parse(request.newValue);
+  }
+  // Parse meta (ChangedFields)
+  let parsedMeta: any = {};
+  if (request.meta) {
+    parsedMeta = JSON.parse(request.meta);
   }
   this.actionsDetails = {
     ...request,
     oldValue: parsedOldValue,
-    newValue: parsednewValue
+    newValue: parsedNewValue,
+    changedFields: parsedMeta?.ChangedFields ?? {}  // <<--- Correct extraction
   };
-  this.actionsDetails.fieldName=request.fieldName;
-  this.actionsDetails.moduleName=request.moduleName;
   const oldVal = this.actionsDetails.oldValue ?? {};
   const newVal = this.actionsDetails.newValue ?? {};
+  const changedFields = this.actionsDetails.changedFields ?? {}; // <<--- Correct reference
+  // Merge keys
   const keys = new Set([
     ...Object.keys(oldVal),
-    ...Object.keys(newVal)
+    ...Object.keys(newVal),
   ]);
+
+  // Build merged list
   this.mergedValues = Array.from(keys).map(key => ({
     key,
     oldValue: oldVal[key],
-    newValue: newVal[key]
+    newValue: newVal[key],
+    isChanged: this.isFieldChanged(key, changedFields)
   }));
   this.modalService.open(modal, { centered: true, backdrop: 'static' });
- }
+}
+isFieldChanged(objectKey: string, changedFields: any): boolean {
+  if (!changedFields) return false;
+  const normalizedKey = objectKey.replace(/\s+/g, "").toLowerCase();
+  const changedKeys = Object.keys(changedFields).map(k =>
+    k.replace(/\s+/g, "").toLowerCase()
+  );
+
+  return changedKeys.includes(normalizedKey);
+}
   // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;
@@ -617,7 +637,7 @@ ImageUrl: any;
     return false
   }
 
-    onViewAttachement(url: any,) {
+  onViewAttachement(url: any,content:any) {
     const lowerUrl = url?.toLowerCase();
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
@@ -626,25 +646,25 @@ ImageUrl: any;
           const objectURL = URL.createObjectURL(blob);
           this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           this.ViewURL = null;
-          this.toggleViewModal();
+          this.toggleViewModal(content);
         },
         error: (err) => console.error('Error downloading image:', err),
       });
     } else if (lowerUrl?.endsWith('pdf')) {
       this.ImageUrl = null;
       this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
-      this.toggleViewModal();
+      this.toggleViewModal(content);
     } else {
       // fallback for other types if needed
       this.ImageUrl = null;
       this.ViewURL = `${environment.viewUrl}${url}`;
-      this.toggleViewModal();
+      this.toggleViewModal(content);
     }
   }
 
-  toggleViewModal() {
+  toggleViewModal(content:any) {
     this.modalService.dismissAll();
-    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
   }
   // destroy the component
 
@@ -653,6 +673,12 @@ ImageUrl: any;
     this.ImageUrl = null;
     this.ViewURL = null;
     this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
+ closeonlyattemchmentforcurrent(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforcurrentaction, {  centered: true, backdrop: 'static', keyboard: false });
   }
 
   ngOnDestroy(): void {

@@ -20,6 +20,7 @@ export default [
     {
         path: 'loadentitlements', component: LoadEntilementsAlloctionComponent,
         children: [
+            { path: '', redirectTo: 'load-entitlement-create', pathMatch: 'full' },
             {
                 path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent)
             },

@@ -352,7 +352,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
     //     return permission === 'Update'; // Disable only 'Create'
     //   }
-    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Allocated',].includes(field)) {
+    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Allocated','Asset Management - Block'].includes(field)) {
       return !['View'].includes(permission); // Enable only 'View' and 'Update'
     }
     return false; // Default: all enabled
@@ -944,6 +944,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management - Allocated',
     'Asset Management - Under Maintenance',
     'Asset Management - Inactive',
+     'Asset Management - Block',
   ];
   assetManagementAllTabActions = [
     'All Allocate Asset',
@@ -964,6 +965,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Available Transfer Asset',
     'Available View Asset Details',
     'Available Update Asset Details',
+    'Available Block Asset Details'
   ];
   assetManagementAllocatedTabActions = [
     'Allocated Reallocate Asset',

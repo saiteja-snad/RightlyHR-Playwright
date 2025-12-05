@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
@@ -15,9 +15,13 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
 import { Skeleton } from 'primeng/skeleton';
+import { TranslateModule } from '@ngx-translate/core';
+import { TimesheetFilterService } from '../../services/timesheet-filter.service';
+import dayjs from 'dayjs';
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
+  imports: [CommonModule, TabsModule, TranslateModule,Select,DatePicker, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -56,9 +60,10 @@ export class AssetsManagmentComponent {
   assetData: any;
   assetDataOptions: any;
   loading=false
+    first = 0;
 
-  constructor(private readonly fb: FormBuilder, public http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
-    public formValidation: FormValidationService, public rbac: RbacService, public readonly router: Router) { }
+  constructor(private readonly fb: FormBuilder, public http: HttpService,private offcanvasService: NgbOffcanvas, private modalService: NgbModal, private conformationPopup: OpenModalService,
+    public formValidation: FormValidationService,private filterService: TimesheetFilterService, public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -67,8 +72,8 @@ export class AssetsManagmentComponent {
     this.getjobLocationList()
     this.getvendor()
     this.intiallocationandsublocation()
-    this.getcount(null, null)
-    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+    this.getcount(null, null,null,null)
+    this.getassetsdata(this.page, this.pageSize,null,null,null,null,this.Status);
     const today = new Date();
     // Set max to today's date
     this.maxpurchesDate = today.toISOString().split('T')[0];
@@ -79,7 +84,92 @@ export class AssetsManagmentComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
+  isFilterApplied(): boolean {
+    const formValue = this.locationfromdata?.value;
+    // Check if any filter (except date & employee) has value
+    return (
+      (formValue?.locationId && formValue?.locationId?.length > 0) ||
+      (formValue?.subLocationId && formValue?.subLocationId?.length > 0) ||
+      (formValue?.assetCategory && formValue?.assetCategory?.length > 0) ||
+      (formValue?.assetSubCategory && formValue?.assetSubCategory?.length > 0)||
+       (formValue?.dateRange && formValue?.dateRange?.length > 0)
+    );
+  }
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
 
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+  onSubmit() {
+    if (this.locationfromdata.invalid) {
+      return;
+    }
+    const formValue = this.locationfromdata.value;
+    this.filterService.setFilters(formValue);
+    this.page = 1;
+    this.first = 0;
+    //this.getteamsummary(employeeIds);
+    this.closeCanvas();
+  }
+  resetForm() {
+    // Reset to current month
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    // Clear all form fields including date range and employee selection
+    this.locationfromdata.patchValue({
+      dateRange: [startOfMonth, endOfMonth],
+      locationId: null,
+      subLocationId: null,
+      assetSubCategory: null,
+      assetCategory: null,
+    });
+     const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+    const loctionid = this.locationfromdata.get('locationId')?.value;
+    const selectedvalue = this.locationfromdata.get('assetCategory')?.value;
+    const selectedsubcatageory = this.locationfromdata.get('assetSubCategory')?.value;
+    // Clear filter service
+    this.filterService.clearFilters();
+    // Reload table data with cleared filters
+    this.page = 1;
+    this.first = 0;
+      this.http.assetsUpdateLocationId(this.assetSubCategory);
+    this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,selectedvalue,selectedsubcatageory, null);
+     this.getcount(loctionid, subLocationId,selectedvalue,null)
+  }
+
+
+// onassetcategoryfilter() {
+//          const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+//     const loctionid = this.locationfromdata.get('locationId')?.value
+//     this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
+//     this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
+//     this.assetForm.get('assetSubCategory')?.enable();
+
+//     const selectedId = this.locationfromdata.get('assetCategory')?.value.id;
+// const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
+//     this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
+//       .subscribe({
+//         next: (data: any) => {
+//           this.assetSubCategory = data;
+//         },
+//         error: (reason: any) => {
+//           console.log(reason);
+//         },
+//       });
+//     localStorage.setItem('', JSON.stringify(this.assetSubCategory))
+//       this.http.assetsUpdateLocationId(this.assetSubCategory);
+//        this.getassetsdata(this.page,this.pageSize,loctionid,subLocationId,selectedvalue,null,null);
+//            this.getcount(loctionid, subLocationId,selectedvalue,null)
+//   }
+
+
+
+
+
+
+  
   initializeNavTabs(): void {
     this.loading=true
     // Populate allNavTabs with permission checks
@@ -89,6 +179,8 @@ export class AssetsManagmentComponent {
       { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#1064CA', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
       { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF8000', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
       { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
+      { label: 'Block', route: '/assets-management/block-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Block', action: 'view' } },
+      
     ];
     // Filter navTabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab =>
@@ -143,6 +235,9 @@ export class AssetsManagmentComponent {
     this.locationfromdata = this.fb.group({
       locationId: [null],
       subLocationId: [{ value: null, disabled: true }],
+      assetCategory:[null],
+      assetSubCategory:[null],
+      dateRange:[null]
     });
   }
 
@@ -319,6 +414,42 @@ export class AssetsManagmentComponent {
       },
     });
   }
+onassetcategoryfilter() {
+         const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+    const loctionid = this.locationfromdata.get('locationId')?.value
+    this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
+    this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
+    this.assetForm.get('assetSubCategory')?.enable();
+
+    const selectedId = this.locationfromdata.get('assetCategory')?.value.id;
+const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
+    this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.assetSubCategory = data;
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+    localStorage.setItem('', JSON.stringify(this.assetSubCategory))
+      this.http.assetsUpdateLocationId(this.assetSubCategory);
+       this.getassetsdata(this.page,this.pageSize,loctionid,subLocationId,selectedvalue,null,null);
+           this.getcount(loctionid, subLocationId,selectedvalue,null)
+  }
+
+  onassetsubcategoryfilter() {
+         const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+    const loctionid = this.locationfromdata.get('locationId')?.value;
+    const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
+    const selectedsubcatageory = this.locationfromdata.get('assetSubCategory')?.value.name;
+
+      this.http.assetsUpdateLocationId(this.assetSubCategory);
+       this.getassetsdata(this.page, this.pageSize, loctionid,subLocationId,selectedvalue,selectedsubcatageory,null);
+          this.getcount(loctionid, subLocationId,selectedvalue,selectedsubcatageory)
+  }
+
+
 
   // onassetsubcategory() {
   //   this.assetForm.get('assetSubCategory')?.enable()
@@ -363,7 +494,7 @@ export class AssetsManagmentComponent {
     this.locationfromdata.get('subLocationId')?.reset()
     localStorage.setItem('assetsublocationId', JSON.stringify(null))
     this.http.assetsUpdateLocationId(locationId);
-    this.getcount(locationId, null)
+    this.getcount(locationId, null,null,null)
   }
 
   onSubLocationChange() {
@@ -372,8 +503,8 @@ export class AssetsManagmentComponent {
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
       this.http.assetsUpdateLocationId(loctionid);
-      this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, null);
-      this.getcount(loctionid, subLocationId)
+      this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,null,null, null);
+      this.getcount(loctionid, subLocationId,null,null)
     }
     else {
       const loctionid = this.locationfromdata.get('locationId')?.value
@@ -493,8 +624,8 @@ export class AssetsManagmentComponent {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset Registered successfully ');
-          this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
-          this.getcount(null, null);
+          this.getassetsdata(this.page, this.pageSize, null, null,null,null, this.Status);
+          this.getcount(null, null,null,null);
           this.assetForm.reset();
           this.http.setnewassetsDetails();
         },
@@ -551,16 +682,18 @@ export class AssetsManagmentComponent {
     });
   }
 
-  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,catageory:any,subcatageory:any, Assetsstatus: any) {
     const params = {
       page: pagenum,
       pageSize: pagesize,
       searchQuery: this.searchQuery,
       locationid: locationid,
       status: Assetsstatus,
-      sublocationid: sublocationid
+      sublocationid: sublocationid,
+      catageory:catageory,
+      subcatageory:subcatageory
     };
-    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status,
+    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid,params.catageory,params.subcatageory,params.status,
       params.page, params.pageSize, params.searchQuery).subscribe({
         next: (res: any) => {
           this.assetslist.next(res.items);
@@ -570,10 +703,12 @@ export class AssetsManagmentComponent {
       });
   }
 
-  getcount(locationId: string | null, subLocationId: string | null) {
+  getcount(locationId: string | null, subLocationId: string | null,catageory:any,subcatageory:any) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
+    if (catageory) params.append('catageory', catageory);
+    if (subcatageory) params.append('subcatageory', subcatageory);
     params.append('status', status);
    
   

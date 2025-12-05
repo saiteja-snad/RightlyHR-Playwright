@@ -499,6 +499,8 @@ export class HttpService {
     url: string,
     selectedLocationId: any,
     selectedSubLocationId: any,
+    category:any,
+    subcatageory:any,
     status: string,
     page: number,
     pageSize: number,
@@ -507,6 +509,8 @@ export class HttpService {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
+      catageory:category,
+      subcatageory:subcatageory,
       status: status,
       page: page,
       pageSize: pageSize,

@@ -9,7 +9,7 @@
     </div>
 
     <div class="d-flex gap-3 align-items-center">
-      <form autocomplete="off" [formGroup]="locationfromdata">
+      <!-- <form autocomplete="off" [formGroup]="locationfromdata">
         <div class="d-flex gap-3 align-items-center">
           <div class="d-flex gap-2 align-items-center">
             <label for="location" class="form-label custom-label text-nowrap filter-labels m-0">Locations</label>
@@ -32,15 +32,90 @@
             </select>
           </div>
         </div>
-      </form>
+      </form> -->
 
       <div>
         @if(rbac.allowedToAccess('Asset Management - Create.view')){
         <button type="button" (click)="openModal(addassetes)" class="custom-btn btn-primary">Register an Asset</button>
         }
       </div>
+      <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+        </button>
+      </div>
     </div>
+
   </div>
+  <!-- Data Filters off canvas -->
+  <ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+      <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+        <p class="filter-header m-0">{{'Filters' | translate}}</p>
+        <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+      <div class="offcanvas-filter-content">
+        <form [formGroup]="locationfromdata" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label custom-label filter-labels mb-3">{{'Locations'| translate}}</label>
+            <div class="custom-p-select-content">
+              <select id="location" formControlName="locationId" class="form-select custom-select"
+                (change)="onLocationChange()">
+                <option [ngValue]="null">All Locations</option>
+                <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
+                  location.jobLocationName }}</option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label custom-label filter-labels mb-3">{{'Sub Locations'| translate}}</label>
+            <div class="custom-p-multiSelect-content">
+              <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
+                (change)="onSubLocationChange()">
+                <option [ngValue]="null">All Sub Locations</option>
+                <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
+                  {{ subLocation.jobSubLocationName }}
+                </option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label custom-label filter-labels mb-3">{{'Asset Category'| translate}}</label>
+            <div class="custom-p-select-content">
+              <p-select [options]="assetCategorys" optionLabel="name" formControlName="assetCategory"
+                placeholder="Please select asset category" class="form-select custom-select"
+                (onChange)="onassetcategoryfilter()"></p-select>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label custom-label filter-labels mb-3">{{'Asset Sub Category' | translate}}</label>
+            <div class="custom-p-select-content">
+              <p-select [options]="assetSubCategory" optionLabel="name" formControlName="assetSubCategory"
+                placeholder="Please select asset sub category" class="form-select custom-select" (onChange)="onassetsubcategoryfilter()"></p-select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label custom-label filter-labels mb-3">{{'Date' | translate}}</label>
+            <div class="custom-date-range-picker">
+              <p-datepicker formControlName="dateRange" placeholder="Select Date Range" selectionMode="range"
+                [showIcon]="true" />
+            </div>
+          </div>
+  
+          <div class="d-flex offcanvas-footer-content gap-3">
+            <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">
+              {{'Clear All' | translate}}</button>
+            <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+              {{'Close' | translate}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </ng-template>
 
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />

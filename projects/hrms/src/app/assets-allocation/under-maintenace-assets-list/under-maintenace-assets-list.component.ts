@@ -167,24 +167,27 @@ export class UnderMaintenaceAssetsListComponent {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-        this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId,null,null, this.Status);
         this.getcount(Value, this.selectedSubLocationId, this.Status);
       }
     })
   }
 
 
-  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,category:any,subcatageory:any, Assetsstatus: any) {
     const params = {
       first: pagenum,
       rows: pagesize,
       searchQuery: this.searchQuery,
       locationid: locationid,
       status: Assetsstatus,
-      sublocationid: sublocationid
+      sublocationid: sublocationid,
+        category:category,
+      subcatageory:subcatageory
     };
     this.loading = true;
-    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
+    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid,  params.category,
+      params.subcatageory, params.status, params.first, params.rows, params.searchQuery).subscribe({
       next: (res: any) => {
         this.assetslist.next(res.items);
         this.loading = false;
@@ -288,14 +291,14 @@ export class UnderMaintenaceAssetsListComponent {
   onRowsChange() {
     this.page = 1;        
     this.first = 0; 
-    this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
   }
 
   onPageChange(event: any) {
      this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+     this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
   }
 
   // Called when first size changes
@@ -304,16 +307,16 @@ export class UnderMaintenaceAssetsListComponent {
     this.rows = newPageSize; 
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+       this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
   }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
       // localStorage.setItem('assetsdata', JSON.stringify(this.assets.value))
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+        this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
     }
     if (event === '') {
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+        this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
     }
   }
 
@@ -371,7 +374,7 @@ export class UnderMaintenaceAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset information updated successfully ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+             this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
           this.assetForm.reset();
         },
         error: (error) => {
@@ -651,7 +654,7 @@ export class UnderMaintenaceAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null, this.Status);
           this.getcount(null, null, this.Status);
         },
         error: (err) => {

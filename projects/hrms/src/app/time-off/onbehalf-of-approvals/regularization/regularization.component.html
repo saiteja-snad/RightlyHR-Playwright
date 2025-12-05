@@ -171,6 +171,15 @@
                     <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters
                     </div>
                 </div>
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <button
+          type="button"
+          class="custom-btn btn-secondary chip-btn"
+          [class.active]="rejectForm.get('comments')?.value === 'Rejected'"
+          (click)="onRejectChipClick()">
+          Rejected
+        </button>
+      </div>
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"

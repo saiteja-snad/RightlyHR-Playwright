@@ -364,6 +364,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
               'Regularization request submitted successfully'
             );
             this.regularizationForm.reset();
+            this.getAttendnaceData(this.getSelectedEmployee());
           },
           error: (err: any) => {
             this.spinnerLoader = false;

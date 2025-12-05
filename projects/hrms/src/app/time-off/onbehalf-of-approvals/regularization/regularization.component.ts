@@ -440,6 +440,12 @@ export class RegularizationComponent {
     this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
+  onRejectChipClick() {
+  this.rejectForm.patchValue({
+    comments: 'Rejected'
+  });
+}
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

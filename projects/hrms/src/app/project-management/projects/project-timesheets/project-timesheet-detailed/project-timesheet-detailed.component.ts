@@ -43,8 +43,8 @@ export class ProjectTimesheetDetailedComponent {
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const rawProjects = res?.data || [];
-        this.selectedProject = rawProjects[0]?.project?.projectName
-        this.clientId = rawProjects[0]?.client?.clientId;
+        this.selectedProject= rawProjects[0]?.project?.projectName
+       this.clientId = rawProjects[0]?.client?.clientId;
         this.projectEmployeeDetails = rawProjects.flatMap((item: any) =>
           item.project.resources.map((resource: any) => ({
             employee: resource.employee,
@@ -66,6 +66,8 @@ export class ProjectTimesheetDetailedComponent {
   }
 
   openModal(entry: any, content: any) {
+
+
     this.employeeName = {
       id: entry.employee.id,
       fusionEmployeeId: entry.employee.fusionEmployeeId,

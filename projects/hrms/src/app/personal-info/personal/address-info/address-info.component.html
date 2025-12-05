@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
   @if(!loading){
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -28,7 +28,11 @@
         <ng-container formGroupName="currentAddress">
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Current Address Line 1')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Current Address Line 1')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="currentAddressLine1"  autocomplete="off" formControlName="addressLine1"
               placeholder="Please enter address line 1"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
@@ -40,7 +44,11 @@
           
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+            <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2@if(isFieldPendingApproval('Current Address Line 2')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Current Address Line 2')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="currentAddressLine2"   autocomplete="off" formControlName="addressLine2"
               placeholder="Please enter address line 2"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
@@ -48,7 +56,11 @@
                 Line 2 cannot exceed 250 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
+            <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span>@if(isFieldPendingApproval('Current City')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Current City')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input"  autocomplete="off" id="currentCity" formControlName="city"
               placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
@@ -60,7 +72,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentState" class="form-label custom-label mb-2">State<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Current State')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Current State')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
               placeholder="Please enter state"   autocomplete="off" (keypress)="formValidation.restrictInputallowspoint($event)">
             <div class="error-msg"
@@ -72,7 +88,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentCountry" class="form-label custom-label mb-2">Country<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Current Country')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Current Country')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
               placeholder="Please enter country"  autocomplete="off"  (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
@@ -84,7 +104,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Current Zip Code/Postal Code')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Current Zip Code/Postal Code')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="currentZipCode"  autocomplete="off" formControlName="zipCode"
               [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
               placeholder="Please enter zip code/postal code">
@@ -116,7 +140,11 @@
             <div class="row">
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Permanent Address Line 1')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Permanent Address Line 1')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="permanentAddressLine1"
               formControlName="addressLine1" placeholder="Please enter address line 1"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
             <div class="error-msg"
@@ -127,7 +155,11 @@
               Address Line 1 cannot exceed 250 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+            <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2@if(isFieldPendingApproval('Permanent Address Line 2')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Permanent Address Line 2')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="permanentAddressLine2"
               formControlName="addressLine2" placeholder="Please enter address line 2"   autocomplete="off"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
               <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine2')?.errors?.['maxlength']">
@@ -135,7 +167,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentCity" class="form-label custom-label mb-2">City<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Permanent City')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Permanent City')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
               placeholder="Please enter city"  autocomplete="off" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
@@ -147,7 +183,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentState" class="form-label custom-label mb-2">State<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Permanent State')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Permanent State')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
               placeholder="Please enter state"  autocomplete="off"  (keypress)="formValidation.restrictInput($event)" >
             <div class="error-msg"
@@ -159,7 +199,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Permanent Country')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Permanent Country')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="country"
               placeholder="Please enter country"  (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
@@ -172,7 +216,11 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
-                class="text-danger">*</span></label>
+                class="text-danger">*</span>@if(isFieldPendingApproval('Permanent Zip Code/Postal Code')) {
+            <i class="bi bi-info-circle-fill info-pending" [ngbPopover]="pendingPopover" triggers="click"
+             (click)="setActiveMessage('Permanent Zip Code/Postal Code')"
+              popoverClass="pending-popover"></i>
+            }</label>
             <input type="text" class="form-control custom-input" id="permanentZipCode" formControlName="zipCode"
               [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
               placeholder="Please enter zip code/postal code">
@@ -227,3 +275,6 @@
   }
 
 </div>
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
+</ng-template>

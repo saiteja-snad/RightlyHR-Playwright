@@ -3,13 +3,41 @@
     <div class="heading-content">
       <app-project-management-module-info />
     </div>
-  
-    @if(rbac.allowedToAccess('Project Details Tab.create')){
-    <div class="d-flex gap-3 align-items-center">
-      <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
-        {{'Add Project' | translate }}</button>
+
+    <div class="d-flex align-items-center gap-3">
+      <!-- Reset Filters -->
+
+      <div *ngIf="rbac.allowedToAccess('Team Time Sheet Filters Tab.view')">
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+        </button>
+      </div>
+
+
+      <!-- Add Project -->
+      @if(rbac.allowedToAccess('Project Details Tab.create')){
+      <div class="d-flex gap-2 align-items-center">
+        <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
+          {{'Add Project' | translate }}</button>
+      </div>
+      }
     </div>
-    }
+  </div>
+
+  <div class="fliter-chip-content mb-2" *ngIf="isActive('/project-management/projects/active') && getSelectedFilters().length > 0">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+        (onRemove)="removeFilter(filter)" />
+
+      <!-- +X More chip -->
+      <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+        label="+{{ getSelectedFilters().length - 3 }} More" (click)="toggleFilters(filterContent)" />
+
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+        {{ 'Clear All' | translate }}
+      </button>
+    </div>
   </div>
 
   <div class="d-flex w-100 gap-3">
@@ -17,7 +45,8 @@
       <app-projects-side-tabs />
     </div>
 
-    <div class="main-content" [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
+    <div class="main-content"
+      [ngClass]="{'project-main-active-content': isActive('/project-management/projects/active')}">
       <div *ngIf="isActive('/project-management/clients')" class="mb-3">
         <app-projects-side-tabs-for-clients />
       </div>
@@ -47,7 +76,8 @@
             <th class="text-center">Project Type</th>
             <th>Department</th>
             <!-- <th>Status</th> -->
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
+            Tab.delete'))
             && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
@@ -59,13 +89,19 @@
                   @if(!isActive('/project-management/clients')){
                   <td>{{ project.client.clientName }}</td>
                   }
-                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
-                   <td class="d-flex  justify-content-center" ><div  class="timesheet-chip " [style.color]="project?.meta?.graphData?.color"  [style.background]="getLighterColor(project?.meta?.graphData?.color) "><b>{{project?.meta?.graphData?.code || '-' }}</b></div></td>
-               
+                  <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                      project.projectName}}</a></td>
+                  <td class="d-flex  justify-content-center">
+                    <div class="timesheet-chip " [style.color]="project?.meta?.graphData?.color"
+                      [style.background]="getLighterColor(project?.meta?.graphData?.color) ">
+                      <b>{{project?.meta?.graphData?.code || '-' }}</b></div>
+                  </td>
+
                   <td class="text-center">{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td>
                   <!-- <td>{{ project.status }}</td> -->
-                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
+                  @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
+                  Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
                   <td class="text-center">
                     <div class="dropdown">
@@ -129,19 +165,20 @@
         <p class="popup-heading mb-0">{{'Update Project' | translate}}</p>
       </div>
     </div>
+
     <div class="custom-main-popup-content">
       <form [formGroup]="updateprojectform" autocomplete="off" (ngSubmit)="saveUpdatedProject()">
         <div class="row">
           <!-- Client Name -->
           <div class="col-md-6 mb-3">
-            <label for="updateclientName" class="form-label custom-label mb-2">Client Name<span
-                class="text-danger">*</span></label>
+            <label for="updateclientName" class="form-label custom-label mb-2">Client Name
+              <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="clients" [filter]="true" [resetFilterOnHide]="true" filterBy="clientName"
                 optionLabel="clientName" optionValue="clientId" formControlName="updateclientName"
-                placeholder="Please select client name" class="form-select custom-select"></p-select>
+                placeholder="Please select client name" class="form-select custom-select" />
             </div>
-            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updateclientName')?.touched &&
               updateprojectform.get('updateclientName')?.invalid">Client Name is required</div>
           </div>
 
@@ -149,16 +186,14 @@
           <div class="col-md-6 mb-3">
             <label for="updatecode" class="form-label custom-label mb-2">Project Code<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"  formControlName="updatecode" maxlength="13"
-              placeholder="Please enter project code">
+            <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+              formControlName="updatecode" maxlength="13" placeholder="Please enter project code">
+            <div class="error-msg" *ngIf="updateprojectform.get('updatecode')?.touched &&
+              updateprojectform.get('updatecode')?.errors?.['required']">Project Code is required</div>
             <div class="error-msg"
-              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['required']">
-              Project Code is required
+              *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
+              Project Code cannot exceed 12 characters
             </div>
-            <div class="error-msg"
-            *ngIf="updateprojectform.get('updatecode')?.touched && updateprojectform.get('updatecode')?.errors?.['maxlength']">
-            Project Code cannot exceed 12 characters
-          </div>
           </div>
 
           <!-- Project Name -->
@@ -172,7 +207,7 @@
             <div class="error-msg" *ngIf="updateprojectform.get('updateprojectName')?.touched">
               <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['required']">Project Name is required
               </div>
-              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['maxCharacters'] || 
+              <div *ngIf="updateprojectform.get('updateprojectName')?.errors?.['maxCharacters'] ||
               updateprojectform.get('updateprojectName')?.errors?.['minCharacters']" class="error-msg">
                 {{ 'Project Name must be between 2-100 characters' | translate }}
               </div>
@@ -181,14 +216,14 @@
 
           <!-- Project Type -->
           <div class="col-md-6 mb-3">
-            <label for="updateprojectType" class="form-label custom-label mb-2">Project Type<span
-                class="text-danger">*</span></label>
+            <label for="updateprojectType" class="form-label custom-label mb-2">Project Type
+              <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="projecttypes" [filter]="true" [resetFilterOnHide]="true" filterBy="value"
                 optionLabel="value" optionValue="value" formControlName="updateprojectType"
-                placeholder="Please select project type" class="form-select custom-select"></p-select>
+                placeholder="Please select project type" class="form-select custom-select" />
             </div>
-            <div class="error-msg" *ngIf="updateprojectform.get('updateprojectType')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updateprojectType')?.touched &&
             updateprojectform.get('updateprojectType')?.invalid">Project Type is required</div>
           </div>
 
@@ -199,20 +234,23 @@
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
                 defaultLabel="Please select department name" formControlName="updatedepartment"
-                class="form-select custom-select"></p-multiSelect>
+                class="form-select custom-select" />
             </div>
-            <div *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
+            <div
+              *ngIf="updateprojectform.get('updatedepartment')?.touched && updateprojectform.get('updatedepartment')?.invalid"
               class="error-msg">
-              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">{{'Department name is required'|translate}}
-              </div>
+              <div *ngIf="updateprojectform.get('updatedepartment')?.errors?.['required']">
+                {{'Department name is required'|translate}}</div>
             </div>
           </div>
 
           <!-- Start Date -->
           <div class="col-md-6 mb-3">
-            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
-            <input type="date" id="updatestartDate" formControlName="updatestartDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched && 
+            <label for="updatestartDate" class="form-label custom-label mb-2">Start Date
+              <span class="text-danger">*</span></label>
+            <input type="date" id="updatestartDate" formControlName="updatestartDate"
+              class="form-control custom-input" />
+            <div class="error-msg" *ngIf="updateprojectform.get('updatestartDate')?.touched &&
             updateprojectform.get('updatestartDate')?.invalid">Start Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> Start Date must be before end Date</div>
@@ -221,9 +259,12 @@
 
           <!-- End Date -->
           <div class="col-md-6 mb-3">
-            <label for="updateendDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
-            <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
+            <label for="updateendDate" class="form-label custom-label mb-2">End Date
+              <span class="text-danger">*</span></label>
+            <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate"
+              class="form-control custom-input" />
+            <div class="error-msg"
+              *ngIf="updateprojectform.get('updateendDate')?.touched && updateprojectform.get('updateendDate')?.invalid">
               End Date is required</div>
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
@@ -236,7 +277,7 @@
                 class="text-danger">*</span></label>
             <input type="date" id="updatekickoffDate" formControlName="updatekickoffDate" [min]="minEffectiveDate"
               [max]="maxEffectiveDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updatekickoffDate')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updatekickoffDate')?.touched &&
             updateprojectform.get('updatekickoffDate')?.invalid">Kickoff Date is required</div>
             <div class="error-msg" *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
             <div class="error-msg" *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective
@@ -249,7 +290,7 @@
                 class="text-danger">*</span></label>
             <input type="date" id="updateeffectiveDate" formControlName="updateeffectiveDate" [min]="minEffectiveDate"
               [max]="maxEffectiveDate" class="form-control custom-input" />
-            <div class="error-msg" *ngIf="updateprojectform.get('updateeffectiveDate')?.touched && 
+            <div class="error-msg" *ngIf="updateprojectform.get('updateeffectiveDate')?.touched &&
             updateprojectform.get('updateeffectiveDate')?.invalid">Effective Date is required</div>
             <div class="error-msg" *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End
               Date</div>
@@ -303,7 +344,8 @@
 
           <!-- Project Color -->
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span class="text-danger">*</span></label>
+            <label class="form-label custom-label mb-2">{{'Project Color' | translate}} <span
+                class="text-danger">*</span></label>
             <input type="color" class="form-control custom-color" formControlName="updatecolor" />
           </div>
 
@@ -368,7 +410,8 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
+        translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -396,6 +439,60 @@
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
       <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChangetohold(modal)">{{'Yes'}}</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Data Filters off canvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <!-- Client Name Filter -->
+      <div class="mb-3">
+        <label class="form-label filter-labels mb-3">{{'Select Client' | translate}}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="clientDetails" optionLabel="clientName" [(ngModel)]="selectedClients"
+            defaultLabel="Please select client" [filter]="true" filterBy="clientName" class="form-select custom-select"
+            (onChange)="onClientChange()" (onClear)="selectedClients = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Department Name -->
+      <div class="mb-3">
+        <label class="form-label filter-labels mb-3">{{'Select Department' | translate}}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno"
+            defaultLabel="Please select department" [filter]="true" filterBy="departmentName"
+            class="form-select custom-select" (onChange)="onDepartmentChangelist($event)"
+            [(ngModel)]="selectedDepartmentIds" (onClear)="selectedDepartmentIds = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Project Type -->
+      <div class="mb-3">
+        <label class="form-label filter-labels mb-3">{{'Select Project Type' | translate}}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projecttypes" optionLabel="value" optionValue="value"
+            [(ngModel)]="selectedProjectTypes" defaultLabel="Please select project type" [filter]="true"
+            class="form-select custom-select" (onChange)="onProjectTypeChange()"
+            (onClear)="selectedProjectTypes = []; getProjectsBasedOnRoute()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+          {{'Clear All' | translate}}</button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{'Close' | translate}}</button>
+      </div>
     </div>
   </div>
 </ng-template>

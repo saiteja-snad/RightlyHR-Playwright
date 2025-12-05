@@ -1,5 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Project } from '../../../Interfaces/projects.model';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
@@ -10,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { HttpService } from '../../../services/http.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
@@ -18,18 +23,28 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { Select } from 'primeng/select';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { ProjectsSideTabsforPhasesComponent } from "../../../shared/project-management-tabs/projects-side-tabsfor-phases/projects-side-tabsfor-phases.component";
+import { ProjectsSideTabsforPhasesComponent } from '../../../shared/project-management-tabs/projects-side-tabsfor-phases/projects-side-tabsfor-phases.component';
 
 @Component({
   selector: 'app-inactive-phases-project',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
-    Select, DataLoaderContentComponent, NoDataFoundComponent, NgbPopover, InfoIconComponent, ProjectsSideTabsforPhasesComponent],
+  imports: [
+    CommonModule,
+    ConfirmationIconComponent,
+    TranslateModule,
+    ReactiveFormsModule,
+    DateformatPipe,
+    Select,
+    DataLoaderContentComponent,
+    NoDataFoundComponent,
+    NgbPopover,
+    InfoIconComponent,
+    ProjectsSideTabsforPhasesComponent,
+  ],
   templateUrl: './inactive-phases-project.component.html',
-  styleUrl: './inactive-phases-project.component.scss'
+  styleUrl: './inactive-phases-project.component.scss',
 })
 export class InactivePhasesProjectComponent {
-
- loading: boolean = false;
+  loading: boolean = false;
   inactiveStatus: any;
   subscription!: Subscription;
   phaseData = [] as IPhases[];
@@ -40,7 +55,7 @@ export class InactivePhasesProjectComponent {
   kickoffBeforeEffectiveValid: boolean = true;
   effectiveDateValidRange: boolean = true;
   effectiveAfterKickoffValid: boolean = true;
-  updatePhaseForm !: FormGroup
+  updatePhaseForm!: FormGroup;
   empinfo: any = {};
   authorityList: IProjectAuthority[] = [];
   phaseId: any;
@@ -49,25 +64,33 @@ export class InactivePhasesProjectComponent {
   projectMinStartDate!: string;
   projectMaxEndDate!: string;
   projectMinEndDate!: string;
-  reasonForm !: FormGroup
-  extendForm !: FormGroup
+  reasonForm!: FormGroup;
+  extendForm!: FormGroup;
   modalData: { title?: string; phase?: IPhases } = {};
+  selectedPhaseStatuses: string[] = [];
+  selectedPhaseDateRange: { startDate: string | null; endDate: string | null } =
+    { startDate: null, endDate: null };
+  selectedAuthorityIds: number[] = [];
 
   @ViewChild('reasonModal') reasonModal!: any;
   @ViewChild('extendModal') extendModal!: any;
-  @ViewChild('updateResourcemodal') updateResourcemodal !: any;
-  @ViewChild('startconfirmationpopup') startconfirmationpopup !: any;
+  @ViewChild('updateResourcemodal') updateResourcemodal!: any;
+  @ViewChild('startconfirmationpopup') startconfirmationpopup!: any;
 
-  constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
-    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,
-    public formValidation: FormValidationsService,) {
-
-  }
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+    private modalService: NgbModal,
+    private http: HttpService,
+    private route: ActivatedRoute,
+    private conformationPopup: OpenModalService,
+    public formValidation: FormValidationsService
+  ) {}
   ngOnInit(): void {
-
     this.updateProjectForm();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const projectId = params['id'];
       if (projectId) {
         this.projectId = parseInt(projectId);
@@ -76,21 +99,55 @@ export class InactivePhasesProjectComponent {
         this.getProjects(this.projectId);
       }
     });
-    this.http.phaseDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getPhaseData();
-    });
+    this.http.phaseDetailesadded$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.getPhaseData();
+      });
     this.ExtendDateForm();
+    this.http.phaseStatusFilter$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((statuses) => {
+        console.log(statuses);
+        this.selectedPhaseStatuses = statuses;
+        this.getPhaseData(); // Re-fetch with filter
+      });
+
+    this.http.phaseDateFilter$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((dateFilter) => {
+        console.log(dateFilter);
+        this.selectedPhaseDateRange = dateFilter; // optional: for UI sync
+        this.getPhaseData(); // Re-fetch with filter
+      });
+
+    this.http.phaseAuthorityFilter$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((ids) => {
+        this.selectedAuthorityIds = ids || [];
+        this.getPhaseData();
+      });
   }
 
   updateProjectForm() {
     this.updatePhaseForm = this.fb.group({
-      phaseName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(101)]],
+      phaseName: [
+        null,
+        [
+          Validators.required,
+          this.formValidation.minCharactersValidator(2),
+          this.formValidation.maxCharactersValidator(101),
+        ],
+      ],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
       effectiveDate: [null, Validators.required],
       kickoffDate: [null, Validators.required],
       phaseDescription: [null, this.formValidation.maxCharactersValidator(501)],
-      allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
+      allocatedHours: [
+        null,
+        [Validators.required, this.formValidation.maxCharactersValidator(6)],
+      ],
       approvalidAuthority: [{ value: null, disabled: true }],
       updatecolor: [''],
     });
@@ -102,8 +159,12 @@ export class InactivePhasesProjectComponent {
       this.StartndendDateValidation();
       this.validateDateRange();
     });
-    this.updatePhaseForm.get('kickoffDate')?.valueChanges.subscribe(() => this.validateDateRange());
-    this.updatePhaseForm.get('effectiveDate')?.valueChanges.subscribe(() => this.validateDateRange());
+    this.updatePhaseForm
+      .get('kickoffDate')
+      ?.valueChanges.subscribe(() => this.validateDateRange());
+    this.updatePhaseForm
+      .get('effectiveDate')
+      ?.valueChanges.subscribe(() => this.validateDateRange());
   }
 
   ExtendDateForm() {
@@ -128,21 +189,48 @@ export class InactivePhasesProjectComponent {
   }
 
   getPhaseData() {
-    const params = {
+    const params: any = {
       projectId: this.projectId,
-      status: 'completed,closed'
     };
-    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
-      next: (data: any) => {
-        this.phaseData = data.data;
-        this.loading = false;
-      },
-      error: (reason: any) => {
-        this.loading = false;
-      }
-    });
-  }
 
+    const validStatuses = ['completed', 'closed'];
+    const filteredStatuses = this.selectedPhaseStatuses.filter(s =>
+      validStatuses.includes(s.toLowerCase())
+    );
+
+    if (filteredStatuses.length > 0) {
+      params.status = filteredStatuses.join(',');
+    } else {
+      params.status = 'completed,closed';
+    }
+
+    // Date filter
+    if (this.selectedPhaseDateRange?.startDate) {
+      params.startDate = this.selectedPhaseDateRange.startDate;
+    }
+    if (this.selectedPhaseDateRange?.endDate) {
+      params.endDate = this.selectedPhaseDateRange.endDate;
+    }
+
+    if (this.selectedAuthorityIds.length > 0) {
+      params.timesheetApprovalAuthorityIds =
+        this.selectedAuthorityIds.join(',');
+    }
+
+    this.loading = true;
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectPhases/list', params)
+      .subscribe({
+        next: (data: any) => {
+          this.phaseData = data.data || [];
+          this.loading = false;
+        },
+        error: () => {
+          this.phaseData = [];
+          this.loading = false;
+        },
+      });
+  }
   StartndendDateValidation() {
     const StartDate = this.updatePhaseForm.get('startDate')?.value;
     const EndDate = this.updatePhaseForm.get('endDate')?.value;
@@ -224,16 +312,19 @@ export class InactivePhasesProjectComponent {
       effectiveDate: phase.effectiveDate?.substring(0, 10),
       approvalidAuthority: phase.pendingApprovalAuthority?.id ?? null,
       phaseDescription: phase.description,
-      updatecolor: phase.meta?.graphData?.color
+      updatecolor: phase.meta?.graphData?.color,
     });
 
     // Load resources THEN open modal
     this.getResourceData(this.projectId, this.phaseId, true);
 
     // Open modal after everything is ready
-    this.modalService.open(this.updateResourcemodal, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(this.updateResourcemodal, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
-
 
   udpatePhase() {
     if (this.updatePhaseForm.invalid) {
@@ -241,7 +332,7 @@ export class InactivePhasesProjectComponent {
       return;
     }
     const formValue = this.updatePhaseForm.value;
-    const currentPhase = this.phaseData.find(p => p.phaseId === this.phaseId);
+    const currentPhase = this.phaseData.find((p) => p.phaseId === this.phaseId);
     const currentStatus = currentPhase?.status?.toLowerCase();
 
     let updatedStatus = 'in progress';
@@ -265,22 +356,25 @@ export class InactivePhasesProjectComponent {
       phaseName: formValue?.phaseName,
       timesheetApprovalAuthorityId: formValue?.approvalidAuthority,
       meta: { graphData: { color: formValue?.updatecolor } },
-      actionType
+      actionType,
     });
   }
 
-  updatePhaseStatus(options: {
-    phaseId: number,
-    status: string,
-    reason?: string,
-    startDate?: string,
-    endDate?: string,
-    phaseName?: string,
-    meta?: any,
-    timesheetApprovalAuthorityId?: any,
-    allocatedHours?: any,
-    actionType?: string;
-  }, modal?: any) {
+  updatePhaseStatus(
+    options: {
+      phaseId: number;
+      status: string;
+      reason?: string;
+      startDate?: string;
+      endDate?: string;
+      phaseName?: string;
+      meta?: any;
+      timesheetApprovalAuthorityId?: any;
+      allocatedHours?: any;
+      actionType?: string;
+    },
+    modal?: any
+  ) {
     this.loading = true;
 
     const payload: any = {
@@ -290,7 +384,7 @@ export class InactivePhasesProjectComponent {
       status: options?.status,
       timesheetApprovalAuthorityId: options?.timesheetApprovalAuthorityId,
       allocatedHours: options?.allocatedHours,
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
     };
 
     if (options.reason) payload.reason = options.reason;
@@ -298,77 +392,91 @@ export class InactivePhasesProjectComponent {
     if (options.endDate) payload.endDate = options.endDate;
     if (options.meta) payload.meta = options.meta;
 
-    this.http.putData(`ProjectPhases/update/${options.phaseId}`, payload).subscribe({
-      next: (res) => {
-        if (modal) modal.close();
-        this.close();
-        this.loading = false;
-        this.updatePhaseForm?.reset();
-        this.reasonForm?.reset();
-        this.extendForm?.reset();
-           this.http.setnewcountfornewprojectphasecount()
-        const statusMsgMap: Record<string, string> = {
-          'in progress':
-            options.actionType === 'update'
-              ? 'Phase updated successfully'
-              : options.actionType === 'resume'
+    this.http
+      .putData(`ProjectPhases/update/${options.phaseId}`, payload)
+      .subscribe({
+        next: (res) => {
+          if (modal) modal.close();
+          this.close();
+          this.loading = false;
+          this.updatePhaseForm?.reset();
+          this.reasonForm?.reset();
+          this.extendForm?.reset();
+          this.http.setnewcountfornewprojectphasecount();
+          const statusMsgMap: Record<string, string> = {
+            'in progress':
+              options.actionType === 'update'
+                ? 'Phase updated successfully'
+                : options.actionType === 'resume'
                 ? 'Phase resumed successfully'
                 : 'Phase started successfully',
-          'hold': 'Phase is kept on hold',
-          'extended':
-            options.actionType === 'update'
-              ? 'Phase updated successfully'
-              : 'Phase extended successfully',
-          'completed': 'Phase completed successfully',
-          'closed': 'Phase closed successfully'
-        };
+            hold: 'Phase is kept on hold',
+            extended:
+              options.actionType === 'update'
+                ? 'Phase updated successfully'
+                : 'Phase extended successfully',
+            completed: 'Phase completed successfully',
+            closed: 'Phase closed successfully',
+          };
 
+          // Normalize status (to lower case, remove spaces if any)
+          const normalizedStatus = options.status?.toLowerCase().trim();
+          const successMsg =
+            statusMsgMap[normalizedStatus] || 'Phase updated successfully';
 
-        // Normalize status (to lower case, remove spaces if any)
-        const normalizedStatus = options.status?.toLowerCase().trim();
-        const successMsg = statusMsgMap[normalizedStatus] || 'Phase updated successfully';
-
-        this.conformationPopup.openSuccessModal(successMsg);
-        this.getPhaseData();
-           this.http.setnewcountfornewprojectphasecount()
-      },
-      error: (err) => {
-        this.loading = false;
-        this.conformationPopup.openErrorModal(err?.error?.message || `Failed to update phase`);
-      }
-    });
+          this.conformationPopup.openSuccessModal(successMsg);
+          this.getPhaseData();
+          this.http.setnewcountfornewprojectphasecount();
+        },
+        error: (err) => {
+          this.loading = false;
+          this.conformationPopup.openErrorModal(
+            err?.error?.message || `Failed to update phase`
+          );
+        },
+      });
   }
 
-
   getProjects(projectId: string) {
-    this.loading = true
-    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.loading = false;
-        this.projectsData = res?.data ?? []; // Extract "data" array
-        const authority = this.projectsData[0]?.pendingApprovalAuthority;
-        const approvalidAuthority = authority ? `${authority.fusionEmpId} - ${authority.name}` : '';
-        const clientid = this.projectsData[0]?.client?.clientId;
-        this.http.updateClientId(clientid);
-        const project = this.projectsData[0];
-        if (project) {
-          this.projectMinStartDate = project.startDate?.split('T')[0];
-          this.projectMaxEndDate = project.endDate?.split('T')[0];
-        }
-      },
-      error: (err) => {
-        this.loading = false
-        console.error('Error fetching projects data:', err);
-        (this.http.clientId$ as Subject<any>).next(null);
-        this.projectsData = [];
-      },
-
-    });
+    this.loading = true;
+    this.http
+      .getData(`Project?projectId=${projectId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          this.projectsData = res?.data ?? []; // Extract "data" array
+          const authority = this.projectsData[0]?.pendingApprovalAuthority;
+          const approvalidAuthority = authority
+            ? `${authority.fusionEmpId} - ${authority.name}`
+            : '';
+          const clientid = this.projectsData[0]?.client?.clientId;
+          this.http.updateClientId(clientid);
+          const project = this.projectsData[0];
+          if (project) {
+            this.projectMinStartDate = project.startDate?.split('T')[0];
+            this.projectMaxEndDate = project.endDate?.split('T')[0];
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('Error fetching projects data:', err);
+          (this.http.clientId$ as Subject<any>).next(null);
+          this.projectsData = [];
+        },
+      });
   }
 
   get isFormInvalid(): boolean {
-    return this.updatePhaseForm.invalid || !this.startndEndDateValid || !this.kickoffDateValid ||
-      !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
+    return (
+      this.updatePhaseForm.invalid ||
+      !this.startndEndDateValid ||
+      !this.kickoffDateValid ||
+      !this.kickoffBeforeEffectiveValid ||
+      !this.effectiveDateValidRange ||
+      !this.effectiveAfterKickoffValid ||
+      this.loading
+    );
   }
 
   closepopup(content: any) {
@@ -379,71 +487,75 @@ export class InactivePhasesProjectComponent {
     this.modalService.dismissAll();
   }
 
-  getResourceData(projectId: number, phaseId?: number, isPopupCall: boolean = false) {
-
+  getResourceData(
+    projectId: number,
+    phaseId?: number,
+    isPopupCall: boolean = false
+  ) {
     const params: any = {
       status: 'Active',
       entityType: 'project',
-      entityRefId: projectId
+      entityRefId: projectId,
     };
 
     if (phaseId) {
       params.phaseId = phaseId;
     }
 
-    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
-      next: (data: any) => {
-        this.loading = false;
+    this.subscription = this.http
+      .getDataIncludeParams('ProjectResource', params)
+      .subscribe({
+        next: (data: any) => {
+          this.loading = false;
 
-        const resourceList = data?.data ?? [];
+          const resourceList = data?.data ?? [];
 
-        // Build dropdown list
-        const dropdownList = resourceList
-          .filter((r: any) => r.employee)
-          .map((r: any) => ({
-            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-            value: r.employee.id
-          }));
+          // Build dropdown list
+          const dropdownList = resourceList
+            .filter((r: any) => r.employee)
+            .map((r: any) => ({
+              label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+              value: r.employee.id,
+            }));
 
-        if (isPopupCall) {
-          this.authorityList = dropdownList;
+          if (isPopupCall) {
+            this.authorityList = dropdownList;
 
-          if (dropdownList.length > 0) {
-            const control = this.updatePhaseForm.get('approvalidAuthority');
+            if (dropdownList.length > 0) {
+              const control = this.updatePhaseForm.get('approvalidAuthority');
 
-            control?.enable();
-            control?.setValidators([Validators.required]);   // ✅ Add required
-            control?.updateValueAndValidity();
+              control?.enable();
+              control?.setValidators([Validators.required]); // ✅ Add required
+              control?.updateValueAndValidity();
 
-            this.isAuthorityRequired = true; // for * in UI
+              this.isAuthorityRequired = true; // for * in UI
+            } else {
+              const control = this.updatePhaseForm.get('approvalidAuthority');
+
+              control?.disable();
+              control?.clearValidators(); // ✅ Remove required
+              control?.updateValueAndValidity();
+
+              this.isAuthorityRequired = false;
+            }
           } else {
-            const control = this.updatePhaseForm.get('approvalidAuthority');
-
-            control?.disable();
-            control?.clearValidators();      // ✅ Remove required
-            control?.updateValueAndValidity();
-
-            this.isAuthorityRequired = false;
+            this.authorityList = dropdownList;
           }
-
-        } else {
-          this.authorityList = dropdownList;
-        }
-      },
-      error: (reason: any) => {
-        this.loading = false;
-        console.error(reason);
-      }
-    });
+        },
+        error: (reason: any) => {
+          this.loading = false;
+          console.error(reason);
+        },
+      });
   }
 
   statusActionsMap: Record<string, string[]> = {
     'yet to start': ['Start', 'Update'],
     'in progress': ['Hold', 'Mark as Completed', 'Extend', 'Update'],
-    'extended': ['Hold', 'Mark as Completed', 'Extend', 'Update'],
-    'hold': ['Resume', 'Mark as Completed'],
-    'completed': ['Close Phase', 'Extend'],
-    'closed': []
+    extended: ['Hold', 'Mark as Completed', 'Extend', 'Update'],
+    hold: ['Resume', 'Mark as Completed'],
+    completed: ['Close Phase', 'Extend'],
+    closed: [],
   };
 
   statusMap: Record<string, string> = {
@@ -452,13 +564,12 @@ export class InactivePhasesProjectComponent {
     'Are you sure you want to mark this phase as completed?': 'completed',
     'Are you sure you want to resume this phase?': 'in progress',
     'Are you sure you want to close this phase?': 'closed',
-    'Are you sure you want to extend this phase?': 'extended'
+    'Are you sure you want to extend this phase?': 'extended',
   };
-
 
   getActionsByStatus(status: string): string[] {
     if (!status) return [];
-    const normalized = status.trim().toLowerCase();  // ensure clean lower case
+    const normalized = status.trim().toLowerCase(); // ensure clean lower case
     return this.statusActionsMap[normalized] ?? [];
   }
 
@@ -471,16 +582,28 @@ export class InactivePhasesProjectComponent {
         this.handleUpdateAction(phase);
         break;
       case 'Hold':
-        this.openReasonModal('Are you sure you want to keep this phase on hold?', phase);
+        this.openReasonModal(
+          'Are you sure you want to keep this phase on hold?',
+          phase
+        );
         break;
       case 'Mark as Completed':
-        this.openReasonModal('Are you sure you want to mark this phase as completed?', phase);
+        this.openReasonModal(
+          'Are you sure you want to mark this phase as completed?',
+          phase
+        );
         break;
       case 'Resume':
-        this.openReasonModal('Are you sure you want to resume this phase?', phase);
+        this.openReasonModal(
+          'Are you sure you want to resume this phase?',
+          phase
+        );
         break;
       case 'Close Phase':
-        this.openReasonModal('Are you sure you want to close this phase?', phase);
+        this.openReasonModal(
+          'Are you sure you want to close this phase?',
+          phase
+        );
         break;
       case 'Extend':
         this.openExtendModal(phase);
@@ -489,27 +612,35 @@ export class InactivePhasesProjectComponent {
   }
 
   getActionIcon(action: string) {
-    return {
-      'Start': 'bi-play-circle',
-      'Hold': 'bi-pause-circle',
-      'Close Phase': 'bi-x-circle',
-      'Mark as Completed': 'bi-check-circle',
-      'Extend': 'bi-calendar-plus',
-      'Resume': 'bi-arrow-repeat',
-      'Reactivate': 'bi-arrow-clockwise',
-      'Update': 'bi bi-pencil'
-    }[action] || 'bi-question-circle';
+    return (
+      {
+        Start: 'bi-play-circle',
+        Hold: 'bi-pause-circle',
+        'Close Phase': 'bi-x-circle',
+        'Mark as Completed': 'bi-check-circle',
+        Extend: 'bi-calendar-plus',
+        Resume: 'bi-arrow-repeat',
+        Reactivate: 'bi-arrow-clockwise',
+        Update: 'bi bi-pencil',
+      }[action] || 'bi-question-circle'
+    );
   }
 
   openReasonModal(title: string, phase: IPhases) {
     this.modalData = { title, phase };
     this.reasonForm.reset();
-    this.modalService.open(this.reasonModal, { centered: true, backdrop: 'static' });
+    this.modalService.open(this.reasonModal, {
+      centered: true,
+      backdrop: 'static',
+    });
   }
 
   openStartModal(phase: IPhases) {
     this.modalData = { phase };
-    this.modalService.open(this.startconfirmationpopup, { centered: true, backdrop: 'static' });
+    this.modalService.open(this.startconfirmationpopup, {
+      centered: true,
+      backdrop: 'static',
+    });
   }
 
   openExtendModal(phase: IPhases) {
@@ -524,7 +655,7 @@ export class InactivePhasesProjectComponent {
     this.extendForm.patchValue({
       newStartDate: phaseStart,
       newEndDate: phaseEnd,
-      extendReason: ''
+      extendReason: '',
     });
 
     // Disable start date if it's in the past
@@ -539,12 +670,19 @@ export class InactivePhasesProjectComponent {
     this.projectMinEndDate = phaseEnd;
 
     this.startndEndDateValid = true;
-    this.modalService.open(this.extendModal, { centered: true, size: 'md', backdrop: 'static' });
+    this.modalService.open(this.extendModal, {
+      centered: true,
+      size: 'md',
+      backdrop: 'static',
+    });
   }
 
-
-  get newStartDate() { return this.extendForm.get('newStartDate')?.value; }
-  get newEndDate() { return this.extendForm.get('newEndDate')?.value; }
+  get newStartDate() {
+    return this.extendForm.get('newStartDate')?.value;
+  }
+  get newEndDate() {
+    return this.extendForm.get('newEndDate')?.value;
+  }
 
   validateExtendDateRange(): void {
     const start = this.extendForm.get('newStartDate')?.value;
@@ -589,16 +727,21 @@ export class InactivePhasesProjectComponent {
     const formValue = this.extendForm.value;
     const phase = this.modalData?.phase;
 
-    const startDate = this.extendForm.get('newStartDate')?.enabled ? formValue.newStartDate : phase?.startDate;
+    const startDate = this.extendForm.get('newStartDate')?.enabled
+      ? formValue.newStartDate
+      : phase?.startDate;
     const endDate = formValue.newEndDate;
 
-    this.updatePhaseStatus({
-      phaseId: this.phaseId,
-      status: 'extended',
-      startDate,
-      endDate,
-      reason: formValue.extendReason
-    }, modal);
+    this.updatePhaseStatus(
+      {
+        phaseId: this.phaseId,
+        status: 'extended',
+        startDate,
+        endDate,
+        reason: formValue.extendReason,
+      },
+      modal
+    );
   }
 
   confirmStart(modal: any) {
@@ -614,7 +757,7 @@ export class InactivePhasesProjectComponent {
     const payload = {
       phaseId: phase.phaseId,
       status,
-      startDate
+      startDate,
     };
 
     this.updatePhaseStatus(payload, modal);
@@ -634,13 +777,11 @@ export class InactivePhasesProjectComponent {
     return normalized.replace(/\b\w/g, (char: any) => char.toUpperCase());
   }
 
-
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
     if (this.subscription) {
-      this.subscription.unsubscribe()
+      this.subscription.unsubscribe();
     }
   }
-
 }

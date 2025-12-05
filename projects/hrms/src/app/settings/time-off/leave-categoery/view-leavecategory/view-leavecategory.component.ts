@@ -161,6 +161,7 @@ export class ViewLeavecategoryComponent {
         { value: undefined, disabled: true },
         [this.dependentRequiredValidator('noticeperiodAllowedType')],
       ],
+      noticePeriodFrequencyType: [{ value: undefined, disabled: true }, Validators.required],
       // Probation Period
       isProbationAllowed: [
         { value: undefined, disabled: true },
@@ -435,6 +436,7 @@ export class ViewLeavecategoryComponent {
       encashAllowedValue: data.encashAllowedValue,
       noticeperiodAllowedType: data.noticeperiodAllowedType,
       noticePeriodAllowedValue: data.noticePeriodAllowedValue,
+      noticePeriodFrequencyType: data.noticePeriodFrequencyType,
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
       probationFrequencyType: data.probationFrequencyType,

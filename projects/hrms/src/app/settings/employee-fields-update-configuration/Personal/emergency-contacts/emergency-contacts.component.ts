@@ -259,6 +259,7 @@ get isReadOnlyMode(): boolean {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope:'Field'
           };
         });
         const request = {

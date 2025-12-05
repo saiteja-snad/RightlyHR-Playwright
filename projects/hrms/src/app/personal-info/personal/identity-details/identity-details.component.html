@@ -9,6 +9,8 @@
             New</div>
         }}
     </div>
+     <div *ngIf="((getIdentitydetails | async) ?? []).length <= 0 && getFieldsApprovalStatusList.length>0" class="error-msg float-end">Note:Record addition request sent for approval.</div>
+
     <div class="custom-table-content">
         @if (!loading) {
         <table class="w-100">

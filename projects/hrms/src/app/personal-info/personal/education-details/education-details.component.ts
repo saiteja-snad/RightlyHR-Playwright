@@ -214,6 +214,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.educationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Academic details added successfully');
+        this.getFieldsApprovalStatus();
         this.getEducationEmpid();
       },
       error: (err: any) => {

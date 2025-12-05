@@ -32,6 +32,7 @@ import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/modu
     ChartModule,
     NoDataFoundComponent,
     SkeletonModule,
+    ModuleInfoIconComponent
   ],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',

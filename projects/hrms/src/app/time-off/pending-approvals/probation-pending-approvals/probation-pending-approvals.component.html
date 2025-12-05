@@ -40,7 +40,7 @@
                         <td class="text-center">
                             <div>
                                 @if(rbac.allowedToAccess('Probation Details.update') ) {
-                                <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess); 
+                                <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess);
                                 getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
                                 {{'Process' | translate}}</button>
                                 }
@@ -140,7 +140,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="managers" [(ngModel)]="selectedData.proccesoption" id="selectoption"
                             name="selectoption" #processoption="ngModel" [(ngModel)]="selectedData.proccesoption"
-                            optionLabel="label" optionValue="value" placeholder="Please select" class="custom-select w-100" 
+                            optionLabel="label" optionValue="value" placeholder="Please select" class="custom-select w-100"
                             (change)="onclickproceevalue(selectedData.proccesoption)" required>
                         </p-select>
                     </div>
@@ -180,7 +180,7 @@
                         (ngModelChange)="ifreasonnull(selectedData.comments)" (keydown)="formsValidation.restrictInitialSpace($event)"  required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
-                    <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
+                    <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) ||
                     (earlyrelievingreason.invalid && ProcessacceptForm.submitted)">{{'Comments is required' | translate}}</div>
                      <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
@@ -197,7 +197,7 @@
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        (keypress)="letters($event)" 
+                        (keypress)="letters($event)"
                         [min]="getBlockedFutureDate(selectedData.probationEndDate,empdata.probationEndDate,selectedData.probationextendedcount)"
                         [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration,empdata.probationEndDate)"
 

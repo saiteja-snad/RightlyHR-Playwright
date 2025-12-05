@@ -807,6 +807,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'WFH (On Behalf Of Approvals)',
     'Comp Off (On Behalf Of Approvals)',
     'Permission (On Behalf Of Approvals)',
+    'Trainee Requests (On Behalf Of Approvals)',
     'My Team On Behalf Of Approvals',
     'On Behalf Of Approvals All Employees',
   ];

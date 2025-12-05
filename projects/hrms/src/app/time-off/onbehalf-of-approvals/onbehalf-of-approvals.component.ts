@@ -17,6 +17,7 @@ import { environment } from '../../../environments/environment';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.component';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -32,7 +33,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     Select,
     ModuleInformationComponent,
     NgbPopoverModule,
-    FormsModule
+    FormsModule,
+    TraineeRequestsComponent
 ],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
@@ -47,10 +49,12 @@ export class OnbehalfOfApprovalsComponent {
   compOff = [] as any;
   wfh = [] as any;
   permissions = [] as any;
+  traineeRequests = [] as any;
   teamManagerControl = new FormControl(null);
   timeOffCount = 0;
   compOffCount = 0;
   wfhCount = 0;
+  traineeRequestsCount = 0;
   activeTab: string = 'timeOff';
   permissionsCount = 0;
   employeeiddetails = [] as any;
@@ -72,6 +76,7 @@ export class OnbehalfOfApprovalsComponent {
           this.getCompoff(this.employeedata.employeeId);
           this.getWfhoff(this.employeedata.employeeId);
           this.getPermissionsoff(this.employeedata.employeeId);
+          this.getTraineeRequestsOff(this.employeedata.employeeId)
         }
         // this.http.resetTriggerSignal();
       }
@@ -107,11 +112,11 @@ export class OnbehalfOfApprovalsComponent {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -173,10 +178,12 @@ export class OnbehalfOfApprovalsComponent {
       this.compOff = [];
       this.wfh = [];
       this.permissions = [];
+      this.traineeRequests = [];
       this.timeOffCount = 0;
       this.compOffCount = 0;
       this.wfhCount = 0;
       this.permissionsCount = 0;
+      this.traineeRequestsCount = 0;
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
       this.http.triggerActionSignal();
     }
@@ -194,10 +201,12 @@ export class OnbehalfOfApprovalsComponent {
       this.compOff = [];
       this.wfh = [];
       this.permissions = [];
+      this.traineeRequests = [];
       this.timeOffCount = 0;
       this.compOffCount = 0;
       this.wfhCount = 0;
       this.permissionsCount = 0;
+      this.traineeRequestsCount = 0;
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
       this.http.triggerActionSignal();
     }
@@ -260,6 +269,19 @@ export class OnbehalfOfApprovalsComponent {
     });
   }
 
+  getTraineeRequestsOff(employeeId: any) {
+  this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.traineeoffboardingModuleId}`).subscribe({
+    next: (data: any) => {
+      this.traineeRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+      this.traineeRequestsCount = this.traineeRequests.length;
+    },
+    error: (reason) => {
+      this.traineeRequests = [];
+      this.traineeRequestsCount = 0;
+    }
+  });
+}
+
   timeoff(Value: any) {
     this.gettimeoffcount(this.employeedata.employeeId);
   }
@@ -275,6 +297,10 @@ export class OnbehalfOfApprovalsComponent {
   permissionsoff(value: any) {
     this.getPermissionsoff(this.employeedata.employeeId)
   }
+
+  traineeRequestsOff(value: any) {
+  this.getTraineeRequestsOff(this.employeedata.employeeId);
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

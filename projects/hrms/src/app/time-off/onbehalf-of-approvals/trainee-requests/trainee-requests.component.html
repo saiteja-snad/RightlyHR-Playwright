@@ -1,0 +1,236 @@
+<div class="custom-main-component-container">
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search by name or ID">
+  </div>
+
+  <div class="custom-table-content">
+    @if(!loading) {
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Trainee ID</th>
+          <th>Name</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th class="text-center">Comments</th>
+          @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).update') ||
+          rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).delete')) {
+          <th class="text-center">Action</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (trn of Trainees.getValue(); track trn.approvalHeader.id) {
+        <tr>
+          <td>{{ trn.entity?.fusionEmpId || '-' }}</td>
+          <td>{{ trn.entity?.empName || trn.entity?.raisedForName || '-' }}</td>
+          <td>{{ trn.entity?.traineeStartDate | dateformat }}</td>
+          <td>{{ trn.entity?.traineeEndDate | dateformat }}</td>
+          <td class="text-center">
+            @if (trn.entity?.comments?.length) {
+            <div (click)="commentsFunction(trn.entity.comments, commentspopup)">
+              <app-info-icon />
+            </div>
+            } @else { - }
+          </td>
+
+          @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).update') ||
+          rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).delete')) {
+          <td class="text-center">
+            <div class="dropdown">
+              <span data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></span>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).update')) {
+                @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage) {
+                <li (click)="handleRequests(trn); openModal(PermissionsApprove)">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
+                </li>
+                }
+                @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).update')) {
+                @if(trn.approvalHeader.currentapprovalStage === trn.approvalHeader.finalapprovalStage) {
+                <li (click)="handleProcess(trn)">
+                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
+                </li>
+                }
+                }
+                }
+                @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).delete')) {
+                <li (click)="handleRequests(trn); openModal(RejectTrainee)">
+                  <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
+                </li>
+                }
+              </ul>
+            </div>
+          </td>
+          }
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="6"><app-no-data-found /></td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    } @else {
+    <app-data-loader-content />
+    }
+  </div>
+</div>
+
+<!-- Approve Modal -->
+<ng-template #PermissionsApprove let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+
+    <!-- Icon + Text -->
+    <div>
+      <img src="icons/conformation.png" class="confirmation-delete-icon" />
+      <p class="confirmation-text">Are you sure you want to Approve?</p>
+    </div>
+
+    <!-- Form Starts -->
+    <form autocomplete="off" name="acceptForm" #acceptForm="ngForm" (ngSubmit)="handleAccept()">
+
+      <!-- Feedback Section -->
+      <div class="custom-main-popup-content">
+        <label class="form-label custom-label">
+          Feedback <span class="text-danger">*</span>
+        </label>
+
+        <textarea class="form-control custom-input" placeholder="Please provide feedback" name="Feedback"
+          #Feedback="ngModel" [(ngModel)]="selectedLeaveData.trcomments" (ngModelChange)="onCommentChange($event)"
+          (keydown)="formsValidation.restrictInitialSpace($event)" maxlength="250" rows="3" required>
+        </textarea>
+
+        <!-- Character Count -->
+        <div class="textarea-count-text">
+          {{ selectedLeaveData.trcomments?.length || 0 }}/250
+        </div>
+
+        <!-- Validation -->
+        <div class="error-msg"
+          *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
+          Feedback is required
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+
+        <button type="submit" class="custom-btn btn-primary"
+          [disabled]="acceptForm.invalid || !selectedLeaveData.trcomments || isLoading">
+
+          @if (!isLoading) {
+          Approve
+          } @else {
+          <div class="button-loader-content">
+            <div class="spinner-border button-spinner text-light" role="status"></div>
+            <div>Submitting...</div>
+          </div>
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</ng-template>
+
+
+<!-- Reject Modal (Extend / Discontinue) -->
+<ng-template #RejectTrainee let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+
+    <div>
+      <img src="icons/reject.png" class="confirmation-delete-icon" />
+    </div>
+    <p class="confirmation-text">Are you sure you want to Reject?</p>
+
+    <!-- Radio Buttons -->
+     <div class="custom-main-popup-content">
+    <div class="d-flex justify-content-center gap-4 mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="rejectType" (click)="toggleExtend()" [checked]="extend" />
+        <label class="form-check-label">Extend</label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="rejectType" (click)="toggleDiscontinue()"
+          [checked]="discontinue" />
+        <label class="form-check-label">Discontinue</label>
+      </div>
+    </div>
+
+    <!-- EXTEND SECTION -->
+    @if(extend) {
+    <div class="mb-3">
+      <label class="form-label custom-label">Extend Date <span class="text-danger">*</span></label>
+      <input type="date" class="form-control custom-input" [(ngModel)]="selectedLeaveData.extenddate" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label custom-label">Feedback <span class="text-danger">*</span></label>
+      <textarea placeholder="Please provide feedback" class="form-control custom-input" rows="3" maxlength="250" [(ngModel)]="selectedLeaveData.trcomments"
+        (ngModelChange)="onCommentChange($event)" (keydown)="formsValidation.restrictInitialSpace($event)"
+        required></textarea>
+
+      <div class="textarea-count-text">
+        {{ selectedLeaveData.trcomments?.length || 0 }}/250
+      </div>
+    </div>
+
+    <button class="custom-btn btn-primary w-100" (click)="handleExtend()"
+      [disabled]="!selectedLeaveData.extenddate || !selectedLeaveData.trcomments || isLoading">
+      Extend & Reject
+    </button>
+    }
+
+    <!-- DISCONTINUE SECTION -->
+    @if(discontinue) {
+    <div class="mb-3">
+      <label class="form-label custom-label">Reason <span class="text-danger">*</span></label>
+      <textarea placeholder="Please provide reason" class="form-control custom-input" rows="3" maxlength="250"
+        [(ngModel)]="selectedLeaveData.rejectedReason" (ngModelChange)="onCommentChange($event)"
+        (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
+
+      <div class="textarea-count-text">
+        {{ selectedLeaveData.rejectedReason?.length || 0 }}/250
+      </div>
+    </div>
+
+    <button class="custom-btn btn-primary w-100" (click)="handleReject()"
+      [disabled]="!selectedLeaveData.rejectedReason || isLoading">
+      Discontinue & Reject
+    </button>
+    }
+
+    <!-- Footer -->
+    <div class="custom-modal-footer mt-3">
+      <button class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    </div>
+
+  </div>
+  </div>
+</ng-template>
+
+<!-- Comments Modal -->
+<ng-template #commentspopup let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border d-flex justify-content-between">
+      <p class="popup-heading mb-0">Comments</p>
+      <a (click)="modal.dismiss()"><img src="icons/close.png" class="close-icon"></a>
+    </div>
+    <div class="card p-3">
+      @for (c of comments; track c) {
+      <div class="mb-3">
+        <p><b>Comment:</b> {{ c.comments }}</p>
+        <p><b>By:</b> {{ c.addedName }} ({{ c.addedByFusionEmpId }})</p>
+        <p><b>Date:</b> {{ c.addedDate | dateformat }}</p>
+      </div>
+      <hr>
+      } @empty {
+      <p>No comments available</p>
+      }
+    </div>
+  </div>
+</ng-template>

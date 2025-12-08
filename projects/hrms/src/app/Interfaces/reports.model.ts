@@ -216,6 +216,12 @@ export interface IAttendanceDetails{
   TeamManagerFusionEmpId?:any;
   teamManagerID?:any;
   teamManagerEmpId?: any;
+  year?: number;
+  shiftIds?: string;
+  locationIds?: string;
+  subLocationIds?: string;
+  leaveCategoryIds?: string; 
+
 }
 
 //leave summmery

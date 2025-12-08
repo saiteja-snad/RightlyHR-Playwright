@@ -1,0 +1,170 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <!-- Header -->
+    <app-reports-header/>
+
+    <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()" *ngIf="LeaveReportForm">
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
+        <button type="button" class="clear-all-btn" [disabled]="
+          !LeaveReportForm.get('employee')?.value &&
+          !LeaveReportForm.get('manager')?.value &&
+          !LeaveReportForm.get('leaveCategory')?.value &&
+          !LeaveReportForm.get('team')?.value &&
+          !LeaveReportForm.get('year')?.value
+        " (click)="clearAllFilters()">
+          Clear All
+        </button>
+
+        <!-- Employee -->
+        @if(rbac.allowedToAccess('Attendance All Employees List(Leave Carry Forward & Encashment).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+
+        <!-- Team Manager -->
+        @if(rbac.allowedToAccess('Attendance Team Manager List(Leave Carry Forward & Encashment).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+              filterPlaceholder="Search manager">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+
+        <!--My Team-->
+        @if(rbac.allowedToAccess('My Team Report(Leave Carry Forward & Encashment).view') &&!rbac.allowedToAccess('Attendance All EmployeesList(Leave Carry Forward & Encashment).view')
+         && !rbac.allowedToAccess('Attendance Team Manager List(Leave Carry Forward & Encashment).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee" (onChange)="onClick($event)">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+        <!-- Leave Category -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label" filterBy="label"
+              formControlName="leaveCategory" placeholder="Select leave category" class="form-select custom-select"
+              filterPlaceholder="Search leave type">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+              <ng-template let-employee #item>{{ employee.label }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+
+          <!-- Year -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
+              placeholder="Select year" class="form-select custom-select">
+            </p-select>
+          </div>
+        </div>
+        }
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+
+          @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view') && rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+            [disabled]="filteredleaveRecord.length == 0 || disableBtn">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="custom-table-content">
+    @if (!isLoading) {
+    <table id="leaveReportTable" class="w-100">
+      <thead>
+        <th>{{'Employee ID' | translate}}</th>
+        <th>{{'Employee Name' | translate}}</th>
+        <th>{{'Department' | translate}}</th>
+        <th>{{'Team Manager' | translate}}</th>
+        <th>{{'Shift' | translate}}</th>
+        <th>{{'Location' | translate}}</th>
+        <th>{{'Sub Location' | translate}}</th>
+        <th>{{'Year' | translate}}</th>
+        <th>{{'Leave Type' | translate}}</th>
+        <th>{{'Entitled' | translate}}</th>
+        <th>{{'Availed' | translate}}</th>
+        <th>{{'Balance' | translate}}</th>
+        <th>{{'Max Carry Forward' | translate}}</th>
+        <th>{{'Actual Carry Forward' | translate}}</th>
+        <th>{{'Max Encashment' | translate}}</th>
+        <th>{{'Leaves Encashed' | translate}}</th>
+        <th>{{'Leaves Lapsed' | translate}}</th>
+      </thead>
+      <tbody>
+        @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+        @else {
+        @for (record of filteredleaveRecord; track $index) {
+        <tr>
+            <td>{{record.fusionEmpId ?? '-'}}</td>
+            <td>{{record.employeeName ?? '-'}}</td>
+            <td>{{record.department ?? '-'}}</td>
+            <td>{{record.teamManagerName ?? '-'}}</td>
+            <td>{{record.shift ?? '-'}}</td>
+            <td>{{record.location ?? '-'}}</td>
+            <td>{{record.subLocation ?? '-'}}</td>
+            <td>{{record.year ?? '-' }}</td>
+            <td>{{record.leaveType ?? '-'}}</td>
+            <td>{{record.entitled ?? '-'}}</td>
+            <td>{{record.availed ?? '-'}}</td>
+            <td>{{record.balance ?? '-'}}</td>
+            <td>{{record.maxCarryForward ?? '-'}}</td>
+            <td>{{record.actualCarryForward ?? '-'}}</td>
+            <td>{{record.maxEncashment ?? '-'}}</td>
+            <td>{{record.leaveEncashed ?? '-'}}</td>
+            <td>{{record.leaveLapsed ?? '-'}}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+    @else{
+    <app-data-loader-content />
+    }
+  </div>
+</div>

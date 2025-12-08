@@ -871,6 +871,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Remote Login Report',
     'Remote Login Report - Generate',
     'Remote Login Report - Export',
+    'Leave Carry Forward & Encashment Report',
+    'Leave Carry Forward & Encashment Report - Generate',
+    'Leave Carry Forward & Encashment Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -894,6 +897,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(Regularization)',
     'Attendance Team Manager List(Regularization)',
     'My Team Report(Regularization)',
+    'Attendance All Employees List(Leave Carry Forward & Encashment)',
+    'Attendance Team Manager List(Leave Carry Forward & Encashment)',
+    'My Team Report(Leave Carry Forward & Encashment)',
   ];
 
   timesheetReportsTabsFields = [

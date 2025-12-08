@@ -31,6 +31,8 @@ export default [
             { path: 'permission-report', loadComponent: () => import('./attendence-reports/permission-reports/permission-reports.component').then((m) => m.PermissionReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Permission Report.view' } },
             { path: 'regularization-report', loadComponent: () => import('./attendence-reports/regularization-reports/regularization-reports.component').then((m) => m.RegularizationReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Regularization Report.view' } },
             { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
+            { path: 'leave-carryforward-report', loadComponent: () => import('./attendence-reports/leave-carry-forward-report/leave-carry-forward-report.component').then((m) => m.LeaveCarryForwardReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Carry Forward & Encashment Report.view' } },
+
         
         ]
     },

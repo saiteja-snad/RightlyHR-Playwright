@@ -41,7 +41,7 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <ng-container *ngIf="asset.status === 'Available'">
+                  <ng-container *ngIf="asset.status === 'Block'">
                     @if(rbac.allowedToAccess('Available Allocate Asset.view')) {
                     <li>
                       <a class="dropdown-item"

@@ -12,6 +12,7 @@
             <thead>
                 <th>Asset Category</th>
                 <th>Asset Sub Category</th>
+                  <th>Asset Modal</th>
                 <th>Serial Number</th>
                 <th>Asset Status</th>
                 <th>Location </th>
@@ -27,6 +28,7 @@
                     <tr *ngFor="let asset of assetslist | async">
                         <td>{{ asset.assetCategory }}</td>
                         <td>{{ asset.assetSubCategory }}</td>
+                        <td>{{ asset.assetModel }}</td>
                         <td>{{ asset.serialNumber }}</td>
                         <td>{{ asset.status }}</td>
                         <td>{{ asset.locationName }}</td>

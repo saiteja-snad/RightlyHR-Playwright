@@ -72,8 +72,8 @@ export class AssetsManagmentComponent {
     this.getjobLocationList()
     this.getvendor()
     this.intiallocationandsublocation()
-    this.getcount(null, null,null,null)
-    this.getassetsdata(this.page, this.pageSize,null,null,null,null,this.Status);
+    this.getcount(null, null,null,null,null,null)
+    this.getassetsdata(this.page, this.pageSize,null,null,null,null,null,null,this.Status);
     const today = new Date();
     // Set max to today's date
     this.maxpurchesDate = today.toISOString().split('T')[0];
@@ -113,32 +113,92 @@ export class AssetsManagmentComponent {
     //this.getteamsummary(employeeIds);
     this.closeCanvas();
   }
-  resetForm() {
-    // Reset to current month
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    // Clear all form fields including date range and employee selection
-    this.locationfromdata.patchValue({
-      dateRange: [startOfMonth, endOfMonth],
-      locationId: null,
-      subLocationId: null,
-      assetSubCategory: null,
-      assetCategory: null,
-    });
-     const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-    const loctionid = this.locationfromdata.get('locationId')?.value;
-    const selectedvalue = this.locationfromdata.get('assetCategory')?.value;
-    const selectedsubcatageory = this.locationfromdata.get('assetSubCategory')?.value;
-    // Clear filter service
-    this.filterService.clearFilters();
-    // Reload table data with cleared filters
-    this.page = 1;
-    this.first = 0;
-      this.http.assetsUpdateLocationId(this.assetSubCategory);
-    this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,selectedvalue,selectedsubcatageory, null);
-     this.getcount(loctionid, subLocationId,selectedvalue,null)
-  }
+  // resetForm() {
+  //   // Reset to current month
+  //   const startOfMonth = dayjs().startOf('month').toDate();
+  //   const endOfMonth = dayjs().endOf('month').toDate();
+  //   // Clear all form fields including date range and employee selection
+  //   this.locationfromdata.patchValue({
+  //     dateRange: [startOfMonth, endOfMonth],
+  //     locationId: null,
+  //     subLocationId: null,
+  //     assetSubCategory: null,
+  //     assetCategory: null,
+  //   });
+  //    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+  //   const loctionid = this.locationfromdata.get('locationId')?.value;
+  //   const selectedvalue = this.locationfromdata.get('assetCategory')?.value;
+  //   const selectedsubcatageory = this.locationfromdata.get('assetsubcategeory')?.value;
+  //   const daterange = this.locationfromdata.get('range')?.value;
 
+  //   // Clear filter service
+  //   this.filterService.clearFilters();
+  //   // Reload table data with cleared filters
+  //   this.page = 1;
+  //   this.first = 0;
+  //     this.http.assetsUpdateLocationId(this.assetSubCategory);
+  //   this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,selectedvalue,selectedsubcatageory, daterange,daterange,null,);
+  //    this.getcount(loctionid, subLocationId,selectedvalue,null,null,null)
+  // }
+
+resetForm() {
+  // Reset to current month
+  const startOfMonth = dayjs().startOf('month').toDate();
+  const endOfMonth = dayjs().endOf('month').toDate();
+
+  // Reset whole form
+  this.locationfromdata.patchValue({
+    dateRange: [startOfMonth, endOfMonth],
+    locationId: null,
+    subLocationId: null,
+    assetCategory: null,
+    assetSubCategory: null,
+  });
+
+  // 🔥 Clear LOCALSTORAGE filters
+  localStorage.removeItem('assetlocationId');
+  localStorage.removeItem('assetsublocationId');
+  localStorage.removeItem('assetcategeory');
+  localStorage.removeItem('assetsubcategeory');
+  localStorage.removeItem('formDate');
+    localStorage.removeItem('toDate');
+    this.locationfromdata.get('subLocationId')?.disable();
+       this.locationfromdata.get('assetSubCategory')?.disable();
+  // Get fresh values (now null)
+  const locationId = null;
+  const subLocationId = null;
+  const category = null;
+  const subCategory = null;
+
+  const fromDate = startOfMonth;
+  const toDate = endOfMonth;
+
+  // 🔥 Clear filter service
+  this.filterService.clearFilters();
+
+  // Reset pagination
+  this.page = 1;
+  this.first = 0;
+
+  // Update service with empty filters
+  this.http.assetsUpdateLocationId(null);
+
+  // Refresh table with NO filters
+  this.getassetsdata(
+    this.page,
+    this.pageSize,
+    locationId,
+    subLocationId,
+    category,
+    subCategory,
+    fromDate,
+    toDate,
+    null
+  );
+
+  // Refresh count correctly
+  this.getcount(locationId, subLocationId, category, subCategory, fromDate, toDate);
+}
 
 // onassetcategoryfilter() {
 //          const subLocationId = this.locationfromdata.get('subLocationId')?.value;
@@ -173,13 +233,22 @@ export class AssetsManagmentComponent {
   initializeNavTabs(): void {
     this.loading=true
     // Populate allNavTabs with permission checks
-    this.allNavTabs = [
+    // this.allNavTabs = [
+    //   // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
+    //   { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#53D33A', permission: { feature: 'Asset Management - Available', action: 'view' }, dynamic: true  },
+    //   { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#1064CA', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
+    //   { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF8000', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
+    //   { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
+    //   { label: 'Block', route: '/assets-management/block-assets', count$: this.http.blockassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Block', action: 'view' } },
+      
+    // ];
+      this.allNavTabs = [
       // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#53D33A', permission: { feature: 'Asset Management - Available', action: 'view' } },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#53D33A', permission: { feature: 'Asset Management - Available', action: 'view' }, dynamic: true  },
       { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#1064CA', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
       { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF8000', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
       { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
-      { label: 'Block', route: '/assets-management/block-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Block', action: 'view' } },
+      { label: 'Block', route: '/assets-management/block-assets', count$: this.http.blockassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Block', action: 'view' } },
       
     ];
     // Filter navTabs based on permissions
@@ -414,41 +483,7 @@ export class AssetsManagmentComponent {
       },
     });
   }
-onassetcategoryfilter() {
-         const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-    const loctionid = this.locationfromdata.get('locationId')?.value
-    this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
-    this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
-    this.assetForm.get('assetSubCategory')?.enable();
-
-    const selectedId = this.locationfromdata.get('assetCategory')?.value.id;
-const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
-    this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.assetSubCategory = data;
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-    localStorage.setItem('', JSON.stringify(this.assetSubCategory))
-      this.http.assetsUpdateLocationId(this.assetSubCategory);
-       this.getassetsdata(this.page,this.pageSize,loctionid,subLocationId,selectedvalue,null,null);
-           this.getcount(loctionid, subLocationId,selectedvalue,null)
-  }
-
-  onassetsubcategoryfilter() {
-         const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-    const loctionid = this.locationfromdata.get('locationId')?.value;
-    const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
-    const selectedsubcatageory = this.locationfromdata.get('assetSubCategory')?.value.name;
-
-      this.http.assetsUpdateLocationId(this.assetSubCategory);
-       this.getassetsdata(this.page, this.pageSize, loctionid,subLocationId,selectedvalue,selectedsubcatageory,null);
-          this.getcount(loctionid, subLocationId,selectedvalue,selectedsubcatageory)
-  }
-
+  
 
 
   // onassetsubcategory() {
@@ -494,7 +529,7 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
     this.locationfromdata.get('subLocationId')?.reset()
     localStorage.setItem('assetsublocationId', JSON.stringify(null))
     this.http.assetsUpdateLocationId(locationId);
-    this.getcount(locationId, null,null,null)
+    this.getcount(locationId, null,null,null,null,null)
   }
 
   onSubLocationChange() {
@@ -503,14 +538,74 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
       this.http.assetsUpdateLocationId(loctionid);
-      this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,null,null, null);
-      this.getcount(loctionid, subLocationId,null,null)
+      this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,null,null, null,null,null,);
+      this.getcount(loctionid, subLocationId,null,null,null,null)
     }
     else {
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
       this.http.assetsUpdateLocationId(loctionid);
     }
+  }
+onassetcategoryfilter() {
+    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+    const loctionid = this.locationfromdata.get('locationId')?.value
+    const selectedcatageoryId = this.locationfromdata.get('assetCategory')?.value.id;
+    const selectedcatageoryvalue = this.locationfromdata.get('assetCategory')?.value.name;
+      localStorage.setItem('assetsubcategeory', JSON.stringify(null));
+    this.locationfromdata.get('assetSubCategory')?.reset(); // Reset previous value
+    this.locationfromdata.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
+    this.locationfromdata.get('assetSubCategory')?.enable();
+    this.http.assetsUpdateCatageoryId(selectedcatageoryvalue);
+    this.http.getData(`AssetCategory?parentId=${selectedcatageoryId}`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.assetSubCategory = data;
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+       localStorage.setItem('assetcategeory', JSON.stringify(selectedcatageoryvalue));
+    this.http.assetsUpdateLocationId(selectedcatageoryvalue);
+    this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, selectedcatageoryvalue, null, null, null, null,);
+    this.getcount(loctionid, subLocationId, selectedcatageoryvalue, null, null, null)
+  }
+
+  onassetsubcategoryfilter() {
+    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
+    const loctionid = this.locationfromdata.get('locationId')?.value;
+    const selectedcatageory = this.locationfromdata.get('assetCategory')?.value.name;
+    const selectedsubcatageory = this.locationfromdata.get('assetSubCategory')?.value.name;
+         localStorage.setItem('assetsubcategeory', JSON.stringify(selectedsubcatageory));
+    this.http.assetsUpdateLocationId(selectedsubcatageory);
+    this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, selectedcatageory, selectedsubcatageory, null, null, null,);
+    this.getcount(loctionid, subLocationId, selectedcatageory, selectedsubcatageory, null, null)
+  }
+
+  ondatechange() {
+    const subLocationId = this.locationfromdata.get('subLocationId')?.value || null;
+    const loctionid = this.locationfromdata.get('locationId')?.value || null;
+    const assetCategory = this.locationfromdata.get('assetCategory')?.value;
+    const assetSubCategory = this.locationfromdata.get('assetSubCategory')?.value;
+    const selectedcatageory = assetCategory?.name || null;
+    const selectedsubcatageory = assetSubCategory?.name || null;
+    const formValue = this.locationfromdata.value;
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
+    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
+     localStorage.setItem('formDate', JSON.stringify(startDate));
+       localStorage.setItem('toDate', JSON.stringify(endDate));
+    this.http.assetsUpdatedatarange(selectedsubcatageory);
+    this.getassetsdata(this.page,this.pageSize,loctionid,subLocationId,selectedcatageory, selectedsubcatageory,startDate, endDate, null);
+    this.getcount( loctionid,subLocationId,selectedcatageory,selectedsubcatageory,startDate,endDate);
   }
 
   getSubLocationByidfliters(selectedLocation: any): void {
@@ -624,8 +719,8 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset Registered successfully ');
-          this.getassetsdata(this.page, this.pageSize, null, null,null,null, this.Status);
-          this.getcount(null, null,null,null);
+          this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
+          this.getcount(null, null,null,null,null,null);
           this.assetForm.reset();
           this.http.setnewassetsDetails();
         },
@@ -682,7 +777,9 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
     });
   }
 
-  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,catageory:any,subcatageory:any, Assetsstatus: any) {
+  
+  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,catageory:any,subcatageory:any,fromDate:any,toDate:any, Assetsstatus: any) {
+
     const params = {
       page: pagenum,
       pageSize: pagesize,
@@ -691,9 +788,11 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
       status: Assetsstatus,
       sublocationid: sublocationid,
       catageory:catageory,
-      subcatageory:subcatageory
+      subcatageory:subcatageory,
+      fromDate:fromDate,
+      toDate:toDate
     };
-    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid,params.catageory,params.subcatageory,params.status,
+    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid,params.catageory,params.subcatageory,params.fromDate,params.toDate,params.status,
       params.page, params.pageSize, params.searchQuery).subscribe({
         next: (res: any) => {
           this.assetslist.next(res.items);
@@ -703,12 +802,14 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
       });
   }
 
-  getcount(locationId: string | null, subLocationId: string | null,catageory:any,subcatageory:any) {
+  getcount(locationId: string | null, subLocationId: string | null,category:any,subcatageory:any,fromDate:any,toDate:any) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
-    if (catageory) params.append('catageory', catageory);
+    if (category) params.append('category', category);
     if (subcatageory) params.append('subcatageory', subcatageory);
+    if (fromDate) params.append('fromDate', fromDate);
+    if (toDate) params.append('toDate', toDate);
     params.append('status', status);
    
   
@@ -721,11 +822,13 @@ const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
   const allocateCount = statusCounts.find((item: any) => item.status === "Allocated")?.count || 0;
   const inactiveCount = statusCounts.find((item: any) => item.status === "Inactive")?.count || 0;
   const undermaintenceCount = statusCounts.find((item: any) => item.status === "Under Maintenance")?.count || 0;
+  const blockcount = statusCounts.find((item: any) => item.status === "Block")?.count || 0;
 
   this.http.setavilableAssetCount(availableCount);
   this.http.setallocatedAssetCount(allocateCount);
   this.http.setundermatinaceAssetCount(undermaintenceCount);
   this.http.setinactiveSubjectAssetCount(inactiveCount);
+   this.http.setblockAssetCount(blockcount);
 
   // Move chart initialization here
   setTimeout(() => this.initChart(), 0);

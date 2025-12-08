@@ -101,7 +101,7 @@
           <div class="mb-3">
             <label class="form-label custom-label filter-labels mb-3">{{'Date' | translate}}</label>
             <div class="custom-date-range-picker">
-              <p-datepicker formControlName="dateRange" placeholder="Select Date Range" selectionMode="range"
+              <p-datepicker formControlName="dateRange" placeholder="Select Date Range" selectionMode="range"(onSelect)="ondatechange()"
                 [showIcon]="true" />
             </div>
           </div>

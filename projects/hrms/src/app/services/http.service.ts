@@ -52,6 +52,9 @@ export class HttpService {
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetscategoryIdSubject = new BehaviorSubject<string | null>(null);
+  assetssubcategeoryIdSubject = new BehaviorSubject<string | null>(null);
+  assetsdaterangeIdSubject = new BehaviorSubject<string | null>(null);
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
@@ -302,6 +305,9 @@ export class HttpService {
 
   assetslocationId$ = this.assetslocationIdSubject.asObservable();
   assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
+  assetscategoryId$ = this.assetscategoryIdSubject.asObservable();
+  assetssubcategeoryId$ = this.assetssubcategeoryIdSubject.asObservable();
+  assetsdaterangeId$ = this.assetsdaterangeIdSubject.asObservable();
   //function to update the desk Updatelocation
   assetsUpdateLocationId(id: string | null) {
     this.assetslocationIdSubject.next(id);
@@ -311,7 +317,25 @@ export class HttpService {
   assetsUpdateSubLocationId(id: string | null) {
     this.assetssublocationIdSubject.next(id);
   }
+  //function to update the desk sublocation
+  assetsUpdateCatageoryId(id: string | null) {
+    this.assetscategoryIdSubject.next(id);
+  }
+    //function to update the desk sublocation
+  assetsUpdateSubCatageoryId(id: string | null) {
+    this.assetssubcategeoryIdSubject.next(id);
+  }
+    //function to update the desk sublocation
+  assetsUpdatedatarange(id: string | null) {
+    this.assetsdaterangeIdSubject.next(id);
+  }
 
+//availlableSearchCount = new BehaviorSubject<number>(0);
+setAvaillableSearchCount(count: number) {
+  //this.availlableSearchCount.next(count);
+     this.avilableassetCountSubject.next(count);
+  
+}
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -501,6 +525,8 @@ export class HttpService {
     selectedSubLocationId: any,
     category:any,
     subcatageory:any,
+    fromDate:any,
+    toDate:any,
     status: string,
     page: number,
     pageSize: number,
@@ -509,8 +535,10 @@ export class HttpService {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
-      catageory:category,
-      subcatageory:subcatageory,
+      category:category,
+      subcategory:subcatageory,
+      fromDate:fromDate,
+      toDate:fromDate,
       status: status,
       page: page,
       pageSize: pageSize,
@@ -765,6 +793,7 @@ export class HttpService {
   allocatedassetCountSubject = new BehaviorSubject<number>(0);
   undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
   inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
+   blockassetCountSubject = new BehaviorSubject<number>(0);
   setAssetCount(count: number) {
     this.assetCountSubject.next(count);
   }
@@ -776,15 +805,29 @@ export class HttpService {
   setallocatedAssetCount(count: number) {
     this.allocatedassetCountSubject.next(count);
   }
-
+setAllocatedSearchCount(count: number) {
+     this.allocatedassetCountSubject.next(count);
+}
   setundermatinaceAssetCount(count: number) {
     this.undermatinaceassetCountSubject.next(count);
   }
+  setundermatinaceSearchCount(count: number) {
+     this.undermatinaceassetCountSubject.next(count);
+}
+ setblockAssetCount(count: number) {
+    this.blockassetCountSubject.next(count);
+  }
 
+setblockSearchCount(count: number) {
+     this.blockassetCountSubject.next(count);
+}
   setinactiveSubjectAssetCount(count: number) {
     this.inactiveaceassetCountSubject.next(count);
   }
 
+setinactiveSearchCount(count: number) {
+     this.inactiveaceassetCountSubject.next(count);
+}
   getFilteredleavesDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/${employeeId}?year=${params}`);
   }

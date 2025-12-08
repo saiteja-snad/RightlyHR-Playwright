@@ -1,0 +1,10 @@
+.add-component-container {
+    position: relative;
+    height: calc(100dvh - 15rem);
+
+    .footer-content {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}

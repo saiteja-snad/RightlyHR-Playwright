@@ -1,10 +1,16 @@
 .leave-icon {
-    width: 1.5rem;
+    width: 1.2rem;
 }
 
 .map-text {
     font-size: 15px;
     font-weight: 700;
-    color: #00A912;
+    color: #0F358A;
 
+
+}
+
+.custom-table-content {
+    height: calc(100dvh - 22rem) !important;
+    border: 1px solid var(--table-header-bg-color);
 }

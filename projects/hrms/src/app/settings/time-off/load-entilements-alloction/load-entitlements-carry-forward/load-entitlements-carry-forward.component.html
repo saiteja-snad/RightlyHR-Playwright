@@ -1,7 +1,9 @@
-<div>
-    <app-loadentilledmentprogressbar />
-</div>
-
-<div>
-    <router-outlet></router-outlet>
+<div class="load-entitlement-container">
+    <div class="progress-content px-5 py-3">
+        <app-loadentilledmentprogressbar />
+    </div>
+    
+    <div class="load-entitlement-content">
+        <router-outlet />
+    </div>
 </div>

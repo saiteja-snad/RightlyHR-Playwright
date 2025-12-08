@@ -1,1 +1,73 @@
-<p>load-entilements-map-categoery works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex gap-2 justify-content-end  mb-2">
+        <div>
+            <img src="images\leave-allocation.png" alt="leaves-icon" class="leave-icon">
+        </div>
+        <div class="d-flex align-items-center map-text m-0">Auto-map 3 categories</div>
+    </div>
+
+    <div class="custom-table-content w-100">
+        <table class="w-100">
+            <thead>
+                <th class="text-center">
+                    Source Category ({{ currentYear }})
+                </th>
+
+                <th class="text-center">
+                    Mapping
+                </th>
+
+                <th class="text-center">
+                    Target Category ({{ nextYear }})
+                </th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of currentYearData">
+
+                    <td>
+
+                        <span [style.color]="item.categoryColor">
+                            {{ item.name }}
+                        </span>
+                        <div class="text-muted small">Eligible for Carry/Encash</div>
+
+                    </td>
+
+                    <!-- arrow -->
+                    <td class="text-center">
+                        →
+                    </td>
+
+                    <!-- target (dropdown) -->
+                    <td>
+
+                        <div class="custom-p-select-content">
+                            <p-select [options]="nextYearData" class="form-select custom-select"
+                                placeholder="Please select " optionLabel="name" optionValue="id">
+
+                            </p-select>
+                        </div>
+                        <!-- <select class="form-select" [(ngModel)]="item.selectedTargetCategoryId">
+            <option value="">Select Target Category</option>
+
+            <option *ngFor="let target of nextYearData" [value]="target.id">
+                {{ target.name }}
+            </option>
+        </select> -->
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+
+    </div>
+    <div class="footer-content">
+        <div class="d-flex justify-content-end align-items-center gap-3">
+            <button type="button" class="custom-btn btn-secondary">Cancel</button>
+            <button type="submit" class="custom-btn btn-primary">Load
+                Eligible Employees</button>
+        </div>
+    </div>
+
+</div>

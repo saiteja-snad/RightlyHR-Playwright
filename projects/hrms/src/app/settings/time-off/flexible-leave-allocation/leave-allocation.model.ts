@@ -108,3 +108,11 @@ export interface ICategoryDetails {
     isApplicableProRataLeave: boolean;
     isOptionalHoliday: boolean;
 }
+
+
+export interface ICarryForward {
+  year: number;
+  location: { id: number };
+  subLocation: { id: number };
+  shift: { id: number };
+}

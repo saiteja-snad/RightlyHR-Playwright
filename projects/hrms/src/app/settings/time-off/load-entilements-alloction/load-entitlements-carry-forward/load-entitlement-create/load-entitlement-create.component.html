@@ -1,4 +1,4 @@
-<div class="add-data-content">
+<div class="add-component-container">
     <form autocomplete="off" [formGroup]="leaveAllocationForm" (ngSubmit)="sumbitdata()">
         <div class="card custom-background-card p-4">
             <div class="row">
@@ -16,17 +16,14 @@
                     </div>
                     <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">
-                            Please select year
-                        </div>
+                        <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">Please select year</div>
                     </div>
                 </div>
 
                 <!-- Location -->
                 <div class="col-md-4 mb-3">
-                    <label for="location" class="form-label custom-label mb-2">
-                        {{ "Location" | translate }}<span class="text-danger">*</span>
-                    </label>
+                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate }}
+                        <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
@@ -39,17 +36,15 @@
                     </div>
                     <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">
-                            Please select location
+                        <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">Please select location
                         </div>
                     </div>
                 </div>
 
                 <!-- Sub Location -->
                 <div class="col-md-4 mb-3">
-                    <label for="subLocation" class="form-label custom-label mb-2">
-                        {{ "Sub Location" | translate }}<span class="text-danger">*</span>
-                    </label>
+                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" | translate }}
+                        <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
@@ -60,7 +55,6 @@
                             <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                         </p-select>
                     </div>
-
                     <div *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
                         class="error-msg">
                         <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">
@@ -71,30 +65,22 @@
 
                 <!-- Shifts -->
                 <div class="col-md-4 mb-3">
-                    <label for="shift" class="form-label custom-label mb-2">
-                        {{ "Shift" | translate }}<span class="text-danger">*</span>
-                    </label>
+                    <label for="shift" class="form-label custom-label mb-2">{{ "Shift" | translate }}
+                        <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                             [showClear]="false" formControlName="shift" placeholder="Please select shift"
-                            class="form-select custom-select" >
+                            class="form-select custom-select">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>
                     </div>
                     <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">
-                            Please select shift
-                        </div>
+                        <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">Please select shift</div>
                     </div>
                 </div>
-
             </div>
-
-
-
-
         </div>
 
         <!-- Submit -->
@@ -102,7 +88,8 @@
             <div class="d-flex justify-content-end align-items-center gap-3">
                 <button type="button" class="custom-btn btn-secondary"
                     (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="leaveAllocationForm.invalid">Load Eligible Employees</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="leaveAllocationForm.invalid">Load
+                    Eligible Employees</button>
             </div>
         </div>
     </form>

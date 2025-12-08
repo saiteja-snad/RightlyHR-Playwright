@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, Subscription, takeUntil } from 'rxjs';
-
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
@@ -11,13 +10,13 @@ import { FormValidationsService } from '../../../../../services/form-validations
 import { HttpService } from '../../../../../services/http.service';
 import { OpenModalService } from '../../../../../services/open-modal.service';
 import { ILocation, IShiftHeader, ISubLocation } from '../../../flexible-leave-allocation/leave-allocation.model';
-
 @Component({
   selector: 'app-load-entitlement-create',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, Select],
   templateUrl: './load-entitlement-create.component.html',
   styleUrl: './load-entitlement-create.component.scss'
 })
+
 export class LoadEntitlementCreateComponent {
   clientForm!: FormGroup;
   empinfo: any = {};
@@ -29,6 +28,7 @@ export class LoadEntitlementCreateComponent {
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
   destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
     private route: Router, private http: HttpService, public formValidation: FormValidationsService,
     private conformationPopup: OpenModalService) { }
@@ -41,7 +41,6 @@ export class LoadEntitlementCreateComponent {
       location: [{ value: '', disabled: true }, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-
     });
     this.getAllLocations();
   }
@@ -62,12 +61,10 @@ export class LoadEntitlementCreateComponent {
   }
 
   private getAllLocations(): void {
-    this.http.getData('JobLocation')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => this.locationDetails = res.jobLocations || [],
-        error: err => console.error('Error fetching locations:', err)
-      });
+    this.http.getData('JobLocation').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => this.locationDetails = res.jobLocations || [],
+      error: err => console.error('Error fetching locations:', err)
+    });
   }
 
   onLocationChange(location: ILocation): void {
@@ -86,21 +83,18 @@ export class LoadEntitlementCreateComponent {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id
     };
-
-    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
-          this.leaveAllocationForm.get('shift')?.enable();
-        },
-        error: err => {
-          console.error('Error fetching shifts:', err);
-          this.shiftDetails = [];
-          this.leaveAllocationForm.get('shift')?.reset();
-          this.leaveAllocationForm.get('shift')?.disable();
-        }
-      });
+    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
+        this.leaveAllocationForm.get('shift')?.enable();
+      },
+      error: err => {
+        console.error('Error fetching shifts:', err);
+        this.shiftDetails = [];
+        this.leaveAllocationForm.get('shift')?.reset();
+        this.leaveAllocationForm.get('shift')?.disable();
+      }
+    });
   }
 
   closepopup(content: any) {
@@ -108,6 +102,8 @@ export class LoadEntitlementCreateComponent {
   }
 
   sumbitdata() {
+    console.log(this.leaveAllocationForm.value)
+    localStorage.setItem('loadEntitlement', JSON.stringify(this.leaveAllocationForm.value));
     this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])
   }
 
@@ -116,5 +112,4 @@ export class LoadEntitlementCreateComponent {
       this.subscription.unsubscribe();
     }
   }
-
 }

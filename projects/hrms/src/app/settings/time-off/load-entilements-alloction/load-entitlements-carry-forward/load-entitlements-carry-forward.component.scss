@@ -1,9 +1,14 @@
-.custom-component-right-content {
+.load-entitlement-container {
+    width: 100%;
+    height: calc(100dvh - 11rem);
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: calc(100dvh - 8.5rem);
+
+    .load-entitlement-content {
+        position: relative;
+        flex: 1;
+    }
 }
 
 .add-data-content {

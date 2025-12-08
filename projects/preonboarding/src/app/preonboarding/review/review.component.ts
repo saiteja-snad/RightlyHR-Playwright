@@ -13,9 +13,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { Ipersonal } from '../../models/personal-details.model';
+import { ConfirmationIconComponent } from "../../../../../hrms/src/app/icons/confirmation-icon/confirmation-icon.component";
+import { DocumentViewIconComponent } from "../../../../../hrms/src/app/icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-review',
-  imports: [CommonModule, FormsModule, RouterModule, NgxDocViewerModule, DateFormatPipe, DetailedStepProgressbarComponent],
+  imports: [CommonModule, FormsModule, RouterModule, NgxDocViewerModule, DateFormatPipe, DetailedStepProgressbarComponent, ConfirmationIconComponent, DocumentViewIconComponent],
   templateUrl: './review.component.html',
   styleUrl: './review.component.scss'
 })

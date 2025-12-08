@@ -66,7 +66,7 @@ export class SettingsTimeOffTabsComponent {
       subjectText: MODULE_INFOS.SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO,
     },
     {
-      label: 'Load Entitlements',
+      label: 'Bulk Load Entitlements',
       link: '/settings/timeoff-configurations/loadentitlements',
       permission: { feature: 'Load Entitlements Tab', action: 'view' },
       icon: '/settings-icon/working-hours.png',

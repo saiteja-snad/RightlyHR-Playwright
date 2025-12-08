@@ -3,6 +3,7 @@ import { FlexibleLeaveAllocationComponent } from "./flexible-leave-allocation/fl
 import { LeaveAlloctaionComponent } from "./leave-alloctaion/leave-alloctaion.component";
 import { LoadEntitlementsComponent } from "./load-entitlements/load-entitlements.component";
 import { LoadEntilementsAlloctionComponent } from "./load-entilements-alloction/load-entilements-alloction.component";
+import { LoadEntitlementsCarryForwardComponent } from "./load-entilements-alloction/load-entitlements-carry-forward/load-entitlements-carry-forward.component";
 
 export default [
     // { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
@@ -20,18 +21,37 @@ export default [
     {
         path: 'loadentitlements', component: LoadEntilementsAlloctionComponent,
         children: [
-            { path: '', redirectTo: 'load-entitlement-create', pathMatch: 'full' },
+            { path: '', redirectTo: 'initial-load-entitlements', pathMatch: 'full' },
             {
-                path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent)
+                path: 'initial-load-entitlements', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component').then((m) => m.IntialLoadEntitlementComponent)
             },
             {
-                path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent)
+                path: 'carry-forward', loadComponent: () => import('./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component').then((m) => m.CarryForwardLeaveEntitlementComponent)
+            },
+
+
+
+        ]
+    },
+    {
+        path: 'load-entitlements', component: LoadEntitlementsCarryForwardComponent,
+        children: [
+            {
+                path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent)
             },
             {
-                path: 'load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/load-entitlemetexecution/load-entitlemetexecution.component').then((m) => m.LoadEntitlemetexecutionComponent)
+                path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent)
+            },
+            {
+                path: 'load-entitlement-map-categoery', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entilements-map-categoery/load-entilements-map-categoery.component').then((m) => m.LoadEntilementsMapCategoeryComponent)
+            },
+            {
+                path: 'load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetexecution/load-entitlemetexecution.component').then((m) => m.LoadEntitlemetexecutionComponent)
             }
         ]
     },
+
+
     {
         path: 'eligibility-criterias', children: [
             // { path: '', redirectTo: 'comp-off', pathMatch: 'full' },

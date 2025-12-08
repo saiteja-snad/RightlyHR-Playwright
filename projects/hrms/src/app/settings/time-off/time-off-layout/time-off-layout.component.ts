@@ -52,4 +52,8 @@ export class TimeOffLayoutComponent implements OnInit {
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
+
+  carryforwordnavigation() {
+    this.router.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-create']);
+  }
 }

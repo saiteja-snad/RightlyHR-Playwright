@@ -7,15 +7,19 @@
         <div class="d-flex justify-content-between">
             <div class="d-flex gap-2 step">
                 <div class="progress-number">1</div>
-                <div class="progress-name">Scope & Config</div>
+                <div class="progress-name">Select Scope</div>
             </div>
             <div class="d-flex gap-2 step" [ngClass]="{ 'inactive-step': progress < 2 }">
                 <div class="progress-number">2</div>
-                <div class="progress-name">Validation & Preview</div>
+                <div class="progress-name">Review Report</div>
             </div>
             <div class="d-flex gap-2 step" [ngClass]="{ 'inactive-step': progress < 3 }">
                 <div class="progress-number">3</div>
-                <div class="progress-name">Execution & Monitor</div>
+                <div class="progress-name">Map Categories</div>
+            </div>
+             <div class="d-flex gap-2 step" [ngClass]="{ 'inactive-step': progress < 4 }">
+                <div class="progress-number">4</div>
+                <div class="progress-name">Execution</div>
             </div>
         </div>
     </div>

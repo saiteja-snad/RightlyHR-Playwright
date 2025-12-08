@@ -162,7 +162,6 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/inactive') {
       this.componentname = 'Inactive Clients';
     }
-
     else if (currentUrl === '/project-management/clients/add/info') {
       this.componentname = 'Add Client';
     }
@@ -194,11 +193,9 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/hold') {
       this.componentname = 'On Hold Projects';
     }
-
     else if (currentUrl === '/project-management/clients/details/resources') {
       this.componentname = 'Active Resources';
     }
-
     else if (currentUrl === '/project-management/clients/details/inactive-resources') {
       this.componentname = 'Inactive Resources';
     }
@@ -262,8 +259,6 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/projects/details/hold-phases') {
       this.componentname = ' On Hold Phases / Milestones';
     }
-
-
     else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' ||
       '/project-management/projects/details/timesheet/resource-summary') {
       this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');

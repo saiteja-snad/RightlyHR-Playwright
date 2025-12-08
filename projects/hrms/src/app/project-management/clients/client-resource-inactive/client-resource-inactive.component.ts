@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, Subject, takeUntil } from 'rxjs';
+import {combineLatest,debounceTime, distinctUntilChanged ,Subscription, Subject, takeUntil } from 'rxjs';
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -22,14 +22,20 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
 @Component({
   selector: 'app-client-resource-inactive',
-  imports: [CommonModule, ReactiveFormsModule,ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule,NgbPopover, DataLoaderContentComponent,
      Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resource-inactive.component.html',
   styleUrl: './client-resource-inactive.component.scss'
 })
 
 export class ClientResourceInactiveComponent {
+  searchValue: string = '';
   resourcesData = [] as IResource[];
+
+  selectedRoleIds: number[] = [];
+  selectedPhaseIds: number[] = [];
+  selectedAuthorityIds: number[] = [];
+  selectedProjectIds:number[] = [];
   resourcesDataByPhase = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -74,7 +80,7 @@ export class ClientResourceInactiveComponent {
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
-    private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute, 
+    private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
@@ -90,8 +96,28 @@ export class ClientResourceInactiveComponent {
         this.getClientsData(clientID);
       }
     });
+
+    combineLatest([
+      this.http.resourceRoleFilter$,
+      this.http.resourcePhaseFilter$,
+      this.http.resourceAuthorityFilter$,
+      this.http.resourceProjectFilter$
+    ]).pipe(
+      takeUntil(this.destroy$),
+      debounceTime(100),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    ).subscribe(([roleIds, phaseIds, authorityIds, projectIds]) => {
+      this.selectedRoleIds = roleIds || [];
+      this.selectedPhaseIds = phaseIds || [];
+      this.selectedAuthorityIds = authorityIds || [];
+      this.selectedProjectIds = projectIds || [];
+      if (this.clientID) {
+        this.getResourceData(this.clientID, this.searchValue);
+      }
+    });
+
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.clientID));
+      this.getResourceData(parseInt(this.clientID), this.searchValue);
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -147,8 +173,24 @@ export class ClientResourceInactiveComponent {
     });
   }
 
-  getResourceData(id: any) {
-    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
+  getResourceData(id: any, searchTerm?: string) {
+    let url = `ProjectResource?status=Released&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    if (searchTerm) {
+      url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    if (this.selectedRoleIds.length > 0) {
+      url += `&roleIds=${this.selectedRoleIds.join(',')}`;
+    }
+    if (this.selectedPhaseIds.length > 0) {
+      url += `&phaseId=${this.selectedPhaseIds.join(',')}`;
+    }
+        if (this.selectedProjectIds.length > 0) {
+      url += `&projectIds=${this.selectedProjectIds.join(',')}`;
+    }
+    if (this.selectedAuthorityIds.length > 0) {
+      url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
+    }
+    this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
           this.resourcesData = data.data;
@@ -194,7 +236,7 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, isPopupCall: boolea
           }));
         this.defaultPendingAuthorityId = this.resourcesDataByPhase[0]?.pendingApprovalAuthority?.id ?? null;
       }
-      
+
       const authorityControl = this.updateResourceForm.get('resourceAuthority');
       if (this.resoucesDropDownData.length === 0) {
         authorityControl?.disable();
@@ -408,7 +450,7 @@ onPhaseChange(event: any) {
   openModal(content: any, size: any, data: any) {
     this.selectedResource = data;
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
-    
+
     const selectedRole = this.projectRoleDropdown.find(
       (r: any) => r.value.roleId === data.projectRoleId
     );
@@ -509,7 +551,7 @@ onPhaseChange(event: any) {
         this.loader = false;
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         this.loader = false;
@@ -538,7 +580,7 @@ onPhaseChange(event: any) {
       next: (res) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Resource deleted successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         console.error('Error occurred:', err);
@@ -610,7 +652,7 @@ onPhaseChange(event: any) {
 
   get newStartDate() { return this.extendForm.get('newStartDate')?.value; }
   get newEndDate() { return this.extendForm.get('newEndDate')?.value; }
-  
+
   openExtendModal(data: any) {
     this.modalData = { data };
     this.extendForm.reset();
@@ -741,7 +783,7 @@ onPhaseChange(event: any) {
           return {
             ...employee,
             id: employee.employeeId,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -782,6 +824,15 @@ onPhaseChange(event: any) {
     this.modalService.dismissAll();
     this.updateResourceForm.reset();
   }
+
+  onSearchChange() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.getResourceData(this.clientID, this.searchValue);
+    }, 300);
+  }
+
+  private searchTimeout: any;
 
   isActive(route: string): boolean {
     return this.router.url.includes(route);

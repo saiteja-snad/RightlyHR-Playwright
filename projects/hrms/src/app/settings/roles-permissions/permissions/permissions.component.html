@@ -4771,9 +4771,8 @@
                             <th colspan="5" class="custom-header">Timesheet Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center"
-                                *ngIf="per.fields === 'My Team (Timesheet)' || per.fields === 'All Employees (Timesheet)'
-                            ||  per.fields === 'Team Time Sheet' ||  per.fields === 'Team Time Sheet Summary Tab'||  per.fields === 'Team Time Sheet Detailed Tab'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'My Team (Timesheet)' || per.fields === 'All Employees (Timesheet)'
+                            ||  per.fields === 'Team Time Sheet' ||  per.fields === 'Team Time Sheet Summary Tab'||  per.fields === 'Team Time Sheet Detailed Tab'||  per.fields === 'Team Time Sheet Filters Tab'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

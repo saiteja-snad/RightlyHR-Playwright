@@ -18,7 +18,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule,InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule, InfoIconComponent],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
 })
@@ -52,7 +52,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   selectedworkcoutrycode = signal<any>('');
   selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, 
+  constructor(private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService,
     public http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
@@ -236,31 +236,38 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   updateAddressInfo(): void {
     const formValue = this.contactForm.getRawValue();
+
     const targetStatuses = ['Pending', 'Cancelled'];
     const pendingFieldNames = this.getFieldsApprovalStatusList
       .filter((item) => targetStatuses.includes(item.approvalStatus))
       .map((item) => item.fieldName);
+
     const fieldToApiMap: { [key: string]: string } = {
       'Personal Email': 'emailaddress',
       'Work Email': 'workEmail',
       'Phone Number': 'contactnumber',
       'Work Number': 'workPhone'
     };
+
     const updatePayload: any = {
       ...this.employedata,
       updatedby: this.empinfo.employeeId.toString(),
       selfUpdate: this.isMyInfoRoute,
       moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
       displayName: this.isMyInfoRoute ? 'Personal' : undefined,
+      workEmail: this.contactForm.get('workMail')?.value || this.employedata.workEmail,
     };
+
     // Only include non-pending fields
     Object.keys(fieldToApiMap).forEach((displayName) => {
       if (!pendingFieldNames.includes(displayName)) {
         const apiKey = fieldToApiMap[displayName];
         let value;
+
         if (displayName === 'Personal Email') value = formValue.personalEmail;
         else if (displayName === 'Phone Number') value = formValue.phoneNumber;
         else if (displayName === 'Work Number') value = formValue.workNumber;
+
         if (value !== undefined && value !== null && value !== '') {
           if (displayName.includes('Number')) {
             updatePayload[apiKey] = String(value).replace(/\D+/g, '');
@@ -270,33 +277,41 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         }
       }
     });
+
     // Always include country codes/flags if changed
     updatePayload.mobilePhoneCountryCode = this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode;
     updatePayload.workPhoneCountryCode = this.selectedDialCode || this.employedata.workPhoneCountryCode;
     updatePayload.contactnumbercountryflag = this.selectedCountryCodephoneflag || this.employedata.contactnumbercountryflag;
     updatePayload.workPhoneCountryFlag = this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag;
-    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload).subscribe({
-      next: (data: any) => {
-        if (data.statusCode === 200) {
-          this.http.setBasicDetails();
-          this.conformationPopup.openSuccessModal('Contact Information updated successfully');
-          this.contactForm.disable();
-          this.buttons = false; // Disable the button after successful update
-          this.getEmployeeId();
-          this.getFieldsApprovalStatus();
-        } else if (data.statusCode === 409) {
-          this.getEmployeeId();
-          this.conformationPopup.openErrorModal(data.message);
-          this.patchForm(data); // Bind the data in case of conflict
-        }
-      },
-      error: (reason: any) => {
-        this.getEmployeeId();
-        this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
-      },
-    });
-  }
 
+    console.log('Contact Payload (excluding pending):', updatePayload);
+
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Data updated successfully:', data);
+          if (data.statusCode === 200) {
+            this.http.setBasicDetails();
+            this.conformationPopup.openSuccessModal('Contact Information updated successfully');
+            this.contactForm.disable();
+            this.buttons = false; // Disable the button after successful update
+            this.getEmployeeId();
+            this.getFieldsApprovalStatus();
+
+          } else if (data.statusCode === 409) {
+            this.getEmployeeId();
+            this.conformationPopup.openErrorModal(data.message);
+            this.patchForm(data); // Bind the data in case of conflict
+          }
+        },
+        error: (reason: any) => {
+          this.getEmployeeId();
+          console.log(reason);
+          this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
+        },
+      });
+  }
+  
   onPhoneNumberInput(): void {
     const phoneNumberControl = this.contactForm.get('phoneNumber');
     if (phoneNumberControl?.value) {

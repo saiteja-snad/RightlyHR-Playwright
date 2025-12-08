@@ -112,7 +112,7 @@ export default [
       { path: 'permissions', component: PermissionsComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
     ],
   },
-  { path: 'global-permissions', component: GlobalPermissionsComponent, data: { permission: 'Global Permissions Module.view' } },
+  
   {
     path: 'extra-hours', component: ExtraHoursComponent,
     children: [

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
@@ -15,12 +15,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
-import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
-import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DownloadIconComponent } from '../../../icons/download-icon/download-icon.component';
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
@@ -48,6 +47,10 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false
   loading = false
   dateofbirth: any;
+  isMyInfoRoute = false;
+  getFieldsApprovalStatusList: any[] = [];
+  addedRecords=[] as any;
+  activeMessage: string = '';
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
     public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
@@ -55,7 +58,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.initializeupdateForm()
     this.getDegree()
-
+    this.getFieldsApprovalStatus();
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
       this.educationForm.get('degreeEndDate')?.reset();
     });
@@ -72,11 +75,13 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.isMyInfoRoute=false;
       this.getEmployeeId();
       this.getEducationEmpid();
 
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.isMyInfoRoute=true;
       this.getEmployeeId();
       this.getEducationEmpid();
     }
@@ -211,6 +216,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.educationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Academic details added successfully');
+        this.getFieldsApprovalStatus();
         this.getEducationEmpid();
       },
       error: (err: any) => {
@@ -233,6 +239,10 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       attachment: attachmentPath || '',
       status: 'Active',
       isDeleted: false,
+      moduleName: "Academics",
+      displayName: "Personal",
+      createdBy: this.empinfo.employeeId,
+      selfUpdate: this.isMyInfoRoute,
     };
   }
 
@@ -367,7 +377,11 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         degreeStartDate: formData.degreeStartDateupdate,
         degreeEndDate: formData.degreeEndDateupdate,
         attachment: this.educationAttachment || '', // Use the existing attachment or the new one
-        employeeId: this.empinfo.employeeId // Add employee ID if required
+        employeeId: this.empinfo.employeeId, // Add employee ID if required
+        moduleName: "Academics",
+        displayName: "Personal",
+        createdBy: this.empinfo.employeeId,
+        selfUpdate: this.isMyInfoRoute,
       };
       // Check if a new attachment is selected
       if (this.educationAttachment instanceof File) {
@@ -406,7 +420,8 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         this.getEducationEmpid()
         this.educationupdateForm.reset()
-        this.modalService.dismissAll()
+        this.modalService.dismissAll();
+        this.getFieldsApprovalStatus();
         this.conformationPopup.openSuccessModal('Academic details updated successfully')
 
       },
@@ -430,22 +445,20 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       return;
     }
     const payload = {
-      status: 'Void',
       id: this.selectedEducationDetails.id,
-      employeeId: this.selectedEducationDetails.employeeId,
-      degree: this.selectedEducationDetails.degree,
-      university: this.selectedEducationDetails.university,
-      specialization: this.selectedEducationDetails.specialization,
-      gpa: this.selectedEducationDetails.gpa,
-      degreeStartDate: this.selectedEducationDetails.degreeStartDate,
-      degreeEndDate: this.selectedEducationDetails.degreeEndDate,
+      empId: this.empinfo.employeeId,
+      requestedBy: this.empinfo.employeeId,
+      moduleName: 'Academics',
+      displayName: 'Personal',
+      selfUpdate: this.isMyInfoRoute,
     };
 
     // Send the delete request
-    this.subscription = this.http.postdata('Education/UPDATER', payload).subscribe({
+    this.subscription = this.http.DeleteData('Education/deleteEducation', payload).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll()
         this.getEducationEmpid();
+        this.getFieldsApprovalStatus()
         this.conformationPopup.openSuccessModal('Academic details deleted successfully');
       },
       error: (err: any) => {
@@ -462,6 +475,55 @@ resetdata(){
   this.educationupdateForm.reset();
   this.modalService.dismissAll();
   this.educationForm.reset()
+}
+getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Academics',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+            this.addedRecords=this.getFieldsApprovalStatusList.filter((item:any)=>item.approvalStatus?.toLowerCase()==='pending' && item.fieldName==='Add');
+            //this.disablePendingFields();
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+    // Add this new method
+ disablePendingFields(referenceid: any): boolean {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item =>
+      String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+  return pendingFields.length > 0;
+}
+    getPendingApprovalMessage(referenceid: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
+  }
+
+  setActiveMessage(referenceid:any) {
+  this.activeMessage = this.getPendingApprovalMessage(referenceid);
 }
   ngOnDestroy(): void {
     if (this.subscription) {

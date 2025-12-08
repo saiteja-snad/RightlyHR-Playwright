@@ -74,16 +74,20 @@ export class AddressesComponent {
     public formValidations: FormValidationsService,
     public rbac: RbacService,
     private authService: AuthService
-  ) {}
+  ) { }
   ngOnInit(): void {
-    this.fieldConfigForm = this.fb.group({
-      addressType: ['', Validators.required],
-      fieldNames: [[], Validators.required],
-      approvalRequired: [true],
-      approvalType: ['', Validators.required],
-      selectedEmployee: [''],
-      selectedRole: [''],
-      selectedManager: [''],
+    this.initializeFormControls();
+    this.fieldConfigForm.get('fieldNames')?.valueChanges.subscribe(val => {
+      const approval = this.fieldConfigForm.get('approvalType');
+
+      // If field names selected → approval type must be required
+      if (val && val.length > 0) {
+        approval?.setValidators([Validators.required]);
+      } else {
+        approval?.clearValidators();
+      }
+
+      approval?.updateValueAndValidity();
     });
     this.getAddressesFields();
     this.setupFormSubscriptions();
@@ -91,43 +95,90 @@ export class AddressesComponent {
     this.getAllRoles();
     this.getAddressesFieldsConfigList();
 
-//     this.fieldConfigForm.get('addressType')?.valueChanges.subscribe(() => {
-//   this.updateFieldOptionsDisableStatus();
-// });
+    //     this.fieldConfigForm.get('addressType')?.valueChanges.subscribe(() => {
+    //   this.updateFieldOptionsDisableStatus();
+    // });
 
   }
+  //function to intialize form control
+  initializeFormControls() {
+    this.fieldConfigForm = this.fb.group({
+      addressType: ['', Validators.required],
+      fieldNames: [[], Validators.required],
+      approvalRequired: [true],
+      approvalType: [null, Validators.required],
+      selectedEmployee: [''],
+      selectedRole: [''],
+      selectedManager: [''],
+    });
+    this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(value => {
+      this.updateConditionalValidators(value);
+    });
 
-//   isFieldAlreadyUsedForSelectedAddressType(fieldName: string): boolean {
-//   const selectedAddressType = this.fieldConfigForm.get('addressType')?.value;
+  }
+  //function to handle approval type changes
+  updateConditionalValidators(type: string) {
 
-//   return this.addressesFieldsConfigList.some((item: any) =>
-//     item.displayName === 'Personal' &&
-//     item.moduleName === 'Address' &&
-//     item.referenceCategory === (selectedAddressType === 'CURRENT' ? 'C' : 'P') &&
-//     item.columnName === fieldName
-//   );
-// }
+    const role = this.fieldConfigForm.get('selectedRole');
+    const emp = this.fieldConfigForm.get('selectedEmployee');
+    const mgr = this.fieldConfigForm.get('selectedManager');
 
-// updateFieldOptionsDisableStatus() {
-//   const addressType = this.fieldConfigForm.get('addressType')?.value;
+    // clear previous validators
+    role?.clearValidators();
+    emp?.clearValidators();
+    mgr?.clearValidators();
 
-//   this.fieldOptions = this.fieldOptions.map((option: any) => ({
-//     ...option,
-//     optionDisabled: this.isFieldAlreadyUsedForSelectedAddressType(option.fieldName)
-//   }));
-// }
+    if (type === 'ROLE') {
+      role?.setValidators([Validators.required]);
+    }
+
+    if (type === 'EMP') {
+      emp?.setValidators([Validators.required]);
+    }
+
+    if (type === 'MANAGER') {
+      mgr?.setValidators([Validators.required]);
+    }
+
+    role?.updateValueAndValidity();
+    emp?.updateValueAndValidity();
+    mgr?.updateValueAndValidity();
+  }
+
+
+  //   isFieldAlreadyUsedForSelectedAddressType(fieldName: string): boolean {
+  //   const selectedAddressType = this.fieldConfigForm.get('addressType')?.value;
+
+  //   return this.addressesFieldsConfigList.some((item: any) =>
+  //     item.displayName === 'Personal' &&
+  //     item.moduleName === 'Address' &&
+  //     item.referenceCategory === (selectedAddressType === 'CURRENT' ? 'C' : 'P') &&
+  //     item.columnName === fieldName
+  //   );
+  // }
+
+  // updateFieldOptionsDisableStatus() {
+  //   const addressType = this.fieldConfigForm.get('addressType')?.value;
+
+  //   this.fieldOptions = this.fieldOptions.map((option: any) => ({
+  //     ...option,
+  //     optionDisabled: this.isFieldAlreadyUsedForSelectedAddressType(option.fieldName)
+  //   }));
+  // }
 
 
   get allOptionsDisabled(): boolean {
-  return this.fieldOptions?.every((o:any) => o.optionDisabled === true);
-}
+    return this.fieldOptions?.every((o: any) => o.optionDisabled === true);
+  }
 
-get isReadOnlyMode(): boolean {
-  return this.allOptionsDisabled;
-}
+  get isReadOnlyMode(): boolean {
+    return this.allOptionsDisabled;
+  }
+
+  allFieldOptions: any[] = [];
   getAddressesFields() {
     const params = 'Personal';
-    const param = 'Address';
+    const param = 'Addresses';
     this.http
       .getDatabyentityvalueForFieldUpdate(
         `EmployeeInfoApprovalFields/getApprovalFields`,
@@ -137,6 +188,7 @@ get isReadOnlyMode(): boolean {
       .subscribe({
         next: (data: any) => {
           if (data.data.length > 0) {
+            this.allFieldOptions = data.data
             this.fieldOptions = data.data.filter(
               (field: any) => field.isRequired !== false
             );
@@ -150,11 +202,24 @@ get isReadOnlyMode(): boolean {
       });
   }
 
+  filterFieldsByAddressType() {
+    this.fieldConfigForm.get('fieldNames')?.reset();
+    this.fieldOptions = [];
+    const selectedType = this.fieldConfigForm.get('addressType')?.value;
+    if (!selectedType) {
+      this.fieldOptions = [];
+      return;
+    }
+    const prefix = selectedType === 'CURRENT' ? 'Current' : 'Permanent';
+    this.fieldOptions = this.allFieldOptions.filter((f: any) =>
+      f.fieldName.startsWith(prefix)
+    );
+  }
   getAddressesFieldsConfigList() {
     this.loader = true;
     const params = {
       displayName: 'Personal',
-      moduleName: 'Address',
+      moduleName: 'Addresses',
     };
     this.http
       .getDataIncludeParams(
@@ -166,15 +231,15 @@ get isReadOnlyMode(): boolean {
           if (data.data.length > 0) {
             this.addressesFieldsConfigList = data.data;
           } else {
-             this.addressesFieldsConfigList = [];
+            this.addressesFieldsConfigList = [];
             console.log('No data found.');
           }
           this.loader = false;
         },
         error: (err) => {
-            if (err.status === 404) {
-          this.addressesFieldsConfigList = [];
-        }
+          if (err.status === 404) {
+            this.addressesFieldsConfigList = [];
+          }
           console.error('Error fetching data:', err);
           this.loader = false;
         },
@@ -188,9 +253,8 @@ get isReadOnlyMode(): boolean {
       .subscribe({
         next: (res: any) => {
           this.activeEmplist = res.map((employee: any) => ({
-            label: `${employee.fusionEmpId ?? ''} - ${
-              employee.firstName ?? ''
-            }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+            label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''
+              }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
             value: employee.employeeId,
           }));
         },
@@ -220,8 +284,8 @@ get isReadOnlyMode(): boolean {
         formValue.addressType === 'CURRENT'
           ? 'C'
           : formValue.addressType === 'PERMANENT'
-          ? 'P'
-          : '';
+            ? 'P'
+            : '';
 
       let loggedInUser = this.authService.getToken();
       let approvalTypeToSend = formValue.approvalType;
@@ -262,6 +326,7 @@ get isReadOnlyMode(): boolean {
               : '',
           referenceCategory: referenceCategory,
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope:'Field'
         };
 
         this.subscription = this.http
@@ -285,6 +350,9 @@ get isReadOnlyMode(): boolean {
               this.conformationPopup.openErrorModal(errorMessage);
               this.loader = false;
             },
+            complete: () => {
+              this.fieldConfigForm.reset({ fieldNames: [] });
+            },
           });
       } else {
         // Create operation
@@ -296,10 +364,11 @@ get isReadOnlyMode(): boolean {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope:'Field'
           };
         });
         const request = {
-         Items:items,
+          Items: items,
           moduleName:
             this.fieldOptions.length > 0
               ? this.fieldOptions[0]?.moduleName
@@ -317,6 +386,7 @@ get isReadOnlyMode(): boolean {
               : '',
           referenceCategory: referenceCategory,
           createdBy: loggedInUser.employeeId,
+
         };
 
         this.subscription = this.http
@@ -336,6 +406,9 @@ get isReadOnlyMode(): boolean {
               const errorMessage = error.error?.message;
               this.conformationPopup.openErrorModal(errorMessage);
               this.loader = false;
+            },
+            complete: () => {
+              this.fieldConfigForm.reset({ fieldNames: [] });
             },
           });
       }
@@ -389,6 +462,7 @@ get isReadOnlyMode(): boolean {
     this.isEditMode = false;
     this.selectedFieldConfig = null;
     this.fieldConfigForm.reset();
+    this.clearApprovalValidators();
     this.fieldConfigForm.get('fieldNames')?.enable(); // Ensure it's enabled for create
     this.modalService.open(this.fieldConfigpopup, {
       backdrop: 'static',
@@ -405,7 +479,7 @@ get isReadOnlyMode(): boolean {
       approvalRequired: true,
       approvalType:
         fieldConfig.approvalEntity === 'TM' ||
-        fieldConfig.approvalEntity === 'RM'
+          fieldConfig.approvalEntity === 'RM'
           ? 'MANAGER'
           : fieldConfig.approvalType,
 
@@ -419,15 +493,15 @@ get isReadOnlyMode(): boolean {
           : '',
       selectedManager:
         fieldConfig.approvalEntity === 'TM' ||
-        fieldConfig.approvalEntity === 'RM'
+          fieldConfig.approvalEntity === 'RM'
           ? fieldConfig.approvalEntity
           : '',
       addressType:
         fieldConfig.referenceCategory === 'C'
           ? 'CURRENT'
           : fieldConfig.referenceCategory === 'P'
-          ? 'PERMANENT'
-          : '',
+            ? 'PERMANENT'
+            : '',
     });
     // Disable fieldNames control to make it non-editable in edit mode
     this.fieldConfigForm.get('fieldNames')?.disable();
@@ -444,11 +518,11 @@ get isReadOnlyMode(): boolean {
       .get('approvalType')
       ?.valueChanges.subscribe((value) => {
         // Reset employee/role selections when type changes
-        this.fieldConfigForm.patchValue({
-          selectedEmployee: '',
-          selectedRole: '',
-          selectedManager: '',
-        });
+        // this.fieldConfigForm.patchValue({
+        //   selectedEmployee: '',
+        //   selectedRole: '',
+        //   selectedManager: '',
+        // });
         this.updateApprovalValidators(value);
       });
   }

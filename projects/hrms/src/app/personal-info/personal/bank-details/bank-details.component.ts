@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { Ibank, Ibankdetails } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -15,12 +15,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
-import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
-import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DownloadIconComponent } from '../../../icons/download-icon/download-icon.component';
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
@@ -39,6 +38,10 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   employedata = {} as IProbationEmployees;
   spinnerLoader = false;
   loading = false
+  isMyInfoRoute = false;
+  getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
+  addedRecords=[] as any;
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -46,7 +49,8 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.initializeBankDetailsForm();
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
-
+    this.getFieldsApprovalStatus();
+    
   }
 
 
@@ -60,9 +64,11 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.isMyInfoRoute=false;
       this.getbankempid()
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
+      this.isMyInfoRoute=true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getbankempid()
       this.getEmployeeId();
@@ -256,6 +262,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       next: () => {
         this.spinnerLoader = false
         this.getbankempid()
+        this.getFieldsApprovalStatus();
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank information added successfully')
@@ -267,7 +274,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  createBankDetailsPayload(attachmentPath: string = ''): any {
+ createBankDetailsPayload(attachmentPath: string = ''): any {
     return {
       empId: parseInt(this.empinfo.employeeId),
       bankName: this.bankDetailsForm.get('bankName')?.value?.bankName1,
@@ -275,6 +282,10 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
       isPrimary: this.bankDetailsForm.get('isPrimary')?.value || false,
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: "Bank Info",
+      displayName: "Personal",
+      createdBy: this.empinfo.employeeId
     };
   }
 
@@ -349,6 +360,10 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         ifscCode: formData.ifscCodeupdate,
         isPrimary: formData.isPrimaryupdate || false,
         isDeleted: false,
+        selfUpdate: this.isMyInfoRoute,
+        moduleName: "Bank Info",
+        displayName: "Personal",
+        createdBy: this.empinfo.employeeId
       };
       // Check if a new attachment is selected
       if (this.bankdocument instanceof File) {
@@ -385,6 +400,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank information updated successfully');
+        this.getFieldsApprovalStatus();
         this.getbankempid(); // Refresh the bank details list
       },
       error: (reason: any) => {
@@ -399,22 +415,37 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  bankDelete(): void {
-    if (!this.bankid) {
-      console.error('Bank ID is not set. Cannot delete bank details.');
-      return;
-    }
-    this.subscription = this.http.getData(`BankDetail/deletebyid/${this.bankid}`).subscribe({
-      next: (data: any) => {
-        this.getbankempid(); // Refresh the bank details list
-        this.modalService.dismissAll(); // Close the modal
-        this.conformationPopup.openSuccessModal('Bank information deleted successfully')
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
-      }
-    });
+ bankDelete(): void {
+  if (!this.bankid) {
+    console.error('Bank ID is not set. Cannot delete bank details.');
+    return;
   }
+ 
+  const payload = {
+    bankId: this.bankid,
+    empId: this.empinfo.employeeId,    // Set from logged-in user context
+    requestedBy: this.empinfo.employeeId, // Logged-in user ID
+    selfUpdate: this.isMyInfoRoute,  // Setting true so approval is applied
+    moduleName: "Bank Info",
+    displayName: "Personal"
+  };
+ 
+  this.subscription = this.http.postdata(`BankDetail/delete`, payload).subscribe({
+    next: () => {
+      this.getbankempid(); // Refresh bank list
+      this.getFieldsApprovalStatus();
+      this.modalService.dismissAll(); // Close modal
+      this.conformationPopup.openSuccessModal(
+        'Bank information deleted successfully.'
+      );
+    },
+    error: () => {
+      this.conformationPopup.openErrorModal(
+        'Failed to submit delete bank request. Please try again.'
+      );
+    }
+  });
+}
    openConfirmationModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -424,7 +455,54 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.bankDetailsUpdateForm.reset();
     this.bankDetailsForm.reset()
   }
+ getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Bank Info',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+            this.addedRecords=this.getFieldsApprovalStatusList.filter((item:any)=>item.approvalStatus?.toLowerCase()==='pending' && item.fieldName==='Add');
 
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+    // Add this new method
+ disablePendingFields(referenceid: any): boolean {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item =>
+      String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+  return pendingFields.length > 0;
+}
+    getPendingApprovalMessage(referenceid: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
+  }
+    setActiveMessage(referenceid:any) {
+  this.activeMessage = this.getPendingApprovalMessage(referenceid);
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

@@ -2,6 +2,9 @@
       font-family: 'VERDANA', sans-serif !important;
   }
 
+  .border-box {
+      border: 1px solid #000;
+  }
 
   .letter-data-content {
       width: 100%;
@@ -47,15 +50,50 @@
 
   }
 
+
   .salary-details-table {
+
+      table,
+      th,
+      td {
+          border: 1px solid #474747;
+          border-collapse: collapse;
+          color: #000;
+      }
+
+      th,
+      td {
+          padding: 0.25rem 0.625rem;
+          text-align: center;
+          color: #000;
+          font-size: var(--fontsize16) !important;
+      }
+
+      th {
+          font-weight: bold;
+      }
 
       .mytable,
       .secondtable {
           th {
-              background: #e7f0fd !important;
+              background: #e7f0fd;
           }
       }
   }
+
+  .mytable tr:nth-child(4),
+  .mytable tr:nth-child(10) {
+
+      background: #fff2cc;
+  }
+
+  .mytable tr:nth-child(9) {
+      background: #fff2cc;
+  }
+
+  .secondtable tr:nth-child(4) td:nth-last-child(-n + 2) {
+    background: #fce4d6;
+}
 
 
   .letter-signature {

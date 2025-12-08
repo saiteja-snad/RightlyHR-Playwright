@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -14,7 +14,7 @@ import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component"
 
 @Component({
   selector: 'app-address-info',
-  imports: [CommonModule, ReactiveFormsModule, Skeleton, EditIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, Skeleton, NgbPopoverModule, EditIconComponent],
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })
@@ -29,6 +29,9 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   loading: boolean = false;
   employedata={} as any;
   isMyInfoRoute = false;
+  fieldOptions = [] as any;
+  getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
 
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
@@ -37,6 +40,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
     this.initializeForm();
+    this.getFieldsApprovalStatus();
     this.addressForm.disable();
     this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
       this.checkIfAddressesAreSame();
@@ -104,6 +108,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.addressForm.get('sameAsPermanent')?.enable();
     this.addressForm.get('currentAddress')?.enable(); // Enable all current address fields
     this.addressForm.get('permanentAddress')?.enable(); // Enable all permanent address fields
+    this.disablePendingFields();
   }
 
   enableForm2(): void {
@@ -243,7 +248,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
 
   postEmployeeAddresses(): void {
     // Update currentAddress and permanentAddress with the latest form values
-    const formValue = this.addressForm.value;
+    const formValue = this.addressForm.getRawValue();
 
     this.currentAddress = {
       ...this.currentAddress,
@@ -255,6 +260,11 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       state: formValue.currentAddress.state,
       country: formValue.currentAddress.country,
       zipCode: formValue.currentAddress.zipCode,
+      updatedBy: this.empinfo.employeeId,
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: 'Addresses',
+      displayName: 'Personal',
+      referenceCategory: 'C',
     };
 
     this.permanentAddress = {
@@ -267,6 +277,11 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       state: formValue.permanentAddress.state,
       country: formValue.permanentAddress.country,
       zipCode: formValue.permanentAddress.zipCode,
+      updatedBy: this.empinfo.employeeId,
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: 'Addresses',
+      displayName: 'Personal',
+      referenceCategory: 'P',
     };
 
     // Prepare the payload
@@ -281,6 +296,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         console.log('Addresses updated successfully:', data);
         this.addressForm.disable();
         this.getEmployeeId();
+        this.getFieldsApprovalStatus();
         this.buttons = false;
         this.buttons2 = false;
         this.conformationPopup.openSuccessModal('Addresses updated successfully');
@@ -297,12 +313,15 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
 
     if (isChecked) {
       this.addressForm.get('permanentAddress')?.patchValue({
-        addressLine1: this.addressForm.get('currentAddress.addressLine1')?.value,
-        addressLine2: this.addressForm.get('currentAddress.addressLine2')?.value,
+        addressLine1: this.addressForm.get('currentAddress.addressLine1')
+          ?.value,
+        addressLine2: this.addressForm.get('currentAddress.addressLine2')
+          ?.value,
         city: this.addressForm.get('currentAddress.city')?.value,
         state: this.addressForm.get('currentAddress.state')?.value,
         country: this.addressForm.get('currentAddress.country')?.value,
         zipCode: this.addressForm.get('currentAddress.zipCode')?.value,
+       
       });
     } else {
       this.addressForm.get('permanentAddress')?.patchValue({
@@ -312,12 +331,96 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         state: this.permanentAddress?.state || '',
         country: this.permanentAddress?.country || '',
         zipCode: this.permanentAddress?.zipCode || '',
+        
       });
     }
 
     this.checkIfAddressesAreSame();
   }
+  getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Addresses',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
 
+  isFieldPendingApproval(fieldName: string): boolean {
+    console.log('Checking pending approval for field:', fieldName ,this.getFieldsApprovalStatusList);
+    return this.getFieldsApprovalStatusList.some(
+      (item: any) =>
+        item.fieldName === fieldName && item.approvalStatus === 'Pending'
+    );
+  }
+
+
+  getPendingApprovalMessage(fieldName: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        item.fieldName === fieldName && item.approvalStatus === 'Pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
+  }
+
+  setActiveMessage(fieldName: string) {
+  this.activeMessage = this.getPendingApprovalMessage(fieldName);
+}
+
+  // Add this method
+  isFieldDisabledDueToPending(fieldName: string): boolean {
+    return this.isFieldPendingApproval(fieldName);
+  }
+   // Add this new method
+ private disablePendingFields(): void {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item => item.approvalStatus === 'Pending')
+    .map(item => item.fieldName);
+
+  const controlMap: { [key: string]: string } = {
+    // Current Address fields
+    'Current Address Line 1': 'currentAddress.addressLine1',
+    'Current Address Line 2': 'currentAddress.addressLine2',
+    'Current City': 'currentAddress.city',
+    'Current State': 'currentAddress.state',
+    'Current Country': 'currentAddress.country',
+    'Current ZipCode': 'currentAddress.zipCode',
+
+    // Permanent Address fields
+    'Permanent Address Line 1': 'permanentAddress.addressLine1',
+    'Permanent Address Line 2': 'permanentAddress.addressLine2',
+    'Permanent City': 'permanentAddress.city',
+    'Permanent State': 'permanentAddress.state',
+    'Permanent Country': 'permanentAddress.country',
+    'Permanent ZipCode': 'permanentAddress.zipCode'
+  };
+
+  pendingFields.forEach((fieldName) => {
+    const controlPath = controlMap[fieldName];
+
+    if (controlPath && this.addressForm.get(controlPath)) {
+      this.addressForm.get(controlPath)?.disable();
+    }
+  });
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

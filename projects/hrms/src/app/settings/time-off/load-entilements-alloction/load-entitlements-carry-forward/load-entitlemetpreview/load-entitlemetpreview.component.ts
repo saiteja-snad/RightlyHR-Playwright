@@ -92,6 +92,7 @@ export class LoadEntitlemetpreviewComponent {
 
   openLeaveDetails(row: any, content: any) {
     this.selectedEmployeeDetail = row.leaveEntries;
+
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
     console.log("Entries =>", this.selectedEmployeeDetail);
   }

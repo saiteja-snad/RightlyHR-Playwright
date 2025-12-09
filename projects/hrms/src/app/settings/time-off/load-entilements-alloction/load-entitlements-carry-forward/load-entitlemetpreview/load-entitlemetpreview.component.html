@@ -17,15 +17,12 @@
 
             <tbody>
                 <tr *ngFor="let row of employeesList">
-                    <td>{{row.employee}}</td>
+                    <td><a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{
+                            row.employee }}</a></td>
                     <td *ngFor="let type of leaveTypes">
                         {{ row[type] ?? 0 }}
                     </td>
-                    <td>
-                        <a type="button" class="download-text">
-                            <i class="bi bi-eye-fill me-2 cursor" (click)="openLeaveDetails(row,viewmodal)"></i>
-                        </a>
-                    </td>
+
                 </tr>
             </tbody>
         </table>
@@ -33,7 +30,8 @@
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary" (click)="navigationtoback()">Back</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="navigationtomapcategory()">Proceed to Mapping</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="navigationtomapcategory()">Proceed to
+                Mapping</button>
         </div>
     </div>
 </div>

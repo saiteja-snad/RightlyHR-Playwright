@@ -19,6 +19,7 @@ import { InfoIconComponent } from "../../../../../icons/info-icon/info-icon.comp
 export class LoadEntitlemetpreviewComponent {
   carryforwarddata: any = {}
   selectedEmployeeDetail: any = null;
+  selectemployeename:any
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
@@ -91,6 +92,8 @@ export class LoadEntitlemetpreviewComponent {
 
 
   openLeaveDetails(row: any, content: any) {
+    console.log("row", row);
+    this.selectemployeename=row.employee
     this.selectedEmployeeDetail = row.leaveEntries;
 
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });

@@ -50,8 +50,7 @@
         </div>
         }
         <!--My Team  -->
-        @if(rbac.allowedToAccess('My Team Report(RemoteLogin).view') &&!rbac.allowedToAccess('Attendance All Employees
-        List(RemoteLogin).view')
+        @if(rbac.allowedToAccess('My Team Report(RemoteLogin).view') &&!rbac.allowedToAccess('Attendance All Employees List(RemoteLogin).view')
         && !rbac.allowedToAccess('Attendance Team Manager List(RemoteLogin).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
@@ -78,8 +77,7 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Extra Log Hours Report - Generate.view') && rbac.allowedToAccess('Extra Log Hours
-          Report - Export.view')){
+          @if(rbac.allowedToAccess('Extra Log Hours Report - Generate.view') && rbac.allowedToAccess('Extra Log Hours Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelextraLogHours()"
             [disabled]="filteredExtraLogHourRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){

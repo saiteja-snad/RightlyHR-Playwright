@@ -177,4 +177,5 @@ export interface ILeaveCategory {
 
   // optional fields in some records
   probationFrequencyType?: string;
+  selectedDestinationId:any
 }

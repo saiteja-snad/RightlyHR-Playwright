@@ -5,23 +5,20 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../services/http.service';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../../../../services/open-modal.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 
-
-
-
-
 @Component({
   selector: 'app-load-entilements-map-categoery',
-  imports: [CommonModule, Select],
+  imports: [CommonModule, Select, FormsModule],
   templateUrl: './load-entilements-map-categoery.component.html',
   styleUrl: './load-entilements-map-categoery.component.scss'
 })
 export class LoadEntilementsMapCategoeryComponent {
   carryforwarddata: any = {}
+  empinfo: any = {};
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   currentYearData: ILeaveCategory[] = [];
@@ -37,6 +34,7 @@ export class LoadEntilementsMapCategoeryComponent {
 
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
     console.log(this.carryforwarddata)
 
@@ -58,8 +56,12 @@ export class LoadEntilementsMapCategoeryComponent {
       .subscribe({
         next: ([current, next]) => {
           this.loading = false;
-          this.currentYearData = current as ILeaveCategory[];
-          this.nextYearData = next as ILeaveCategory[];
+          this.currentYearData = (current as ILeaveCategory[])
+            .filter(x => x.encashAllowedType || x.carryForwardAllowed)
+      
+
+          this.nextYearData = (next as ILeaveCategory[])
+            .filter(x => x.encashAllowedType || x.carryForwardAllowed);
         },
         error: _ => (this.loading = false)
       });
@@ -103,6 +105,7 @@ export class LoadEntilementsMapCategoeryComponent {
         grouped[item.employeeId] = {
           employee: item.employeeName,
           employeeId: item.employeeId,
+          gradeId: item.jobGradeId,
           leaveEntries: []   // 👈 store whole list people
         };
       }
@@ -118,7 +121,9 @@ export class LoadEntilementsMapCategoeryComponent {
         actualCarryForward: item.actualCarryForward,
         maxEncashment: item.maxEncashment,
         leaveEncashed: item.leaveEncashed,
-        leaveLapsed: item.leaveLapsed
+        leaveLapsed: item.leaveLapsed,
+        leaveCategoryId: item.leaveCategoryId,
+        selectedDestinationId: item.leaveCategoryId
       });
     });
 
@@ -127,7 +132,54 @@ export class LoadEntilementsMapCategoeryComponent {
 
   }
 
+  buildCarryForwardPayload() {
+    const categoryMap = new Map(this.currentYearData.map(x => [x.id, x.selectedDestinationId]));
 
+    const payload = {
+      jobType: "CarryForward",
+      year: this.carryforwarddata.year,
+      locationId: this.carryforwarddata.location.id,
+      subLocationId: this.carryforwarddata.subLocation.id,
+      shiftId: this.carryforwarddata.shift.id,
+      notes: '',
+
+      requestPayload: {
+        employees: this.employeesList.map(emp => ({
+          employeeId: emp.employeeId,
+          gradeId: emp.gradeId ?? 0,
+
+          entitlementsData: emp.leaveEntries
+            .filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0)
+            .map((x: { leaveCategoryId: any; actualCarryForward: any; }) => ({
+              sourceCategoryId: x.leaveCategoryId,
+              destinationCategoryId: categoryMap.get(x.leaveCategoryId) || x.leaveCategoryId,
+              sourceYear: this.carryforwarddata.year,
+              destinationYear: this.nextYear,
+              noOfDays: x.actualCarryForward
+            })),
+
+        }))
+      },
+
+      initiatedBy: this.empinfo.employeeId
+    };
+
+    return payload;
+  }
+
+  submit() {
+    const body = this.buildCarryForwardPayload();
+
+    this.http.postdata('LeaveEntitlementJobs/create-carry-forward', body)
+      .subscribe({
+        next: (res) => {
+          console.log('success', res);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
   navigationtoback() {
     this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])
   }

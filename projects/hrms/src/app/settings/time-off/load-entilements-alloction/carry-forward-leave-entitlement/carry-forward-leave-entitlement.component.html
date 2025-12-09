@@ -1,1 +1,65 @@
-<p>carry-forward-leave-entitlement works!</p>
+<div class="custom-main-component-container">
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control custom-search-input"
+      placeholder="Search by asset category / asset sub category / serial number" aria-label="Username"
+      [(ngModel)]="searchQuery" aria-describedby="basic-addon1">
+  </div>
+
+  <div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+      <thead>
+        <th>Job Id</th>
+        <th>Year</th>
+        <th>Job Type</th>
+        <th>Created by</th>
+        <th>Status </th>
+        <th>Emp Processed</th>
+
+      </thead>
+      <tbody>
+        <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
+          <tr *ngFor="let item of jobData">
+            <td>{{ item?.jobId }}</td>
+            <td>{{ item?.year }}</td>
+            <td>{{ item?.jobType }}</td>
+            <td>{{ item?.initiatedBy?.name }}</td>
+            <td>{{ item?.status }}</td>
+
+            <td>
+              {{ item?.successCount }}/{{ item?.totalEmployees }}
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noDataTemplate>
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
+
+  <div class="pagination-content" *ngIf="jobData.length > 0">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+          </option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+          collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+</div>

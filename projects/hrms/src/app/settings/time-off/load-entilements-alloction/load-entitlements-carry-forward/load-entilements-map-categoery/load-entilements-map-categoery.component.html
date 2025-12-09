@@ -24,49 +24,32 @@
             <tbody>
                 <tr *ngFor="let item of currentYearData">
 
-                    <td>
-
-                        <span [style.color]="item.categoryColor">
-                            {{ item.name }}
-                        </span>
-                        <div class="text-muted small">Eligible for Carry/Encash</div>
-
-                    </td>
-
-                    <!-- arrow -->
                     <td class="text-center">
-                        →
+                        <span>{{item.categoryCode}}</span>
+                        <span class="categoryname" [style.color]="item.categoryColor">
+                            {{ item.name }} {{currentYear}}
+                        </span>
+                        <div class="eligible-text" *ngIf="item.carryForwardAllowed">Eligible for Carry Forward</div>
+                        <div class="eligible-text" *ngIf="item.encashAllowedType">Eligible for Encash</div>
                     </td>
-
-                    <!-- target (dropdown) -->
+                    <td class="text-center">
+                        <i class="bi bi-arrow-right"></i>
+                    </td>
                     <td>
-
                         <div class="custom-p-select-content">
                             <p-select [options]="nextYearData" class="form-select custom-select"
-                                placeholder="Please select " optionLabel="name" optionValue="id">
-
+                                placeholder="Please select category " optionLabel="name" optionValue="id">
                             </p-select>
                         </div>
-                        <!-- <select class="form-select" [(ngModel)]="item.selectedTargetCategoryId">
-            <option value="">Select Target Category</option>
-
-            <option *ngFor="let target of nextYearData" [value]="target.id">
-                {{ target.name }}
-            </option>
-        </select> -->
                     </td>
                 </tr>
             </tbody>
-
         </table>
-
-
     </div>
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
-            <button type="button" class="custom-btn btn-secondary">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary">Load
-                Eligible Employees</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="navigationtoback()">Back</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="navigationtofinal()">Commit & Process</button>
         </div>
     </div>
 

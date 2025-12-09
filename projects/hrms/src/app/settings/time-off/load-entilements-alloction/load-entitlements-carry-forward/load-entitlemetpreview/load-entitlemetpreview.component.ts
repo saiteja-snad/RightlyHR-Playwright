@@ -18,6 +18,7 @@ import { InfoIconComponent } from "../../../../../icons/info-icon/info-icon.comp
 })
 export class LoadEntitlemetpreviewComponent {
   carryforwarddata: any = {}
+  selectedEmployeeDetail: any = null;
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
@@ -30,74 +31,76 @@ export class LoadEntitlemetpreviewComponent {
   }
 
   leaveTypes: string[] = [];
-employeesList: any[] = [];
+  employeesList: any[] = [];
 
-getdataforcarryforward(carryforwarddata: ICarryForward) {
-  this.loading = true;
+  getdataforcarryforward(carryforwarddata: ICarryForward) {
+    this.loading = true;
 
-  this.http.getData(
-    `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
+    this.http.getData(
+      `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
     &subLocationIds=${carryforwarddata.subLocation.id}
     &shiftIds=${carryforwarddata.shift.id}
     &year=${carryforwarddata.year}`
-  )
-  .pipe(takeUntil(this.destroy$))
-  .subscribe({
-    next: (res: any) => {
-      this.loading = false;
-      const data = res.data;
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          const data = res.data;
 
-      this.formatCarryList(data);
-    },
-    error: () => {
-      this.loading = false;
-    }
-  });
-}
+          this.formatCarryList(data);
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+  }
 
-formatCarryList(data: any[]) {
+  formatCarryList(data: any[]) {
 
-  this.leaveTypes = [...new Set(data.map(x => x.leaveType))];
+    this.leaveTypes = [...new Set(data.map(x => x.leaveType))];
 
-  const grouped: any = {};
+    const grouped: any = {};
+    data.forEach(item => {
+      if (!grouped[item.employeeId]) {
+        grouped[item.employeeId] = {
+          employee: item.employeeName,
+          employeeId: item.employeeId,
+          leaveEntries: []   // 👈 store whole list people
+        };
+      }
 
-  data.forEach(item => {
+      grouped[item.employeeId][item.leaveType] = item.maxCarryForward;
 
-    if (!grouped[item.employeeId]) {
-      grouped[item.employeeId] = {
-        employee: item.employeeName,
-        employeeId: item.employeeId,
-        leaveEntries: []   // 👈 store whole list people
-      };
-    }
-
-    grouped[item.employeeId][item.leaveType] = item.maxCarryForward;
-
-    grouped[item.employeeId].leaveEntries.push({
-      leaveType: item.leaveType,
-      entitled: item.entitled,
-      availed: item.availed,
-      balance: item.balance,
-      maxCarryForward: item.maxCarryForward,
-      actualCarryForward: item.actualCarryForward,
-      maxEncashment: item.maxEncashment,
-      leaveEncashed: item.leaveEncashed,
-      leaveLapsed: item.leaveLapsed
+      grouped[item.employeeId].leaveEntries.push({
+        leaveType: item.leaveType,
+        entitled: item.entitled,
+        availed: item.availed,
+        balance: item.balance,
+        maxCarryForward: item.maxCarryForward,
+        actualCarryForward: item.actualCarryForward,
+        maxEncashment: item.maxEncashment,
+        leaveEncashed: item.leaveEncashed,
+        leaveLapsed: item.leaveLapsed
+      });
     });
-  });
 
-  this.employeesList = Object.values(grouped);
-}
+    this.employeesList = Object.values(grouped);
+  }
 
-selectedEmployeeDetail: any = null;
 
-openLeaveDetails(row:any,content:any){
 
-   this.selectedEmployeeDetail = row.leaveEntries;
-   
+  openLeaveDetails(row: any, content: any) {
+    this.selectedEmployeeDetail = row.leaveEntries;
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
-   console.log("Entries =>", this.selectedEmployeeDetail);
-}
+    console.log("Entries =>", this.selectedEmployeeDetail);
+  }
 
 
+  navigationtomapcategory() {
+    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-map-categoery'])
+  }
+  navigationtoback() {
+    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-create'])
+  }
 }

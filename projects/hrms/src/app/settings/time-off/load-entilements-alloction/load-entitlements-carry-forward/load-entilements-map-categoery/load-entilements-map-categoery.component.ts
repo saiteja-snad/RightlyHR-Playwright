@@ -75,7 +75,7 @@ export interface ILeaveCategory {
 
 @Component({
   selector: 'app-load-entilements-map-categoery',
-  imports: [CommonModule,Select],
+  imports: [CommonModule, Select],
   templateUrl: './load-entilements-map-categoery.component.html',
   styleUrl: './load-entilements-map-categoery.component.scss'
 })
@@ -85,14 +85,12 @@ export class LoadEntilementsMapCategoeryComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   currentYearData: ILeaveCategory[] = [];
   nextYearData: ILeaveCategory[] = [];
-currentYear = 0;
-nextYear = 0;
+  currentYear = 0;
+  nextYear = 0;
 
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
     private route: Router, private http: HttpService, public formValidation: FormValidationsService,
     private conformationPopup: OpenModalService) { }
-
-
 
 
   ngOnInit(): void {
@@ -110,10 +108,10 @@ nextYear = 0;
 
 
     this.currentYear = carryforwarddata.year;    // example 2025
-    this.nextYear =  this.currentYear + 1;  
+    this.nextYear = this.currentYear + 1;
 
-    const req1 = this.getDataByYear(carryforwarddata, 
-    this.currentYear );
+    const req1 = this.getDataByYear(carryforwarddata,
+      this.currentYear);
     const req2 = this.getDataByYear(carryforwarddata, this.nextYear);
 
     forkJoin([req1, req2])
@@ -135,7 +133,11 @@ nextYear = 0;
     );
   }
 
+  navigationtoback() {
+    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-map-categoery'])
+  }
 
-
-
+  navigationtofinal() {
+    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
+  }
 }

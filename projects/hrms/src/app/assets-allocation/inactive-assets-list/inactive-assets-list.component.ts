@@ -211,7 +211,10 @@ export class InactiveAssetsListComponent {
         this.assetslist.next(res.items);
         this.loading = false;
         this.collectionSize = res.totalCount;
-         this.http.setinactiveSearchCount(res.totalCount);
+         if(this.searchQuery){
+          this.http.setinactiveSearchCount(res.totalCount);
+        }
+      
         
       },
       error: (error: any) => {

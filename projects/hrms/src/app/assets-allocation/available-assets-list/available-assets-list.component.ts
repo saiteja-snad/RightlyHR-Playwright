@@ -267,6 +267,9 @@ export class AvailableAssetsListComponent {
         this.selectedSubcategeoryname = JSON.parse(localStorage.getItem('assetsubcategeory') ?? 'null');
         this.formdate = JSON.parse(localStorage.getItem('formDate') ?? 'null');
        this.todate = JSON.parse(localStorage.getItem('toDate') ?? 'null');
+       if(this.selectedLocationId || this.selectedSubLocationId || this.selectedcatageoryname || this.selectedSubcategeoryname || this.todate|| this.formdate){
+        this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       }
         this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
         this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
       }
@@ -382,7 +385,9 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
         this.assetslist.next(res.items);
         this.loading = false;
         this.collectionSize = res.totalCount;
+        if(this.searchQuery){
         this.http.setAvaillableSearchCount(res.totalCount);
+        }
       },
       error: (error: any) => {
         this.loading = false;
@@ -1519,14 +1524,20 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
   }
 
   }
+  resetAllFilters() {
+  this.http.setavilableAssetCount(null);
+  this.http.setallocatedAssetCount(null);
+  this.http.setundermatinaceAssetCount(null);
+  this.http.setinactiveSubjectAssetCount(null);
+   this.http.setblockAssetCount(null);
+}
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
-    
-    
-  //this.getFilteredData();
+     this.resetAllFilters(); 
   }
 }

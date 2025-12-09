@@ -16,9 +16,9 @@
         <th>Asset Status</th>
         <th>Location </th>
         <th>Sub Location </th>
-        @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
-        rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
-        rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){
+        @if(rbac.allowedToAccess('Block Allocate Asset.view') || rbac.allowedToAccess('Block Inactive Asset.view') ||
+        rbac.allowedToAccess('Block Mark as Maintenance Asset.view') || rbac.allowedToAccess('Block Transfer Asset.view')||
+        rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset Details.view')){
         <th class="text-center">Action</th>
         }
       </thead>
@@ -32,9 +32,9 @@
             <td>{{ asset.status }}</td>
             <td>{{ asset.locationName }}</td>
             <td>{{ asset?.sublocationName || 'N/A' }}</td>
-            @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
-            rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
-            rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){
+            @if(rbac.allowedToAccess('Block Allocate Asset.view') || rbac.allowedToAccess('Block Inactive Asset.view') ||
+            rbac.allowedToAccess('Block Mark as Maintenance Asset.view') || rbac.allowedToAccess('Block Transfer Asset.view')||
+            rbac.allowedToAccess('Block View Asset Details.view') || rbac.allowedToAccess('Block Update Asset Details.view')){
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -42,7 +42,7 @@
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <ng-container *ngIf="asset.status === 'Block'">
-                    @if(rbac.allowedToAccess('Available Allocate Asset.view')) {
+                    @if(rbac.allowedToAccess('Block Allocate Asset.view')) {
                     <li>
                       <a class="dropdown-item"
                         (click)="openModal(allocateAnasset); storeassetid = asset.id; selectedAsset = asset;viewasetsdata(asset)">
@@ -50,7 +50,7 @@
                       </a>
                     </li>
                     }
-                    @if( rbac.allowedToAccess('Available Inactive Asset.view')) {
+                    @if( rbac.allowedToAccess('Block Inactive Asset.view')) {
                     <li>
                       <a class="dropdown-item"
                         (click)="openModal(deleteasstes); storeassetid = asset.id; selectedAsset = asset ">
@@ -58,7 +58,7 @@
                       </a>
                     </li>
                     }
-                    @if(rbac.allowedToAccess('Available Mark as Maintenance Asset.view')) {
+                    @if(rbac.allowedToAccess('Block Mark as Maintenance Asset.view')) {
                     <li>
                       <a class="dropdown-item"
                         (click)="openModal(underMaintenance); storeassetid = asset.id; selectedAsset = asset">
@@ -66,7 +66,7 @@
                       </a>
                     </li>
                     }
-                    @if(rbac.allowedToAccess('Available Transfer Asset.view')) {
+                    @if(rbac.allowedToAccess('Block Transfer Asset.view')) {
                     <li>
                       <a class="dropdown-item"
                         (click)="openModal(tranferaerasset); storeassetid = asset.id; selectedAsset = asset;viewdatatrasfer(asset) ">
@@ -75,21 +75,28 @@
                     </li>
                     }
                   </ng-container>
-                  @if(rbac.allowedToAccess('Available View Asset Details.view')) {
+                  @if(rbac.allowedToAccess('Block View Asset Details.view')) {
                   <li>
                     <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                       View Asset Details
                     </a>
                   </li>
                   }
-                  @if(rbac.allowedToAccess('Available Update Asset Details.view')) {
+                  @if(rbac.allowedToAccess('Block Update Asset Details.view')) {
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
                       Update
                     </a>
                   </li>
-                  }                 
+                  }  
+                  @if(rbac.allowedToAccess('Block Mark as Available Asset.view')){
+                  <li>
+                    <a class="dropdown-item" (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
+                      Mark as Available
+                    </a>
+                  </li>
+                  }
                 </ul>
               </div>
             </td>
@@ -880,4 +887,18 @@
     </div>
 
   </div>
+</ng-template>
+<ng-template #avilableasstes let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Available?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="conformationpoppupavailable();model.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="avaliableassets(storeassetid);model.dismiss()">Yes</button>
+        </div>
+    </div>
 </ng-template>

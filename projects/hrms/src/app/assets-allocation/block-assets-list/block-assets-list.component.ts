@@ -374,7 +374,11 @@ export class BlockAssetsListComponent {
      this.releaseform.reset()
      this.isToggledvender = false
    }
- 
+   conformationpoppupavailable() {
+    this.modalService.dismissAll()
+    this.assetForm.reset();
+
+  }
  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,category:any,subcatageory:any,fromDate:any,toDate:any ,Assetsstatus: any) {
      const params = {
        first: pagenum,
@@ -396,7 +400,10 @@ export class BlockAssetsListComponent {
          this.assetslist.next(res.items);
          this.loading = false;
          this.collectionSize = res.totalCount;
-          this.http.setblockSearchCount(res.totalCount);
+          if(this.searchQuery){
+        this.http.setblockSearchCount(res.totalCount);
+        }
+         
          
        },
        error: (error: any) => {
@@ -1354,7 +1361,7 @@ export class BlockAssetsListComponent {
            this.modalService.dismissAll();
            this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
- 
+            this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
          },
          error: (err) => {
            console.error('Error deleting asset:', err);

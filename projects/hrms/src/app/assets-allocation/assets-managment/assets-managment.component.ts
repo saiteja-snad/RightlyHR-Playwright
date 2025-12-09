@@ -540,7 +540,7 @@ onassetcategoryfilter() {
     this.http.assetsUpdateLocationId(selectedSubCategory);
     this.http.assetsUpdateFromDate(startDate);
     this.http.assetsUpdateToDate(endDate);
-    console.log('payload', this.page, this.pageSize, locationId, subLocationId,
+    console.log('payload', this.page, this.first, locationId, subLocationId,
       selectedCategory, selectedSubCategory, startDate, endDate, null);
     // Call your APIs ONCE here
     this.getassetsdata(this.page, this.pageSize, locationId, subLocationId,

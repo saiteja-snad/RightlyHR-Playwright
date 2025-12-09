@@ -809,34 +809,34 @@ setAvaillableSearchCount(count: number) {
     this.assetCountSubject.next(count);
   }
 
-  setavilableAssetCount(count: number) {
+  setavilableAssetCount(count: any) {
     this.avilableassetCountSubject.next(count);
   }
 
-  setallocatedAssetCount(count: number) {
+  setallocatedAssetCount(count: any) {
     this.allocatedassetCountSubject.next(count);
   }
-setAllocatedSearchCount(count: number) {
+setAllocatedSearchCount(count: any) {
      this.allocatedassetCountSubject.next(count);
 }
-  setundermatinaceAssetCount(count: number) {
+  setundermatinaceAssetCount(count: any) {
     this.undermatinaceassetCountSubject.next(count);
   }
-  setundermatinaceSearchCount(count: number) {
+  setundermatinaceSearchCount(count: any) {
      this.undermatinaceassetCountSubject.next(count);
 }
- setblockAssetCount(count: number) {
+ setblockAssetCount(count: any) {
     this.blockassetCountSubject.next(count);
   }
 
-setblockSearchCount(count: number) {
+setblockSearchCount(count: any) {
      this.blockassetCountSubject.next(count);
 }
-  setinactiveSubjectAssetCount(count: number) {
+  setinactiveSubjectAssetCount(count: any) {
     this.inactiveaceassetCountSubject.next(count);
   }
 
-setinactiveSearchCount(count: number) {
+setinactiveSearchCount(count: any) {
      this.inactiveaceassetCountSubject.next(count);
 }
   getFilteredleavesDataByID(employeeId: number, params?: any) {

@@ -57,7 +57,7 @@
       </div>
       <div class="offcanvas-filter-content">
         <form [formGroup]="locationfromdata" (ngSubmit)="onSubmit()">
-          <!-- <div class="mb-3">
+          <div class="mb-3">
             <label class="form-label custom-label filter-labels mb-3">{{'Locations'| translate}}</label>
             <div class="custom-p-select-content">
               <select id="location" formControlName="locationId" class="form-select custom-select"
@@ -67,21 +67,8 @@
                   location.jobLocationName }}</option>
               </select>
             </div>
-          </div> -->
-        <div class="mb-3">
-          <label class="form-label custom-label filter-labels mb-3">
-            {{ 'Locations' | translate }}
-          </label>
-        
-          <div class="custom-p-select-content">
-            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue="id"
-              placeholder="Please select locations" formControlName="locationId" class="form-select custom-select"
-              (onChange)="onLocationChange()">
-            </p-select>
           </div>
-        </div>
-
-          <!-- <div class="mb-3">
+          <div class="mb-3">
             <label class="form-label custom-label filter-labels mb-3">{{'Sub Locations'| translate}}</label>
             <div class="custom-p-multiSelect-content">
               <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
@@ -92,21 +79,7 @@
                 </option>
               </select>
             </div>
-          </div> -->
-          <div class="mb-3">
-            <label class="form-label custom-label filter-labels mb-3">
-              {{ 'Sub Locations' | translate }}
-            </label>
-          
-            <div class="custom-p-select-content">
-              <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
-                placeholder="Please select sub location" formControlName="subLocationId" class="form-select custom-select"
-                (onChange)="onSubLocationChange()">
-              </p-select>
-            </div>
           </div>
-
-        
           <div class="mb-3">
             <label class="form-label custom-label filter-labels mb-3">{{'Asset Category'| translate}}</label>
             <div class="custom-p-select-content">

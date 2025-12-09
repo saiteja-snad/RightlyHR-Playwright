@@ -213,7 +213,10 @@ export class UnderMaintenaceAssetsListComponent {
         this.assetslist.next(res.items);
         this.loading = false;
         this.collectionSize = res.totalCount;
+         if(this.searchQuery){
          this.http.setundermatinaceSearchCount(res.totalCount);
+        }
+        
         
       },
       error: (error: any) => {

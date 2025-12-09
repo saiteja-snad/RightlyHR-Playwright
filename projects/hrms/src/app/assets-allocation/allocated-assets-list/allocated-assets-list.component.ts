@@ -461,7 +461,9 @@ export class AllocatedAssetsListComponent {
       this.assetslist.next(res.items);
         this.loading = false;
         this.collectionSize = res.totalCount;
-         this.http.setAllocatedSearchCount(res.totalCount);
+          if(this.searchQuery){
+        this.http.setAllocatedSearchCount(res.totalCount);
+        }
       },
       error: (error: any) => {
         console.error('Error fetching assets:', error);

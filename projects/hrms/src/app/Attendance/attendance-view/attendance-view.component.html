@@ -14,8 +14,8 @@
                     (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
                     dateFormat="mm/yy" [readonlyInput]="true" /> -->
                 <div class="custom-year-month-picker">
-                    <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)" 
-                    [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true" 
+                    <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)"
+                    [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true"
                     [maxDate]="maxMonth"></p-datepicker>
                 </div>
             </div>
@@ -114,7 +114,7 @@
                             @if((item?.tags ?? []).length > 0 &&item.status){
                             <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
                                 @for(tag of item.tags; track $index){
-                                <div class="card substatus-card"  
+                                <div class="card substatus-card"
                                 [ngStyle]="{ color: tag?.colour ?? '#305889',borderColor: tag?.colour ?? '#305889'}">
                                      {{tag?.name}}
                                     @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.exceededBreakDuration){
@@ -141,8 +141,8 @@
                                 }
                                 @if(rbac.allowedToAccess('Request Regularization.view')){
                                 @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
-                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable 
-                                && isWithinPastDaysAllowed(item.date) && item.employeeId==empdata.employeeId){ 
+                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable
+                                && isWithinPastDaysAllowed(item.date) && item.employeeId==empdata.employeeId){
                                 <a class="application-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                     <u>Regularization</u>
                                 </a>
@@ -328,7 +328,7 @@
                                                 <i class="bi bi-info-circle-fill ms-2"></i>
                                             </a>
                                             <ng-template #popContent>
-                                                
+
                                                 <div class="custom-text">Total Duration: <b>{{ getTotalDuration(logsDuration, breakDuration) }}</b></div>
                                             </ng-template>
                                         </span>
@@ -455,7 +455,7 @@
                 <div class="d-block">
                     <div class="d-flex flex-column">
                         <p class="m-0 p-2 rounded popupcomments">
-                            Total Duration: 
+                            Total Duration:
                             <span *ngIf="totalDurationHours;else durationtotal">
                                 {{totalDurationHours === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
                             </span>
@@ -473,7 +473,7 @@
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">Regularization Duration:
-                            <span *ngIf="regularizationAttendDuration;else regularization">{{regularizationAttendDuration === '00:00:00' || 
+                            <span *ngIf="regularizationAttendDuration;else regularization">{{regularizationAttendDuration === '00:00:00' ||
                             !regularizationAttendDuration ? '-' : regularizationAttendDuration}}</span>
                             <ng-template #regularization>NA</ng-template>
                         </p>
@@ -512,7 +512,7 @@
                                 placeholder="Please select duration" class="form-select custom-select w-100">
                             </p-select>
                         </div>
-                       
+
                         <div class="error-msg">
                             <div *ngIf="extraHoursForm.get('duration')?.invalid && extraHoursForm.get('duration')?.touched">Duration is required</div>
                         </div>

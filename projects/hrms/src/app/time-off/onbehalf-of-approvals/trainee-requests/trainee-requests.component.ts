@@ -218,33 +218,36 @@ export class TraineeRequestsComponent implements OnInit, OnDestroy {
   }
 
   // Final Process
-  handleProcess(request: any) {
-    this.isLoading = true;
-    const payload = {
-      approvedBy: this.authService.getToken().employeeId.toString(),
-      status: 'Processed',
-      moduleId: environment.traineeoffboardingModuleId,
-      onBehalfOfApproval: true,
-      headerRequests: [{
-        headerID: request.approvalHeader.id,
-        currentStage: Number(this.selectedRequest.approvalHeader.currentapprovalStage),
-      }],
-    };
-
-    this.subscription = this.http
-      .putData(`PendingApproval/process/${request.approvalHeader.id}`, payload)
-      .subscribe({
-        next: () => {
-          this.conformationPopup.openSuccessModal('Trainee request processed successfully');
-          this.refresh();
-        },
-        error: (err: any) => {
-          this.isLoading = false;
-          this.conformationPopup.openErrorModal(err.error?.message || 'Error');
-        },
-        complete: () => this.isLoading = false,
-      });
+handleProcess(request: any) {
+  if (!request?.approvalHeader) {
+    this.conformationPopup.openErrorModal('Invalid request');
+    return;
   }
+
+  this.isLoading = true;
+
+  const payload = {
+    approvedBy: this.authService.getToken().employeeId.toString(),
+    status: 'Processed',
+    moduleId: environment.traineeoffboardingModuleId,
+    onBehalfOfApproval: true,
+    currentStage: Number(request.approvalHeader.currentapprovalStage),
+  };
+
+  this.subscription = this.http
+    .putData(`PendingApproval/process/${request.approvalHeader.id}`, payload)
+    .subscribe({
+      next: () => {
+        this.conformationPopup.openSuccessModal('Trainee request processed successfully');
+        this.refresh();
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.conformationPopup.openErrorModal(err.error?.message || 'Error');
+      },
+      complete: () => this.isLoading = false,
+    });
+}
 
   commentsFunction(comments: any, content: any) {
     this.comments = Array.isArray(comments) ? comments : (comments ? [comments] : []);

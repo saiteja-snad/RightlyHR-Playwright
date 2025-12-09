@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-
 @Component({
   selector: 'app-loadentilledmentprogressbar',
   imports: [CommonModule],
   templateUrl: './loadentilledmentprogressbar.component.html',
   styleUrl: './loadentilledmentprogressbar.component.scss'
 })
+
 export class LoadentilledmentprogressbarComponent {
   progress = 0;
   subscription: any;

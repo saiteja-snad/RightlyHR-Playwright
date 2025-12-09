@@ -1,41 +1,26 @@
-<div class="custom-main-component-container">
-    <div class="d-flex gap-2 justify-content-end  mb-2">
-        <div>
-            <img src="images\leave-allocation.png" alt="leaves-icon" class="leave-icon">
-        </div>
+<div class="load-components-container">
+    <div class="d-flex align-items-center justify-content-end gap-2 mb-3">
+        <div><img src="images\leave-allocation.png" alt="leaves-icon" class="leave-icon"></div>
         <div class="d-flex align-items-center map-text m-0">Auto-map 3 categories</div>
     </div>
 
-    <div class="custom-table-content w-100">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <th class="text-center">
-                    Source Category ({{ currentYear }})
-                </th>
-
-                <th class="text-center">
-                    Mapping
-                </th>
-
-                <th class="text-center">
-                    Target Category ({{ nextYear }})
-                </th>
+                <th class="text-center">Source Category ({{ currentYear }})</th>
+                <th class="text-center">Mapping</th>
+                <th class="text-center">Target Category ({{ nextYear }})</th>
             </thead>
             <tbody>
                 <tr *ngFor="let item of currentYearData">
-
                     <td class="text-center">
                         <span>{{item.categoryCode}}</span>
-                        <span class="categoryname" [style.color]="item.categoryColor">
-                            {{ item.name }} {{currentYear}}
-                        </span>
+                        <span class="categoryname" [style.color]="item.categoryColor">{{ item.name }} {{currentYear}}</span>
                         <div *ngIf="item.carryForwardAllowed || item.encashAllowedType" class="eligible-text">
-                            Eligible for
-                            {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
+                            Eligible for {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
                             {{ item.carryForwardAllowed && item.encashAllowedType ? ' /' : '' }}
                             {{ item.encashAllowedType ? ' Encash' : '' }}
                         </div>
-
                     </td>
                     <td class="text-center">
                         <i class="bi bi-arrow-right"></i>
@@ -59,5 +44,4 @@
             <button type="button" class="custom-btn btn-primary" (click)="submit()">Commit & Process</button>
         </div>
     </div>
-
 </div>

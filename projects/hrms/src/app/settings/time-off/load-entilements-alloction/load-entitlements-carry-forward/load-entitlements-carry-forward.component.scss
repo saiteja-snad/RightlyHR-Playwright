@@ -10,21 +10,3 @@
         flex: 1;
     }
 }
-
-.add-data-content {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 16rem);
-    overflow-y: auto;
-
-    .footer-content {
-        position: absolute;
-        width: 100%;
-        bottom: 1rem;
-        right: 1rem;
-
-        .custom-btn {
-            width: 120px;
-        }
-    }
-}

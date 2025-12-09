@@ -10,7 +10,6 @@ export default [
     {
         path: 'leave-categoery',
         children: [
-            // { path: '', redirectTo: 'pendingleavecategory', pathMatch: 'full' },
             { path: 'pendingleavecategory', loadComponent: () => import('./leave-categoery/pending-leavecategory/pending-leavecategory.component').then((m) => m.PendingLeavecategoryComponent) },
             { path: 'publishedleavecategory', loadComponent: () => import('./leave-categoery/published-leavecategory/published-leavecategory.component').then((m) => m.PublishedLeavecategoryComponent) },
         ]
@@ -22,36 +21,19 @@ export default [
         path: 'loadentitlements', component: LoadEntilementsAlloctionComponent,
         children: [
             { path: '', redirectTo: 'initial-load-entitlements', pathMatch: 'full' },
-            {
-                path: 'initial-load-entitlements', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component').then((m) => m.IntialLoadEntitlementComponent)
-            },
-            {
-                path: 'carry-forward', loadComponent: () => import('./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component').then((m) => m.CarryForwardLeaveEntitlementComponent)
-            },
-
-
-
+            { path: 'initial-load-entitlements', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component').then((m) => m.IntialLoadEntitlementComponent) },
+            { path: 'carry-forward', loadComponent: () => import('./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component').then((m) => m.CarryForwardLeaveEntitlementComponent) },
         ]
     },
     {
         path: 'load-entitlements', component: LoadEntitlementsCarryForwardComponent,
         children: [
-            {
-                path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent)
-            },
-            {
-                path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent)
-            },
-            {
-                path: 'load-entitlement-map-categoery', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entilements-map-categoery/load-entilements-map-categoery.component').then((m) => m.LoadEntilementsMapCategoeryComponent)
-            },
-            {
-                path: 'load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetexecution/load-entitlemetexecution.component').then((m) => m.LoadEntitlemetexecutionComponent)
-            }
+            { path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent) },
+            { path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent) },
+            { path: 'load-entitlement-map-categoery', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entilements-map-categoery/load-entilements-map-categoery.component').then((m) => m.LoadEntilementsMapCategoeryComponent) },
+            { path: 'load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetexecution/load-entitlemetexecution.component').then((m) => m.LoadEntitlemetexecutionComponent) }
         ]
     },
-
-
     {
         path: 'eligibility-criterias', children: [
             // { path: '', redirectTo: 'comp-off', pathMatch: 'full' },
@@ -66,8 +48,6 @@ export default [
             { path: 'late-login-alert-configuration', loadComponent: () => import('./attendance-eligibility-criteria/late-login-alert-configuration/late-login-alert-configuration.component').then((m) => m.LateLoginAlertConfigurationComponent) },
             { path: 'extra-hours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/extra-hours-configuration/extra-hours-configuration.component').then((m) => m.ExtraHoursConfigurationComponent) },
             { path: 'flexible-workhours-configuration', loadComponent: () => import('./attendance-eligibility-criteria/flexible-workhours-configuration/flexible-workhours-configuration.component').then((m) => m.FlexibleWorkhoursConfigurationComponent) },
-
-
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },
@@ -79,7 +59,6 @@ export default [
             { path: '', redirectTo: 'wfh-allocation', pathMatch: 'full' },
             { path: 'wfh-allocation', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation/wfh-allocation.component').then((m) => m.WfhAllocationComponent) },
             { path: 'wfh-allocation-view', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent) },
-
         ]
     },
     {
@@ -87,7 +66,6 @@ export default [
             { path: '', redirectTo: 'workhours-allocation', pathMatch: 'full' },
             { path: 'workhours-allocation', loadComponent: () => import('./flexible-hours-allocation/hours-allocation/hours-allocation.component').then((m) => m.HoursAllocationComponent) },
             { path: 'workhours-allocation-view', loadComponent: () => import('./flexible-hours-allocation/hours-allocation-view/hours-allocation-view.component').then((m) => m.HoursAllocationViewComponent) },
-
         ]
     },
 ] as Route[];

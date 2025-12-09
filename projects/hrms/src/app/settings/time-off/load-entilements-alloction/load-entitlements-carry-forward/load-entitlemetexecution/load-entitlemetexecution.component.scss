@@ -1,3 +1,36 @@
+.load-components-container {
+    position: relative;
+    height: calc(100dvh - 17rem);
+
+    .footer-content {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}
+
+.custom-table-content {
+    min-height: 30vh !important;
+    max-height: 50dvh !important;
+    border: 1px solid var(--table-header-bg-color);
+
+    th,td{
+        border-right: 1px solid #D9E2EB;
+    }
+
+    th:nth-child(1) {
+        background-color: #E8F5FF;
+    }
+
+    th:nth-child(2) {
+        background-color: #FFFAE4;
+    }
+
+    th:nth-child(3) {
+        background-color: #FFF1F0;
+    }
+}
+
 .leave-icon {
     width: 1.5rem;
 }
@@ -6,5 +39,4 @@
     font-size: 15px;
     font-weight: 700;
     color: #00A912;
-
 }

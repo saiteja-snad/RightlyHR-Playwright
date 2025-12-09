@@ -19,6 +19,7 @@ import { InfoIconComponent } from "../../../../../icons/info-icon/info-icon.comp
 export class LoadEntitlemetpreviewComponent {
   carryforwarddata: any = {}
   selectedEmployeeDetail: any = null;
+  selectemployeename: any
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
@@ -26,7 +27,6 @@ export class LoadEntitlemetpreviewComponent {
     private conformationPopup: OpenModalService) { }
   ngOnInit(): void {
     this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
-    console.log(this.carryforwarddata)
     this.getdataforcarryforward(this.carryforwarddata)
   }
 
@@ -57,9 +57,7 @@ export class LoadEntitlemetpreviewComponent {
   }
 
   formatCarryList(data: any[]) {
-
     this.leaveTypes = [...new Set(data.map(x => x.leaveType))];
-
     const grouped: any = {};
     data.forEach(item => {
       if (!grouped[item.employeeId]) {
@@ -86,12 +84,17 @@ export class LoadEntitlemetpreviewComponent {
     });
 
     this.employeesList = Object.values(grouped);
+    console.log(this.employeesList);
+
   }
 
 
 
   openLeaveDetails(row: any, content: any) {
+    console.log("row", row);
+    this.selectemployeename = row.employee
     this.selectedEmployeeDetail = row.leaveEntries;
+
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
     console.log("Entries =>", this.selectedEmployeeDetail);
   }

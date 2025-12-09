@@ -10,19 +10,12 @@
                 <tr>
                     <th>Employee</th>
                     <th *ngFor="let type of leaveTypes">{{type}}</th>
-                    <th>View</th>
                 </tr>
             </thead>
-
             <tbody>
                 <tr *ngFor="let row of employeesList">
-                    <td>{{row.employee}}</td>
+                    <td><a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee }}</a></td>
                     <td *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
-                    <td>
-                        <a type="button" class="download-text">
-                            <i class="bi bi-eye-fill me-2 cursor" (click)="openLeaveDetails(row,viewmodal)"></i>
-                        </a>
-                    </td>
                 </tr>
             </tbody>
         </table>
@@ -41,8 +34,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">View Data
-                </p>
+                <p class="popup-heading mb-0">{{selectemployeename}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

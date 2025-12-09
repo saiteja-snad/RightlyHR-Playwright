@@ -16,8 +16,11 @@
                     <td class="text-center">
                         <span>{{item.categoryCode}}</span>
                         <span class="categoryname" [style.color]="item.categoryColor">{{ item.name }} {{currentYear}}</span>
-                        <div class="eligible-text" *ngIf="item.carryForwardAllowed">Eligible for Carry Forward</div>
-                        <div class="eligible-text" *ngIf="item.encashAllowedType">Eligible for Encash</div>
+                        <div *ngIf="item.carryForwardAllowed || item.encashAllowedType" class="eligible-text">
+                            Eligible for {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
+                            {{ item.carryForwardAllowed && item.encashAllowedType ? ' /' : '' }}
+                            {{ item.encashAllowedType ? ' Encash' : '' }}
+                        </div>
                     </td>
                     <td class="text-center">
                         <i class="bi bi-arrow-right"></i>

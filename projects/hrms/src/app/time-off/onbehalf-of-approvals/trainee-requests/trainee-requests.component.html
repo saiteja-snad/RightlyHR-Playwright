@@ -98,9 +98,19 @@
         </label>
 
         <textarea class="form-control custom-input" placeholder="Please provide feedback" name="Feedback"
-          #Feedback="ngModel" [(ngModel)]="selectedLeaveData.trcomments" (ngModelChange)="onCommentChange($event)"
+          #Feedback="ngModel" [(ngModel)]="selectedLeaveData.trcomments" (ngModelChange)="onCommentChange('trcomments', $event)"
           (keydown)="formsValidation.restrictInitialSpace($event)" maxlength="250" rows="3" required>
         </textarea>
+
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3 mt-3">
+  <button
+    type="button"
+    class="custom-btn btn-secondary chip-btn"
+    [class.active]="selectedLeaveData.trcomments === 'Approved'"
+    (click)="setApproveComment('Approved')">
+    Approved
+  </button>
+</div>
 
         <!-- Character Count -->
         <div class="textarea-count-text">
@@ -171,8 +181,18 @@
     <div class="mb-3">
       <label class="form-label custom-label">Feedback <span class="text-danger">*</span></label>
       <textarea placeholder="Please provide feedback" class="form-control custom-input" rows="3" maxlength="250" [(ngModel)]="selectedLeaveData.trcomments"
-        (ngModelChange)="onCommentChange($event)" (keydown)="formsValidation.restrictInitialSpace($event)"
+        (ngModelChange)="onCommentChange('trcomments', $event)" (keydown)="formsValidation.restrictInitialSpace($event)"
         required></textarea>
+
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3 mt-3">
+  <button
+    type="button"
+    class="custom-btn btn-secondary chip-btn"
+    [class.active]="selectedLeaveData.trcomments === 'Extended'"
+    (click)="setExtendComment('Extended')">
+    Extended
+  </button>
+</div>
 
       <div class="textarea-count-text">
         {{ selectedLeaveData.trcomments?.length || 0 }}/250
@@ -190,8 +210,18 @@
     <div class="mb-3">
       <label class="form-label custom-label">Reason <span class="text-danger">*</span></label>
       <textarea placeholder="Please provide reason" class="form-control custom-input" rows="3" maxlength="250"
-        [(ngModel)]="selectedLeaveData.rejectedReason" (ngModelChange)="onCommentChange($event)"
+        [(ngModel)]="selectedLeaveData.rejectedReason" (ngModelChange)="onCommentChange('trcomments', $event)"
         (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
+
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3 mt-3">
+  <button
+    type="button"
+    class="custom-btn btn-secondary chip-btn"
+    [class.active]="selectedLeaveData.rejectedReason === 'Rejected'"
+    (click)="setRejectComment('Rejected')">
+    Rejected
+  </button>
+</div>
 
       <div class="textarea-count-text">
         {{ selectedLeaveData.rejectedReason?.length || 0 }}/250

@@ -272,10 +272,28 @@ handleProcess(request: any) {
     this.http.triggerActionSignal?.();
   }
 
-  onCommentChange(value: string) {
-  this.selectedLeaveData.trcomments = value;
+onCommentChange(field: 'trcomments' | 'rejectedReason', value: string) {
+  if (field === 'trcomments') {
+    this.selectedLeaveData.trcomments = value;
+  } else if (field === 'rejectedReason') {
+    this.selectedLeaveData.rejectedReason = value;
+  }
 }
 
+setApproveComment(text: string) {
+  this.selectedLeaveData.trcomments = text;
+  this.onCommentChange('trcomments', text);
+}
+
+setRejectComment(text: string) {
+  this.selectedLeaveData.rejectedReason = text;
+  // No onCommentChange needed here unless you add counter for rejectedReason
+}
+
+setExtendComment(text: string) {
+  this.selectedLeaveData.trcomments = text;
+  this.onCommentChange('trcomments', text);
+}
 
   ngOnDestroy() {
     if (this.subscription) this.subscription.unsubscribe();

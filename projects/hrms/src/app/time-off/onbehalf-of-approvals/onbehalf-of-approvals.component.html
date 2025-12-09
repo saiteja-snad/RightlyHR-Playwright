@@ -32,7 +32,6 @@
       </div>
       }
 
-
       <!-- <label class="form-label component-sub-header m-0" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
@@ -88,6 +87,14 @@
             </div>
           </li>
           }
+          @if(rbac.allowedToAccess('Regularization (On Behalf Of Approvals).view') ) {
+          <li class="nav-item">
+            <div class="nav-link" [class.active]="activeTab === 'regularization'" (click)="setActiveTab('regularization')">
+              <img src="/time-off-icon/regularization-icon.png" alt="Icon" class="icon mb-2">
+              <div>Regularization ({{ regularizationCount }})</div>
+            </div>
+          </li>
+          }
         </ul>
       </div>
     </div>
@@ -104,6 +111,9 @@
       </div>
       <div *ngIf="activeTab === 'permissions'">
         <app-permissions (dataEvent)="permissionsoff($event)"></app-permissions>
+      </div>
+      <div *ngIf="activeTab === 'regularization'">
+        <app-regularization (dataEvent)="regularizationoff($event)"></app-regularization>
       </div>
     </div>
   </div>

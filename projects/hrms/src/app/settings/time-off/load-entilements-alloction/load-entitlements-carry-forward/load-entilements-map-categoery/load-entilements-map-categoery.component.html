@@ -27,9 +27,9 @@
                     </td>
                     <td>
                         <div class="custom-p-select-content">
-                            <p-select [options]="nextYearData" class="form-select custom-select"
+                            <p-select [options]="getAvailableOptions(item)" class="form-select custom-select"
                                 placeholder="Please select target category" optionLabel="name" optionValue="id"
-                               >
+                                [(ngModel)]="item.selectedDestinationId">
                             </p-select>
                         </div>
                     </td>

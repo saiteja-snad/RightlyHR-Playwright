@@ -185,4 +185,11 @@ export class LoadEntilementsMapCategoeryComponent {
   navigationtofinal() {
     this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
   }
+
+  getAvailableOptions(currentItem: any) {
+    const selectedIds = this.currentYearData
+      .filter(x => x.selectedDestinationId && x.id !== currentItem.id)
+      .map(x => x.selectedDestinationId);
+    return this.nextYearData.filter(x => !selectedIds.includes(x.id));
+  }
 }

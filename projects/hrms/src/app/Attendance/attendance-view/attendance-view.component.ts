@@ -459,7 +459,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
-    const statuses = ['active', 'Trainee Active', 'Active Contract'];
+    const statuses = ['Active', 'Trainee Active', 'Active Contract', 'Inactive', 'Trainee Inactive', 'Inactive Contract'];
     this.subscription = this.http
       .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
       .subscribe({

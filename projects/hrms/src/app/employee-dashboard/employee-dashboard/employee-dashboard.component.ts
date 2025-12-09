@@ -16,9 +16,10 @@ import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
 import { TabsModule } from 'primeng/tabs';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule],
+  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, ProfileIconComponent],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -30,6 +31,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   loading = false;
   avaliabletlyloading = false;
   hasRealEvents: boolean = false;
+  weaklyloghrsloader= false;
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -683,8 +685,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
 
   getWeeklyWorkLogHours() {
-    this.http
-      .getData(
+    this.weaklyloghrsloader= true;
+    this.http.getData(
         `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -701,8 +703,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           this.totalHours = this.sumDurations(
             attendance.map((item: any) => item.duration.totalDuration)
           );
+          this.weaklyloghrsloader= false;
         },
-        error: (err) => console.log(err),
+        error: (err) => {
+          this.weaklyloghrsloader= false;
+          console.log(err);
+        }
       });
   }
 

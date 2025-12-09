@@ -619,7 +619,7 @@ export const permissionsData = [
   { fields: 'Available Transfer Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Available View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Available Update Asset Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Available Block Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Available Block Asset', View: false, Update: false, Create: false, Delete: false },
 
   //Asset Management Allocated Tab Actions
   { fields: 'Allocated Reallocate Asset', View: false, Update: false, Create: false, Delete: false },

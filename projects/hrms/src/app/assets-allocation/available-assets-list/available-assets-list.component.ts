@@ -213,7 +213,7 @@ export class AvailableAssetsListComponent {
   }
  initialblockform(){
  this.blockform = this.fb.group({
-      reason: [null, [Validators.maxLength(250)]]
+      reason: [null, [Validators.required,Validators.maxLength(250)]]
     })
 }
   purchaseDateEqualWarrantyDateValidator(): ValidatorFn {
@@ -1290,7 +1290,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           console.log("Update Response:", res);
           this.blockform.reset()
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset set Block successfully ');
+          this.conformationPopup.openSuccessModal('Asset blocked successfully ');
           this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
           this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
         },
@@ -1481,6 +1481,10 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
   }
 
   postblock(blockform: FormGroup, removeAsset: number) {
+      if (blockform.invalid) {
+    blockform.markAllAsTouched();
+    return;
+  }
     if (blockform.valid) {
       // Create the payload for the asset assignment
 

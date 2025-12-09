@@ -325,9 +325,20 @@ export class HttpService {
   assetsUpdateSubCatageoryId(id: string | null) {
     this.assetssubcategeoryIdSubject.next(id);
   }
-    //function to update the desk sublocation
-  assetsUpdatedatarange(id: string | null) {
-    this.assetsdaterangeIdSubject.next(id);
+    // ---------- FROM DATE ----------
+  private fromDateSubject = new BehaviorSubject<string | null>(null);
+  fromDate$ = this.fromDateSubject.asObservable();
+
+  assetsUpdateFromDate(date: string | null) {
+    this.fromDateSubject.next(date);
+  }
+
+  // ---------- TO DATE ----------
+  private toDateSubject = new BehaviorSubject<string | null>(null);
+  toDate$ = this.toDateSubject.asObservable();
+
+  assetsUpdateToDate(date: string | null) {
+    this.toDateSubject.next(date);
   }
 
 //availlableSearchCount = new BehaviorSubject<number>(0);
@@ -538,7 +549,7 @@ setAvaillableSearchCount(count: number) {
       category:category,
       subcategory:subcatageory,
       fromDate:fromDate,
-      toDate:fromDate,
+      toDate:toDate,
       status: status,
       page: page,
       pageSize: pageSize,

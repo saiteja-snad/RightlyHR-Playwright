@@ -965,7 +965,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Available Transfer Asset',
     'Available View Asset Details',
     'Available Update Asset Details',
-    'Available Block Asset Details'
+    'Available Block Asset'
   ];
   assetManagementAllocatedTabActions = [
     'Allocated Reallocate Asset',

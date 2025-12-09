@@ -61,7 +61,7 @@ export class AssetsManagmentComponent {
   assetDataOptions: any;
   loading=false
     first = 0;
-
+  isApplyDisabledFlag = true;
   constructor(private readonly fb: FormBuilder, public http: HttpService,private offcanvasService: NgbOffcanvas, private modalService: NgbModal, private conformationPopup: OpenModalService,
     public formValidation: FormValidationService,private filterService: TimesheetFilterService, public rbac: RbacService, public readonly router: Router) { }
 
@@ -98,10 +98,7 @@ export class AssetsManagmentComponent {
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
-
-  closeCanvas() {
-    this.offcanvasService.dismiss();
-  }
+ 
   onSubmit() {
     if (this.locationfromdata.invalid) {
       return;
@@ -113,123 +110,47 @@ export class AssetsManagmentComponent {
     //this.getteamsummary(employeeIds);
     this.closeCanvas();
   }
-  // resetForm() {
-  //   // Reset to current month
-  //   const startOfMonth = dayjs().startOf('month').toDate();
-  //   const endOfMonth = dayjs().endOf('month').toDate();
-  //   // Clear all form fields including date range and employee selection
-  //   this.locationfromdata.patchValue({
-  //     dateRange: [startOfMonth, endOfMonth],
-  //     locationId: null,
-  //     subLocationId: null,
-  //     assetSubCategory: null,
-  //     assetCategory: null,
-  //   });
-  //    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-  //   const loctionid = this.locationfromdata.get('locationId')?.value;
-  //   const selectedvalue = this.locationfromdata.get('assetCategory')?.value;
-  //   const selectedsubcatageory = this.locationfromdata.get('assetsubcategeory')?.value;
-  //   const daterange = this.locationfromdata.get('range')?.value;
+ 
 
-  //   // Clear filter service
-  //   this.filterService.clearFilters();
-  //   // Reload table data with cleared filters
-  //   this.page = 1;
-  //   this.first = 0;
-  //     this.http.assetsUpdateLocationId(this.assetSubCategory);
-  //   this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,selectedvalue,selectedsubcatageory, daterange,daterange,null,);
-  //    this.getcount(loctionid, subLocationId,selectedvalue,null,null,null)
-  // }
-
-resetForm() {
-  // Reset to current month
-  const startOfMonth = dayjs().startOf('month').toDate();
-  const endOfMonth = dayjs().endOf('month').toDate();
-
-  // Reset whole form
-  this.locationfromdata.patchValue({
-    dateRange: [startOfMonth, endOfMonth],
-    locationId: null,
-    subLocationId: null,
-    assetCategory: null,
-    assetSubCategory: null,
-  });
-
-  // 🔥 Clear LOCALSTORAGE filters
-  localStorage.removeItem('assetlocationId');
-  localStorage.removeItem('assetsublocationId');
-  localStorage.removeItem('assetcategeory');
-  localStorage.removeItem('assetsubcategeory');
-  localStorage.removeItem('formDate');
+  resetForm() {
+    // Reset to current month
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    // Reset whole form
+    this.locationfromdata.patchValue({ locationId: null, subLocationId: null, assetCategory: null, assetSubCategory: null, });
+    this.locationfromdata.get('dateRange')?.reset();
+    // Clear LOCALSTORAGE filters
+    localStorage.removeItem('assetlocationId');
+    localStorage.removeItem('assetsublocationId');
+    localStorage.removeItem('assetcategeory');
+    localStorage.removeItem('assetsubcategeory');
+    localStorage.removeItem('formDate');
     localStorage.removeItem('toDate');
     this.locationfromdata.get('subLocationId')?.disable();
-       this.locationfromdata.get('assetSubCategory')?.disable();
-  // Get fresh values (now null)
-  const locationId = null;
-  const subLocationId = null;
-  const category = null;
-  const subCategory = null;
+    this.locationfromdata.get('assetSubCategory')?.disable();
+    this.locationfromdata.get('dateRange')?.enable();
+    // Get fresh values (now null)
+    const locationId = null;
+    const subLocationId = null;
+    const category = null;
+    const subCategory = null;
+    const fromDate = null;
+    const toDate = null;
+    // Clear filter service
+    this.filterService.clearFilters();
+    // Reset pagination
+    this.page = 1;
+    this.first = 0;
+    // Update service with empty filters
+    this.http.assetsUpdateLocationId(null);
+    // Refresh table with NO filters
+    this.getassetsdata(this.page, this.pageSize, locationId, subLocationId, category, subCategory, fromDate, toDate, null);
+    // Refresh count correctly
+    this.getcount(locationId, subLocationId, category, subCategory, fromDate, toDate);
+    this.isApplyDisabledFlag = true;
+    this.locationfromdata.updateValueAndValidity();
+  }
 
-  const fromDate = startOfMonth;
-  const toDate = endOfMonth;
-
-  // 🔥 Clear filter service
-  this.filterService.clearFilters();
-
-  // Reset pagination
-  this.page = 1;
-  this.first = 0;
-
-  // Update service with empty filters
-  this.http.assetsUpdateLocationId(null);
-
-  // Refresh table with NO filters
-  this.getassetsdata(
-    this.page,
-    this.pageSize,
-    locationId,
-    subLocationId,
-    category,
-    subCategory,
-    fromDate,
-    toDate,
-    null
-  );
-
-  // Refresh count correctly
-  this.getcount(locationId, subLocationId, category, subCategory, fromDate, toDate);
-}
-
-// onassetcategoryfilter() {
-//          const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-//     const loctionid = this.locationfromdata.get('locationId')?.value
-//     this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
-//     this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
-//     this.assetForm.get('assetSubCategory')?.enable();
-
-//     const selectedId = this.locationfromdata.get('assetCategory')?.value.id;
-// const selectedvalue = this.locationfromdata.get('assetCategory')?.value.name;
-//     this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
-//       .subscribe({
-//         next: (data: any) => {
-//           this.assetSubCategory = data;
-//         },
-//         error: (reason: any) => {
-//           console.log(reason);
-//         },
-//       });
-//     localStorage.setItem('', JSON.stringify(this.assetSubCategory))
-//       this.http.assetsUpdateLocationId(this.assetSubCategory);
-//        this.getassetsdata(this.page,this.pageSize,loctionid,subLocationId,selectedvalue,null,null);
-//            this.getcount(loctionid, subLocationId,selectedvalue,null)
-//   }
-
-
-
-
-
-
-  
   initializeNavTabs(): void {
     this.loading=true
     // Populate allNavTabs with permission checks
@@ -262,7 +183,7 @@ resetForm() {
     this.assetForm = this.fb.group({
       assetModel: [null, [Validators.required, Validators.maxLength(20), Validators.pattern(/^[^\s].*$/)]],
       assetCategory: [null, Validators.required],
-      assetSubCategory: [{ value: null, disabled: true }, Validators.required],
+      assetSubCategory: [{ value: null, disabled: true }, [Validators.required]],
       assetID: [null],
       vendordetailes: [null, Validators.required],
       serialnumber: [null, [Validators.required, Validators.maxLength(30)]],
@@ -304,10 +225,24 @@ resetForm() {
       locationId: [null],
       subLocationId: [{ value: null, disabled: true }],
       assetCategory:[null],
-      assetSubCategory:[null],
+      assetSubCategory:[{ value: null, disabled: true }],
       dateRange:[null]
     });
+     this.locationfromdata.valueChanges.subscribe(() => {
+    this.isApplyDisabledFlag = this.checkIfFormIsEmpty();
+  });
   }
+checkIfFormIsEmpty(): boolean {
+  const v = this.locationfromdata.value;
+
+  return !(
+    v.locationId ||
+    v.subLocationId ||
+    v.assetCategory ||
+    v.assetSubCategory ||
+    (v.dateRange && v.dateRange[0] && v.dateRange[1])
+  );
+}
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true });
@@ -483,8 +418,6 @@ resetForm() {
     });
   }
   
-
-
   // onassetsubcategory() {
   //   this.assetForm.get('assetSubCategory')?.enable()
   //   const selectedId = this.assetForm.get('assetCategory')?.value.id;
@@ -527,8 +460,8 @@ resetForm() {
     localStorage.setItem('assetlocationId', JSON.stringify(locationId))
     this.locationfromdata.get('subLocationId')?.reset()
     localStorage.setItem('assetsublocationId', JSON.stringify(null))
-    this.http.assetsUpdateLocationId(locationId);
-    this.getcount(locationId, null,null,null,null,null)
+    //this.http.assetsUpdateLocationId(locationId);
+   // this.getcount(locationId, null,null,null,null,null)
   }
 
   onSubLocationChange() {
@@ -536,19 +469,17 @@ resetForm() {
     if (subLocationId) {
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
-      this.http.assetsUpdateLocationId(loctionid);
-      this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,null,null, null,null,null,);
-      this.getcount(loctionid, subLocationId,null,null,null,null)
+      //this.http.assetsUpdateLocationId(loctionid);
+     // this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId,null,null, null,null,null,);
+     // this.getcount(loctionid, subLocationId,null,null,null,null)
     }
     else {
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
-      this.http.assetsUpdateLocationId(loctionid);
+    //  this.http.assetsUpdateLocationId(loctionid);
     }
   }
 onassetcategoryfilter() {
-    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-    const loctionid = this.locationfromdata.get('locationId')?.value
     const selectedcatageoryId = this.locationfromdata.get('assetCategory')?.value.id;
     const selectedcatageoryvalue = this.locationfromdata.get('assetCategory')?.value.name;
       localStorage.setItem('assetsubcategeory', JSON.stringify(null));
@@ -566,29 +497,14 @@ onassetcategoryfilter() {
         },
       });
        localStorage.setItem('assetcategeory', JSON.stringify(selectedcatageoryvalue));
-    this.http.assetsUpdateLocationId(selectedcatageoryvalue);
-    this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, selectedcatageoryvalue, null, null, null, null,);
-    this.getcount(loctionid, subLocationId, selectedcatageoryvalue, null, null, null)
   }
 
   onassetsubcategoryfilter() {
-    const subLocationId = this.locationfromdata.get('subLocationId')?.value;
-    const loctionid = this.locationfromdata.get('locationId')?.value;
-    const selectedcatageory = this.locationfromdata.get('assetCategory')?.value.name;
     const selectedsubcatageory = this.locationfromdata.get('assetSubCategory')?.value.name;
-         localStorage.setItem('assetsubcategeory', JSON.stringify(selectedsubcatageory));
-    this.http.assetsUpdateLocationId(selectedsubcatageory);
-    this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, selectedcatageory, selectedsubcatageory, null, null, null,);
-    this.getcount(loctionid, subLocationId, selectedcatageory, selectedsubcatageory, null, null)
+    localStorage.setItem('assetsubcategeory', JSON.stringify(selectedsubcatageory));
   }
 
   ondatechange() {
-    const subLocationId = this.locationfromdata.get('subLocationId')?.value || null;
-    const loctionid = this.locationfromdata.get('locationId')?.value || null;
-    const assetCategory = this.locationfromdata.get('assetCategory')?.value;
-    const assetSubCategory = this.locationfromdata.get('assetSubCategory')?.value;
-    const selectedcatageory = assetCategory?.name || null;
-    const selectedsubcatageory = assetSubCategory?.name || null;
     const formValue = this.locationfromdata.value;
     const formatDate = (date: Date | null) => {
       if (!date) return null;
@@ -601,12 +517,45 @@ onassetcategoryfilter() {
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
      localStorage.setItem('formDate', JSON.stringify(startDate));
-       localStorage.setItem('toDate', JSON.stringify(endDate));
-    this.http.assetsUpdatedatarange(selectedsubcatageory);
-    this.getassetsdata(this.page,this.pageSize,loctionid,subLocationId,selectedcatageory, selectedsubcatageory,startDate, endDate, null);
-    this.getcount( loctionid,subLocationId,selectedcatageory,selectedsubcatageory,startDate,endDate);
+      localStorage.setItem('toDate', JSON.stringify(endDate));
+  }
+  
+  applydata() {
+    const formValue = this.locationfromdata.value;
+    const locationId = formValue.locationId || null;
+    const subLocationId = formValue.subLocationId || null;
+    const selectedCategory = formValue.assetCategory?.name || null;
+    const selectedSubCategory = formValue.assetSubCategory?.name || null;
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      const d = new Date(date);
+      return `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}/${d.getFullYear()}`;
+    };
+    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
+    //Update all BehaviorSubjects here ONLY
+    this.http.assetsUpdateLocationId(locationId);
+    this.http.assetsUpdateLocationId(subLocationId);
+    this.http.assetsUpdateCatageoryId(selectedCategory);
+    this.http.assetsUpdateLocationId(selectedSubCategory);
+    this.http.assetsUpdateFromDate(startDate);
+    this.http.assetsUpdateToDate(endDate);
+    console.log('payload', this.page, this.pageSize, locationId, subLocationId,
+      selectedCategory, selectedSubCategory, startDate, endDate, null);
+    // Call your APIs ONCE here
+    this.getassetsdata(this.page, this.pageSize, locationId, subLocationId,
+      selectedCategory, selectedSubCategory, startDate, endDate, null);
+
+    this.getcount(locationId, subLocationId, selectedCategory,
+      selectedSubCategory, startDate, endDate);
+
+    this.closeCanvas();
   }
 
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
+  
   getSubLocationByidfliters(selectedLocation: any): void {
     this.locationfromdata.get('subLocationId')?.enable();
     this.subscription = this.http
@@ -778,7 +727,8 @@ onassetcategoryfilter() {
 
   
   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,catageory:any,subcatageory:any,fromDate:any,toDate:any, Assetsstatus: any) {
-
+  console.log('payload-01',this.page, this.pageSize, locationid, sublocationid,
+    catageory, subcatageory, fromDate, toDate, null);
     const params = {
       page: pagenum,
       pageSize: pagesize,

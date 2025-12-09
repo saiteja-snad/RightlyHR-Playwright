@@ -90,7 +90,7 @@
                     </a>
                   </li>
                   }
-                   @if(rbac.allowedToAccess('Available Block Asset Details.view')) {
+                   @if(rbac.allowedToAccess('Available Block Asset.view')) {
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(blockAssetForm); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
@@ -536,7 +536,8 @@
       <form autocomplete="off" [formGroup]="blockform" (ngSubmit)="postblock(blockform, storeassetid)">
           <div class="col-md-12  mb-2">
             <label class="form-label custom-label mb-2">
-              Additional Comments
+              Additional Comments <span
+                class="error-msg">*</span>
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"

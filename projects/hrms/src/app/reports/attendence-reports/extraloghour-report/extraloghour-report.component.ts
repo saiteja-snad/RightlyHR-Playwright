@@ -19,10 +19,12 @@ import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { IWfhReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-extraloghour-report',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, TranslateModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, TranslateModule,NgbPopoverModule,
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './extraloghour-report.component.html',
   styleUrl: './extraloghour-report.component.scss'
 })

@@ -660,7 +660,7 @@ export const permissionsData = [
   //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
-  
+
   // { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
@@ -858,6 +858,9 @@ export const permissionsData = [
   { fields: 'Review Cycle Employee List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Performance Review', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Performance Review', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'KRA', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'KPI', View: false, Update: false, Create: false, Delete: false },
+
 
   //Review Cycle List Actions
   { fields: 'Create Review Cycle', View: false, Update: false, Create: false, Delete: false },

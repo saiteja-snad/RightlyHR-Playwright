@@ -1173,6 +1173,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Review Cycle Employee List',
     'My Performance Review',
     'My Team Performance Review',
+    'KRA',
+    'KPI'
   ];
   reviewCycleListActionsFields = [
     'Create Review Cycle',

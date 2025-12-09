@@ -461,7 +461,9 @@ export const PMS_TABS = [
   { route: '/pms/review-cycle', permission: 'Review Cycle List.view' },
   { route: '/pms/apprisal', permission: 'Review Cycle Employee List.view' },
   { route: '/pms/myPerformance', permission: 'My Performance Review.view' },
-  { route: '/pms/team-performance', permission: 'My Team Performance Review.view' }
+  { route: '/pms/team-performance', permission: 'My Team Performance Review.view' },
+  { route: '/pms/kra', permission: 'KRA.view' },
+  { route: '/pms/kpi', permission: 'KPI.view' }
 ]
 
 export const MY_PERFORMANCE_TABS = [
@@ -522,13 +524,13 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
 export const Employee_TEAM_NUMBERS = [
    { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
- 
+
 ]
 
 export const MyINFO_TEAM_NUMBERS = [
    { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
- 
+
 ]
 export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
   { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },

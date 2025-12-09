@@ -8,7 +8,12 @@
                 <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Dashboard
             </li>
             }
-
+                 @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/employee-dashboard');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/employee-dashboard')">
+                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Employee Dashboard
+            </li>
+            }
             <!--My Info-->
             @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"

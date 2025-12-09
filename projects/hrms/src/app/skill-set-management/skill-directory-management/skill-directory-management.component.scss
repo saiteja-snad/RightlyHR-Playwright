@@ -14,20 +14,22 @@
 
 .custom-table-chips {
   .p-chip {
-    border: 1px solid #D1D9E2 !important;
+    border: 1px solid var(--content-border-color) !important;
+    background: var(--card-bg-color) !important;
   }
 }
 
 .offcanvas-chips {
   .p-chip {
-    border: 0.5px solid;
+    border: 1px solid var(--content-border-color);
     font-weight: 500;
     font-size: var(--fontsize10);
-    color: #305889;
+    color: var(--primary-color);
     border-radius: 0.25rem;
     line-height: 100%;
     padding: 0.25rem;
     text-decoration: underline;
+    background: #FFF !important;
   }
 
   .Phase-link {
@@ -56,7 +58,6 @@
 }
 
 .custom-offcanvas-skill {
-
   /* Profile Section */
   .profile-content {
     display: flex;
@@ -64,7 +65,7 @@
     color: var(--primary-color);
     padding: 0.5rem 1rem !important;
     border-radius: 0.5rem;
-    background: linear-gradient(180deg, #FFFFFF -326.7%, #ECF0F4 100%);
+    background: var(--card-bg-color);
 
     .profile-image {
       width: 3.625rem;
@@ -93,7 +94,7 @@
       border-radius: 2rem;
       font-size: var(--fontsize12);
       padding: 0.35rem 1rem;
-      color: #0b3a83;
+      color: var(--primary-color);
     }
   }
 
@@ -104,7 +105,7 @@
   /* Tabs */
   .custom-skill-set-tabs {
     .p-tablist {
-      background: linear-gradient(360deg, #ECF1F5 0%, var(--module-accordian-bg-color) 150%);
+      background: var(--card-bg-color);
       border-radius: 0.5rem;
       padding: 0.25rem;
       display: inline-flex;
@@ -112,7 +113,7 @@
     }
 
     .p-tablist-tab-list {
-      background: linear-gradient(360deg, #ECF1F5 0%, var(--module-accordian-bg-color) 150%);
+      background: var(--card-bg-color);
       font-weight: 700;
       font-size: var(--fontsize14) !important;
     }
@@ -159,10 +160,10 @@
       width: 100%;
       padding: 0.625rem;
       border-radius: 0.5rem;
-      background: #ECF1F5;
+      background: var(--card-bg-color);
 
       p-chip {
-        background: #F8FBFF !important;
+        background: #FFF !important;
         border: none !important;
         border-radius: 1.25rem !important;
         font-size: var(--fontsize12) !important;
@@ -194,7 +195,7 @@
   /* Projects */
   .projects-container {
     .project-card {
-      background: #f8fbff;
+      background: var(--card-bg-color);
       border-radius: 0.5rem;
       padding: 0.625rem;
       border-left: 3px solid var(--primary-color);
@@ -305,8 +306,8 @@
     border: 1px solid #FFFFFF;
     border-radius: 0.5rem;
     padding: 0.75rem;
-    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-    border: 1px solid #DCE3E9;
+    background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
+    border: 1px solid var(--content-border-color);
     box-shadow: 0px 0px 5px 0px #0B3A831A;
 
     .profile-image {
@@ -386,8 +387,6 @@
   color: var(--primary-color);
 }
 
-
-
 .popup-header-border {
   border-bottom: 1.5px solid transparent;
   border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
@@ -398,7 +397,6 @@
 
 .custom-chip-content {
   .skill-level {
-
     &.beginner {
       color: #f8af13; // orange
     }
@@ -441,15 +439,14 @@
   color: #00a912;
 }
 
-
 .status-in-progress {
   color: #FF9500;
 }
 
 .popup-table-wrapper {
   .popup-table-scroll-container {
-    border: 1px solid #D1D8E3 !important;
-    border-bottom: 1px solid #D1D8E3 !important;
+    border: 1px solid var(--content-border-color) !important;
+    border-bottom: 1px solid var(--content-border-color) !important;
     border-radius: 0.5rem !important;
   }
 

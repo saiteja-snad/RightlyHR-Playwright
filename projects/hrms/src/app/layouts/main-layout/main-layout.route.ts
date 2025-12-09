@@ -27,10 +27,13 @@ import { ProjectManagementLayoutComponent } from "../../project-management/proje
 import { CardsManagementLayoutComponent } from "../../cards-management/cards-management-layout/cards-management-layout.component";
 import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
 import { PendingApprovalsComponent } from "../../time-off/pending-approvals/pending-approvals.component";
+import { EmployeeDashboardComponent } from "../../employee-dashboard/employee-dashboard/employee-dashboard.component";
+
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
     { path: 'admin', component: AdminLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/admin.route') },
+    { path: 'employee-dashboard', component: EmployeeDashboardComponent, canActivate: [authGuard], },
     { path: 'dashboard', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'personalinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
     { path: 'myinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },

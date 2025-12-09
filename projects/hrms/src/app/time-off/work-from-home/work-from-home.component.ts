@@ -19,11 +19,12 @@ import { Select } from 'primeng/select';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-work-from-home',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
-    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, Skeleton],
+    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, Skeleton, ConfirmationIconComponent],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
   encapsulation: ViewEncapsulation.None,

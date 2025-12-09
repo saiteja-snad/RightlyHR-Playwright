@@ -10,10 +10,11 @@ import { FormBuilder } from '@angular/forms';
 import { RbacService } from '../../../../services/rbac.service';
 import { IPolicy } from '../pending-policies/policies.model';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 
 @Component({
   selector: 'app-published-policies',
-  imports: [CommonModule, NoDataFoundComponent, TranslateModule, NgbPopoverModule, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, TranslateModule, NgbPopoverModule, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './published-policies.component.html',
   styleUrl: './published-policies.component.scss'
 })

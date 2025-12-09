@@ -58,7 +58,9 @@
                 @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
                 <li>
                   <a class="dropdown-item" (click)="updateShift(shift.id)">
-                    <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
+
+                    <app-settings-update-icon />Update
+
                   </a>
                 </li>
                 }

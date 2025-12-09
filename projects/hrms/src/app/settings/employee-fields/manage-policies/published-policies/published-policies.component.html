@@ -45,7 +45,7 @@
                 }
                 <li>
                   <a *ngIf="item.status === 'Published'" class="dropdown-item" (click)="viewPublishedPolicy(item)">
-                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
+                      <app-document-view-icon />{{'View' | translate}}
                   </a>
                 </li>
               </ul>

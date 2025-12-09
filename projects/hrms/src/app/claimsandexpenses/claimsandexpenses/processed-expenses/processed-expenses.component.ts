@@ -12,12 +12,14 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+
 import { DownloadExpenseComponent } from '../../download-expense/download-expense.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent, DownloadExpenseComponent],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })

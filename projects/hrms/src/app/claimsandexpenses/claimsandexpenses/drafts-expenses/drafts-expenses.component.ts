@@ -21,9 +21,10 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 import { Select } from 'primeng/select';
 import { AuthService } from '../../../services/auth.service';
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe, Select, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, Select, NgxDocViewerModule, TranslateModule, ReactiveFormsModule,DocumentViewIconComponent, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe],

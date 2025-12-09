@@ -49,7 +49,7 @@
                                     *ngIf="item.documentUrl.endsWith('jpg') || item.documentUrl.endsWith('jpeg') || item.documentUrl.endsWith('png') ;else downloadView">
                                     <a type="button" class="view-btn"
                                         (click)="onViewClick(item.documentUrl);onClickEditDocument(item)">
-                                        <i class="bi bi-eye-fill me-2"></i>View
+                                          <app-document-view-icon />View
                                     </a>
                                 </div>
                                 <ng-template #downloadView>
@@ -209,7 +209,7 @@
 <ng-template #confirmationPopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+          <app-confirmation-icon />
             <p class="confirmation-text mb-4">Are you sure you want to submit the documents?</p>
         </div>
         <div class="d-flex justify-content-center gap-5 mt-4">

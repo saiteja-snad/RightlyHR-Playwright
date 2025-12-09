@@ -12,6 +12,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
+import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 @Component({
   selector: 'app-document-history-appointment-letter',
   imports: [
@@ -23,8 +24,9 @@ import { DatePicker } from 'primeng/datepicker';
     AppointmentletterpipePipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    DatePicker
-  ],
+    DatePicker,
+    DownloadIconComponent
+],
   templateUrl: './document-history-appointment-letter.component.html',
   styleUrl: './document-history-appointment-letter.component.scss',
 })

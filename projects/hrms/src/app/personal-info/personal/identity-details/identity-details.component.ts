@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -15,10 +15,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DownloadIconComponent } from '../../../icons/download-icon/download-icon.component';
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, NgbPopoverModule, InfoIconComponent, DownloadIconComponent],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
@@ -39,6 +41,10 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false
   loading = false
   selectedIdentityTypetoUpdate: any;
+  isMyInfoRoute = false;
+  getFieldsApprovalStatusList: any[] = [];
+  activeMessage: string = '';
+  addedRecords=[] as any;
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
@@ -48,7 +54,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.initializeupdateForm();
     this.vadationfotidentitytype()
-    this.vadationfoforupdatetidentitytype()
+    this.vadationfoforupdatetidentitytype();
+    this.getFieldsApprovalStatus();
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -61,10 +68,12 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
       this.getIdentityByEmpid();
+      this.isMyInfoRoute = false;
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
       this.getIdentityByEmpid();
+      this.isMyInfoRoute = true;
     }
   }
 
@@ -335,7 +344,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         this.modalService.dismissAll()
         this.identityForm.reset();
-        this.getIdentityByEmpid()
+        this.getIdentityByEmpid();
+        this.getFieldsApprovalStatus();
         this.conformationPopup.openSuccessModal('Identity information added successfully');
       },
       error: (error) => {
@@ -351,7 +361,10 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityType: this.identityForm.get('identityType')?.value?.identityType1,
       identityNumber: this.identityForm.get('identityNumber')?.value,
       attachment: attachmentPath || '',
-
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: "Identity Info",
+      displayName: "Personal",
+      createdBy: this.empinfo.employeeId
     };
   }
 
@@ -413,7 +426,11 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         identityNumber: formData.identityupdateNumber,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
-        isDeleted: false
+        isDeleted: false,
+        selfUpdate: this.isMyInfoRoute,
+        moduleName: "Identity Info",
+        displayName: "Personal",
+        createdBy: this.empinfo.employeeId
       };
 
       // Check if a new attachment is selected
@@ -453,6 +470,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         // Close the modal and refresh the data
         this.getIdentityByEmpid();
+        this.getFieldsApprovalStatus();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Identity information updated successfully');
       },
@@ -469,7 +487,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
 
   opendeletModal(content: any, identityDetails: any): void {
-    this.selectedIdentityId = identityDetails.identityId; // Store the selected identityId
+    this.selectedIdentityId = identityDetails; // Store the selected identityId
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -478,14 +496,20 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       console.error('No identityId selected for deletion');
       return;
     }
-
-    this.subscription = this.http
-      .getData(`IdentityTable/deletebyid/${this.selectedIdentityId}`)
+    const payload = {
+      identityId: this.selectedIdentityId.identityId,
+      empId: this.selectedIdentityId.empId,
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: "Identity Info",
+      displayName: "Personal",
+      requestedBy: this.empinfo.employeeId
+    };
+    this.subscription = this.http.DeleteData(`IdentityTable/delete`,payload)
       .subscribe({
         next: (data: any) => {
-          console.log('Identity deleted successfully:', data);
-          this.modalService.dismissAll()
+          this.modalService.dismissAll();
           this.getIdentityByEmpid();
+          this.getFieldsApprovalStatus();
           this.conformationPopup.openSuccessModal('Identity information deleted successfully');
         },
         error: (err: any) => {
@@ -499,7 +523,55 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.identityForm.reset();
     this.modalService.dismissAll()
   }
+ getFieldsApprovalStatus() {
+    const params = {
+      displayName: 'Personal',
+      moduleName: 'Identity Info',
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+    this.subscription = this.http
+      .getDataIncludeParams(
+        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
+        params
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data.data.length > 0) {
+            this.getFieldsApprovalStatusList = data.data;
+            this.addedRecords=this.getFieldsApprovalStatusList.filter((item:any)=>item.approvalStatus?.toLowerCase()==='pending' && item.fieldName==='Add');
+            //this.disablePendingFields();
+          } else {
+            console.log('No data found.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
+  }
+    // Add this new method
+ disablePendingFields(referenceid: any): boolean {
+  const pendingFields = this.getFieldsApprovalStatusList
+    .filter(item =>
+      String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+  return pendingFields.length > 0;
+}
+    getPendingApprovalMessage(referenceid: string): string {
+    const pendingItem = this.getFieldsApprovalStatusList.find(
+      (item: any) =>
+        String(item.referenceCategory) === String(referenceid) &&
+      item.approvalStatus?.toLowerCase() === 'pending'
+    );
+    return (
+      pendingItem?.message || 'This field change request is awaiting approval.'
+    );
+  }
 
+  setActiveMessage(referenceid:any) {
+  this.activeMessage = this.getPendingApprovalMessage(referenceid);
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

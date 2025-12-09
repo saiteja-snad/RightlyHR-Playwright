@@ -4,8 +4,10 @@
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search by employee ID / employee name/ review cycle name / department / team / location / sub location / status" [(ngModel)]="searchQuery"
-                (ngModelChange)="fetchReviewCycles()" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" class="form-control custom-search-input"
+                placeholder="Search by employee ID / employee name/ review cycle name / department / team / location / sub location / status"
+                [(ngModel)]="searchQuery" (ngModelChange)="fetchReviewCycles()" aria-label="Username"
+                aria-describedby="basic-addon1">
         </div>
     </div>
     @if(!dataload){
@@ -44,18 +46,18 @@
                     <td>{{ item.rcItemStatus }}</td>
                     <td class="text-center">
                         @if(rbac.allowedToAccess('My Performance Assessment.view')){
-                            <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu text-center">
-                                    <li class="dropdown-item"
-                                        (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                        <a class="dropdown-custom-btn">{{item.assessorType}}
-                                            {{'Assessment' | translate}}</a>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li 
+                                    (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                    <a  class="dropdown-item">{{item.assessorType}}
+                                        {{'Assessment' | translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
                         }
                     </td>
                 </tr>
@@ -81,7 +83,8 @@
                     </option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
+                    }} of {{ collectionSize }}
                 </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -90,8 +93,8 @@
     </div>
     }
     }@else{
-        <div class="custom-compoent-data-loader">
-            <app-data-loader-content />
-        </div>
+    <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>
     }
 </div>

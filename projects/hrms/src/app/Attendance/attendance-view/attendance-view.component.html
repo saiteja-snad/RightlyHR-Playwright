@@ -1,12 +1,11 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
-    <div class="heading-content">
-      <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){({{empName}})}</p>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-          (click)="updateModuleInfo()" class="module-icon">
-      </div>
-    </div>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){({{empName}})}</p>
+            <div>
+                <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" />
+            </div>
+        </div>
 
     <div class="d-flex align-items-center flex-wrap gap-3">
       <label class="form-label custom-label filter-labels m-0">Select</label>
@@ -67,35 +66,32 @@
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-  <div class="d-flex gap-3">
-    <div class="custom-table-content attendance-log-content">
-      @if(!dataLoader){
-      <table class="w-100">
-        <thead>
-          <th class="max-width">Date</th>
-          <th class="max-width">First In</th>
-          <th class="max-width">Last Out</th>
-          <th class="max-width">Duration</th>
-          <th class="max-width">Logs</th>
-          <th class="text-end pe-5">Status</th>
-        </thead>
-        <tbody>
-          @if(attendanceData.value.length>0){
-          @for (item of attendanceData|async; track $index) {
-          <tr>
-            <td class="max-width">{{(item.date|dateformat)??'-'}}</td>
-            <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
-            <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-            <td class="max-width">
-              {{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
-              item.duration.totalDuration}}
-            </td>
-            <td class="max-width">
-              @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0) ||
-              (item.logExtraHours.length>0)){
-              <div>
-                <a type="button"
-                  (click)="openModalLarge(punchintimes);
+    <div class="d-flex gap-3">
+        <div class="custom-table-content attendance-log-content">
+            @if(!dataLoader){
+            <table class="w-100">
+                <thead>
+                    <th class="max-width">Date</th>
+                    <th class="max-width">First In</th>
+                    <th class="max-width">Last Out</th>
+                    <th class="max-width">Duration</th>
+                    <th class="max-width">Logs</th>
+                    <th class="text-end pe-5">Status</th>
+                </thead>
+                <tbody>
+                    @if(attendanceData.value.length>0){
+                    @for (item of attendanceData|async; track $index) {
+                    <tr>
+                        <td class="max-width">{{(item.date | dateformat)??'-'}}</td>
+                        <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
+                        <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
+                        <td class="max-width">
+                            {{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration.totalDuration}}
+                        </td>
+                        <td class="max-width">
+                            @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0) || (item.logExtraHours.length>0)){
+                            <div>
+                                <a type="button" (click)="openModalLarge(punchintimes);
                                 dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,item.permissions,item.logExtraHours,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
                   <app-info-icon />
                 </a>

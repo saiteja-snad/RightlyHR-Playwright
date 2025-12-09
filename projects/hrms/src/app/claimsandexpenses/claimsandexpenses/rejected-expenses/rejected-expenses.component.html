@@ -40,7 +40,7 @@
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-                      <i class="bi bi-eye-fill me-2"></i>View</a>
+                     <i class="bi bi-eye me-2"></i>View</a>
                   </li>
                   <li>
                     <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
@@ -110,7 +110,7 @@
                   </a>
                   <a type="button" class="download-text  text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
                     (click)="onViewAttachement(item?.attachment_url)">
-                    <i class="bi bi-eye-fill me-2"></i>View
+                      <app-document-view-icon />View
                   </a>
                 </div>
               </td>

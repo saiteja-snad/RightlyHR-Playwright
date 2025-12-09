@@ -18,6 +18,9 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RegularizationComponent } from './regularization/regularization.component';
+
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -34,7 +37,8 @@ import { RegularizationComponent } from './regularization/regularization.compone
     Select,
     ModuleInformationComponent,
     NgbPopoverModule,
-    FormsModule
+    FormsModule,
+    ModuleInfoIconComponent,
 ],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
@@ -114,7 +118,7 @@ export class OnbehalfOfApprovalsComponent {
     const url = this.router.url;
 
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
+      '/on-behalf-of/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
     };
 
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

@@ -16,11 +16,14 @@ import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
 import { AccordionModule } from 'primeng/accordion';
+import { DashAttIconComponent } from "../../icons/dash-att-icon/dash-att-icon.component";
+import { FingerPrintIconComponent } from "../../icons/finger-print-icon/finger-print-icon.component";
+import { LeaveIconComponent } from "../../icons/leave-icon/leave-icon.component";
+import { WfhIconComponent } from "../../icons/wfh-icon/wfh-icon.component";
 @Component({
   selector: 'app-dashboard',
-  imports: [ CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel,
-     ChartModule, DateformatPipe, Skeleton, AccordionModule
-  ],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel,
+    ChartModule, DateformatPipe, Skeleton, AccordionModule, DashAttIconComponent, FingerPrintIconComponent, LeaveIconComponent, WfhIconComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,

@@ -15,6 +15,9 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DomSanitizer } from '@angular/platform-browser';
+import { environment } from '../../../../environments/environment';
 
 
 interface ApprovalItem {
@@ -27,6 +30,9 @@ interface ApprovalItem {
   headerId: number;
   sourceFieldName:string;
   comments?:string;
+  approvalScope?:string;
+  moduleName?:string;
+  meta?:any;
 }
 
 interface ModuleData {
@@ -48,7 +54,8 @@ interface ModuleData {
     NoDataFoundComponent,
     DateformatPipe,
     InfoIconComponent,
-    NgbPopoverModule
+    NgbPopoverModule,
+    NgxDocViewerModule
 ],
   templateUrl: './personal-approvals.component.html',
   styleUrls: ['./personal-approvals.component.scss'],
@@ -66,18 +73,20 @@ export class PersonalApprovalsComponent implements OnInit {
 
   @ViewChild('cancelModal') cancelModal!: TemplateRef<any>;
   @ViewChild('confirmationModal') confirmationModal!: TemplateRef<any>;
-
   private employeeId!: number;
-
   private modalRef!: NgbModalRef;
-
+  ImageUrl: any;
+  ViewURL:any;
+   @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
   constructor(
     public rbac: RbacService,
     private http: HttpService,
     private modalService: NgbModal,
     private fb: FormBuilder,
     private conformationPopup: OpenModalService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {
     this.initForm();
   }
@@ -87,7 +96,68 @@ export class PersonalApprovalsComponent implements OnInit {
     this.employeeId = this.empdata?.employeeId;
     this.fetchApprovalHistory();
   }
+actionsDetails={} as any;
+ openModalforaction(modal: any, request: any,){
+  let parsedOldValue = {};
+  if (request.oldValue && request.oldValue!='-') {
+      parsedOldValue = JSON.parse(request.oldValue);
+  }
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
+  this.actionsDetails.fieldName=request.fieldName;
+  this.actionsDetails.moduleName=request.moduleName;
+  this.modalService.open(modal, { centered: true, backdrop: 'static' });
+ }
+  mergedValues: any[] = [];
+ openModalfornewvalueAction(modal: any, request: any) {
+  // Parse oldValue and newValue
+  let parsedOldValue = {};
+  let parsedNewValue = {};
+  if (request.oldValue&& request.oldValue!='-') {
+    parsedOldValue = JSON.parse(request?.oldValue);
+  }
+  if (request.newValue && request.newValue!='-') {
+    parsedNewValue = JSON.parse(request.newValue);
+  }
+  // Parse meta (ChangedFields)
+  let parsedMeta: any = {};
+  if (request.meta && request.meta!='') {
+    parsedMeta = JSON.parse(request.meta);
+  }
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue,
+    newValue: parsedNewValue,
+    changedFields: parsedMeta?.ChangedFields ?? {}  // <<--- Correct extraction
+  };
+  const oldVal = this.actionsDetails.oldValue ?? {};
+  const newVal = this.actionsDetails.newValue ?? {};
+  const changedFields = this.actionsDetails.changedFields ?? {}; // <<--- Correct reference
+  // Merge keys
+  const keys = new Set([
+    ...Object.keys(oldVal),
+    ...Object.keys(newVal),
+  ]);
+  // Build merged list
+  this.mergedValues = Array.from(keys).map(key => ({
+    key,
+    oldValue: oldVal[key],
+    newValue: newVal[key],
+    isChanged: this.isFieldChanged(key, changedFields)
+  }));
+  this.modalService.open(modal, { centered: true, backdrop: 'static' });
+}
+isFieldChanged(objectKey: string, changedFields: any): boolean {
+  if (!changedFields) return false;
+  const normalizedKey = objectKey.replace(/\s+/g, "").toLowerCase();
+  const changedKeys = Object.keys(changedFields).map(k =>
+    k.replace(/\s+/g, "").toLowerCase()
+  );
 
+  return changedKeys.includes(normalizedKey);
+}
   shouldShowTooltip(element: HTMLElement): boolean {
     if (!element) return false;
     return element.offsetWidth < element.scrollWidth;
@@ -175,7 +245,10 @@ export class PersonalApprovalsComponent implements OnInit {
                 itemId: item.itemId,
                 headerId: header.headerId,
                 sourceFieldName:item.sourceFieldName,
-                comments:item.comments
+                comments:item.comments,
+                approvalScope:item.approvalScope,
+                moduleName:item.moduleName,
+                meta: item?.meta ?? ''
               });
             });
           });
@@ -187,7 +260,6 @@ export class PersonalApprovalsComponent implements OnInit {
         });
       }
     });
-
     this.moduleData = Array.from(moduleMap.entries()).map(
       ([moduleName, items]) => ({
         moduleName,
@@ -301,7 +373,49 @@ export class PersonalApprovalsComponent implements OnInit {
         return '';
     }
   }
+  onViewAttachement(url: any,content:any) {
+    const lowerUrl = url?.toLowerCase();
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.ViewURL = null;
+          this.toggleViewModal(content);
+        },
+        error: (err) => console.error('Error downloading image:', err),
+      });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal(content);
+    } else {
+      // fallback for other types if needed
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal(content);
+    }
+  }
 
+  toggleViewModal(content:any) {
+    this.modalService.dismissAll();
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+  }
+  // destroy the component
+
+  closeonlyattemchment(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
+ closeonlyattemchmentforcurrent(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforcurrentaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

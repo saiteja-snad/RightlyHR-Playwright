@@ -22,7 +22,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     background-color: var(--white-color);
-    border: 1px solid #CCDAEC;
+    border: 1px solid var(--content-border-color);
 }
 
 .time-sheet-graph-card {
@@ -30,7 +30,7 @@
     padding: 0.5rem;
     border: 1px solid #FFFFFF;
     border-radius: 0.5rem;
-    background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
+    background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
 }
 
 .summary-header {
@@ -72,7 +72,7 @@
 .dashed-line {
     width: 100%;
     height: 1px;
-    border: 1px dashed #C9D3DD;
+    border: 1px dashed var(--content-border-color);
 }
 
 .stacked-progress-container {
@@ -166,8 +166,8 @@
 }
 
 .no-data-image {
-    width: 156px !important;
-    height: 130px !important;
+    --no-data-icon-width: 7rem !important;
+    --no-data-icon-height: 6rem !important;
 }
 
 .graph-no-data-content {
@@ -176,23 +176,18 @@
     height: 100%;
     min-height: 15rem;
 
-    .no-data-image {
-        width: 7rem !important;
-        height: 6rem !important;
-    }
-
     .no-data-text {
         font-size: var(--fontsize14) !important;
     }
 }
 
 .chart-card-skeleton {
-  width: 100%;
-  height: 15rem;
-  margin: 0 auto;
-  background: transparent;
+    width: 100%;
+    height: 15rem;
+    margin: 0 auto;
+    background: transparent;
 
-  .p-skeleton {
-    background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
-  }
+    .p-skeleton {
+        background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%) !important;
+    }
 }

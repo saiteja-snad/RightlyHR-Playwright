@@ -12,9 +12,10 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-blood-bank',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, NgbPopoverModule, ModuleInformationComponent,ModuleInfoIconComponent],
   templateUrl: './blood-bank.component.html',
   styleUrl: './blood-bank.component.scss',
   encapsulation: ViewEncapsulation.None,

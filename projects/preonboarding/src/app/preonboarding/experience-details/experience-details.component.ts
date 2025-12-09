@@ -12,9 +12,10 @@ import { Router } from '@angular/router';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { environment } from '../../../../environments/environment';
+import { DocumentViewIconComponent } from "../../../../../hrms/src/app/icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-experience-details',
-  imports: [CommonModule, DateFormatPipe,NgxDocViewerModule, DetailedStepProgressbarComponent],
+  imports: [CommonModule, DateFormatPipe, NgxDocViewerModule, DetailedStepProgressbarComponent, DocumentViewIconComponent],
   templateUrl: './experience-details.component.html',
   styleUrl: './experience-details.component.scss'
 })

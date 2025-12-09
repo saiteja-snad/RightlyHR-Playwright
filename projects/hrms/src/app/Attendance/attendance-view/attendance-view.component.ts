@@ -35,6 +35,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { AccordionModule } from 'primeng/accordion';
 import { ChartModule } from 'primeng/chart';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-attendance-view',
@@ -49,6 +50,7 @@ import { ChartModule } from 'primeng/chart';
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
+    ModuleInfoIconComponent,
     Select,
     DataLoaderContentComponent,
     TohoursPipe,
@@ -469,7 +471,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
-    const statuses = ['active', 'Trainee Active', 'Active Contract'];
+    const statuses = ['Active', 'Trainee Active', 'Active Contract', 'Inactive', 'Trainee Inactive', 'Inactive Contract'];
     this.subscription = this.http
       .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
       .subscribe({

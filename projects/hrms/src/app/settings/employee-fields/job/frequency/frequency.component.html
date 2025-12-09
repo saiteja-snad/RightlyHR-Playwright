@@ -43,13 +43,13 @@
                             <!--Update-->
                             <div>
                                 <a (click)="openUpdate(freq)" *ngIf="rbac.allowedToAccess('Frequency.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                     <app-settings-update-icon />
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
                                 <a (click)="openDelete(freq)" *ngIf="rbac.allowedToAccess('Frequency.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                       <app-settings-delete-icon />
                                 </a>
                             </div>
                         </div>

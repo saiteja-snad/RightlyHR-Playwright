@@ -2,7 +2,13 @@
     @if(!isloading){
     <div class="card profile-card mb-2">
         <div class="image-content">
-            <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
+           <ng-container *ngIf="imageUrl; else showProfileIcon">
+                <img [src]="imageUrl" alt="Profile Image" class="profile-image">
+            </ng-container>
+        
+            <ng-template #showProfileIcon>
+                <app-profile-icon [iconWidth]="'72'" [iconHeight]="'72'" />
+            </ng-template>
             <div class="edit-icon-content">
                 <label for="formFile-personalinfo" class="form-label">
                     <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>

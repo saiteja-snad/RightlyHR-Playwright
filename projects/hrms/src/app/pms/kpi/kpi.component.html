@@ -252,17 +252,23 @@
                 </td>
 
                 <td class="text-center align-middle">
-                  @if (kpiRows.length > 1) {
-                  <button type="button" class="btn btn-sm btn-outline-danger me-2" (click)="removeKpiRow($index)">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                  }
+                  <div class="d-flex justify-content-center align-items-center gap-2">
 
-                  @if ($index === kpiRows.length - 1) {
-                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="addKpiRow()">
-                    <i class="bi bi-plus-circle"></i>
-                  </button>
-                  }
+                    @if ($index === kpiRows.length - 1) {
+                    <button type="button"
+                      class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+                      style="width: 32px; height: 32px;" (click)="addKpiRow()">
+                      <i class="bi bi-plus-circle"></i>
+                    </button>
+                    }
+
+                    @if (kpiRows.length > 1) {
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" (click)="removeKpiRow($index)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    }
+
+                  </div>
                 </td>
 
               </tr>

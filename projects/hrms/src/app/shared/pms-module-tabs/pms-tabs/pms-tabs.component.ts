@@ -19,8 +19,6 @@ export class PmsTabsComponent implements OnInit {
     { label: 'Review Cycle Employee List', link: '/pms/apprisal', permission: { feature: 'Review Cycle Employee List', action: 'view' } },
     { label: 'My Performance Review', link: '/pms/myPerformance', permission: { feature: 'My Performance Review', action: 'view' } },
     { label: 'My Team Performance Review', link: '/pms/team-performance', permission: { feature: 'My Team Performance Review', action: 'view' } },
-    { label: 'KRA', link: '/pms/kra', permission: { feature: 'KRA', action: 'view' } },
-    { label: 'KPI', link: '/pms/kpi', permission: { feature: 'KPI', action: 'view' } },
 
   ];
 

@@ -58,8 +58,7 @@ export class LoadEntilementsMapCategoeryComponent {
           this.loading = false;
           this.currentYearData = (current as ILeaveCategory[])
             .filter(x => x.encashAllowedType || x.carryForwardAllowed)
-      
-
+           
           this.nextYearData = (next as ILeaveCategory[])
             .filter(x => x.encashAllowedType || x.carryForwardAllowed);
         },
@@ -76,7 +75,6 @@ export class LoadEntilementsMapCategoeryComponent {
 
 
   getdataforcarryforwardforplaylod(carryforwarddata: ICarryForward) {
-
     this.http.getData(
       `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
     &subLocationIds=${carryforwarddata.subLocation.id}

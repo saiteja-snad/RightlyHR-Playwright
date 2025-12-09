@@ -1,3 +1,4 @@
+import { OpenModalService } from './../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -30,6 +31,10 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { AccordionModule } from 'primeng/accordion';
+import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-kpi',
@@ -45,6 +50,10 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     NoDataFoundComponent,
     ModuleInformationComponent,
     ModuleInfoIconComponent,
+    AccordionModule,
+    TooltipModule,
+    DropdownModule,
+    SelectModule
   ],
   templateUrl: './kpi.component.html',
   styleUrl: './kpi.component.scss',
@@ -56,6 +65,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   private modalService = inject(NgbModal);
   public rbac = inject(RbacService);
   private router = inject(Router);
+  private conformationPopup= inject(OpenModalService);
 
   moduleinfo = '';
   searchText = '';
@@ -63,6 +73,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   filteredDetails: any[] = [];
   dataload = false;
   isSubmitting = false;
+  groupedKpis: { kraId: number; kraName: string; kpis: any[] }[] = [];
 
   page = 1;
   rows = 10;
@@ -133,27 +144,65 @@ export class KpiComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadKpiList() {
-    const params = {
-      page: this.page,
-      pageSize: this.rows,
-      ...(this.searchText && { searchQuery: this.searchText }),
-    };
-
-    this.dataload = true;
-    this.subscription = this.http.getpagentiontData('kpi', params).subscribe({
-      next: (res: any) => {
-        this.kpiList = res.items || [];
-        this.collectionSize = res.totalCount || 0;
-        this.filteredDetails = this.kpiList;
-        this.dataload = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.dataload = false;
-      },
-    });
+  onKraChange() {
+  const selectedKraId = this.kpiForm.get('kraId')?.value;
+  if (selectedKraId) {
+    const selectedKra = this.kraList.find(k => k.kraId === selectedKraId);
+    if (selectedKra) {
+      this.kpiForm.patchValue({
+        weightage: selectedKra.weightageValue,           // auto-fill weightage
+        effectiveDate: selectedKra.effectiveDate.split('T')[0], // format YYYY-MM-DD
+        targetDate: selectedKra.targetDate.split('T')[0],       // format YYYY-MM-DD
+      });
+    }
   }
+}
+
+loadKpiList() {
+  const params = {
+    page: this.page,
+    pageSize: this.rows,
+    ...(this.searchText && { searchQuery: this.searchText }),
+  };
+
+  this.dataload = true;
+  this.subscription = this.http.getDataIncludeParams('Kpi/getAll', params).subscribe({
+    next: (res: any) => {
+      const kpis = res.data || [];
+      this.collectionSize = res.pagination?.totalRecords || 0;
+
+      // Group KPIs by kraId + kraName
+      const map = new Map<number, { kraId: number; kraName: string; kpis: any[] }>();
+
+      kpis.forEach((kpi: any) => {
+        const kraId = kpi.kraId;
+        const kraName = kpi.kraName || 'Unknown KRA';
+
+        if (!map.has(kraId)) {
+          map.set(kraId, { kraId, kraName, kpis: [] });
+        }
+        map.get(kraId)!.kpis.push(kpi);
+      });
+
+      this.groupedKpis = Array.from(map.values())
+        .sort((a, b) => a.kraName.localeCompare(b.kraName));
+
+      this.filteredDetails = kpis;
+      this.dataload = false;
+
+      console.log("Grouped KPIs =>", this.groupedKpis);
+console.log("Raw KPIs =>", kpis);
+console.log("Data load =>", this.dataload);
+
+    },
+    error: (err) => {
+      console.error(err);
+      this.groupedKpis = [];
+      this.collectionSize = 0;
+      this.dataload = false;
+    }
+  });
+}
 
   onSearchTextChange() {
     this.page = 1;
@@ -217,50 +266,46 @@ export class KpiComponent implements OnInit, OnDestroy {
     this.kpiRows.removeAt(index);
   }
 
-  onSubmitKpi() {
-    if (this.kpiForm.invalid || this.kpiRows.length === 0) return;
+onSubmitKpi() {
+  if (this.kpiForm.invalid || this.kpiRows.length === 0) return;
 
-    this.isSubmitting = true;
+  this.isSubmitting = true;
 
-    const formValue = this.kpiForm.getRawValue(); // safer for typed reactive forms
+  const formValue = this.kpiForm.getRawValue();
+  const selectedKra = this.kraList.find(k => k.kraId === formValue.kraId);
 
-    const kpiRowsValue = this.kpiRows.getRawValue(); // always FormArray[], never undefined
+  const payload = this.kpiRows.getRawValue().map((row: any) => ({
+    kraId: formValue.kraId,
+    kpiName: row.kpiName.trim(),
+    targetType: row.uom,                    // assuming UOM = targetType
+    targetValue: String(row.targetValue),
+    weightageValue: String(row.weightage),
+    targetDate: row.targetDate,
+    description: row.description.trim(),
+    status: "Created",
+    kraName: selectedKra?.kraName,
+    kraWeightage: String(selectedKra?.weightageValue),
+    kraEffectiveDate: selectedKra?.effectiveDate,
+    kraTargetDate: selectedKra?.targetDate,
+  }));
 
-    const payload = {
-      kraId: formValue.kraId,
-      weightage: String(formValue.weightage),
-      effectiveDate: formValue.effectiveDate,
-      targetDate: formValue.targetDate,
-
-      kpis: kpiRowsValue.map((row) => ({
-        kpiName: row.kpiName.trim(),
-        weightage: String(row.weightage),
-        unitOfMeasurement: row.uom,
-        targetValue: String(row.targetValue),
-        targetDate: row.targetDate,
-        description: row.description.trim(),
-      })),
-    };
-
-    this.http.postdata('kpi/bulk', payload).subscribe({
-      next: () => {
-        this.modalService.dismissAll();
-        this.loadKpiList();
-        alert('KPIs created successfully!');
-      },
-      error: (err) => {
-        console.error('Error:', err);
-        alert(
-          'Failed to create KPIs: ' + (err.error?.message || 'Unknown error')
-        );
-      },
-      complete: () => {
-        this.isSubmitting = false;
-        this.kpiForm.reset();
-        this.kpiRows.clear();
-      },
-    });
-  }
+  this.http.postdata('Kpi/upsertkra', payload).subscribe({
+    next: () => {
+      this.modalService.dismissAll();
+      this.loadKpiList();
+      this.conformationPopup.openSuccessModal('KPIs created successfully');
+    },
+    error: (err) => {
+      console.error(err);
+      this.conformationPopup.openErrorModal(err.error?.message || 'Failed to create KPIs');
+    },
+    complete: () => {
+      this.isSubmitting = false;
+      this.kpiForm.reset();
+      this.kpiRows.clear();
+    }
+  });
+}
 
   hasAnyActionPermission(): boolean {
     return (
@@ -276,6 +321,19 @@ export class KpiComponent implements OnInit, OnDestroy {
   onView(kpi: any) {
     alert('View: ' + (kpi.kpiTitle || kpi.kpiName));
   }
+
+  getStatusClass(status: string) {
+  switch (status) {
+    case 'Created':
+      return 'status-created';
+    case 'Active':
+      return 'status-active';
+    case 'On Hold':
+      return 'status-onhold';
+    default:
+      return '';
+  }
+}
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();

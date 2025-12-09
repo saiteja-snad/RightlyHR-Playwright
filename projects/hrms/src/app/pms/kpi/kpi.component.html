@@ -35,100 +35,110 @@
       (ngModelChange)="onSearchTextChange()" />
   </div>
 
-  <!-- Table -->
-  @if (!dataload) {
-  <div class="custom-table-content w-100">
-    <table class="w-100">
-      <thead>
-        <tr>
-          <th>{{ 'KPI Title' | translate }}</th>
-          <th>{{ 'Category' | translate }}</th>
-          <th>{{ 'Weightage (%)' | translate }}</th>
-          <th>{{ 'UOM' | translate }}</th>
-          <th>{{ 'Effective Date' | translate }}</th>
-          <th>{{ 'Target Date' | translate }}</th>
-          <th>{{ 'Status' | translate }}</th>
-          @if (hasAnyActionPermission()) {
-          <th class="text-center">{{ 'Action' | translate }}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @if (filteredDetails.length > 0) {
-        @for (kpi of filteredDetails; track kpi.id) {
-        <tr>
-          <td>{{ kpi.kpiTitle || kpi.kpiName }}</td>
-          <td>{{ kpi.categoryName || '-' }}</td>
-          <td>{{ kpi.weightage }}%</td>
-          <td>{{ kpi.unitOfMeasurement || '-' }}</td>
-          <td>{{ kpi.effectiveDate | date:'dd-MM-yyyy' }}</td>
-          <td>{{ kpi.targetDate | date:'dd-MM-yyyy' }}</td>
-          <td>
-            <span class="badge" [ngClass]="kpi.status === 'Active' ? 'bg-success' : 'bg-secondary'">
-              {{ kpi.status }}
-            </span>
-          </td>
-
-          @if (hasAnyActionPermission()) {
-          <td class="text-center">
-            <div class="dropdown">
-              <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
-                <i class="bi bi-three-dots-vertical"></i>
+<!-- Replace from Search Bar down with this entire block -->
+<div class="custom-main-popup-content custom-accordians mt-3">
+  @if (!dataload && groupedKpis.length > 0) {
+    <p-accordion [multiple]="false">
+      @for (group of groupedKpis; track group.kraId) {
+        <p-accordionTab>
+          <!-- Custom Header -->
+          <ng-template pTemplate="header">
+            <div class="d-flex justify-content-between align-items-center w-100 pe-4">
+              <span class="fw-bold">{{ group.kraName }}</span>
+              <span class="text-muted small">
+                {{ group.kpis.length }} KPI{{ group.kpis.length > 1 ? 's' : '' }}
               </span>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                @if (rbac.allowedToAccess('Update KPI.view')) {
-                <li class="dropdown-item" (click)="onUpdate(kpi)">
-                  <a class="dropdown-custom-btn">{{ 'Update' | translate }}</a>
-                </li>
-                }
-                @if (rbac.allowedToAccess('View KPI.view')) {
-                <li class="dropdown-item" (click)="onView(kpi)">
-                  <a class="dropdown-custom-btn">{{ 'View' | translate }}</a>
-                </li>
-                }
-              </ul>
             </div>
-          </td>
-          }
-        </tr>
-        }
-        } @else {
-        <tr>
-          <td colspan="8" class="text-center py-4">
-            <app-no-data-found />
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+          </ng-template>
 
-  <!-- Pagination -->
-  @if (filteredDetails.length > 0) {
-  <div class="pagination-content">
-    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-      <div class="d-flex align-items-center gap-3 p-2">
-        <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-          (ngModelChange)="onPageSizeChange($event)">
-          @for (option of options; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-        <span class="pagination-label text-nowrap">
-          Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{
-          collectionSize }}
-        </span>
-      </div>
-      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)">
-      </p-paginator>
+          <!-- Content -->
+          <ng-template pTemplate="content">
+            <div class="custom-table-content custom-popup-table mt-3">
+              <table class="w-100 popup-table">
+                <thead class="table-light">
+                  <tr>
+                    <th>{{ 'KPI Name' | translate }}</th>
+                    <th>{{ 'Weightage (%)' | translate }}</th>
+                    <th>{{ 'UOM' | translate }}</th>
+                    <th>{{ 'Target Value' | translate }}</th>
+                    <th>{{ 'Target Date' | translate }}</th>
+                    <th>{{ 'Description' | translate }}</th>
+                    <th>{{ 'Status' | translate }}</th>
+                    @if (hasAnyActionPermission()) {
+                      <th class="text-center">{{ 'Action' | translate }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (kpi of group.kpis; track kpi.kpiId) {
+                    <tr>
+                      <td class="fw-medium">{{ kpi.kpiName }}</td>
+                      <td>{{ kpi.weightageValue }}</td>
+                      <td>{{ kpi.targetType }}</td>
+                      <td>{{ kpi.targetValue }}</td>
+                      <td>{{ kpi.targetDate | date:'dd-MM-yyyy' }}</td>
+                      <td>
+                        <span class="ellipsis-cell" pTooltip="{{ kpi.description }}" tooltipPosition="top">
+                          {{ kpi.description.length > 40 ? (kpi.description | slice:0:40) + '...' : kpi.description }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="kpi-status"
+                          [ngClass]="getStatusClass(kpi.status)">
+                          {{ kpi.status }}
+                        </span>
+                      </td>
+
+                      @if (hasAnyActionPermission()) {
+                        <td class="text-center">
+                          <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                              <i class="bi bi-three-dots-vertical text-muted"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu shadow-sm">
+                              @if (rbac.allowedToAccess('Update KPI.view')) {
+                                <li class="dropdown-item" (click)="onUpdate(kpi)">
+                                  <a class="dropdown-custom-btn small">
+                                    <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                                  </a>
+                                </li>
+                              }
+                              @if (rbac.allowedToAccess('View KPI.view')) {
+                                <li class="dropdown-item" (click)="onView(kpi)">
+                                  <a class="dropdown-custom-btn small">
+                                    <i class="bi bi-eye me-2"></i>{{ 'View' | translate }}
+                                  </a>
+                                </li>
+                              }
+                            </ul>
+                          </div>
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </ng-template>
+        </p-accordionTab>
+      }
+    </p-accordion>
+  }
+
+  <!-- No Data -->
+  @else if (!dataload && groupedKpis.length === 0) {
+    <div class="text-center py-5">
+      <app-no-data-found />
     </div>
-  </div>
   }
-  } @else {
-  <div class="custom-compoent-data-loader">
-    <app-data-loader-content />
-  </div>
+
+  <!-- Loading -->
+  @else if (dataload) {
+    <div class="text-center py-5">
+      <app-data-loader-content />
+    </div>
   }
+</div>
 </div>
 
 <!-- ==================== CREATE KPI MODAL (Professional Design) ==================== -->
@@ -143,27 +153,38 @@
         <!-- Top Section: KRA, Weightage, Dates -->
         <div class="row g-3 mb-4">
           <!-- KRA Selection -->
-          <div class="col-md-6">
-            <label class="form-label custom-label mb-2">
-              {{ 'KRA' | translate }} <span class="text-danger">*</span>
-            </label>
-            <select class="form-select custom-input" formControlName="kraId">
-              <option [ngValue]="null" disabled>{{ 'Select KRA' | translate }}</option>
-              @for (kra of kraList; track kra.kraId) {
-              <option [ngValue]="kra.kraId">{{ kra.kraName }}</option>
-              }
-            </select>
-            <div class="error-msg" *ngIf="f['kraId'].touched && f['kraId'].invalid">
-              Please select a KRA
-            </div>
-          </div>
+<div class="col-md-6">
+  <label class="form-label custom-label mb-2">
+    {{ 'KRA' | translate }} <span class="text-danger">*</span>
+  </label>
+
+  <div class="custom-p-select-content">
+    <p-select
+      [options]="kraList"
+      optionLabel="kraName"
+      optionValue="kraId"
+      class="form-select custom-select"
+      placeholder="Select KRA"
+      [filter]="true"
+      resetFilterOnHide="true"
+      [showClear]="true"
+      formControlName="kraId"
+      (onChange)="onKraChange()">
+    </p-select>
+  </div>
+
+  <div class="error-msg" *ngIf="f['kraId'].touched && f['kraId'].invalid">
+    Please select a KRA
+  </div>
+</div>
+
 
           <!-- Weightage -->
           <div class="col-md-6">
             <label class="form-label custom-label mb-2">
               {{ 'Weightage (%)' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
+            <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100" [readonly]="kpiForm.get('kraId')?.value"
               placeholder="Enter weightage">
             <div class="error-msg" *ngIf="f['weightage'].touched && f['weightage'].invalid">
               Weightage must be between 1 and 100
@@ -175,7 +196,7 @@
             <label class="form-label custom-label mb-2">
               {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control custom-input" formControlName="effectiveDate">
+            <input type="date" class="form-control custom-input" formControlName="effectiveDate" [readonly]="kpiForm.get('kraId')?.value">
             <div class="error-msg" *ngIf="f['effectiveDate'].touched && f['effectiveDate'].invalid">
               Effective Date is required
             </div>
@@ -186,7 +207,7 @@
             <label class="form-label custom-label mb-2">
               {{ 'Target Date' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control custom-input" formControlName="targetDate"
+            <input type="date" class="form-control custom-input" formControlName="targetDate"  [readonly]="kpiForm.get('kraId')?.value"
               [min]="kpiForm.get('effectiveDate')?.value">
             <div class="error-msg" *ngIf="f['targetDate'].touched && f['targetDate'].invalid">
               Target Date is required

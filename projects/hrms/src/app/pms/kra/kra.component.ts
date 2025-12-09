@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-kra',
@@ -30,6 +31,7 @@ import { filter } from 'rxjs/operators';
     NoDataFoundComponent,
     ModuleInformationComponent,
     ModuleInfoIconComponent,
+    SelectModule
   ],
   templateUrl: './kra.component.html',
   styleUrl: './kra.component.scss',
@@ -70,8 +72,32 @@ currentEditingKraId: number | null = null;
   kraForm: any;
   get f() { return this.kraForm.controls; }
 
+  assignKpiForm: any;
+
+assignByRoleForm: any;
+selectedKraTitle = '';
+selectedKpiCount = 0;
+
+
+jobRoleOptions = [
+  { label: 'Software Engineer', value: 1 },
+  { label: 'Senior Developer', value: 2 },
+  { label: 'Team Lead', value: 3 },
+];
+
+employeeOptions = [
+  { label: 'John Doe', value: 101 },
+  { label: 'Alice Smith', value: 102 },
+  { label: 'Michael Lee', value: 103 }
+];
+
+
   private subscription!: Subscription;
   @ViewChild('createKraModal') createKraModal: any;
+  @ViewChild('assignKpiModal') assignKpiModal: any;
+  @ViewChild('assignByRoleModal') assignByRoleModal: any;
+
+
 
   constructor(
     private fb: FormBuilder,
@@ -91,7 +117,46 @@ currentEditingKraId: number | null = null;
       description: ['', [Validators.required, Validators.minLength(10)]],
       attachment: [null as File | null],
     }, { validators: this.targetDateValidator });
+
+    this.assignKpiForm = this.fb.group({
+  kraName: [{ value: '', disabled: true }],
+  weightageValue: [{ value: '', disabled: true }],
+  effectiveDate: [{ value: '', disabled: true }],
+  targetDate: [{ value: '', disabled: true }],
+
+  kpiRows: this.fb.array([
+    this.createKpiRow()
+  ])
+});
+
+this.assignByRoleForm = this.fb.group({
+  roleRows: this.fb.array([
+    this.createRoleRow()
+  ])
+});
+
   }
+
+  createKpiRow() {
+  return this.fb.group({
+    kpiName: ['', Validators.required],
+    weightage: ['', [Validators.required, Validators.min(1), Validators.max(100)]],
+    unit: ['', Validators.required],
+    targetValue: ['', Validators.required],
+    targetDate: ['', Validators.required],
+  });
+}
+
+createRoleRow() {
+  return this.fb.group({
+    jobRole: ['', Validators.required],
+    employee: ['', Validators.required],
+    effectiveDate: ['', Validators.required],
+    targetDate: ['', Validators.required],
+  });
+}
+
+
 
   ngOnInit(): void {
     this.loadKraList();
@@ -180,42 +245,41 @@ openCreateModal() {
     return this.kraCategories.find(c => c.id === id)?.name || '-';
   }
 
- onSubmitKra() {
-  if (this.kraForm.invalid) return;
 
-  this.isSubmitting = true;
-
+  uploadKraAttachment(payload: any): void {
   const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
   const employeeId = user?.employeeId || 0;
 
-  const payload = {
-    kraId: this.isEditMode ? this.currentEditingKraId : 0,
-    categoryId: this.kraForm.value.categoryId,
-    kraName: this.kraForm.value.kraName?.trim(),
-    effectiveDate: this.kraForm.value.effectiveDate,
-    targetDate: this.kraForm.value.targetDate,
-    weightageValue: String(this.kraForm.value.weightageValue),
-    description: this.kraForm.value.description?.trim(),
-    createdBy: this.isEditMode ? undefined : employeeId,
-    updatedBy: employeeId,
-  };
+  const filePath = `/FusionDocuments/Employee Documents/KRA Documents/${employeeId}`;
 
-  // Remove undefined fields (API doesn't expect them on update)
-  if (!this.isEditMode) {
-    delete payload.createdBy;
-  }
+  this.http
+    .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.kraForm.value.attachment)
+    .subscribe({
+      next: (data: any) => {
+        if (data) {
+          payload.documentUrl = data.path;   // IMPORTANT → API needs this
+          this.saveKraData(payload);         // Continue saving KRA
+        }
+      },
+      error: () => {
+        this.isSubmitting = false;
+        this.conformationPopup.openErrorModal("File upload failed");
+      }
+    });
+}
 
 
+saveKraData(payload: any): void {
   this.http.postdata('Kra/upsertkra', payload).subscribe({
     next: () => {
       this.modalService.dismissAll();
       this.loadKraList();
+
       this.conformationPopup.openSuccessModal(
         this.isEditMode ? 'KRA updated successfully' : 'KRA created successfully'
       );
     },
     error: (err) => {
-      console.error('API Error:', err);
       this.conformationPopup.openErrorModal(err.error?.message || 'Operation failed');
     },
     complete: () => {
@@ -226,6 +290,44 @@ openCreateModal() {
     }
   });
 }
+
+
+onSubmitKra() {
+  if (this.kraForm.invalid) return;
+
+  this.isSubmitting = true;
+
+  const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  const employeeId = user?.employeeId || 0;
+
+  const payload: any = {
+    kraId: this.isEditMode ? this.currentEditingKraId : 0,
+    categoryId: this.kraForm.value.categoryId,
+    kraName: this.kraForm.value.kraName?.trim(),
+    effectiveDate: this.kraForm.value.effectiveDate,
+    targetDate: this.kraForm.value.targetDate,
+    weightageValue: String(this.kraForm.value.weightageValue),
+    description: this.kraForm.value.description?.trim(),
+     createdBy: this.isEditMode ? undefined : employeeId,
+    updatedBy: employeeId
+  };
+
+  if (!this.isEditMode) {
+    payload.createdBy = employeeId;
+  }
+
+  const file = this.kraForm.value.attachment;
+
+  // If a file is selected → upload first and get documentUrl
+  if (file) {
+    this.uploadKraAttachment(payload);
+  } else {
+    // No file → directly save with documentUrl = null
+    payload.documentUrl = null;
+    this.saveKraData(payload);
+  }
+}
+
   hasAnyActionPermission(): boolean {
     return true;
   }
@@ -249,12 +351,45 @@ onUpdate(kra: any) {
 }
 
 onAssignKpi(kra: any) {
-  alert(`Assign KPI to: ${kra.kraName}`);
+
+  // Reset form
+  this.assignKpiForm.reset();
+  this.kpiRows.clear();
+  this.kpiRows.push(this.createKpiRow());
+
+  // Patch KRA values
+  this.assignKpiForm.patchValue({
+    kraName: kra.kraName,
+    weightageValue: kra.weightageValue,
+    effectiveDate: kra.effectiveDate.split("T")[0],
+    targetDate: kra.targetDate.split("T")[0]
+  });
+
+  this.modalService.open(this.assignKpiModal, {
+    centered: true,
+    size: 'xl',
+    backdrop: 'static'
+  });
 }
 
 onAssignByRole(kra: any) {
-  alert(`Assign By Role for: ${kra.kraName}`);
+
+  // Set header values
+  this.selectedKraTitle = kra.kraName;
+  this.selectedKpiCount = kra.kpiCount || 0; // If API gives count
+
+  // Reset form and rows
+  this.assignByRoleForm.reset();
+  this.roleRows.clear();
+  this.roleRows.push(this.createRoleRow());
+
+  this.modalService.open(this.assignByRoleModal, {
+    centered: true,
+    size: 'xl',
+    backdrop: 'static'
+  });
 }
+
 
 onMakeInactive(kra: any) {
   if (confirm(`Are you sure you want to make "${kra.kraName}" Inactive?`)) {
@@ -300,12 +435,13 @@ private updateKraStatus(kraId: number, newStatus: string) {
   });
 }
 
-  onFileChange(event: any) {
+onFileChange(event: any) {
   const file = event.target.files[0] as File;
   if (file) {
     this.kraForm.patchValue({ attachment: file });
   }
 }
+
 
 getStatusClass(status: string) {
   switch (status) {
@@ -319,6 +455,32 @@ getStatusClass(status: string) {
       return '';
   }
 }
+
+
+get kpiRows() {
+  return this.assignKpiForm.get('kpiRows');
+}
+
+addKpiRow() {
+  this.kpiRows.push(this.createKpiRow());
+}
+
+removeKpiRow(index: number) {
+  this.kpiRows.removeAt(index);
+}
+
+get roleRows() {
+  return this.assignByRoleForm.get('roleRows');
+}
+
+addRoleRow() {
+  this.roleRows.push(this.createRoleRow());
+}
+
+removeRoleRow(index: number) {
+  this.roleRows.removeAt(index);
+}
+
 
 
   ngOnDestroy() {

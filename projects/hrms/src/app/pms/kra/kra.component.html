@@ -45,7 +45,7 @@
       <table class="w-100">
         <thead>
           <tr>
-            <th>{{ 'Category' | translate }}</th>
+            <th>{{ 'KRA Category' | translate }}</th>
             <th>{{ 'KRA Title' | translate }}</th>
             <th>{{ 'Weightage (%)' | translate }}</th>
             <th>{{ 'Effective Date' | translate }}</th>
@@ -169,20 +169,30 @@
         <div class="row g-3">
 
           <!-- KRA Category -->
-          <div class="col-md-6">
-            <label class="form-label custom-label mb-2">
-              {{ 'KRA Category' | translate }} <span class="text-danger">*</span>
-            </label>
-            <select class="form-select custom-input" formControlName="categoryId">
-              <option [ngValue]="null" disabled>{{ 'Select Category' | translate }}</option>
-              @for (cat of kraCategories; track cat.id) {
-                <option [ngValue]="cat.id">{{ cat.name }}</option>
-              }
-            </select>
-            <div class="error-msg" *ngIf="f['categoryId'].touched && f['categoryId'].invalid">
-              Please select a KRA category
-            </div>
-          </div>
+<div class="col-md-6">
+  <label class="form-label custom-label mb-2">
+    {{ 'KRA Category' | translate }} <span class="text-danger">*</span>
+  </label>
+
+  <div class="custom-p-select-content">
+    <p-select
+      [options]="kraCategories"
+      optionLabel="name"
+      optionValue="id"
+      class="form-select custom-select"
+      placeholder="Select Category"
+      [filter]="true"
+      resetFilterOnHide="true"
+      [showClear]="true"
+      formControlName="categoryId">
+    </p-select>
+  </div>
+
+  <div class="error-msg" *ngIf="f['categoryId'].touched && f['categoryId'].invalid">
+    Please select a KRA category
+  </div>
+</div>
+
 
           <!-- KRA Title -->
           <div class="col-md-6">
@@ -234,6 +244,19 @@
             </div>
           </div>
 
+          <div class="col-md-6">
+  <label class="form-label custom-label mb-2">
+    {{ 'Upload Document' | translate }}
+  </label>
+
+  <input
+    type="file"
+    class="form-control custom-input"
+    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+    (change)="onFileChange($event)"
+  />
+</div>
+
           <!-- Description -->
           <div class="col-12">
             <label class="form-label custom-label mb-2">
@@ -267,3 +290,235 @@
     </div>
   </div>
 </ng-template>
+
+
+<!-- ASSIGN KPI MODAL -->
+<ng-template #assignKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+
+    <!-- Header -->
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">Assign KPI</p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="assignKpiForm">
+
+        <!-- AUTO POPULATED KRA DETAILS -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label custom-label">KRA Title</label>
+            <input type="text" class="form-control custom-input"
+              formControlName="kraName" >
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label">Weightage (%)</label>
+            <input type="text" class="form-control custom-input"
+              formControlName="weightageValue" >
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label">Effective Date</label>
+            <input type="text" class="form-control custom-input"
+              formControlName="effectiveDate" >
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label">Target Date</label>
+            <input type="text" class="form-control custom-input"
+              formControlName="targetDate">
+          </div>
+        </div>
+
+        <!-- KPI TABLE -->
+        <div class="custom-table custom-popup-table mb-4 mt-4">
+          <table class="w-100">
+            <thead class="table-light">
+              <tr>
+                <th>KPI Name</th>
+                <th>Weightage (%)</th>
+                <th>Unit of Measurement</th>
+                <th>Target Value</th>
+                <th>Target Date</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody formArrayName="kpiRows">
+              <tr *ngFor="let row of kpiRows.controls; let i = index" [formGroupName]="i">
+
+                <td>
+                  <input type="text" class="form-control custom-input"
+                    formControlName="kpiName" placeholder="Enter KPI Name">
+                </td>
+
+                <td>
+                  <input type="number" class="form-control custom-input"
+                    formControlName="weightage" placeholder="0-100" min="1" max="100">
+                </td>
+
+                <td>
+                  <input type="text" class="form-control custom-input"
+                    formControlName="unit" placeholder="e.g. % , Nos , Rating">
+                </td>
+
+                <td>
+                  <input type="number" class="form-control custom-input"
+                    formControlName="targetValue" placeholder="Enter Value">
+                </td>
+
+                <td>
+                  <input type="date" class="form-control custom-input"
+                    formControlName="targetDate">
+                </td>
+
+                <td class="text-center">
+                  <button type="button"
+                    class="btn btn-sm btn-outline-danger me-2"
+                    *ngIf="kpiRows.length > 1"
+                    (click)="removeKpiRow(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+
+                  <button type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    *ngIf="i === kpiRows.length - 1"
+                    (click)="addKpiRow()">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            Cancel
+          </button>
+
+          <button type="button" class="custom-btn btn-primary">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- ASSIGN BY ROLE MODAL -->
+<ng-template #assignByRoleModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center
+                custom-poup-header-content popup-header-border">
+
+      <p class="popup-heading mb-0">
+        Assign By Role ({{ selectedKraTitle }})
+      </p>
+
+      <p class="popup-heading mb-0 text-primary" style="cursor:pointer; text-decoration: underline;">
+        KPIs – {{ selectedKpiCount }}
+      </p>
+
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="assignByRoleForm">
+
+        <!-- TABLE -->
+         <div class="custom-table custom-popup-table mb-4 mt-4">
+        <table class="w-100">
+          <thead class="table-light">
+            <tr>
+              <th>Job Role</th>
+              <th>Employees</th>
+              <th>Effective Date</th>
+              <th>Target Date</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody formArrayName="roleRows">
+
+            <tr *ngFor="let row of roleRows.controls; let i = index" [formGroupName]="i">
+
+              <!-- Job Role -->
+              <td>
+                <p-select
+                  [options]="jobRoleOptions"
+                  optionLabel="label"
+                  formControlName="jobRole"
+                  placeholder="Select Job Role"
+                  class="w-100">
+                </p-select>
+              </td>
+
+              <!-- Employees -->
+              <td>
+                <p-select
+                  [options]="employeeOptions"
+                  optionLabel="label"
+                  formControlName="employee"
+                  placeholder="Select Employee"
+                  class="w-100">
+                </p-select>
+              </td>
+
+              <!-- Effective Date -->
+              <td>
+                <input type="date" class="form-control custom-input"
+                  formControlName="effectiveDate">
+              </td>
+
+              <!-- Target Date -->
+              <td>
+                <input type="date" class="form-control custom-input"
+                  formControlName="targetDate">
+              </td>
+
+              <!-- Actions -->
+              <td class="text-center">
+
+                <button type="button"
+                  class="btn btn-sm btn-outline-danger me-2"
+                  *ngIf="roleRows.length > 1"
+                  (click)="removeRoleRow(i)">
+                  <i class="bi bi-trash"></i>
+                </button>
+
+                <button type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  *ngIf="i === roleRows.length - 1"
+                  (click)="addRoleRow()">
+                  <i class="bi bi-plus-circle"></i>
+                </button>
+
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            Cancel
+          </button>
+
+          <button type="button" class="custom-btn btn-primary">
+            Assign
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</ng-template>
+

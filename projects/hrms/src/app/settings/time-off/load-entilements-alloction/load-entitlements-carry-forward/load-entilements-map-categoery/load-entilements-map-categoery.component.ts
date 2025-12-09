@@ -134,7 +134,7 @@ export class LoadEntilementsMapCategoeryComponent {
   }
 
   navigationtoback() {
-    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-map-categoery'])
+    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])
   }
 
   navigationtofinal() {

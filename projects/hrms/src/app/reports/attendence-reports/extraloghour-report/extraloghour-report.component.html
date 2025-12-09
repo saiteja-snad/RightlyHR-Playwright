@@ -53,7 +53,7 @@
         @if(rbac.allowedToAccess('My Team Report(RemoteLogin).view') &&!rbac.allowedToAccess('Attendance All Employees List(RemoteLogin).view')
         && !rbac.allowedToAccess('Attendance Team Manager List(RemoteLogin).view')){
         <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
+          <div class="custom-p-select-content ">
             <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
               formControlName="team" placeholder="Please select employee" class="form-select custom-select"
               filterPlaceholder="Search employee" (onChange)="onClick($event)">

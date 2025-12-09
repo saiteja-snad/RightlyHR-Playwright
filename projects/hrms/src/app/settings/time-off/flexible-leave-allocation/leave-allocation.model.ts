@@ -116,3 +116,65 @@ export interface ICarryForward {
   subLocation: { id: number };
   shift: { id: number };
 }
+
+
+export interface ILeaveCategory {
+  id: number;
+  applicableYear: number;
+  locationID: number;
+  subLocation: number;
+  shiftId: number;
+  type: number;
+  name: string;
+
+  locationName: string;
+  subLocationName: string;
+  shiftName: string;
+  categoryColor: string;
+  categoryCode: string;
+
+  noticeperiodAllowedType: boolean;
+  noticePeriodAllowedValue: number;
+
+  allowedHalfDay: boolean;
+  allowedGender: number;
+  allowedMaritalStatus: number;
+
+  excludeWeekends: boolean;
+  excludeHolidays: boolean;
+
+  futureDatesAllowed: boolean;
+  futureDatesAllowedDays: number;
+
+  pastDateAllowed: boolean;
+  pastDatesAllowedDays: number;
+
+  carryForwardAllowed: boolean;
+  carryForwardAllowedType: boolean;
+  carryForwardAllowedValue: number;
+
+  encashAllowedType: boolean;
+  encashAllowedValue: number;
+
+  validity: number;
+  status: string;
+
+  addedBy: number;
+  addedDate: string;
+  lastModifiedBy: number;
+  lastModifiedDate: string;
+
+  parentId: number;
+  isDefault: boolean;
+
+  isProbationAllowed: boolean;
+  probationDays: number;
+
+  isApplicableProRataLeave: boolean;
+  isOptionalHoliday: boolean;
+
+  leaveTypeId: number;
+
+  // optional fields in some records
+  probationFrequencyType?: string;
+}

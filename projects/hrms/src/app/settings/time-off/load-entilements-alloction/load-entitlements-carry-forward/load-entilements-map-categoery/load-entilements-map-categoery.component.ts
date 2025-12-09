@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ICarryForward } from '../../../flexible-leave-allocation/leave-allocation.model';
+import { ICarryForward, ILeaveCategory } from '../../../flexible-leave-allocation/leave-allocation.model';
 import { FormValidationsService } from '../../../../../services/form-validations.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../services/http.service';
@@ -11,66 +11,7 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 
 
-export interface ILeaveCategory {
-  id: number;
-  applicableYear: number;
-  locationID: number;
-  subLocation: number;
-  shiftId: number;
-  type: number;
-  name: string;
 
-  locationName: string;
-  subLocationName: string;
-  shiftName: string;
-  categoryColor: string;
-  categoryCode: string;
-
-  noticeperiodAllowedType: boolean;
-  noticePeriodAllowedValue: number;
-
-  allowedHalfDay: boolean;
-  allowedGender: number;
-  allowedMaritalStatus: number;
-
-  excludeWeekends: boolean;
-  excludeHolidays: boolean;
-
-  futureDatesAllowed: boolean;
-  futureDatesAllowedDays: number;
-
-  pastDateAllowed: boolean;
-  pastDatesAllowedDays: number;
-
-  carryForwardAllowed: boolean;
-  carryForwardAllowedType: boolean;
-  carryForwardAllowedValue: number;
-
-  encashAllowedType: boolean;
-  encashAllowedValue: number;
-
-  validity: number;
-  status: string;
-
-  addedBy: number;
-  addedDate: string;
-  lastModifiedBy: number;
-  lastModifiedDate: string;
-
-  parentId: number;
-  isDefault: boolean;
-
-  isProbationAllowed: boolean;
-  probationDays: number;
-
-  isApplicableProRataLeave: boolean;
-  isOptionalHoliday: boolean;
-
-  leaveTypeId: number;
-
-  // optional fields in some records
-  probationFrequencyType?: string;
-}
 
 
 @Component({
@@ -87,6 +28,8 @@ export class LoadEntilementsMapCategoeryComponent {
   nextYearData: ILeaveCategory[] = [];
   currentYear = 0;
   nextYear = 0;
+  leaveTypes: string[] = [];
+  employeesList: any[] = [];
 
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
     private route: Router, private http: HttpService, public formValidation: FormValidationsService,
@@ -98,18 +41,14 @@ export class LoadEntilementsMapCategoeryComponent {
     console.log(this.carryforwarddata)
 
     this.getCarryForwardData(this.carryforwarddata)
+    this.getdataforcarryforwardforplaylod(this.carryforwarddata)
   }
-
-  leaveTypes: string[] = [];
 
 
   getCarryForwardData(carryforwarddata: ICarryForward) {
     this.loading = true;
-
-
     this.currentYear = carryforwarddata.year;    // example 2025
     this.nextYear = this.currentYear + 1;
-
     const req1 = this.getDataByYear(carryforwarddata,
       this.currentYear);
     const req2 = this.getDataByYear(carryforwarddata, this.nextYear);
@@ -132,6 +71,62 @@ export class LoadEntilementsMapCategoeryComponent {
       `OrgLeavesCategories?locationId=${carryforwarddata.location.id}&subLocationId=${carryforwarddata.subLocation.id}&year=${year}&status=Published&shiftId=${carryforwarddata.shift.id}`
     );
   }
+
+
+  getdataforcarryforwardforplaylod(carryforwarddata: ICarryForward) {
+
+    this.http.getData(
+      `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
+    &subLocationIds=${carryforwarddata.subLocation.id}
+    &shiftIds=${carryforwarddata.shift.id}
+    &year=${carryforwarddata.year}`
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          const data = res.data;
+
+          this.formatCarryList(data);
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+  }
+
+  formatCarryList(data: any[]) {
+    this.leaveTypes = [...new Set(data.map(x => x.leaveType))];
+    const grouped: any = {};
+    data.forEach(item => {
+      if (!grouped[item.employeeId]) {
+        grouped[item.employeeId] = {
+          employee: item.employeeName,
+          employeeId: item.employeeId,
+          leaveEntries: []   // 👈 store whole list people
+        };
+      }
+
+      grouped[item.employeeId][item.leaveType] = item.maxCarryForward;
+
+      grouped[item.employeeId].leaveEntries.push({
+        leaveType: item.leaveType,
+        entitled: item.entitled,
+        availed: item.availed,
+        balance: item.balance,
+        maxCarryForward: item.maxCarryForward,
+        actualCarryForward: item.actualCarryForward,
+        maxEncashment: item.maxEncashment,
+        leaveEncashed: item.leaveEncashed,
+        leaveLapsed: item.leaveLapsed
+      });
+    });
+
+    this.employeesList = Object.values(grouped);
+    console.log(this.employeesList);
+
+  }
+
 
   navigationtoback() {
     this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])

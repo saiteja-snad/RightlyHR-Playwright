@@ -67,7 +67,7 @@ export class SettingsTimeOffTabsComponent {
     },
     {
       label: 'Bulk Load Entitlements',
-      link: '/settings/timeoff-configurations/loadentitlements',
+      link: '/settings/timeoff-configurations/initial-load-entitlements',
       permission: { feature: 'Load Entitlements Tab', action: 'view' },
       icon: '/settings-icon/working-hours.png',
       subjectText: MODULE_INFOS.SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO,
@@ -94,6 +94,8 @@ export class SettingsTimeOffTabsComponent {
   }
 
   navigateToAccessedRoute(route: string) {
+    console.log(route);
+    
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);

@@ -249,7 +249,7 @@ export class AccessNavigationService {
               this.rbac.allowedToAccess('Load Entitlements Tab.view')
             ) {
               return (route =
-                '/settings/timeoff-configurations/loadentitlements');
+                'settings/timeoff-configurations/initial-load-entitlements');
             }
 
             if (
@@ -885,6 +885,10 @@ export class AccessNavigationService {
             return (route =
               '/settings/timeoff-configurations/load-entitlements');
           }
+          if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
+            return (route =
+              '/settings/timeoff-configurations/initial-load-entitlements');
+          }
         }
 
         break;
@@ -1134,6 +1138,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/settings/timeoff-configurations/initial-load-entitlements':
+        if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
+          return (route =
+            '/settings/timeoff-configurations/initial-load-entitlements');
+        }
+        break;
 
       case '/settings/timeoff-configurations/flexible-wfh-allocation':
         if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
@@ -1308,6 +1318,9 @@ export class AccessNavigationService {
                 return (route =
                   '/settings/timeoff-configurations/loadentitlements');
               }
+              if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
+                return (route = '/settings/timeoff-configurations/initial-load-entitlements');
+              }
 
               if (this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')) {
                 for (const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS) {
@@ -1316,9 +1329,7 @@ export class AccessNavigationService {
                   }
                 }
               }
-              if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
-                return (route = '/settings/timeoff-configurations/load-entitlements');
-              }
+
             }
           }
         }

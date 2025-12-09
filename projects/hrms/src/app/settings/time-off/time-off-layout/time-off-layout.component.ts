@@ -9,10 +9,11 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 import { WfhAllocationTabsComponent } from "../flexible-wfh-allocation/wfh-allocation-tabs/wfh-allocation-tabs.component";
 import { HoursAllocationTabsComponent } from "../flexible-hours-allocation/hours-allocation-tabs/hours-allocation-tabs.component";
+import { LeaveEntitlementSideBarComponent } from "../../../shared/leave-entitlement-side-bar/leave-entitlement-side-bar.component";
 @Component({
   selector: 'app-time-off-layout',
   imports: [RouterModule, CommonModule, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent,
-    NgbPopoverModule, SettingsHeaderComponent, WfhAllocationTabsComponent, HoursAllocationTabsComponent],
+    NgbPopoverModule, SettingsHeaderComponent, WfhAllocationTabsComponent, HoursAllocationTabsComponent, LeaveEntitlementSideBarComponent],
   templateUrl: './time-off-layout.component.html',
   styleUrl: './time-off-layout.component.scss',
   encapsulation:ViewEncapsulation.None

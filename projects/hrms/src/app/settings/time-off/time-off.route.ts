@@ -4,6 +4,8 @@ import { LeaveAlloctaionComponent } from "./leave-alloctaion/leave-alloctaion.co
 import { LoadEntitlementsComponent } from "./load-entitlements/load-entitlements.component";
 import { LoadEntilementsAlloctionComponent } from "./load-entilements-alloction/load-entilements-alloction.component";
 import { LoadEntitlementsCarryForwardComponent } from "./load-entilements-alloction/load-entitlements-carry-forward/load-entitlements-carry-forward.component";
+import { IntialLoadEntitlementComponent } from "./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component";
+import { CarryForwardLeaveEntitlementComponent } from "./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component";
 
 export default [
     // { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
@@ -17,14 +19,10 @@ export default [
     { path: 'leave-allocation', component: LeaveAlloctaionComponent },
     { path: 'load-entitlements', component: LoadEntitlementsComponent },
     { path: 'flexible-leave-allocation', component: FlexibleLeaveAllocationComponent },
-    {
-        path: 'loadentitlements', component: LoadEntilementsAlloctionComponent,
-        children: [
-            { path: '', redirectTo: 'initial-load-entitlements', pathMatch: 'full' },
-            { path: 'initial-load-entitlements', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component').then((m) => m.IntialLoadEntitlementComponent) },
-            { path: 'carry-forward', loadComponent: () => import('./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component').then((m) => m.CarryForwardLeaveEntitlementComponent) },
-        ]
-    },
+
+    { path: 'initial-load-entitlements', component: IntialLoadEntitlementComponent },
+    { path: 'carry-forward', component: CarryForwardLeaveEntitlementComponent },
+
     {
         path: 'load-entitlements', component: LoadEntitlementsCarryForwardComponent,
         children: [

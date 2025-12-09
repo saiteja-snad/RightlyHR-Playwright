@@ -79,7 +79,7 @@ export const SETTINGS_TIMEOFF_TABS = [
   { route: '/settings/timeoff-configurations/leave-allocation', permission: 'Leave Allocation Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-leave-allocation', permission: 'Flexible Leave Allocation Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias', permission: 'Attendance Eligibility Criteria Tab.view' },
-  { route: '/settings/timeoff-configurations/load-entitlements', permission: 'Load Entitlements Tab.view' },
+  { route: '/settings/timeoff-configurations/initial-load-entitlements', permission: 'Load Entitlements Tab.view' },
     { route: '/settings/timeoff-configurations/loadentitlements', permission: 'Load Entitlements Tab.view' },
 ];
 

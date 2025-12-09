@@ -9,12 +9,13 @@
             <app-settings-header />
         </div>
 
-        <div *ngIf="isActive('/settings/timeoff-configurations/loadentitlements/initial-load-entitlements')">
+        <div *ngIf="isActive('/settings/timeoff-configurations/initial-load-entitlements')">
             <button type="button" class="custom-btn btn-primary">Add Initial Entitlements </button>
         </div>
 
-        <div *ngIf="isActive('/settings/timeoff-configurations/loadentitlements/carry-forward')">
-            <button type="button" class="custom-btn btn-primary" (click)="carryforwordnavigation()">Add Carry Forward</button>
+        <div *ngIf="isActive('/settings/timeoff-configurations/carry-forward')">
+            <button type="button" class="custom-btn btn-primary" (click)="carryforwordnavigation()">Add Carry
+                Forward</button>
         </div>
     </div>
 
@@ -45,6 +46,12 @@
         isActive('/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view')) {
         <div class="component-left-tabs-container">
             <app-hours-allocation-tabs />
+        </div>
+        }
+
+        @if(isActive('/settings/timeoff-configurations/carry-forward') || isActive('/settings/timeoff-configurations/initial-load-entitlements')){
+        <div class="component-left-tabs-container">
+            <app-leave-entitlement-side-bar />
         </div>
         }
 

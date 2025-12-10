@@ -13,13 +13,18 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of currentYearData">
-                    <td class="text-center">
-                        <span>{{item.categoryCode}}</span>
-                        <span class="categoryname" [style.color]="item.categoryColor">{{ item.name }} {{currentYear}}</span>
-                        <div *ngIf="item.carryForwardAllowed || item.encashAllowedType" class="eligible-text">
-                            Eligible for {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
-                            {{ item.carryForwardAllowed && item.encashAllowedType ? ' /' : '' }}
-                            {{ item.encashAllowedType ? ' Encash' : '' }}
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center gap-3">
+                            <div class="code-box" [style.background]="hexToRgba(item.categoryColor, 0.1)"
+  [style.color]="item.categoryColor">{{item.categoryCode}}</div>
+                            <div class="text-start">
+                                <div class="categoryname" [style.color]="item.categoryColor">{{ item.name }} {{currentYear}}</div>
+                                <div *ngIf="item.carryForwardAllowed || item.encashAllowedType" class="eligible-text">
+                                    Eligible for {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
+                                    {{ item.carryForwardAllowed && item.encashAllowedType ? ' /' : '' }}
+                                    {{ item.encashAllowedType ? ' Encash' : '' }}
+                                </div>
+                            </div>
                         </div>
                     </td>
                     <td class="text-center">

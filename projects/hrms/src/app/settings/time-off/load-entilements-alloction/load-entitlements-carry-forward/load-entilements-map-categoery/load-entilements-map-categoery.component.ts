@@ -9,13 +9,13 @@ import { FormBuilder, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-
 @Component({
   selector: 'app-load-entilements-map-categoery',
   imports: [CommonModule, Select, FormsModule],
   templateUrl: './load-entilements-map-categoery.component.html',
   styleUrl: './load-entilements-map-categoery.component.scss'
 })
+
 export class LoadEntilementsMapCategoeryComponent {
   carryforwarddata: any = {}
   empinfo: any = {};
@@ -32,49 +32,32 @@ export class LoadEntilementsMapCategoeryComponent {
     private route: Router, private http: HttpService, public formValidation: FormValidationsService,
     private conformationPopup: OpenModalService) { }
 
-
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
-    console.log(this.carryforwarddata)
-
     this.getCarryForwardData(this.carryforwarddata)
     this.getdataforcarryforwardforplaylod(this.carryforwarddata)
   }
-
 
   getCarryForwardData(carryforwarddata: ICarryForward) {
     this.loading = true;
     this.currentYear = carryforwarddata.year;    // example 2025
     this.nextYear = this.currentYear + 1;
-    const req1 = this.getDataByYear(carryforwarddata,
-      this.currentYear);
+    const req1 = this.getDataByYear(carryforwarddata, this.currentYear);
     const req2 = this.getDataByYear(carryforwarddata, this.nextYear);
-
-    forkJoin([req1, req2])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: ([current, next]) => {
-          this.loading = false;
-          this.currentYearData = (current as ILeaveCategory[])
-            .filter(x => x.encashAllowedType || x.carryForwardAllowed)
-
-
-
-          this.nextYearData = (next as ILeaveCategory[])
-            .filter(x => x.encashAllowedType || x.carryForwardAllowed);
-        },
-        error: _ => (this.loading = false)
-      });
+    forkJoin([req1, req2]).pipe(takeUntil(this.destroy$)).subscribe({
+      next: ([current, next]) => {
+        this.loading = false;
+        this.currentYearData = (current as ILeaveCategory[]).filter(x => x.encashAllowedType || x.carryForwardAllowed)
+        this.nextYearData = (next as ILeaveCategory[]).filter(x => x.encashAllowedType || x.carryForwardAllowed);
+      },
+      error: _ => (this.loading = false)
+    });
   }
-
 
   private getDataByYear(carryforwarddata: ICarryForward, year: number) {
-    return this.http.getData(
-      `OrgLeavesCategories?locationId=${carryforwarddata.location.id}&subLocationId=${carryforwarddata.subLocation.id}&year=${year}&status=Published&shiftId=${carryforwarddata.shift.id}`
-    );
+    return this.http.getData(`OrgLeavesCategories?locationId=${carryforwarddata.location.id}&subLocationId=${carryforwarddata.subLocation.id}&year=${year}&status=Published&shiftId=${carryforwarddata.shift.id}`);
   }
-
 
   getdataforcarryforwardforplaylod(carryforwarddata: ICarryForward) {
     this.http.getData(
@@ -88,7 +71,6 @@ export class LoadEntilementsMapCategoeryComponent {
         next: (res: any) => {
           this.loading = false;
           const data = res.data;
-
           this.formatCarryList(data);
         },
         error: () => {
@@ -109,9 +91,7 @@ export class LoadEntilementsMapCategoeryComponent {
           leaveEntries: []
         };
       }
-
       grouped[item.employeeId][item.leaveType] = item.maxCarryForward;
-
       grouped[item.employeeId].leaveEntries.push({
         leaveType: item.leaveType,
         entitled: item.entitled,
@@ -126,15 +106,11 @@ export class LoadEntilementsMapCategoeryComponent {
         selectedDestinationId: item.leaveCategoryId
       });
     });
-
     this.employeesList = Object.values(grouped);
-    console.log(this.employeesList);
-
   }
 
   buildCarryForwardPayload() {
     const categoryMap = new Map(this.currentYearData.map(x => [x.id, x.selectedDestinationId]));
-
     const payload = {
       jobType: "CarryForward",
       year: this.nextYear,
@@ -142,44 +118,39 @@ export class LoadEntilementsMapCategoeryComponent {
       subLocationId: this.carryforwarddata.subLocation.id,
       shiftId: this.carryforwarddata.shift.id,
       notes: '',
-
       requestPayload: {
         employees: this.employeesList.map(emp => ({
           employeeId: emp.employeeId,
           gradeId: emp.gradeId ?? 0,
-
-          entitlementsData: emp.leaveEntries
-            .filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0)
-            .map((x: { leaveCategoryId: any; actualCarryForward: any; }) => ({
-              sourceCategoryId: x.leaveCategoryId,
-              destinationCategoryId: categoryMap.get(x.leaveCategoryId) ,
-              sourceYear: this.carryforwarddata.year,
-              destinationYear: this.nextYear,
-              noOfDays: x.actualCarryForward
-            })),
+          entitlementsData: emp.leaveEntries.filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0).map((x: 
+            { leaveCategoryId: any; actualCarryForward: any; }) => ({
+            sourceCategoryId: x.leaveCategoryId,
+            destinationCategoryId: categoryMap.get(x.leaveCategoryId),
+            sourceYear: this.carryforwarddata.year,
+            destinationYear: this.nextYear,
+            noOfDays: x.actualCarryForward
+          })),
 
         }))
       },
-
       initiatedBy: this.empinfo.employeeId
     };
-
     return payload;
   }
 
   submit() {
     const body = this.buildCarryForwardPayload();
-    this.http.postdata('LeaveEntitlementJobs/create-carry-forward', body)
-      .subscribe({
-        next: (res: any) => {
-          localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
-          this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
+    this.http.postdata('LeaveEntitlementJobs/create-carry-forward', body).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
+        this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
+
   navigationtoback() {
     this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])
   }
@@ -189,9 +160,15 @@ export class LoadEntilementsMapCategoeryComponent {
   }
 
   getAvailableOptions(currentItem: any) {
-    const selectedIds = this.currentYearData
-      .filter(x => x.selectedDestinationId && x.id !== currentItem.id)
-      .map(x => x.selectedDestinationId);
+    const selectedIds = this.currentYearData.filter(x => x.selectedDestinationId && x.id !== currentItem.id).map(x => x.selectedDestinationId);
     return this.nextYearData.filter(x => !selectedIds.includes(x.id));
+  }
+
+  hexToRgba(hex: string, alpha: number = 1) {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 }

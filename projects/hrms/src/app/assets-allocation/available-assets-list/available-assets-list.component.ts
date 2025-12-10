@@ -269,8 +269,10 @@ export class AvailableAssetsListComponent {
        this.todate = JSON.parse(localStorage.getItem('toDate') ?? 'null');
        if(this.selectedLocationId || this.selectedSubLocationId || this.selectedcatageoryname || this.selectedSubcategeoryname || this.todate|| this.formdate){
         this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       }else{
+         this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
        }
-        this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       // this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
         this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
       }
     })

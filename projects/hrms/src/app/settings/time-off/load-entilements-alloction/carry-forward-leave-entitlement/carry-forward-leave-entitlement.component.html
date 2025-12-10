@@ -21,11 +21,11 @@
       <tbody>
         <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
           <tr *ngFor="let item of jobData">
-            <td>{{ item?.jobId }}</td>
-            <td>{{ item?.year }}</td>
-            <td>{{ item?.jobType }}</td>
-            <td>{{ item?.initiatedBy?.name }}</td>
-            <td>{{ item?.status }}</td>
+            <td>{{ item?.jobId ?? '_' }}</td>
+            <td>{{ item?.year ?? '_' }}</td>
+            <td>{{ item?.jobType ?? '_' }}</td>
+            <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
+            <td>{{ item?.status ?? '-'}}</td>
 
             <td>
               {{ item?.successCount }}/{{ item?.totalEmployees }}

@@ -240,7 +240,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Flexible Work Hours Allocation';
     }
-    else if (url.startsWith('/settings/timeoff-configurations/loadentitlements')) {
+    else if (url.startsWith('/settings/timeoff-configurations/initial-load-entitlements')) {
       this.moduleName = 'Load Entitlements';
       this.componentName = 'Load Entitlements Configuration';
     }

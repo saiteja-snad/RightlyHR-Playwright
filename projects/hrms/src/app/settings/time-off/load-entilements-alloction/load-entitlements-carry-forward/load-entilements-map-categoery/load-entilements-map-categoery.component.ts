@@ -58,6 +58,8 @@ export class LoadEntilementsMapCategoeryComponent {
           this.loading = false;
           this.currentYearData = (current as ILeaveCategory[])
             .filter(x => x.encashAllowedType || x.carryForwardAllowed)
+          
+        
            
           this.nextYearData = (next as ILeaveCategory[])
             .filter(x => x.encashAllowedType || x.carryForwardAllowed);

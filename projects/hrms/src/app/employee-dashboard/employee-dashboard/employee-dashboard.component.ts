@@ -448,6 +448,13 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         const labels = data.map((item: any) => item.gender);
         const counts = data.map((item: any) => item.count);
 
+        // Dynamic color assignment based on gender
+        const colors = labels.map((gender: string) => {
+          if (gender === 'Female') return '#E91CAB';
+          if (gender === 'Male') return '#1E88E5';
+          return '#B146C3'; // Others
+        });
+
         // Assign chart data (same style as your reference)
         this.genderChartData = {
           labels: labels,
@@ -455,7 +462,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             {
               label: 'Gender Count',
               data: counts,
-              backgroundColor: ['#E91CAB', '#1E88E5', '#B146C3'],
+              backgroundColor: colors,
               barThickness: 10,
               borderRadius: {
                 topRight: 12,
@@ -730,6 +737,20 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
+  getDobWithCurrentYear(dob: string) {
+  const date = new Date(dob);
+  const currentYear = new Date().getFullYear();
+  date.setFullYear(currentYear);
+  return date;
+}
+
+
+ getannuservierWithCurrentYear(dob: string) {
+  const date = new Date(dob);
+  const currentYear = new Date().getFullYear();
+  date.setFullYear(currentYear);
+  return date;
+}
   nagvition() {
     this.router.navigate(['/myinfo/job/team-members']);
   }

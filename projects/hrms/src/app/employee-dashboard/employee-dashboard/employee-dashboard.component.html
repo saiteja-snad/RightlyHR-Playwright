@@ -59,8 +59,8 @@
                 </div>
 
                 <div class="flex-between-content justify-content-center">
-                    <div class="previous-time-text">Previous Day Entry :</div>
-                    <div class="previous-duration">{{ previousDurationLabel }}</div>
+                    <div class="previous-time-text">Previous Day Entry : </div>
+                    <div class="previous-duration ms-1">{{ previousDurationLabel }}</div>
                 </div>
             </div>
 
@@ -203,14 +203,14 @@
             <div class="section-title mb-3">Upcoming Work Anniversaries</div>
             <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon" class="custom-party-image">
             </div>
-            <div class="px-4 event-list-content">
+            <div class="event-list-content">
                 <div *ngFor="let item of anniversaries" class="mb-2">
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-work-anniversary"></div>
                         <div class="content-text content-name">{{ item.firstName }} {{ item.lastName }} ,
                             {{ getSuffix(item.anniversaryYearCount) }} Work Anniversary</div>
                     </div>
-                    <div class="content-text content-date">{{ item.dateOfJoining | dateformat}}</div>
+                    <div class="content-text content-date">{{   getannuservierWithCurrentYear(item.dateOfJoining) | date:'MMM d, y'}}</div>
                 </div>
             </div>
         </div>
@@ -219,14 +219,15 @@
             <div class="section-title mb-3">Upcoming Birthdays</div>
             <div class="w-100 text-center"><img src="icons\brithday.png" alt="Brithday Icon" class="custom-party-image">
             </div>
-            <div class="px-4 birthday-event-list-content">
+            <div class="birthday-event-list-content">
                 <div *ngFor="let item of employeesBirthdays" class="mb-2">
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-birthday"></div>
                         <div class="content-text content-name">{{ item.firstName }} {{item.middleName}}
                             {{item.lastName}}</div>
                     </div>
-                    <div class="content-text content-date">{{ item.dob | dateformat }}</div>
+
+                    <div class="content-text content-date">  {{ getDobWithCurrentYear(item.dob) | date:'MMM d, y' }}</div>
                 </div>
             </div>
         </div>
@@ -239,7 +240,7 @@
             <div class="events-content">
                 <div class="carousel-content">
                     <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false"
-                        [circular]="true" [autoplayInterval]="3000">
+                        [circular]="true" [autoplayInterval]="5000">
                         <ng-template pTemplate="item" let-item>
                             <div class="accordian-text">
                                 <ng-container [ngSwitch]="item.type">
@@ -261,7 +262,7 @@
                                         <p class="m-0">{{'Celebrating their Marriage Anniversary today...'|
                                             translate}}</p>
                                     </div>
-                                    <div *ngSwitchDefault class="event-name">{{ item.quotationname }}</div>
+                                    <div *ngSwitchDefault class="d-flex justify-content-center align-items-center   event-name">{{ item.quotationname }}</div>
                                 </ng-container>
                             </div>
                         </ng-template>

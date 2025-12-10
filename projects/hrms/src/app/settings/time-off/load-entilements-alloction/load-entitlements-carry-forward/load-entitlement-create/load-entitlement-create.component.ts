@@ -71,6 +71,7 @@ export class LoadEntitlementCreateComponent {
     if (location?.jobSubLocations?.length) {
       this.subLocationDetails = location.jobSubLocations;
       this.leaveAllocationForm.get('subLocation')?.enable();
+      this.leaveAllocationForm.get('subLocation')?.reset();
     } else {
       this.subLocationDetails = [];
       this.leaveAllocationForm.get('subLocation')?.enable();

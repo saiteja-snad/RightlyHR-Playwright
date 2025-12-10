@@ -58,9 +58,9 @@ export class LoadEntilementsMapCategoeryComponent {
           this.loading = false;
           this.currentYearData = (current as ILeaveCategory[])
             .filter(x => x.encashAllowedType || x.carryForwardAllowed)
-          
-        
-           
+
+
+
           this.nextYearData = (next as ILeaveCategory[])
             .filter(x => x.encashAllowedType || x.carryForwardAllowed);
         },
@@ -106,7 +106,7 @@ export class LoadEntilementsMapCategoeryComponent {
           employee: item.employeeName,
           employeeId: item.employeeId,
           gradeId: item.jobGradeId,
-          leaveEntries: []   // 👈 store whole list people
+          leaveEntries: []
         };
       }
 
@@ -137,7 +137,7 @@ export class LoadEntilementsMapCategoeryComponent {
 
     const payload = {
       jobType: "CarryForward",
-      year: this.carryforwarddata.year,
+      year: this.nextYear,
       locationId: this.carryforwarddata.location.id,
       subLocationId: this.carryforwarddata.subLocation.id,
       shiftId: this.carryforwarddata.shift.id,
@@ -152,7 +152,7 @@ export class LoadEntilementsMapCategoeryComponent {
             .filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0)
             .map((x: { leaveCategoryId: any; actualCarryForward: any; }) => ({
               sourceCategoryId: x.leaveCategoryId,
-              destinationCategoryId: categoryMap.get(x.leaveCategoryId) || x.leaveCategoryId,
+              destinationCategoryId: categoryMap.get(x.leaveCategoryId) ,
               sourceYear: this.carryforwarddata.year,
               destinationYear: this.nextYear,
               noOfDays: x.actualCarryForward
@@ -169,11 +169,11 @@ export class LoadEntilementsMapCategoeryComponent {
 
   submit() {
     const body = this.buildCarryForwardPayload();
-
     this.http.postdata('LeaveEntitlementJobs/create-carry-forward', body)
       .subscribe({
-        next: (res) => {
-          console.log('success', res);
+        next: (res: any) => {
+          localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
+          this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
         },
         error: (err) => {
           console.error(err);

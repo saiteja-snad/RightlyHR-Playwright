@@ -68,14 +68,17 @@
             <div class="content-card">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Consumed Leave Types</div>
-                    <div class="circle-leaves-graph">
+                     <div class="total">Total: <span class="count">{{  totalLeaves.used  }}</span><span class="total-allowed">/{{ totalLeaves.allowed }}</span></div>
+                   
+
+
+                    <!-- <div class="circle-leaves-graph">
                         <p-chart type="doughnut" [data]="totalLeavesChartData" [options]="totalLeavesChartOptions"
                             styleClass="today-chart" />
                         <div class="circle-value">
-                            <span class="leaves-count"><b>{{ totalLeaves.used }}</b></span>
-                            <span class="total-allowed">/{{ totalLeaves.allowed }}</span>
+                         
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="leave-list-content">
@@ -132,7 +135,7 @@
                                         </ng-container>
 
                                         <ng-template #showProfileIcon>
-                                            <app-profile-icon [iconWidth]="'45'" [iconHeight]="'45'"  class=" mb-2" />
+                                            <app-profile-icon [iconWidth]="'45'" [iconHeight]="'45'" class=" mb-2" />
                                         </ng-template>
                                         <div class="name text-wrap">{{ emp.name }}</div>
                                         <div class="role text-wrap">{{ emp.role }}</div>
@@ -210,7 +213,8 @@
                         <div class="content-text content-name">{{ item.firstName }} {{ item.lastName }} ,
                             {{ getSuffix(item.anniversaryYearCount) }} Work Anniversary</div>
                     </div>
-                    <div class="content-text content-date">{{   getannuservierWithCurrentYear(item.dateOfJoining) | date:'MMM d, y'}}</div>
+                    <div class="content-text content-date ms-3">{{ getannuservierWithCurrentYear(item.dateOfJoining) |
+                        date:'MMM d, y'}}</div>
                 </div>
             </div>
         </div>
@@ -224,10 +228,11 @@
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-birthday"></div>
                         <div class="content-text content-name">{{ item.firstName }} {{item.middleName}}
-                            {{item.lastName}}</div>
+                            {{item.lastName}}'s Brithday</div>
                     </div>
 
-                    <div class="content-text content-date">  {{ getDobWithCurrentYear(item.dob) | date:'MMM d, y' }}</div>
+                    <div class="content-text content-date ms-3"> {{ getDobWithCurrentYear(item.dob) | date:'MMM d, y' }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -262,7 +267,9 @@
                                         <p class="m-0">{{'Celebrating their Marriage Anniversary today...'|
                                             translate}}</p>
                                     </div>
-                                    <div *ngSwitchDefault class="d-flex justify-content-center align-items-center   event-name">{{ item.quotationname }}</div>
+                                    <div *ngSwitchDefault
+                                        class="d-flex justify-content-center align-items-center   event-name">{{
+                                        item.quotationname }}</div>
                                 </ng-container>
                             </div>
                         </ng-template>

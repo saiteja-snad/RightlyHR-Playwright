@@ -130,18 +130,17 @@
     transform: translate(-50%, -50%);
     text-align: center;
 
-    .leaves-count {
+   
+} .leaves-count {
         font-weight: 400;
         font-size: var(--fontsize10);
     }
 
     .total-allowed {
         font-weight: 400;
-        font-size: 8px;
+        font-size: 10px;
         color: #747474;
     }
-}
-
 .leaves-count {
     font-weight: 400;
     font-size: var(--fontsize10);
@@ -282,7 +281,7 @@
 
     .content-text {
         font-weight: 400;
-        font-size: var(--fontsize12);
+        font-size: var(--fontsize10);
     }
 
     .content-name {
@@ -515,7 +514,8 @@
 
     .employee-type-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px;
     }
 
     canvas {

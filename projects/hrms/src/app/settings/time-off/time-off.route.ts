@@ -22,7 +22,7 @@ export default [
 
     { path: 'initial-load-entitlements', component: IntialLoadEntitlementComponent },
     { path: 'carry-forward', component: CarryForwardLeaveEntitlementComponent },
-
+    {path:'jobview',component:LoadEntilementsAlloctionComponent},
     {
         path: 'load-entitlements', component: LoadEntitlementsCarryForwardComponent,
         children: [

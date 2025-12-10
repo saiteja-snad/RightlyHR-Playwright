@@ -2,8 +2,8 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-search-input"
-      placeholder="Search by asset category / asset sub category / serial number" aria-label="Username"
-      [(ngModel)]="searchQuery" aria-describedby="basic-addon1">
+      placeholder="Search by year/ jobtype / status / created by" aria-label="Username" [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -21,11 +21,20 @@
       <tbody>
         <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
           <tr *ngFor="let item of jobData">
-            <td>{{ item?.jobId ?? '_' }}</td>
+            <td><a class="project-name cursor" (click)="navigateView(item?.jobId)">
+                {{ item?.jobId ?? '_' }}
+              </a></td>
             <td>{{ item?.year ?? '_' }}</td>
             <td>{{ item?.jobType ?? '_' }}</td>
             <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
-            <td>{{ item?.status ?? '-'}}</td>
+            <td [ngClass]="{
+            'status-success': item.status === 'success',
+            'status-failed': item.status === 'failed',
+            'status-partial': item.status === 'partially_completed',
+            'status-processing': item.status === 'processing',
+            'status-completed': item.status === 'completed',
+            'status-pending': item?.status === 'pending'
+      }" class="text-capitalize">{{ item?.status ?? '-'}}</td>
 
             <td>
               {{ item?.successCount }}/{{ item?.totalEmployees }}

@@ -7,6 +7,7 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { IJobsResponse } from '../../../../Interfaces/loadentitlementjob';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-carry-forward-leave-entitlement',
@@ -28,16 +29,15 @@ export class CarryForwardLeaveEntitlementComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  jobdata: IJobsResponse[] = []
   subscription!: Subscription;
   jobData: any[] = [];
-  constructor(private http: HttpService,) { }
+  constructor(private http: HttpService, private router: Router) { }
 
   ngOnInit(): void {
     this.getdatacarryforword()
   }
 
- onPageSizeChange(newPageSize: number) {
+  onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
@@ -52,17 +52,30 @@ export class CarryForwardLeaveEntitlementComponent {
     this.getdatacarryforword();
   }
 
+  onSearchChange(value: string) {
+    this.page = 1;   // reset to page 1 when searching
+    this.searchQuery = value;
+    this.getdatacarryforword();
+  }
+
   getdatacarryforword() {
-    let url = `LeaveEntitlementJobs?pageNumber=${this.page}&pageSize=${this.pageSize}`
+    let url = `LeaveEntitlementJobs?pageNumber=${this.page}&pageSize=${this.pageSize}&searchTerm=${this.searchQuery}`
     this.subscription = this.http.get(url).subscribe({
       next: (res: any) => {
-        this.jobData = res.data;
+        this.jobData = res?.data;
         this.collectionSize = res.pagination.totalRecords;
       },
       error: (err) => {
         console.error('Error fetching projects:', err);
+        this.loading = false
+        this.jobData = [];
       },
     });
+
+  }
+
+  navigateView(jobId: number) {
+    this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });
 
   }
 

@@ -27,7 +27,9 @@ export class LoadEntitlemetexecutionComponent {
           next: (res: any) => {
             this.conformationPopup.openSuccessModal("Carry Forward Entilement Successfully");
             setTimeout(() => {
-              this.route.navigate(['/settings/timeoff-configurations/carry-forward'])
+              this.route.navigate(['/settings/timeoff-configurations/carry-forward']),
+                localStorage.removeItem('carryForwardJobId'),
+                localStorage.removeItem('loadEntitlement')
             }, 3000);
           },
           error: (err) => {

@@ -20,6 +20,7 @@ export class LoadEntitlemetpreviewComponent {
   carryforwarddata: any = {}
   selectedEmployeeDetail: any = null;
   selectemployeename: any
+  selectedfusionEmpId:any
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
@@ -64,6 +65,8 @@ export class LoadEntitlemetpreviewComponent {
         grouped[item.employeeId] = {
           employee: item.employeeName,
           employeeId: item.employeeId,
+          fusionEmpId: item.fusionEmpId,
+  
           leaveEntries: []   // 👈 store whole list people
         };
       }
@@ -92,7 +95,8 @@ export class LoadEntitlemetpreviewComponent {
 
   openLeaveDetails(row: any, content: any) {
     console.log("row", row);
-    this.selectemployeename = row.employee
+    this.selectemployeename = row.employee;
+    this.selectedfusionEmpId=row.fusionEmpId
     this.selectedEmployeeDetail = row.leaveEntries;
 
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });

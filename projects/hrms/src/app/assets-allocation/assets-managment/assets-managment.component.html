@@ -9,31 +9,6 @@
     </div>
 
     <div class="d-flex gap-3 align-items-center">
-      <!-- <form autocomplete="off" [formGroup]="locationfromdata">
-        <div class="d-flex gap-3 align-items-center">
-          <div class="d-flex gap-2 align-items-center">
-            <label for="location" class="form-label custom-label text-nowrap filter-labels m-0">Locations</label>
-            <select id="location" formControlName="locationId" class="form-select custom-select"
-              (change)="onLocationChange()">
-              <option [ngValue]="null">All Locations</option>
-              <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
-                location.jobLocationName }}</option>
-            </select>
-          </div>
-
-          <div class="d-flex gap-2 align-items-center">
-            <label for="subLocation" class="form-label custom-label filter-labels text-nowrap m-0">Sub Locations</label>
-            <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
-              (change)="onSubLocationChange()">
-              <option [ngValue]="null">All Sub Locations</option>
-              <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
-                {{ subLocation.jobSubLocationName }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </form> -->
-
       <div>
         @if(rbac.allowedToAccess('Asset Management - Create.view')){
         <button type="button" (click)="openModal(addassetes)" class="custom-btn btn-primary">Register an Asset</button>
@@ -96,23 +71,6 @@
                 placeholder="Please select asset sub category" class="form-select custom-select" (onChange)="onassetsubcategoryfilter()"></p-select>
             </div>
           </div>
-                  <!-- <div class="mb-3">
-                    <label class="form-label custom-label filter-labels mb-3">
-                      {{ 'Asset Sub Category' | translate }}
-                    </label>
-                  
-                    <div class="custom-p-multiSelect-content">
-                      <select formControlName="assetSubCategory" class="form-select custom-select" (change)="onassetsubcategoryfilter()">
-                  
-                        <option [ngValue]="null">All Asset Sub Categories</option>
-                  
-                        <option *ngFor="let subCat of assetSubCategory" [ngValue]="subCat">
-                          {{ subCat.name }}
-                        </option>
-                  
-                      </select>
-                    </div>
-                  </div> -->
           <div class="mb-3">
             <label class="form-label custom-label filter-labels mb-3">{{'Date' | translate}}</label>
             <div class="custom-date-range-picker">
@@ -472,10 +430,6 @@
           <div class="custom-modal-footer ">
             <button type="button" class="custom-btn btn-secondary "
               (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
-            <!-- <button type="submit" class="custom-btn btn-primary "
-            [disabled]="assetForm.invalid || 
-            (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
-            Submit</button> -->
             <button type="submit" class="custom-btn btn-primary" [disabled]="assetForm.invalid ||
             assetForm.get('subLocationId')?.invalid ||
            (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) ||

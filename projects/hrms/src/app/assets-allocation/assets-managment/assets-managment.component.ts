@@ -83,7 +83,25 @@ export class AssetsManagmentComponent {
     this.initializeNavTabs();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+      // Restore saved filters
+  this.restoreFilterValues();
+
+  // Apply filtered results immediately
+  const formValue = this.locationfromdata.value;
+
+  this.getassetsdata(
+    this.page,
+    this.pageSize,
+    formValue.locationId,
+    formValue.subLocationId,
+    formValue.assetCategory?.name,
+    formValue.assetSubCategory?.name,
+    formValue.dateRange?.[0],
+    formValue.dateRange?.[1],
+    this.Status
+  )
   }
+  
   isFilterApplied(): boolean {
     const formValue = this.locationfromdata?.value;
     // Check if any filter (except date & employee) has value
@@ -98,7 +116,27 @@ export class AssetsManagmentComponent {
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
- 
+ restoreFilterValues() {
+  const savedLocation = JSON.parse(localStorage.getItem('assetlocationId') || 'null');
+  const savedSubLocation = JSON.parse(localStorage.getItem('assetsublocationId') || 'null');
+  const savedCategory = JSON.parse(localStorage.getItem('assetcategeory') || 'null');
+  const savedSubCategory = JSON.parse(localStorage.getItem('assetsubcategeory') || 'null');
+  const savedFromDate = JSON.parse(localStorage.getItem('formDate') || 'null');
+  const savedToDate = JSON.parse(localStorage.getItem('toDate') || 'null');
+
+  this.locationfromdata.patchValue({
+    locationId: savedLocation,
+    subLocationId: savedSubLocation,
+    assetCategory: savedCategory ? { name: savedCategory } : null,
+    assetSubCategory: savedSubCategory ? { name: savedSubCategory } : null,
+    dateRange: savedFromDate && savedToDate ? [new Date(savedFromDate), new Date(savedToDate)] : null
+  });
+
+  // Load sublocations based on saved location
+  if (savedLocation) {
+    this.getSubLocationByidfliters(savedLocation);
+  }
+ }
   onSubmit() {
     if (this.locationfromdata.invalid) {
       return;

@@ -36,7 +36,7 @@ export class LoadEntitlementCreateComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
+    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '{}')
     this.yearsList = this.getYears();
     this.leaveAllocationForm = this.fb.group({
       year: ['', Validators.required],

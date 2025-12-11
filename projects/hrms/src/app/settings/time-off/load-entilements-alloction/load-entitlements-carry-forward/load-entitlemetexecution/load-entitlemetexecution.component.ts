@@ -20,7 +20,7 @@ export class LoadEntitlemetexecutionComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.carryforwarddatajobid = JSON.parse(localStorage.getItem('carryForwardJobId') ?? '')
+    this.carryforwarddatajobid = JSON.parse(localStorage.getItem('carryForwardJobId') ?? '{}')
     if (this.carryforwarddatajobid) {
       this.http.postbyId(`LeaveEntitlementJobs/${this.carryforwarddatajobid}/start`)
         .subscribe({

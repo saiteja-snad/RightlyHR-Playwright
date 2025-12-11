@@ -34,7 +34,7 @@ export class LoadEntilementsMapCategoeryComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
+    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '{}')
     this.getCarryForwardData(this.carryforwarddata)
     this.getdataforcarryforwardforplaylod(this.carryforwarddata)
   }

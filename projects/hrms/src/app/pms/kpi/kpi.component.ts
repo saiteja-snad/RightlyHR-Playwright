@@ -232,6 +232,11 @@ console.log("Data load =>", this.dataload);
     this.kpiForm.reset();
     this.kpiRows.clear();
     this.addKpiRow(); // Start with one empty row
+
+     this.kpiForm.get('kraId')?.enable();
+  this.kpiForm.get('weightage')?.enable();
+  this.kpiForm.get('effectiveDate')?.enable();
+  this.kpiForm.get('targetDate')?.enable();
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
@@ -353,6 +358,11 @@ onUpdate(kpi: any, content: any) {  // ← Add `content` parameter
     effectiveDate: selectedKra?.effectiveDate.split('T')[0],
     targetDate: selectedKra?.targetDate.split('T')[0],
   });
+
+  this.kpiForm.get('kraId')?.disable();
+  this.kpiForm.get('weightage')?.disable();
+  this.kpiForm.get('effectiveDate')?.disable();
+  this.kpiForm.get('targetDate')?.disable();
 
   const kpisForKra = this.groupedKpis
   .find(g => g.kraId === kpi.kraId)?.kpis || [];

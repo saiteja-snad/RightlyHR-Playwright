@@ -14,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class SettingsHeaderComponent implements OnInit {
   moduleName: string = '';
   componentName: string = '';
-  navigationname:string=''
+  navigationname: string = ''
 
   constructor(public router: Router, public rbac: RbacService) { }
 
@@ -243,17 +243,17 @@ export class SettingsHeaderComponent implements OnInit {
     }
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
       this.moduleName = 'Time Off';
-      this.navigationname='Bulk Entitlements'
+      this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Initial Load Entitlements';
     }
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/carry-forward')) {
       this.moduleName = 'Time Off';
-      this.navigationname='Bulk Entitlements'
+      this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Carry Forward Load Entitlements';
     }
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
       this.moduleName = 'Time Off';
-      this.navigationname='Bulk Entitlements'
+      this.navigationname = 'Bulk Entitlements'
       this.componentName = 'JOB ID  ';
     }
   }
@@ -262,11 +262,11 @@ export class SettingsHeaderComponent implements OnInit {
       '/settings/timeoff-configurations/jobview',
       '/settings/timeoff-configurations/load-entitlements/load-entitlement-create'
     ];
-    
+
     if (hidePaths.some(path => this.router.url.startsWith(path))) {
       return false;
     }
-    
+
     return this.router.url.startsWith('/settings');
   }
 
@@ -283,7 +283,9 @@ export class SettingsHeaderComponent implements OnInit {
   navigateToSettings() {
     this.router.navigate(['/settings'])
   }
-  navigateToloadentiments(){
+  navigateToloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
+    localStorage.removeItem('carryForwardJobId'),
+      localStorage.removeItem('loadEntitlement')
   }
 }

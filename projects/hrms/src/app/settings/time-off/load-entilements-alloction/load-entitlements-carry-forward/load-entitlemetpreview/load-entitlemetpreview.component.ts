@@ -41,7 +41,7 @@ export class LoadEntitlemetpreviewComponent {
       `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
     &subLocationIds=${carryforwarddata.subLocation.id}
     &shiftIds=${carryforwarddata.shift.id}
-    &year=${carryforwarddata.year}`
+    &year=${carryforwarddata.year}&excludeJobProcessedEmployees=true`
     )
       .pipe(takeUntil(this.destroy$))
       .subscribe({

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -50,6 +50,8 @@ export class KraComponent implements OnInit, OnDestroy {
   first = 0;
   collectionSize = 0;
 
+  selectedKraId: number = 0;
+
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -91,6 +93,16 @@ employeeOptions = [
   { label: 'Michael Lee', value: 103 }
 ];
 
+dummyKpiList = [
+  'KPI 1 – Quality of Work',
+  'KPI 2 – Productivity Score',
+  'KPI 3 – Timeline Adherence',
+  'KPI 4 – Communication'
+];
+
+kpiList: any[] = [];
+
+
 
   private subscription!: Subscription;
   @ViewChild('createKraModal') createKraModal: any;
@@ -105,7 +117,8 @@ employeeOptions = [
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+    private offcanvasService: NgbOffcanvas
   ) {
     // Form initialized safely in constructor
     this.kraForm = this.fb.group({
@@ -377,6 +390,7 @@ onAssignByRole(kra: any) {
   // Set header values
   this.selectedKraTitle = kra.kraName;
   this.selectedKpiCount = kra.kpiCount || 0; // If API gives count
+  this.selectedKraId = kra.kraId;
 
   // Reset form and rows
   this.assignByRoleForm.reset();
@@ -479,6 +493,39 @@ addRoleRow() {
 
 removeRoleRow(index: number) {
   this.roleRows.removeAt(index);
+}
+
+loadKpisForKra(kraId: number) {
+  this.http.getDataIncludeParams('Kpi/getAll', { page: 1, pageSize: 100 }).subscribe({
+    next: (res: any) => {
+      if (res.success) {
+        this.kpiList = (res.data || []).filter((k: any) => k.kraId === kraId);
+      } else {
+        this.kpiList = [];
+      }
+    },
+    error: (err) => {
+      console.error('Error loading KPIs:', err);
+      this.kpiList = [];
+    }
+  });
+}
+
+openKpiCanvas(content: TemplateRef<any>, modalRef: any, kraId: number) {
+  modalRef.dismiss(); // Close modal first
+  this.loadKpisForKra(kraId); // Load real KPIs
+
+  setTimeout(() => {
+    this.offcanvasService.open(content, {
+      position: 'end',
+      backdrop: 'static',
+      panelClass: 'custom-kpi-canvas'
+    });
+  }, 300);
+}
+
+closeKpiCanvas() {
+  this.offcanvasService.dismiss();
 }
 
 

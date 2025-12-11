@@ -211,7 +211,7 @@
             <label class="form-label custom-label mb-2">
               {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control custom-input" formControlName="effectiveDate">
+            <input type="date" class="form-control custom-input" formControlName="effectiveDate" onkeydown="return false">
             <div class="error-msg" *ngIf="f['effectiveDate'].touched && f['effectiveDate'].invalid">
               Effective Date is required
             </div>
@@ -223,7 +223,7 @@
               {{ 'Target Date' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="date" class="form-control custom-input" formControlName="targetDate"
-              [min]="kraForm.get('effectiveDate')?.value">
+              [min]="kraForm.get('effectiveDate')?.value" onkeydown="return false">
             <div class="error-msg" *ngIf="f['targetDate'].touched && f['targetDate'].invalid">
               Target Date is required
             </div>
@@ -370,7 +370,7 @@
 
                 <td>
                   <input type="date" class="form-control custom-input"
-                    formControlName="targetDate">
+                    formControlName="targetDate" onkeydown="return false">
                 </td>
 
                 <td class="text-center">
@@ -415,18 +415,15 @@
   <div class="custom-main-popup-container" ngbAutofocus>
 
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center
-                custom-poup-header-content popup-header-border">
+<div class="d-flex justify-content-between align-items-center custom-poup-header-content popup-header-border px-4 py-3">
+  <p class="popup-heading mb-0">Assign By Role ({{ selectedKraTitle }})</p>
 
-      <p class="popup-heading mb-0">
-        Assign By Role ({{ selectedKraTitle }})
-      </p>
-
-      <p class="popup-heading mb-0 text-primary" style="cursor:pointer; text-decoration: underline;">
-        KPIs – {{ selectedKpiCount }}
-      </p>
-
-    </div>
+  <p class="kpi-count-pill mb-0 fw-bold"
+     style="cursor: pointer; text-decoration: underline;"
+     (click)="openKpiCanvas(kpiCanvas, modal, selectedKraId)">
+    KPI's : {{ selectedKpiCount }}
+  </p>
+</div>
 
     <div class="custom-main-popup-content">
       <form [formGroup]="assignByRoleForm">
@@ -450,36 +447,42 @@
 
               <!-- Job Role -->
               <td>
+                <div class="custom-p-select-content">
                 <p-select
                   [options]="jobRoleOptions"
                   optionLabel="label"
                   formControlName="jobRole"
                   placeholder="Select Job Role"
+                  [filter]="true"
                   class="w-100">
                 </p-select>
+                </div>
               </td>
 
               <!-- Employees -->
               <td>
+                <div class="custom-p-select-content">
                 <p-select
                   [options]="employeeOptions"
                   optionLabel="label"
                   formControlName="employee"
                   placeholder="Select Employee"
+                  [filter]="true"
                   class="w-100">
                 </p-select>
+                </div>
               </td>
 
               <!-- Effective Date -->
               <td>
                 <input type="date" class="form-control custom-input"
-                  formControlName="effectiveDate">
+                  formControlName="effectiveDate" onkeydown="return false">
               </td>
 
               <!-- Target Date -->
               <td>
                 <input type="date" class="form-control custom-input"
-                  formControlName="targetDate">
+                  formControlName="targetDate" onkeydown="return false">
               </td>
 
               <!-- Actions -->
@@ -521,4 +524,57 @@
     </div>
   </div>
 </ng-template>
+
+<!-- KPI LIST RIGHT SIDEBAR -->
+<ng-template #kpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">KPI's ({{ kpiList.length }})</p>
+      <a (click)="closeKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+        @if (kpiList.length === 0) {
+          <div class="text-center py-5 text-muted">
+            <app-no-data-found />
+          </div>
+        } @else {
+          @for (kpi of kpiList; track kpi.kpiId) {
+            <div class="project-card mb-3">
+              <!-- KPI Name -->
+              <p class="project-name">{{ kpi.kpiName }}</p>
+
+              <!-- Row: Weightage | Target Value | Target Date -->
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div class="text-center">
+                  <p class="project-role mb-1">Weightage</p>
+                  <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
+                </div>
+                <div class="text-center">
+                  <p class="project-role mb-1">Target Value</p>
+                  <p class="project-dates fw-bold">
+                    {{ kpi.targetValue }}
+                    <span class="text-muted small">{{ kpi.targetType }}</span>
+                  </p>
+                </div>
+                <div class="text-center">
+                  <p class="project-role mb-1">Target Date</p>
+                  <p class="project-dates fw-bold">
+                    {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 

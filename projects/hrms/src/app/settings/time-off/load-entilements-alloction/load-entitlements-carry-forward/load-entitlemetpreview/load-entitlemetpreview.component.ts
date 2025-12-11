@@ -23,7 +23,7 @@ export class LoadEntitlemetpreviewComponent {
   carryforwarddata: any = {}
   selectedEmployeeDetail: any = null;
   selectemployeename: any
-  selectedfusionEmpId:any
+  selectedfusionEmpId: any
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
@@ -69,12 +69,11 @@ export class LoadEntitlemetpreviewComponent {
           employee: item.employeeName,
           employeeId: item.employeeId,
           fusionEmpId: item.fusionEmpId,
-  
-          leaveEntries: []   // 👈 store whole list people
+          leaveEntries: []
         };
       }
 
-      grouped[item.employeeId][item.leaveType] = item.maxCarryForward;
+      grouped[item.employeeId][item.leaveType] = item.actualCarryForward;
 
       grouped[item.employeeId].leaveEntries.push({
         leaveType: item.leaveType,
@@ -99,7 +98,7 @@ export class LoadEntitlemetpreviewComponent {
   openLeaveDetails(row: any, content: any) {
     console.log("row", row);
     this.selectemployeename = row.employee;
-    this.selectedfusionEmpId=row.fusionEmpId
+    this.selectedfusionEmpId = row.fusionEmpId
     this.selectedEmployeeDetail = row.leaveEntries;
 
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });

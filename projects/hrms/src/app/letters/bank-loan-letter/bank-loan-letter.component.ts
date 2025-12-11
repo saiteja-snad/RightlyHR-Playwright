@@ -249,7 +249,7 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
         this.bankLoanFile = new File([blob], fileName, {
           type: 'application/pdf',
         });
-
+       
         this.uploadBankLoanLetter();
       });
     }

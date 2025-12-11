@@ -254,7 +254,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
       this.moduleName = 'Time Off';
       this.navigationname='Bulk Entitlements'
-      this.componentName = 'Job Details  ';
+      this.componentName = 'JOB ID  ';
     }
   }
   isShowsettingsRoute(): boolean {

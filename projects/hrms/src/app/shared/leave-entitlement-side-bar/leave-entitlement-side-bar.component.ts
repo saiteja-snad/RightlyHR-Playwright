@@ -24,7 +24,7 @@ export class LeaveEntitlementSideBarComponent {
       permission: { feature: 'Project Details Tab', action: 'view' }
     },
     {
-      label: 'Carry Forward Load entitlement', link: '/settings/timeoff-configurations/carry-forward', icon: 'project-mangement-icons/Inactiveprojects.png', statusKey: 'inactive',
+      label: 'Carry Forward Load entitlements', link: '/settings/timeoff-configurations/carry-forward', icon: 'project-mangement-icons/Inactiveprojects.png', statusKey: 'inactive',
       permission: { feature: 'Project Details Tab', action: 'view' },
     },
  

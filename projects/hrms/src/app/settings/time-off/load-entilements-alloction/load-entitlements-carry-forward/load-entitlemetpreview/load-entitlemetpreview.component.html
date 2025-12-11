@@ -24,7 +24,7 @@
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary" (click)="navigationtoback()">Back</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="navigationtomapcategory()">Proceed to Mapping</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="leaveTypes.length===0" (click)="navigationtomapcategory()">Proceed to Mapping</button>
         </div>
     </div>
 </div>

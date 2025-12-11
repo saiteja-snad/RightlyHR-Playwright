@@ -1,5 +1,11 @@
 <div class="heading-content">
+    @if(isShowsettingsRoute()){
     <div class="commpoment-name navigator" (click)="navigateToSettings()">Settings</div>
+    }
+
+      @if(isShowsettingsjobRoute()){
+    <div class="commpoment-name navigator" (click)="navigateToloadentiments()">Settings</div>
+    }
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>

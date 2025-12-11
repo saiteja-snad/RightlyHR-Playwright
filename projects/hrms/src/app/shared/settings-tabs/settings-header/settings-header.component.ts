@@ -241,12 +241,45 @@ export class SettingsHeaderComponent implements OnInit {
       this.componentName = 'Flexible Work Hours Allocation';
     }
     else if (url.startsWith('/settings/timeoff-configurations/initial-load-entitlements')) {
-      this.moduleName = 'Load Entitlements';
-      this.componentName = 'Load Entitlements Configuration';
+      this.moduleName = 'Bulk Load Entitlements Configuration';
+      this.componentName = 'Initial Load Entitlements';
     }
+    else if (url.startsWith('/settings/timeoff-configurations/carry-forward')) {
+      this.moduleName = 'Bulk Load Entitlements Configuration';
+      this.componentName = 'Carry Forward Load Entitlements';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
+      this.moduleName = 'Bulk Load Entitlements Configuration';
+      this.componentName = 'Job Details  ';
+    }
+  }
+  isShowsettingsRoute(): boolean {
+    const hidePaths = [
+      '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/load-entitlements/load-entitlement-create'
+    ];
+    
+    if (hidePaths.some(path => this.router.url.startsWith(path))) {
+      return false;
+    }
+    
+    return this.router.url.startsWith('/settings');
+  }
+
+  isShowsettingsjobRoute() {
+    const showPaths = [
+      '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/load-entitlements/load-entitlement-create'
+
+
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
   }
 
   navigateToSettings() {
     this.router.navigate(['/settings'])
+  }
+  navigateToloadentiments(){
+    this.router.navigate(['/settings/timeoff-configurations/carry-forward'])
   }
 }

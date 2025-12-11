@@ -24,7 +24,7 @@ export default [
     { path: 'load-entitlement/carry-forward', component: CarryForwardLeaveEntitlementComponent },
     {path:'jobview',component:LoadEntilementsAlloctionComponent},
     {
-        path: 'load-entitlements', component: LoadEntitlementsCarryForwardComponent,
+        path: 'leave-entitlements', component: LoadEntitlementsCarryForwardComponent,
         children: [
             { path: 'load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlement-create/load-entitlement-create.component').then((m) => m.LoadEntitlementCreateComponent) },
             { path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent) },

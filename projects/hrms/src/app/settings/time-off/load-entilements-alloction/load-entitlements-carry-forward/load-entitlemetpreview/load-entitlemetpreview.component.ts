@@ -107,9 +107,9 @@ export class LoadEntitlemetpreviewComponent {
 
 
   navigationtomapcategory() {
-    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-map-categoery'])
+    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery'])
   }
   navigationtoback() {
-    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-create'])
+    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-create'])
   }
 }

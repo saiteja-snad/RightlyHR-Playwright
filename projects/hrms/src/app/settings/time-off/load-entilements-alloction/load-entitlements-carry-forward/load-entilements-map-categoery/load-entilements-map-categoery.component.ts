@@ -143,7 +143,7 @@ export class LoadEntilementsMapCategoeryComponent {
     this.http.postdata('LeaveEntitlementJobs/create-carry-forward', body).subscribe({
       next: (res: any) => {
         localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
-        this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
+        this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'])
       },
       error: (err) => {
         console.error(err);
@@ -152,11 +152,11 @@ export class LoadEntilementsMapCategoeryComponent {
   }
 
   navigationtoback() {
-    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])
+    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview'])
   }
 
   navigationtofinal() {
-    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-execution'])
+    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'])
   }
 
   getAvailableOptions(currentItem: any) {

@@ -29,7 +29,7 @@ export class SettingsHeaderComponent implements OnInit {
       const jobid = params['id'];
       if (jobid) {
         this.jobid = jobid;
-      
+
       }
     });
 
@@ -252,23 +252,32 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
-      this.componentName = 'Initial Load Entitlements';
+      this.componentName = 'Initial Leave Carry Forward';
     }
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/carry-forward')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
-      this.componentName = 'Carry Forward Load Entitlements';
+      this.componentName = 'Leave Carry Forward';
     }
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
-      this.componentName =  this.jobid;
+      this.componentName = this.jobid;
+    }
+
+    else if (url.startsWith('/settings/timeoff-configurations/leave-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Leave Carry Forward';
     }
   }
   isShowsettingsRoute(): boolean {
     const hidePaths = [
       '/settings/timeoff-configurations/jobview',
-      '/settings/timeoff-configurations/load-entitlements/load-entitlement-create'
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
+         '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
+         '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
+         '/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'
     ];
 
     if (hidePaths.some(path => this.router.url.startsWith(path))) {
@@ -281,7 +290,8 @@ export class SettingsHeaderComponent implements OnInit {
   isShowsettingsjobRoute() {
     const showPaths = [
       '/settings/timeoff-configurations/jobview',
-      '/settings/timeoff-configurations/load-entitlements/load-entitlement-create'
+      '/settings/timeoff-configurations/leave-entitlements',
+   
 
 
     ];
@@ -289,7 +299,9 @@ export class SettingsHeaderComponent implements OnInit {
   }
 
   navigateToSettings() {
-    this.router.navigate(['/settings'])
+    this.router.navigate(['/settings']),
+      localStorage.removeItem('carryForwardJobId'),
+      localStorage.removeItem('loadEntitlement')
   }
   navigateToloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])

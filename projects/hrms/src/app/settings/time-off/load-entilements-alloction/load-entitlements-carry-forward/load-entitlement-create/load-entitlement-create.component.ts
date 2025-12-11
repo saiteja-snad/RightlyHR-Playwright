@@ -116,7 +116,7 @@ export class LoadEntitlementCreateComponent {
   sumbitdata() {
     console.log(this.leaveAllocationForm.value)
     localStorage.setItem('loadEntitlement', JSON.stringify(this.leaveAllocationForm.value));
-    this.route.navigate(['/settings/timeoff-configurations/load-entitlements/load-entitlement-preview'])
+    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview'])
   }
 
   ngOnDestroy(): void {

@@ -13,7 +13,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, Select, ReactiveFormsModule],
   templateUrl: './add-leavecategory.component.html',
   styleUrl: './add-leavecategory.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class AddLeavecategoryComponent {
@@ -50,16 +50,18 @@ export class AddLeavecategoryComponent {
   shiftsArray = [] as any[];
 
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
-     private router: Router, private modalService: NgbModal) {
+    private router: Router, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
     this.jobLocationList();
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
+
+    for (let year = currentYear + 1; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
     }
+
     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
@@ -70,7 +72,7 @@ export class AddLeavecategoryComponent {
       type: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
-      validity: ['', [Validators.required, this.restrictInputNumbersValidator,Validators.max(366)]],
+      validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
       categoryColor: ['#000000', Validators.required],
       parentId: [undefined],
       // Additional Information
@@ -83,7 +85,7 @@ export class AddLeavecategoryComponent {
       isApplicableProRataLeave: [undefined, Validators.required],
       // Future Dates
       futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed'), this.maxValidDaysValidator('validity') ]],
+      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed'), this.maxValidDaysValidator('validity')]],
       // Past Dates
       pastDateAllowed: [undefined, Validators.required],
       pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
@@ -107,55 +109,55 @@ export class AddLeavecategoryComponent {
   }
 
 
-validateAllowedDays(){
-   this.setupMaxValidation('futureDatesAllowedDays', 'validity');
-   this.setupMaxValidation('pastDatesAllowedDays', 'validity');
-   this.setupMaxValidation('carryForwardAllowedValue', 'validity');
-   this.setupMaxValidation('encashAllowedValue', 'validity');
-   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
-   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
-   this.setupMaxValidation('probationDays', 'validity');
-}
+  validateAllowedDays() {
+    this.setupMaxValidation('futureDatesAllowedDays', 'validity');
+    this.setupMaxValidation('pastDatesAllowedDays', 'validity');
+    this.setupMaxValidation('carryForwardAllowedValue', 'validity');
+    this.setupMaxValidation('encashAllowedValue', 'validity');
+    this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+    this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+    this.setupMaxValidation('probationDays', 'validity');
+  }
 
 
-setupMaxValidation(controlName: string, maxControlName: string): void {
-  const control = this.leavePolicyForm.get(controlName);
-  const maxControl = this.leavePolicyForm.get(maxControlName);
+  setupMaxValidation(controlName: string, maxControlName: string): void {
+    const control = this.leavePolicyForm.get(controlName);
+    const maxControl = this.leavePolicyForm.get(maxControlName);
 
-  if (!control || !maxControl) return;
+    if (!control || !maxControl) return;
 
-  control.valueChanges.subscribe(value => {
-    const max = maxControl.value;
+    control.valueChanges.subscribe(value => {
+      const max = maxControl.value;
 
-    if (value && +value > max) {
-      control.setErrors({ ...control.errors, maxExceeded: true });
-    } else {
-      if (control.hasError('maxExceeded')) {
-        const errors = { ...control.errors };
-        delete errors['maxExceeded'];
-        control.setErrors(Object.keys(errors).length ? errors : null);
+      if (value && +value > max) {
+        control.setErrors({ ...control.errors, maxExceeded: true });
+      } else {
+        if (control.hasError('maxExceeded')) {
+          const errors = { ...control.errors };
+          delete errors['maxExceeded'];
+          control.setErrors(Object.keys(errors).length ? errors : null);
+        }
       }
-    }
-  });
-}
+    });
+  }
 
 
 
 
   maxValidDaysValidator(maxField: string): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const parent = control.parent;
-    if (!parent) return null;
+    return (control: AbstractControl): ValidationErrors | null => {
+      const parent = control.parent;
+      if (!parent) return null;
 
-    const max = parent.get(maxField)?.value;
-    if (max != null && control.value != null && control.value > max) {
-      console.log(`Max value exceeded: ${control.value} > ${max}`);
-      
-      return { maxExceeded: true };
-    }
-    return null;
-  };
-}
+      const max = parent.get(maxField)?.value;
+      if (max != null && control.value != null && control.value > max) {
+        console.log(`Max value exceeded: ${control.value} > ${max}`);
+
+        return { maxExceeded: true };
+      }
+      return null;
+    };
+  }
 
 
   jobLocationList() {
@@ -214,7 +216,7 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
   getOrgLeavesCategories() {
     this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
       next: (responseData: any) => {
-        this,responseData.orgcategory
+        this, responseData.orgcategory
         this.postOrgPloicyDetailsArray = responseData as [];
         this.publishedCategories = responseData.filter((x: any) => x.status === 'Published');
       },

@@ -16,9 +16,10 @@
                     <td>
                         <div class="d-flex justify-content-center align-items-center gap-3">
                             <div class="code-box" [style.background]="hexToRgba(item.categoryColor, 0.1)"
-  [style.color]="item.categoryColor">{{item.categoryCode}}</div>
+                                [style.color]="item.categoryColor">{{item.categoryCode}}</div>
                             <div class="text-start">
-                                <div class="categoryname" [style.color]="item.categoryColor">{{ item.name }} {{currentYear}}</div>
+                                <div class="categoryname" [style.color]="item.categoryColor">{{ item.name }}
+                                    {{currentYear}}</div>
                                 <div *ngIf="item.carryForwardAllowed || item.encashAllowedType" class="eligible-text">
                                     Eligible for {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
                                     {{ item.carryForwardAllowed && item.encashAllowedType ? ' /' : '' }}
@@ -46,7 +47,7 @@
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary" (click)="navigationtoback()">Back</button>
-            <button type="button" class="custom-btn btn-primary"  (click)="submit()">Commit & Process</button>
+            <button type="button" class="custom-btn btn-primary" (click)="submit()">Commit & Process</button>
         </div>
     </div>
 </div>

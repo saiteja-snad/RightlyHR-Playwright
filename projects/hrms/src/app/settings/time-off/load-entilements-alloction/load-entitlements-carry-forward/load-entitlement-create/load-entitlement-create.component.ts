@@ -21,6 +21,7 @@ export class LoadEntitlementCreateComponent {
   clientForm!: FormGroup;
   empinfo: any = {};
   leaveAllocationForm!: FormGroup;
+  carryforwarddata: any = {}
   spinnerLoader: boolean = false;
   subscription!: Subscription;
   yearsList: number[] = [];
@@ -35,6 +36,7 @@ export class LoadEntitlementCreateComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
     this.yearsList = this.getYears();
     this.leaveAllocationForm = this.fb.group({
       year: ['', Validators.required],
@@ -42,6 +44,15 @@ export class LoadEntitlementCreateComponent {
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
     });
+
+    if (this.carryforwarddata) {
+      this.leaveAllocationForm.patchValue({
+        year: this.carryforwarddata.year,
+        location: this.carryforwarddata.location,
+        subLocation: this.carryforwarddata.subLocation,
+        shift: this.carryforwarddata.shift
+      });
+    }
     this.getAllLocations();
   }
 

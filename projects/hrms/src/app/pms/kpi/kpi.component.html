@@ -13,9 +13,7 @@
 
     <!-- @if (rbac.allowedToAccess('Create KPI.view')) { -->
     <div>
-      <button class="custom-btn btn-primary" (click)="openModal(createKpiModal)">
-        {{ 'Create KPI' | translate }}
-      </button>
+      <button class="custom-btn btn-primary" (click)="openModal(createKpiModal)">{{ 'Create KPI' | translate }}</button>
     </div>
     <!-- } -->
   </div>
@@ -30,29 +28,20 @@
     <span class="input-group-text custom-input-group-search">
       <i class="bi bi-search"></i>
     </span>
-    <input type="search" class="form-control custom-search-input"
-      placeholder="Search by KPI name, department, status..." [(ngModel)]="searchText"
-      (ngModelChange)="onSearchTextChange()" />
+    <input type="search" class="form-control custom-search-input" placeholder="Search by KPI name, department, status..."
+      [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
   </div>
 
   <!-- Replace from Search Bar down with this entire block -->
   <div class="custom-main-popup-content custom-accordians mt-3">
     @if (!dataload && groupedKpis.length > 0) {
     <p-accordion [multiple]="false">
-      @for (group of groupedKpis; track group.kraId) {
-      <p-accordionTab>
-        <!-- Custom Header -->
-        <ng-template pTemplate="header">
-          <div class="d-flex justify-content-between align-items-center w-100 pe-4">
-            <span class="fw-bold">{{ group.kraName }}</span>
-            <span class="text-muted small">
-              {{ group.kpis.length }} KPI{{ group.kpis.length > 1 ? 's' : '' }}
-            </span>
-          </div>
-        </ng-template>
-
-        <!-- Content -->
-        <ng-template pTemplate="content">
+      <p-accordion-panel *ngFor="let group of groupedKpis; track group.kraId; let i = index" [value]="i">
+        <p-accordion-header>
+          <div class="accordian-header-text text-truncate">{{ group.kraName }}</div>
+          <div class="total-hrs-text text-truncate">{{ group.kpis.length }} KPI{{ group.kpis.length > 1 ? 's' : '' }}</div>
+        </p-accordion-header>
+        <p-accordion-content>
           <div class="custom-table-content custom-popup-table">
             <table class="w-100 popup-table">
               <thead class="table-light">
@@ -87,7 +76,6 @@
                       {{ kpi.status }}
                     </span>
                   </td>
-
                   @if (hasAnyActionPermission()) {
                   <td class="text-center">
                     <div class="dropdown">
@@ -95,20 +83,16 @@
                         <i class="bi bi-three-dots-vertical text-muted"></i>
                       </span>
                       <ul class="dropdown-menu custom-dropdown-menu">
-
                         <li class="dropdown-item" (click)="onUpdate(kpi, createKpiModal)">
                           <a class="dropdown-custom-btn">
                             <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                           </a>
                         </li>
-
-
                         <li class="dropdown-item" (click)="onView(kpi)">
                           <a class="dropdown-custom-btn">
                             <i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}
                           </a>
                         </li>
-
                       </ul>
                     </div>
                   </td>
@@ -118,19 +102,18 @@
               </tbody>
             </table>
           </div>
-        </ng-template>
-      </p-accordionTab>
-      }
+  
+        </p-accordion-content>
+      </p-accordion-panel>
+  
     </p-accordion>
     }
-
     <!-- No Data -->
     @else if (!dataload && groupedKpis.length === 0) {
     <div class="text-center py-5">
       <app-no-data-found />
     </div>
     }
-
     <!-- Loading -->
     @else if (dataload) {
     <div class="text-center py-5">
@@ -140,13 +123,13 @@
   </div>
 </div>
 
-<!-- ==================== CREATE KPI MODAL (Professional Design) ==================== -->
+<!-- CREATE KPI MODAL (Professional Design) -->
 <ng-template #createKpiModal let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <p class="popup-heading mb-0">
-  {{ isEditMode ? ('Update KPI' | translate) : ('Create New KPI' | translate) }}
-</p>
+        {{ isEditMode ? ('Update KPI' | translate) : ('Create New KPI' | translate) }}
+      </p>
     </div>
 
     <div class="custom-main-popup-content">
@@ -189,8 +172,8 @@
             <label class="form-label custom-label mb-2">
               {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control custom-input" formControlName="effectiveDate"
-              [readonly]="isEditMode" onkeydown="return false">
+            <input type="date" class="form-control custom-input" formControlName="effectiveDate" [readonly]="isEditMode"
+              onkeydown="return false">
             <div class="error-msg" *ngIf="f['effectiveDate'].touched && f['effectiveDate'].invalid">
               Effective Date is required
             </div>
@@ -201,8 +184,8 @@
             <label class="form-label custom-label mb-2">
               {{ 'Target Date' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control custom-input" formControlName="targetDate"
-              [readonly]="isEditMode" [min]="kpiForm.get('effectiveDate')?.value" onkeydown="return false">
+            <input type="date" class="form-control custom-input" formControlName="targetDate" [readonly]="isEditMode"
+              [min]="kpiForm.get('effectiveDate')?.value" onkeydown="return false">
             <div class="error-msg" *ngIf="f['targetDate'].touched && f['targetDate'].invalid">
               Target Date is required
             </div>
@@ -257,7 +240,8 @@
                 </td>
 
                 <td>
-                  <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
                 </td>
 
                 <td>
@@ -271,8 +255,9 @@
 
                     @if ($index === kpiRows.length - 1) {
                     <button type="button"
-                      class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" [disabled]="!canAddRow()" [ngClass]="{'btn-outline-secondary': !canAddRow()}" *ngIf="$index === kpiRows.length - 1"
-                      style="width: 32px; height: 32px;" (click)="addKpiRow()">
+                      class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+                      [disabled]="!canAddRow()" [ngClass]="{'btn-outline-secondary': !canAddRow()}"
+                      *ngIf="$index === kpiRows.length - 1" style="width: 32px; height: 32px;" (click)="addKpiRow()">
                       <i class="bi bi-plus-circle"></i>
                     </button>
                     }
@@ -292,12 +277,12 @@
               }
             </tbody>
           </table>
-@if (totalWeightage > 100) {
-  <div class="m-2 small">
-    <span class="fw-semibold">Note: </span>
-    <span class="text-danger">Total weightage cannot exceed 100%.</span>
-  </div>
-}
+          @if (totalWeightage > 100) {
+          <div class="m-2 small">
+            <span class="fw-semibold">Note: </span>
+            <span class="text-danger">Total weightage cannot exceed 100%.</span>
+          </div>
+          }
 
         </div>
 
@@ -306,14 +291,14 @@
             {{ 'Cancel' | translate }}
           </button>
           <button type="submit" class="custom-btn btn-primary"
-  [disabled]="kpiForm.invalid || isSubmitting || kpiRows.length === 0">
-  @if (isSubmitting) {
-    <span class="spinner-border spinner-border-sm me-2"></span>
-    {{ isEditMode ? 'Updating...' : 'Creating...' }}
-  } @else {
-    {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
-  }
-</button>
+            [disabled]="kpiForm.invalid || isSubmitting || kpiRows.length === 0">
+            @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            {{ isEditMode ? 'Updating...' : 'Creating...' }}
+            } @else {
+            {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
+            }
+          </button>
         </div>
       </form>
     </div>

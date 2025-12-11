@@ -19,9 +19,9 @@ export class PmsMainTabsComponent {
   empinfo: any;
   columnsPerRow = 3;
   navTabs = [
-    { label: 'Review Cycle', link: '/pms/review-cycle', icon: 'main-menu-icons/project-management-client.png', permission: { feature: 'Clients', action: 'view' } },
-    { label: 'KRA', link: '/pms/kra', icon: 'main-menu-icons/project-management-project.png', permission: { feature: 'Projects', action: 'view' } },
-    { label: 'KPI', link: '/pms/kpi', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Time Sheet', action: 'view' } },
+    { label: 'Review Cycle', link: '/pms/review-cycle', icon: 'main-menu-icons/project-management-client.png', permission: { feature: 'PMS', action: 'view' } },
+    { label: 'KRA', link: '/pms/kra', icon: 'main-menu-icons/project-management-project.png', permission: { feature: 'KRA', action: 'view' } },
+    { label: 'KPI', link: '/pms/kpi', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'KPI', action: 'view' } },
   ];
 
   constructor(public readonly router: Router, private rbac: RbacService, private accessNav: AccessNavigationService) { }

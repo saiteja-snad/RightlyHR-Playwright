@@ -1779,8 +1779,6 @@ export class AccessNavigationService {
         }
         break;
 
-
-
       case '/personalinfo/documents':
         if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') ||
           this.rbac.allowedToAccess('My Info Documents Tab.view')) {
@@ -1813,35 +1811,37 @@ export class AccessNavigationService {
         }
         break;
 
-
-
-
       case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {
-            console.log('Checking permission for route:', item.route);
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
         }
-
         break;
-
 
       case '/myinfo/job/team':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
           for (const item of MyINFO_TEAM_NUMBERS) {
-            console.log('Checking permission for route:', item.route);
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
         }
-
         break;
 
+      case '/pms/kpi':
+        if (this.rbac.allowedToAccess('KPI.view')) {
+          return (route = '/pms/kpi');
+        }
+        break;
 
+      case '/pms/kra':
+        if (this.rbac.allowedToAccess('KRA.view')) {
+          return (route = '/pms/kra');
+        }
+        break;
     }
     return route;
   }

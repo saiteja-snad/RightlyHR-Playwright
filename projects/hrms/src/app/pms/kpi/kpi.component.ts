@@ -1,22 +1,7 @@
 import { OpenModalService } from './../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation,
-  inject,
-} from '@angular/core';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  FormBuilder,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-  FormArray,
-  FormGroup,
-} from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors, FormArray, } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
@@ -27,7 +12,6 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -35,7 +19,6 @@ import { AccordionModule } from 'primeng/accordion';
 import { TooltipModule } from 'primeng/tooltip';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
-
 @Component({
   selector: 'app-kpi',
   standalone: true,
@@ -65,7 +48,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   private modalService = inject(NgbModal);
   public rbac = inject(RbacService);
   private router = inject(Router);
-  private conformationPopup= inject(OpenModalService);
+  private conformationPopup = inject(OpenModalService);
 
   moduleinfo = '';
   searchText = '';
@@ -90,7 +73,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   // KRA List (to show in dropdown)
   kraList: any[] = [];
   isEditMode = false;
-currentKraId: number | null = null;
+  currentKraId: number | null = null;
 
   // Main form
   kpiForm = this.fb.group(
@@ -147,64 +130,64 @@ currentKraId: number | null = null;
   }
 
   onKraChange() {
-  const selectedKraId = this.kpiForm.get('kraId')?.value;
-  if (selectedKraId) {
-    const selectedKra = this.kraList.find(k => k.kraId === selectedKraId);
-    if (selectedKra) {
-      this.kpiForm.patchValue({
-        weightage: selectedKra.weightageValue,           // auto-fill weightage
-        effectiveDate: selectedKra.effectiveDate.split('T')[0], // format YYYY-MM-DD
-        targetDate: selectedKra.targetDate.split('T')[0],       // format YYYY-MM-DD
-      });
+    const selectedKraId = this.kpiForm.get('kraId')?.value;
+    if (selectedKraId) {
+      const selectedKra = this.kraList.find(k => k.kraId === selectedKraId);
+      if (selectedKra) {
+        this.kpiForm.patchValue({
+          weightage: selectedKra.weightageValue,           // auto-fill weightage
+          effectiveDate: selectedKra.effectiveDate.split('T')[0], // format YYYY-MM-DD
+          targetDate: selectedKra.targetDate.split('T')[0],       // format YYYY-MM-DD
+        });
+      }
     }
   }
-}
 
-loadKpiList() {
-  const params = {
-    page: this.page,
-    pageSize: this.rows,
-    ...(this.searchText && { searchQuery: this.searchText }),
-  };
+  loadKpiList() {
+    const params = {
+      page: this.page,
+      pageSize: this.rows,
+      ...(this.searchText && { searchQuery: this.searchText }),
+    };
 
-  this.dataload = true;
-  this.subscription = this.http.getDataIncludeParams('Kpi/getAll', params).subscribe({
-    next: (res: any) => {
-      const kpis = res.data || [];
-      this.collectionSize = res.pagination?.totalRecords || 0;
+    this.dataload = true;
+    this.subscription = this.http.getDataIncludeParams('Kpi/getAll', params).subscribe({
+      next: (res: any) => {
+        const kpis = res.data || [];
+        this.collectionSize = res.pagination?.totalRecords || 0;
 
-      // Group KPIs by kraId + kraName
-      const map = new Map<number, { kraId: number; kraName: string; kpis: any[] }>();
+        // Group KPIs by kraId + kraName
+        const map = new Map<number, { kraId: number; kraName: string; kpis: any[] }>();
 
-      kpis.forEach((kpi: any) => {
-        const kraId = kpi.kraId;
-        const kraName = kpi.kraName || 'Unknown KRA';
+        kpis.forEach((kpi: any) => {
+          const kraId = kpi.kraId;
+          const kraName = kpi.kraName || 'Unknown KRA';
 
-        if (!map.has(kraId)) {
-          map.set(kraId, { kraId, kraName, kpis: [] });
-        }
-        map.get(kraId)!.kpis.push(kpi);
-      });
+          if (!map.has(kraId)) {
+            map.set(kraId, { kraId, kraName, kpis: [] });
+          }
+          map.get(kraId)!.kpis.push(kpi);
+        });
 
-      this.groupedKpis = Array.from(map.values())
-        .sort((a, b) => a.kraName.localeCompare(b.kraName));
+        this.groupedKpis = Array.from(map.values())
+          .sort((a, b) => a.kraName.localeCompare(b.kraName));
 
-      this.filteredDetails = kpis;
-      this.dataload = false;
+        this.filteredDetails = kpis;
+        this.dataload = false;
 
-      console.log("Grouped KPIs =>", this.groupedKpis);
-console.log("Raw KPIs =>", kpis);
-console.log("Data load =>", this.dataload);
+        console.log("Grouped KPIs =>", this.groupedKpis);
+        console.log("Raw KPIs =>", kpis);
+        console.log("Data load =>", this.dataload);
 
-    },
-    error: (err) => {
-      console.error(err);
-      this.groupedKpis = [];
-      this.collectionSize = 0;
-      this.dataload = false;
-    }
-  });
-}
+      },
+      error: (err) => {
+        console.error(err);
+        this.groupedKpis = [];
+        this.collectionSize = 0;
+        this.dataload = false;
+      }
+    });
+  }
 
   onSearchTextChange() {
     this.page = 1;
@@ -228,15 +211,15 @@ console.log("Data load =>", this.dataload);
 
   openModal(content: any) {
     this.isEditMode = false;
-  this.currentKraId = null;
+    this.currentKraId = null;
     this.kpiForm.reset();
     this.kpiRows.clear();
     this.addKpiRow(); // Start with one empty row
 
-     this.kpiForm.get('kraId')?.enable();
-  this.kpiForm.get('weightage')?.enable();
-  this.kpiForm.get('effectiveDate')?.enable();
-  this.kpiForm.get('targetDate')?.enable();
+    this.kpiForm.get('kraId')?.enable();
+    this.kpiForm.get('weightage')?.enable();
+    this.kpiForm.get('effectiveDate')?.enable();
+    this.kpiForm.get('targetDate')?.enable();
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
@@ -255,16 +238,16 @@ console.log("Data load =>", this.dataload);
 
 
   get totalWeightage(): number {
-  return this.kpiRows.controls.reduce((sum, row) => {
-    const weightage = row.get('weightage')?.value || 0;
-    return sum + (Number(weightage) || 0);
-  }, 0);
-}
+    return this.kpiRows.controls.reduce((sum, row) => {
+      const weightage = row.get('weightage')?.value || 0;
+      return sum + (Number(weightage) || 0);
+    }, 0);
+  }
 
 
-canAddRow(): boolean {
-  return this.totalWeightage < 100;
-}
+  canAddRow(): boolean {
+    return this.totalWeightage < 100;
+  }
 
 
   // Add a new KPI row
@@ -290,119 +273,111 @@ canAddRow(): boolean {
     this.kpiRows.removeAt(index);
   }
 
-onSubmitKpi() {
-  if (this.kpiForm.invalid || this.kpiRows.length === 0) return;
+  onSubmitKpi() {
+    if (this.kpiForm.invalid || this.kpiRows.length === 0) return;
 
-  this.isSubmitting = true;
+    this.isSubmitting = true;
 
-  const formValue = this.kpiForm.getRawValue();
+    const formValue = this.kpiForm.getRawValue();
 
-  const payload = this.kpiRows.getRawValue().map((row: any, index: number) => {
-    const originalKpi = this.kpiList.find(k =>
-      k.kraId === formValue.kraId &&
-      k.kpiName === row.kpiName &&
-      k.weightageValue === String(row.weightage)
-    );
-
-    return {
-      kpiId: originalKpi?.kpiId || 0,
-      kraId: formValue.kraId,
-      kpiName: row.kpiName.trim(),
-      targetType: row.uom,
-      targetValue: String(row.targetValue),
-      weightageValue: String(row.weightage),
-      targetDate: row.targetDate,
-      description: row.description.trim(),
-      status: "Created",
-    };
-  });
-
-  this.http.postdata('Kpi/upsertkra', payload).subscribe({
-    next: () => {
-      this.modalService.dismissAll();
-      this.loadKpiList();
-      this.conformationPopup.openSuccessModal(
-        this.isEditMode ? 'KPIs updated successfully' : 'KPIs created successfully'
+    const payload = this.kpiRows.getRawValue().map((row: any, index: number) => {
+      const originalKpi = this.kpiList.find(k =>
+        k.kraId === formValue.kraId &&
+        k.kpiName === row.kpiName &&
+        k.weightageValue === String(row.weightage)
       );
-    },
-    error: (err) => {
-      console.error(err);
-      this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save KPIs');
-    },
-    complete: () => {
-      this.isSubmitting = false;
-      this.isEditMode = false;
-      this.currentKraId = null;
-      this.kpiForm.reset();
-      this.kpiRows.clear();
-    }
-  });
-}
+
+      return {
+        kpiId: originalKpi?.kpiId || 0,
+        kraId: formValue.kraId,
+        kpiName: row.kpiName.trim(),
+        targetType: row.uom,
+        targetValue: String(row.targetValue),
+        weightageValue: String(row.weightage),
+        targetDate: row.targetDate,
+        description: row.description.trim(),
+        status: "Created",
+      };
+    });
+
+    this.http.postdata('Kpi/upsertkra', payload).subscribe({
+      next: () => {
+        this.modalService.dismissAll();
+        this.loadKpiList();
+        this.conformationPopup.openSuccessModal(
+          this.isEditMode ? 'KPIs updated successfully' : 'KPIs created successfully'
+        );
+      },
+      error: (err) => {
+        console.error(err);
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save KPIs');
+      },
+      complete: () => {
+        this.isSubmitting = false;
+        this.isEditMode = false;
+        this.currentKraId = null;
+        this.kpiForm.reset();
+        this.kpiRows.clear();
+      }
+    });
+  }
 
   hasAnyActionPermission(): boolean {
     return true
   }
 
-onUpdate(kpi: any, content: any) {  // ← Add `content` parameter
-  this.isEditMode = true;
-  this.currentKraId = kpi.kraId;
-
-  const selectedKra = this.kraList.find(k => k.kraId === kpi.kraId);
-
-  this.kpiForm.reset();
-  this.kpiRows.clear();
-
-  this.kpiForm.patchValue({
-    kraId: kpi.kraId,
-    weightage: selectedKra?.weightageValue,
-    effectiveDate: selectedKra?.effectiveDate.split('T')[0],
-    targetDate: selectedKra?.targetDate.split('T')[0],
-  });
-
-  this.kpiForm.get('kraId')?.disable();
-  this.kpiForm.get('weightage')?.disable();
-  this.kpiForm.get('effectiveDate')?.disable();
-  this.kpiForm.get('targetDate')?.disable();
-
-  const kpisForKra = this.groupedKpis
-  .find(g => g.kraId === kpi.kraId)?.kpis || [];
-  kpisForKra.forEach(k => {
-    this.kpiRows.push(this.fb.group({
-      kpiName: [k.kpiName, [Validators.required, Validators.minLength(5)]],
-      weightage: [Number(k.weightageValue), [Validators.required, Validators.min(1), Validators.max(100)]],
-      uom: [k.targetType, Validators.required],
-      targetValue: [Number(k.targetValue), Validators.required],
-      targetDate: [k.targetDate.split('T')[0], Validators.required],
-      description: [k.description, [Validators.required, Validators.minLength(10)]],
-    }));
-  });
-
-  if (this.kpiRows.length === 0) this.addKpiRow();
-
-  // Now open using the passed content
-  this.modalService.open(content, {
-    centered: true,
-    backdrop: 'static',
-    size: 'xl',
-  });
-}
+  onUpdate(kpi: any, content: any) {  // ← Add `content` parameter
+    this.isEditMode = true;
+    this.currentKraId = kpi.kraId;
+    const selectedKra = this.kraList.find(k => k.kraId === kpi.kraId);
+    this.kpiForm.reset();
+    this.kpiRows.clear();
+    this.kpiForm.patchValue({
+      kraId: kpi.kraId,
+      weightage: selectedKra?.weightageValue,
+      effectiveDate: selectedKra?.effectiveDate.split('T')[0],
+      targetDate: selectedKra?.targetDate.split('T')[0],
+    });
+    this.kpiForm.get('kraId')?.disable();
+    this.kpiForm.get('weightage')?.disable();
+    this.kpiForm.get('effectiveDate')?.disable();
+    this.kpiForm.get('targetDate')?.disable();
+    const kpisForKra = this.groupedKpis.find(g => g.kraId === kpi.kraId)?.kpis || [];
+    kpisForKra.forEach(k => {
+      this.kpiRows.push(this.fb.group({
+        kpiName: [k.kpiName, [Validators.required, Validators.minLength(5)]],
+        weightage: [Number(k.weightageValue), [Validators.required, Validators.min(1), Validators.max(100)]],
+        uom: [k.targetType, Validators.required],
+        targetValue: [Number(k.targetValue), Validators.required],
+        targetDate: [k.targetDate.split('T')[0], Validators.required],
+        description: [k.description, [Validators.required, Validators.minLength(10)]],
+      }));
+    });
+    if (this.kpiRows.length === 0) this.addKpiRow();
+    // Now open using the passed content
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'xl',
+    });
+  }
 
   onView(kpi: any) {
     alert('View: ' + (kpi.kpiTitle || kpi.kpiName));
   }
 
   getStatusClass(status: string) {
-  switch (status) {
-    case 'Created':
-      return 'status-created';
-    case 'Active':
-      return 'status-active';
-    case 'On Hold':
-      return 'status-onhold';
-    default:
-      return '';
+    switch (status) {
+      case 'Created':
+        return 'status-created';
+      case 'Active':
+        return 'status-active';
+      case 'On Hold':
+        return 'status-onhold';
+      default:
+        return '';
+    }
   }
-}
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();

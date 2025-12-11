@@ -66,6 +66,27 @@ export class AssetsManagmentComponent {
     public formValidation: FormValidationService,private filterService: TimesheetFilterService, public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
+      if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+    localStorage.removeItem('assetlocationId');
+    localStorage.removeItem('assetsublocationId');
+    localStorage.removeItem('assetcategeory');
+    localStorage.removeItem('assetsubcategeory');
+    localStorage.removeItem('formDate');
+    localStorage.removeItem('toDate');
+  }
+
+  // Continue initialization
+  this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+  this.initialform();
+  this.getassetsCategory();
+  this.getjobLocationList();
+  this.getvendor();
+  
+  this.intiallocationandsublocation();
+
+  // Load default count & unfiltered data after clearing
+  this.getcount(null, null, null, null, null, null);
+  this.getassetsdata(this.page, this.pageSize, null, null, null, null, null, null, this.Status);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()
     this.getassetsCategory()
@@ -83,23 +104,6 @@ export class AssetsManagmentComponent {
     this.initializeNavTabs();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
-      // Restore saved filters
-  this.restoreFilterValues();
-
-  // Apply filtered results immediately
-  const formValue = this.locationfromdata.value;
-
-  this.getassetsdata(
-    this.page,
-    this.pageSize,
-    formValue.locationId,
-    formValue.subLocationId,
-    formValue.assetCategory?.name,
-    formValue.assetSubCategory?.name,
-    formValue.dateRange?.[0],
-    formValue.dateRange?.[1],
-    this.Status
-  )
   }
   
   isFilterApplied(): boolean {

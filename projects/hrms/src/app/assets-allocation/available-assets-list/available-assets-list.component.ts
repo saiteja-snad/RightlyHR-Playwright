@@ -1298,8 +1298,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           this.blockform.reset()
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset blocked successfully ');
-          this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
-          this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
+          this.getcount(this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);

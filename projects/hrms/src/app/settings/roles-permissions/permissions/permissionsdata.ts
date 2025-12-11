@@ -637,10 +637,6 @@ export const permissionsData = [
   { fields: 'Inactive View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive Update Asset Details', View: false, Update: false, Create: false, Delete: false },
  //Asset Management Block Tab Actions
-  { fields: 'Block Allocate Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Block Inactive Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Block Mark as Maintenance Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Block Transfer Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Block View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Block Update Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Block Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },

@@ -4,7 +4,7 @@ import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { Select } from 'primeng/select';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -16,11 +16,11 @@ import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-
+import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-block-assets-list',
-imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent],
+imports: [CommonModule, ReactiveFormsModule,NgbPopoverModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './block-assets-list.component.html',
   styleUrl: './block-assets-list.component.scss',
     providers: [DatePipe]
@@ -472,37 +472,7 @@ export class BlockAssetsListComponent {
          },
        });
    }
- 
-   // getSubLocationByid(selectedLocation: any): void {
-   //   this.locationfromdata.get('subLocationId')?.enable()
-   //   this.assetForm.get('subLocationId')?.enable()
-   //   if (selectedLocation && selectedLocation.id) {
-   //     this.subscription = this.http
-   //       .getData(
-   //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
-   //       )
-   //       .subscribe({
-   //         next: (data: any) => {
-   //           console.log('Sub Location Data:', data);
- 
-   //           if (data.length === 0) {
-   //             this.subLocationsDropdown = []; // Reset if no sub-locations are found
-   //           } else {
-   //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-   //           }
-   //           this.assetForm.patchValue({ subLocation: null });
-   //         },
-   //         error: (err: any) => {
-   //           console.error('Error fetching sub-location data:', err);
-   //           this.subLocationsDropdown = []; // Reset on error
-   //           this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
-   //         },
-   //       });
-   //   } else {
-   //     this.subLocationsDropdown = []; // Reset if no location is selected
-   //   }
-   // }
- 
+
    getSubLocationByid(selectedLocation: any): void {
      this.locationfromdata.get('subLocationId')?.enable();
      this.assetForm.get('subLocationId')?.enable()
@@ -984,47 +954,8 @@ export class BlockAssetsListComponent {
      }
    }
  
-   updatetranferlocation(locationfromdata: FormGroup, assetId: number) {
-     if (locationfromdata.valid) {
-       console.log('Selected Asset:', this.selectedAsset);
-       const payload = {
-         assetModel: this.selectedAsset.assetModel,
-         assetCategory: this.selectedAsset.assetCategory,
-         assetSubCategory: this.selectedAsset.assetSubCategory,
-         identificationNumber: this.selectedAsset.identificationNumber,
-         serialNumber: this.selectedAsset.serialNumber,
-         status: this.selectedAsset.status,
-         createdBy: this.selectedAsset.createdBy,
-         vendorId: this.selectedAsset.vendorId,
-         purchaseDate: this.selectedAsset.purchaseDate,
-         locationid: this.locationfromdata.get('locationId')?.value.id, // Selected location ID
-         sublocationid: this.locationfromdata.get('subLocationId')?.value, // Selected sub-location ID
-         transferReason: locationfromdata.get('comments')?.value
-       };
- 
-       console.log('Payload for asset update:', payload);
- 
-       this.http.putData(`AssetMaster/assettransfer?assetId=${assetId}`, payload)
-         .pipe(takeUntil(this.destroy$))
-         .subscribe({
-           next: (res) => {
-             this.modalService.dismissAll();
-             this.conformationPopup.openSuccessModal('Asset transferred  successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-                this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
-             this.locationfromdata.reset();
-           },
-           error: (error) => {
-             console.error("Error updating asset:", error);
-             this.conformationPopup.openErrorModal(error.error?.Message || 'Error occurred while Asset Unassigned.',)
-           }
-         });
-     } else {
-       console.log('Update form is invalid.');
-     }
-   }
- 
- 
+   
+
    updateAssetsmaster(reassigndata: FormGroup, assetId: number) {
      if (reassigndata.valid) {
        console.log('Selected Asset:', this.selectedAsset);
@@ -1068,46 +999,7 @@ export class BlockAssetsListComponent {
      }
    }
  
- 
- 
-   postinactive(inactiveForm: FormGroup, removeAsset: number) {
-     if (inactiveForm.valid) {
-       // Create the payload for the asset assignment
-       const payload: any = {
-         assetId: removeAsset,
-         employeeId: parseInt(this.empinfo.employeeId),
-         status: 'Inactive',
-         assetDataId: this.selectedAsset.assetDataId,
- 
-         reason: inactiveForm.value.assetsstatatues,
-         createdBy: parseInt(this.empinfo.employeeId),
- 
-         additionalComments: this.inactiveForm.get('comments')?.value
-       };
- 
-       console.log("Payload for assignment:", payload);
-       console.log(this.selectedAsset);
- 
-       this.http.postdata('AssetTransaction', payload)
-         .pipe(takeUntil(this.destroy$))
-         .subscribe({
-           next: (res: any) => {
-             console.log("Assignment Response:", res);
-             // Call the updateAssets function if the assignment is successful
-             this.removeassets(inactiveForm, removeAsset);
- 
-           },
-           error: (error) => {
-             console.error("Error assigning asset:", error);
- 
-           },
- 
-         });
-     } else {
-       console.log("Assignment Form is invalid.");
-     }
-   }
- 
+
    viewassetdata(assetId: any) {
      this.http.getData(`AssetTransaction?assetId=${assetId}`)
        .pipe(takeUntil(this.destroy$))
@@ -1205,42 +1097,7 @@ export class BlockAssetsListComponent {
      }
    }
  
-   postudermaitence(undermainteenceForm: FormGroup, removeAsset: number) {
-     if (undermainteenceForm.valid) {
-       // Create the payload for the asset assignment
-       const payload: any = {
-         assetId: removeAsset,
-         employeeId: parseInt(this.empinfo.employeeId),
-         status: 'Under Maintenance',
-         vendorId: this.selectedAsset.vendorId,
-         fromDate: undermainteenceForm.value.startdate,
-         toDate: this.undermainteenceForm.get('enddate')?.value,
-         reason: undermainteenceForm.value.assetsstatatues,
-         createdBy: parseInt(this.empinfo.employeeId),
-         vendorName: this.undermainteenceForm.get('vendorname')?.value,
-         vendorContactNumber: this.undermainteenceForm.get('contactnumber')?.value,
-         additionalComments: this.undermainteenceForm.get('comments')?.value
-       };
- 
-       console.log("Payload for assignment:", payload);
-       console.log(this.selectedAsset);
-       this.http.postdata('AssetTransaction', payload)
-         .pipe(takeUntil(this.destroy$))
-         .subscribe({
-           next: (res: any) => {
-             console.log("Assignment Response:", res);
-             // Call the updateAssets function if the assignment is successful
-             this.updateundermaitence(undermainteenceForm, removeAsset);
-           },
-           error: (error) => {
- 
-           },
- 
-         });
-     } else {
-       console.log("Assignment Form is invalid.");
-     }
-   }
+
  
    updateundermaitence(inactiveForm: FormGroup, assetId: number) {
      console.log(this.selectedAsset);

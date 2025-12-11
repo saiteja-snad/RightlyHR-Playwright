@@ -65,8 +65,13 @@
             'status-processing': e.status === 'processing',
             'status-completed': e.status === 'completed',
             'status-pending': e?.status === 'pending'
-      }" class="text-capitalize">{{ e?.status }}</td>
+      }" class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'failed' ">
+                <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click" />
 
+              </span></td>
+            <ng-template #pendingPopover>
+              <div class="module-info-text">{{e?.reason }}</div>
+            </ng-template>
           </tr>
 
         </ng-container>

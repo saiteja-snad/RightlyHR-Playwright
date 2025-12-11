@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { LeaveEntitlementSideBarComponent } from "../../../shared/leave-entitlement-side-bar/leave-entitlement-side-bar.component";
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
@@ -9,10 +9,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { CommonModule } from '@angular/common';
 import { PaginatorModule } from 'primeng/paginator';
 import { FormsModule } from '@angular/forms';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-load-entilements-alloction',
-  imports: [RouterModule, CommonModule, PaginatorModule, FormsModule, LeaveEntitlementSideBarComponent, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [RouterModule, CommonModule, PaginatorModule, FormsModule,NgbPopoverModule, LeaveEntitlementSideBarComponent, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './load-entilements-alloction.component.html',
   styleUrl: './load-entilements-alloction.component.scss'
 })

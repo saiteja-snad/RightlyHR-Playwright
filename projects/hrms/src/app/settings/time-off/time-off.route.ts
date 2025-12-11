@@ -20,8 +20,8 @@ export default [
     { path: 'load-entitlements', component: LoadEntitlementsComponent },
     { path: 'flexible-leave-allocation', component: FlexibleLeaveAllocationComponent },
 
-    { path: 'initial-load-entitlements', component: IntialLoadEntitlementComponent },
-    { path: 'carry-forward', component: CarryForwardLeaveEntitlementComponent },
+    { path: 'load-entitlement/initial-load-entitlements', component: IntialLoadEntitlementComponent },
+    { path: 'load-entitlement/carry-forward', component: CarryForwardLeaveEntitlementComponent },
     {path:'jobview',component:LoadEntilementsAlloctionComponent},
     {
         path: 'load-entitlements', component: LoadEntitlementsCarryForwardComponent,

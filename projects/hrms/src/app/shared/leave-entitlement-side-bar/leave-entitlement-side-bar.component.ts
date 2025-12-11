@@ -20,12 +20,12 @@ export class LeaveEntitlementSideBarComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
     {
-      label: 'Initial Load entitlements', link: '/settings/timeoff-configurations/initial-load-entitlements', icon: 'project-mangement-icons/activeprojects.png', statusKey: 'active',
-      permission: { feature: 'Project Details Tab', action: 'view' }
+      label: 'Initial Load entitlements', link: '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements', icon: 'project-mangement-icons/activeprojects.png', statusKey: 'active',
+      permission: { feature: 'Initial Load Entitlements', action: 'view' }
     },
     {
-      label: 'Carry Forward Load entitlements', link: '/settings/timeoff-configurations/carry-forward', icon: 'project-mangement-icons/Inactiveprojects.png', statusKey: 'inactive',
-      permission: { feature: 'Project Details Tab', action: 'view' },
+      label: 'Carry Forward Load entitlements', link: '/settings/timeoff-configurations/load-entitlement/carry-forward', icon: 'project-mangement-icons/Inactiveprojects.png', statusKey: 'inactive',
+      permission: { feature: 'Carry Forward Load Entitlements', action: 'view' },
     },
  
   ];

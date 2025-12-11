@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class SettingsHeaderComponent implements OnInit {
   moduleName: string = '';
   componentName: string = '';
+  navigationname:string=''
 
   constructor(public router: Router, public rbac: RbacService) { }
 
@@ -240,16 +241,19 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Flexible Work Hours Allocation';
     }
-    else if (url.startsWith('/settings/timeoff-configurations/initial-load-entitlements')) {
-      this.moduleName = 'Bulk Load Entitlements Configuration';
+    else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.navigationname='Bulk Entitlements'
       this.componentName = 'Initial Load Entitlements';
     }
-    else if (url.startsWith('/settings/timeoff-configurations/carry-forward')) {
-      this.moduleName = 'Bulk Load Entitlements Configuration';
+    else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/carry-forward')) {
+      this.moduleName = 'Time Off';
+      this.navigationname='Bulk Entitlements'
       this.componentName = 'Carry Forward Load Entitlements';
     }
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
-      this.moduleName = 'Bulk Load Entitlements Configuration';
+      this.moduleName = 'Time Off';
+      this.navigationname='Bulk Entitlements'
       this.componentName = 'Job Details  ';
     }
   }
@@ -280,6 +284,6 @@ export class SettingsHeaderComponent implements OnInit {
     this.router.navigate(['/settings'])
   }
   navigateToloadentiments(){
-    this.router.navigate(['/settings/timeoff-configurations/carry-forward'])
+    this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
   }
 }

@@ -79,10 +79,13 @@ export const SETTINGS_TIMEOFF_TABS = [
   { route: '/settings/timeoff-configurations/leave-allocation', permission: 'Leave Allocation Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-leave-allocation', permission: 'Flexible Leave Allocation Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias', permission: 'Attendance Eligibility Criteria Tab.view' },
-  { route: '/settings/timeoff-configurations/initial-load-entitlements', permission: 'Load Entitlements Tab.view' },
-    { route: '/settings/timeoff-configurations/loadentitlements', permission: 'Load Entitlements Tab.view' },
+  { route: '/settings/timeoff-configurations/loadentitlements', permission: 'Load Entitlements Tab.view' },
 ];
 
+export const SETTINGS_TIMEOFF_load_entitlement_TABS = [
+  { route: '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements', permission: 'Initial Load Entitlements.view' },
+  { route: '/settings/timeoff-configurations/load-entitlement/carry-forward', permission: 'Carry Forward Load Entitlements.view' },
+]
 export const SETTINGS_ASSEST_CONFIGURATION_TABS = [
   { route: '/settings/assets-configuration/vendor-detiles', permission: 'Vendor Details.view' },
   { route: '/settings/assets-configuration/asset-catagory', permission: 'Asset Catagory.view' },
@@ -118,7 +121,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/identitytype', permission: 'Identity Type.view' },
   { route: '/settings/employee-fields/personal/relationship', permission: 'Relationship.view' },
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
-  {route: '/settings/employee-fields/personal/skills',permission: 'SkillSet.view'}
+  { route: '/settings/employee-fields/personal/skills', permission: 'SkillSet.view' }
 ]
 
 export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
@@ -521,15 +524,15 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
 ];
 
 export const Employee_TEAM_NUMBERS = [
-   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
+  { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
- 
+
 ]
 
 export const MyINFO_TEAM_NUMBERS = [
-   { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
+  { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
- 
+
 ]
 export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
   { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },

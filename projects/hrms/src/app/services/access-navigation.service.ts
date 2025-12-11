@@ -13,6 +13,7 @@ import {
   REGULARIZATION_SUB_TABS,
   REMOTE_LOGIN_SUB_TABS,
   SETTINGS_ASSEST_CONFIGURATION_TABS,
+  SETTINGS_TIMEOFF_load_entitlement_TABS ,
   SETTINGS_DYNAMIC_FORMS_TABS,
   SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS,
   SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_TABS,
@@ -885,10 +886,7 @@ export class AccessNavigationService {
             return (route =
               '/settings/timeoff-configurations/load-entitlements');
           }
-          if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
-            return (route =
-              '/settings/timeoff-configurations/initial-load-entitlements');
-          }
+
         }
 
         break;
@@ -1107,6 +1105,15 @@ export class AccessNavigationService {
           }
         }
         break;
+      case '/settings/timeoff-configurations/load-entitlement':
+        if (this.rbac.allowedToAccess('Bulk Load Entitlements Tab.view')) {
+          for (const item of SETTINGS_TIMEOFF_load_entitlement_TABS ) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
 
       case '/settings/timeoff-configurations/leave-categoery':
         if (this.rbac.allowedToAccess('Leave Category Tab.view')) {
@@ -1138,12 +1145,6 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/settings/timeoff-configurations/initial-load-entitlements':
-        if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
-          return (route =
-            '/settings/timeoff-configurations/initial-load-entitlements');
-        }
-        break;
 
       case '/settings/timeoff-configurations/flexible-wfh-allocation':
         if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
@@ -1317,9 +1318,6 @@ export class AccessNavigationService {
               ) {
                 return (route =
                   '/settings/timeoff-configurations/loadentitlements');
-              }
-              if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
-                return (route = '/settings/timeoff-configurations/initial-load-entitlements');
               }
 
               if (this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')) {

@@ -9,7 +9,7 @@
             <app-settings-header />
         </div>
 
-        <div *ngIf="isActive('/settings/timeoff-configurations/initial-load-entitlements')">
+        <div *ngIf="isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')">
             <button type="button" class="custom-btn btn-primary">Add Initial Entitlements </button>
         </div>
 
@@ -49,7 +49,7 @@
         </div>
         }
 
-        @if(isActive('/settings/timeoff-configurations/carry-forward') || isActive('/settings/timeoff-configurations/initial-load-entitlements')){
+        @if(isActive('/settings/timeoff-configurations/load-entitlement/carry-forward') || isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')){
         <div class="component-left-tabs-container">
             <app-leave-entitlement-side-bar />
         </div>

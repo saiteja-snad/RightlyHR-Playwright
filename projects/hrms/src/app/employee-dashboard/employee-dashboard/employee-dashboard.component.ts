@@ -31,7 +31,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   loading = false;
   avaliabletlyloading = false;
   hasRealEvents: boolean = false;
-  weaklyloghrsloader= false;
+  weaklyloghrsloader = false;
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -264,7 +264,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
               name: item.category?.name,
               allowed: item.allowedDays,
               used: item.utilizedDays,
-              percentage: (item.utilizedDays / item.allowedDays) * 100
+              percentage:
+                item.allowedDays === 0
+                  ? 0
+                  : (item.utilizedDays / item.allowedDays) * 100
             }));
 
             // ✅ NEW: Total leaves calculation
@@ -596,10 +599,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
       cutout: "70%",
       plugins: {
         legend: { display: false },
-        
+
         tooltip: { enabled: false }
       },
-    
+
     };
   }
 
@@ -681,21 +684,30 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     };
 
     this.todayChartOptions = {
+      responsive: true,
       cutout: '75%',
       plugins: {
         legend: { display: false },
         tooltip: { enabled: false }
       },
+      interaction: {
+        mode: false
+      },
+      hover: {
+        mode: null,
+        intersect: false
+      },
+      events: []
 
     };
   }
 
 
   getWeeklyWorkLogHours() {
-    this.weaklyloghrsloader= true;
+    this.weaklyloghrsloader = true;
     this.http.getData(
-        `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
-      ).pipe(takeUntil(this.destroy$))
+      `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
+    ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           const attendance = res.data.attendanceData;
@@ -710,10 +722,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           this.totalHours = this.sumDurations(
             attendance.map((item: any) => item.duration.totalDuration)
           );
-          this.weaklyloghrsloader= false;
+          this.weaklyloghrsloader = false;
         },
         error: (err) => {
-          this.weaklyloghrsloader= false;
+          this.weaklyloghrsloader = false;
           console.log(err);
         }
       });
@@ -738,19 +750,19 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   getDobWithCurrentYear(dob: string) {
-  const date = new Date(dob);
-  const currentYear = new Date().getFullYear();
-  date.setFullYear(currentYear);
-  return date;
-}
+    const date = new Date(dob);
+    const currentYear = new Date().getFullYear();
+    date.setFullYear(currentYear);
+    return date;
+  }
 
 
- getannuservierWithCurrentYear(dob: string) {
-  const date = new Date(dob);
-  const currentYear = new Date().getFullYear();
-  date.setFullYear(currentYear);
-  return date;
-}
+  getannuservierWithCurrentYear(dob: string) {
+    const date = new Date(dob);
+    const currentYear = new Date().getFullYear();
+    date.setFullYear(currentYear);
+    return date;
+  }
   nagvition() {
     this.router.navigate(['/myinfo/job/team-members']);
   }

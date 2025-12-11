@@ -86,7 +86,7 @@
                         <div class="leave-row">
                             <div class="leave-name">{{ leave.name }}</div>
                             <div class="progress-container">
-                                <div class="progress-bar" [style.width.%]="leave.percentage"></div>
+                                <div class="progress-bar" [style.width.%]="leave.percentage || 0"></div>
                             </div>
                             <div><b class="leave-count">{{ leave.used }}</b><span class="totaled-allowed">/{{
                                     leave.allowed }}</span></div>

@@ -122,14 +122,14 @@ export class LoadEntilementsMapCategoeryComponent {
         employees: this.employeesList.map(emp => ({
           employeeId: emp.employeeId,
           gradeId: emp.gradeId ?? 0,
-          entitlementsData: emp.leaveEntries.filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0).map((x: 
+          entitlementsData: emp.leaveEntries.filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0).map((x:
             { leaveCategoryId: any; actualCarryForward: any; }) => ({
-            sourceCategoryId: x.leaveCategoryId,
-            destinationCategoryId: categoryMap.get(x.leaveCategoryId),
-            sourceYear: this.carryforwarddata.year,
-            destinationYear: this.nextYear,
-            noOfDays: x.actualCarryForward
-          })),
+              sourceCategoryId: x.leaveCategoryId,
+              destinationCategoryId: categoryMap.get(x.leaveCategoryId),
+              sourceYear: this.carryforwarddata.year,
+              destinationYear: this.nextYear,
+              noOfDays: x.actualCarryForward
+            })),
 
         }))
       },
@@ -170,5 +170,10 @@ export class LoadEntilementsMapCategoeryComponent {
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  isAllDropdownsSelected(): boolean {
+    return this.currentYearData.length > 0 &&
+      this.currentYearData.every(item => item.selectedDestinationId);
   }
 }

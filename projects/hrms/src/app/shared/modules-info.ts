@@ -297,4 +297,10 @@ export const MODULE_INFOS = {
     SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Dashboard provides a comprehensive overview of employee skills and proficiency levels across the organization. It displays key insights such as total employee count, committed and available employees, skill proficiency distribution, top skills, and department-wise skill breakdown. The dashboard helps management identify skill strengths, resource availability, and training needs efficiently.",
     SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
     My_Timesheet_Resource_Summary_view: "The Summary tab provides an overall view of the employee’s timesheet activity, including project allocation, billable distribution, and allocated vs actual hours. It helps managers quickly assess workload patterns and utilization through visual charts and aggregated project data.",
+
+
+    JOB_VIEW: 'This module helps to display the detailed results of the selected processing job, including all employees covered in that run and their individual processing statuses. It allows you to verify the outcomes, identify any errors, and review whether the carry-forward or encashment updates were processed correctly.',
+    CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward & Encashment workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward or encashment job updates seamlessly.',
+
+
 }

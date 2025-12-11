@@ -3,10 +3,15 @@ import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInformationComponent } from "../../module-information/module-information.component";
+import { filter } from 'rxjs';
+import { MODULE_INFOS } from '../../modules-info';
 
 @Component({
   selector: 'app-settings-header',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, ModuleInfoIconComponent, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './settings-header.component.html',
   styleUrl: './settings-header.component.scss'
 })
@@ -14,11 +19,16 @@ import { TranslateModule } from '@ngx-translate/core';
 export class SettingsHeaderComponent implements OnInit {
   moduleName: string = '';
   componentName: string = '';
-  navigationname: string = ''
+  navigationname: string = '';
+  moduleinfo: string = '';
   jobid: any;
+  routeToInfoMap!: { [key: string]: string };
   constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
     this.ComponentnameDisplay();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -34,6 +44,35 @@ export class SettingsHeaderComponent implements OnInit {
     });
 
   }
+
+  updateModuleInfo() {
+    const urlWithoutQuery = this.router.url.split('?')[0];
+    this.ComponentnameDisplay();
+    this.routeToInfoMap = {
+      '/settings/timeoff-configurations/jobview': MODULE_INFOS.JOB_VIEW,
+      '/settings/timeoff-configurations/leave-entitlements': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+      '/settings/timeoff-configurations/load-entitlement/carry-forward': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+
+    };
+    this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+
+    isShowsformoduelinfo() {
+    const showPaths = [
+      '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/leave-entitlements',
+      '/settings/timeoff-configurations/load-entitlement/carry-forward'
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
 
   ComponentnameDisplay() {
     const url = this.router.url;
@@ -275,9 +314,9 @@ export class SettingsHeaderComponent implements OnInit {
     const hidePaths = [
       '/settings/timeoff-configurations/jobview',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
-         '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
-         '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
-         '/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'
     ];
 
     if (hidePaths.some(path => this.router.url.startsWith(path))) {
@@ -291,12 +330,11 @@ export class SettingsHeaderComponent implements OnInit {
     const showPaths = [
       '/settings/timeoff-configurations/jobview',
       '/settings/timeoff-configurations/leave-entitlements',
-   
-
-
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
+
+
 
   navigateToSettings() {
     this.router.navigate(['/settings']),

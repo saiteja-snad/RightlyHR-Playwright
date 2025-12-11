@@ -10,9 +10,11 @@ import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time
 import { ProjectManagementMainTabsComponent } from "../project-management-tabs/project-management-main-tabs/project-management-main-tabs.component";
 import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-main-tabs/onbehalfof-main-tabs.component";
 import { PendingApprovalsTabsComponent } from "../time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
+import { PmsMainTabsComponent } from "../pms-module-tabs/pms-main-tabs/pms-main-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent, PendingApprovalsTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent,
+    OnbehalfofMainTabsComponent, PendingApprovalsTabsComponent, PmsMainTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -48,11 +50,6 @@ export class SidenavComponent implements OnInit {
        {
       label: 'Personalization', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
       route: '/theme', permission: { feature: 'Themes', action: 'view' },
-    },
-    //pms
-    {
-      label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms.png',
-      permission: { feature: 'PMS', action: 'view' }
     },
     //Blood Bank
     {

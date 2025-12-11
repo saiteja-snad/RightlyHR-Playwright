@@ -84,22 +84,22 @@ export class AssetsManagmentComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
       // Restore saved filters
-  this.restoreFilterValues();
+  //this.restoreFilterValues();
 
   // Apply filtered results immediately
-  const formValue = this.locationfromdata.value;
+  //const formValue = this.locationfromdata.value;
 
-  this.getassetsdata(
-    this.page,
-    this.pageSize,
-    formValue.locationId,
-    formValue.subLocationId,
-    formValue.assetCategory?.name,
-    formValue.assetSubCategory?.name,
-    formValue.dateRange?.[0],
-    formValue.dateRange?.[1],
-    this.Status
-  )
+  // this.getassetsdata(
+  //   this.page,
+  //   this.pageSize,
+  //   formValue.locationId,
+  //   formValue.subLocationId,
+  //   formValue.assetCategory?.name,
+  //   formValue.assetSubCategory?.name,
+  //   formValue.dateRange?.[0],
+  //   formValue.dateRange?.[1],
+  //   this.Status
+  // )
   }
   
   isFilterApplied(): boolean {

@@ -5,6 +5,7 @@
     </div>
 
     <div class="custom-table-content">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -13,13 +14,25 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let row of employeesList">
-                    <td><a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee }}</a>
-                    </td>
-                    <td *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
-                </tr>
+                <ng-container *ngIf="employeesList.length > 0; else noDataTemplate">
+                    <tr *ngFor="let row of employeesList">
+                        <td><a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee
+                                }}</a>
+                        </td>
+                        <td *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 
     <div class="footer-content">

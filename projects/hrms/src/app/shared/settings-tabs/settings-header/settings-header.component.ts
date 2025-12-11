@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -15,8 +15,8 @@ export class SettingsHeaderComponent implements OnInit {
   moduleName: string = '';
   componentName: string = '';
   navigationname: string = ''
-
-  constructor(public router: Router, public rbac: RbacService) { }
+  jobid: any;
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
     this.ComponentnameDisplay();
@@ -25,6 +25,14 @@ export class SettingsHeaderComponent implements OnInit {
         this.ComponentnameDisplay();
       }
     });
+    this.route.queryParams.subscribe((params) => {
+      const jobid = params['id'];
+      if (jobid) {
+        this.jobid = jobid;
+      
+      }
+    });
+
   }
 
   ComponentnameDisplay() {
@@ -254,7 +262,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
-      this.componentName = 'JOB ID  ';
+      this.componentName =  this.jobid;
     }
   }
   isShowsettingsRoute(): boolean {

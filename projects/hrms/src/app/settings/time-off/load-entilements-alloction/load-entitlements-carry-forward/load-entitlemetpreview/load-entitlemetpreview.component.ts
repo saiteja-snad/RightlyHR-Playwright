@@ -9,10 +9,13 @@ import { OpenModalService } from '../../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { ICarryForward } from '../../../flexible-leave-allocation/leave-allocation.model';
 import { InfoIconComponent } from "../../../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from '../../../../../shared/no-data-found/no-data-found.component';
+
 
 @Component({
   selector: 'app-load-entitlemetpreview',
-  imports: [CommonModule, InfoIconComponent],
+  imports: [CommonModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './load-entitlemetpreview.component.html',
   styleUrl: './load-entitlemetpreview.component.scss'
 })

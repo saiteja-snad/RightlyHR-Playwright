@@ -386,31 +386,57 @@ export class LoadEntitlementsComponent {
   }
 
   StatusMsg: any;
+  // sendEntitlementRequest() {
+  //   // Iterate through each record in tableData and construct the request body for each record
+  //   this.tableData.forEach((record) => {
+  //     const requestBody = {
+  //       employeeId: this.selectedEmployeeDetails.employeeId,
+  //       year: record.year,
+  //       addedBy: this.loggedinuser.employeeId,
+  //       leaveEntitlements: [
+  //         {
+  //           employeeId: this.selectedEmployeeDetails.employeeId,
+  //           year: record.year,
+  //           addedBy: this.loggedinuser.employeeId,
+  //           leaveCategoryId: record.categoryId,
+  //           entitlementDays: record.entitledLeaves,
+  //         },
+  //       ],
+  //     };
+  //     this.http.postdata('LeaveEntitlements/load', requestBody).subscribe((response: any) => {
+  //      this.confirmation.openSuccessModal('Leaves entitled successfully');
+  //       setTimeout(function () {
+  //         location.reload();
+  //       }, 2000);
+  //     });
+  //   });
+  // }
+
   sendEntitlementRequest() {
-    // Iterate through each record in tableData and construct the request body for each record
-    this.tableData.forEach((record) => {
-      const requestBody = {
-        employeeId: this.selectedEmployeeDetails.employeeId,
-        year: record.year,
-        addedBy: this.loggedinuser.employeeId,
-        leaveEntitlements: [
-          {
-            employeeId: this.selectedEmployeeDetails.employeeId,
-            year: record.year,
-            addedBy: this.loggedinuser.employeeId,
-            leaveCategoryId: record.categoryId,
-            entitlementDays: record.entitledLeaves,
-          },
-        ],
-      };
-      this.http.postdata('LeaveEntitlements/load', requestBody).subscribe((response: any) => {
-       this.confirmation.openSuccessModal('Leaves entitled successfully');
-        setTimeout(function () {
-          location.reload();
-        }, 2000);
-      });
+  const requestBody = {
+    employeeId: this.selectedEmployeeDetails.employeeId,
+    year: new Date().getFullYear(), // Or take from first record if year differs
+    addedBy: this.loggedinuser.employeeId,
+    leaveEntitlements: this.tableData.map(record => ({
+      employeeId: this.selectedEmployeeDetails.employeeId,
+      year: record.year,
+      addedBy: this.loggedinuser.employeeId,
+      leaveCategoryId: record.categoryId,
+      entitlementDays: record.entitledLeaves,
+    }))
+  };
+
+  this.http.postdata('LeaveEntitlements/load', requestBody)
+    .subscribe((response: any) => {
+      const modalElement = document.getElementById('successhide');
+      if (modalElement) {
+        modalElement.classList.add('show');
+        modalElement.style.display = 'block';
+        this.StatusMsg = 'Leaves entitled successfully';
+      }
+      setTimeout(() => location.reload(), 2000);
     });
-  }
+}
 
   fetchEmployeeDetails(fusionEmpId: string) {
     // Step 1: Find the employeeId for the given fusionEmpId

@@ -41,7 +41,7 @@
     padding: 0.5rem 0.75rem;
     min-height: 9rem;
     overflow-y: auto;
-    background: linear-gradient(90deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
     border: 2px solid #FFFFFF;
 
     .section-title {
@@ -78,7 +78,6 @@
         font-size: var(--fontsize10);
         font-weight: 500;
         background: linear-gradient(90.05deg, #FFFFFF -87.95%, var(--primary-color) 99.96%);
-
     }
 
     .total-hrs {
@@ -93,6 +92,10 @@
             bottom: 0em !important;
         }
     }
+}
+
+.day-entry-content {
+    min-width: 10rem;
 }
 
 .flex-between-content {
@@ -277,7 +280,7 @@
 
     .circle-birthday {
         background: #E1E8FE;
-        border: 0.4px solid #131C6D;
+        border: 0.4px solid var(--primary-color);
     }
 
     .content-text {
@@ -292,7 +295,6 @@
     .content-date {
         color: #A9A9A9;
     }
-
 }
 
 .daliy-events-content {
@@ -335,14 +337,18 @@
         }
 
         .carousel-content {
+            position: relative;
+            width: 100%;
+            font-size: var(--fontsize12);
             letter-spacing: 2%;
             text-align: center;
-            font-size: var(--fontsize12);
-            width: 100%;
-            position: relative;
 
             .p-carousel-indicator-list {
+                position: absolute !important;
+                width: 100%;
                 padding: 0rem !important;
+                justify-content: center;
+                top: 5rem !important;
             }
 
             .p-carousel-indicator-button {
@@ -368,13 +374,6 @@
                 font-size: var(--fontsize12);
             }
         }
-
-        .p-carousel-indicator-list {
-            position: absolute !important;
-            justify-content: center;
-            top: 5rem !important;
-            left: 38%;
-        }
     }
 }
 
@@ -384,7 +383,8 @@
     gap: 2rem;
 
     .leave-name {
-        width: 100px;
+        min-width: 6.5rem;
+        max-width: 6.5rem;
         font-weight: 600;
         font-size: var(--fontsize10);
         color: #222222;
@@ -392,6 +392,7 @@
 
     .progress-container {
         width: 30rem;
+        min-width: 10rem;
         height: 6px;
         background: #dbe3ea;
         border-radius: 4px;
@@ -407,6 +408,10 @@
         width: 60px;
         text-align: right;
         font-size: var(--fontsize13);
+    }
+
+    .count {
+        min-width: 2rem;
     }
 }
 
@@ -434,9 +439,8 @@
     width: 100%;
 
     .p-tab {
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
-        cursor: none !important;
+        padding: 0rem 0.625rem !important;
+        cursor: auto !important;
     }
 
     .p-tablist-tab-list {
@@ -458,7 +462,7 @@
         justify-content: flex-start;
         align-items: center;
         padding: 0.5rem;
-        background: linear-gradient(95.64deg, rgba(255, 255, 255, 0.05) -11.57%, rgba(11, 58, 131, 0.05) 100.11%);
+        background: linear-gradient(90deg, #FFFFFF 0%, var(--display-grid-cards-bg-color) 100%);
         border-radius: 0.5rem;
         border: 1px solid #0B3A831A;
 

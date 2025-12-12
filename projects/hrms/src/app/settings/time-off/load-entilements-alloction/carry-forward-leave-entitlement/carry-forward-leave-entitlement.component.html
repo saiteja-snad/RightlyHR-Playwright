@@ -6,12 +6,11 @@
         placeholder="Search by year/ jobtype / status / created by" aria-label="Username" [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
-    <div class="w-30">
-      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
-        <i class="bi bi-funnel me-2" ></i>Filters
-        <!-- <span *ngIf="isFilterApplied()" class="filter-indicator"></span> -->
-      </button>
-    </div>
+
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+        </button>
   </div>
 
   <div class="custom-table-content">
@@ -85,19 +84,19 @@
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
       <p class="filter-header m-0">{{'Filters' | translate}}</p>
-      <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
     </div>
 
     <div class="offcanvas-filter-content">
       <form autocomplete="off" [formGroup]="leaveAllocationForm">
         <div>
         
-            <div class="col-md-4 mb-3">
-              <label for="year" class="form-label custom-label mb-2">
+             <div class="mb-3">
+              <label for="year" class="form-label custom-label filter-labels mb-3">
                 {{ "Year" | translate }}<span class="text-danger">*</span>
               </label>
               <div class="custom-p-select-content">
-                <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
+                <p-select   [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
                   class="form-select custom-select" formControlName="year" placeholder="Please select year"
                   (onChange)="enableLocation()">
                   <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
@@ -111,8 +110,8 @@
             </div>
 
             <!-- Location -->
-            <div class="col-md-4 mb-3">
-              <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate }}
+             <div class="mb-3">
+              <label for="location" class="form-label custom-label filter-labels mb-3">{{ "Location" | translate }}
                 <span class="text-danger">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
@@ -132,8 +131,8 @@
             </div>
 
             <!-- Sub Location -->
-            <div class="col-md-4 mb-3">
-              <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" | translate }}
+            <div class="mb-3">
+              <label for="subLocation" class="form-label custom-label filter-labels mb-3">{{ "Sub Location" | translate }}
                 <span class="text-danger">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
@@ -155,8 +154,8 @@
             </div>
 
             <!-- Shifts -->
-            <div class="col-md-4 mb-3">
-              <label for="shift" class="form-label custom-label mb-2">{{ "Shift" | translate }}
+            <div class="mb-3">
+              <label for="shift" class="form-label custom-label filter-labels mb-3">{{ "Shift" | translate }}
                 <span class="text-danger">*</span></label>
               <div class="custom-p-select-content">
                 <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
@@ -177,10 +176,10 @@
         <!-- Submit -->
 
         <div class="d-flex offcanvas-footer-content gap-3">
-          <button type="button" class="custom-btn btn-secondary w-100">
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">
             {{'Clear All' | translate}}</button>
-          <button type="button" class="custom-btn btn-primary w-100">
-            {{'Close' | translate}}</button>
+          <button type="button" class="custom-btn btn-primary w-100" [disabled]="isApplyDisabledFlag"(click)="applydata()">
+            {{'Apply' | translate}}</button>
         </div>
       </form>
 

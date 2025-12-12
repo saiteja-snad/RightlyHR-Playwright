@@ -682,8 +682,8 @@ allZeroesIfMaxLength(): ValidatorFn {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset has been marked as active ');
-             this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
-           this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);

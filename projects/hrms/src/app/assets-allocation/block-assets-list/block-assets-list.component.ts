@@ -938,8 +938,8 @@ export class BlockAssetsListComponent {
  
              this.modalService.dismissAll();
              this.conformationPopup.openSuccessModal('Asset allocated successfully ');
-              this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-               this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
+             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
  
            },
            error: (error) => {
@@ -1082,8 +1082,8 @@ export class BlockAssetsListComponent {
              console.log(res);
              this.modalService.dismissAll();
              this.conformationPopup.openSuccessModal('Asset inactivated successfully');
-             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-              this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
+     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
              this.inactiveForm.reset()
            },
            error: (err) => {
@@ -1129,8 +1129,8 @@ export class BlockAssetsListComponent {
            this.undermainteenceForm.reset()
            this.modalService.dismissAll();
            this.conformationPopup.openSuccessModal('Asset set under maintenance successfully ');
-           this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
-           this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
          },
          error: (error) => {
            console.error("Error updating asset:", error);
@@ -1221,8 +1221,8 @@ export class BlockAssetsListComponent {
            console.log(res);
            this.modalService.dismissAll();
            this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-            this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
+     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
          },
          error: (err) => {
            console.error('Error deleting asset:', err);

@@ -3048,9 +3048,7 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Block Allocate Asset' ||
-                            per.fields === 'Block Inactive Asset' || per.fields === 'Block Mark as Maintenance Asset' ||
-                            per.fields === 'Block Transfer Asset' || per.fields === 'Block View Asset Details' ||
+                            <tr class="text-align-center" *ngIf="per.fields === 'Block View Asset Details' ||
                             per.fields === 'Block Update Asset Details' || per.fields === 'Block Mark as Available Asset'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

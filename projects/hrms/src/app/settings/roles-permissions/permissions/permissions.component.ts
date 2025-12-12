@@ -984,10 +984,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Inactive Update Asset Details',
   ];
     assetManagementBlockTabActions = [
-    'Block Allocate Asset',
-    'Block Inactive Asset',
-    'Block Mark as Maintenance Asset',
-    'Block Transfer Asset',
     'Block View Asset Details',
     'Block Update Asset Details',
     'Block Mark as Available Asset'

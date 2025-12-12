@@ -602,7 +602,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset information updated successfully ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+         // this.getcount(this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
           this.assetForm.reset();
         },
         error: (error) => {
@@ -951,8 +952,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
 
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset allocated successfully ');
-             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-            this.getcount(null,this.selectedSubLocationId,null,null,null,null,this.Status);
+           this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
 
           },
           error: (error) => {
@@ -993,8 +994,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           next: (res) => {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset transferred  successfully ');
-           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-            this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
+          this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
             this.locationfromdata.reset();
           },
           error: (error) => {
@@ -1173,8 +1174,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
             console.log(res);
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset inactivated successfully');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null,this.Status);
-            this.getcount(null, this.selectedSubLocationId,null,null,null,null,this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
             this.inactiveForm.reset()
           },
           error: (err) => {
@@ -1255,8 +1256,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset set under maintenance successfully ');
-          this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
-          this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
+           this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);
@@ -1298,8 +1299,8 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           this.blockform.reset()
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset blocked successfully ');
-          this.getcount(null, this.selectedSubLocationId,null,null,null,null, this.Status);
-          this.getassetsdata(this.page, this.pageSize, null, null,null,null,null,null, this.Status);
+          this.getcount(this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);

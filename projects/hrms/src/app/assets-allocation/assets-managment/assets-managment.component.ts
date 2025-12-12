@@ -66,6 +66,27 @@ export class AssetsManagmentComponent {
     public formValidation: FormValidationService,private filterService: TimesheetFilterService, public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
+      if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+    localStorage.removeItem('assetlocationId');
+    localStorage.removeItem('assetsublocationId');
+    localStorage.removeItem('assetcategeory');
+    localStorage.removeItem('assetsubcategeory');
+    localStorage.removeItem('formDate');
+    localStorage.removeItem('toDate');
+  }
+
+  // Continue initialization
+  this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+  this.initialform();
+  this.getassetsCategory();
+  this.getjobLocationList();
+  this.getvendor();
+  
+  this.intiallocationandsublocation();
+
+  // Load default count & unfiltered data after clearing
+  this.getcount(null, null, null, null, null, null);
+  this.getassetsdata(this.page, this.pageSize, null, null, null, null, null, null, this.Status);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()
     this.getassetsCategory()
@@ -84,6 +105,7 @@ export class AssetsManagmentComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
+  
   isFilterApplied(): boolean {
     const formValue = this.locationfromdata?.value;
     // Check if any filter (except date & employee) has value
@@ -98,7 +120,27 @@ export class AssetsManagmentComponent {
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
- 
+ restoreFilterValues() {
+  const savedLocation = JSON.parse(localStorage.getItem('assetlocationId') || 'null');
+  const savedSubLocation = JSON.parse(localStorage.getItem('assetsublocationId') || 'null');
+  const savedCategory = JSON.parse(localStorage.getItem('assetcategeory') || 'null');
+  const savedSubCategory = JSON.parse(localStorage.getItem('assetsubcategeory') || 'null');
+  const savedFromDate = JSON.parse(localStorage.getItem('formDate') || 'null');
+  const savedToDate = JSON.parse(localStorage.getItem('toDate') || 'null');
+
+  this.locationfromdata.patchValue({
+    locationId: savedLocation,
+    subLocationId: savedSubLocation,
+    assetCategory: savedCategory ? { name: savedCategory } : null,
+    assetSubCategory: savedSubCategory ? { name: savedSubCategory } : null,
+    dateRange: savedFromDate && savedToDate ? [new Date(savedFromDate), new Date(savedToDate)] : null
+  });
+
+  // Load sublocations based on saved location
+  if (savedLocation) {
+    this.getSubLocationByidfliters(savedLocation);
+  }
+ }
   onSubmit() {
     if (this.locationfromdata.invalid) {
       return;

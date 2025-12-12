@@ -11,10 +11,11 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ILocation, IShiftHeader, ISubLocation } from '../../flexible-leave-allocation/leave-allocation.model';
 import { Select } from 'primeng/select';
+import { ModuleInformationComponent } from "../../../../shared/module-information/module-information.component";
 
 @Component({
   selector: 'app-carry-forward-leave-entitlement',
-  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent,Select,ReactiveFormsModule, TranslateModule, NoDataFoundComponent, FormsModule],
+  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent, Select, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, FormsModule, ModuleInformationComponent],
   templateUrl: './carry-forward-leave-entitlement.component.html',
   styleUrl: './carry-forward-leave-entitlement.component.scss'
 })
@@ -40,19 +41,50 @@ export class CarryForwardLeaveEntitlementComponent {
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
+  isApplyDisabledFlag = true;
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit(): void {
-    this.getdatacarryforword()
+    this.getdatacarryforword();
+    this.initializefilter();
+    this.getAllLocations();
+  }
+  initializefilter() {
     this.leaveAllocationForm = this.fb.group({
       year: ['', Validators.required],
       location: [{ value: '', disabled: true }, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
     });
-    this.getAllLocations();
+      this.yearsList = this.getYears();
+     this.leaveAllocationForm.valueChanges.subscribe(() => {
+    this.isApplyDisabledFlag = this.checkIfFormIsEmpty();
+  });
   }
+checkIfFormIsEmpty(): boolean {
+  const v = this.leaveAllocationForm.value;
+  return !(
+    v.year ||
+    v.location ||
+    v.subLocation ||
+    v.shift 
+  );
+}
+
+activeFilters: any = {};
+applydata() {
+  const form = this.leaveAllocationForm.value;
+  this.activeFilters = {}; // reset old filters
+  if (form.year) this.activeFilters.years = form.year.year || form.year;
+  if (form.location) this.activeFilters.locationIds = form.location.id;
+  if (form.subLocation) this.activeFilters.subLocationIds = form.subLocation.id;
+  if (form.shift) this.activeFilters.shiftIds = form.shift.id;
+  this.page = 1;  
+  this.first = 0;
+  this.getdatacarryforword(); // NOW table loads using filters
+  this.closeCanvas();
+}
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
@@ -68,29 +100,69 @@ export class CarryForwardLeaveEntitlementComponent {
     this.first = event.first;
     this.getdatacarryforword();
   }
-
+resetForm(){
+  this.leaveAllocationForm.reset();
+  this.isApplyDisabledFlag = true;
+    // 3. Remove active filters
+  this.activeFilters = {};
+    this.getdatacarryforword();
+  //localStorage.removeItem(l)
+}
   onSearchChange(value: string) {
     this.page = 1;   // reset to page 1 when searching
     this.searchQuery = value;
     this.getdatacarryforword();
   }
 
+  // getdatacarryforword() {
+  //   let url = `LeaveEntitlementJobs?pageNumber=${this.page}&pageSize=${this.pageSize}&searchTerm=${this.searchQuery}`
+  //   this.subscription = this.http.get(url).subscribe({
+  //     next: (res: any) => {
+  //       this.jobData = res?.data;
+  //       this.collectionSize = res.pagination.totalRecords;
+  //     },
+  //     error: (err) => {
+  //       console.error('Error fetching projects:', err);
+  //       this.loading = false
+  //       this.jobData = [];
+  //     },
+  //   });
+
+  // }
   getdatacarryforword() {
-    let url = `LeaveEntitlementJobs?pageNumber=${this.page}&pageSize=${this.pageSize}&searchTerm=${this.searchQuery}`
-    this.subscription = this.http.get(url).subscribe({
-      next: (res: any) => {
-        this.jobData = res?.data;
-        this.collectionSize = res.pagination.totalRecords;
-      },
-      error: (err) => {
-        console.error('Error fetching projects:', err);
-        this.loading = false
-        this.jobData = [];
-      },
-    });
+  const params: any = {
+    pageNumber: this.page,
+    pageSize: this.pageSize,
+    searchTerm: this.searchQuery,
+    ...this.activeFilters   // merge filters here
+  };
 
+  const query = new URLSearchParams(params).toString();
+  let url = `LeaveEntitlementJobs?${query}`;
+
+  this.subscription = this.http.get(url).subscribe({
+    next: (res: any) => {
+      this.jobData = res?.data;
+      this.collectionSize = res.pagination.totalRecords;
+    },
+    error: (err) => {
+      console.error('Error:', err);
+      this.loading = false;
+      this.jobData = [];
+    },
+  });
+}
+
+ isFilterApplied(): boolean {
+    const formValue = this.leaveAllocationForm?.value;
+    // Check if any filter (except date & employee) has value
+    return (
+      (formValue?.year && formValue?.year?.length > 0) ||
+      (formValue?.location && formValue?.location.jobLocationName?.length > 0) ||
+      (formValue?.subLocation && formValue?.subLocation.jobSubLocationName?.length > 0) ||
+      (formValue?.shift && formValue?.shift.shiftName?.length > 0)
+    );
   }
-
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
     let yearsList: number[] = []
@@ -143,13 +215,13 @@ export class CarryForwardLeaveEntitlementComponent {
       }
     });
   }
-
+ closeCanvas() {
+    this.offcanvasService.dismiss();
+  }
   navigateView(jobId: number) {
     this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });
   }
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
-
-
 }

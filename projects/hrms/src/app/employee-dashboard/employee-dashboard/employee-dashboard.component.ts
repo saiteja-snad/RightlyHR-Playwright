@@ -427,6 +427,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         this.hasRealEvents = events.length > 0;
         if (events.length) {
           this.eventItems = events;
+          console.log(this.eventItems);
+          
         } else {
           this.quotationsData();
         }
@@ -459,6 +461,16 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   genderCountLoader = false;
   genderChartData: any = {};
   genderChartOptions: any = {};
+
+  // Custom carousel indicator properties
+  currentCarouselIndex = 0;
+  get activeIndicatorIndex() {
+    return this.currentCarouselIndex % 3;
+  }
+
+  onCarouselPageChange(event: any) {
+    this.currentCarouselIndex = event.page;
+  }
 
   getGenderCountChart() {
     this.genderCountLoader = true;

@@ -542,3 +542,29 @@
         color: var(--primary-color) !important;
     }
 }
+/* Custom 3-dot indicators */
+.custom-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.indicator-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #bbc3d1;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.indicator-dot.active {
+    background: var(--primary-color);
+    transform: scale(1.2);
+}
+
+/* Hide PrimeNG default indicators */
+::ng-deep .p-carousel .p-carousel-indicators {
+    display: none !important;
+}

@@ -103,6 +103,7 @@ export class CarryForwardLeaveEntitlementComponent {
   resetForm() {
     this.leaveAllocationForm.reset();
     this.isApplyDisabledFlag = true;
+    this.offcanvasService.dismiss()
     // 3. Remove active filters
     this.activeFilters = {};
     this.getdatacarryforword();

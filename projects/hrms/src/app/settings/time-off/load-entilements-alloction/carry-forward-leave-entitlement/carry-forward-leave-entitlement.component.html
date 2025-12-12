@@ -34,6 +34,7 @@
             <td>{{ item?.jobType ?? '_' }}</td>
             <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
             <td [ngClass]="{'status-success': item.status === 'success',
+            'status-queued': item.status === 'queued',
             'status-failed': item.status === 'failed','status-partial': item.status === 'partially_completed',
             'status-processing': item.status === 'processing','status-completed': item.status === 'completed',
             'status-pending': item?.status === 'pending'}" class="text-capitalize">{{ item?.status ?? '-'}}</td>

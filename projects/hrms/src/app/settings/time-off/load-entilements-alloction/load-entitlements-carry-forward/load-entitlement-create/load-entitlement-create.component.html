@@ -29,8 +29,7 @@
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
                             formControlName="location" placeholder="Please select location"
                             (onChange)="onLocationChange($event.value)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
-                                }}</ng-template>
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
                             <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                         </p-select>
                     </div>
@@ -49,9 +48,8 @@
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
                             formControlName="subLocation" placeholder="Please select sub location"
-                            (onChange)="getAllShifts($event.value)" >
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                                }}</ng-template>
+                            (onChange)="getAllShifts($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                             <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                         </p-select>
                     </div>
@@ -69,8 +67,8 @@
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
-                            [showClear]="false" formControlName="shift"  placeholder="Please select shift"
-                            class="form-select custom-select" >
+                            [showClear]="false" formControlName="shift" placeholder="Please select shift"
+                            class="form-select custom-select">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>
@@ -86,10 +84,9 @@
         <!-- Submit -->
         <div class="footer-content">
             <div class="d-flex justify-content-end align-items-center gap-3">
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="leaveAllocationForm.invalid">Load
-                    Eligible Employees</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="leaveAllocationForm.invalid">
+                    Load Eligible Employees</button>
             </div>
         </div>
     </form>
@@ -103,7 +100,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="model.dismiss()">{{'Yes'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="model.dismiss();resetdata()">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>

@@ -3,17 +3,21 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { LeaveEntitlementSideBarComponent } from "../../../shared/leave-entitlement-side-bar/leave-entitlement-side-bar.component";
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { CommonModule } from '@angular/common';
 import { PaginatorModule } from 'primeng/paginator';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { ICategoryDetails, IEmployees } from '../flexible-leave-allocation/leave-allocation.model';
+import { TranslateModule } from '@ngx-translate/core';
+import { Select, SelectModule } from 'primeng/select';
+
 
 @Component({
   selector: 'app-load-entilements-alloction',
-  imports: [RouterModule, CommonModule, PaginatorModule, FormsModule,NgbPopoverModule, LeaveEntitlementSideBarComponent, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent],
+  imports: [RouterModule, CommonModule, TranslateModule, Select, SelectModule, PaginatorModule, FormsModule, NgbPopoverModule, LeaveEntitlementSideBarComponent, DataLoaderContentComponent, NoDataFoundComponent, InfoIconComponent, ReactiveFormsModule],
   templateUrl: './load-entilements-alloction.component.html',
   styleUrl: './load-entilements-alloction.component.scss'
 })
@@ -25,6 +29,7 @@ export class LoadEntilementsAlloctionComponent {
   rows = 10;
   collectionSize!: number;
   first = 0;
+  destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -34,20 +39,35 @@ export class LoadEntilementsAlloctionComponent {
   jobid: any;
   jobSummary: any = {};
   employees: any[] = [];
+  categoryDetails = [] as ICategoryDetails[];
+  employeeDetails = [] as IEmployees[];
+  selectedEmployee: any;
+  selectedCategory: any;
+  leaveAllocationForm!: FormGroup;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private http: HttpService,
-    private offcanvasService: NgbOffcanvas
+    private offcanvasService: NgbOffcanvas,
+    private fb: FormBuilder,
   ) { }
 
   ngOnInit() {
+    this.initilaiztionFrom();
     this.route.queryParams.subscribe((params) => {
       const jobid = params['id'];
       if (jobid) {
         this.jobid = jobid;
         this.getdatacarryforword();
       }
+
+    });
+
+  }
+  initilaiztionFrom() {
+    this.leaveAllocationForm = this.fb.group({
+      categoryName: [null, Validators.required],
+      employeeName: [null, Validators.required],
     });
   }
 
@@ -66,13 +86,45 @@ export class LoadEntilementsAlloctionComponent {
     this.getdatacarryforword();
   }
 
+  onSelectedEmployee(event: any) {
+    this.selectedEmployee = event.employeeId;
+    this.getdatacarryforword();
+  }
+
+  changeCategory(event: any) {
+    console.log(event)
+    this.selectedCategory = event.id;
+    this.getdatacarryforword();
+  }
+clearFilters() {
+  this.selectedEmployee = null;
+  this.selectedCategory = null;
+  this.leaveAllocationForm.reset();
+  this.getdatacarryforword();
+}
+
   getdatacarryforword() {
-    let url = `LeaveEntitlementJobs/${this.jobid}/details?pageNumber=${this.page}&pageSize=${this.pageSize}`
+    const params = [
+      `pageNumber=${this.page}`,
+      `pageSize=${this.pageSize}`,
+    ];
+
+    if (this.selectedEmployee) {
+      params.push(`employeeId=${this.selectedEmployee}`);
+    }
+
+    if (this.selectedCategory) {
+      params.push(`leaveCategoryId=${this.selectedCategory}`);
+    }
+
+    const url = `LeaveEntitlementJobs/${this.jobid}/details?${params.join('&')}`;
     this.subscription = this.http.get(url).subscribe({
       next: (res: any) => {
         this.jobSummary = res.data.jobSummary;
         this.employees = res.data.employees;
         this.collectionSize = res.pagination.totalRecords;
+        this.getAllEmployees();
+        this.getCategoryDetails();
       },
       error: (err) => {
         console.error('Error fetching projects:', err);
@@ -83,5 +135,46 @@ export class LoadEntilementsAlloctionComponent {
 
   }
 
+  getCategoryDetails(): void {
+    const payload = {
+      year: this.jobSummary?.processingYear,
+      locationId: this.jobSummary?.locationId,
+      subLocationId: this.jobSummary?.subLocationId,
+      shiftId: this.jobSummary?.shiftId,
+      status: 'Published',
+    };
+
+    this.http.getDataWithQueryParams("OrgLeavesCategories", payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.categoryDetails = res;
+
+      },
+      error: err => {
+        console.error('Error fetching categories:', err);
+
+      }
+    });
+  }
+
+  getAllEmployees() {
+    const payload = {
+      locationId: this.jobSummary?.locationId,
+      subLocationId: this.jobSummary?.subLocationId,
+      shiftId: this.jobSummary?.shiftId,
+    };
+    this.http.getDataWithQueryParams("Employeedata/getAll", payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.employeeDetails = res.map((employee: any) => ({
+          ...employee,
+          fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+        }));
+
+      },
+      error: err => {
+        console.error('Error fetching employees:', err);
+
+      }
+    });
+  }
 
 }

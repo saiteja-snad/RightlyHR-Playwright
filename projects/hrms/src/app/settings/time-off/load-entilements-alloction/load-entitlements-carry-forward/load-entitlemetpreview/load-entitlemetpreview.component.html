@@ -16,8 +16,8 @@
             <tbody>
                 <ng-container *ngIf="employeesList.length > 0; else noDataTemplate">
                     <tr *ngFor="let row of employeesList">
-                        <td><a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee
-                                }}</a>
+                        <td>
+                            <a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee }}</a>
                         </td>
                         <td *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
                     </tr>

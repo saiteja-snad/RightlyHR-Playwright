@@ -16,19 +16,17 @@ import { LeaveEntitlementSideBarComponent } from "../../../shared/leave-entitlem
     NgbPopoverModule, SettingsHeaderComponent, WfhAllocationTabsComponent, HoursAllocationTabsComponent, LeaveEntitlementSideBarComponent],
   templateUrl: './time-off-layout.component.html',
   styleUrl: './time-off-layout.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class TimeOffLayoutComponent implements OnInit {
-  moduleinfo : string = '';
-  
+  moduleinfo: string = '';
+
   constructor(public readonly router: Router) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
@@ -39,7 +37,6 @@ export class TimeOffLayoutComponent implements OnInit {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/settings/timeoff-configurations/leave-categoery': MODULE_INFOS.SETTINGS_LEAVE_CATEGORY_MODULE_INFO,
       '/settings/timeoff-configurations/leave-allocation': MODULE_INFOS.SETTINGS_LEAVE_ALLOCATION_MODULE_INFO,
@@ -47,9 +44,8 @@ export class TimeOffLayoutComponent implements OnInit {
       '/settings/timeoff-configurations/eligibility-criterias': MODULE_INFOS.SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO,
       '/settings/timeoff-configurations/load-entitlements': MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
       '/settings/timeoff-configurations/flexible-wfh-allocation': MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
-      '/settings/timeoff-configurations/flexible-workhours-allocation':MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
+      '/settings/timeoff-configurations/flexible-workhours-allocation': MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

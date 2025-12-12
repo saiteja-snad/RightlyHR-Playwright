@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, TemplateRef } from '@angular/core';
 import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -8,10 +8,12 @@ import { IJobsResponse } from '../../../../Interfaces/loadentitlementjob';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-carry-forward-leave-entitlement',
-  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent, NoDataFoundComponent, FormsModule],
+  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent,TranslateModule, NoDataFoundComponent, FormsModule],
   templateUrl: './carry-forward-leave-entitlement.component.html',
   styleUrl: './carry-forward-leave-entitlement.component.scss'
 })
@@ -31,7 +33,7 @@ export class CarryForwardLeaveEntitlementComponent {
   ];
   subscription!: Subscription;
   jobData: any[] = [];
-  constructor(private http: HttpService, private router: Router) { }
+  constructor(private http: HttpService, private router: Router,private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit(): void {
     this.getdatacarryforword()
@@ -76,7 +78,9 @@ export class CarryForwardLeaveEntitlementComponent {
 
   navigateView(jobId: number) {
     this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });
-
+  }
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
 

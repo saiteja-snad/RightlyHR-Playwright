@@ -1541,12 +1541,12 @@ export class AllocatedAssetsListComponent {
   navigateToAsset(assetId: any) {
     this.router.navigate(['/assets-management/view-assets-details'], { queryParams: { id: assetId } });
   }
-    getcount(locationId: string | null, subLocationId: string | null,category:any,subcatageory:any,fromDate:any,toDate:any,status:any) {
+    getcount(locationId: string | null, subLocationId: string | null,category:any,subcategory:any,fromDate:any,toDate:any,status:any) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
     if (category) params.append('category', category);
-    if (subcatageory) params.append('subcatageory', subcatageory);
+    if (subcategory) params.append('subcategory', subcategory);
     if (fromDate) params.append('fromDate', fromDate);
     if (toDate) params.append('toDate', toDate);
     params.append('status', status);

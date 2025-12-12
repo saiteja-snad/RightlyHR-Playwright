@@ -34,11 +34,64 @@
     </div>
   </div>
 
+
+
+  <form autocomplete="off" [formGroup]="leaveAllocationForm">
+    <div class="row ">
+      <!-- Employee Name -->
+      <div class="col-5 mb-3">
+        <label for="employeeName" class="form-label custom-label mb-2">
+          {{ "Employee Name" | translate }}
+        </label>
+        <div class="custom-p-select-content">
+          <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+            [showClear]="false" class="form-select custom-select" formControlName="employeeName"
+            (onChange)="onSelectedEmployee($event.value)" placeholder="Please select employee">
+            <ng-template let-selectedOption #selectedItem>
+              {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+            </ng-template>
+            <ng-template let-user #item>
+              {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
+            </ng-template>
+          </p-select>
+        </div>
+        <div
+          *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
+          class="error-msg">
+          <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">
+            Please select employee
+          </div>
+        </div>
+      </div>
+      <!-- Category Name -->
+      <div class="col-5 mb-3">
+        <label for="categoryName" class="form-label custom-label mb-2">
+          {{ "Category Name" | translate }}
+        </label>
+        <div class="custom-p-select-content">
+          <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="false"
+            formControlName="categoryName" class="form-select custom-select" placeholder="Please select category name"
+            (onChange)="changeCategory($event.value)">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+            <ng-template let-location #item>{{ location.name }}</ng-template>
+          </p-select>
+        </div>
+        <div
+          *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
+          class="error-msg">
+          <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">
+            Please select category name
+          </div>
+        </div>
+      </div>
+      <div class="col-2 mb-3">
+        <button type="button" class="clear-all-btn" (click)="clearFilters()">Clear All</button>
+      </div>
+    </div>
+  </form>
   <p class="component-header mb-3">
     Employee Entitlement Mapping View
-
   </p>
-
 
   <div class="custom-table-content">
     @if(!loading){

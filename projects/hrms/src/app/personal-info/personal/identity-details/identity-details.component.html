@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Identity Info' | translate}}</span></div>
         @if(canAccess('create','identity')){
@@ -9,6 +9,8 @@
             New</div>
         }}
     </div>
+     <div *ngIf="addedRecords.length>0" class="error-msg float-end">Note: Record addition request sent for approval</div>
+
     <div class="custom-table-content">
         @if (!loading) {
         <table class="w-100">
@@ -41,25 +43,30 @@
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
                         !== 'trainee inactive')){
                         <td class="text-center">
+                            @if(disablePendingFields(identityDetails.identityId)){
+                                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                             popoverClass="pending-popover" (click)="setActiveMessage(identityDetails.identityId)"/>
+                            }@else{ 
                             <div class="dropdown" *ngIf="!identityDetails.referenceId">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     @if(canAccess('update','identity')){
-                                    <li (click)="openModalupdate(updateidentityModal, identityDetails)">
-                                        <a class="dropdown-item">
-                                             <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
+                                    <li >
+                                        <button type="button" class="dropdown-item"  (click)="openModalupdate(updateidentityModal, identityDetails)">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </button>
                                     </li>}
                                     @if(canAccess('delete','identity')){
-                                    <li (click)="opendeletModal(deleteconformation,identityDetails)">
-                                        <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
-                                        </a>
+                                    <li >
+                                        <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,identityDetails)">
+                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                        </button>
                                     </li>}
                                 </ul>
                             </div>
+                        }
                         </td>
                         }}
                     </tr>
@@ -297,4 +304,7 @@
             <button type="submit" class="custom-btn btn-primary" (click)="identityDelete()">Yes</button>
         </div>
     </div>
+</ng-template>
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
 </ng-template>

@@ -17,7 +17,13 @@ import { OnBehalfOfRemoteloginApprovedComponent } from './on-behalf-of-remotelog
 import { OnBehalfOfRemoteloginProcessedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-processed/on-behalf-of-remotelogin-processed.component';
 import { OnBehalfOfRemoteloginRejectedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-rejected/on-behalf-of-remotelogin-rejected.component';
 import { OnBehalfOfRemoteloginCancellationComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-cancellation/on-behalf-of-remotelogin-cancellation.component';
+import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 
+import { OnbehalfOfApprovalsComponent } from './onbehalf-of-approvals/onbehalf-of-approvals.component';
+import { TimeOffComponent } from './onbehalf-of-approvals/time-off/time-off.component';
+import { CompOffEntitlementComponent } from './onbehalf-of-approvals/comp-off-entitlement/comp-off-entitlement.component';
+import { WfhComponent } from './onbehalf-of-approvals/wfh/wfh.component';
+import { PermissionsComponent } from './onbehalf-of-approvals/permissions/permissions.component';
 export default [
     { path: '', redirectTo: '/on-behalf-of/on-behalf-of', pathMatch: 'full' },
     {
@@ -58,5 +64,16 @@ export default [
             { path: 'cancelled', component: OnBehalfOfRemoteloginCancellationComponent }
         ],
     },
+    { path: 'global-permissions', component: GlobalPermissionsComponent, data: { permission: 'Global Permissions Module.view' } },
+
+      {
+        path: 'on-behalf-of-approvals', component: OnbehalfOfApprovalsComponent,
+        children: [
+          { path: 'time-off', component: TimeOffComponent, data: { permission: 'Time Off (On Behalf Of Approvals).view' } },
+          { path: 'entitlement', component: CompOffEntitlementComponent, data: { permission: 'Comp Off (On Behalf Of Approvals).view' } },
+          { path: 'wfh', component: WfhComponent, data: { permission: 'WFH (On Behalf Of Approvals).view' } },
+          { path: 'permissions', component: PermissionsComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
+        ],
+      },
 
 ] as Route[];

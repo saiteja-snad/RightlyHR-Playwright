@@ -10,9 +10,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { SkeletonModule } from 'primeng/skeleton';
-import dayjs from 'dayjs'
 import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
-
+import dayjs from 'dayjs'
 
 @Component({
   selector: 'app-project-timesheet-summary',

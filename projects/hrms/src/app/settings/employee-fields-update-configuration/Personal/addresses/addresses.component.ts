@@ -210,16 +210,11 @@ export class AddressesComponent {
       this.fieldOptions = [];
       return;
     }
-
     const prefix = selectedType === 'CURRENT' ? 'Current' : 'Permanent';
-
     this.fieldOptions = this.allFieldOptions.filter((f: any) =>
       f.fieldName.startsWith(prefix)
     );
-    console.log(this.fieldConfigForm)
   }
-
-
   getAddressesFieldsConfigList() {
     this.loader = true;
     const params = {
@@ -331,6 +326,7 @@ export class AddressesComponent {
               : '',
           referenceCategory: referenceCategory,
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope:'Field'
         };
 
         this.subscription = this.http
@@ -368,6 +364,7 @@ export class AddressesComponent {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope:'Field'
           };
         });
         const request = {
@@ -389,6 +386,7 @@ export class AddressesComponent {
               : '',
           referenceCategory: referenceCategory,
           createdBy: loggedInUser.employeeId,
+
         };
 
         this.subscription = this.http

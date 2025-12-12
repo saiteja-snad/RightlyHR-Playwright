@@ -20,16 +20,18 @@ import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { SignalsService } from '../../../../services/signals.service';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-employeeinfo-for-your-role-request',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe,NgxDocViewerModule],
   templateUrl: './employeeinfo-for-your-role-request.component.html',
   styleUrl: './employeeinfo-for-your-role-request.component.scss'
 })
 export class EmployeeinfoForYourRoleRequestComponent {
-  empinfodata: EMPLOYEEINFO[] = [];
+   empinfodata: EMPLOYEEINFO[] = [];
   subscription!: Subscription;
   empinfo: any;
   selectedLeaveData = {} as EMPLOYEEINFO;
@@ -74,13 +76,18 @@ export class EmployeeinfoForYourRoleRequestComponent {
   allFields: any;
   allPendingApprovals: any;
   allPendingApprovalItems: any;
- selectedLeaveStatus: any;
+     selectedLeaveStatus: any;
+  //emp: any;
+ ImageUrl: any;
+ ViewURL:any;
+  @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
+   private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getAllPendingApprovals();
+     this.getAllPendingApprovals();
     this.employeeid = parseInt(this.empinfo.employeeId);
     this.loadClientsAndProjects(this.page, this.pageSize);
     this.http.selectedEmployeeIdTimesheet$
@@ -105,18 +112,7 @@ export class EmployeeinfoForYourRoleRequestComponent {
 
     this.intializeApproveForm();
   }
-  showdate(data:any):boolean{
-    if(data?.sourceFieldName =='Dob' && data.oldValue && data.oldValue!='-'){
-      return true
-    }
-    return false
-  }
-  showdatefornew(data:any):boolean{
-  if(data?.sourceFieldName =='Dob' && data.newValue && data.newValue!='-'){
-      return true
-    }
-    return false
-  }
+  // initialization
   intializeApproveForm() {
     this.timeSheetApproveForm = this.fb.group({
       comments: [null, [Validators.required, Validators.maxLength(250)]]
@@ -139,7 +135,7 @@ export class EmployeeinfoForYourRoleRequestComponent {
   });
   }
 
-  // called for pagination
+  // called for pagination 
   onRowsChange() {
     this.page = 1;
     this.first = 0;
@@ -176,32 +172,27 @@ export class EmployeeinfoForYourRoleRequestComponent {
     this.openModal(popup, null, this.conformationstatus);
   }
 
+  loadClientsAndProjects(page: number, pageSize: number): void {
+    this.dataload = true;
+    const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=ROLE&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
 
-
-loadClientsAndProjects(page: number, pageSize: number): void {
-  this.dataload = true;
-  const url = `PendingApproval/getEmployeeInfoPendingApprovals?moduleId=${environment.pendingapprovalemployeid}&approvedType=ROLE&employeeId=${this.empinfo?.employeeId}&page=${page}&pageSize=${pageSize}`;
-
-  this.http.getData(url).subscribe({next: (res: any) => {
-      this.dataload = false;
-
-      if (!res.success || !res.data?.items?.length) {
-        this.empinfodata = [];
-        return;
-      }
-
-      this.collectionSize = res.data.totalCount;
-      const finalEmployees: any[] = [];
-
-      // LOOP ALL EMPLOYEES
-      res.data.items.forEach((empBlock: any) => {
-        const flatEntries: any[] = [];
-        empBlock.entries.forEach((entry: any) => {
-          // entry.fields
-          //   //  FILTER: ONLY WAITING FOR APPROVAL RECORDS
-          //   .filter((f: any) =>
-          //     f.pendingApproval?.header?.status === "Waiting for Approval"
-          //   )
+    this.http.getData(url).subscribe({next: (res: any) => {
+        this.dataload = false;
+        if (!res.success || !res.data?.items?.length) {
+          this.empinfodata = [];
+          return;
+        }
+        this.collectionSize = res.data.totalCount;
+        const finalEmployees: any[] = [];
+        // LOOP ALL EMPLOYEES
+        res.data.items.forEach((empBlock: any) => {
+          const flatEntries: any[] = [];
+          empBlock.entries.forEach((entry: any) => {
+            // entry.fields
+            //   //  FILTER: ONLY WAITING FOR APPROVAL RECORDS
+            //   .filter((f: any) =>
+            //     f.pendingApproval?.header?.status === "Waiting for Approval"
+            //   )
             entry.fields.filter((fields: any) => {
                 const pandingapproval = fields.pendingApproval;
                 if (!pandingapproval) return false;
@@ -209,43 +200,47 @@ loadClientsAndProjects(page: number, pageSize: number): void {
                 const anyItemWaiting = pandingapproval.items?.some((items: any) => items.approvedStatus === "Waiting for Approval");
                 return headerWaiting || anyItemWaiting;
               }).forEach((fieldname: any) => {
-              const pandingapproval = fieldname.pendingApproval;
-              flatEntries.push({
-                id: fieldname.itemId,
-                fieldName: fieldname.fieldName,
-                oldValue: fieldname.oldValue,
-                newValue: fieldname.newValue,
-                sourceFieldName: fieldname.sourceFieldName,
-                requestedDate: fieldname.createdDate,
-                headerId: entry.employeeFieldHeader?.headerId,
-                moduleName: entry.employeeFieldHeader?.moduleName,
-                displayName: entry.employeeFieldHeader?.displayName,
-                headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
-                headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
-                pendingApprovalHeader: pandingapproval?.header ?? null,
-                approvalItems: pandingapproval?.items ?? [],
-                comments: pandingapproval?.comments ?? []
+                const padingapprovaldata = fieldname.pendingApproval;
+                flatEntries.push({
+                  id: fieldname.itemId,
+                  fieldName: fieldname.fieldName,
+                  oldValue: fieldname.oldValue,
+                  newValue: fieldname.newValue,
+                  sourceFieldName: fieldname.sourceFieldName,
+                  requestedDate: fieldname.createdDate,
+                  headerId: entry.employeeFieldHeader?.headerId,
+                  moduleName: entry.employeeFieldHeader?.moduleName,
+                  displayName: entry.employeeFieldHeader?.displayName,
+                  headerRequestedBy: entry.employeeFieldHeader?.requestedBy,
+                  headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
+                  pendingApprovalHeader: padingapprovaldata?.header ?? null,
+                  approvalItems: padingapprovaldata?.items ?? [],
+                  comments: padingapprovaldata?.comments ?? [],
+                  approvalScope: fieldname?.approvalScope ?? '',
+                  meta: fieldname?.meta ?? ''
+                });
               });
-            });
-        });
-
-        // ONLY PUSH EMPLOYEE IF THEY HAVE ANY WAITING RECORDS
-        if (flatEntries.length > 0) {
-          finalEmployees.push({
-            employeeName: empBlock.employeeName,
-            entries: flatEntries
           });
-        }
-      });
-      this.empinfodata = finalEmployees;
-      console.log("FILTERED EMP TABLE DATA:", this.empinfodata);
-    },
-    error: () => {
-      this.dataload = false;
-      this.empinfodata = [];
-    }
-  });
-}
+
+          // ONLY PUSH EMPLOYEE IF THEY HAVE ANY WAITING RECORDS
+          if (flatEntries.length > 0) {
+            finalEmployees.push({
+              employeeName: empBlock.employeeName,
+              entries: flatEntries
+            });
+          }
+        });
+        this.empinfodata = finalEmployees;
+        console.log("FILTERED EMP TABLE DATA:", this.empinfodata);
+      },
+
+      error: () => {
+        this.dataload = false;
+        this.empinfodata = [];
+      }
+    });
+  }
+
   // called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {
     this.showhideaction = false;
@@ -328,7 +323,70 @@ loadClientsAndProjects(page: number, pageSize: number): void {
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
   }
+  actionsDetails={} as any;
+ openModalforaction(modal: any, request: any,){
+     let parsedOldValue = {};
+  if (request.oldValue) {
+      parsedOldValue = JSON.parse(request.oldValue);
+  }
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
+  this.actionsDetails.fieldName=request.fieldName;
+  this.actionsDetails.moduleName=request.moduleName;
+  console.log("this.actionsDetails",this.actionsDetails)
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+ }
+mergedValues: any[] = [];
+openModalfornewvalueAction(modal: any, request: any) {
+  // Parse oldValue and newValue
+  let parsedOldValue = {};
+  let parsedNewValue = {};
+  if (request.oldValue) {
+    parsedOldValue = JSON.parse(request.oldValue);
+  }
+  if (request.newValue) {
+    parsedNewValue = JSON.parse(request.newValue);
+  }
+  // Parse meta (ChangedFields)
+  let parsedMeta: any = {};
+  if (request.meta) {
+    parsedMeta = JSON.parse(request.meta);
+  }
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue,
+    newValue: parsedNewValue,
+    changedFields: parsedMeta?.ChangedFields ?? {}  // <<--- Correct extraction
+  };
+  const oldVal = this.actionsDetails.oldValue ?? {};
+  const newVal = this.actionsDetails.newValue ?? {};
+  const changedFields = this.actionsDetails.changedFields ?? {}; // <<--- Correct reference
+  // Merge keys
+  const keys = new Set([
+    ...Object.keys(oldVal),
+    ...Object.keys(newVal),
+  ]);
 
+  // Build merged list
+  this.mergedValues = Array.from(keys).map(key => ({
+    key,
+    oldValue: oldVal[key],
+    newValue: newVal[key],
+    isChanged: this.isFieldChanged(key, changedFields)
+  }));
+  this.modalService.open(modal, { centered: true, backdrop: 'static' });
+}
+isFieldChanged(objectKey: string, changedFields: any): boolean {
+  if (!changedFields) return false;
+  const normalizedKey = objectKey.replace(/\s+/g, "").toLowerCase();
+  const changedKeys = Object.keys(changedFields).map(k =>
+    k.replace(/\s+/g, "").toLowerCase()
+  );
+
+  return changedKeys.includes(normalizedKey);
+}
   // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;
@@ -365,7 +423,7 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           ],
         };
       }
-      console.log("payload",this.requestBody)
+      console.log("payload", this.requestBody)
 
       // Same API call
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -390,6 +448,10 @@ loadClientsAndProjects(page: number, pageSize: number): void {
             });
             setTimeout(() => modalRef.close(), 3000);
           }
+             this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              employeinfo: true,
+            }));
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -407,11 +469,12 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+          
           this.http.triggerActionSignal();
            this.signalService.employeinfoDetailsTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
-             this.getAllPendingApprovals();
+            this.getAllPendingApprovals();
         },
       });
     }
@@ -494,14 +557,11 @@ loadClientsAndProjects(page: number, pageSize: number): void {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
-         
+          this.getAllPendingApprovals();
           this.http.triggerActionSignal();
           this.signalService.employeinfoDetailsTriggerSignal.set(true);
           this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
-            this.getAllPendingApprovals();
-         
-
         },
       });
     }
@@ -550,12 +610,13 @@ loadClientsAndProjects(page: number, pageSize: number): void {
     return selectedCount > 0 && selectedCount < totalEntries;
   }
 
+  //select all Toggle all entries across all days
   toggleSelectAllDays(isChecked: boolean): void {
     if (!this.empinfodata || this.empinfodata.length === 0) return;
     if (isChecked) {
       this.showhideaction = false;
       this.empinfodata.forEach((day, i) => {
-      this.selectedMap[i] = [...day.entries];
+        this.selectedMap[i] = [...day.entries];
       });
     } else {
       this.showhideaction = true;
@@ -563,8 +624,63 @@ loadClientsAndProjects(page: number, pageSize: number): void {
     }
     this.syncGlobalSelectedEntries();
   }
+    showdate(data:any):boolean{
+    if(data?.sourceFieldName =='Dob' && data.oldValue && data.oldValue!='-'){
+      return true
+    }
+    return false
+  }
+  showdatefornew(data:any):boolean{
+  if(data?.sourceFieldName =='Dob' && data.newValue && data.newValue!='-'){
+      return true
+    }
+    return false
+  }
 
+  onViewAttachement(url: any,content:any) {
+    const lowerUrl = url?.toLowerCase();
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.ViewURL = null;
+          this.toggleViewModal(content);
+        },
+        error: (err) => console.error('Error downloading image:', err),
+      });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal(content);
+    } else {
+      // fallback for other types if needed
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal(content);
+    }
+  }
+
+  toggleViewModal(content:any) {
+    this.modalService.dismissAll();
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+  }
   // destroy the component
+
+  closeonlyattemchment(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
+ closeonlyattemchmentforcurrent(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforcurrentaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

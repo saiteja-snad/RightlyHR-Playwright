@@ -21,10 +21,9 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { Paginator } from "primeng/paginator";
 import { SkeletonModule } from 'primeng/skeleton';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
-
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, ModuleInfoIconComponent, FormsModule, TranslateModule, CommonModule, NgbPopoverModule, NoDataFoundComponent,

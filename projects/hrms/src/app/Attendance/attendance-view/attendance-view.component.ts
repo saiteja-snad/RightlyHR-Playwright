@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -52,13 +58,12 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     ModuleInformationComponent,
     InfoIconComponent,
     AccordionModule,
-    ChartModule
+    ChartModule,
   ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class AttendanceViewComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   dataLoader = false;
@@ -123,6 +128,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   attendanceSummaryOptions: any;
   maxMonth: Date = new Date();
   extraHoursForm!: FormGroup;
+  selectedDateTotalDuration: string = '00:00:00';
 
   constructor(
     private authService: AuthService,
@@ -133,7 +139,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
     public readonly router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // Get current date
@@ -213,7 +219,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   //function to inialize form
   initializeForm() {
     this.regularizationForm = this.fb.group({
-      permissionDate: [{ value: null, disable: true }, Validators.required],
+      permissionDate: [{ value: null, disabled: true }, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
       reason: [
@@ -249,7 +255,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       'maxRegularizePerMonth',
       'maxRegularizeHoursPerDay',
       'maxRegularizeHoursPerMonth',
-      'pastDaysAllowed'
+      'pastDaysAllowed',
     ];
     this.subscription = this.http
       .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
@@ -259,7 +265,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
           const pastDaysAllowedConfig = this.regularizationValues?.find(
             (item: any) => item.attribute === 'pastDaysAllowed'
           );
-          this.maxPastDaysAllowed = pastDaysAllowedConfig ? parseFloat(pastDaysAllowedConfig.value) : undefined;
+          this.maxPastDaysAllowed = pastDaysAllowedConfig
+            ? parseFloat(pastDaysAllowedConfig.value)
+            : undefined;
           console.log(this.maxPastDaysAllowed, 'maxPastDaysAllowed');
           const maxHoursConfig = this.regularizationValues?.find(
             (item) => item.attribute === 'maxRegularizeHoursPerDay'
@@ -284,7 +292,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     const today = new Date();
     const selected = new Date(date);
     // Calculate the difference in days
-    const diff = Math.floor((today.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24));
+    const diff = Math.floor(
+      (today.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24)
+    );
     return diff <= this.maxPastDaysAllowed && diff >= 0;
   }
 
@@ -298,7 +308,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     regularizations: any,
     permissionduration: any,
     regularizationduration: any,
-    breakDuration: any,
+    breakDuration: any
   ) {
     this.logsDuration = totalduration;
     this.breakDuration = breakDuration;
@@ -329,7 +339,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   //function to post the regularization
   applyRgularization(regularizationForm: FormGroup) {
     if (regularizationForm.valid) {
-      const formData = regularizationForm.value;
+      const formData = regularizationForm.getRawValue();
       const payLoad = {
         raisedFor: this.empdata.employeeId,
         requestedBy: this.empdata.employeeId,
@@ -356,6 +366,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
               'Regularization request submitted successfully'
             );
             this.regularizationForm.reset();
+            this.getAttendnaceData(this.getSelectedEmployee());
           },
           error: (err: any) => {
             this.spinnerLoader = false;
@@ -400,8 +411,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
-      }${employee.lastName ? ' ' + employee.lastName : ''}`;
+        this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
+      employee.middleName ? ' ' + employee.middleName : ''
+    }${employee.lastName ? ' ' + employee.lastName : ''}`;;
     
     // Calculate start and end dates for the selected month
     const startDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month').format('YYYY-MM-DD');
@@ -413,7 +425,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: any) => {
-          this.getAttendanceCriteria()
+          this.getAttendanceCriteria();
           this.dataLoader = false;
           const updatedAttendanceData = response.data.attendanceData.map(
             (item: any) => ({
@@ -464,33 +476,62 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
-    const statuses = ['active', 'Trainee Active', 'Active Contract'];
+    const statuses = ['Active', 'Trainee Active', 'Active Contract', 'Inactive', 'Trainee Inactive', 'Inactive Contract'];
     this.subscription = this.http
       .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
       .subscribe({
         next: (response: any) => {
           if (response) {
             this.getAllEmployeeInfo = response
-              .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
+              .filter(
+                (employee: any) =>
+                  employee.employeeId !== this.empdata.employeeId
+              )
               .map((employee: any) => ({
                 ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim()
+                fullName: `${
+                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName ?? ''} ${
+                  employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName ?? ''}`.trim(),
               }))
-              .sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
+              .sort((a: any, b: any) =>
+                (a.firstName ?? '').localeCompare(b.firstName ?? '')
+              ); //  Sort by first name
           }
         },
         error: (error) => {
           console.log(error);
-        }
+        },
       });
   }
 
+onclickRegularization(date: Date | string) {
+  const displayDateString =
+    typeof date === 'string'
+      ? date.split('T')[0]
+      : date.toISOString().split('T')[0];
 
-  onclickRegularization(date: Date) {
-    this.regularizationForm.patchValue({
-      permissionDate: date,
-    });
+  const selectedDateObj = new Date(displayDateString);
+
+  if (isNaN(selectedDateObj.getTime())) {
+    console.error('Invalid date received:', date);
+    return;
   }
+
+  const attendanceRecord = this.attendanceData.value.find((item: any) => {
+    const itemDate = new Date(item.date);
+    return itemDate.toDateString() === selectedDateObj.toDateString();
+  });
+
+  // This is the key fix: use patchValue with emitEvent: false
+  this.regularizationForm.patchValue({
+    permissionDate: displayDateString
+  }, { emitEvent: false });
+
+  this.selectedDateTotalDuration =
+    attendanceRecord?.duration?.totalDuration || '00:00:00';
+}
 
   getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
@@ -504,13 +545,23 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
               .map((employee: any) => {
                 return {
                   ...employee,
-                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
-                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+                  fullName: `${
+                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName}
+                ${employee.middleName ? employee.middleName + ' ' : ''}${
+                    employee.lastName
+                  }`,
                 };
               })
               .sort((a: any, b: any) => {
-                const idA = parseInt(a.fusionEmpId?.replace(/\D/g, '') || '0', 10);
-                const idB = parseInt(b.fusionEmpId?.replace(/\D/g, '') || '0', 10);
+                const idA = parseInt(
+                  a.fusionEmpId?.replace(/\D/g, '') || '0',
+                  10
+                );
+                const idB = parseInt(
+                  b.fusionEmpId?.replace(/\D/g, '') || '0',
+                  10
+                );
                 return idA - idB;
               });
           }
@@ -522,8 +573,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.extraHoursForm = this.fb.group({
       date: [null, Validators.required],
       duration: [null, [Validators.required]],
-      description: [null, [Validators.required],
-      ],
+      description: [null, [Validators.required]],
     });
   }
 
@@ -535,22 +585,32 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   getdatabyentriy() {
     const entity = 'ExtraLogHours';
     const attributes = ['AllowedPastDays', 'AllowedHours'];
-    this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, entity, attributes).subscribe({
-      next: (data: any) => {
-        const allowedPastDaysObj = data.find((d: any) => d.attribute === 'AllowedPastDays');
-        const allowedHoursObj = data.find((d: any) => d.attribute === 'AllowedHours');
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues/getv1`, entity, attributes)
+      .subscribe({
+        next: (data: any) => {
+          const allowedPastDaysObj = data.find(
+            (d: any) => d.attribute === 'AllowedPastDays'
+          );
+          const allowedHoursObj = data.find(
+            (d: any) => d.attribute === 'AllowedHours'
+          );
 
-        this.allowedPastDays = allowedPastDaysObj ? Number(allowedPastDaysObj.value) : 0;
-        this.allowedHours = allowedHoursObj ? Number(allowedHoursObj.value) : 0;
+          this.allowedPastDays = allowedPastDaysObj
+            ? Number(allowedPastDaysObj.value)
+            : 0;
+          this.allowedHours = allowedHoursObj
+            ? Number(allowedHoursObj.value)
+            : 0;
 
-        if (this.allowedHours > 0) {
-          this.generateDurationOptions(this.allowedHours);
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      },
-    });
+          if (this.allowedHours > 0) {
+            this.generateDurationOptions(this.allowedHours);
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching data:', err);
+        },
+      });
   }
 
   generateDurationOptions(maxHours: number) {
@@ -586,7 +646,10 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         moduleId: environment.extraHoursModuleId,
       };
       this.extraHrsLoader = true;
-      this.http.postData('RegularizationRequests/create', payLoad, { responseType: 'text', })
+      this.http
+        .postData('RegularizationRequests/create', payLoad, {
+          responseType: 'text',
+        })
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
@@ -599,7 +662,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             this.extraHrsLoader = false;
             console.error('Error:', err);
 
-            let errorMessage = 'An unexpected error occurred. Please try again.';
+            let errorMessage =
+              'An unexpected error occurred. Please try again.';
 
             try {
               if (typeof err.error === 'string') {
@@ -614,7 +678,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
                 errorMessage = err.message;
               }
             } catch (e) {
-              errorMessage = typeof err.error === 'string' ? err.error : errorMessage;
+              errorMessage =
+                typeof err.error === 'string' ? err.error : errorMessage;
             }
 
             this.conformationPopup.openErrorModal(errorMessage);

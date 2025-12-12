@@ -20,7 +20,6 @@ import { combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import dayjs from 'dayjs'
 import { ModuleInfoIconComponent } from '../../../../icons/module-info-icon/module-info-icon.component';
-
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [

@@ -19,7 +19,6 @@
         </div>
     </div>
 
-
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         @if (isActive('/settings/timeoff-configurations/eligibility-criterias') ||
@@ -32,10 +31,8 @@
             @if(isActive('/settings/timeoff-configurations/leave-categoery')) {
             <app-leave-category-tabs />
             }
-
         </div>
         }
-
         @if(isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation') ||
         isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view')) {
         <div class="component-left-tabs-container">
@@ -48,8 +45,8 @@
             <app-hours-allocation-tabs />
         </div>
         }
-
-        @if(isActive('/settings/timeoff-configurations/load-entitlement/carry-forward') || isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')){
+        @if(isActive('/settings/timeoff-configurations/load-entitlement/carry-forward') ||
+        isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')){
         <div class="component-left-tabs-container">
             <app-leave-entitlement-side-bar />
         </div>

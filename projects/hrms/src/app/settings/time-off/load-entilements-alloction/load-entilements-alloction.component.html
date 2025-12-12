@@ -1,48 +1,37 @@
-<div>
+<div class="custom-main-component-container">
+  <p class="component-header">Job Details & Mapping</p>
 
-  <p class="component-header mb-3">
-    Job Details & Mapping
-  </p>
   <div class="card criteria-card p-4 mb-3">
-
-    <p class="component-sub-header mb-3">
-      Auto-Mapped Job Criteria (Fixed)
-    </p>
+    <p class="component-sub-header">Auto-Mapped Job Criteria (Fixed)</p>
 
     <div class="row gy-2">
-
       <div class="col-md-3 col-6">
         <span class="label">Year:</span>
-        <strong>{{jobSummary.processingYear}}</strong>
+        <b>{{jobSummary.processingYear}}</b>
       </div>
 
       <div class="col-md-3 col-6">
         <span class="label">Location:</span>
-        <strong>{{jobSummary.location }}</strong>
+        <b>{{jobSummary.location }}</b>
       </div>
 
       <div class="col-md-3 col-6">
         <span class="label">Sub-Location:</span>
-        <strong>{{jobSummary.subLocation }}</strong>
+        <b>{{jobSummary.subLocation }}</b>
       </div>
 
       <div class="col-md-3 col-6">
         <span class="label">Shift:</span>
-        <strong>{{ jobSummary.shiftName}}</strong>
+        <b>{{ jobSummary.shiftName}}</b>
       </div>
-
     </div>
   </div>
 
-
-
   <form autocomplete="off" [formGroup]="leaveAllocationForm">
-    <div class="row ">
+    <div class="custom-grid align-items-center">
       <!-- Employee Name -->
-      <div class="col-5 mb-3">
-        <label for="employeeName" class="form-label custom-label mb-2">
-          {{ "Employee Name" | translate }}
-        </label>
+      <div class="mb-3">
+        <label for="employeeName" class="form-label custom-label mb-2">{{ "Employee Name" | translate }}</label>
         <div class="custom-p-select-content">
           <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
             [showClear]="false" class="form-select custom-select" formControlName="employeeName"
@@ -50,24 +39,17 @@
             <ng-template let-selectedOption #selectedItem>
               {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
             </ng-template>
-            <ng-template let-user #item>
-              {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
-            </ng-template>
+            <ng-template let-user #item>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</ng-template>
           </p-select>
         </div>
-        <div
-          *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
+        <div *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
           class="error-msg">
-          <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">
-            Please select employee
-          </div>
+          <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">Please select employee</div>
         </div>
       </div>
       <!-- Category Name -->
-      <div class="col-5 mb-3">
-        <label for="categoryName" class="form-label custom-label mb-2">
-          {{ "Category Name" | translate }}
-        </label>
+      <div class="mb-3">
+        <label for="categoryName" class="form-label custom-label mb-2">{{ "Category Name" | translate }}</label>
         <div class="custom-p-select-content">
           <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="false"
             formControlName="categoryName" class="form-select custom-select" placeholder="Please select category name"
@@ -76,22 +58,20 @@
             <ng-template let-location #item>{{ location.name }}</ng-template>
           </p-select>
         </div>
-        <div
-          *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
+
+        <div *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
           class="error-msg">
-          <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">
-            Please select category name
-          </div>
+          <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">Please select category name</div>
         </div>
       </div>
-      <div class="col-2 mb-3">
+
+      <div class="mb-3">
         <button type="button" class="clear-all-btn" (click)="clearFilters()">Clear All</button>
       </div>
     </div>
   </form>
-  <p class="component-header mb-3">
-    Employee Entitlement Mapping View
-  </p>
+
+  <p class="component-header mb-3">Employee Entitlement Mapping View</p>
 
   <div class="custom-table-content">
     @if(!loading){
@@ -102,7 +82,6 @@
         <th>Leave Category</th>
         <th class="text-center">Available Balance (Carried)</th>
         <th>Status </th>
-
       </thead>
       <tbody>
         <ng-container *ngIf="employees.length > 0; else noDataTemplate">
@@ -111,22 +90,17 @@
             <td>{{ e?.employee?.name }}</td>
             <td>{{ e?.leaveCategory }}</td>
             <td class="text-center">{{ e?.carryForwardCount }}</td>
-            <td [ngClass]="{
-            'status-success': e.status === 'success',
-            'status-failed': e.status === 'failed',
-            'status-partial': e.status === 'partially_completed',
-            'status-processing': e.status === 'processing',
-            'status-completed': e.status === 'completed',
-            'status-pending': e?.status === 'pending'
-      }" class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'failed' ">
+            <td [ngClass]="{'status-success': e.status === 'success','status-failed': e.status === 'failed',
+            'status-partial': e.status === 'partially_completed','status-processing': e.status === 'processing',
+            'status-completed': e.status === 'completed','status-pending': e?.status === 'pending'}" 
+            class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'failed'">
                 <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click" />
-
-              </span></td>
+              </span>
+            </td>
             <ng-template #pendingPopover>
               <div class="module-info-text">{{e?.reason }}</div>
             </ng-template>
           </tr>
-
         </ng-container>
         <ng-template #noDataTemplate>
           <tr>
@@ -146,12 +120,11 @@
       <div class="d-flex align-items-center gap-3 p-2">
         <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
           (ngModelChange)="onPageSizeChange($event)">
-          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-          </option>
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
         </select>
         <span class="pagination-label text-nowrap">
-          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
-          collectionSize }}
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+          (+first + +rows) }} of {{ collectionSize }}
         </span>
       </div>
       <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

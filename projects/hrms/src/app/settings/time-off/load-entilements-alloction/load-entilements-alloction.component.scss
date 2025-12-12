@@ -3,9 +3,15 @@
     box-shadow: 0px 0px 6px 1px rgba(34, 34, 34, 0.1019607843);
 }
 
-
 .custom-table-content {
-    height: calc(100dvh - 30rem) !important;
+    height: 50vh !important;
+}
+
+.custom-grid {
+    display: grid;
+    grid-template-columns: 5fr 5fr 2fr;
+    align-items: center;
+    gap: 1rem;
 }
 
 .status-success {
@@ -50,4 +56,11 @@
 
 .clear-all-btn:focus {
     outline: none;
+}
+
+.custom-table-content {
+    .no-data-image {
+        width: 166px !important;
+        height: 138px !important;
+    }
 }

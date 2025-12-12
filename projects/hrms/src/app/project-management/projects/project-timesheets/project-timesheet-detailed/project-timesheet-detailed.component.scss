@@ -15,8 +15,7 @@
 .custom-table-content {
     border: 1px solid #E1E7F2 !important;
 
-    th,
-    td {
+    th,td {
         font-size: var(--fontsize14) !important;
     }
 
@@ -60,17 +59,18 @@
 }
 
 .assigned {
- color: #F29000 !important;
+    color: #F29000 !important;
 }
+
 .active {
-   color: #00A912 !important;
+    color: #00A912 !important;
 }
 
-.released{
-  color: #EA362C !important;
+.released {
+    color: #EA362C !important;
 }
 
-.resoure-role-text{
+.resoure-role-text {
     text-wrap: wrap;
     line-break: anywhere;
 }

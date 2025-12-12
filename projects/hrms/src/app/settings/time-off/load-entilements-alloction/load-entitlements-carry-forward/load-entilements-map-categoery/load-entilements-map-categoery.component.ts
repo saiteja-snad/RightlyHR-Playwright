@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { ICarryForward, ILeaveCategory } from '../../../flexible-leave-allocation/leave-allocation.model';
 import { FormValidationsService } from '../../../../../services/form-validations.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../services/http.service';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
-import { OpenModalService } from '../../../../../services/open-modal.service';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
@@ -28,9 +26,8 @@ export class LoadEntilementsMapCategoeryComponent {
   leaveTypes: string[] = [];
   employeesList: any[] = [];
 
-  constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
-    private route: Router, private http: HttpService, public formValidation: FormValidationsService,
-    private conformationPopup: OpenModalService) { }
+  constructor(public formValidations: FormValidationsService, private route: Router,
+    private http: HttpService, public formValidation: FormValidationsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -60,23 +57,20 @@ export class LoadEntilementsMapCategoeryComponent {
   }
 
   getdataforcarryforwardforplaylod(carryforwarddata: ICarryForward) {
-    this.http.getData(
-      `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
+    this.http.getData(`Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
     &subLocationIds=${carryforwarddata.subLocation.id}
     &shiftIds=${carryforwarddata.shift.id}
     &year=${carryforwarddata.year}`
-    )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-          const data = res.data;
-          this.formatCarryList(data);
-        },
-        error: () => {
-          this.loading = false;
-        }
-      });
+    ).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        const data = res.data;
+        this.formatCarryList(data);
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
 
   formatCarryList(data: any[]) {
@@ -173,7 +167,6 @@ export class LoadEntilementsMapCategoeryComponent {
   }
 
   isAllDropdownsSelected(): boolean {
-    return this.currentYearData.length > 0 &&
-      this.currentYearData.every(item => item.selectedDestinationId);
+    return this.currentYearData.length > 0 && this.currentYearData.every(item => item.selectedDestinationId);
   }
 }

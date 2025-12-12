@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef } from '@angular/core';
 import { PaginatorModule } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
-import { IJobsResponse } from '../../../../Interfaces/loadentitlementjob';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { ILocation, IShiftHeader, ISubLocation } from '../../flexible-leave-allocation/leave-allocation.model';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-carry-forward-leave-entitlement',
-  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent,TranslateModule, NoDataFoundComponent, FormsModule],
+  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent,Select,ReactiveFormsModule, TranslateModule, NoDataFoundComponent, FormsModule],
   templateUrl: './carry-forward-leave-entitlement.component.html',
   styleUrl: './carry-forward-leave-entitlement.component.scss'
 })
@@ -33,10 +34,24 @@ export class CarryForwardLeaveEntitlementComponent {
   ];
   subscription!: Subscription;
   jobData: any[] = [];
-  constructor(private http: HttpService, private router: Router,private offcanvasService: NgbOffcanvas) { }
+  leaveAllocationForm!: FormGroup;
+
+  yearsList: number[] = [];
+  locationDetails = [] as ILocation[];
+  subLocationDetails = [] as ISubLocation[];
+  shiftDetails = [] as IShiftHeader[];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas) { }
 
   ngOnInit(): void {
     this.getdatacarryforword()
+    this.leaveAllocationForm = this.fb.group({
+      year: ['', Validators.required],
+      location: [{ value: '', disabled: true }, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
+    });
+    this.getAllLocations();
   }
 
   onPageSizeChange(newPageSize: number) {
@@ -74,6 +89,59 @@ export class CarryForwardLeaveEntitlementComponent {
       },
     });
 
+  }
+
+  private getYears(): number[] {
+    const currentYear = new Date().getFullYear();
+    let yearsList: number[] = []
+    for (let i = -1; i < 11; i++) {
+      yearsList.push(currentYear + i);
+    }
+    return yearsList;
+  }
+
+  enableLocation(): void {
+    if (this.leaveAllocationForm.get('year')?.value) {
+      this.leaveAllocationForm.get('location')?.enable();
+    }
+  }
+
+  private getAllLocations(): void {
+    this.http.getData('JobLocation').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => this.locationDetails = res.jobLocations || [],
+      error: err => console.error('Error fetching locations:', err)
+    });
+  }
+
+  onLocationChange(location: ILocation): void {
+    if (location?.jobSubLocations?.length) {
+      this.subLocationDetails = location.jobSubLocations;
+      this.leaveAllocationForm.get('subLocation')?.enable();
+      this.leaveAllocationForm.get('subLocation')?.reset();
+    } else {
+      this.subLocationDetails = [];
+      this.leaveAllocationForm.get('subLocation')?.enable();
+      this.leaveAllocationForm.get('subLocation')?.reset();
+    }
+  }
+
+  getAllShifts(subLocation: ISubLocation): void {
+    const params = {
+      locationId: subLocation.jobLocationId,
+      subLocationId: subLocation.id
+    };
+    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
+        this.leaveAllocationForm.get('shift')?.enable();
+      },
+      error: err => {
+        console.error('Error fetching shifts:', err);
+        this.shiftDetails = [];
+        this.leaveAllocationForm.get('shift')?.reset();
+        this.leaveAllocationForm.get('shift')?.disable();
+      }
+    });
   }
 
   navigateView(jobId: number) {

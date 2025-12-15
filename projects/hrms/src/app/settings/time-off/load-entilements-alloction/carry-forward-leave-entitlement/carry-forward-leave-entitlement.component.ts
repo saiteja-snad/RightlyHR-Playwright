@@ -119,6 +119,7 @@ export class CarryForwardLeaveEntitlementComponent {
     const params: any = {
       pageNumber: this.page,
       pageSize: this.pageSize,
+      jobType:'Carry Forward',
       searchTerm: this.searchQuery,
       ...this.activeFilters   // merge filters here
     };

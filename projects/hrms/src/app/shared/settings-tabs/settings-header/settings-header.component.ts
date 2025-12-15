@@ -309,6 +309,12 @@ export class SettingsHeaderComponent implements OnInit {
       this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Leave Carry Forward';
     }
+
+      else if (url.startsWith('/settings/timeoff-configurations/intial-leave-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Initial Leave Entitlements';
+    }
   }
   isShowsettingsRoute(): boolean {
     const hidePaths = [

@@ -90,7 +90,6 @@
                             class="form-select custom-select" display="chip">
 
                             <ng-template pTemplate="selectedItems" let-selectedItems>
-                                <span *ngIf="!selectedItems?.length">Please select category name</span>
                                 <span *ngFor="let item of selectedItems; let i = index">
                                     {{ item.name }}<span *ngIf="i < selectedItems.length - 1">, </span>
                                 </span>

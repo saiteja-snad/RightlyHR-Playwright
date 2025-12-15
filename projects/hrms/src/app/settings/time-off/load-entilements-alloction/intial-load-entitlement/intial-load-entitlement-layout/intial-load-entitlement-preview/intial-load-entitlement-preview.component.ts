@@ -50,41 +50,92 @@ export class IntialLoadEntitlementPreviewComponent {
 
   leaveHeaders: any[] = [];
   employeesTableData: any[] = [];
+  leaveEntries: any[] = []
+mapEmployees(employees: any[]) {
+  const headerMap = new Map<string, any>();
 
-  mapEmployees(employees: any[]) {
-    const headerMap = new Map<string, any>();
+  this.employeesTableData = employees.map(emp => {
+    const leaveValues: any = {};
+    const leaveEntries: any[] = []; // ✅ PER EMPLOYEE
 
-    this.employeesTableData = employees.map(emp => {
-      const leaveValues: any = {};
+    emp.leaveCategories.forEach((lc: any) => {
+      const category = lc.orgLeaveCategories;
+      const code = category.categoryCode;
 
-      emp.leaveCategories.forEach((lc: any) => {
-        const category = lc.orgLeaveCategories;
-        const code = category.categoryCode;
+      leaveValues[code] = lc.allowedDays;
 
-        leaveValues[code] = lc.allowedDays;
-
-        // collect headers only once
-        if (!headerMap.has(code)) {
-          headerMap.set(code, {
-            code,
-            name: category.name,
-            color: category.categoryColor
-          });
-        }
+      leaveEntries.push({
+        leaveCategoryId: lc.categoryId, // ✅ REQUIRED
+        categoryCode: code,
+        allowedDays: lc.allowedDays
       });
 
-      return {
-        employeeName: `${emp.firstName} ${emp.lastName}`,
-        joinedDate: emp.dateOfJoining,
-        location: emp.locationName,
-        shift: emp.shiftName,
-        grade: emp.gradeName,
-        leaveValues
-      };
+      if (!headerMap.has(code)) {
+        headerMap.set(code, {
+          code,
+          name: category.name,
+          color: category.categoryColor
+        });
+      }
     });
 
-    this.leaveHeaders = Array.from(headerMap.values());
-  }
+    return {
+      employeeId: emp.employeeId,
+      gradeId: emp.gradeId,
+      employeeName: `${emp.firstName} ${emp.lastName}`,
+      joinedDate: emp.dateOfJoining,
+      location: emp.locationName,
+      shift: emp.shiftName,
+      grade: emp.gradeName,
+      leaveValues,
+      leaveEntries // ✅ attached correctly
+    };
+  });
 
+  this.leaveHeaders = Array.from(headerMap.values());
+}
+
+
+
+ buildCarryForwardPayload() {
+  return {
+    jobType: "InitialLoad",
+    year: this.carryforwarddata.year,
+    locationId: this.carryforwarddata.location.id,
+    subLocationId: this.carryforwarddata.subLocation.id,
+    shiftId: this.carryforwarddata.shift.id,
+    notes: '',
+    initiatedBy: this.empinfo.employeeId,
+
+    requestPayload: {
+      employees: this.employeesTableData.map(emp => ({
+        employeeId: emp.employeeId,
+        gradeId: emp.gradeId,
+
+        entitlementsData: (emp.leaveEntries || [])
+          .filter((x: { allowedDays: number; }) => x.allowedDays > 0)
+          .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
+            leaveCategoryId: x.leaveCategoryId,
+            noOfDays: x.allowedDays
+          }))
+      }))
+    }
+  };
+}
+
+
+
+  submit() {
+    const body = this.buildCarryForwardPayload();
+    this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
+        this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'])
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
 
 }

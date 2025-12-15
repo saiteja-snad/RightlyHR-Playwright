@@ -860,6 +860,8 @@ export const permissionsData = [
   { fields: 'My Team Performance Review', View: false, Update: false, Create: false, Delete: false },
   { fields: 'KRA', View: false, Update: false, Create: false, Delete: false },
   { fields: 'KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Assign KRA KPI', View: false, Update: false, Create: false, Delete: false },
+
 
 
   //Review Cycle List Actions
@@ -924,6 +926,7 @@ export const permissionsData = [
   //PMS Configuration Module
   { fields: 'Increment Percentage', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Configuration', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Configuration', View: false, Update: false, Create: false, Delete: false },
 
   //Increment Percentage Actions
   { fields: 'Increment Create', View: false, Update: false, Create: false, Delete: false },
@@ -938,6 +941,13 @@ export const permissionsData = [
   { fields: 'Assessor Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
+
+    //Kra Configuration Actions
+  { fields: 'Kra Create', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
   //Holidays Tabs Sections
   { fields: 'Public Holidays Tab', View: false, Update: false, Create: false, Delete: false },

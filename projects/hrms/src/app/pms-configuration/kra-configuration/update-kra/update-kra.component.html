@@ -1,0 +1,55 @@
+<div class="custom-main-popup-container" ngbAutofocus>
+  <div class="custom-poup-header-content popup-header-border">
+    <div>
+      <p class="popup-heading mb-0">Update KRA Category</p>
+    </div>
+    <div>
+      <a (click)="openconfirmationModelforcancle(cancel, updateForm)">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+  </div>
+
+  <div class="custom-main-popup-content">
+    <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && onUpdate()">
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <label class="form-label custom-label">Category Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" name="categoryName" [(ngModel)]="kra.categoryName" required>
+          <div class="error-msg" *ngIf="updateForm.submitted && !kra.categoryName">Required</div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <label class="form-label custom-label">Category Code <span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" name="categoryCode" [(ngModel)]="kra.categoryCode" required>
+          <div class="error-msg" *ngIf="updateForm.submitted && !kra.categoryCode">Required</div>
+        </div>
+
+        <div class="col-12 mb-4">
+          <label class="form-label custom-label">Description</label>
+          <textarea class="form-control custom-input" rows="4" name="description" [(ngModel)]="kra.description"></textarea>
+        </div>
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel, updateForm)">Cancel</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid || isLoading">
+          @if(!isLoading) { Update } @else { Updating... }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<ng-template #cancel let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">Yes</button>
+    </div>
+  </div>
+</ng-template>

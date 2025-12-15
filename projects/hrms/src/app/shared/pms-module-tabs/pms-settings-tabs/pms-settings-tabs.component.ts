@@ -28,6 +28,13 @@ export class PmsSettingsTabsComponent implements OnInit {
       description: MODULE_INFOS.PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO,
       permission: { feature: 'Assessor Configuration', action: 'view' }
     },
+    {
+      label: 'KRA Configuration',
+      link: '/pmsconfiguration/kra',
+      icon: '/main-menu-icons/sssessor-configuration.png',
+      description: MODULE_INFOS.PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO,
+      permission: { feature: 'Kra Configuration', action: 'view' }
+    },
   ];
 
   constructor(private rbac: RbacService) { }

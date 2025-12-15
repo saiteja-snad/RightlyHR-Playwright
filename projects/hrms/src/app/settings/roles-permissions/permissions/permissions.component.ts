@@ -1174,7 +1174,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Performance Review',
     'My Team Performance Review',
     'KRA',
-    'KPI'
+    'KPI',
+    'Assign KRA KPI'
   ];
   reviewCycleListActionsFields = [
     'Create Review Cycle',
@@ -1227,7 +1228,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Team Promotion Letter Download',
     'Team Appraisal Letter Download',
   ];
-  pmsConfigurationFields = ['Increment Percentage', 'Assessor Configuration'];
+  pmsConfigurationFields = ['Increment Percentage', 'Assessor Configuration', 'Kra Configuration'];
   incrementActionsFields = [
     'Increment Create',
     'Increment Update(Status - Created)',
@@ -1241,6 +1242,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Assessor Delete(Status - Created)',
     'Assessor Update(Status - Initialted)',
     'Assessor Update(Status - Review On Hold)',
+  ];
+    kraFields = [
+    'Kra Create',
+    'Kra Update(Status - Created)',
+    'Kra Delete(Status - Created)',
+    'Kra Update(Status - Initialted)',
+    'Kra Update(Status - Review On Hold)',
   ];
   employeeInfoPersonalSubTabsFields = [
     'Employee Info Basic Information',

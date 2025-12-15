@@ -1842,6 +1842,12 @@ export class AccessNavigationService {
           return (route = '/pms/kra');
         }
         break;
+
+       case '/pms/assign-kra-kpi':
+        if (this.rbac.allowedToAccess('Assign KRA KPI.view')) {
+          return (route = '/pms/assign-kra-kpi');
+        }
+        break;
     }
     return route;
   }

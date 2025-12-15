@@ -1,0 +1,37 @@
+.p-dropdown-panel {
+  z-index: 9999 !important;
+  position: absolute !important;
+}
+
+/* Allow dropdown to expand outside table */
+.custom-main-popup-container,
+.custom-main-popup-content,
+.custom-popup-table,
+.custom-popup-table table,
+.custom-popup-table tr,
+.custom-popup-table td {
+  overflow: visible !important;
+}
+
+/* Dropdown root */
+.p-dropdown {
+  overflow: visible !important;
+}
+
+.custom-kpi-canvas {
+  z-index: 1081 !important; /* higher than modal (1055-1060) */
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}

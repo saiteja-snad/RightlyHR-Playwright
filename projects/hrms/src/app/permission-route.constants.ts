@@ -463,7 +463,8 @@ export const PMS_TABS = [
   { route: '/pms/myPerformance', permission: 'My Performance Review.view' },
   { route: '/pms/team-performance', permission: 'My Team Performance Review.view' },
   { route: '/pms/kra', permission: 'KRA.view' },
-  { route: '/pms/kpi', permission: 'KPI.view' }
+  { route: '/pms/kpi', permission: 'KPI.view' },
+  { route: '/pms/assign-kra-kpi', permission: 'Assign KRA KPI.view' },
 ]
 
 export const MY_PERFORMANCE_TABS = [
@@ -478,7 +479,9 @@ export const TEAM_PERFORMANCE_TABS = [
 
 export const PMS_CONFIGURATION_TABS = [
   { route: '/pmsconfiguration/increment', permission: 'Increment Percentage.view' },
-  { route: '/pmsconfiguration/assessor', permission: 'Assessor Configuration.view' }
+  { route: '/pmsconfiguration/assessor', permission: 'Assessor Configuration.view' },
+  { route: '/pmsconfiguration/kra', permission: 'Kra Configuration.view' }
+
 ]
 
 export const EVENTS_SUB_TABS = [

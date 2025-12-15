@@ -14,6 +14,7 @@ import { ViewComponent } from "./review-cycle-list/view/view.component";
 import { PermissionsGuard } from "../guards/permissions.guard";
 import { KraComponent } from "./kra/kra.component";
 import { KpiComponent } from "./kpi/kpi.component";
+import { AssignKraKpiComponent } from "./assign-kra-kpi/assign-kra-kpi.component";
 
 export default [
     { path: '', redirectTo: '/pms/review-cycle', pathMatch: 'full' },
@@ -39,4 +40,5 @@ export default [
     },
     { path: 'kra', component: KraComponent, canActivate: [PermissionsGuard], data: { permission: 'KRA.view' } },
     { path: 'kpi', component: KpiComponent, canActivate: [PermissionsGuard], data: { permission: 'KPI.view' } },
+    { path: 'assign-kra-kpi', component: AssignKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'Assign KRA KPI.view' } },
 ] as Route[];

@@ -1,0 +1,134 @@
+<!-- kra-configuration.component.html -->
+<div class="custom-main-component-container">
+
+  <div class="component-header-content">
+    <div>
+      <app-settings-header />
+    </div>
+    <!-- @if(rbac.allowedToAccess('Kra Create.view')) { -->
+    <div>
+      <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
+    </div>
+    <!-- } -->
+  </div>
+
+  <div class="w-100">
+    <!-- Search -->
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="search" class="form-control custom-search-input"
+             placeholder="Search by category name or code"
+             [(ngModel)]="searchText"
+             (ngModelChange)="onSearchTextChange()"
+             aria-label="Search">
+    </div>
+
+    <!-- Table -->
+    <div class="custom-table-content">
+      @if(!dataload) {
+      <table class="w-100">
+        <thead>
+          <th>Category Name</th>
+          <th class="text-center">Category Code</th>
+          <th class="text-center">Description</th>
+          <th class="text-center">Status</th>
+          @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
+          <th class="text-center">Action</th>
+          }
+        </thead>
+        <tbody>
+          @if(kraCategories.length > 0) {
+            @for (item of kraCategories; track item.categoryId) {
+            <tr>
+              <td>{{ item.categoryName || '-' }}</td>
+              <td class="text-center">{{ item.categoryCode || '-' }}</td>
+              <td>
+                <div class="text-center" *ngIf="item?.description; else noDescription">
+                  <app-info-icon ngbPopover="{{ item?.description }}" container="body">
+                  </app-info-icon>
+                </div>
+                <ng-template #noDescription>NA</ng-template>
+              </td>
+              <td class="text-center">
+                <span class="kra-status" [ngClass]="getStatusClass(item.status)">
+                  {{ item.status || 'Inactive' }}
+                </span>
+
+              </td>
+
+              @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
+              <td class="text-center">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    @if(rbac.allowedToAccess('Kra Update(Status - Created).view')) {
+                    <li>
+                      <a class="dropdown-item" (click)="editDetails(item)"><i class="bi bi-pencil me-2"></i>Update</a>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
+                    <li>
+                      <a class="dropdown-item text-danger" (click)="openDelete(confirmation, item.categoryId)">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                    }
+                  </ul>
+                </div>
+              </td>
+              }
+            </tr>
+            }
+          } @else {
+            <tr>
+              <td colspan="5">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      } @else {
+      <app-data-loader-content />
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if(kraCategories.length > 0) {
+    <div class="pagination-content">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let opt of pageOptions" [value]="opt">{{ opt }}</option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{ collectionSize }}
+          </span>
+        </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                     (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<ng-template #confirmation let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div class="text-center mb-3">
+      <img src="icons/delete-icon.png" alt="delete" class="confirmation-delete-icon">
+      <p class="confirmation-text mt-3">Are you sure you want to delete this KRA Category?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+      <button type="button" class="custom-btn btn-primary" (click)="deleteCategory(); modal.dismiss()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>

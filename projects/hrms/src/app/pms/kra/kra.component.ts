@@ -16,6 +16,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
+import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 
 @Component({
   selector: 'app-kra',
@@ -31,7 +32,8 @@ import { SelectModule } from 'primeng/select';
     NoDataFoundComponent,
     ModuleInformationComponent,
     ModuleInfoIconComponent,
-    SelectModule
+    SelectModule,
+    InfoIconComponent
   ],
   templateUrl: './kra.component.html',
   styleUrl: './kra.component.scss',
@@ -59,14 +61,7 @@ export class KraComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
 
-  // Static KRA Categories
-  kraCategories = [
-    { id: 1, name: 'Financial Performance' },
-    { id: 2, name: 'Customer Satisfaction' },
-    { id: 3, name: 'Operational Excellence' },
-    { id: 4, name: 'Team Development' },
-    { id: 5, name: 'Innovation & Growth' },
-  ];
+kraCategories: { id: number; name: string }[] = [];
 
   isEditMode = false;
 currentEditingKraId: number | null = null;
@@ -124,12 +119,9 @@ kpiList: any[] = [];
     this.kraForm = this.fb.group({
       categoryId: [null as number | null, Validators.required],
       kraName: ['', [Validators.required, Validators.minLength(5)]],
-      effectiveDate: ['', Validators.required],
-      targetDate: ['', Validators.required],
-      weightageValue: [null as number | null, [Validators.required, Validators.min(1), Validators.max(100)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       attachment: [null as File | null],
-    }, { validators: this.targetDateValidator });
+    }, {});
 
     this.assignKpiForm = this.fb.group({
   kraName: [{ value: '', disabled: true }],
@@ -174,6 +166,7 @@ createRoleRow() {
   ngOnInit(): void {
     this.loadKraList();
     this.updateModuleInfo();
+    this.loadKraCategories();
 
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
@@ -218,6 +211,27 @@ createRoleRow() {
     });
   }
 
+  loadKraCategories(): void {
+
+  this.http.getData('Kra/getallconfiguration').subscribe({
+    next: (res: any) => {
+      if (res.success && res.data) {
+        // Map API response to format expected by p-select
+        this.kraCategories = res.data.map((cat: any) => ({
+          id: cat.categoryId,
+          name: cat.categoryName
+        }));
+      } else {
+        this.kraCategories = [];
+      }
+    },
+    error: (err: any) => {
+      console.error('Error loading KRA categories:', err);
+      this.kraCategories = [];
+    },
+  });
+}
+
   onSearchTextChange() {
     this.page = 1;
     this.first = 0;
@@ -245,14 +259,6 @@ openCreateModal() {
   this.modalService.open(this.createKraModal, { centered: true, backdrop: 'static', size: 'lg' });
 }
 
-  targetDateValidator(control: AbstractControl): ValidationErrors | null {
-    const effective = control.get('effectiveDate')?.value;
-    const target = control.get('targetDate')?.value;
-    if (effective && target && new Date(target) < new Date(effective)) {
-      return { targetDateBeforeEffective: true };
-    }
-    return null;
-  }
 
   getCategoryName(id: number): string {
     return this.kraCategories.find(c => c.id === id)?.name || '-';
@@ -315,11 +321,8 @@ onSubmitKra() {
 
   const payload: any = {
     kraId: this.isEditMode ? this.currentEditingKraId : 0,
-    categoryId: this.kraForm.value.categoryId,
+    kraCategoryId: this.kraForm.value.categoryId,
     kraName: this.kraForm.value.kraName?.trim(),
-    effectiveDate: this.kraForm.value.effectiveDate,
-    targetDate: this.kraForm.value.targetDate,
-    weightageValue: String(this.kraForm.value.weightageValue),
     description: this.kraForm.value.description?.trim(),
      createdBy: this.isEditMode ? undefined : employeeId,
     updatedBy: employeeId
@@ -353,9 +356,6 @@ onUpdate(kra: any) {
   this.kraForm.patchValue({
     categoryId: kra.categoryId,
     kraName: kra.kraName,
-    effectiveDate: kra.effectiveDate.split('T')[0], // Format: YYYY-MM-DD
-    targetDate: kra.targetDate.split('T')[0],
-    weightageValue: kra.weightageValue,
     description: kra.description,
   });
 

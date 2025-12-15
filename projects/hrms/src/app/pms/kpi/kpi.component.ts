@@ -1,7 +1,7 @@
 import { OpenModalService } from './../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors, FormArray, } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
@@ -15,10 +15,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { AccordionModule } from 'primeng/accordion';
 import { TooltipModule } from 'primeng/tooltip';
-import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
+import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+
 @Component({
   selector: 'app-kpi',
   standalone: true,
@@ -33,10 +33,10 @@ import { SelectModule } from 'primeng/select';
     NoDataFoundComponent,
     ModuleInformationComponent,
     ModuleInfoIconComponent,
-    AccordionModule,
     TooltipModule,
-    DropdownModule,
-    SelectModule
+    SelectModule,
+    TooltipModule,
+    InfoIconComponent
   ],
   templateUrl: './kpi.component.html',
   styleUrl: './kpi.component.scss',
@@ -56,7 +56,6 @@ export class KpiComponent implements OnInit, OnDestroy {
   filteredDetails: any[] = [];
   dataload = false;
   isSubmitting = false;
-  groupedKpis: { kraId: number; kraName: string; kpis: any[] }[] = [];
 
   page = 1;
   rows = 10;
@@ -70,41 +69,43 @@ export class KpiComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
 
-  // KRA List (to show in dropdown)
+  // Dropdown options
+  kpiTypes = [
+    { label: 'Quantitative', value: 'Quantitative' },
+    { label: 'Qualitative', value: 'Qualitative' }
+  ];
+
+  uomOptions = [
+    { label: 'Percentage (%)', value: '%' },
+    { label: 'Currency ($)', value: '$' },
+    { label: 'Numbers (Nos)', value: 'Nos' },
+    { label: 'Hours (Hrs)', value: 'Hrs' },
+    { label: 'Days', value: 'Days' }
+  ];
+
+  // KRA List (still loaded if needed elsewhere in template)
   kraList: any[] = [];
   isEditMode = false;
-  currentKraId: number | null = null;
+  currentKpiId: number | null = null;
 
-  // Main form
-  kpiForm = this.fb.group(
-    {
-      kraId: [null, Validators.required],
-      weightage: [
-        null,
-        [Validators.required, Validators.min(1), Validators.max(100)],
-      ],
-      effectiveDate: ['', Validators.required],
-      targetDate: ['', Validators.required],
-      kpiRows: this.fb.array([]), // Dynamic KPI rows
-    },
-    { validators: this.targetDateValidator }
-  );
+  // Simplified single KPI form
+  kpiForm = this.fb.group({
+    kpiName: ['', [Validators.required, Validators.minLength(5)]],
+    uom: ['', Validators.required],
+    targetValue: [null as number | null, [Validators.required, Validators.min(0)]],
+    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]]
+  });
 
   // Getter for form controls
   get f() {
     return this.kpiForm.controls;
   }
 
-  // Getter for KPI rows FormArray
-  get kpiRows(): FormArray {
-    return this.kpiForm.get('kpiRows') as FormArray;
-  }
-
   private subscription!: Subscription;
 
   ngOnInit(): void {
-    this.loadKraList(); // Load KRA dropdown
-    this.loadKpiList(); // Load existing KPIs
+    this.loadKraList();
+    this.loadKpiList();
     this.updateModuleInfo();
 
     this.router.events
@@ -117,7 +118,6 @@ export class KpiComponent implements OnInit, OnDestroy {
     // this.moduleinfo = url.includes('/pms/kpi') ? MODULE_INFOS.PMS_KPI_LIST_MODULE_INFO : '';
   }
 
-  // Load KRA dropdown
   loadKraList() {
     this.http.getData('Kra/getAll').subscribe({
       next: (res: any) => {
@@ -129,65 +129,36 @@ export class KpiComponent implements OnInit, OnDestroy {
     });
   }
 
-  onKraChange() {
-    const selectedKraId = this.kpiForm.get('kraId')?.value;
-    if (selectedKraId) {
-      const selectedKra = this.kraList.find(k => k.kraId === selectedKraId);
-      if (selectedKra) {
-        this.kpiForm.patchValue({
-          weightage: selectedKra.weightageValue,           // auto-fill weightage
-          effectiveDate: selectedKra.effectiveDate.split('T')[0], // format YYYY-MM-DD
-          targetDate: selectedKra.targetDate.split('T')[0],       // format YYYY-MM-DD
-        });
-      }
-    }
-  }
-
   loadKpiList() {
-    const params = {
-      page: this.page,
-      pageSize: this.rows,
-      ...(this.searchText && { searchQuery: this.searchText }),
-    };
+  const params = {
+    pageNumber: this.page,
+    pageSize: this.rows,
+    ...(this.searchText && { searchQuery: this.searchText }),
+  };
 
-    this.dataload = true;
-    this.subscription = this.http.getDataIncludeParams('Kpi/getAll', params).subscribe({
-      next: (res: any) => {
-        const kpis = res.data || [];
+  this.dataload = true;
+  this.subscription = this.http.getDataIncludeParams('Kpi/getAll', params).subscribe({
+    next: (res: any) => {
+      if (res.success) {
+        this.kpiList = res.data || [];
         this.collectionSize = res.pagination?.totalRecords || 0;
-
-        // Group KPIs by kraId + kraName
-        const map = new Map<number, { kraId: number; kraName: string; kpis: any[] }>();
-
-        kpis.forEach((kpi: any) => {
-          const kraId = kpi.kraId;
-          const kraName = kpi.kraName || 'Unknown KRA';
-
-          if (!map.has(kraId)) {
-            map.set(kraId, { kraId, kraName, kpis: [] });
-          }
-          map.get(kraId)!.kpis.push(kpi);
-        });
-
-        this.groupedKpis = Array.from(map.values())
-          .sort((a, b) => a.kraName.localeCompare(b.kraName));
-
-        this.filteredDetails = kpis;
-        this.dataload = false;
-
-        console.log("Grouped KPIs =>", this.groupedKpis);
-        console.log("Raw KPIs =>", kpis);
-        console.log("Data load =>", this.dataload);
-
-      },
-      error: (err) => {
-        console.error(err);
-        this.groupedKpis = [];
+        this.filteredDetails = this.kpiList; // Flat list now
+      } else {
+        this.kpiList = [];
+        this.filteredDetails = [];
         this.collectionSize = 0;
-        this.dataload = false;
       }
-    });
-  }
+      this.dataload = false;
+    },
+    error: (err) => {
+      console.error(err);
+      this.kpiList = [];
+      this.filteredDetails = [];
+      this.collectionSize = 0;
+      this.dataload = false;
+    }
+  });
+}
 
   onSearchTextChange() {
     this.page = 1;
@@ -211,159 +182,81 @@ export class KpiComponent implements OnInit, OnDestroy {
 
   openModal(content: any) {
     this.isEditMode = false;
-    this.currentKraId = null;
+    this.currentKpiId = null;
     this.kpiForm.reset();
-    this.kpiRows.clear();
-    this.addKpiRow(); // Start with one empty row
 
-    this.kpiForm.get('kraId')?.enable();
-    this.kpiForm.get('weightage')?.enable();
-    this.kpiForm.get('effectiveDate')?.enable();
-    this.kpiForm.get('targetDate')?.enable();
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
-      size: 'xl',
+      size: 'lg'
     });
-  }
-
-  targetDateValidator(control: AbstractControl): ValidationErrors | null {
-    const effective = control.get('effectiveDate')?.value;
-    const target = control.get('targetDate')?.value;
-    if (effective && target && new Date(target) < new Date(effective)) {
-      return { targetDateBeforeEffective: true };
-    }
-    return null;
-  }
-
-
-  get totalWeightage(): number {
-    return this.kpiRows.controls.reduce((sum, row) => {
-      const weightage = row.get('weightage')?.value || 0;
-      return sum + (Number(weightage) || 0);
-    }, 0);
-  }
-
-
-  canAddRow(): boolean {
-    return this.totalWeightage < 100;
-  }
-
-
-  // Add a new KPI row
-  addKpiRow() {
-    if (this.totalWeightage >= 100) return;
-    this.kpiRows.push(
-      this.fb.group({
-        kpiName: ['', [Validators.required, Validators.minLength(5)]],
-        weightage: [
-          null,
-          [Validators.required, Validators.min(1), Validators.max(100), Validators.pattern(/^[0-9]+$/)],
-        ],
-        uom: ['', Validators.required],
-        targetValue: [null, Validators.required],
-        targetDate: ['', Validators.required],
-        description: ['', [Validators.required, Validators.minLength(10)]],
-      })
-    );
-  }
-
-  // Remove a KPI row
-  removeKpiRow(index: number) {
-    this.kpiRows.removeAt(index);
   }
 
   onSubmitKpi() {
-    if (this.kpiForm.invalid || this.kpiRows.length === 0) return;
+    if (this.kpiForm.invalid) return;
 
     this.isSubmitting = true;
 
+    // Safely extract values — all are guaranteed non-null due to Validators.required
     const formValue = this.kpiForm.getRawValue();
 
-    const payload = this.kpiRows.getRawValue().map((row: any, index: number) => {
-      const originalKpi = this.kpiList.find(k =>
-        k.kraId === formValue.kraId &&
-        k.kpiName === row.kpiName &&
-        k.weightageValue === String(row.weightage)
-      );
+    const payload = {
+      kpiId: this.currentKpiId || 0,
+      kpiName: formValue.kpiName!.trim(),
+      targetType: formValue.uom!,
+      targetValue: String(formValue.targetValue!),
+      description: formValue.description!.trim(),
+      status: "Created"
+      // kraId: ... (add if required by backend)
+    };
 
-      return {
-        kpiId: originalKpi?.kpiId || 0,
-        kraId: formValue.kraId,
-        kpiName: row.kpiName.trim(),
-        targetType: row.uom,
-        targetValue: String(row.targetValue),
-        weightageValue: String(row.weightage),
-        targetDate: row.targetDate,
-        description: row.description.trim(),
-        status: "Created",
-      };
-    });
+    const endpoint = this.isEditMode ? 'Kpi/upsertkra' : 'Kpi/upsertkra';
 
-    this.http.postdata('Kpi/upsertkra', payload).subscribe({
+    this.http.postdata(endpoint, payload).subscribe({
       next: () => {
         this.modalService.dismissAll();
         this.loadKpiList();
         this.conformationPopup.openSuccessModal(
-          this.isEditMode ? 'KPIs updated successfully' : 'KPIs created successfully'
+          this.isEditMode ? 'KPI updated successfully' : 'KPI created successfully'
         );
       },
       error: (err) => {
         console.error(err);
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save KPIs');
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save KPI');
       },
       complete: () => {
         this.isSubmitting = false;
         this.isEditMode = false;
-        this.currentKraId = null;
+        this.currentKpiId = null;
         this.kpiForm.reset();
-        this.kpiRows.clear();
       }
     });
   }
 
-  hasAnyActionPermission(): boolean {
-    return true
+    hasAnyActionPermission(): boolean {
+    return true;
   }
 
-  onUpdate(kpi: any, content: any) {  // ← Add `content` parameter
+  onUpdate(kpi: any, content: any) {
     this.isEditMode = true;
-    this.currentKraId = kpi.kraId;
-    const selectedKra = this.kraList.find(k => k.kraId === kpi.kraId);
-    this.kpiForm.reset();
-    this.kpiRows.clear();
+    this.currentKpiId = kpi.kpiId || kpi.id || 0;
+
     this.kpiForm.patchValue({
-      kraId: kpi.kraId,
-      weightage: selectedKra?.weightageValue,
-      effectiveDate: selectedKra?.effectiveDate.split('T')[0],
-      targetDate: selectedKra?.targetDate.split('T')[0],
+      kpiName: kpi.kpiName || '',
+      uom: kpi.targetType || '',
+      targetValue: kpi.targetValue != null ? Number(kpi.targetValue) : null,
+      description: kpi.description || ''
     });
-    this.kpiForm.get('kraId')?.disable();
-    this.kpiForm.get('weightage')?.disable();
-    this.kpiForm.get('effectiveDate')?.disable();
-    this.kpiForm.get('targetDate')?.disable();
-    const kpisForKra = this.groupedKpis.find(g => g.kraId === kpi.kraId)?.kpis || [];
-    kpisForKra.forEach(k => {
-      this.kpiRows.push(this.fb.group({
-        kpiName: [k.kpiName, [Validators.required, Validators.minLength(5)]],
-        weightage: [Number(k.weightageValue), [Validators.required, Validators.min(1), Validators.max(100)]],
-        uom: [k.targetType, Validators.required],
-        targetValue: [Number(k.targetValue), Validators.required],
-        targetDate: [k.targetDate.split('T')[0], Validators.required],
-        description: [k.description, [Validators.required, Validators.minLength(10)]],
-      }));
-    });
-    if (this.kpiRows.length === 0) this.addKpiRow();
-    // Now open using the passed content
+
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
-      size: 'xl',
+      size: 'lg'
     });
   }
 
   onView(kpi: any) {
-    alert('View: ' + (kpi.kpiTitle || kpi.kpiName));
+    alert('View: ' + (kpi.kpiName || 'KPI'));
   }
 
   getStatusClass(status: string) {
@@ -378,6 +271,26 @@ export class KpiComponent implements OnInit, OnDestroy {
         return '';
     }
   }
+
+  onMakeInactive(kpi: any) {
+  if (confirm(`Are you sure you want to make "${kpi.kpiName}" Inactive?`)) {
+    const payload = {
+      kpiId: kpi.kpiId,
+      status: 'Inactive',
+      updatedBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0
+    };
+
+    this.http.postdata('Kpi/upsertkra', payload).subscribe({
+      next: () => {
+        this.loadKpiList();
+        this.conformationPopup.openSuccessModal('KPI status updated to Inactive');
+      },
+      error: (err) => {
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
+      }
+    });
+  }
+}
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();

@@ -1,0 +1,379 @@
+<!-- assign-kra-kpi.component.html -->
+<div class="custom-main-component-container">
+
+  <!-- Header with Assign Button -->
+  <!-- Header with Assign Button + Filters -->
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name cursor">
+        PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{ 'Assign KRA / KPI' | translate }}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <!-- Wrap all filter dropdowns in a form -->
+    <form [formGroup]="filterForm" class="d-flex flex-wrap gap-3 align-items-end">
+      <div>
+        <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          Clear All
+        </button>
+      </div>
+      <div class="flex-grow-1" style="min-width: 200px;">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+            resetFilterOnHide="true" filterBy="designationName" formControlName="jobRole" placeholder="Job Role"
+            class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="flex-grow-1" style="min-width: 200px;">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentDetails" optionLabel="departmentName" formControlName="department"
+            placeholder="Department" (onChange)="onDepartmentChange($event.value)" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="flex-grow-1" style="min-width: 200px;">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="teamDropdownValues" optionLabel="subdepartmentName" formControlName="team"
+            placeholder="Team" class="form-select custom-select" (onChange)="onTeamChange($event.value)">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="flex-grow-1" style="min-width: 200px;">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="location"
+            placeholder="Location" (onChange)="getSubLocationByid($event.value)" class="form-select custom-select">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="flex-grow-1" style="min-width: 200px;">
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="subLocationsDropdown" optionLabel="jobSubLocationName" formControlName="subLocation"
+            placeholder="Sub Location" class="form-select custom-select" (onChange)="onSubLocationChange($event.value)">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div>
+        <button class="custom-btn btn-primary" (click)="openAssignModal(assignKraKpiModal)">
+          {{ 'Assign KRA' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  <!-- Selected Records Header (Bulk Actions Placeholder - can be extended later) -->
+  @if (selectedItems.length > 0 && multiSelect) {
+  <div class="component-header-content mt-3">
+    <div class="component-sub-header">Selected Records: {{ selectedItems.length }}</div>
+    <div class="d-flex gap-3">
+      <!-- Placeholder for future bulk actions -->
+      <!-- Example: <button class="custom-btn btn-primary-approve">Bulk Approve</button> -->
+    </div>
+  </div>
+  }
+
+  <!-- Search Box -->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
+    <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
+      placeholder="Search by KRA name..." (ngModelChange)="onSearchTextChange()" autocomplete="off">
+  </div>
+
+  <!-- Table -->
+  @if (!dataload) {
+  <div class="custom-p-multi-select-table">
+    <p-table #dt [value]="kraList" [(selection)]="selectedItems" dataKey="kraId" [tableStyle]="{'min-width': '50rem'}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+          <th>{{ 'Employee Name' | translate }}</th>
+          <th class="text-center">{{ 'Review Cycle' | translate }}</th>
+          <th class="text-center">{{ 'KRA' | translate }}</th>
+          <th class="text-center">{{ 'Total KPIs' | translate }}</th>
+          <th class="text-center">{{ 'Weightage (%)' | translate }}</th>
+          <th class="text-center">{{ 'Effective Date' | translate }}</th>
+          <th class="text-center">{{ 'Target Date' | translate }}</th>
+          <th class="text-center">{{ 'Action' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-kra>
+        <tr>
+          <td><p-tableCheckbox [value]="kra" /></td>
+          <td>{{ kra.employeedata.fullName  || "-" }}</td>
+          <td class="text-center">{{ kra?.reviewCycleData?.reviewCycleName || "-" }}</td>
+          <td class="text-center">{{ kra.kraName || "-" }}</td>
+          <td class="text-center">{{ kra.kpiCount || "-" }}</td>
+          <td class="text-center">{{ kra.weightageValue || "-" }}</td>
+          <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
+          <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
+          <td class="text-center">
+            <div class="dropdown">
+              <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                <i class="bi bi-three-dots-vertical text-muted"></i>
+              </span>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li class="dropdown-item" (click)="onUpdate(kra)">
+                  <a class="dropdown-custom-btn">
+                    <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                  </a>
+                </li>
+                <li class="dropdown-item" (click)="onHold(kra)">
+                  <a class="dropdown-custom-btn text-warning">
+                    <i class="bi bi-pause-circle me-2"></i>{{ 'On Hold' | translate }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center py-4">
+            <app-no-data-found />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Pagination -->
+  @if (kraList.length > 0) {
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          @for (option of options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{
+          collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
+  } @else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }
+</div>
+
+<!-- ASSIGN KRA/KPI MODAL - UNCHANGED -->
+<ng-template #assignKraKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">
+        {{ 'Assign KRA & KPIs' | translate }}
+      </p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="assignForm" (ngSubmit)="onSubmitAssign()">
+        <!-- Top Section: KRA, Weightage, Review Cycle, Rating Scale -->
+        <div class="row g-3 mb-4">
+          <!-- KRA Selection -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'KRA' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="kraListForDropdown" optionLabel="kraName" optionValue="kraId"
+                class="form-select custom-select" placeholder="Select KRA" [filter]="true" resetFilterOnHide="true"
+                [showClear]="true" formControlName="kraId" (onChange)="onKraSelected()">
+              </p-select>
+            </div>
+            <div class="error-msg" *ngIf="assignForm.get('kraId')?.touched && assignForm.get('kraId')?.invalid">
+              Please select a KRA
+            </div>
+          </div>
+
+          <!-- Weightage (Read-only) -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Weightage (%)' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
+              placeholder="Enter weightage">
+
+          </div>
+
+          <!-- Effective Date -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+              onkeydown="return false">
+            <div class="error-msg"
+              *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
+              Effective Date is required
+            </div>
+          </div>
+
+          <!-- Target Date -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Target Date' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
+            <div class="error-msg"
+              *ngIf="assignForm.get('targetDate')?.touched && assignForm.get('targetDate')?.invalid">
+              Target Date is required
+            </div>
+          </div>
+
+          <!-- Review Cycle Dropdown -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Review Cycle' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
+                formControlName="reviewCycle">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="assignForm.get('reviewCycle')?.touched && assignForm.get('reviewCycle')?.invalid">
+              Please select a review cycle
+            </div>
+          </div>
+
+          <!-- Rating Scale Dropdown -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Rating Scale' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="ratingScaleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select Rating Scale" class="form-select custom-select" [filter]="true"
+                formControlName="ratingScale">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="assignForm.get('ratingScale')?.touched && assignForm.get('ratingScale')?.invalid">
+              Please select a rating scale
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic KPI Rows Table -->
+        <div class="custom-table custom-popup-table mb-4">
+          <table class="w-100">
+            <thead class="table-light">
+              <tr>
+                <th>{{ 'KPI Name' | translate }}</th>
+                <th>{{ 'Unit of Measurement' | translate }}</th>
+                <th>{{ 'Weightage' | translate }}</th>
+                <th>{{ 'Target Value' | translate }}</th>
+                <th>{{ 'Target Date' | translate }}</th>
+                <th>{{ 'Description' | translate }}</th>
+                <th class="text-center">{{ 'Actions' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="kpiRows">
+              @for (row of kpiRows.controls; track $index; let i = $index) {
+              <tr [formGroupName]="i">
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true"
+                      [showClear]="true" placeholder="Select or search KPI" class="form-select custom-select"
+                      formControlName="kpiId">
+                    </p-select>
+                  </div>
+                </td>
+                <!-- Unit of Measurement -->
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="uomOptions" optionLabel="label" optionValue="value" placeholder="Select UOM"
+                      [filter]="true" formControlName="uom">
+                    </p-select>
+                  </div>
+                </td>
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
+                    placeholder="e.g. 20">
+                </td>
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="targetValue"
+                    placeholder="e.g. 95">
+                </td>
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
+                </td>
+                <!-- Description -->
+                <td>
+                  <textarea class="form-control custom-input" rows="2" formControlName="description"
+                    placeholder="Enter description"></textarea>
+                </td>
+                <td class="text-center align-middle">
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+                    @if (i === kpiRows.length - 1) {
+                    <button type="button"
+                      class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+                      style="width: 32px; height: 32px;" [disabled]="!canAddRow()"
+                      [ngClass]="{'btn-outline-secondary': !canAddRow()}" (click)="addKpiRow()">
+                      <i class="bi bi-plus-circle"></i>
+                    </button>
+                    }
+                    @if (kpiRows.length > 1) {
+                    <button type="button"
+                      class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
+                      style="width: 32px; height: 32px;" (click)="removeKpiRow(i)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="text-danger small m-3" *ngIf="totalNewKpiWeightage > 100">
+            Note: Total KPI weightage cannot exceed 100%.
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="submit" class="custom-btn btn-primary"
+            [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canAddRow()">
+            @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2"></span> Assigning...
+            } @else {
+            {{ 'Assign' | translate }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

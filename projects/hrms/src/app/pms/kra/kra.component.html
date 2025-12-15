@@ -12,11 +12,11 @@
     </div>
 
     <!-- @if (rbac.allowedToAccess('Create KRA.view')) { -->
-      <div>
-        <button class="custom-btn btn-primary" (click)="openCreateModal()">
-          {{ 'Create KRA' | translate }}
-        </button>
-      </div>
+    <div>
+      <button class="custom-btn btn-primary" (click)="openCreateModal()">
+        {{ 'Create KRA' | translate }}
+      </button>
+    </div>
     <!-- } -->
   </div>
 
@@ -30,130 +30,134 @@
     <span class="input-group-text custom-input-group-search">
       <i class="bi bi-search"></i>
     </span>
-    <input
-      type="search"
-      class="form-control custom-search-input"
-      placeholder="Search by KRA name..."
-      [(ngModel)]="searchText"
-      (ngModelChange)="onSearchTextChange()"
-    />
+    <input type="search" class="form-control custom-search-input" placeholder="Search by KRA name..."
+      [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
   </div>
 
   <!-- Table -->
   @if (!dataload) {
-    <div class="custom-table-content w-100">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>{{ 'KRA Category' | translate }}</th>
-            <th>{{ 'KRA Title' | translate }}</th>
-            <th>{{ 'Weightage (%)' | translate }}</th>
-            <th>{{ 'Effective Date' | translate }}</th>
-            <th>{{ 'Target Date' | translate }}</th>
-            <th>{{ 'Status' | translate }}</th>
-            @if (hasAnyActionPermission()) {
-              <th class="text-center">{{ 'Action' | translate }}</th>
-            }
-          </tr>
-        </thead>
-        <tbody>
-          @if (filteredDetails.length > 0) {
-            @for (kra of filteredDetails; track kra.kraId) {
-              <tr>
-                <td>{{ getCategoryName(kra.categoryId) }}</td>
-                <td>{{ kra.kraName }}</td>
-                <td>{{ kra.weightageValue }}%</td>
-                <td>{{ kra.effectiveDate | date:'dd-MM-yyyy' }}</td>
-                <td>{{ kra.targetDate | date:'dd-MM-yyyy' }}</td>
-                <td>
-                  <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
-                    {{ kra.status }}
-                  </span>
-                </td>
-                <!-- Inside the table row, replace the entire <td> for Action with this: -->
-@if (hasAnyActionPermission()) {
-  <td class="text-center">
-    <div class="dropdown">
-      <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
-        <i class="bi bi-three-dots-vertical"></i>
-      </span>
-      <ul class="dropdown-menu custom-dropdown-menu">
-
-        <!-- Created Status -->
-        @if (kra.status === 'Created') {
-          <li class="dropdown-item" (click)="onUpdate(kra)">
-            <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
-          </li>
-          <li class="dropdown-item" (click)="onAssignKpi(kra)">
-            <a class="dropdown-custom-btn"><i class="bi bi-bullseye me-2"></i>{{ 'Assign KPI' | translate }}</a>
-          </li>
-          <li class="dropdown-item" (click)="onAssignByRole(kra)">
-            <a class="dropdown-custom-btn"><i class="bi bi-people me-2"></i>{{ 'Assign By Role' | translate }}</a>
-          </li>
-        }
-
-        <!-- Active Status -->
-        @else if (kra.status === 'Active') {
-          <li class="dropdown-item" (click)="onUpdate(kra)">
-            <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
-          </li>
-          <li class="dropdown-item" (click)="onMakeInactive(kra)">
-            <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}</a>
-          </li>
-          <li class="dropdown-item" (click)="onHold(kra)">
-            <a class="dropdown-custom-btn text-info"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate }}</a>
-          </li>
-        }
-
-        <!-- On Hold Status -->
-        @else if (kra.status === 'On Hold') {
-          <li class="dropdown-item" (click)="onResume(kra)">
-            <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Resume' | translate }}</a>
-          </li>
-          <li class="dropdown-item" (click)="onMakeInactive(kra)">
-            <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}</a>
-          </li>
-        }
-
-      </ul>
-    </div>
-  </td>
-}
-              </tr>
-            }
-          } @else {
-            <tr>
-              <td colspan="7" class="text-center py-4">
-                <app-no-data-found />
-              </td>
-            </tr>
+  <div class="custom-table-content w-100">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{ 'KRA Category' | translate }}</th>
+          <th class="text-center">{{ 'KRA Title' | translate }}</th>
+          <th class="text-center">{{ 'Description' | translate }}</th>
+          <th class="text-center">{{ 'Status' | translate }}</th>
+          @if (hasAnyActionPermission()) {
+          <th class="text-center">{{ 'Action' | translate }}</th>
           }
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pagination -->
-    @if (filteredDetails.length > 0) {
-      <div class="pagination-content">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-          <div class="d-flex align-items-center gap-3 p-2">
-            <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
-              @for (option of options; track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
-            <span class="pagination-label text-nowrap">
-              Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{ collectionSize }}
+        </tr>
+      </thead>
+      <tbody>
+        @if (filteredDetails.length > 0) {
+        @for (kra of filteredDetails; track kra.kraId) {
+        <tr>
+          <td>{{ kra.kraCategoryName }}</td>
+          <td class="text-center">{{ kra.kraName }}</td>
+          <td class="text-center">
+            <div  *ngIf="kra.description; else noDescription">
+              <app-info-icon ngbPopover="{{ kra.description }}" container="body">
+              </app-info-icon>
+            </div>
+            <ng-template #noDescription>NA</ng-template>
+          </td>
+          <td class="text-center">
+            <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
+              {{ kra.status }}
             </span>
-          </div>
-          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)"></p-paginator>
-        </div>
+          </td>
+          <!-- Inside the table row, replace the entire <td> for Action with this: -->
+          @if (hasAnyActionPermission()) {
+          <td class="text-center">
+            <div class="dropdown">
+              <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                <i class="bi bi-three-dots-vertical"></i>
+              </span>
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <!-- Created Status -->
+                @if (kra.status === 'Created') {
+                <li class="dropdown-item" (click)="onUpdate(kra)">
+                  <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
+                </li>
+                <li class="dropdown-item" (click)="onAssignKpi(kra)">
+                  <a class="dropdown-custom-btn"><i class="bi bi-bullseye me-2"></i>{{ 'Assign KPI' | translate }}</a>
+                </li>
+                <li class="dropdown-item" (click)="onAssignByRole(kra)">
+                  <a class="dropdown-custom-btn"><i class="bi bi-people me-2"></i>{{ 'Assign By Role' | translate }}</a>
+                </li>
+                }
+
+                <!-- Active Status -->
+                @else if (kra.status === 'Active') {
+                <li class="dropdown-item" (click)="onUpdate(kra)">
+                  <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
+                </li>
+                <li class="dropdown-item" (click)="onMakeInactive(kra)">
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
+                    translate }}</a>
+                </li>
+                <li class="dropdown-item" (click)="onHold(kra)">
+                  <a class="dropdown-custom-btn text-info"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate
+                    }}</a>
+                </li>
+                }
+
+                <!-- On Hold Status -->
+                @else if (kra.status === 'On Hold') {
+                <li class="dropdown-item" (click)="onResume(kra)">
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Resume' |
+                    translate }}</a>
+                </li>
+                <li class="dropdown-item" (click)="onMakeInactive(kra)">
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
+                    translate }}</a>
+                </li>
+                }
+
+              </ul>
+            </div>
+          </td>
+          }
+        </tr>
+        }
+        } @else {
+        <tr>
+          <td colspan="7" class="text-center py-4">
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (filteredDetails.length > 0) {
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          @for (option of options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{
+          collectionSize }}
+        </span>
       </div>
-    }
-  } @else {
-    <div class="custom-compoent-data-loader">
-      <app-data-loader-content />
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
     </div>
+  </div>
+  }
+  } @else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
   }
 </div>
 
@@ -169,29 +173,22 @@
         <div class="row g-3">
 
           <!-- KRA Category -->
-<div class="col-md-6">
-  <label class="form-label custom-label mb-2">
-    {{ 'KRA Category' | translate }} <span class="text-danger">*</span>
-  </label>
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'KRA Category' | translate }} <span class="text-danger">*</span>
+            </label>
 
-  <div class="custom-p-select-content">
-    <p-select
-      [options]="kraCategories"
-      optionLabel="name"
-      optionValue="id"
-      class="form-select custom-select"
-      placeholder="Select Category"
-      [filter]="true"
-      resetFilterOnHide="true"
-      [showClear]="true"
-      formControlName="categoryId">
-    </p-select>
-  </div>
+            <div class="custom-p-select-content">
+              <p-select [options]="kraCategories" optionLabel="name" optionValue="id" class="form-select custom-select"
+                placeholder="Select Category" [filter]="true" resetFilterOnHide="true" [showClear]="true"
+                formControlName="categoryId" [disabled]="isEditMode">
+              </p-select>
+            </div>
 
-  <div class="error-msg" *ngIf="f['categoryId'].touched && f['categoryId'].invalid">
-    Please select a KRA category
-  </div>
-</div>
+            <div class="error-msg" *ngIf="f['categoryId'].touched && f['categoryId'].invalid">
+              Please select a KRA category
+            </div>
+          </div>
 
 
           <!-- KRA Title -->
@@ -206,56 +203,14 @@
             </div>
           </div>
 
-          <!-- Effective Date -->
           <div class="col-md-6">
             <label class="form-label custom-label mb-2">
-              {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
+              {{ 'Upload Document' | translate }}
             </label>
-            <input type="date" class="form-control custom-input" formControlName="effectiveDate" onkeydown="return false">
-            <div class="error-msg" *ngIf="f['effectiveDate'].touched && f['effectiveDate'].invalid">
-              Effective Date is required
-            </div>
+
+            <input type="file" class="form-control custom-input" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+              (change)="onFileChange($event)" />
           </div>
-
-          <!-- Target Date -->
-          <div class="col-md-6">
-            <label class="form-label custom-label mb-2">
-              {{ 'Target Date' | translate }} <span class="text-danger">*</span>
-            </label>
-            <input type="date" class="form-control custom-input" formControlName="targetDate"
-              [min]="kraForm.get('effectiveDate')?.value" onkeydown="return false">
-            <div class="error-msg" *ngIf="f['targetDate'].touched && f['targetDate'].invalid">
-              Target Date is required
-            </div>
-            <div class="error-msg" *ngIf="kraForm.errors?.['targetDateBeforeEffective']">
-              Target Date must be same or after Effective Date
-            </div>
-          </div>
-
-          <!-- Weightage -->
-          <div class="col-md-6">
-            <label class="form-label custom-label mb-2">
-              {{ 'Weightage (%)' | translate }} <span class="text-danger">*</span>
-            </label>
-            <input type="number" class="form-control custom-input" formControlName="weightageValue"
-              min="1" max="100" placeholder="e.g. 25">
-            <div class="error-msg" *ngIf="f['weightageValue'].touched && f['weightageValue'].invalid">
-              Weightage must be between 1 and 100
-            </div>
-          </div>
-
-          <div class="col-md-6">
-  <label class="form-label custom-label mb-2">
-    {{ 'Upload Document' | translate }}
-  </label>
-
-  <input
-    type="file"
-    class="form-control custom-input"
-    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
-    (change)="onFileChange($event)"
-  />
-</div>
 
           <!-- Description -->
           <div class="col-12">
@@ -277,12 +232,11 @@
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
             {{ 'Cancel' | translate }}
           </button>
-          <button type="submit" class="custom-btn btn-primary"
-            [disabled]="kraForm.invalid || isSubmitting">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="kraForm.invalid || isSubmitting">
             @if (isSubmitting) {
-              <span class="spinner-border spinner-border-sm me-2"></span> {{ isEditMode ? 'Updating...' : 'Creating...' }}
+            <span class="spinner-border spinner-border-sm me-2"></span> {{ isEditMode ? 'Updating...' : 'Creating...' }}
             } @else {
-              {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
+            {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
             }
           </button>
         </div>
@@ -308,26 +262,22 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label custom-label">KRA Title</label>
-            <input type="text" class="form-control custom-input"
-              formControlName="kraName" >
+            <input type="text" class="form-control custom-input" formControlName="kraName">
           </div>
 
           <div class="col-md-6">
             <label class="form-label custom-label">Weightage (%)</label>
-            <input type="text" class="form-control custom-input"
-              formControlName="weightageValue" >
+            <input type="text" class="form-control custom-input" formControlName="weightageValue">
           </div>
 
           <div class="col-md-6">
             <label class="form-label custom-label">Effective Date</label>
-            <input type="text" class="form-control custom-input"
-              formControlName="effectiveDate" >
+            <input type="text" class="form-control custom-input" formControlName="effectiveDate">
           </div>
 
           <div class="col-md-6">
             <label class="form-label custom-label">Target Date</label>
-            <input type="text" class="form-control custom-input"
-              formControlName="targetDate">
+            <input type="text" class="form-control custom-input" formControlName="targetDate">
           </div>
         </div>
 
@@ -349,41 +299,37 @@
               <tr *ngFor="let row of kpiRows.controls; let i = index" [formGroupName]="i">
 
                 <td>
-                  <input type="text" class="form-control custom-input"
-                    formControlName="kpiName" placeholder="Enter KPI Name">
+                  <input type="text" class="form-control custom-input" formControlName="kpiName"
+                    placeholder="Enter KPI Name">
                 </td>
 
                 <td>
-                  <input type="number" class="form-control custom-input"
-                    formControlName="weightage" placeholder="0-100" min="1" max="100">
+                  <input type="number" class="form-control custom-input" formControlName="weightage" placeholder="0-100"
+                    min="1" max="100">
                 </td>
 
                 <td>
-                  <input type="text" class="form-control custom-input"
-                    formControlName="unit" placeholder="e.g. % , Nos , Rating">
+                  <input type="text" class="form-control custom-input" formControlName="unit"
+                    placeholder="e.g. % , Nos , Rating">
                 </td>
 
                 <td>
-                  <input type="number" class="form-control custom-input"
-                    formControlName="targetValue" placeholder="Enter Value">
+                  <input type="number" class="form-control custom-input" formControlName="targetValue"
+                    placeholder="Enter Value">
                 </td>
 
                 <td>
-                  <input type="date" class="form-control custom-input"
-                    formControlName="targetDate" onkeydown="return false">
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
                 </td>
 
                 <td class="text-center">
-                  <button type="button"
-                    class="btn btn-sm btn-outline-danger me-2"
-                    *ngIf="kpiRows.length > 1"
+                  <button type="button" class="btn btn-sm btn-outline-danger me-2" *ngIf="kpiRows.length > 1"
                     (click)="removeKpiRow(i)">
                     <i class="bi bi-trash"></i>
                   </button>
 
-                  <button type="button"
-                    class="btn btn-sm btn-outline-primary"
-                    *ngIf="i === kpiRows.length - 1"
+                  <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="i === kpiRows.length - 1"
                     (click)="addKpiRow()">
                     <i class="bi bi-plus-circle"></i>
                   </button>
@@ -415,98 +361,84 @@
   <div class="custom-main-popup-container" ngbAutofocus>
 
     <!-- Header -->
-<div class="d-flex justify-content-between align-items-center custom-poup-header-content popup-header-border px-4 py-3">
-  <p class="popup-heading mb-0">Assign By Role ({{ selectedKraTitle }})</p>
+    <div
+      class="d-flex justify-content-between align-items-center custom-poup-header-content popup-header-border px-4 py-3">
+      <p class="popup-heading mb-0">Assign By Role ({{ selectedKraTitle }})</p>
 
-  <p class="kpi-count-pill mb-0 fw-bold"
-     style="cursor: pointer; text-decoration: underline;"
-     (click)="openKpiCanvas(kpiCanvas, modal, selectedKraId)">
-    KPI's : {{ selectedKpiCount }}
-  </p>
-</div>
+      <p class="kpi-count-pill mb-0 fw-bold" style="cursor: pointer; text-decoration: underline;"
+        (click)="openKpiCanvas(kpiCanvas, modal, selectedKraId)">
+        KPI's : {{ selectedKpiCount }}
+      </p>
+    </div>
 
     <div class="custom-main-popup-content">
       <form [formGroup]="assignByRoleForm">
 
         <!-- TABLE -->
-         <div class="custom-table custom-popup-table mb-4 mt-4">
-        <table class="w-100">
-          <thead class="table-light">
-            <tr>
-              <th>Job Role</th>
-              <th>Employees</th>
-              <th>Effective Date</th>
-              <th>Target Date</th>
-              <th class="text-center">Actions</th>
-            </tr>
-          </thead>
+        <div class="custom-table custom-popup-table mb-4 mt-4">
+          <table class="w-100">
+            <thead class="table-light">
+              <tr>
+                <th>Job Role</th>
+                <th>Employees</th>
+                <th>Effective Date</th>
+                <th>Target Date</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
 
-          <tbody formArrayName="roleRows">
+            <tbody formArrayName="roleRows">
 
-            <tr *ngFor="let row of roleRows.controls; let i = index" [formGroupName]="i">
+              <tr *ngFor="let row of roleRows.controls; let i = index" [formGroupName]="i">
 
-              <!-- Job Role -->
-              <td>
-                <div class="custom-p-select-content">
-                <p-select
-                  [options]="jobRoleOptions"
-                  optionLabel="label"
-                  formControlName="jobRole"
-                  placeholder="Select Job Role"
-                  [filter]="true"
-                  class="w-100">
-                </p-select>
-                </div>
-              </td>
+                <!-- Job Role -->
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="jobRoleOptions" optionLabel="label" formControlName="jobRole"
+                      placeholder="Select Job Role" [filter]="true" class="w-100">
+                    </p-select>
+                  </div>
+                </td>
 
-              <!-- Employees -->
-              <td>
-                <div class="custom-p-select-content">
-                <p-select
-                  [options]="employeeOptions"
-                  optionLabel="label"
-                  formControlName="employee"
-                  placeholder="Select Employee"
-                  [filter]="true"
-                  class="w-100">
-                </p-select>
-                </div>
-              </td>
+                <!-- Employees -->
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="employeeOptions" optionLabel="label" formControlName="employee"
+                      placeholder="Select Employee" [filter]="true" class="w-100">
+                    </p-select>
+                  </div>
+                </td>
 
-              <!-- Effective Date -->
-              <td>
-                <input type="date" class="form-control custom-input"
-                  formControlName="effectiveDate" onkeydown="return false">
-              </td>
+                <!-- Effective Date -->
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+                    onkeydown="return false">
+                </td>
 
-              <!-- Target Date -->
-              <td>
-                <input type="date" class="form-control custom-input"
-                  formControlName="targetDate" onkeydown="return false">
-              </td>
+                <!-- Target Date -->
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
+                </td>
 
-              <!-- Actions -->
-              <td class="text-center">
+                <!-- Actions -->
+                <td class="text-center">
 
-                <button type="button"
-                  class="btn btn-sm btn-outline-danger me-2"
-                  *ngIf="roleRows.length > 1"
-                  (click)="removeRoleRow(i)">
-                  <i class="bi bi-trash"></i>
-                </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger me-2" *ngIf="roleRows.length > 1"
+                    (click)="removeRoleRow(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
 
-                <button type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  *ngIf="i === roleRows.length - 1"
-                  (click)="addRoleRow()">
-                  <i class="bi bi-plus-circle"></i>
-                </button>
+                  <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="i === roleRows.length - 1"
+                    (click)="addRoleRow()">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
 
-              </td>
-            </tr>
+                </td>
+              </tr>
 
-          </tbody>
-        </table>
+            </tbody>
+          </table>
         </div>
 
         <!-- FOOTER -->
@@ -540,41 +472,39 @@
     <div class="offcanvas-filter-content p-3">
       <div class="projects-container">
         @if (kpiList.length === 0) {
-          <div class="text-center py-5 text-muted">
-            <app-no-data-found />
-          </div>
+        <div class="text-center py-5 text-muted">
+          <app-no-data-found />
+        </div>
         } @else {
-          @for (kpi of kpiList; track kpi.kpiId) {
-            <div class="project-card mb-3">
-              <!-- KPI Name -->
-              <p class="project-name">{{ kpi.kpiName }}</p>
+        @for (kpi of kpiList; track kpi.kpiId) {
+        <div class="project-card mb-3">
+          <!-- KPI Name -->
+          <p class="project-name">{{ kpi.kpiName }}</p>
 
-              <!-- Row: Weightage | Target Value | Target Date -->
-              <div class="d-flex justify-content-between align-items-start gap-3">
-                <div class="text-center">
-                  <p class="project-role mb-1">Weightage</p>
-                  <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
-                </div>
-                <div class="text-center">
-                  <p class="project-role mb-1">Target Value</p>
-                  <p class="project-dates fw-bold">
-                    {{ kpi.targetValue }}
-                    <span class="text-muted small">{{ kpi.targetType }}</span>
-                  </p>
-                </div>
-                <div class="text-center">
-                  <p class="project-role mb-1">Target Date</p>
-                  <p class="project-dates fw-bold">
-                    {{ kpi.targetDate | date:'MMM dd, yyyy' }}
-                  </p>
-                </div>
-              </div>
+          <!-- Row: Weightage | Target Value | Target Date -->
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
             </div>
-          }
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        }
         }
       </div>
     </div>
   </div>
 </ng-template>
-
-

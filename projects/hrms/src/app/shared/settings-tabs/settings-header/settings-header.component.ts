@@ -78,7 +78,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/employee-fields-update-configurations/job')) {
       this.moduleName = 'Employee Fields Update Configurations';
       this.componentName = 'Job';
-    } 
+    }
     else if (url.startsWith('/settings/employee-fields-update-configurations/documents')) {
       this.moduleName = 'Employee Fields Update Configurations';
       this.componentName = 'Documents';
@@ -145,6 +145,10 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/pmsconfiguration/assessor')) {
       this.moduleName = 'PMS Configurations';
       this.componentName = 'Assessor Configuration';
+    }
+     else if (url.startsWith('/pmsconfiguration/kra')) {
+      this.moduleName = 'PMS Configurations';
+      this.componentName = 'Kra Configuration';
     }
 
     //Dynamic Forms

@@ -115,21 +115,6 @@ export class CarryForwardLeaveEntitlementComponent {
     this.getdatacarryforword();
   }
 
-  // getdatacarryforword() {
-  //   let url = `LeaveEntitlementJobs?pageNumber=${this.page}&pageSize=${this.pageSize}&searchTerm=${this.searchQuery}`
-  //   this.subscription = this.http.get(url).subscribe({
-  //     next: (res: any) => {
-  //       this.jobData = res?.data;
-  //       this.collectionSize = res.pagination.totalRecords;
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching projects:', err);
-  //       this.loading = false
-  //       this.jobData = [];
-  //     },
-  //   });
-
-  // }
   getdatacarryforword() {
     const params: any = {
       pageNumber: this.page,

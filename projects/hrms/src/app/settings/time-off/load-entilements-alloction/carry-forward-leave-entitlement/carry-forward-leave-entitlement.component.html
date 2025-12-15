@@ -7,7 +7,8 @@
         (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
 
-    <button type="button" class="custom-btn btn-secondary position-relative text-nowrap" (click)="toggleFilters(filterContent)">
+    <button type="button" class="custom-btn btn-secondary position-relative text-nowrap"
+      (click)="toggleFilters(filterContent)">
       <i class="bi bi-funnel me-2"></i>Filters
       <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
     </button>
@@ -33,11 +34,15 @@
             <td>{{ item?.year ?? '_' }}</td>
             <td>{{ item?.jobType ?? '_' }}</td>
             <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
-            <td [ngClass]="{'status-success': item.status === 'Success',
-            'status-queued': item.status === 'Queued',
-            'status-failed': item.status === 'Failed','status-partial': item.status === 'Partially Completed',
-            'status-processing': item.status === 'Processing','status-completed': item.status === 'Completed',
-            'status-pending': item?.status === 'Pending'}" class="text-capitalize">{{ item?.status ?? '-'}}</td>
+            <td [ngClass]="{
+  'status-success': (item.status || '').toLowerCase() === 'success',
+  'status-queued': (item.status || '').toLowerCase() === 'queued',
+  'status-failed': (item.status || '').toLowerCase() === 'failed',
+  'status-partial': (item.status || '').toLowerCase() === 'partially_completed',
+  'status-processing': (item.status || '').toLowerCase() === 'processing',
+  'status-completed': (item.status || '').toLowerCase() === 'completed',
+  'status-pending': (item.status || '').toLowerCase() === 'pending'
+}" class="text-capitalize">{{ item?.status ?? '-'}}</td>
             <td>{{ item?.successCount }}/{{ item?.totalEmployees }}</td>
           </tr>
         </ng-container>
@@ -134,7 +139,8 @@
               <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
             </p-select>
           </div>
-          <div *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
+          <div
+            *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
             class="error-msg">
             <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">Please select sub location</div>
           </div>

@@ -13,8 +13,8 @@
         <th>Asset Sub Category</th>
         <th>Asset Modal</th>
         <th>Serial Number</th>
-        <th>Purchased Date</th>
         <th>Asset Status</th>
+         <th>Purchase Date</th>
         <th>Location </th>
         <th>Sub Location </th>
         @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
@@ -29,9 +29,9 @@
             <td>{{ asset.assetCategory }}</td>         
             <td>{{ asset.assetSubCategory }}</td>
              <td>{{ asset.assetModel }}</td>
-            <td>{{ asset.serialNumber }}</td>
-            <td>{{ asset.purchaseDate | date }}</td>
+            <td>{{ asset.serialNumber }}</td>        
             <td>{{ asset.status }}</td>
+            <td>{{ asset.purchaseDate | date }}</td>
             <td>{{ asset.locationName }}</td>
             <td>{{ asset?.sublocationName || 'N/A' }}</td>
             @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||

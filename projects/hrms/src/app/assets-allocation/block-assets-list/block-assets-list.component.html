@@ -14,6 +14,7 @@
         <th>Asset Modal</th>
         <th>Serial Number</th>
         <th>Asset Status</th>
+        <th>Purchase Date</th>
         <th>Reason</th>
         <th>Location </th>
         <th>Sub Location </th>
@@ -30,6 +31,7 @@
              <td>{{ asset.assetModel }}</td>
             <td>{{ asset.serialNumber }}</td>
             <td>{{ asset.status }}</td>
+             <td>{{ asset.purchaseDate | date }}</td>
               <td>
                 <div class="d-flex align-items-center gap-1">
                   <!-- Show info icon only when comment exists -->

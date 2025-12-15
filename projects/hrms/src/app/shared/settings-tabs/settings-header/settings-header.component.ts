@@ -314,6 +314,7 @@ export class SettingsHeaderComponent implements OnInit {
     const hidePaths = [
       '/settings/timeoff-configurations/jobview',
       '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create',
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',

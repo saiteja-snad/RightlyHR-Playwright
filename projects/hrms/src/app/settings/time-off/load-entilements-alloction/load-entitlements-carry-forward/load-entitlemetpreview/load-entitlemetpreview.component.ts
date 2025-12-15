@@ -27,7 +27,7 @@ export class LoadEntitlemetpreviewComponent {
     private route: Router, private http: HttpService, public formValidation: FormValidationsService) { }
 
   ngOnInit(): void {
-    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '')
+    this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '{}')
     this.getdataforcarryforward(this.carryforwarddata)
   }
 
@@ -36,7 +36,7 @@ export class LoadEntitlemetpreviewComponent {
   getdataforcarryforward(carryforwarddata: ICarryForward) {
     this.loading = true;
     this.http.getData(
-    `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
+      `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
     &subLocationIds=${carryforwarddata.subLocation.id}
     &shiftIds=${carryforwarddata.shift.id}
     &year=${carryforwarddata.year}&excludeJobProcessedEmployees=true`

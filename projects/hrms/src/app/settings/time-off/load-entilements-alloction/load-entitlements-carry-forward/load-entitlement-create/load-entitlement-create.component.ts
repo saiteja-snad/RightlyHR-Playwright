@@ -76,9 +76,9 @@ private getAllLocations(): void {
       next: (res: any) => {
         this.locationDetails = res.jobLocations || [];
         // Auto-load subLocations & shifts if saved data exists
-        if (this.carryforwarddata?.location.jobLocationName) {
+        if (this.carryforwarddata?.location?.jobLocationName) {
           const selectedLocation = this.locationDetails.find(
-            (loc: any) => loc.jobLocationName === this.carryforwarddata.location.jobLocationName
+            (loc: any) => loc.jobLocationName === this.carryforwarddata?.location?.jobLocationName
           );
           if (selectedLocation) {
             this.onLocationChange(selectedLocation);

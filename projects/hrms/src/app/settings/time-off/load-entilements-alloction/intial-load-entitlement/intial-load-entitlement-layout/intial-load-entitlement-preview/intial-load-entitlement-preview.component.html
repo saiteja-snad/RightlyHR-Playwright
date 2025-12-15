@@ -1,1 +1,51 @@
-<p>intial-load-entitlement-preview works!</p>
+<div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Location / Shift</th>
+                <th>Grade</th>
+
+                <!-- Dynamic headers -->
+                <th *ngFor="let header of leaveHeaders" class="text-center">
+                    {{ header.name }}
+                    <small>({{ header.code }})</small>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="employeesTableData.length > 0; else noDataTemplate">
+                <tr *ngFor="let emp of employeesTableData">
+                    <td>
+                        <strong>{{ emp.employeeName }}</strong><br />
+                        <small>Joined: {{ emp.joinedDate | date:'yyyy-MM-dd' }}</small>
+                    </td>
+
+                    <td>
+                        {{ emp.location }}<br />
+                        <small>{{ emp.shift }}</small>
+                    </td>
+
+                    <td>
+                      <div class="code-box text-center">  {{ emp.grade }}</div>
+                    </td>
+
+                    <!-- Dynamic td -->
+                    <td *ngFor="let header of leaveHeaders" class="text-center">
+                        {{ emp.leaveValues[header.code] ?? 0 }}
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-template #noDataTemplate>
+                <tr>
+                    <app-no-data-found />
+                </tr>
+            </ng-template>
+        </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+</div>

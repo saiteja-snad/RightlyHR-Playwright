@@ -83,7 +83,7 @@ export class CarryForwardLeaveEntitlementComponent {
     this.page = 1;
     this.first = 0;
     this.getdatacarryforword(); // NOW table loads using filters
-    this.closeCanvas();
+    this.offcanvasService.dismiss();
   }
 
   onPageSizeChange(newPageSize: number) {
@@ -164,6 +164,7 @@ export class CarryForwardLeaveEntitlementComponent {
       (formValue?.shift && formValue?.shift.shiftName?.length > 0)
     );
   }
+
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
     let yearsList: number[] = []

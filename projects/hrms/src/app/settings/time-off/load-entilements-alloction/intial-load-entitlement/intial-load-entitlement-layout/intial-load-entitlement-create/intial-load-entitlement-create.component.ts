@@ -14,7 +14,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-intial-load-entitlement-create',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,MultiSelectModule, Select],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, Select],
   templateUrl: './intial-load-entitlement-create.component.html',
   styleUrl: './intial-load-entitlement-create.component.scss'
 })
@@ -146,18 +146,18 @@ export class IntialLoadEntitlementCreateComponent {
   }
 
 
-  getCategoryDetails(policy:any): void {
+  getCategoryDetails(policy: any): void {
     console.log(policy);
-    
-     let params = {
-      locationId:  this.leaveAllocationForm.get('location')?.value?.id,
+
+    let params = {
+      locationId: this.leaveAllocationForm.get('location')?.value?.id,
       subLocationId: this.leaveAllocationForm.get('subLocation')?.value?.id,
       year: this.leaveAllocationForm.get('year')?.value,
       status: 'Published',
       shiftId: policy.id
     };
     console.log(params);
-    
+
     this.http.getDataWithQueryParams("OrgLeavesCategories", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.categoryDetails = res;
@@ -175,10 +175,26 @@ export class IntialLoadEntitlementCreateComponent {
   }
 
   sumbitdata() {
-    console.log(this.leaveAllocationForm.value)
-    localStorage.setItem('intialloadEntitlement', JSON.stringify(this.leaveAllocationForm.value));
-    this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview'])
+    const formValue = this.leaveAllocationForm.value;
+
+    const payload = {
+      year: formValue.year,
+      location: formValue.location,
+      subLocation: formValue.subLocation,
+      shift: formValue.shift,
+      categoryIds: formValue.categoryName?.map((c: any) => c.id) || []
+    };
+
+    localStorage.setItem(
+      'intialloadEntitlement',
+      JSON.stringify(payload)
+    );
+
+    this.route.navigate([
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview'
+    ]);
   }
+
   resetdata() {
     this.leaveAllocationForm.reset();
     localStorage.removeItem('loadEntitlement');

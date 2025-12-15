@@ -90,10 +90,10 @@
             <td>{{ e?.employee?.name }}</td>
             <td>{{ e?.leaveCategory }}</td>
             <td class="text-center">{{ e?.carryForwardCount }}</td>
-            <td [ngClass]="{'status-success': e.status === 'success','status-failed': e.status === 'failed',
-            'status-partial': e.status === 'partially_completed','status-processing': e.status === 'processing',
-            'status-completed': e.status === 'completed','status-pending': e?.status === 'pending'}" 
-            class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'failed'">
+            <td [ngClass]="{'status-success': e.status === 'Success','status-failed': e.status === 'Failed',
+            'status-partial': e.status === 'Partially Completed','status-processing': e.status === 'Processing',
+            'status-completed': e.status === 'Completed','status-pending': e?.status === 'Pending'}" 
+            class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'Failed'">
                 <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click" />
               </span>
             </td>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../../services/http.service';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ export class IntialLoadEntitlementPreviewComponent {
   empinfo: any = {};
   carryforwarddata: any = {}
   loading: boolean = false;
+  @ViewChild('conformation', { static: true }) conformation!: TemplateRef<any>;
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService,
     private route: Router, private http: HttpService) { }
@@ -33,8 +34,14 @@ export class IntialLoadEntitlementPreviewComponent {
     data: any[];
   } | null = null;
 
-  isGradeAssignmentSuccess=false
+  policymapping: {
+    status: any;
+    data: any[];
+  } | null = null;
+  isGradeAssignmentSuccess = false
   failedGradeEmployees: any[] = [];
+
+
   getdataforcarryforward(carryforwarddata: any) {
 
     this.loading = true;
@@ -49,7 +56,7 @@ export class IntialLoadEntitlementPreviewComponent {
         this.mapEmployees(res.data.employees);
         // ✅ Store entire object
         this.gradeAssignments = res.data.gradeAssignments;
-
+        this.policymapping = res.data.policyMapping
         // Optional helpers
         this.isGradeAssignmentSuccess = res.gradeAssignments?.status === 'success';
         this.failedGradeEmployees = res.gradeAssignments?.data || [];
@@ -136,7 +143,34 @@ export class IntialLoadEntitlementPreviewComponent {
   }
 
 
+  canSubmit(): boolean {
+    return this.policymapping?.status !== 'failed'
+      && this.gradeAssignments?.status !== 'failed';
+  }
+
+
   submit() {
+    if (!this.canSubmit()) {
+      this.modalService.open(this.conformation, { centered: true, backdrop: 'static', keyboard: false, size: 'l' });
+      return;
+    }
+    const body = this.buildCarryForwardPayload();
+    this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
+      next: (res: any) => {
+        this.conformationPopup.openSuccessModal("Carry Forward Entilement Successfully");
+        setTimeout(() => {
+          this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
+          localStorage.removeItem('intialloadEntitlement')
+        }, 2000);
+      },
+      error: (err) => {
+        console.error(err);
+        this.conformationPopup.openErrorModal("Carry Forward Entilement Failed");
+      }
+    });
+  }
+
+  skipped() {
     const body = this.buildCarryForwardPayload();
     this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
       next: (res: any) => {

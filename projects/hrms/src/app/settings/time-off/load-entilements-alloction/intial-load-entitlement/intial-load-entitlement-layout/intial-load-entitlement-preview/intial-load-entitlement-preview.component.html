@@ -1,6 +1,6 @@
 <div class="load-components-container">
 
-    <div class="status-cards mb-3">
+    <div class="status-cards mb-3" *ngIf="employeesTableData.length > 0">
         <div class="status-card" [ngClass]="{
        'success': gradeAssignments?.status === 'success',
        'error': gradeAssignments?.status === 'failed'
@@ -22,17 +22,32 @@
         </div>
 
 
-        <div class="status-card success">
+        <div class="status-card" [ngClass]="{
+       'success': policymapping?.status === 'success',
+       'error': policymapping?.status === 'failed'
+     }">
+
             <div class="icon">
-                ✔
+                {{ policymapping?.status === 'success' ? '✔' : '✖' }}
             </div>
+
             <div class="content">
                 <h4>Policy Mapping</h4>
-                <p>Leave policies found for all grades.</p>
+
+                <!-- SUCCESS -->
+                <p *ngIf="policymapping?.status === 'success'">
+                    Leave policies found for all grades.
+                </p>
+
+                <!-- FAILED -->
+                <p *ngIf="policymapping?.status === 'failed'">
+                    {{ policymapping?.data?.length }} leave policy configuration issue(s) found.
+                </p>
             </div>
         </div>
 
-      
+
+
     </div>
 
 
@@ -92,7 +107,22 @@
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary">Back</button>
-            <button type="button" class="custom-btn btn-primary" (click)="submit()">Commit & Process</button>
+            <button type="button" class="custom-btn btn-primary" (click)="submit()" [disabled]="employeesTableData.length===0">Commit & Process</button>
         </div>
     </div>
 </div>
+
+
+<!--Delete popup-->
+<ng-template #conformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\error-icon.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4">Initial Load cannot be submitted due to failed validations</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="skipped()"> Skipped and Continuous</button>
+        </div>
+    </div>
+</ng-template>

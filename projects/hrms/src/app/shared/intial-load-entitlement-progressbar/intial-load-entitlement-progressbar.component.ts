@@ -17,7 +17,7 @@ progress = 0;
     setProgress(url: string) {
     if (url.includes('/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create')) {
       this.progress = 1;   // 25%
-    } else if (url.includes('/settings/timeoff-configurations/leave-entitlements/intial-load-entitlement-preview')) {
+    } else if (url.includes('/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview')) {
       this.progress = 2;   // 50%
     } else if (url.includes('/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery')) {
       this.progress = 3;   // 75%

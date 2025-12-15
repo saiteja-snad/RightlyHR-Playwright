@@ -200,7 +200,20 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
               doj.getDate()
             );
 
-            return anniversaryThisYear >= today && anniversaryThisYear <= next30;
+            // Birthday next year (for crossing Dec → Jan)
+            const anniversarynextYear = new Date(
+              today.getFullYear() + 1,
+              doj.getMonth(),
+              doj.getDate()
+            );
+
+            return ((anniversarynextYear >= today && anniversarynextYear <= next30) || (anniversaryThisYear >= today && anniversaryThisYear <= next30))
+
+
+          }) .sort((a: any, b: any) => {
+            // SORT HERE by upcoming birthday date
+            return this.getDobWithCurrentYear(a.dateOfJoining).getTime() -
+                   this.getDobWithCurrentYear(b.dateOfJoining).getTime();
           });
         },
 
@@ -209,34 +222,52 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
 
-
   getbrithday() {
     this.http
-      .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$))
+      .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
 
           const today = new Date();
           const next30 = new Date();
-          next30.setDate(today.getDate() + 30); // next 30 days
+          next30.setDate(today.getDate() + 30);
 
           this.employeesBirthdays = data.filter((item: any) => {
             const dob = new Date(item.dob);
 
-            // birthday in CURRENT year
+            // Birthday this year
             const birthdayThisYear = new Date(
               today.getFullYear(),
               dob.getMonth(),
               dob.getDate()
             );
 
-            return birthdayThisYear >= today && birthdayThisYear <= next30;
+            // Birthday next year (for crossing Dec → Jan)
+            const birthdayNextYear = new Date(
+              today.getFullYear() + 1,
+              dob.getMonth(),
+              dob.getDate()
+            );
+
+            // Check for next 30 days including next-year birthdays
+            return (
+              (birthdayThisYear >= today && birthdayThisYear <= next30) ||
+              (birthdayNextYear >= today && birthdayNextYear <= next30)
+            );
+          })
+          .sort((a: any, b: any) => {
+            // SORT HERE by upcoming birthday date
+            return this.getDobWithCurrentYear(a.dob).getTime() -
+                   this.getDobWithCurrentYear(b.dob).getTime();
           });
+
         },
 
         error: (err: any) => console.log(err),
       });
   }
+
 
 
 
@@ -396,6 +427,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         this.hasRealEvents = events.length > 0;
         if (events.length) {
           this.eventItems = events;
+          console.log(this.eventItems);
+          
         } else {
           this.quotationsData();
         }
@@ -428,6 +461,16 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   genderCountLoader = false;
   genderChartData: any = {};
   genderChartOptions: any = {};
+
+  // Custom carousel indicator properties
+  currentCarouselIndex = 0;
+  get activeIndicatorIndex() {
+    return this.currentCarouselIndex % 3;
+  }
+
+  onCarouselPageChange(event: any) {
+    this.currentCarouselIndex = event.page;
+  }
 
   getGenderCountChart() {
     this.genderCountLoader = true;
@@ -751,18 +794,34 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
   getDobWithCurrentYear(dob: string) {
     const date = new Date(dob);
-    const currentYear = new Date().getFullYear();
-    date.setFullYear(currentYear);
+    const today = new Date();
+
+    // Set year as current year first
+    date.setFullYear(today.getFullYear());
+
+    // If that birthday already passed → move to next year
+    if (date < today) {
+      date.setFullYear(today.getFullYear() + 1);
+    }
+
     return date;
   }
-
 
   getannuservierWithCurrentYear(dob: string) {
     const date = new Date(dob);
-    const currentYear = new Date().getFullYear();
-    date.setFullYear(currentYear);
+    const today = new Date();
+
+    // Set anniversary to the current year first
+    date.setFullYear(today.getFullYear());
+
+    // If the anniversary already passed this year → move to next year
+    if (date < today) {
+      date.setFullYear(today.getFullYear() + 1);
+    }
+
     return date;
   }
+
   nagvition() {
     this.router.navigate(['/myinfo/job/team-members']);
   }

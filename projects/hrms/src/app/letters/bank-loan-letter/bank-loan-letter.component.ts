@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
@@ -15,17 +15,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [
-    CommonModule,
-    Select,
-    ReactiveFormsModule,
-    DateformatPipe,
-    TranslateModule,
-    NgbPopoverModule,
-  ],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss',
-
 })
 
 export class BankLoanLetterComponent implements OnInit, OnDestroy {
@@ -53,13 +45,8 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
     { name: 'Hard Copy', value: false },
   ];
 
-  constructor(
-    private http: HttpService,
-    private httpclient: HttpClient,
-    private router: Router,
-    private fb: FormBuilder,
-    private modal: OpenModalService
-  ) { }
+  constructor(private http: HttpService, private httpclient: HttpClient, private router: Router, 
+    private fb: FormBuilder, private modal: OpenModalService) { }
 
   ngOnInit() {
     this.initializeForm();
@@ -80,7 +67,6 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
     });
-
     // this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
     //   this.DateValidation();
     // });
@@ -93,54 +79,41 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
   }
 
   getAllActiveEmployees() {
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          this.employeeDetails = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            };
-          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        this.employeeDetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          };
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   getAuthorityDetails() {
     let offertype = 'Bank Loan Letter';
-    this.subscription = this.http
-      .getData(`SignaturesList?LetterType=${offertype}`)
-      .subscribe({
-        next: (data: any) => {
-          this.signatureAuthorityDetails = data.map((authority: any) => ({
-            ...authority,
-            fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
-
-          }));
-        },
-        error: (error: any) => {
-          console.error(error);
-        },
-      });
+    this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
+      next: (data: any) => {
+        this.signatureAuthorityDetails = data.map((authority: any) => ({
+          ...authority,
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+        }));
+      },
+      error: (error: any) => {
+        console.error(error);
+      },
+    });
   }
 
   onClickEmployee(event: any) {
     this.selectedEmployee = event.value;
-
-    this.employeeFullname =
-      this.selectedEmployee.firstName +
-      (this.selectedEmployee.middleName
-        ? ' ' + this.selectedEmployee.middleName
-        : '') +
-      ' ' +
-      this.selectedEmployee.lastName;
-
+    this.employeeFullname = this.selectedEmployee.firstName + (this.selectedEmployee.middleName ? ' ' + 
+    this.selectedEmployee.middleName : '') + ' ' + this.selectedEmployee.lastName;
     if (this.selectedEmployee.gender == 'Male') {
       this.hisOrHerdata = 'his';
       this.herOrHimdata = 'him';
@@ -151,40 +124,33 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
       this.hisOrHerdata = 'his/her';
       this.herOrHimdata = 'him/her';
     }
-
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
 
   getJobdetails(employeeId: any) {
-    this.subscription = this.http
-      .getData(`JobDetails/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          if (!data || data.length === 0) {
-            this.jobErrorMessage = 'No job details found for this employee.';
-            this.employeeForm.get('jobValid')?.setValue(false);
-          } else {
-            let res = data.sort((a: any, b: any) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime())[0];
-            this.selectedEmployeeJobDetails = res;
-            this.jobErrorMessage = '';
-            this.employeeForm.get('jobValid')?.setValue(true);
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData(`JobDetails/${employeeId}`).subscribe({
+      next: (data: any) => {
+        if (!data || data.length === 0) {
+          this.jobErrorMessage = 'No job details found for this employee.';
+          this.employeeForm.get('jobValid')?.setValue(false);
+        } else {
+          let res = data.sort((a: any, b: any) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime())[0];
+          this.selectedEmployeeJobDetails = res;
+          this.jobErrorMessage = '';
+          this.employeeForm.get('jobValid')?.setValue(true);
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   DateValidation() {
-    const dateofbankloan = new Date(
-      this.employeeForm.get('dateofbankloan')?.value
-    );
+    const dateofbankloan = new Date(this.employeeForm.get('dateofbankloan')?.value);
     const joiningDate = new Date(this.selectedEmployeeJobDetails.effectiveDate);
-
     if (dateofbankloan <= joiningDate) {
-      this.jobErrorMessage =
-        'Bank loan date must be after the employee joining date.';
+      this.jobErrorMessage = 'Bank loan date must be after the employee joining date.';
       this.employeeForm.get('jobValid')?.setValue(false);
     } else {
       this.jobErrorMessage = '';
@@ -199,9 +165,9 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
   onclickDesignation(event: any) {
     this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
-      this.authorityFullName = this.selectedAuthority.middleName
-        ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
-        : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
+      this.authorityFullName = this.selectedAuthority.middleName ? `${this.selectedAuthority.firstName} 
+      ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}` : 
+      `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
     }
   }
 
@@ -217,24 +183,15 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     const data = f.value;
     let fileName = '';
-
-    if (
-      this.selectedEmployee &&
-      this.selectedEmployee.firstName &&
-      this.selectedEmployee.lastName
-    ) {
-      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName
-        }_${new Date().getTime()}_BankLoanLetter.pdf`;
+    if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
+      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_BankLoanLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
       return;
     }
-
     data.dateofbankloan = this.formatDate(data.dateofbankloan);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
-
     const pdfContent = document.getElementById('pdfContent');
-
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
@@ -242,14 +199,11 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
         const imgWidth = pdf.internal.pageSize.getWidth();
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-
         pdf.save(fileName);
-
         const blob = pdf.output('blob');
         this.bankLoanFile = new File([blob], fileName, {
           type: 'application/pdf',
         });
-
         this.uploadBankLoanLetter();
       });
     }

@@ -467,6 +467,8 @@ export const permissionsData = [
   { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Trainee Requests (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+
   { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
 
@@ -592,6 +594,11 @@ export const permissionsData = [
   { fields: 'Remote Login Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
+
+{ fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+
 
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },

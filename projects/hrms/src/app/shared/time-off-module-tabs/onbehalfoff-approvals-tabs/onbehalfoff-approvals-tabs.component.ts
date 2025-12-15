@@ -23,6 +23,8 @@ ngOnInit(){
     { label: 'WFH', link: '/time-off/on-behalf-of-approvals/wfh',permission: { feature: 'WFH (On Behalf Of Approvals)', action: 'view' } },
     { label: 'Permissions', link: '/time-off/on-behalf-of-approvals/permissions',permission: { feature: 'Permission (On Behalf Of Approvals)', action: 'view' } },
     { label: 'Regularization', link: '/time-off/on-behalf-of-approvals/regularization',permission: { feature: 'Regularization (On Behalf Of Approvals)', action: 'view' } },
+    { label: 'Trainee Requests', link: '/time-off/on-behalf-of-approvals/trainee-requests',permission: { feature: 'Trainee Requests (On Behalf Of Approvals)', action: 'view' } },
+
   ];
    this.loading = false;
 }

@@ -139,6 +139,7 @@
                 @if(rbac.allowedToAccess('Request Leave.view')){
                 @if(item.isLeaveApplicable && item.duration.totalDuration >= '00:00:00' &&
                 currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
+                  <a class="application-btn" (click)="navigateToLeave(item)"><u>Apply Leave</u> </a>
                 }
                 }
                 @if(rbac.allowedToAccess('Request Regularization.view')){

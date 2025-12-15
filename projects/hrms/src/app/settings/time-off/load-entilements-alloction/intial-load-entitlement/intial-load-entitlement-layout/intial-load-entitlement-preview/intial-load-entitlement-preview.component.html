@@ -1,5 +1,42 @@
 <div class="load-components-container">
 
+    <div class="status-cards mb-3">
+        <div class="status-card" [ngClass]="{
+       'success': gradeAssignments?.status === 'success',
+       'error': gradeAssignments?.status === 'failed'
+     }">
+
+            <div class="icon">
+                {{ gradeAssignments?.status === 'success' ? '✔' : '✖' }}
+            </div>
+
+            <div class="content">
+                <h4>Grade Assignments</h4>
+                <p *ngIf="gradeAssignments?.status === 'success'">
+                    All selected employees have valid grades.
+                </p>
+                <p *ngIf="gradeAssignments?.status === 'failed'">
+                    {{ gradeAssignments?.data?.length }} employees failed grade assignment.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="status-card success">
+            <div class="icon">
+                ✔
+            </div>
+            <div class="content">
+                <h4>Policy Mapping</h4>
+                <p>Leave policies found for all grades.</p>
+            </div>
+        </div>
+
+      
+    </div>
+
+
+
     <div class="custom-table-content">
         @if(!loading){
         <table class="w-100">
@@ -52,10 +89,10 @@
         }
     </div>
 
-      <div class="footer-content">
+    <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary">Back</button>
-            <button type="button" class="custom-btn btn-primary"  (click)="submit()">Commit & Process</button>
+            <button type="button" class="custom-btn btn-primary" (click)="submit()">Commit & Process</button>
         </div>
     </div>
 </div>

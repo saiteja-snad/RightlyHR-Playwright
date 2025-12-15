@@ -16,12 +16,16 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+
 import { environment } from '../../../../environments/environment';
+
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+
 
 @Component({
   selector: 'app-desk-for-you-request',
   imports: [CommonModule, NoDataFoundComponent, FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule,
-    SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
+    SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './desk-for-you-request.component.html',
   styleUrl: './desk-for-you-request.component.scss'
 })

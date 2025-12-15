@@ -18,10 +18,11 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent,ModuleInfoIconComponent],
   templateUrl: './apprisal-list.component.html',
   styleUrl: './apprisal-list.component.scss',
   encapsulation: ViewEncapsulation.None,

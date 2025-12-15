@@ -30,7 +30,7 @@
       <div class="component-header">{{subHeader}}</div>
 
       <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
      
     </div>
@@ -43,17 +43,14 @@
 
     <div class="d-flex gap-2">
       @if(rbac.allowedToAccess('Inactive Button.view')){
-      <button class="custom-btn btn-primary"
-        *ngIf="isActive('personalinfo/job/employmentType') &&
-            empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
-        (click)="navigation()">Inactive</button>
+      <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType') && empdata?.empstatus !=='Inactive' 
+      &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId" 
+      (click)="navigation()">Inactive</button>
       }
 
-      @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective'||emppersonalinfo.empstatus ==
-      'Prospective Contract') && (empdata?.substatus =='Employee Created'
-      || empdata?.substatus=='Requested Documents') ){
-      <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
-        (click)="emailForRequestDoc()" [disabled]="isLoading">
+      @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective' || emppersonalinfo.empstatus == 'Prospective Contract') 
+      && (empdata?.substatus =='Employee Created' || empdata?.substatus=='Requested Documents') ){
+      <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')" (click)="emailForRequestDoc()" [disabled]="isLoading">
         <span *ngIf="!isLoading">{{'Request for Documents'|translate}}</span>
         <div class="button-loader-content" *ngIf="isLoading">
           <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -61,13 +58,12 @@
       </button>
       }
 
-      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective'||emppersonalinfo.empstatus == 'Prospective Contract'
-                || emppersonalinfo.empstatus == 'Trainee Prospective')  && (emppersonalinfo?.substatus == 'Employee Created' ||
-                emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' ||
-                emppersonalinfo?.substatus == 'Documents Rejected'|| emppersonalinfo?.substatus == 'Documents Accepted' ||
-                emppersonalinfo?.substatus == 'Documents Verified')" (click)="openModal(archivedbtn)">
-        {{'Archive'|translate}}
-      </button>
+      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective' 
+      ||emppersonalinfo.empstatus == 'Prospective Contract' || emppersonalinfo.empstatus == 'Trainee Prospective') && 
+      (emppersonalinfo?.substatus == 'Employee Created' || emppersonalinfo?.substatus=='Requested Documents' || 
+      emppersonalinfo?.substatus == 'Documents Submitted' || emppersonalinfo?.substatus == 'Documents Rejected' || 
+      emppersonalinfo?.substatus == 'Documents Accepted' || emppersonalinfo?.substatus == 'Documents Verified')" 
+      (click)="openModal(archivedbtn)">{{'Archive'|translate}}</button>
 
       @if (hasMyInfoHistoryAccess()
       && isActive('/myinfo')
@@ -78,7 +74,6 @@
         {{ 'View History' | translate }}
       </button>
       }
-
 
       @if (hasEmployeeHistoryAccess()
       && isActive('/personalinfo')
@@ -129,26 +124,21 @@
       }
 
       @if(this.rbac.allowedToAccess('Generate Credentials Button.view') && !this.empdata?.isUserRegistred ){
-      <button class="custom-btn btn-secondary"
-        *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active' || empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'"
-        (click)="openCredentialsModal(generateCredentialsModal)">
-        {{'Generate Credentials '|translate}}
-      </button>
+      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || 
+      empdata?.empstatus ==='Trainee Active' || empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'" 
+      (click)="openCredentialsModal(generateCredentialsModal)">{{'Generate Credentials'|translate}}</button>
       }
-      @if (empdata?.empstatus ==='Prospective' || empdata?.empstatus ==='Trainee Prospective' || empdata?.empstatus ===
-      'Prospective Contract') {
+
+      @if (empdata?.empstatus ==='Prospective' || empdata?.empstatus ==='Trainee Prospective' || empdata?.empstatus === 'Prospective Contract') {
       <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info')"
         [hidden]="!empdata.isCredentialExpired" (click)="openCredentialsModal(regenerateCredentialsModal)">
-        {{'Regenerate Credentials'|translate}}
-      </button>
+        {{'Regenerate Credentials'|translate}}</button>
       }
 
       @if(this.rbac.allowedToAccess('Reset Password Button.view') && this.empdata?.isUserRegistred){
-      <button class="custom-btn btn-secondary"
-        *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active'|| empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'"
-        (click)="openCredentialsModal(resetPasswordConfirmation)">
-        {{'Reset Password'|translate}}
-      </button>
+      <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active' 
+      || empdata?.empstatus === 'Active Contract') &&  empdata?.substatus !=='Prospective'" (click)="openCredentialsModal(resetPasswordConfirmation)">
+        {{'Reset Password'|translate}} </button>
       }
     </div>
   </div>
@@ -191,8 +181,7 @@
         <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
       </div>
       <div>
-        <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
+        <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
 

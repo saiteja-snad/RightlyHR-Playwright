@@ -20,11 +20,13 @@ import { HttpService } from '../../../../services/http.service';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
 import { SignalsService } from '../../../../services/signals.service';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-employeeinfo-for-you-request',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton, DateformatPipe,NgxDocViewerModule],
   templateUrl: './employeeinfo-for-you-request.component.html',
   styleUrl: './employeeinfo-for-you-request.component.scss'
 })
@@ -77,9 +79,13 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
      selectedLeaveStatus: any;
   totalCount: any;
   //emp: any;
-
+ImageUrl: any;
+ ViewURL:any;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  @ViewChild('popupforaction') private popupforaction!: NgbModal;
+  @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
+   private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -224,7 +230,9 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
                   headerRequestedDate: entry.employeeFieldHeader?.requestedDate,
                   pendingApprovalHeader: padingapprovaldata?.header ?? null,
                   approvalItems: padingapprovaldata?.items ?? [],
-                  comments: padingapprovaldata?.comments ?? []
+                  comments: padingapprovaldata?.comments ?? [],
+                  approvalScope: fieldname?.approvalScope ?? '',
+                  meta: fieldname?.meta ?? ''
                 });
               });
           });
@@ -318,7 +326,79 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
   }
+  actionsDetails={} as any;
+ openModalforaction(modal: any, request: any,){
+  console.log("request",request)
+  //this.actionsDetails=request;
+     let parsedOldValue = {};
 
+  if (request.oldValue) {
+    try {
+      parsedOldValue = JSON.parse(request.oldValue);
+    } catch (e) {
+      console.error("Parsing error for oldValue:", request.oldValue);
+    }
+  }
+
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue
+  };
+  this.actionsDetails.fieldName=request.fieldName;
+  this.actionsDetails.moduleName=request.moduleName;
+  console.log("this.actionsDetails",this.actionsDetails)
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+ }
+mergedValues: any[] = [];
+openModalfornewvalueAction(modal: any, request: any) {
+  // Parse oldValue and newValue
+  let parsedOldValue = {};
+  let parsedNewValue = {};
+  if (request.oldValue) {
+    parsedOldValue = JSON.parse(request.oldValue);
+  }
+  if (request.newValue) {
+    parsedNewValue = JSON.parse(request.newValue);
+  }
+  // Parse meta (ChangedFields)
+  let parsedMeta: any = {};
+  if (request.meta) {
+    parsedMeta = JSON.parse(request.meta);
+  }
+  this.actionsDetails = {
+    ...request,
+    oldValue: parsedOldValue,
+    newValue: parsedNewValue,
+    changedFields: parsedMeta?.ChangedFields ?? {}  // <<--- Correct extraction
+  };
+  const oldVal = this.actionsDetails.oldValue ?? {};
+  const newVal = this.actionsDetails.newValue ?? {};
+  const changedFields = this.actionsDetails.changedFields ?? {}; // <<--- Correct reference
+  // Merge keys
+  const keys = new Set([
+    ...Object.keys(oldVal),
+    ...Object.keys(newVal),
+  ]);
+
+  // Build merged list
+  this.mergedValues = Array.from(keys).map(key => ({
+    key,
+    oldValue: oldVal[key],
+    newValue: newVal[key],
+    isChanged: this.isFieldChanged(key, changedFields)
+  }));
+  this.modalService.open(modal, { centered: true, backdrop: 'static' });
+}
+isFieldChanged(objectKey: string, changedFields: any): boolean {
+  if (!changedFields) return false;
+
+  const normalizedKey = objectKey.replace(/\s+/g, "").toLowerCase();
+  const changedKeys = Object.keys(changedFields).map(k =>
+    k.replace(/\s+/g, "").toLowerCase()
+  );
+
+  return changedKeys.includes(normalizedKey);
+}
   // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;
@@ -587,8 +667,50 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
     }
     return false
   }
+
+    onViewAttachement(url: any,content:any) {
+    const lowerUrl = url?.toLowerCase();
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.ViewURL = null;
+          this.toggleViewModal(content);
+        },
+        error: (err) => console.error('Error downloading image:', err),
+      });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal(content);
+    } else {
+      // fallback for other types if needed
+      this.ImageUrl = null;
+      this.ViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal(content);
+    }
+  }
+
+  toggleViewModal(content:any) {
+    this.modalService.dismissAll();
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
+  }
   // destroy the component
 
+  closeonlyattemchment(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
+ closeonlyattemchmentforcurrent(){
+    this.modalService.dismissAll();
+    this.ImageUrl = null;
+    this.ViewURL = null;
+    this.modalService.open(this.popupforcurrentaction, {  centered: true, backdrop: 'static', keyboard: false });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -10,9 +10,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
+import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 @Component({
   selector: 'app-degree',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './degree.component.html',
   styleUrl: './degree.component.scss',
 })

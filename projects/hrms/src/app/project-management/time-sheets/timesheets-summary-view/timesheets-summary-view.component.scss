@@ -11,8 +11,7 @@
     border-bottom-left-radius: 0rem !important;
     border-bottom-right-radius: 0rem !important;
 
-    th,
-    td {
+    th, td {
         font-size: var(--fontsize14) !important;
     }
 
@@ -36,7 +35,7 @@
     width: 100%;
     border: 1px solid #FFFFFF;
     border-radius: 0.5rem;
-    background: linear-gradient(180deg, #FFFFFF -139.29%, #ECF0F4 100%);
+    background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
 }
 
 .summary-header {
@@ -184,8 +183,8 @@
     min-height: 15rem;
 
     .no-data-image {
-        width: 7rem !important;
-        height: 6rem !important;
+        --no-data-icon-width: 7rem !important;
+        --no-data-icon-height: 6rem !important;
     }
 
     .no-data-text {
@@ -226,20 +225,6 @@
     td:last-child {
         border-bottom-right-radius: 0.325rem;
     }
-}
-
-.clear-all-btn {
-    background: none;
-    border: none;
-    text-decoration: underline;
-    padding: 0;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
-}
-
-.clear-all-btn:focus {
-    outline: none;
 }
 
 ::ng-deep .chartjs-tooltip {
@@ -324,6 +309,63 @@
     background-color: #FFEA00;
 }
 
+::ng-deep.custom-date-range-picker {
+    .p-datepicker {
+        width: 100% !important;
+    }
+}
+
+/* Filter Indicator Dot */
+.filter-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #0B3A83;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 #0B3A83;
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    }
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}
+
+.filter-content {
+    position: sticky;
+}
+
+.custom-chip-red {
+    padding: 0.25rem !important;
+    background-color: white !important;
+    color: #0B3A83 !important;
+    border: 1px solid #0B3A83 !important;
+}
 
 .timesheet-chip {
     font-size: 8.5px !important;

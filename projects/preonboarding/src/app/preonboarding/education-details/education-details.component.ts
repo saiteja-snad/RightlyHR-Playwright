@@ -14,9 +14,10 @@ import { DataService } from '../../common-services/data.service';
 import { environment } from '../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { DocumentViewIconComponent } from "../../../../../hrms/src/app/icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, DateFormatPipe, NgxDocViewerModule, DetailedStepProgressbarComponent],
+  imports: [CommonModule, DateFormatPipe, NgxDocViewerModule, DetailedStepProgressbarComponent, DocumentViewIconComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })

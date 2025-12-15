@@ -35,13 +35,12 @@
         <div class="d-flex justify-content-center gap-3 pt-5 pb-4">
           <div>
             @if (attendanceData.data.attendanceData[0].status.toLowerCase() === 'wfh') {
-            <img src="/dashboard-icon/work-from-home-icon.png" alt="Icon" class="icon">
+            <app-wfh-icon />
             }
             @else if (attendanceData.data.attendanceData[0].status.toLowerCase() === 'leave') {
-            <img src="/dashboard-icon/leave-icon.png" alt="Icon" class="icon">
+            <app-leave-icon />
             }
-            @else {
-            <img src="/dashboard-icon/log-icon.png" alt="Icon" class="icon">
+            @else { <app-finger-print-icon />
             }
           </div>
           <div>
@@ -60,10 +59,10 @@
               !== 'Leave'
               && attendanceData.data.attendanceData[0].status !== 'Absent'){
               <div>
-                <img src="/dashboard-icon/info.png" alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes);
+                <app-dash-att-icon alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes);
                       dayLogsData(attendanceData.data.attendanceData[0].biometricLogs,attendanceData.data.attendanceData[0].date,
                       attendanceData.data.attendanceData[0].duration.biometricDuration,attendanceData.data.attendanceData[0].permissions,
-                      attendanceData.data.attendanceData[0].regularizations)">
+                      attendanceData.data.attendanceData[0].regularizations)"/>
               </div>
               }
             </div>
@@ -110,6 +109,7 @@
       <!--Events Display-->
       @if(!eventsLoader){
       <div class="content-card events-content">
+        
         <div class="carousel-content">
           <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false" [circular]="true"
             [autoplayInterval]="3000">

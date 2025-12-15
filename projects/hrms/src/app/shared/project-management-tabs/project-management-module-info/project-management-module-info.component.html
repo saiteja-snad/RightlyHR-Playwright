@@ -7,7 +7,7 @@
     </div>
     }
      @if(isShowClientRoute()){
-    <div class="commpoment-name" ><b>{{this.clientName}}</b>
+    <div class="commpoment-name" [style.color]="clientColor"><b>{{this.clientName}}</b>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
@@ -23,7 +23,7 @@
     </div>
     }
      @if(isShowProjectRoute()){
-    <div class="commpoment-name" ><b>{{this.projectname}}</b>
+    <div class="commpoment-name" [style.color]="projectColor"><b>{{this.projectname}}</b>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
@@ -50,7 +50,7 @@
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
     </div>
     }
-        @if(isShowtimesheetforresourceproject()){
+    @if(isShowtimesheetforresourceproject()){
     <div class="commpoment-name">
         <a (click)="navigatetodetaliedtoproject()"><u>Detalied</u></a>
         <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>

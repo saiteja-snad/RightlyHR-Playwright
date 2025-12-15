@@ -16,10 +16,11 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-probation-details',
   standalone: true,
-  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })

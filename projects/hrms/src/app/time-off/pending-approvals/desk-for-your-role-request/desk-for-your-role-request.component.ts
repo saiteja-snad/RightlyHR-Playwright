@@ -15,9 +15,11 @@ import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { environment } from '../../../../environments/environment';
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+
 @Component({
   selector: 'app-desk-for-your-role-request',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './desk-for-your-role-request.component.html',
   styleUrl: './desk-for-your-role-request.component.scss'
 })

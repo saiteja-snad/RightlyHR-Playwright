@@ -11,11 +11,13 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 
 
 @Component({
   selector: 'app-expenses-configuration',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsUpdateIconComponent, SettingsDeleteIconComponent],
   templateUrl: './expenses-configuration.component.html',
   styleUrl: './expenses-configuration.component.scss'
 })

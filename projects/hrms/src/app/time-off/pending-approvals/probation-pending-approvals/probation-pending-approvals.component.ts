@@ -23,12 +23,12 @@ import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
-
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
     PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent,
-    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent],
+    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
 })

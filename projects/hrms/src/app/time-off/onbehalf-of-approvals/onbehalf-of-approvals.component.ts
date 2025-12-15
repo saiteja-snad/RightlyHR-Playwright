@@ -18,6 +18,9 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { RegularizationComponent } from './regularization/regularization.component';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.component';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -30,12 +33,17 @@ import { ExpensesComponent } from './expenses/expenses.component';
     PermissionsComponent,
     CompOffEntitlementComponent,
     TimeOffComponent,
+    RegularizationComponent,
     Select,
     ModuleInformationComponent,
     NgbPopoverModule,
     FormsModule,
-    ExpensesComponent
-  ],
+    ExpensesComponent,
+    ModuleInfoIconComponent,
+    TraineeRequestsComponent
+
+],
+
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -49,14 +57,23 @@ export class OnbehalfOfApprovalsComponent {
   compOff = [] as any;
   wfh = [] as any;
   permissions = [] as any;
+
   expenses = [] as any;
+
+  regularization = [] as any;
+
+  traineeRequests = [] as any;
+
+
   teamManagerControl = new FormControl(null);
   timeOffCount = 0;
   compOffCount = 0;
   expensesCount = 0;
   wfhCount = 0;
+  traineeRequestsCount = 0;
   activeTab: string = 'timeOff';
   permissionsCount = 0;
+  regularizationCount = 0;
   employeeiddetails = [] as any;
   getEmployeeInfo = [] as any;
   disaplyapplybutton = true;
@@ -77,6 +94,9 @@ export class OnbehalfOfApprovalsComponent {
           this.getWfhoff(this.employeedata.employeeId);
           this.getPermissionsoff(this.employeedata.employeeId);
           this.getExpensesoff(this.employeedata.employeeId)
+          this.getRegularizationoff(this.employeedata.employeeId);
+          this.getTraineeRequestsOff(this.employeedata.employeeId)
+
         }
         // this.http.resetTriggerSignal();
       }
@@ -115,7 +135,7 @@ export class OnbehalfOfApprovalsComponent {
     const url = this.router.url;
 
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
+      '/on-behalf-of/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
     };
 
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
@@ -177,11 +197,20 @@ export class OnbehalfOfApprovalsComponent {
       this.compOff = [];
       this.wfh = [];
       this.permissions = [];
+      this.regularization = [];
+      this.traineeRequests = [];
+
       this.timeOffCount = 0;
       this.compOffCount = 0;
       this.wfhCount = 0;
       this.permissionsCount = 0;
+
       this.expensesCount = 0;
+
+      this.regularizationCount = 0;
+
+      this.traineeRequestsCount = 0;
+
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
       this.http.triggerActionSignal();
     }
@@ -199,11 +228,18 @@ export class OnbehalfOfApprovalsComponent {
       this.compOff = [];
       this.wfh = [];
       this.permissions = [];
+      this.regularization = [];
+
+      this.traineeRequests = [];
+
       this.timeOffCount = 0;
       this.compOffCount = 0;
       this.expensesCount = 0;
       this.wfhCount = 0;
       this.permissionsCount = 0;
+      this.regularizationCount = 0;
+      this.traineeRequestsCount = 0;
+
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
       this.http.triggerActionSignal();
     }
@@ -280,6 +316,32 @@ export class OnbehalfOfApprovalsComponent {
   }
   
 
+  getRegularizationoff(employeeId: any) {
+  this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.attendanceRegularizationModuleId}`).subscribe({
+    next: (data: any) => {
+      this.regularization = data.data.filter((item: any) => item.approvalHeader.status !== 'Processed' && item.approvalHeader.status !== 'Rejected');
+      this.regularizationCount = this.regularization.length;
+    },
+    error: (reason) => {
+      this.regularization = [];
+      this.regularizationCount = 0;
+          }
+  });
+}
+  getTraineeRequestsOff(employeeId: any) {
+  this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.traineeoffboardingModuleId}`).subscribe({
+    next: (data: any) => {
+      this.traineeRequests = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+      this.traineeRequestsCount = this.traineeRequests.length;
+    },
+    error: (reason) => {
+      this.traineeRequests = [];
+      this.traineeRequestsCount = 0;
+
+    }
+  });
+}
+
   timeoff(Value: any) {
     this.gettimeoffcount(this.employeedata.employeeId);
   }
@@ -299,6 +361,14 @@ export class OnbehalfOfApprovalsComponent {
     this.getExpensesoff(this.employeedata.employeeId)
   }
 
+
+  regularizationoff(value: any) {
+  this.getRegularizationoff(this.employeedata.employeeId);
+  }
+
+  traineeRequestsOff(value: any) {
+  this.getTraineeRequestsOff(this.employeedata.employeeId);
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

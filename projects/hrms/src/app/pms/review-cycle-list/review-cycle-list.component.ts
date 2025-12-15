@@ -17,6 +17,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-review-cycle-list',
@@ -30,7 +31,8 @@ import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs
     NoDataFoundComponent,
     ModuleInformationComponent,
     NgbPopoverModule,
-    PmsTabsComponent
+    PmsTabsComponent,
+    ModuleInfoIconComponent
 ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',

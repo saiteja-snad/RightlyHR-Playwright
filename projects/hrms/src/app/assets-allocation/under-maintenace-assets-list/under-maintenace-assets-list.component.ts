@@ -14,10 +14,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-under-maintenace-assets-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, ConfirmationIconComponent],
   templateUrl: './under-maintenace-assets-list.component.html',
   styleUrl: './under-maintenace-assets-list.component.scss',
   providers: [DatePipe]

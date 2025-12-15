@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -23,13 +17,15 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import moment from 'moment';
 import { environment } from '../../../../environments/environment';
-
+import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent, EditIconComponent, InfoIconComponent],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss',
 })
+
 export class BasicInfoComponent implements OnInit, OnDestroy {
   basicInfoForm!: FormGroup;
   subscription!: Subscription;
@@ -60,18 +56,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   activeMessage: string = '';
   totalCount: any;
 
-
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    public formValidation: FormValidationService,
-
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    public rbac: RbacService,
-    public permission: AccessForEmployeeinfoService,
-    private router: Router
-  ) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, 
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, 
+    public permission: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -83,7 +70,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getFieldsApprovalStatus();
     this.basicInfoForm.disable();
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
-      console.log(data);
       this.empyployeedata.dob = null;
       this.changeingdob = data;
     });
@@ -92,24 +78,18 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   getBasicInfoFields() {
     const params = 'Personal';
     const param = 'Basic Info';
-    this.subscription = this.http
-      .getDatabyentityvalueForFieldUpdate(
-        `EmployeeInfoApprovalFields/getApprovalFields`,
-        params,
-        param
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data.data.length > 0) {
-            this.fieldOptions = data.data;
-          } else {
-            console.log('No data found.');
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching data:', err);
-        },
-      });
+    this.subscription = this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`, params, param).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.fieldOptions = data.data;
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      },
+    });
   }
 
   getFieldsApprovalStatus() {
@@ -118,25 +98,19 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       moduleName: 'Basic Info',
       employeeId: parseInt(this.empinfo.employeeId),
     };
-    this.subscription = this.http
-      .getDataIncludeParams(
-        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
-        params
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data.data.length > 0) {
-            this.getFieldsApprovalStatusList = data.data;
-          } else {
-            console.log('No data found.');
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching data:', err);
-        },
-      });
+    this.subscription = this.http.getDataIncludeParams(`EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`, params).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.getFieldsApprovalStatusList = data.data;
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      },
+    });
   }
-
 
   isFieldPendingApproval(fieldName: string): boolean {
     return this.getFieldsApprovalStatusList.some(
@@ -147,8 +121,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   getPendingApprovalMessage(fieldName: string): string {
     const pendingItem = this.getFieldsApprovalStatusList.find(
-      (item: any) =>
-        item.fieldName === fieldName && item.approvalStatus === 'Pending'
+      (item: any) => item.fieldName === fieldName && item.approvalStatus === 'Pending'
     );
     return (
       pendingItem?.message || 'This field change request is awaiting approval.'
@@ -156,23 +129,20 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   setActiveMessage(fieldName: string) {
-  this.activeMessage = this.getPendingApprovalMessage(fieldName);
-}
+    this.activeMessage = this.getPendingApprovalMessage(fieldName);
+  }
 
   // Add this method
   isFieldDisabledDueToPending(fieldName: string): boolean {
     return this.isFieldPendingApproval(fieldName);
   }
 
-  canAccessfield(
-    action: 'view' | 'create' | 'update' | 'delete',
-    permission: string
-  ) {
+  canAccessfield(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permission.canAccessField(action, permission);
   }
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-
     if (fullPath.startsWith('/personalinfo')) {
       this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -219,10 +189,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       const birthDate = new Date(dob);
       let age = currentDate.getFullYear() - birthDate.getFullYear();
       const monthDiff = currentDate.getMonth() - birthDate.getMonth();
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())
-      ) {
+      if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
         age--;
       }
       if (age < 18 || age > 75) {
@@ -233,53 +200,39 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   onsalutationvalidation(): void {
-    console.log('CALL');
     const gender = this.basicInfoForm.get('gender')?.value;
-    console.log(gender);
-
     const title = this.basicInfoForm.get('salutation')?.value?.titlename;
-    console.log(title);
-
     const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
     const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
-
-    if (
-      (genderLower === 'male' && titleLower === 'mr.') ||
-      (genderLower === 'female' &&
-        ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
-      ((genderLower === 'other' || genderLower === 'others') &&
-        (titleLower === 'others.' || titleLower === 'other.')) ||
-      ((genderLower === 'male' || genderLower === 'female') &&
-        (titleLower == null || titleLower === ''))
-    ) {
+    if ((genderLower === 'male' && titleLower === 'mr.') || (genderLower === 'female' && 
+      ['ms.', 'miss.', 'mrs.'].includes(titleLower)) || ((genderLower === 'other' || genderLower === 'others') && 
+      (titleLower === 'others.' || titleLower === 'other.')) || ((genderLower === 'male' || genderLower === 'female') 
+      && (titleLower == null || titleLower === ''))) {
       this.salutationValidationcheck = false; // Valid combination
     } else {
       this.salutationValidationcheck = true; // Invalid combination
-      console.log(this.salutationValidationcheck);
     }
   }
 
   getEmployeeId(): void {
     this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.loading = false;
-          this.empyployeedata = data;
-          this.patchForm(data);
-          this.dateofbirth = this.formatDateToLocal(this.empyployeedata.dob);
-          localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
-          this.changemaritalstatus();
-        },
-        error: (error: any) => {
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.loading = false;
+        this.empyployeedata = data;
+        this.patchForm(data);
+        this.dateofbirth = this.formatDateToLocal(this.empyployeedata.dob);
+        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+        this.changemaritalstatus();
+      },
+      error: (error: any) => {
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 
   getdateofbirth(): string | null {
@@ -305,38 +258,28 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   patchForm(data: any): void {
-    console.log('data', data);
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
-      salutation:
-        this.titledetails.find((item: any) => item.titlename === data.title) ||
-        data.title,
+      salutation: this.titledetails.find((item: any) => item.titlename === data.title) || data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
       marriageDate: this.formatDateToLocal(data.marriedDate) || null,
       dob: this.formatDateToLocal(data.dob),
-      bloodGroup: this.bloodGroups.find(
-        (item: any) => item.name === data.bloodGroup
-      ),
-      maritalStatus:
-        this.Maritaldetails.find(
-          (item: any) => item.maritalstatus1 === data.maritalStatus
-        ) || data.maritalStatus,
+      bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
+      maritalStatus: this.Maritaldetails.find((item: any) => item.maritalstatus1 === data.maritalStatus) || data.maritalStatus,
     });
   }
 
   updateBasicInfo(): void {
     // const formValue = this.basicInfoForm.getRawValue();
-
     // Get list of pending field names
-      // const targetStatuses = ['Pending', 'Cancelled'];
-      // const pendingFieldNames = this.getFieldsApprovalStatusList
-      //   .filter((item) => targetStatuses.includes(item.approvalStatus))
-      //   .map((item) => item.fieldName);
-
+    // const targetStatuses = ['Pending', 'Cancelled'];
+    // const pendingFieldNames = this.getFieldsApprovalStatusList
+    //   .filter((item) => targetStatuses.includes(item.approvalStatus))
+    //   .map((item) => item.fieldName);
     // Map fieldName (display) → form control name
     // const fieldToControlMap: { [key: string]: string } = {
     //   'First Name': 'firstName',
@@ -349,9 +292,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     //   'Marital Status': 'maritalStatus',
     //   'Married Date': 'marriageDate',
     // };
-
     // Build payload — only include fields that are NOT pending
-         const formValue = this.basicInfoForm.value;
+    const formValue = this.basicInfoForm.value;
     const updatePayload: any = {
       ...this.empyployeedata,
       updatedby: this.empinfo.employeeId.toString(),
@@ -370,11 +312,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       moduleName: this.isMyInfoRoute ? 'Basic Info' : undefined,
       displayName: this.isMyInfoRoute ? 'Personal' : undefined,
     };
-
     // // Only add fields that are editable (not pending) and have changed
     // Object.keys(fieldToControlMap).forEach((displayFieldName) => {
     //   const controlName = fieldToControlMap[displayFieldName];
-
     //   if (!pendingFieldNames.includes(displayFieldName)) {
     //     const currentValue = formValue[controlName];
     //     const originalValue =
@@ -391,7 +331,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     //                 ? 'dob'
     //                 : controlName
     //       ];
-
     //     // Optional: only send if changed
     //     if (currentValue !== undefined && currentValue !== null) {
     //       if (controlName === 'salutation') {
@@ -413,37 +352,29 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     // });
     // Always include fusionEmpId if editable
     if (!this.basicInfoForm.get('fusionEmpId')?.disabled) {
-      updatePayload.fusionEmpId =
-        formValue.fusionEmpId || this.empyployeedata.fusionEmpId;
+      updatePayload.fusionEmpId = formValue.fusionEmpId || this.empyployeedata.fusionEmpId;
     }
 
-    console.log('Final Payload (excluding pending fields):', updatePayload);
-
-    this.subscription = this.http
-      .postdata(`Employeedata/UPDATER`, updatePayload)
-      .subscribe({
-        next: (data: any) => {
-          if (data.statusCode === 200) {
-            this.conformationPopup.openSuccessModal(
-              'Basic information updated successfully'
-            );
-            this.getEmployeeId();
-            this.getFieldsApprovalStatus();
-           this.getApprovalStatusCounts(); // Refresh pending status
-            this.http.setBasicDetails();
-            this.basicInfoForm.disable();
-            this.buttons = false;
-          } else if (data.statusCode === 409) {
-            this.conformationPopup.openErrorModal(data.message);
-            this.patchForm(this.empyployeedata);
-          }
-        },
-        error: (reason: any) => {
-          this.conformationPopup.openErrorModal(
-            reason.error.message || 'Basic info update failed'
-          );
-        },
-      });
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload).subscribe({
+      next: (data: any) => {
+        if (data.statusCode === 200) {
+          this.conformationPopup.openSuccessModal('Basic information updated successfully');
+          this.getEmployeeId();
+          this.getFieldsApprovalStatus(); // Refresh pending status
+          this.http.setBasicDetails();
+          this.basicInfoForm.disable();
+          this.buttons = false;
+        } else if (data.statusCode === 409) {
+          this.conformationPopup.openErrorModal(data.message);
+          this.patchForm(this.empyployeedata);
+        }
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal(
+          reason.error.message || 'Basic info update failed'
+        );
+      },
+    });
   }
 
   getGender() {
@@ -482,17 +413,11 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   changemaritalstatus(): void {
-    const maritalStatus =
-      this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 ||
-      this.basicInfoForm.get('maritalStatus')?.value ||
-      this.empyployeedata.maritalStatus;
-
-    console.log('Marital Status:', maritalStatus);
+    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 || 
+    this.basicInfoForm.get('maritalStatus')?.value || this.empyployeedata.maritalStatus;
     if (maritalStatus === 'Married') {
       // Add the required validator to the marriageDate field
-      this.basicInfoForm
-        .get('marriageDate')
-        ?.setValidators([Validators.required]);
+      this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
     } else {
       // Clear the validators if marital status is not "Married"
       this.basicInfoForm.get('marriageDate')?.clearValidators();
@@ -505,31 +430,22 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   showButtons(): void {
     this.buttons = !this.buttons;
     const fullPath = this.router.url;
-
     if (this.buttons) {
       this.basicInfoForm.enable();
-
       // Always disable employeeId field
       this.basicInfoForm.get('employeeId')?.disable();
-
       // Disable fields that have pending approval
       this.disablePendingFields();
-
       // Handle different route cases
       if (fullPath.startsWith('/myinfo')) {
         this.basicInfoForm.get('fusionEmpId')?.disable();
       }
-
       // Personal info route specific logic for fusionEmpId
       if (fullPath.startsWith('/personalinfo/personal')) {
-        if (
-          !this.rbac.allowedToAccess('Employee Info Basic Information.view')
-        ) {
+        if (!this.rbac.allowedToAccess('Employee Info Basic Information.view')) {
           this.basicInfoForm.get('fusionEmpId')?.disable();
         }
-        if (
-          this.rbac.allowedToAccess('Employee Info Basic Information.update')
-        ) {
+        if (this.rbac.allowedToAccess('Employee Info Basic Information.update')) {
           this.basicInfoForm.get('fusionEmpId')?.enable();
         }
       }
@@ -546,7 +462,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const pendingFields = this.getFieldsApprovalStatusList
       .filter((item) => item.approvalStatus === 'Pending')
       .map((item) => item.fieldName);
-
     pendingFields.forEach((fieldName) => {
       const controlMap: { [key: string]: string } = {
         'First Name': 'firstName',
@@ -559,7 +474,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         'Marital Status': 'maritalStatus',
         'Married Date': 'marriageDate',
       };
-
       const controlName = controlMap[fieldName];
       if (controlName && this.basicInfoForm.get(controlName)) {
         this.basicInfoForm.get(controlName)?.disable();

@@ -33,7 +33,6 @@ import { AuthService } from '../../../services/auth.service';
     FormsModule,
     PaginatorModule,
     DropdownModule,
-    DateformatPipe,
     NgxDocViewerModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,

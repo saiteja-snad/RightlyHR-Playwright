@@ -15,7 +15,7 @@
   width: 100%;
   padding: 0.625rem;
   border-radius: 0.5rem;
-  background: #ECF1F5;
+  background: var(--table-header-bg-color);
 }
 
 .soft-skill-chips {
@@ -93,6 +93,7 @@ input:focus {
 .expert {
   color: #00A912 !important;
 }
+
 .skill-icon {
   width: 24px;
   height: 24px;

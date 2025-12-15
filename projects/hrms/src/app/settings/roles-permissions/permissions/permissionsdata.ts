@@ -241,6 +241,7 @@ export const permissionsData = [
 
   //New Side Nav Section
   { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
@@ -260,6 +261,7 @@ export const permissionsData = [
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contacts Directory', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Skill Set Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
@@ -270,6 +272,7 @@ export const permissionsData = [
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet Filters Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -464,6 +467,8 @@ export const permissionsData = [
   { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Regularization (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Trainee Requests (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
 
@@ -590,6 +595,11 @@ export const permissionsData = [
   { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
 
+{ fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+
+
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },
@@ -658,7 +668,7 @@ export const permissionsData = [
   //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
-  
+
   // { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },

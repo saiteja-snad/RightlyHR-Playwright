@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { combineLatest, Subject, Subscription, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { Project } from '../../../Interfaces/projects.model';
 import { IEmployeeDetails } from '../../../letters/letters.modal';
@@ -20,18 +20,23 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { IPhases } from '../../../Interfaces/project-management/phases.model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { ClientResourceTabComponent } from '../../../shared/project-management-tabs/client-resource-tab/client-resource-tab.component';
+
 @Component({
   selector: 'app-client-resources',
-  imports: [CommonModule, ReactiveFormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ClientResourceTabComponent, TranslateModule, NgbPopover,
     DataLoaderContentComponent, Select, DateformatPipe, NoDataFoundComponent, ConfirmationIconComponent, InfoIconComponent],
   templateUrl: './client-resources.component.html',
   styleUrl: './client-resources.component.scss'
 })
 
 export class ClientResourcesComponent implements OnInit, OnDestroy {
+  searchValue: string = '';
   resourcestartdate: any
   resourcesData = [] as IResource[];
+  filteredResourcesData = [] as IResource[];
   resourcesDataByPhase = [] as IResource[];
+
+
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
   reasonForm!: FormGroup;
@@ -77,9 +82,16 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   selectedRoleId: number = 0;
   selectedEntityRefId: number = 0;
 
+
+
   constructor(private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute,
     private conformationPopup: OpenModalService) { }
+
+  selectedRoleIds: number[] = [];
+  selectedPhaseIds: number[] = [];
+  selectedAuthorityIds: number[] = [];
+  selectedProjectIds:number[] = [];
 
   ngOnInit() {
     this.initializeForms();
@@ -89,13 +101,38 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       const clientID = params['id'];
       if (clientID) {
         this.clientID = parseInt(clientID);
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
         this.getclientProjects(this.clientID);
         this.getClientsData(clientID);
       }
     });
-    this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getResourceData(parseInt(this.clientID));
+
+    combineLatest([
+      this.http.resourceRoleFilter$,
+      this.http.resourcePhaseFilter$,
+      this.http.resourceAuthorityFilter$,
+      this.http.resourceProjectFilter$
+    ]).pipe(
+      takeUntil(this.destroy$),
+      debounceTime(100),
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
+    ).subscribe(([roleIds, phaseIds, authorityIds, projectIds]) => {
+      this.selectedRoleIds = roleIds || [];
+      this.selectedPhaseIds = phaseIds || [];
+      this.selectedAuthorityIds = authorityIds || [];
+      this.selectedProjectIds = projectIds || [];
+      if (this.clientID) {
+        this.getResourceData(this.clientID, this.searchValue);
+      }
+    });
+
+    this.http.resourceDetailesadded$.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(50)
+    ).subscribe(() => {
+      if (this.clientID) {
+        this.getResourceData(this.clientID, this.searchValue);
+      }
     });
     this.updateResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -150,7 +187,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       extendReason: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]]
     });
   }
-  
+
   updateStatusEffectiveDateValidation() {
     const statusEffectiveDateControl = this.reasonForm.get('statusEffectiveDate');
     if (this.modalData?.title?.includes('release')) {
@@ -161,15 +198,33 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     statusEffectiveDateControl?.updateValueAndValidity();
   }
 
-  
 
-  getResourceData(id: any) {
-    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
+
+  getResourceData(id: any, searchTerm?: string) {
+    let url = `ProjectResource?status=Active,assigned&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`;
+    if (searchTerm) {
+      url += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    if (this.selectedRoleIds?.length > 0) {
+      url += `&roleIds=${this.selectedRoleIds.join(',')}`;
+    }
+    if (this.selectedPhaseIds?.length > 0) {
+      url += `&phaseId=${this.selectedPhaseIds.join(',')}`;
+    }
+    if (this.selectedAuthorityIds?.length > 0) {
+      url += `&timesheetApprovalAuthorityIds=${this.selectedAuthorityIds.join(',')}`;
+    }
+    if (this.selectedProjectIds?.length > 0) {
+      url += `&projectIds=${this.selectedProjectIds.join(',')}`;
+    }
+    this.subscription = this.http.getDataIncludeParams(url).subscribe({
       next: (data: any) => {
         if (data?.data?.length > 0) {
           this.resourcesData = data.data;
+          this.filteredResourcesData = data.data;
         } else {
           this.resourcesData = [];
+          this.filteredResourcesData = [];
         }
         this.loading = false;
       },
@@ -445,7 +500,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
           resourceName: data?.employee?.id,
           resourceEmail: data?.employee?.workMail,
           overtimeEligible: data.overtimeEligibile,
-          resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''} 
+          resourcePhone: data?.employee ? `${data.employee.mobilePhoneCountryCode ?? ''}
           ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-' : '-',
           designation: data?.employee?.designation,
           resourceAllocationhrs: data.allocatedHours || null,
@@ -513,7 +568,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.http.setnewcountfornewresourcecount()
         this.conformationPopup.openSuccessModal(successMessage || 'Resource updated successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         this.loader = false;
@@ -542,7 +597,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Resource deleted successfully');
-        this.getResourceData(this.clientID);
+        this.getResourceData(this.clientID, this.searchValue);
       },
       error: (err) => {
         console.error('Error occurred:', err);
@@ -740,7 +795,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
           return {
             ...employee,
             id: employee.employeeId,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -756,7 +811,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.selectedEmployee = this.employeeDetails?.find(emp => emp.employeeId === employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''}
       ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-'
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
@@ -781,6 +836,35 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.updateResourceForm.reset();
   }
 
+  watchSearchValue() {
+    let timeout: any;
+    const originalSearchValue = this.searchValue;
+
+    const checkSearch = () => {
+      if (this.searchValue !== originalSearchValue) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          this.getResourceData(this.clientID, this.searchValue);
+        }, 300);
+      }
+    };
+
+    setInterval(() => {
+      if (this.searchValue !== originalSearchValue) {
+        checkSearch();
+      }
+    }, 100);
+  }
+
+  onSearchChange() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.getResourceData(this.clientID, this.searchValue);
+    }, 300);
+  }
+
+  private searchTimeout: any;
+
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
@@ -791,5 +875,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    clearTimeout(this.searchTimeout);
   }
 }

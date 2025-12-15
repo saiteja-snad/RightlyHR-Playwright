@@ -30,6 +30,7 @@ import { SearchFormPipe } from '../search-form.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-draft-forms',
@@ -40,7 +41,8 @@ import { RbacService } from '../../../services/rbac.service';
     TranslateModule,
     FormsModule,
     SearchFormPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    SettingsUpdateIconComponent
 ],
   templateUrl: './draft-forms.component.html',
   styleUrl: './draft-forms.component.scss',

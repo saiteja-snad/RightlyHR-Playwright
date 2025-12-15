@@ -10,10 +10,12 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
 
 @Component({
   selector: 'app-expenses-allowed-days',
-  imports: [CommonModule,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule,ReactiveFormsModule,TranslateModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './expenses-allowed-days.component.html',
   styleUrl: './expenses-allowed-days.component.scss'
 })

@@ -10,9 +10,10 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 @Component({
    selector: 'app-published-weekends',
-   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
    templateUrl: './published-weekends.component.html',
    styleUrl: './published-weekends.component.scss'
 })

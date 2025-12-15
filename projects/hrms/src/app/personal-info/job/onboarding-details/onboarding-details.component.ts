@@ -13,9 +13,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
+import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, EditIconComponent],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss',
   encapsulation: ViewEncapsulation.None,

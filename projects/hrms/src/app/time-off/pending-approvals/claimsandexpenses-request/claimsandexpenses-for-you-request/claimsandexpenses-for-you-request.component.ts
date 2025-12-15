@@ -24,6 +24,7 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
+import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [
@@ -40,7 +41,8 @@ import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/c
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
-    ConfirmationIconComponent
+    ConfirmationIconComponent,
+    DocumentViewIconComponent
 ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',

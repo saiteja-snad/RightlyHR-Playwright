@@ -21,9 +21,10 @@ import dayjs from 'dayjs';
 import { HttpParams } from '@angular/common/http';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent, ModuleInformationComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent, ModuleInformationComponent, DataLoaderContentComponent,ModuleInfoIconComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })

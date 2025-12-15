@@ -16,10 +16,12 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-visa-details',
-  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DateformatPipe, DataLoaderContentComponent],
+  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './visa-details.component.html',
   styleUrl: './visa-details.component.scss'
 })

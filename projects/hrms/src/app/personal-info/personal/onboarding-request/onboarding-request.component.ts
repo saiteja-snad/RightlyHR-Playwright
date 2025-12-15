@@ -18,11 +18,14 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { DocumentData } from '../../../Interfaces/document.model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
+
 import { FormValidationsService } from '../../../services/form-validations.service';
+
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
-    DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
+    DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent],
   templateUrl: './onboarding-request.component.html',
   styleUrl: './onboarding-request.component.scss'
 })

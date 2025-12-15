@@ -5,7 +5,7 @@
             </div>
             <div class="component-header">{{'Comp-Off'|translate}}</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
             </div>
         </div>
 
@@ -180,7 +180,7 @@
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+          <app-confirmation-icon />
             <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
         </div>
 

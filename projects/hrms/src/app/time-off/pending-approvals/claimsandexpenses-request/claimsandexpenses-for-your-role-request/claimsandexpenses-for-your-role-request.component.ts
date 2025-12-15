@@ -25,6 +25,7 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { Router, RouterOutlet } from '@angular/router';
+import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -41,8 +42,10 @@ import { Router, RouterOutlet } from '@angular/router';
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
-    ConfirmationIconComponent
-  ],
+    ConfirmationIconComponent,
+    DocumentViewIconComponent
+],
+
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })

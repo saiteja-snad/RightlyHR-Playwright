@@ -218,7 +218,8 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/inactive-employee-report', permission: 'Inactive Empolyee Report.view' },
   { route: '/reports/attendence-reports/yearly-summary-report', permission: 'Yearly Summary Report.view' },
   { route: '/reports/attendence-reports/permission-report', permission: 'Permission Report.view' },
-  { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' }
+  { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' },
+  { route: '/reports/attendence-reports/extraloghour-report', permission: 'Extra Log Hours Report.view' },
 ];
 
 export const TIMESHEET_REPORTS_TABS = [

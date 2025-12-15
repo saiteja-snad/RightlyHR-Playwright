@@ -18,7 +18,6 @@ import { ILocation, IShiftHeader, ISubLocation } from '../../../flexible-leave-a
 })
 
 export class LoadEntitlementCreateComponent {
-  clientForm!: FormGroup;
   empinfo: any = {};
   leaveAllocationForm!: FormGroup;
   carryforwarddata: any = {}

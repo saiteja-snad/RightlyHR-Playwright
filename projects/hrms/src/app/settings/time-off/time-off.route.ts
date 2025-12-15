@@ -6,6 +6,7 @@ import { LoadEntilementsAlloctionComponent } from "./load-entilements-alloction/
 import { LoadEntitlementsCarryForwardComponent } from "./load-entilements-alloction/load-entitlements-carry-forward/load-entitlements-carry-forward.component";
 import { IntialLoadEntitlementComponent } from "./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement.component";
 import { CarryForwardLeaveEntitlementComponent } from "./load-entilements-alloction/carry-forward-leave-entitlement/carry-forward-leave-entitlement.component";
+import { IntialLoadEntitlementLayoutComponent } from "./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-layout.component";
 
 export default [
     // { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
@@ -22,7 +23,7 @@ export default [
 
     { path: 'load-entitlement/initial-load-entitlements', component: IntialLoadEntitlementComponent },
     { path: 'load-entitlement/carry-forward', component: CarryForwardLeaveEntitlementComponent },
-    {path:'jobview',component:LoadEntilementsAlloctionComponent},
+    { path: 'jobview', component: LoadEntilementsAlloctionComponent },
     {
         path: 'leave-entitlements', component: LoadEntitlementsCarryForwardComponent,
         children: [
@@ -30,6 +31,15 @@ export default [
             { path: 'load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetpreview/load-entitlemetpreview.component').then((m) => m.LoadEntitlemetpreviewComponent) },
             { path: 'load-entitlement-map-categoery', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entilements-map-categoery/load-entilements-map-categoery.component').then((m) => m.LoadEntilementsMapCategoeryComponent) },
             { path: 'load-entitlement-execution', loadComponent: () => import('./load-entilements-alloction/load-entitlements-carry-forward/load-entitlemetexecution/load-entitlemetexecution.component').then((m) => m.LoadEntitlemetexecutionComponent) }
+        ]
+    },
+    {
+        path: 'intial-leave-entitlements',
+        component: IntialLoadEntitlementLayoutComponent,
+        children: [
+            { path: 'intial-load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-create/intial-load-entitlement-create.component').then((m) => m.IntialLoadEntitlementCreateComponent) },
+            { path: 'intial-load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-preview/intial-load-entitlement-preview.component').then((m) => m.IntialLoadEntitlementPreviewComponent) },
+
         ]
     },
     {

@@ -10,7 +10,7 @@
         </div>
 
         <div *ngIf="isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')">
-            <button type="button" class="custom-btn btn-primary">Add Initial Entitlements </button>
+            <button type="button" class="custom-btn btn-primary" (click)="initialentitlements()">Add Initial Entitlements </button>
         </div>
 
         <div *ngIf="isActive('/settings/timeoff-configurations/load-entitlement/carry-forward')">

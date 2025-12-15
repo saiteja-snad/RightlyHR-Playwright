@@ -64,7 +64,7 @@ export class SettingsHeaderComponent implements OnInit {
   }
 
 
-    isShowsformoduelinfo() {
+  isShowsformoduelinfo() {
     const showPaths = [
       '/settings/timeoff-configurations/jobview',
       '/settings/timeoff-configurations/leave-entitlements',
@@ -291,7 +291,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
-      this.componentName = 'Initial Leave Carry Forward';
+      this.componentName = 'Initial Leave Entitlements';
     }
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/carry-forward')) {
       this.moduleName = 'Time Off';
@@ -313,6 +313,7 @@ export class SettingsHeaderComponent implements OnInit {
   isShowsettingsRoute(): boolean {
     const hidePaths = [
       '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
@@ -335,12 +336,24 @@ export class SettingsHeaderComponent implements OnInit {
   }
 
 
+  isShowsettingsjobRouteforintial() {
+    const showPaths = [
+      '/settings/timeoff-configurations/intial-leave-entitlements',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  navigateTointialloadentiments() {
+    this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
+  }
+
 
   navigateToSettings() {
     this.router.navigate(['/settings']),
       localStorage.removeItem('carryForwardJobId'),
       localStorage.removeItem('loadEntitlement')
   }
+
   navigateToloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
     localStorage.removeItem('carryForwardJobId'),

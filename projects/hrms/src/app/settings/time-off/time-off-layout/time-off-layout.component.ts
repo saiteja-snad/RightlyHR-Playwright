@@ -53,4 +53,7 @@ export class TimeOffLayoutComponent implements OnInit {
   carryforwordnavigation() {
     this.router.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-create']);
   }
+  initialentitlements(){
+    this.router.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create']);
+  }
 }

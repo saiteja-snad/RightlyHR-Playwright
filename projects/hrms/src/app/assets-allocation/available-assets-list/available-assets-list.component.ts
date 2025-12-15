@@ -539,12 +539,16 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
 
     if (event !== '' && event.length >= 1) {
       // localStorage.setItem('assetsdata', JSON.stringify(this.assets.value))
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-     this.getcount(this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status, this.searchQuery  );
+   // this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+    // this.getcount(this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status, this.searchQuery  );
+    this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+    this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status,this.searchQuery );
     }
     if (event === '') {
-   this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
-        this.getcount(this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status, this.searchQuery);
+   //this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+    //  this.getcount(this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status, this.searchQuery);
+    this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+    this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status,this.searchQuery);
     }
   }
 

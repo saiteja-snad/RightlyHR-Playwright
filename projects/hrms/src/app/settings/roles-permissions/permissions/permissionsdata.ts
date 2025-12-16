@@ -607,6 +607,8 @@ export const permissionsData = [
   { fields: 'Asset Management - Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Inactive', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Asset Management - Block', View: false, Update: false, Create: false, Delete: false },
+
 
   //Asset Management All Tab Actions
   // { fields: 'All Allocate Asset', View: false, Update: false, Create: false, Delete: false },
@@ -627,6 +629,7 @@ export const permissionsData = [
   { fields: 'Available Transfer Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Available View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Available Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Available Block Asset', View: false, Update: false, Create: false, Delete: false },
 
   //Asset Management Allocated Tab Actions
   { fields: 'Allocated Reallocate Asset', View: false, Update: false, Create: false, Delete: false },
@@ -643,6 +646,10 @@ export const permissionsData = [
   { fields: 'Inactive Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+ //Asset Management Block Tab Actions
+  { fields: 'Block View Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Block Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Block Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
 
   // My Info Sub Tabs Section
   { fields: 'My Info Personal Tab', View: false, Update: false, Create: false, Delete: false },

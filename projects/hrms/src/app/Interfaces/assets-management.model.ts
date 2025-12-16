@@ -127,6 +127,8 @@ export interface IAssetAllocation {
     comments?: string;
     transactions?: ITransaction[];
     assignedTo?: IAssignedTo;
+    additionalComments?: any;
+
   }
   export interface IAssignedTo {
     firstName: string;
@@ -135,7 +137,8 @@ export interface IAssetAllocation {
     fusionEmpId: string;
     employeeId: number;
     transactionId: number;
-    assetIdName: string
+    assetIdName: string;
+    comments?: string;
   }
   export interface AssetMaster {
     id: number;

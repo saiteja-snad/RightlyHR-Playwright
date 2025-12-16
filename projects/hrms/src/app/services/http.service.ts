@@ -52,6 +52,9 @@ export class HttpService {
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetscategoryIdSubject = new BehaviorSubject<string | null>(null);
+  assetssubcategeoryIdSubject = new BehaviorSubject<string | null>(null);
+  assetsdaterangeIdSubject = new BehaviorSubject<string | null>(null);
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
@@ -336,6 +339,9 @@ setOnBehalfExpensesUpdated(empId: number | null) {
 
   assetslocationId$ = this.assetslocationIdSubject.asObservable();
   assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
+  assetscategoryId$ = this.assetscategoryIdSubject.asObservable();
+  assetssubcategeoryId$ = this.assetssubcategeoryIdSubject.asObservable();
+  assetsdaterangeId$ = this.assetsdaterangeIdSubject.asObservable();
   //function to update the desk Updatelocation
   assetsUpdateLocationId(id: string | null) {
     this.assetslocationIdSubject.next(id);
@@ -345,7 +351,36 @@ setOnBehalfExpensesUpdated(empId: number | null) {
   assetsUpdateSubLocationId(id: string | null) {
     this.assetssublocationIdSubject.next(id);
   }
+  //function to update the desk sublocation
+  assetsUpdateCatageoryId(id: string | null) {
+    this.assetscategoryIdSubject.next(id);
+  }
+    //function to update the desk sublocation
+  assetsUpdateSubCatageoryId(id: string | null) {
+    this.assetssubcategeoryIdSubject.next(id);
+  }
+    // ---------- FROM DATE ----------
+  private fromDateSubject = new BehaviorSubject<string | null>(null);
+  fromDate$ = this.fromDateSubject.asObservable();
 
+  assetsUpdateFromDate(date: string | null) {
+    this.fromDateSubject.next(date);
+  }
+
+  // ---------- TO DATE ----------
+  private toDateSubject = new BehaviorSubject<string | null>(null);
+  toDate$ = this.toDateSubject.asObservable();
+
+  assetsUpdateToDate(date: string | null) {
+    this.toDateSubject.next(date);
+  }
+
+//availlableSearchCount = new BehaviorSubject<number>(0);
+setAvaillableSearchCount(count: number) {
+  //this.availlableSearchCount.next(count);
+     this.avilableassetCountSubject.next(count);
+  
+}
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -536,6 +571,10 @@ setOnBehalfExpensesUpdated(empId: number | null) {
     url: string,
     selectedLocationId: any,
     selectedSubLocationId: any,
+    category:any,
+    subcatageory:any,
+    fromDate:any,
+    toDate:any,
     status: string,
     page: number,
     pageSize: number,
@@ -544,6 +583,10 @@ setOnBehalfExpensesUpdated(empId: number | null) {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
+      category:category,
+      subcategory:subcatageory,
+      fromDate:fromDate,
+      toDate:toDate,
       status: status,
       page: page,
       pageSize: pageSize,
@@ -806,26 +849,41 @@ setOnBehalfExpensesUpdated(empId: number | null) {
   allocatedassetCountSubject = new BehaviorSubject<number>(0);
   undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
   inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
+   blockassetCountSubject = new BehaviorSubject<number>(0);
   setAssetCount(count: number) {
     this.assetCountSubject.next(count);
   }
 
-  setavilableAssetCount(count: number) {
+  setavilableAssetCount(count: any) {
     this.avilableassetCountSubject.next(count);
   }
 
-  setallocatedAssetCount(count: number) {
+  setallocatedAssetCount(count: any) {
     this.allocatedassetCountSubject.next(count);
   }
-
-  setundermatinaceAssetCount(count: number) {
+setAllocatedSearchCount(count: any) {
+     this.allocatedassetCountSubject.next(count);
+}
+  setundermatinaceAssetCount(count: any) {
     this.undermatinaceassetCountSubject.next(count);
   }
+  setundermatinaceSearchCount(count: any) {
+     this.undermatinaceassetCountSubject.next(count);
+}
+ setblockAssetCount(count: any) {
+    this.blockassetCountSubject.next(count);
+  }
 
-  setinactiveSubjectAssetCount(count: number) {
+setblockSearchCount(count: any) {
+     this.blockassetCountSubject.next(count);
+}
+  setinactiveSubjectAssetCount(count: any) {
     this.inactiveaceassetCountSubject.next(count);
   }
 
+setinactiveSearchCount(count: any) {
+     this.inactiveaceassetCountSubject.next(count);
+}
   getFilteredleavesDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/${employeeId}?year=${params}`);
   }

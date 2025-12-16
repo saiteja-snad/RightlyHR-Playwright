@@ -243,6 +243,7 @@ export const ASSEST_ALLOCATION_TABS = [
   { route: '/assets-management/allocated-assets', permission: 'Asset Management - Allocated.view' },
   { route: '/assets-management/under-maintenance-assets', permission: 'Asset Management - Under Maintenance.view' },
   { route: '/assets-management/inactive-assets', permission: 'Asset Management - Inactive.view' },
+   { route: '/assets-management/block-assets', permission: 'Asset Management - Block.view' },
 ];
 
 export const DESK_ALLOCATION_TABS = [

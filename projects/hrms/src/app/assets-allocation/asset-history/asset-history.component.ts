@@ -7,9 +7,11 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-asset-history',
-  imports: [CommonModule, TabsModule, RouterModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, TabsModule,NgbPopoverModule, RouterModule, DateformatPipe, NoDataFoundComponent, TranslateModule, InfoIconComponent],
   templateUrl: './asset-history.component.html',
   styleUrl: './asset-history.component.scss'
 })

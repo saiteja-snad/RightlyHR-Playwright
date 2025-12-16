@@ -106,6 +106,8 @@ export class IntialLoadEntitlementComponent {
     this.isApplyDisabledFlag = true;
     this.offcanvasService.dismiss()
     // 3. Remove active filters
+    this.subLocationDetails=[];
+    this.shiftDetails=[];
     this.activeFilters = {};
     this.getdatacarryforword();
     //localStorage.removeItem(l)
@@ -145,7 +147,7 @@ export class IntialLoadEntitlementComponent {
     const formValue = this.leaveAllocationForm?.value;
     // Check if any filter (except date & employee) has value
     return (
-      (formValue?.year && formValue?.year?.length > 0) ||
+      (formValue?.year ) ||
       (formValue?.location && formValue?.location.jobLocationName?.length > 0) ||
       (formValue?.subLocation && formValue?.subLocation.jobSubLocationName?.length > 0) ||
       (formValue?.shift && formValue?.shift.shiftName?.length > 0)

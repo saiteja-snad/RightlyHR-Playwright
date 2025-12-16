@@ -103,7 +103,8 @@ export class CarryForwardLeaveEntitlementComponent {
   resetForm() {
     this.leaveAllocationForm.reset();
     this.isApplyDisabledFlag = true;
-
+    this.subLocationDetails=[]
+    this.shiftDetails=[]
     // 3. Remove active filters
     this.activeFilters = {};
     this.getdatacarryforword();
@@ -156,7 +157,7 @@ export class CarryForwardLeaveEntitlementComponent {
     const formValue = this.leaveAllocationForm?.value;
     // Check if any filter (except date & employee) has value
     return (
-      (formValue?.year && formValue?.year?.length > 0) ||
+      (formValue?.year) ||
       (formValue?.location && formValue?.location.jobLocationName?.length > 0) ||
       (formValue?.subLocation && formValue?.subLocation.jobSubLocationName?.length > 0) ||
       (formValue?.shift && formValue?.shift.shiftName?.length > 0)

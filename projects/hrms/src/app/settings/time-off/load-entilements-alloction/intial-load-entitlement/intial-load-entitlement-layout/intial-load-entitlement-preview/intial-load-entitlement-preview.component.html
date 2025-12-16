@@ -23,9 +23,9 @@
 
 
         <div class="status-card" [ngClass]="{
-       'success': policymapping?.status === 'success',
-       'error': policymapping?.status === 'failed'
-     }">
+        'success': policymapping?.status === 'success',
+        'error': policymapping?.status === 'failed'
+        }">
 
             <div class="icon">
                 {{ policymapping?.status === 'success' ? '✔' : '✖' }}
@@ -44,6 +44,7 @@
                     {{ policymapping?.data?.length }} leave policy configuration issue(s) found.
                 </p>
             </div>
+         
         </div>
 
 
@@ -107,7 +108,8 @@
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary">Back</button>
-            <button type="button" class="custom-btn btn-primary" (click)="submit()" [disabled]="employeesTableData.length===0">Commit & Process</button>
+            <button type="button" class="custom-btn btn-primary" (click)="submit()"
+                [disabled]="employeesTableData.length===0">Commit & Process</button>
         </div>
     </div>
 </div>

@@ -421,12 +421,17 @@ getApprovalStatusCounts() {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
+        this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
       employee.middleName ? ' ' + employee.middleName : ''
-    }${employee.lastName ? ' ' + employee.lastName : ''}`;
+    }${employee.lastName ? ' ' + employee.lastName : ''}`;;
+    
+    // Calculate start and end dates for the selected month
+    const startDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).startOf('month').format('YYYY-MM-DD');
+    const endDate = moment().year(this.selectedYear).month(this.selectedMonth - 1).endOf('month').format('YYYY-MM-DD');
+    
     this.subscription = this.http
       .getData(
-        `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
+        `v2/AttendanceData/employee/${employeeId}?fromdate=${startDate}&todate=${endDate}`
       )
       .subscribe({
         next: (response: any) => {
@@ -693,6 +698,7 @@ onclickRegularization(date: Date | string) {
             this.getApprovalStatusCounts();
             this.extraHrsLoader = false;
             this.extraHoursForm.reset();
+            this.getAttendnaceData(this.getSelectedEmployee());
           },
         });
     }

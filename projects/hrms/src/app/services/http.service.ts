@@ -678,6 +678,14 @@ setOnBehalfExpensesUpdated(empId: number | null) {
       responseType: 'blob', // Set response type to 'blob' to handle file download
     });
   }
+
+  downloadMonthlyAttendanceReportV2(url: string, startDate: string, endDate: string): Observable<Blob> {
+    const apiurl = `${this.ApiUrl}${url}?startDate=${startDate}&endDate=${endDate}`;
+    // Make the GET request and return the file as a Blob
+    return this.http.get(apiurl, {
+      responseType: 'blob', // Set response type to 'blob' to handle file download
+    });
+  }
   downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
     const apiurl = `${this.ApiUrl}${url}`;
     return this.http.get(apiurl, {

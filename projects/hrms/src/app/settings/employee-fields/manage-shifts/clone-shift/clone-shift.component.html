@@ -211,11 +211,64 @@
                                     {{'Full Day is required'|translate}}</span>
                             </div>
                         </div>
+
+                        <!-- Pre-Shift Buffer -->
+                        <div class="w-100">
+                            <div class="d-flex gap-1">
+                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Pre-Shift Buffer (mins)' | translate}}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div>
+                                    <a type="button" [ngbPopover]="punchBeginBeforeDescription">
+                                        <app-info-icon />
+                                    </a>
+                                </div>
+                                <ng-template #punchBeginBeforeDescription>
+                                    <p class="mb-0">{{ 'Minutes allowed before shift start for considering punch-in as valid'}}</p>
+                                </ng-template>
+                            </div>
+                            <input type="number" class="form-control custom-input w-100" formControlName="punchBeginBefore"
+                               placeholder="Please enter pre-shift buffer" min="0" max="960" (keydown)="blockInvalidKeys($event)"
+                                (paste)="blockNegativePaste($event)" />
+                            <div *ngIf="shift.get('punchBeginBefore')?.invalid && (shift.get('punchBeginBefore')?.dirty || shift.get('punchBeginBefore')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('punchBeginBefore')?.errors?.['required']">
+                                    {{'Pre-Shift Buffer is required'|translate}}</span>
+                                <span *ngIf="shift.get('punchBeginBefore')?.errors?.['max']">
+                                    {{'Pre-Shift Buffer cannot exceed 960 minutes'|translate}}</span>
+                            </div>
+                        </div>
+
+                        <!-- Punch End After -->
+                        <div class="w-100">
+                            <div class="d-flex gap-1">
+                                <label for="punchEndAfter" class="form-label custom-label mb-2">{{'Post-Shift Buffer (mins)' | translate}}
+                                </label>
+                                <div>
+                                    <a type="button" [ngbPopover]="punchEndAfterDescription">
+                                        <app-info-icon />
+                                    </a>
+                                </div>
+                                <ng-template #punchEndAfterDescription>
+                                    <p class="mb-0">{{ 'Minutes allowed after shift end for considering punch-out as valid'}}</p>
+                                </ng-template>
+                            </div>
+                            <input type="number" class="form-control custom-input w-100" formControlName="punchEndAfter"
+                                placeholder="Please enter post-shift buffer" min="0" max="960" (keydown)="blockInvalidKeys($event)"
+                                (paste)="blockNegativePaste($event)" />
+                            <div *ngIf="shift.get('punchEndAfter')?.invalid && (shift.get('punchEndAfter')?.dirty || shift.get('punchEndAfter')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('punchEndAfter')?.errors?.['required']">
+                                    {{'Post-Shift Buffer is required'|translate}}</span>
+                                <span *ngIf="shift.get('punchEndAfter')?.errors?.['max']">
+                                    {{'Post-Shift Buffer cannot exceed 960 minutes'|translate}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
     
-            <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
+            <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
         </div>
         <div class="d-flex gap-3 justify-content-end">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>

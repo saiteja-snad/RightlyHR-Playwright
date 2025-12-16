@@ -13,9 +13,11 @@
 
     <div class="d-flex align-items-center gap-4">
       <a class="inactive-btn" (click)="toggleInactiveFilter()">{{ inactiveButtonLabel | translate }}</a>
+      @if(this.rbac.allowedToAccess('KPI.create')){
       <button class="custom-btn btn-primary" (click)="openModal(createKpiModal)">
         {{ 'Create KPI' | translate }}
       </button>
+      }
     </div>
   </div>
 

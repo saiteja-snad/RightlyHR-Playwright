@@ -554,6 +554,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/pms/review-cycle':
+        if (this.rbac.allowedToAccess('Review Cycle List.view')) {
+          return (route = '/pms/review-cycle');
+        }
+        break;
+
       case '/pmsconfiguration':
         for (const item of PMS_CONFIGURATION_TABS) {
           if (this.rbac.allowedToAccess(item.permission)) {
@@ -1828,6 +1834,12 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        break;
+
+      case '/pms/review-cycle':
+        if (this.rbac.allowedToAccess('Review Cycle List.view')) {
+          return (route = '/pms/review-cycle');
         }
         break;
 

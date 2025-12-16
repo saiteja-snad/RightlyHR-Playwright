@@ -19,12 +19,11 @@ export class PmsMainTabsComponent {
   empinfo: any;
   columnsPerRow = 3;
   navTabs = [
-    { label: 'Review Cycle', link: '/pms/review-cycle', icon: 'main-menu-icons/project-management-client.png', permission: { feature: 'PMS', action: 'view' } },
+    { label: 'Review Cycle', link: '/pms/review-cycle', icon: 'main-menu-icons/project-management-client.png', permission: { feature: 'Review Cycle List', action: 'view' } },
     { label: 'KRA', link: '/pms/kra', icon: 'main-menu-icons/kra.png', permission: { feature: 'KRA', action: 'view' } },
     { label: 'KPI', link: '/pms/kpi', icon: 'main-menu-icons/kpi.png', permission: { feature: 'KPI', action: 'view' } },
     { label: 'Assign KRA/KPI', link: '/pms/assign-kra-kpi', icon: 'main-menu-icons/assign-kra-kpi.png', permission: { feature: 'Assign KRA KPI', action: 'view' } },
     { label: 'My KRA/KPI', link: '/pms/my-kra-kpi/view', icon: 'main-menu-icons/my-kra-kpi.png', permission: { feature: 'My KRA KPI', action: 'view' } },
-
   ];
 
   constructor(public readonly router: Router, private rbac: RbacService, private accessNav: AccessNavigationService) { }

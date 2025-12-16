@@ -19,6 +19,12 @@
                     {{ gradeAssignments?.data?.length }} employees failed grade assignment.
                 </p>
             </div>
+            <div *ngIf="gradeAssignments?.status === 'failed'">
+                <a type="button" class="download-text" (click)="toggleFilters(gradeassignments)">
+                    <i class="bi bi-eye-fill me-2"></i>View
+                </a>
+
+            </div>
         </div>
 
 
@@ -44,11 +50,22 @@
                     {{ policymapping?.data?.length }} leave policy configuration issue(s) found.
                 </p>
             </div>
-         
+            <div *ngIf="policymapping?.status === 'failed'">
+                <a type="button" class="download-text" (click)="toggleFilters(filterContent)">
+                    <i class="bi bi-eye-fill me-2"></i>View
+                </a>
+
+            </div>
         </div>
-
-
-
+        <div class="status-card success">
+            <div class="icon">
+                ✔
+            </div>
+            <div class="content">
+                <h4>Duplicate Check</h4>
+                <p>No existing records for Year 2025.</p>
+            </div>
+        </div>
     </div>
 
 
@@ -125,6 +142,52 @@
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="skipped()"> Skipped and Continuous</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Errors' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+
+        <div class="offcanvas-filter-content">
+
+            <div class="error-box" *ngFor="let item of policymapping?.data">
+                <h6 class="category-name">
+                    <b>Category Name</b> : {{ item.categories.name }} ({{ item.categories.code }})
+                </h6>
+
+                <p class="error-reason">
+                    <b>Reason</b> : {{ item.categories.reason }}
+                </p>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #gradeassignments let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Errors' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+
+        <div class="offcanvas-filter-content">
+
+            <div class="error-box" *ngFor="let item of gradeAssignments?.data">
+                <h5 class="category-name">
+                    <b>Employee Name</b> : {{ item.employee.name }}
+                </h5>
+                <h6 class="category-name"> <b>Employee ID</b> : {{ item.employee.fusionEmpId }}</h6>
+
+                <p class="error-reason">
+                    <b>Reason</b> : {{ item.employee.reason }}
+                </p>
+            </div>
         </div>
     </div>
 </ng-template>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../../services/http.service';
 import { Router } from '@angular/router';
 import { ICarryForward } from '../../../../flexible-leave-allocation/leave-allocation.model';
@@ -8,10 +8,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { NoDataFoundComponent } from "../../../../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-intial-load-entitlement-preview',
-  imports: [CommonModule, NoDataFoundComponent, DataLoaderContentComponent,],
+  imports: [CommonModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule],
   templateUrl: './intial-load-entitlement-preview.component.html',
   styleUrl: './intial-load-entitlement-preview.component.scss'
 })
@@ -22,7 +23,7 @@ export class IntialLoadEntitlementPreviewComponent {
   @ViewChild('conformation', { static: true }) conformation!: TemplateRef<any>;
   destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService,
-    private route: Router, private http: HttpService) { }
+    private route: Router, private http: HttpService, private offcanvasService: NgbOffcanvas) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.carryforwarddata = JSON.parse(localStorage.getItem('intialloadEntitlement') ?? '{}');
@@ -75,7 +76,7 @@ export class IntialLoadEntitlementPreviewComponent {
 
     this.employeesTableData = employees.map(emp => {
       const leaveValues: any = {};
-      const leaveEntries: any[] = []; // ✅ PER EMPLOYEE
+      const leaveEntries: any[] = []; 
 
       emp.leaveCategories.forEach((lc: any) => {
         const category = lc.orgLeaveCategories;
@@ -84,7 +85,7 @@ export class IntialLoadEntitlementPreviewComponent {
         leaveValues[code] = lc.allowedDays;
 
         leaveEntries.push({
-          leaveCategoryId: lc.categoryId, // ✅ REQUIRED
+          leaveCategoryId: lc.categoryId, 
           categoryCode: code,
           allowedDays: lc.allowedDays
         });
@@ -157,11 +158,8 @@ export class IntialLoadEntitlementPreviewComponent {
     const body = this.buildCarryForwardPayload();
     this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Carry Forward Entilement Successfully");
-        setTimeout(() => {
-          this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
-          localStorage.removeItem('intialloadEntitlement')
-        }, 2000);
+      localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
+        this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'])
       },
       error: (err) => {
         console.error(err);
@@ -174,11 +172,8 @@ export class IntialLoadEntitlementPreviewComponent {
     const body = this.buildCarryForwardPayload();
     this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Carry Forward Entilement Successfully");
-        setTimeout(() => {
-          this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
-          localStorage.removeItem('intialloadEntitlement')
-        }, 2000);
+        localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
+        this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'])
       },
       error: (err) => {
         console.error(err);
@@ -186,4 +181,11 @@ export class IntialLoadEntitlementPreviewComponent {
     });
   }
 
+  toggleFilters(content: TemplateRef<any>) {
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+  closeCanvas() {
+    this.offcanvasService.dismiss();
+
+  }
 }

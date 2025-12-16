@@ -39,6 +39,7 @@ export default [
         children: [
             { path: 'intial-load-entitlement-create', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-create/intial-load-entitlement-create.component').then((m) => m.IntialLoadEntitlementCreateComponent) },
             { path: 'intial-load-entitlement-preview', loadComponent: () => import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-preview/intial-load-entitlement-preview.component').then((m) => m.IntialLoadEntitlementPreviewComponent) },
+            {path:'intial-load-entitlement-execution',loadComponent:()=>import('./load-entilements-alloction/intial-load-entitlement/intial-load-entitlement-layout/intial-load-entitlement-execution/intial-load-entitlement-execution.component').then((m)=>m.IntialLoadEntitlementExecutionComponent)}
 
         ]
     },

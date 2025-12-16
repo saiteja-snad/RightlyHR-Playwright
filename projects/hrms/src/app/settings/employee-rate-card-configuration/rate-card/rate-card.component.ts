@@ -145,7 +145,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     let url = `RateCard?status=active&page=${this.pageNumber}&pageSize=${this.pageSize}`;
 
     if (this.selectedYear) {
-      url +=`&year=${this.selectedYear}`;};
+      url +=`&year=${this.selectedYear}`}
     // Add employeeIds if available
     if (this.employeeId) {
       url += `&entityValues=${encodeURIComponent(this.employeeId)}`;

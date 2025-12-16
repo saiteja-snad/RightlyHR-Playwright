@@ -82,15 +82,17 @@
               </div>
 
               <!-- <small class="text-muted">
-              ({{ emp.assignments.length }} Assigned)
-            </small> -->
+                    ({{ emp.assignments.length }} Assigned)
+                  </small> -->
 
             </div>
           </p-accordion-header>
 
           <!-- ACCORDION CONTENT -->
           <p-accordion-content>
+
             <div class="custom-p-multi-select-table custom-accordian-table">
+               @if (emp.assignments && emp.assignments.length > 0) {
               <p-table [value]="emp.assignments">
 
                 <ng-template pTemplate="header">
@@ -138,21 +140,15 @@
                       {{ kra.kpis?.[0]?.kraTargetDate | date:'mediumDate' }}
                     </td>
                     <td class="text-center">
-  <div class="progress" style="height: 8px;">
-    <div
-      class="progress-bar"
-      role="progressbar"
-      [style.width.%]="getKraProgress(kra)"
-      [attr.aria-valuenow]="getKraProgress(kra)"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      [ngClass]="getProgressClass(getKraProgress(kra))"
-    ></div>
-  </div>
-  <small class="fw-semibold">
-    {{ getKraProgress(kra) }}%
-  </small>
-</td>
+                      <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" role="progressbar" [style.width.%]="getKraProgress(kra)"
+                          [attr.aria-valuenow]="getKraProgress(kra)" aria-valuemin="0" aria-valuemax="100"
+                          [ngClass]="getProgressClass(getKraProgress(kra))"></div>
+                      </div>
+                      <small class="fw-semibold">
+                        {{ getKraProgress(kra) }}%
+                      </small>
+                    </td>
 
                     <td class="text-center">
                       <div class="dropdown">
@@ -166,12 +162,12 @@
                               <i class="bi bi-pencil me-2"></i>Update
                             </a>
                           </li>
-                        }
+                          }
                           <!-- <li class="dropdown-item" (click)="onHold(kra)">
-                            <a class="dropdown-custom-btn text-warning">
-                              <i class="bi bi-pause-circle me-2"></i>On Hold
-                            </a>
-                          </li> -->
+                                  <a class="dropdown-custom-btn text-warning">
+                                    <i class="bi bi-pause-circle me-2"></i>On Hold
+                                  </a>
+                                </li> -->
                         </ul>
                       </div>
                     </td>
@@ -179,13 +175,19 @@
                 </ng-template>
 
               </p-table>
-            </div>
+
+            } @else {
+                  <div class="p-4 text-center text-muted">
+                    <app-no-data-found />
+                  </div>
+                }
+                 </div>
           </p-accordion-content>
 
         </p-accordion-panel>
       </p-accordion>
 
-      <!-- ✅ PAGINATION STARTS HERE -->
+      <!-- PAGINATION STARTS HERE -->
       <div class="pagination-content">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
 
@@ -328,9 +330,9 @@
         </div>
 
         <!-- Dynamic KPI Rows Table -->
-        <div class="custom-table custom-popup-table mb-4">
+        <div class="custom-table-content custom-popup-table">
           <table class="w-100">
-            <thead class="table-light">
+            <thead>
               <tr>
                 <th>{{ 'KPI Name' | translate }}</th>
                 <th>{{ 'Unit of Measurement' | translate }}</th>
@@ -348,7 +350,7 @@
                   <div class="custom-p-select-content">
                     <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true"
                       [showClear]="true" placeholder="Select or search KPI" class="form-select custom-select"
-                      formControlName="kpiId">
+                      formControlName="kpiId" appendTo=".custom-main-popup-content">
                     </p-select>
                   </div>
                 </td>

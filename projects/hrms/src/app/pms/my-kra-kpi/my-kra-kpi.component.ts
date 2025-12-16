@@ -1,22 +1,393 @@
-import { Component } from '@angular/core';
-import { KraKpiManagementLayoutComponent } from '../kra-kpi-management-layout/kra-kpi-management-layout.component';
-import { NgbModal, NgbModalRef, NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { TranslateModule } from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { PaginatorModule } from 'primeng/paginator';
+import { FormsModule } from '@angular/forms';
+
+import { HttpService } from '../../services/http.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-
-
-
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
+import { KraKpiManagementLayoutComponent } from '../kra-kpi-management-layout/kra-kpi-management-layout.component';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { TemplateRef } from '@angular/core';
+import { OpenModalService } from '../../services/open-modal.service';
+import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
+import { Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 
 @Component({
   selector: 'app-my-kra-kpi',
-  imports: [KraKpiManagementLayoutComponent,TranslateModule,NgbPopoverModule,CommonModule,ModuleInfoIconComponent],
   standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    NgbPopoverModule,
+    PaginatorModule,
+    ModuleInfoIconComponent,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    KraKpiManagementLayoutComponent,
+    InfoIconComponent,
+    ModuleInformationComponent
+
+  ],
   templateUrl: './my-kra-kpi.component.html',
-  styleUrl: './my-kra-kpi.component.scss'
+  styleUrl: './my-kra-kpi.component.scss',
 })
-export class MyKraKpiComponent {
+export class MyKraKpiComponent implements OnInit {
+  kraList: any[] = [];
+  dataload = false;
+  moduleinfo = '';
+
+  page = 1;
+  rows = 10;
+  first = 0;
+  collectionSize = 0;
+
+  options = [
+    { label: '10', value: 10 },
+    { label: '20', value: 20 },
+    { label: '50', value: 50 },
+  ];
+
+  myKpiList: any[] = [];
+  selectedKra: any;
+
+  constructor(
+    private http: HttpService,
+    private offcanvasService: NgbOffcanvas,
+    public modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    public readonly router: Router,
+
+  ) {}
+
+  ngOnInit(): void {
+    this.getMyKraList();
+    this.updateModuleInfo();
+  }
+
+    updateModuleInfo() {
+    const url = this.router.url;
+    this.moduleinfo = url.includes('/pms/my-kpi-kra/view')
+      ? MODULE_INFOS.PMS_MY_KRA_KPI_LIST_MODULE_INFO
+      : '';
+  }
+
+  getMyKraList(): void {
+    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    const employeeId = user?.employeeId || 0;
+
+    const params: any = {
+      employeeId,
+      pageNumber: this.page,
+      pageSize: this.rows,
+    };
+
+    this.dataload = true;
+
+    this.http
+      .getDataIncludeParams('Kpi/getEmployeeAssignKpiKra', params)
+      .subscribe({
+        next: (res: any) => {
+          if (res.success && Array.isArray(res.data)) {
+            // 🔹 FLATTEN DATA
+            this.kraList = res.data.flatMap((emp: any) =>
+              (emp.kras || []).map((k: any) => {
+                const kpis = k.kpis || [];
+
+                // 🔹 Progress = avg of assignedWeightage
+                const progress =
+                  kpis.length > 0
+                    ? Math.round(
+                        kpis.reduce(
+                          (sum: number, kp: any) =>
+                            sum + Number(kp.assignedWeightage || 0),
+                          0
+                        ) / kpis.length
+                      )
+                    : 0;
+
+                return {
+                  kraId: k.kra.kraId,
+                  kraName: k.kra.kraName,
+                  effectiveDate: k.kra.effectiveDate,
+                  targetDate: k.kra.targetDate,
+                  weightageValue: k.kra.weightageValue,
+                  status: k.kra.status,
+                  kpisCount: k.kpisCount,
+                  kpis: k.kpis || [],
+                  progress,
+                };
+              })
+            );
+
+            this.collectionSize =
+              res.pagination?.totalRecords ?? this.kraList.length;
+          } else {
+            this.kraList = [];
+            this.collectionSize = 0;
+          }
+
+          this.dataload = false;
+        },
+        error: () => {
+          this.kraList = [];
+          this.collectionSize = 0;
+          this.dataload = false;
+        },
+      });
+  }
+
+  openKraKpiModal(kra: any, content: any) {
+    this.selectedKra = kra;
+    this.loadKpisForMyKra(kra);
+
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'xl',
+    });
+  }
+
+
+async submitForApproval() {
+  try {
+    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    const employeeId = user?.employeeId || 0;
+
+    const payloadArray: any[] = [];
+
+    for (let kpi of this.myKpiList) {
+      let documentUrl = null;
+
+      // Upload file if exists
+      if (kpi.attachment) {
+        documentUrl = await this.uploadKpiFile(this.selectedKra.kraId, kpi.kpiId || 0, kpi.attachment);
+      }
+
+      payloadArray.push({
+        id: kpi.assigneeId || 0,
+        employeeId: employeeId,
+        reviewCycleId: 0, // set if needed
+        kraId: this.selectedKra.kraId,
+        kpiId: kpi.kpiId || 0,
+        assignedTarget: kpi.targetValue?.toString() || '',
+        weightage: kpi.assignedWeightage?.toString() || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: employeeId,
+        updatedBy: employeeId,
+        targetedDate: kpi.targetDate || new Date().toISOString(),
+        status: 'Waiting for Approval', // or as per your workflow
+        documentUrl: documentUrl || ''
+      });
+    }
+
+    // Call API
+    this.http.postdata('Kpi/submitkrakpi', payloadArray).subscribe({
+      next: (res: any) => {
+        console.log('KPIs submitted successfully', res);
+        this.modalService.dismissAll();
+        this.getMyKraList()
+        this.conformationPopup.openSuccessModal('Submit for Approval Successful');
+      },
+      error: (err: any) => {
+        console.error('Submit for Approval failed', err);
+      }
+    });
+
+  } catch (err) {
+    console.error('Error uploading KPI files', err);
+  }
+}
+
+async saveKpis() {
+  try {
+    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    const employeeId = user?.employeeId || 0;
+
+    const payloadArray: any[] = [];
+
+    for (let kpi of this.myKpiList) {
+      let documentUrl = null;
+
+      // Upload file if exists
+      if (kpi.attachment) {
+        documentUrl = await this.uploadKpiFile(
+          this.selectedKra.kraId,
+          kpi.kpiId || 0,
+          kpi.attachment
+        );
+      }
+
+      payloadArray.push({
+        id: kpi.assigneeId || 0,
+        employeeId: employeeId,
+        reviewCycleId: 0,
+        kraId: this.selectedKra.kraId,
+        kpiId: kpi.kpiId || 0,
+        assignedTarget: kpi.targetValue?.toString() || '',
+        weightage: kpi.assignedWeightage?.toString() || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: employeeId,
+        updatedBy: employeeId,
+        targetedDate: kpi.targetDate || new Date().toISOString(),
+        status: 'Draft',
+        documentUrl: documentUrl || ''
+      });
+    }
+
+    this.http.postdata('Kpi/submitkrakpi', payloadArray).subscribe({
+      next: (res: any) => {
+        console.log('KPIs saved as Draft', res);
+
+        // Close KPI modal first
+        this.modalService.dismissAll();
+
+        // Refresh list
+        this.getMyKraList();
+
+        // Show success popup AFTER modal close
+        setTimeout(() => {
+          this.conformationPopup.openSuccessModal(
+            'KPIs saved as Draft successfully'
+          );
+        }, 300);
+      },
+      error: (err: any) => {
+        console.error('Save KPI Draft failed', err);
+      }
+    });
+
+  } catch (err) {
+    console.error('Error while saving KPI draft', err);
+  }
+}
+
+
+
+  onSearchTextChange() {
+    this.page = 1;
+    this.first = 0;
+    this.getMyKraList();
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.rows = event.rows;
+    this.first = event.first;
+    this.getMyKraList();
+  }
+
+  onPageSizeChange(newSize: number) {
+    this.rows = newSize;
+    this.page = 1;
+    this.first = 0;
+    this.getMyKraList();
+  }
+
+  getProgressClass(value: number): string {
+    if (value >= 80) return 'bg-success';
+    if (value >= 50) return 'bg-warning';
+    return 'bg-danger';
+  }
+
+  getStatusClass(status: string) {
+    switch (status) {
+      case 'Created':
+        return 'status-created';
+      case 'Active':
+        return 'status-active';
+      case 'On Hold':
+        return 'status-onhold';
+      default:
+        return '';
+    }
+  }
+
+  openMyKpiCanvas(content: TemplateRef<any>, kra: any): void {
+    this.selectedKra = kra;
+    this.loadKpisForMyKra(kra);
+
+    setTimeout(() => {
+      this.offcanvasService.open(content, {
+        position: 'end',
+        backdrop: 'static',
+        panelClass: 'custom-kpi-canvas',
+      });
+    }, 150);
+  }
+
+  closeMyKpiCanvas(): void {
+    this.offcanvasService.dismiss();
+  }
+
+  loadKpisForMyKra(kra: any): void {
+    this.myKpiList = [];
+
+    if (kra?.kpis && kra.kpis.length > 0) {
+      kra.kpis.forEach((kpi: any) => {
+        this.myKpiList.push({
+          kpiId: kpi.kpiId,
+          kpiName: kpi.kpiName,
+          weightageValue: kpi.weightageValue,
+          targetValue: kpi.targetValue,
+          targetType: kpi.targetType,
+          targetDate: kpi.targetDate
+            ? this.formatDateForInput(kpi.targetDate)
+            : null,
+          description: kpi.description,
+          assignedWeightage: kpi.assignedWeightage || 0,
+          attachment: null,
+          assigneeId:kpi.assigneeId
+        });
+      });
+    }
+
+    console.log('My KPIs loaded:', this.myKpiList);
+  }
+
+  formatDateForInput(dateStr: string) {
+    const d = new Date(dateStr);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    return `${d.getFullYear()}-${month}-${day}`;
+  }
+
+onFileChange(event: any, index: number) {
+  const file = event.target.files[0];
+  if (file) {
+    this.myKpiList[index].attachment = file;
+    this.myKpiList[index].attachmentName = file.name; // optional for display
+    console.log('File attached for row', index, file);
+  }
+}
+
+uploadKpiFile(kraId: number, kpiId: number, file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const filePath = `/KRA/${kraId}/KPI/${kpiId}/Documents`;
+    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
+      .subscribe({
+        next: (res: any) => {
+          if (res?.path) {
+            resolve(res.path); // Return uploaded file path
+          } else {
+            reject('No path returned');
+          }
+        },
+        error: (err) => {
+          console.error('File upload failed', err);
+          reject(err);
+        }
+      });
+  });
+}
 
 }

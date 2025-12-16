@@ -718,7 +718,6 @@ removeKpiRow(index: number): void {
 
     this.addKpiRow(); // Start with one row
     this.modalService.open(content, {
-      centered: true,
       backdrop: 'static',
       size: 'xl',
     });
@@ -911,7 +910,6 @@ onUpdate(kraAssignment: any): void {
   });
 
   this.modalService.open(this.assignKraKpiModal, {
-    centered: true,
     backdrop: 'static',
     size: 'xl'
   });
@@ -1087,7 +1085,7 @@ onUpdate(kraAssignment: any): void {
       (emp) => emp.selected === true
     );
 
-    return hasFilter && hasSelection;
+    return hasFilter || hasSelection;
   }
 
   openAssignedKpiCanvas(

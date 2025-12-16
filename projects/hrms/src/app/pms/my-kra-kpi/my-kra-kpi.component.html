@@ -1,36 +1,281 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div class="heading-content">
-            <div class="commpoment-name">My KRA/KPI<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-            </div>
-            <div class="component-header">{{"View" | translate}}</div>
-            <div>
-                <app-module-info-icon placement="bottom" />
-            </div>
-        </div>
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">PMS<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{"My KRA's / KPI's" | translate}}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent"  />
+      </div>
+    </div>
+  </div>
+    <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
-        <!-- <div class="d-flex align-items-center gap-3">
-            <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
-            <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
-                    placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
-                    selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
-                    (onChange)="onCheckemployeeProficiency($event)" />
-            </div>
-            <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
-                    optionLabel="label" optionValue="value" [maxSelectedLabels]="3" selectedItemsLabel="{3} items selected"
-                    [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                    (onChange)="onSkillSelectionChange($event)" />
-            </div>
-        </div> -->
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="component-left-tabs-container">
+      <app-kra-kpi-management-layout />
     </div>
 
-    <div class="main-content d-flex w-100 gap-3">
-        <div class="component-left-tabs-container">
-            <app-kra-kpi-management-layout />
-        </div>
+    <div class="w-100 right-content">
 
-        <div class="w-100 right-content"></div>
+      <!-- TABLE -->
+      @if (!dataload) {
+      <div class="custom-table-content w-100">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>{{ 'KRA Name' | translate }}</th>
+              <th class="text-center">{{ 'KPIs Count' | translate }}</th>
+              <th class="text-center">{{ 'Effective Date' | translate }}</th>
+              <th class="text-center">{{ 'Target Date' | translate }}</th>
+              <th class="text-center">{{ 'Weightage' | translate }}</th>
+              <th class="text-center">{{ 'Progress (%)' | translate }}</th>
+              <th class="text-center">{{ 'Status' | translate }}</th>
+            </tr>
+          </thead>
+
+
+          <tbody>
+            @if (kraList.length > 0) {
+            @for (kra of kraList; track kra.kraId) {
+            <tr>
+              <td class="kras-bold cursor" (click)="openKraKpiModal(kra, kraKpiModal)">{{ kra.kraName }}</td>
+
+              <td class="text-center kras-bold cursor" [class.text-muted]="kra.kpisCount === 0"
+                [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
+                (click)="openMyKpiCanvas(myKpiCanvas, kra)">
+                {{ kra.kpisCount }}
+              </td>
+
+              <td class="text-center">
+                {{ kra.effectiveDate | date:'mediumDate' }}
+              </td>
+
+              <td class="text-center">
+                {{ kra.targetDate | date:'mediumDate' }}
+              </td>
+
+              <td class="text-center">
+                {{ kra.weightageValue }}
+              </td>
+
+
+              <td class="text-center">
+                <div class="progress-wrapper">
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar" role="progressbar" [style.width.%]="kra.progress"
+                      [ngClass]="getProgressClass(kra.progress)" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                  </div>
+                  <small class="fw-semibold">
+                    {{ kra.progress }}%
+                  </small>
+                </div>
+              </td>
+
+
+
+              <td class="text-center">
+                <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
+                  {{ kra.status }}
+                </span>
+              </td>
+            </tr>
+            }
+            } @else {
+            <tr>
+              <td colspan="7" class="text-center py-4">
+                <app-no-data-found />
+              </td>
+            </tr>
+            }
+          </tbody>
+
+        </table>
+      </div>
+
+      <!-- PAGINATION -->
+      @if (kraList.length > 0) {
+      <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+
+          <div class="d-flex align-items-center gap-3 p-2">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+              (ngModelChange)="onPageSizeChange($event)">
+              @for (option of options; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+
+            <span class="pagination-label text-nowrap">
+              Showing {{ first + 1 }} -
+              {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }}
+              of {{ collectionSize }}
+            </span>
+          </div>
+
+          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)">
+          </p-paginator>
+
+        </div>
+      </div>
+      }
+      } @else {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }
+
     </div>
+
+  </div>
 </div>
+
+
+<ng-template #myKpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">
+        KPIs ({{ myKpiList.length }})
+      </p>
+      <a (click)="closeMyKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+
+        <div *ngIf="myKpiList.length === 0" class="text-center py-5 text-muted">
+          <app-no-data-found></app-no-data-found>
+        </div>
+
+        <div *ngFor="let kpi of myKpiList" class="project-card mb-3">
+          <p class="project-name">{{ kpi.kpiName }}</p>
+
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
+            </div>
+
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #kraKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <!-- Header -->
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">{{ selectedKra?.kraName }}</p>
+    </div>
+    <div class="custom-main-popup-content">
+      <!-- KPI Table -->
+      <div class="custom-table-content custom-popup-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>{{ 'KPI Name' | translate }}</th>
+              <th>{{ 'Weightage' | translate }}</th>
+              <th>{{ 'Target Value' | translate }}</th>
+              <th>{{ 'Target Date' | translate }}</th>
+              <th>{{ 'Description' | translate }}</th>
+              <th>{{ 'Progress' | translate }}</th>
+              <th>{{ 'Attachment' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let kpi of myKpiList; let i = index">
+              <!-- KPI Name -->
+              <td>
+                <input type="text" class="form-control custom-input" [(ngModel)]="myKpiList[i].kpiName" disabled />
+              </td>
+
+              <!-- Weightage -->
+              <td>
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].weightageValue"
+                  disabled />
+              </td>
+
+              <!-- Target Value -->
+              <td>
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].targetValue"
+                  disabled />
+              </td>
+
+              <!-- Target Date -->
+              <td>
+                <input type="date" class="form-control custom-input" [(ngModel)]="myKpiList[i].targetDate" disabled />
+              </td>
+
+              <!-- Description -->
+              <!-- <td>
+              <textarea class="form-control custom-input" rows="2" [(ngModel)]="myKpiList[i].description"
+                disabled></textarea>
+            </td> -->
+
+              <td class="text-center">
+                <div *ngIf="myKpiList[i].description; else noDescription">
+                  <app-info-icon ngbPopover="{{ myKpiList[i].description }}" container="body">
+                  </app-info-icon>
+                </div>
+                <ng-template #noDescription>NA</ng-template>
+              </td>
+              <!-- Assigned Weightage -->
+              <td>
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].assignedWeightage"
+                  [min]="0" [max]="100" step="1" />
+              </td>
+
+              <!-- Attachment -->
+              <td>
+                <input type="file" class="form-control custom-input" (change)="onFileChange($event, i)" />
+                <div *ngIf="myKpiList[i].attachmentName" class="mt-1">{{ myKpiList[i].attachmentName }}</div>
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+      <!-- Footer -->
+      <div class="custom-modal-footer d-flex justify-content-end gap-3 m-3">
+        <a type="button" class="save-btn mt-2" (click)="saveKpis()">
+          {{ 'Save' | translate }}
+        </a>
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button type="button" class="custom-btn btn-primary" (click)="submitForApproval()">
+          {{ 'Submit for Approval' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

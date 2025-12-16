@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 
-import {RbacService} from '../../services/rbac.service'
+import { RbacService } from '../../services/rbac.service'
 
 @Component({
   selector: 'app-kra-kpi-management-layout',
@@ -15,10 +15,14 @@ import {RbacService} from '../../services/rbac.service'
 export class KraKpiManagementLayoutComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'My KRA/KPI', link: '/pms/my-kra-kpi/view', icon: 'main-menu-icons/my-kra-kpi.png',
-      permission: { feature: 'My KRA KPI', action: 'view' } },
-    { label: 'Dashboard', link: '/pms/my-kra-kpi/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
-      permission: { feature: 'My KRA KPI', action: 'view' } },
+    {
+      label: 'My KRA/KPI', link: '/pms/my-kpi-kra/view', icon: 'main-menu-icons/my-kra-kpi.png',
+      permission: { feature: 'My KRA KPI', action: 'view' }
+    },
+    {
+      label: 'Dashboard', link: '/pms/my-kpi-kra/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
+      permission: { feature: 'My KRA KPI', action: 'view' }
+    },
   ];
 
   constructor(public rbac: RbacService) { }
@@ -35,5 +39,4 @@ export class KraKpiManagementLayoutComponent {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
-
 }

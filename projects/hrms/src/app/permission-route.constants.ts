@@ -117,7 +117,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
   { route: '/settings/employee-fields/personal/identitytype', permission: 'Identity Type.view' },
   { route: '/settings/employee-fields/personal/relationship', permission: 'Relationship.view' },
   { route: '/settings/employee-fields/personal/bank-name', permission: 'Bank Names.view' },
-  {route: '/settings/employee-fields/personal/skills',permission: 'SkillSet.view'}
+  { route: '/settings/employee-fields/personal/skills', permission: 'SkillSet.view' }
 ]
 
 export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
@@ -528,13 +528,13 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
 ];
 
 export const Employee_TEAM_NUMBERS = [
-   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
+  { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
 
 ]
 
 export const MyINFO_TEAM_NUMBERS = [
-   { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
+  { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
 
 ]
@@ -720,4 +720,9 @@ export const CARDS_SUB_TABS = [
   { route: '/card-management/expiry', permission: 'Cards Expired.view' },
   { route: '/card-management/allocated', permission: 'Cards Allocated.view' },
   { route: '/card-management/hold', permission: 'Cards Hold.view' },
+]
+
+export const MY_KRA_KPI_TABS = [
+  { route: '/pms/my-kpi-kra/view', permission: 'My KRA KPI.view' },
+  { route: '/pms/my-kpi-kra/dashboard', permission: 'My KRA KPI.view' },
 ]

@@ -82,7 +82,8 @@ import {
   OFFBOARDING_APPROVALS_TABS,
   ONBOARDING_APPROVALS_TABS,
   Employee_TEAM_NUMBERS,
-  MyINFO_TEAM_NUMBERS
+  MyINFO_TEAM_NUMBERS,
+  MY_KRA_KPI_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -1861,19 +1862,28 @@ export class AccessNavigationService {
         }
         break;
 
-        case '/pms/my-kra-kpi/view':
+        case '/pms/my-kpi-kra':
         if (this.rbac.allowedToAccess('My KRA KPI.view')) {
-          return (route = '/pms/my-kra-kpi');
+          for (const item of MY_KRA_KPI_TABS) {
+            debugger
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 
-        case '/pms/my-kra-kpi/dashboard':
-        if (this.rbac.allowedToAccess('Dashboard KRA KPI.view')) {
-          return (route = '/pms/my-kra-kpi/dashboard');
+        case '/pms/my-kpi-kra/view':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/my-kpi-kra/view');
         }
         break;
 
-
+        case '/pms/my-kpi-kra/dashboard':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/my-kpi-kra/dashboard');
+        }
+        break;
     }
     return route;
   }

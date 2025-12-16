@@ -43,7 +43,6 @@ export default [
     { path: 'kra', component: KraComponent, canActivate: [PermissionsGuard], data: { permission: 'KRA.view' } },
     { path: 'kpi', component: KpiComponent, canActivate: [PermissionsGuard], data: { permission: 'KPI.view' } },
     { path: 'assign-kra-kpi', component: AssignKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'Assign KRA KPI.view' } },
-
     { path: 'my-kpi-kra',
         children: [
             { path: 'view', component: MyKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },

@@ -11,19 +11,17 @@
 
         <!-- <div class="d-flex align-items-center gap-3">
             <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
-
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
-                    optionValue="value" placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
+                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
+                    placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
                     selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
                     (onChange)="onCheckemployeeProficiency($event)" />
             </div>
-
             <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills"
-                    placeholder="Please Select Skills" optionLabel="label" optionValue="value" [maxSelectedLabels]="3"
-                    selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
-                    class="form-select custom-select" (onChange)="onSkillSelectionChange($event)" />
+                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Please Select Skills"
+                    optionLabel="label" optionValue="value" [maxSelectedLabels]="3" selectedItemsLabel="{3} items selected"
+                    [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                    (onChange)="onSkillSelectionChange($event)" />
             </div>
         </div> -->
     </div>
@@ -33,7 +31,6 @@
             <app-kra-kpi-management-layout />
         </div>
 
-        <div class="w-100 right-content">
-        </div>
+        <div class="w-100 right-content"></div>
     </div>
 </div>

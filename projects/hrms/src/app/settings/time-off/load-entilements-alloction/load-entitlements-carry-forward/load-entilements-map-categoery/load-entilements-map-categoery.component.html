@@ -1,8 +1,8 @@
 <div class="load-components-container">
-    <div class="d-flex align-items-center justify-content-end gap-2 mb-3">
+    <!-- <div class="d-flex align-items-center justify-content-end gap-2 mb-3">
         <div><img src="images\leave-allocation.png" alt="leaves-icon" class="leave-icon"></div>
         <div class="d-flex align-items-center map-text m-0">Auto-map {{currentYearData.length}} categories</div>
-    </div>
+    </div> -->
 
     <div class="custom-table-content">
         <table class="w-100">
@@ -33,7 +33,7 @@
                     <td>
                         <div class="custom-p-select-content">
                             <p-select [options]="nextYearData" class="form-select custom-select"
-                                placeholder="Please select target category" optionLabel="name" optionValue="id" filterPlaceholder="Search category"
+                                placeholder="Please select target category" optionLabel="name" optionValue="id"   appendTo="body" filterPlaceholder="Search category"
                                 [(ngModel)]="item.selectedDestinationId">
                             </p-select>
                         </div>

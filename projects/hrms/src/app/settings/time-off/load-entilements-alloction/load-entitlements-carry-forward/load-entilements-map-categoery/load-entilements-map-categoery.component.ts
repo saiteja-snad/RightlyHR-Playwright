@@ -118,7 +118,7 @@ export class LoadEntilementsMapCategoeryComponent {
         employees: this.employeesList.map(emp => ({
           employeeId: emp.employeeId,
           gradeId: emp.gradeId ?? 0,
-          entitlementsData: emp.leaveEntries.filter((x: { actualCarryForward: number; }) => x.actualCarryForward > 0).map((x:
+          entitlementsData: emp.leaveEntries.map((x:
             { leaveCategoryId: any; actualCarryForward: any; }) => ({
               sourceCategoryId: x.leaveCategoryId,
               destinationCategoryId: categoryMap.get(x.leaveCategoryId),

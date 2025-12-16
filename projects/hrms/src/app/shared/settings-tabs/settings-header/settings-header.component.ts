@@ -50,7 +50,8 @@ export class SettingsHeaderComponent implements OnInit {
     this.ComponentnameDisplay();
     this.routeToInfoMap = {
       '/settings/timeoff-configurations/jobview': MODULE_INFOS.JOB_VIEW,
-      '/settings/timeoff-configurations/leave-entitlements': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview': MODULE_INFOS.CARRY_FORWORD_LEAVES,
       '/settings/timeoff-configurations/load-entitlement/carry-forward': MODULE_INFOS.CARRY_FORWORD_LEAVES,
 
     };

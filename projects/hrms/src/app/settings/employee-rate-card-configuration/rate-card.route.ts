@@ -11,7 +11,7 @@ export default [
  
             { path: 'rate-card-active', loadComponent: () => import('./rate-card/rate-card.component').then((m) => m.RateCardComponent) },
             { path: 'rate-card-inactive', loadComponent: () => import('./rate-card-inactive/rate-card-inactive.component').then((m) => m.RateCardInactiveComponent) },
-        
+            {path:'rate-card-add',loadComponent: () => import('./add-rate-card/add-rate-card.component').then((m) => m.AddRateCardComponent)}
         ]
     },
 ] as Route[];

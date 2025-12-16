@@ -1,1 +1,167 @@
-<p>add-rate-card works!</p>
+<div class="custom-main-component-container">
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name navigator" (click)="nagvition()">Employee Rate Card
+                <i class="bi bi-chevron-double-right ms-1"></i></div>
+            <div class="component-header">{{'Add Rate Card'|translate}}</div>
+        </div>
+    </div>
+
+    <form autocomplete="off" [formGroup]="ratecardForm" (ngSubmit)="addRateCard()">
+        <div class="custom-setting-right-content fields-data-container">
+            <div class="data-header-content">
+                <!-- Year -->
+                <div>
+                    <label class="form-label custom-label mb-2">{{'Year'|translate}}
+                        <span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="year" placeholder="Select Year" [options]="years"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg" *ngIf="ratecardForm.controls['year'].invalid && (ratecardForm.controls['year'].touched || 
+                                        ratecardForm.controls['year'].dirty)">
+                        <div *ngIf="ratecardForm.controls['year'].errors?.['required']">{{'Year is required '|translate}}</div>
+                    </div>
+                </div>
+    
+                <!-- Location -->
+                <div>
+                    <label class="form-label custom-label mb-2">{{'Location'|translate}}
+                        <span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="location" placeholder="Please select location"
+                            optionLabel="jobLocationName" optionValue="id" class="form-select custom-select"
+                            (onChange)="onLocationChange($event.value)" [disabled]="!ratecardForm.get('location')?.valid"
+                            [options]="locations">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="ratecardForm.controls['location'].invalid &&  (ratecardForm.controls['location'].touched || ratecardForm.controls['location'].dirty)">
+                        <div *ngIf="ratecardForm.controls['location'].errors?.['required']">
+                            {{'Location is required'|translate}}
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Sub Location -->
+                <div>
+                    <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="subLocation" placeholder="Please select sub location"
+                            optionLabel="jobSubLocationName" optionValue="id" [disabled]="sublocatiodis"
+                            class="form-select custom-select" [disabled]="!ratecardForm.get('location')?.valid"
+                            [options]="subLocations">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="ratecardForm.controls['subLocation'].invalid && 
+                                                                (ratecardForm.controls['subLocation'].touched || ratecardForm.controls['subLocation'].dirty)">
+                        <div *ngIf="ratecardForm.controls['subLocation'].errors?.['required']">
+                            {{'Sub Location is required'|translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4 mt-1">
+                    <button type="button" class="custom-btn btn-primary px-4" (click)="addShift()">
+                        <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
+                    </button>
+                </div>
+            </div>
+    
+            <div formArrayName="rateItems">
+                <div *ngFor="let shift of rateItems.controls; let i = index" [formGroupName]="i"
+                    class="card custom-background-card p-3 mb-3">
+                    <div class="d-flex w-100 gap-3 mb-3">
+                        <!-- Experince -->
+                        <div class="w-100">
+                            <label class="form-label custom-label">{{'Experince'|translate}}
+                                <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input w-100" formControlName="shiftCode"
+                                placeholder="Please enter Experince" />
+                            <div *ngIf="shift.get('shiftCode')?.invalid && (shift.get('shiftCode')?.dirty || shift.get('shiftCode')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Experince is required'
+                                    | translate}}</span>
+                            </div>
+                        </div>
+    
+                        <!-- Rate Basic -->
+                        <div class="w-100">
+                            <label class="form-label custom-label">{{'Rate Basic'|translate}}<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control custom-input w-100" formControlName="shiftName"
+                                placeholder="Please enter shift name" />
+                            <div *ngIf="shift.get('shiftName')?.invalid && (shift.get('shiftName')?.dirty || shift.get('shiftName')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is required'
+                                    | translate}}</span>
+                            </div>
+                        </div>
+    
+                        <!-- Currency -->
+                        <div class="w-100">
+                            <label class="form-label custom-label">{{'Currency' | translate}}</label>
+                            <input type="text" class="form-control custom-input w-100" formControlName="color" />
+                        </div>
+    
+                        <!-- Rate -->
+                        <div class="w-100">
+                            <label class="form-label custom-label">{{'Rate' | translate}}<span
+                                    class="text-danger">*</span></label>
+                            <input type="number" class="form-control custom-input w-100" formControlName="startTime" />
+                            <div *ngIf="shift.get('startTime')?.invalid && (shift.get('startTime')?.dirty || shift.get('startTime')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('startTime')?.errors?.['required']">{{'Start Time is required'}}</span>
+                            </div>
+                        </div>
+    
+                        <!-- End Time -->
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <label class="form-label custom-label">{{'End Time' | translate}}
+                                        <span class="text-danger">*</span></label>
+                                </div>
+                                <div>
+                                    <!-- Delete Icon -->
+                                    <button type="button" class="custom-icon btn p-0" (click)="deleteShift(i)">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+    
+                            <input type="time" class="form-control custom-input w-100" formControlName="endTime" />
+                            <div *ngIf="shift.get('endTime')?.invalid && (shift.get('endTime')?.dirty || shift.get('endTime')?.touched)"
+                                class="error-msg">
+                                <span *ngIf="shift.get('endTime')?.errors?.['required']">{{'End Time is required' |
+                                    translate}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
+    
+        </div>
+        <div class="d-flex gap-3 justify-content-end">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary px-5" [disabled]="ratecardForm.invalid" >{{'Submit'|translate}}</button>
+        </div>
+    </form>
+</div>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

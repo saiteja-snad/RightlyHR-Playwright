@@ -92,6 +92,7 @@ export class IntialLoadEntitlementPreviewComponent {
         employeeName: `${emp.firstName} ${emp.lastName}`,
         joinedDate: emp.dateOfJoining,
         location: emp.locationName,
+        sublocationName:emp.sublocationName,
         shift: emp.shiftName,
         grade: emp.gradeName,
         isValid: emp.isValid,

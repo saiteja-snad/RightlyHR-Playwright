@@ -58,7 +58,9 @@
             <thead>
                 <tr>
                     <th>Employee</th>
-                    <th>Location / Shift</th>
+                    <th>Location </th>
+                    <th>Sub Location</th>
+                    <th>Shift</th>
                     <th class="text-center">Grade</th>
                     <!-- Dynamic headers -->
                     <th *ngFor="let header of leaveHeaders" class="text-center">
@@ -74,7 +76,9 @@
                             <strong>{{ emp.employeeName }}</strong><br />
                             <small>Joined: {{ emp.joinedDate | date:'yyyy-MM-dd' }}</small>
                         </td>
-                        <td>{{ emp.location }}<br /><small>{{ emp.shift }}</small></td>
+                        <td>{{ emp.location }}</td>
+                        <td>{{emp.sublocationName}}</td>
+                        <td>{{ emp.shift }}</td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center">
                                 <div class="code-box text-center px-4"> {{ emp.grade }}</div>

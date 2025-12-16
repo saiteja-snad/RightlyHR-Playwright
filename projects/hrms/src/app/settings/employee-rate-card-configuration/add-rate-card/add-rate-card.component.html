@@ -77,12 +77,22 @@
                         <div class="w-100">
                             <label class="form-label custom-label">{{'Experince'|translate}}
                                 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input w-100" formControlName="shiftCode"
-                                placeholder="Please enter Experince" />
+                            <div class="d-flex">
+                                <div>
+                                    <input type="number" class="form-control value-input" id="min-{{i}}" name="min-{{i}}" min="0"
+                                        placeholder="Please enter Experince" required />
+                                </div>
+                                <div class="pt-2">
+                                    <span class="mx-2">-</span>
+                                </div>
+                                <div>
+                                    <input type="number" class="form-control value-input" id="max-{{i}}" name="max-{{i}}" min="0"
+                                        placeholder="Please enter Experince" required />
+                                </div>
+                            </div>
                             <div *ngIf="shift.get('shiftCode')?.invalid && (shift.get('shiftCode')?.dirty || shift.get('shiftCode')?.touched)"
                                 class="error-msg">
-                                <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Experince is required'
-                                    | translate}}</span>
+                                <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Experince is required' | translate}}</span>
                             </div>
                         </div>
     

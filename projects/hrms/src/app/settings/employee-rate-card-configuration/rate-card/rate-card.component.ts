@@ -16,6 +16,8 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { IRateCardActiveViewModel } from './rate-card-model';
 import { AddRateCardComponent } from '../add-rate-card/add-rate-card.component';
 import { Router } from '@angular/router';
+import { RateCardTabsComponent } from "../rate-card-tabs/rate-card-tabs.component";
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 
 @Component({
   selector: 'app-rate-card',
@@ -28,8 +30,7 @@ import { Router } from '@angular/router';
     DataLoaderContentComponent,
     FormsModule,
     Paginator,
-    InfoIconComponent,
-    NgbPopoverModule],
+    NgbPopoverModule, RateCardTabsComponent, SettingsHeaderComponent],
   templateUrl: './rate-card.component.html',
   styleUrl: './rate-card.component.scss'
 })

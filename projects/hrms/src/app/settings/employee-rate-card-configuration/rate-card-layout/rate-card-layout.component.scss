@@ -1,5 +1,5 @@
-.custom-component-left-content {
-    height: calc(100dvh - 8.5rem);
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem) !important;
 }
 
 .custom-setting-right-content {
@@ -14,8 +14,4 @@
 .fields-data-container {
     height: calc(100vh - 12rem) !important;
     padding: 1rem !important;
-}
-
-.component-left-tabs-container {
-    height: calc(100dvh - 8.5rem) !important;
 }

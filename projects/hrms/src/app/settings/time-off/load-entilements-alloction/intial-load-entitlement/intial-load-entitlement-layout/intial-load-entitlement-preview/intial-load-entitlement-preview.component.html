@@ -1,77 +1,57 @@
 <div class="load-components-container">
 
     <div class="status-cards mb-3" *ngIf="employeesTableData.length > 0">
-        <div class="status-card" [ngClass]="{
-       'success': gradeAssignments?.status === 'success',
-       'error': gradeAssignments?.status === 'failed'
-     }">
-
-            <div class="icon">
-                {{ gradeAssignments?.status === 'success' ? '✔' : '✖' }}
-            </div>
-
-            <div class="content">
-                <h4>Grade Assignments</h4>
-                <p *ngIf="gradeAssignments?.status === 'success'">
-                    All selected employees have valid grades.
-                </p>
-                <p *ngIf="gradeAssignments?.status === 'failed'">
-                    {{ gradeAssignments?.data?.length }} employees failed grade assignment.
-                </p>
-            </div>
-            <div *ngIf="gradeAssignments?.status === 'failed'">
-                <a type="button" class="download-text" (click)="toggleFilters(gradeassignments)">
-                    <i class="bi bi-eye-fill me-2"></i>View
-                </a>
-
+        <div class="status-card" [ngClass]="{'success': gradeAssignments?.status === 'success',
+           'error': gradeAssignments?.status === 'failed' }">
+            <div class="icon">{{ gradeAssignments?.status === 'success' ? '✔' : '✖' }}</div>
+            <div class="content d-flex align-items-center justify-content-between w-100">
+                <div>
+                    <h4>Grade Assignments</h4>
+                    <p *ngIf="gradeAssignments?.status === 'success'" class="m-0">
+                        All selected employees have valid grades.</p>
+                    <p *ngIf="gradeAssignments?.status === 'failed'" class="m-0">
+                        {{ gradeAssignments?.data?.length }} employees failed grade assignment.</p>
+                </div>
+                <div *ngIf="gradeAssignments?.status === 'failed'">
+                    <a type="button" [ngClass]="{'success': gradeAssignments?.status === 'success',
+           'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(gradeassignments)">
+                        <i class="bi bi-eye-fill me-2"></i>View
+                    </a>
+                </div>
             </div>
         </div>
 
-
-        <div class="status-card" [ngClass]="{
-        'success': policymapping?.status === 'success',
-        'error': policymapping?.status === 'failed'
-        }">
-
-            <div class="icon">
-                {{ policymapping?.status === 'success' ? '✔' : '✖' }}
-            </div>
-
-            <div class="content">
-                <h4>Policy Mapping</h4>
-
-                <!-- SUCCESS -->
-                <p *ngIf="policymapping?.status === 'success'">
-                    Leave policies found for all grades.
-                </p>
-
-                <!-- FAILED -->
-                <p *ngIf="policymapping?.status === 'failed'">
-                    {{ policymapping?.data?.length }} leave policy configuration issue(s) found.
-                </p>
-            </div>
-            <div *ngIf="policymapping?.status === 'failed'">
-                <a type="button" class="download-text" (click)="toggleFilters(filterContent)">
-                    <i class="bi bi-eye-fill me-2"></i>View
-                </a>
-
+        <div class="status-card" [ngClass]="{'success': policymapping?.status === 'success',
+                'error': policymapping?.status === 'failed'}">
+            <div class="icon">{{ policymapping?.status === 'success' ? '✔' : '✖' }}</div>
+            <div class="content d-flex align-items-center justify-content-between w-100">
+                <div>
+                    <h4>Policy Mapping</h4>
+                    <!-- SUCCESS -->
+                    <p *ngIf="policymapping?.status === 'success'" class="m-0">Leave policies found for all grades.</p>
+                    <!-- FAILED -->
+                    <p *ngIf="policymapping?.status === 'failed'" class="m-0">
+                        {{ policymapping?.data?.length }} leave policy configuration issue(s) found.
+                    </p>
+                </div>
+                <div *ngIf="policymapping?.status === 'failed'">
+                    <a type="button" [ngClass]="{'success': gradeAssignments?.status === 'success',
+           'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(filterContent)">
+                        <i class="bi bi-eye-fill me-2"></i>View
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="status-card " [ngClass]="{
-        'success': duplicatecheck?.status === 'success',
-        'error': duplicatecheck?.status === 'failed'
-        }">
-            <div class="icon">
-                {{ duplicatecheck?.status === 'success' ? '✔' : '✖' }}
-            </div>
+
+        <div class="status-card " [ngClass]="{'success': duplicatecheck?.status === 'success',
+                'error': duplicatecheck?.status === 'failed'}">
+            <div class="icon">{{ duplicatecheck?.status === 'success' ? '✔' : '✖' }}</div>
             <div class="content">
                 <h4>Duplicate Check</h4>
-                <p>No duplicate records for Year {{carryforwarddata?.year}}.</p>
+                <p class="m-0">No duplicate records for Year {{carryforwarddata?.year}}.</p>
             </div>
         </div>
     </div>
-
-
 
     <div class="custom-table-content">
         @if(!loading){
@@ -80,8 +60,7 @@
                 <tr>
                     <th>Employee</th>
                     <th>Location / Shift</th>
-                    <th>Grade</th>
-
+                    <th class="text-center">Grade</th>
                     <!-- Dynamic headers -->
                     <th *ngFor="let header of leaveHeaders" class="text-center">
                         {{ header.name }}
@@ -96,16 +75,12 @@
                             <strong>{{ emp.employeeName }}</strong><br />
                             <small>Joined: {{ emp.joinedDate | date:'yyyy-MM-dd' }}</small>
                         </td>
-
-                        <td>
-                            {{ emp.location }}<br />
-                            <small>{{ emp.shift }}</small>
+                        <td>{{ emp.location }}<br /><small>{{ emp.shift }}</small></td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center">
+                                <div class="code-box text-center px-4"> {{ emp.grade }}</div>
+                            </div>
                         </td>
-
-                        <td>
-                            <div class="code-box text-center"> {{ emp.grade }}</div>
-                        </td>
-
                         <!-- Dynamic td -->
                         <td *ngFor="let header of leaveHeaders" class="text-center">
                             {{ emp.leaveValues[header.code] ?? 0 }}
@@ -134,7 +109,6 @@
     </div>
 </div>
 
-
 <!--Delete popup-->
 <ng-template #conformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
@@ -155,14 +129,11 @@
             <p class="filter-header m-0">{{'Policy Mapping Errors' | translate}}</p>
             <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
-
         <div class="offcanvas-filter-content">
-
             <div class="error-box" *ngFor="let item of policymapping?.data">
                 <h6 class="category-name">
                     <b>Category Name</b> : {{ item.categories.name }} ({{ item.categories.code }})
                 </h6>
-
                 <p class="error-reason">
                     <b>Reason</b> : {{ item.categories.reason }}
                 </p>
@@ -178,15 +149,12 @@
             <p class="filter-header m-0">{{'Grade Assignments Errors' | translate}}</p>
             <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
-
         <div class="offcanvas-filter-content">
-
             <div class="error-box" *ngFor="let item of gradeAssignments?.data">
                 <h5 class="category-name">
                     <b>Employee Name</b> : {{ item.employee.name }}
                 </h5>
                 <h6 class="category-name"> <b>Employee ID</b> : {{ item.employee.fusionEmpId }}</h6>
-
                 <p class="error-reason">
                     <b>Reason</b> : {{ item.employee.reason }}
                 </p>

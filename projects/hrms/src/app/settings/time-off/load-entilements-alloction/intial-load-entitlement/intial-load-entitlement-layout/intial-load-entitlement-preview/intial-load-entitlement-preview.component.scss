@@ -18,6 +18,7 @@
 
 
 .code-box {
+    width: max-content;
     padding: 0.5rem;
     border-radius: 0.325rem;
     color: #000;
@@ -38,7 +39,7 @@
     border: 1px solid;
 }
 
-/* ✅ SUCCESS */
+/* SUCCESS */
 .status-card.success {
     background: #f6fffa;
     border-color: #b7ebc6;
@@ -54,8 +55,20 @@
     color: #166534;
 }
 
+.status-card.success .content a {
+    font-size: 12px;
+    font-weight: 600;
+    color: #15803d;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+       cursor: pointer;
+}
+
 .status-card.success .content p {
-      font-size: 12px;
+    font-size: 12px;
     font-weight: 600;
     color: #15803d;
 }
@@ -71,13 +84,26 @@
 }
 
 .status-card.error .content h4 {
-     font-size: 12px;
+    font-size: 12px;
     font-weight: 600;
     color: #7f1d1d;
 }
 
+
+.status-card.error .content a {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ef4444;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 0%;
+    cursor: pointer;
+}
+
 .status-card.error .content p {
-     font-size: 12px;
+    font-size: 12px;
     font-weight: 600;
     color: #b91c1c;
 }

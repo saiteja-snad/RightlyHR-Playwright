@@ -3,53 +3,40 @@ import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../../services/http.service';
 import { Router } from '@angular/router';
-import { ICarryForward } from '../../../../flexible-leave-allocation/leave-allocation.model';
 import { Subject, takeUntil } from 'rxjs';
 import { NoDataFoundComponent } from "../../../../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-intial-load-entitlement-preview',
   imports: [CommonModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule],
   templateUrl: './intial-load-entitlement-preview.component.html',
   styleUrl: './intial-load-entitlement-preview.component.scss'
 })
+
 export class IntialLoadEntitlementPreviewComponent {
   empinfo: any = {};
   carryforwarddata: any = {}
   loading: boolean = false;
   @ViewChild('conformation', { static: true }) conformation!: TemplateRef<any>;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  gradeAssignments: { status: any; data: any[]; } | null = null;
+  policymapping: { status: any; data: any[]; } | null = null;
+  duplicatecheck: { status: any; data: any[]; } | null = null;
+  isGradeAssignmentSuccess = false;
+  failedGradeEmployees: any[] = [];
+
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService,
     private route: Router, private http: HttpService, private offcanvasService: NgbOffcanvas) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.carryforwarddata = JSON.parse(localStorage.getItem('intialloadEntitlement') ?? '{}');
     this.getdataforcarryforward(this.carryforwarddata);
   }
 
-  gradeAssignments: {
-    status: any;
-    data: any[];
-  } | null = null;
-
-  policymapping: {
-    status: any;
-    data: any[];
-  } | null = null;
-
-  duplicatecheck: {
-    status: any;
-    data: any[];
-  } | null = null;
-  isGradeAssignmentSuccess = false
-  failedGradeEmployees: any[] = [];
-
-
   getdataforcarryforward(carryforwarddata: any) {
-
     this.loading = true;
     this.http.getData(
       `Employeedata/employees/with-leave-categories?locationIds=${carryforwarddata?.location?.id}
@@ -78,24 +65,19 @@ export class IntialLoadEntitlementPreviewComponent {
   leaveEntries: any[] = []
   mapEmployees(employees: any[]) {
     const headerMap = new Map<string, any>();
-
     this.employeesTableData = employees.map(emp => {
       const leaveValues: any = {};
       const leaveEntries: any[] = [];
-
       emp.leaveCategories.forEach((lc: any) => {
         const category = lc.orgLeaveCategories;
         const code = category.categoryCode;
-
         leaveValues[code] = lc.allowedDays;
-
         leaveEntries.push({
           leaveCategoryId: lc.categoryId,
           categoryCode: code,
           allowedDays: lc.allowedDays,
           isValid: lc.isValid,
         });
-
         if (!headerMap.has(code)) {
           headerMap.set(code, {
             code,
@@ -104,7 +86,6 @@ export class IntialLoadEntitlementPreviewComponent {
           });
         }
       });
-
       return {
         employeeId: emp.employeeId,
         gradeId: emp.gradeId,
@@ -115,14 +96,11 @@ export class IntialLoadEntitlementPreviewComponent {
         grade: emp.gradeName,
         isValid: emp.isValid,
         leaveValues,
-        leaveEntries // ✅ attached correctly
+        leaveEntries // attached correctly
       };
     });
-
     this.leaveHeaders = Array.from(headerMap.values());
   }
-
-
 
   buildCarryForwardPayload() {
     return {
@@ -136,33 +114,29 @@ export class IntialLoadEntitlementPreviewComponent {
 
       requestPayload: {
         employees: this.employeesTableData
-          // ✅ only valid employees
+          // only valid employees
           .filter(emp => emp?.isValid === true)
           .map(emp => ({
             employeeId: emp?.employeeId,
             gradeId: emp?.gradeId,
-
             entitlementsData: (emp.leaveEntries || [])
-              // ✅ only valid + allowedDays > 0
+              // only valid + allowedDays > 0
               .filter((x: { isValid: boolean; allowedDays: number; }) => x.isValid === true && x.allowedDays > 0)
               .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
                 leaveCategoryId: x?.leaveCategoryId,
                 noOfDays: x?.allowedDays
               }))
           }))
-          // ✅ remove employees with empty entitlements
+          // remove employees with empty entitlements
           .filter(emp => emp?.entitlementsData?.length > 0)
       }
     };
   }
 
-
-
   canSubmit(): boolean {
     return this.policymapping?.status !== 'failed'
       && this.gradeAssignments?.status !== 'failed';
   }
-
 
   submit() {
     if (!this.canSubmit()) {
@@ -193,7 +167,6 @@ export class IntialLoadEntitlementPreviewComponent {
       error: (err) => {
         console.error(err);
         this.conformationPopup.openErrorModal(err.error.message);
-
       }
     });
   }
@@ -201,10 +174,11 @@ export class IntialLoadEntitlementPreviewComponent {
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
+
   closeCanvas() {
     this.offcanvasService.dismiss();
-
   }
+
   back() {
     this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create'])
   }

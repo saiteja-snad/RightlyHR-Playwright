@@ -9,13 +9,11 @@
     }
 }
 
-
 .custom-table-content {
     min-height: 30vh !important;
     max-height: 50dvh !important;
     border: 1px solid var(--table-header-bg-color);
 }
-
 
 .code-box {
     width: max-content;
@@ -64,7 +62,7 @@
     text-decoration: underline;
     text-decoration-style: solid;
     text-decoration-thickness: 0%;
-       cursor: pointer;
+    cursor: pointer;
 }
 
 .status-card.success .content p {
@@ -72,7 +70,6 @@
     font-weight: 600;
     color: #15803d;
 }
-
 
 .status-card.error {
     background: #fff5f5;
@@ -88,7 +85,6 @@
     font-weight: 600;
     color: #7f1d1d;
 }
-
 
 .status-card.error .content a {
     font-size: 12px;
@@ -119,4 +115,27 @@
     font-size: 16px;
     margin-right: 12px;
     flex-shrink: 0;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #FFFFFF;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    border: 1px solid #DCE3E9;
+    box-shadow: 0px 0px 5px 0px rgba(11, 58, 131, 0.1019607843);
+
+    .name {
+        font-size: var(--fontsize14);
+        font-weight: 600;
+        text-transform: capitalize;
+        color: var(--primary-color);
+    }
+
+    .designation {
+        color: #6b7280;
+        font-size: var(--fontsize12);
+    }
 }

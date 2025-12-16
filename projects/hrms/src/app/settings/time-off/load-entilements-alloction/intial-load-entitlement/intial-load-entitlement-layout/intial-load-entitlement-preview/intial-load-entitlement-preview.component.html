@@ -1,5 +1,4 @@
 <div class="load-components-container">
-
     <div class="status-cards mb-3" *ngIf="employeesTableData.length > 0">
         <div class="status-card" [ngClass]="{'success': gradeAssignments?.status === 'success',
            'error': gradeAssignments?.status === 'failed' }">
@@ -14,8 +13,8 @@
                 </div>
                 <div *ngIf="gradeAssignments?.status === 'failed'">
                     <a type="button" [ngClass]="{'success': gradeAssignments?.status === 'success',
-           'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(gradeassignments)">
-                        <i class="bi bi-eye-fill me-2"></i>View
+                    'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(gradeassignments)">
+                        <i class="bi bi-eye-fill me-1"></i>View
                     </a>
                 </div>
             </div>
@@ -36,8 +35,8 @@
                 </div>
                 <div *ngIf="policymapping?.status === 'failed'">
                     <a type="button" [ngClass]="{'success': gradeAssignments?.status === 'success',
-           'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(filterContent)">
-                        <i class="bi bi-eye-fill me-2"></i>View
+                    'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(filterContent)">
+                        <i class="bi bi-eye-fill me-1"></i>View
                     </a>
                 </div>
             </div>
@@ -131,17 +130,16 @@
         </div>
         <div class="offcanvas-filter-content">
             <div class="error-box" *ngFor="let item of policymapping?.data">
-                <h6 class="category-name">
-                    <b>Category Name</b> : {{ item.categories.name }} ({{ item.categories.code }})
-                </h6>
-                <p class="error-reason">
-                    <b>Reason</b> : {{ item.categories.reason }}
-                </p>
+                <div class="profile-content mb-3">
+                    <p class="designation m-0 mb-1"><b>Category Name</b> : 
+                        <span class="name">{{ item.categories.name }} ({{ item.categories.code }})</span>
+                    </p>
+                    <p class="designation m-0"><b>Reason</b> : {{ item.categories.reason }}</p>
+                </div>
             </div>
         </div>
     </div>
 </ng-template>
-
 
 <ng-template #gradeassignments let-offcanvas>
     <div class="custom-filter-container">
@@ -151,13 +149,11 @@
         </div>
         <div class="offcanvas-filter-content">
             <div class="error-box" *ngFor="let item of gradeAssignments?.data">
-                <h5 class="category-name">
-                    <b>Employee Name</b> : {{ item.employee.name }}
-                </h5>
-                <h6 class="category-name"> <b>Employee ID</b> : {{ item.employee.fusionEmpId }}</h6>
-                <p class="error-reason">
-                    <b>Reason</b> : {{ item.employee.reason }}
-                </p>
+                <div class="profile-content mb-3">
+                    <p class="name m-0 mb-1">{{ item.employee.name }}</p>
+                    <p class="designation m-0 mb-1"><b>Employee ID</b> : {{ item.employee.fusionEmpId }}</p>
+                    <p class="designation m-0"><b>Reason</b> : {{ item.employee.reason }}</p>
+                </div>
             </div>
         </div>
     </div>

@@ -19,7 +19,7 @@ progress = 0;
       this.progress = 1;   // 25%
     } else if (url.includes('/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview')) {
       this.progress = 2;   // 50%
-    } else if (url.includes('/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery')) {
+    } else if (url.includes('/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution')) {
       this.progress = 3;   // 75%
     } else {
       this.progress = 0;   // default

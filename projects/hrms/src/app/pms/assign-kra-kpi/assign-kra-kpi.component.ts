@@ -34,6 +34,7 @@ import { ChipModule } from 'primeng/chip';
 import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { RbacService } from '../../services/rbac.service';
 
 
 @Component({
@@ -71,6 +72,7 @@ export class AssignKraKpiComponent implements OnInit {
   private popup = inject(OpenModalService);
   private router = inject(Router);
   private offcanvasService = inject(NgbOffcanvas);
+  public rbac = inject(RbacService);
 
   kraList: any[] = [];
   allKraData: any[] = []; // For filtering/sorting in table
@@ -120,9 +122,9 @@ export class AssignKraKpiComponent implements OnInit {
     jobRole: this.fb.control<number | null>(null),
 
     department: this.fb.control<any[]>([]),
-    team: this.fb.control<any[]>([]),
+    team: this.fb.control<any[]>({ value: [], disabled: true }),
     location: this.fb.control<any[]>([]),
-    subLocation: this.fb.control<any[]>([]),
+    subLocation: this.fb.control<any[]>({ value: [], disabled: true }),
   });
 
   activeEmplist = [] as any;
@@ -247,12 +249,17 @@ selectedKraAssignment: any;
 
   onDepartmentChange(selectedDepartments: any[]): void {
     const departmentIds = selectedDepartments?.map((d) => d.sno) || [];
+     const teamControl = this.filterForm.get('team');
 
     if (departmentIds.length === 0) {
+      teamControl?.disable();
+    teamControl?.setValue([]);
       this.teamDropdownValues = [];
       this.JobroleDesignation = []; // Clear job roles if no department
+      this.onTeamChange([]);
       return;
     }
+    teamControl?.enable();
 
     const departmentIdStr = departmentIds.join(',');
 
@@ -338,13 +345,19 @@ selectedKraAssignment: any;
   }
 
   getSubLocationByid(selectedLocations: any[]): void {
+    const subLocationControl = this.filterForm.get('subLocation');
     if (!selectedLocations || selectedLocations.length === 0) {
+      subLocationControl?.disable();
+    subLocationControl?.setValue([]);
       this.subLocationsDropdown = [];
       this.joblocid = '';
+      this.onSubLocationChange([]);
       // Clear location-based employee filter
       this.loadEmployeesByLocation();
       return;
     }
+    subLocationControl?.enable();
+
 
     this.joblocid = selectedLocations.map((loc) => loc.id).join(',');
 
@@ -1173,5 +1186,37 @@ loadKpisForEmployee(employeeId: number) {
         return '';
     }
   }
+
+  getKraProgress(kra: any): number {
+  if (!kra?.kpis || kra.kpis.length === 0) {
+    return 0;
+  }
+
+  const total = kra.kpis.reduce(
+    (sum: number, kpi: any) => sum + Number(kpi.weightageValue || 0),
+    0
+  );
+
+  return Math.round(total / kra.kpis.length);
+}
+
+getProgressClass(value: number): string {
+  if (value >= 80) return 'bg-success';
+  if (value >= 50) return 'bg-warning';
+  return 'bg-danger';
+}
+
+get isDepartmentSelected(): boolean {
+  const dept = this.filterForm.get('department')?.value;
+  return Array.isArray(dept) && dept.length > 0;
+}
+
+get isLocationSelected(): boolean {
+  const loc = this.filterForm.get('location')?.value;
+  return Array.isArray(loc) && loc.length > 0;
+}
+
+
+
 
 }

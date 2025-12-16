@@ -142,25 +142,26 @@ pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
     });
   }
 
-  toggleInactiveFilter(): void {
+toggleInactiveFilter(): void {
   this.showOnlyInactive = !this.showOnlyInactive;
 
   if (this.showOnlyInactive) {
-    // Show ONLY inactive KPIs
     this.filteredDetails = this.kpiList.filter(
       kpi => kpi.status === 'Inactive'
     );
     this.inactiveButtonLabel = 'Active KPI';
   } else {
-    // Show ALL KPIs
-    this.filteredDetails = [...this.kpiList];
+    this.filteredDetails = this.kpiList.filter(
+      kpi => kpi.status !== 'Inactive'
+    );
     this.inactiveButtonLabel = 'Inactive KPI';
   }
 
-  // Reset pagination when filter changes
+  // reset pagination
   this.page = 1;
   this.first = 0;
 }
+
 
 
   loadKpiList() {
@@ -177,8 +178,9 @@ pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
         this.kpiList = res.data || [];
         this.collectionSize = res.pagination?.totalRecords || 0;
         this.filteredDetails = this.showOnlyInactive
-    ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
-    : [...this.kpiList];
+  ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
+  : this.kpiList.filter(kpi => kpi.status !== 'Inactive');
+
       } else {
         this.kpiList = [];
         this.filteredDetails = [];

@@ -25,11 +25,16 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
   styleUrl: './kra-configuration.component.scss',
   imports: [
     // Keep only what you use
-    CommonModule, FormsModule, RouterModule,
-    PaginatorModule, NgbPopoverModule,
-    NoDataFoundComponent, DataLoaderContentComponent,
-    SettingsHeaderComponent, InfoIconComponent
-  ]
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    PaginatorModule,
+    NgbPopoverModule,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    SettingsHeaderComponent,
+    InfoIconComponent,
+  ],
 })
 export class KraConfigurationComponent implements OnInit, OnDestroy {
   dataload = false;
@@ -52,45 +57,39 @@ export class KraConfigurationComponent implements OnInit, OnDestroy {
     public rbac: RbacService
   ) {}
 
-ngOnInit(): void {
-  this.loadKraCategories();
+  ngOnInit(): void {
+    this.loadKraCategories();
 
-  effect(() => {
-    const status = this.http.tirggerCountSignal();
+    effect(() => {
+      const status = this.http.tirggerCountSignal();
 
-    if (status.global) {
-      this.loadKraCategories();
+      if (status.global) {
+        this.loadKraCategories();
 
-      // reset back to false
-      this.http.tirggerCountSignal.update(s => ({
-        ...s,
-        global: false
-      }));
-    }
-  });
-}
-
+        // reset back to false
+        this.http.tirggerCountSignal.update((s) => ({
+          ...s,
+          global: false,
+        }));
+      }
+    });
+  }
 
   loadKraCategories(): void {
     const params: any = {
-      pageNumber: this.page,
-      pageSize: this.rows
+      ...(this.searchText && { search: this.searchText }),
     };
-    if (this.searchText.trim()) {
-      params.searchparam = this.searchText.trim();
-    }
+
 
     this.dataload = true;
-    this.subscription = this.http.getData('Kra/getallconfiguration')
-      .subscribe({
-        next: (res: any) => {
-          this.kraCategories = res.data || [];
-this.collectionSize = res.data?.length || 0;
-
-        },
-        error: () => this.dataload = false,
-        complete: () => this.dataload = false
-      });
+    this.subscription = this.http.getDataIncludeParams('Kra/getallconfiguration', params).subscribe({
+      next: (res: any) => {
+        this.kraCategories = res.data || [];
+        this.collectionSize = res.data?.length || 0;
+      },
+      error: () => (this.dataload = false),
+      complete: () => (this.dataload = false),
+    });
   }
 
   onSearchTextChange(): void {
@@ -117,7 +116,7 @@ this.collectionSize = res.data?.length || 0;
     const modalRef = this.modalService.open(AddKraComponent, {
       centered: true,
       backdrop: 'static',
-      size: 'lg'
+      size: 'lg',
     });
     modalRef.result.then(
       () => this.loadKraCategories(),
@@ -129,7 +128,7 @@ this.collectionSize = res.data?.length || 0;
     const modalRef = this.modalService.open(UpdateKraComponent, {
       centered: true,
       backdrop: 'static',
-      size: 'lg'
+      size: 'lg',
     });
     modalRef.componentInstance.updateData = data;
     modalRef.result.then(
@@ -138,67 +137,65 @@ this.collectionSize = res.data?.length || 0;
     );
   }
 
-openDelete(template: any, id: number | undefined): void {
-  if (!id) {
-    this.popup.openErrorModal('Invalid category selected');
-    return;
-  }
-  this.deleteId = id;
-  this.modalService.open(template, { centered: true });
-}
-
-deleteCategory(): void {
-  if (!this.deleteId) return;
-
-  const categoryToDelete = this.kraCategories.find(
-    (x: any) => x.categoryId === this.deleteId
-  );
-
-  if (!categoryToDelete) {
-    this.popup.openErrorModal("Category not found");
-    return;
-  }
-
-  const payload = {
-    categoryId: categoryToDelete.categoryId,
-    categoryName: categoryToDelete.categoryName,
-    categoryCode: categoryToDelete.categoryCode,
-    description: categoryToDelete.description || '',
-    status: "void",
-    effectiveFrom: categoryToDelete.effectiveFrom || new Date().toISOString(),
-    // createdBy: categoryToDelete.createdBy || this.authService.getToken().employeeId,
-    createdOn: categoryToDelete.createdOn || new Date().toISOString(),
-    // updatedBy: this.authService.getToken().employeeId,
-    updatedOn: new Date().toISOString()
-  };
-
-  this.http.postdata(`Kra/updateconfiguration`, payload).subscribe({
-    next: () => {
-      this.popup.openSuccessModal("KRA Category deleted successfully");
-      this.loadKraCategories();
-    },
-    error: (err: any) => {
-      this.popup.openErrorModal(
-        err.error?.message || "Failed to delete KRA category"
-      );
+  openDelete(template: any, id: number | undefined): void {
+    if (!id) {
+      this.popup.openErrorModal('Invalid category selected');
+      return;
     }
-  });
-}
-
-
-getStatusClass(status?: string) {
-  switch (status) {
-    case 'Created':
-      return 'status-created';
-    case 'Active':
-      return 'status-active';
-    case 'On Hold':
-      return 'status-onhold';
-    default:
-      return '';
+    this.deleteId = id;
+    this.modalService.open(template, { centered: true });
   }
-}
 
+  deleteCategory(): void {
+    if (!this.deleteId) return;
+
+    const categoryToDelete = this.kraCategories.find(
+      (x: any) => x.categoryId === this.deleteId
+    );
+
+    if (!categoryToDelete) {
+      this.popup.openErrorModal('Category not found');
+      return;
+    }
+
+    const payload = {
+      categoryId: categoryToDelete.categoryId,
+      categoryName: categoryToDelete.categoryName,
+      categoryCode: categoryToDelete.categoryCode,
+      description: categoryToDelete.description || '',
+      status: 'void',
+      effectiveFrom: categoryToDelete.effectiveFrom || new Date().toISOString(),
+      // createdBy: categoryToDelete.createdBy || this.authService.getToken().employeeId,
+      createdOn: categoryToDelete.createdOn || new Date().toISOString(),
+      // updatedBy: this.authService.getToken().employeeId,
+      updatedOn: new Date().toISOString(),
+    };
+
+    this.http.postdata(`Kra/updateconfiguration`, payload).subscribe({
+      next: () => {
+        this.popup.openSuccessModal('KRA Category deleted successfully');
+        this.loadKraCategories();
+      },
+      error: (err: any) => {
+        this.popup.openErrorModal(
+          err.error?.message || 'Failed to delete KRA category'
+        );
+      },
+    });
+  }
+
+  getStatusClass(status?: string) {
+    switch (status) {
+      case 'Created':
+        return 'status-created';
+      case 'Active':
+        return 'status-active';
+      case 'On Hold':
+        return 'status-onhold';
+      default:
+        return '';
+    }
+  }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();

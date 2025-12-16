@@ -79,6 +79,7 @@
               <ul class="dropdown-menu custom-dropdown-menu">
 
                 <!-- UPDATE -->
+                 @if(rbac.allowedToAccess('KPI.update')){
                 @if (canUpdate(kpi.status)) {
                 <li class="dropdown-item" (click)="onUpdate(kpi, createKpiModal)">
                   <a class="dropdown-custom-btn">
@@ -86,8 +87,10 @@
                   </a>
                 </li>
                 }
+              }
 
                 <!-- ACTIVATE -->
+                 @if(rbac.allowedToAccess('KPI.update')){
                 @if (canActivate(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Active')">
                   <a class="dropdown-custom-btn text-success">
@@ -95,17 +98,21 @@
                   </a>
                 </li>
                 }
+              }
 
                 <!-- INACTIVE -->
+                 @if(rbac.allowedToAccess('KPI.delete')){
                 @if (canInactivate(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Inactive')">
                   <a class="dropdown-custom-btn text-warning">
                     <i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}
                   </a>
                 </li>
+              }
                 }
 
                 <!-- HOLD -->
+                 @if(rbac.allowedToAccess('KPI.update')){
                 @if (canHold(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'On Hold')">
                   <a class="dropdown-custom-btn text-secondary">
@@ -113,6 +120,7 @@
                   </a>
                 </li>
                 }
+              }
 
               </ul>
 

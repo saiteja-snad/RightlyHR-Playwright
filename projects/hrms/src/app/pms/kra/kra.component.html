@@ -14,14 +14,14 @@
     <!-- @if (rbac.allowedToAccess('Create KRA.view')) { -->
     <div class="d-flex align-items-center gap-4">
       <a class="inactive-btn" (click)="toggleInactiveKra()">
-        {{ kraFilterApplied ? 'Inactive KRA' : 'Active KRA' }}
+        {{ kraFilterApplied ? 'Active KRA' : 'Inactive KRA' }}
       </a>
 
       @if(rbac.allowedToAccess('KRA.create')){
       <button class="custom-btn btn-primary" (click)="openCreateModal()">
         {{ 'Create KRA' | translate }}
       </button>
-    }
+      }
 
     </div>
 
@@ -51,6 +51,7 @@
           <th>{{ 'KRA Category' | translate }}</th>
           <th class="text-center">{{ 'KRA Title' | translate }}</th>
           <th class="text-center">{{ 'Description' | translate }}</th>
+          <th class="text-center">{{ 'Attachment' | translate }}</th>
           <th class="text-center">{{ 'Status' | translate }}</th>
           @if (hasAnyActionPermission()) {
           <th class="text-center">{{ 'Action' | translate }}</th>
@@ -71,6 +72,26 @@
             <ng-template #noDescription>NA</ng-template>
           </td>
           <td class="text-center">
+            @if (kra.documentUrl) {
+            <div class="d-flex justify-content-center gap-2">
+              <!-- Download -->
+              <!-- <a class="download-text cursor-pointer"
+         (click)="onSelectDownload(kra.documentUrl)">
+        <i class="bi bi-download"></i>
+      </a> -->
+
+              <!-- View -->
+              <a class="download-text cursor-pointer" *ngIf="isViewableFile(kra.documentUrl)"
+                (click)="onViewAttachement(kra.documentUrl)">
+                <app-document-view-icon />
+              </a>
+            </div>
+            } @else {
+            NA
+            }
+          </td>
+
+          <td class="text-center">
             <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
               {{ kra.status }}
             </span>
@@ -86,9 +107,11 @@
 
                 <!-- Created Status -->
                 @if (kra.status === 'Created') {
+                @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="onUpdate(kra)">
                   <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                 </li>
+                }
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
                   <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
                     translate }}</a>
@@ -97,36 +120,48 @@
 
                 <!-- Active Status -->
                 @else if (kra.status === 'Active') {
+                @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="onUpdate(kra)">
                   <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                 </li>
+                }
+                @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'On Hold')">
                   <a class="dropdown-custom-btn text-info"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate
                     }}</a>
                 </li>
+                }
+                @if(rbac.allowedToAccess('KRA.delete')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Inactive')">
                   <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
                     translate }}</a>
                 </li>
+                }
                 }
 
                 <!-- On Hold Status -->
                 @else if (kra.status === 'On Hold') {
+                @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
                   <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Active' |
                     translate }}</a>
                 </li>
+                }
+                @if(rbac.allowedToAccess('KRA.delete')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Inactive')">
                   <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
                     translate }}</a>
                 </li>
                 }
+                }
 
-               @else if (kra.status === 'Inactive') {
+                @else if (kra.status === 'Inactive') {
+                @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
                   <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Active' |
                     translate }}</a>
                 </li>
+                }
                 }
 
               </ul>
@@ -526,12 +561,17 @@
 <!-- STATUS CHANGE CONFIRMATION MODAL -->
 <ng-template #statusConfirmModal let-modal>
   <div class="result-popup-content" ngbAutofocus>
-        <div>
-          <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to change the status of "{{ pendingKraName }}"</p>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">
+        Are you sure you want to change the status of
+        <strong>"{{ pendingKraName }}"</strong>
+        to
+        <strong>{{ pendingNewStatus }}</strong>?
+      </p>
     </div>
 
-      <div class="custom-modal-footer">
+    <div class="custom-modal-footer">
       <button type="button" (click)="modal.dismiss()" class="custom-btn btn-secondary">
         No
       </button>
@@ -539,24 +579,24 @@
         Yes
       </button>
     </div>
-    </div>
+  </div>
 </ng-template>
 
 
-<!-- <ng-template #confirmatideleteonpopup let-model>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to cancel?</p>
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">Attachment</p>
+      <a (click)="modal.dismiss()">
+        <img src="icons/close.png" class="close-icon" />
+      </a>
     </div>
 
-    <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-        Yes
-      </button>
+    <div class="custom-main-popup-content text-center">
+      <img *ngIf="ExpenseImageUrl" [src]="ExpenseImageUrl" class="img-fluid" />
+
+      <iframe *ngIf="ExpenseViewURL" [src]="ExpenseViewURL" width="100%" height="500px" frameborder="0">
+      </iframe>
     </div>
   </div>
-</ng-template> -->
+</ng-template>

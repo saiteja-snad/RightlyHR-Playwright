@@ -31,10 +31,12 @@
       </div>
 
       <div>
+        @if(rbac.allowedToAccess('Assign KRA KPI.create')){
         <button class="custom-btn btn-primary" (click)="openAssignModal(assignKraKpiModal)"
           [disabled]="!canOpenAssignModal">
           {{ 'Assign KRA' | translate }}
         </button>
+      }
       </div>
     </div>
   </div>
@@ -100,6 +102,7 @@
                     <th class="text-center">Status</th>
                     <th class="text-center">Effective Date</th>
                     <th class="text-center">Target Date</th>
+                    <th class="text-center">Progress (%)</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </ng-template>
@@ -135,16 +138,35 @@
                       {{ kra.kpis?.[0]?.kraTargetDate | date:'mediumDate' }}
                     </td>
                     <td class="text-center">
+  <div class="progress" style="height: 8px;">
+    <div
+      class="progress-bar"
+      role="progressbar"
+      [style.width.%]="getKraProgress(kra)"
+      [attr.aria-valuenow]="getKraProgress(kra)"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [ngClass]="getProgressClass(getKraProgress(kra))"
+    ></div>
+  </div>
+  <small class="fw-semibold">
+    {{ getKraProgress(kra) }}%
+  </small>
+</td>
+
+                    <td class="text-center">
                       <div class="dropdown">
                         <span data-bs-toggle="dropdown" class="cursor-pointer">
                           <i class="bi bi-three-dots-vertical text-muted"></i>
                         </span>
                         <ul class="dropdown-menu custom-dropdown-menu">
+                          @if(rbac.allowedToAccess('Assign KRA KPI.update')){
                           <li class="dropdown-item" (click)="onUpdate(kra)">
                             <a class="dropdown-custom-btn">
                               <i class="bi bi-pencil me-2"></i>Update
                             </a>
                           </li>
+                        }
                           <!-- <li class="dropdown-item" (click)="onHold(kra)">
                             <a class="dropdown-custom-btn text-warning">
                               <i class="bi bi-pause-circle me-2"></i>On Hold
@@ -426,7 +448,7 @@
 
     <div class="offcanvas-filter-content p-4">
       <!-- Job Role -->
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <label class="form-label filter-labels mb-3">{{ 'Job Role' | translate }}</label>
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="JobroleDesignation" optionLabel="designationName" formControlName="jobRole"
@@ -434,7 +456,7 @@
             (onClear)="applyFilters()">
           </p-multiSelect>
         </div>
-      </div>
+      </div> -->
 
       <!-- Department -->
       <div class="mb-4">

@@ -39,6 +39,11 @@ export class IntialLoadEntitlementPreviewComponent {
     status: any;
     data: any[];
   } | null = null;
+
+  duplicatecheck: {
+    status: any;
+    data: any[];
+  } | null = null;
   isGradeAssignmentSuccess = false
   failedGradeEmployees: any[] = [];
 
@@ -50,14 +55,14 @@ export class IntialLoadEntitlementPreviewComponent {
       `Employeedata/employees/with-leave-categories?locationIds=${carryforwarddata?.location?.id}
       &subLocationIds=${carryforwarddata?.subLocation?.id}
       &shiftIds=${carryforwarddata?.shift?.id}
-      &year=${carryforwarddata?.year}&categoryIds=${carryforwarddata?.categoryIds}`
+      &year=${carryforwarddata?.year}&categoryIds=${carryforwarddata?.categoryIds}&excludeJobProcessedEmployees=true`
     ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.mapEmployees(res.data.employees);
-        // ✅ Store entire object
         this.gradeAssignments = res.data.gradeAssignments;
-        this.policymapping = res.data.policyMapping
+        this.policymapping = res.data.policyMapping;
+        this.duplicatecheck = res.data.duplicateCheck;
         // Optional helpers
         this.isGradeAssignmentSuccess = res.gradeAssignments?.status === 'success';
         this.failedGradeEmployees = res.gradeAssignments?.data || [];
@@ -87,7 +92,8 @@ export class IntialLoadEntitlementPreviewComponent {
         leaveEntries.push({
           leaveCategoryId: lc.categoryId,
           categoryCode: code,
-          allowedDays: lc.allowedDays
+          allowedDays: lc.allowedDays,
+          isValid: lc.isValid,
         });
 
         if (!headerMap.has(code)) {
@@ -107,6 +113,7 @@ export class IntialLoadEntitlementPreviewComponent {
         location: emp.locationName,
         shift: emp.shiftName,
         grade: emp.gradeName,
+        isValid: emp.isValid,
         leaveValues,
         leaveEntries // ✅ attached correctly
       };
@@ -120,28 +127,35 @@ export class IntialLoadEntitlementPreviewComponent {
   buildCarryForwardPayload() {
     return {
       jobType: "InitialLoad",
-      year: this.carryforwarddata.year,
-      locationId: this.carryforwarddata.location.id,
-      subLocationId: this.carryforwarddata.subLocation.id,
-      shiftId: this.carryforwarddata.shift.id,
+      year: this.carryforwarddata?.year,
+      locationId: this.carryforwarddata?.location?.id,
+      subLocationId: this.carryforwarddata?.subLocation?.id,
+      shiftId: this.carryforwarddata?.shift?.id,
       notes: '',
-      initiatedBy: this.empinfo.employeeId,
+      initiatedBy: this.empinfo?.employeeId,
 
       requestPayload: {
-        employees: this.employeesTableData.map(emp => ({
-          employeeId: emp.employeeId,
-          gradeId: emp.gradeId,
+        employees: this.employeesTableData
+          // ✅ only valid employees
+          .filter(emp => emp?.isValid === true)
+          .map(emp => ({
+            employeeId: emp?.employeeId,
+            gradeId: emp?.gradeId,
 
-          entitlementsData: (emp.leaveEntries || [])
-            .filter((x: { allowedDays: number; }) => x.allowedDays > 0)
-            .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
-              leaveCategoryId: x.leaveCategoryId,
-              noOfDays: x.allowedDays
-            }))
-        }))
+            entitlementsData: (emp.leaveEntries || [])
+              // ✅ only valid + allowedDays > 0
+              .filter((x: { isValid: boolean; allowedDays: number; }) => x.isValid === true && x.allowedDays > 0)
+              .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
+                leaveCategoryId: x?.leaveCategoryId,
+                noOfDays: x?.allowedDays
+              }))
+          }))
+          // ✅ remove employees with empty entitlements
+          .filter(emp => emp?.entitlementsData?.length > 0)
       }
     };
   }
+
 
 
   canSubmit(): boolean {
@@ -189,7 +203,7 @@ export class IntialLoadEntitlementPreviewComponent {
     this.offcanvasService.dismiss();
 
   }
-  back(){
+  back() {
     this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create'])
   }
 }

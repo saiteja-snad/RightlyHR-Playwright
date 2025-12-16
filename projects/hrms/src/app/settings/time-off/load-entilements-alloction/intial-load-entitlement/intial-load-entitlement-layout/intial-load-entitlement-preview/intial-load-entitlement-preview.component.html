@@ -57,13 +57,16 @@
 
             </div>
         </div>
-        <div class="status-card success">
+        <div class="status-card " [ngClass]="{
+        'success': duplicatecheck?.status === 'success',
+        'error': duplicatecheck?.status === 'failed'
+        }">
             <div class="icon">
-                ✔
+                {{ duplicatecheck?.status === 'success' ? '✔' : '✖' }}
             </div>
             <div class="content">
                 <h4>Duplicate Check</h4>
-                <p>No existing records for Year 2025.</p>
+                <p>No duplicate records for Year {{carryforwarddata?.year}}.</p>
             </div>
         </div>
     </div>

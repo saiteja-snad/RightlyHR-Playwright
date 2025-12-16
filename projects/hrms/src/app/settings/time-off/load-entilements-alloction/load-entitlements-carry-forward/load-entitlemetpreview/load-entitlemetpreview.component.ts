@@ -39,7 +39,7 @@ export class LoadEntitlemetpreviewComponent {
       `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
     &subLocationIds=${carryforwarddata.subLocation.id}
     &shiftIds=${carryforwarddata.shift.id}
-    &year=${carryforwarddata.year}&excludeJobProcessedEmployees=true`
+    &year=${carryforwarddata.year}&excludeJobProcessedEmployees=true&employeeTypes=Permanent,Contract,Trainee`
     ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;

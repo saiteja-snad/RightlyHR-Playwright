@@ -86,6 +86,13 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     this.getAllEmployeeDetails();
     this.getAllRateCardDetails();
   }
+  getExperienceFrom(item?: IRateCardActiveViewModel): number | string {
+ if (!item?.experienceBands?.length) {
+    return '-';
+  }
+  const band = item.experienceBands[0];
+  return `${band.experienceFrom}-${band.experienceTo}`;
+}
   // On year change
    onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
@@ -136,25 +143,26 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     ) {
       this.searchValue = null;
     }
-    let url = `EmployeeRateCard/ratecard/getAll=${this.pageNumber}&pageSize=${this.pageSize}`;
+    // let url = `RateCard=${this.pageNumber}&pageSize=${this.pageSize}`;
 
-    if (this.selectedYear) {
-      url +=`&year=${this.selectedYear}`;};
-    // Add employeeIds if available
-    if (this.employeeId) {
-      url += `&entityValues=${encodeURIComponent(this.employeeId)}`;
-    }
-    // Only add searchValue if it's not empty/null/undefined
-    if (this.searchValue && this.searchValue.trim() !== '') {
-      url += `&search=${encodeURIComponent(this.searchValue.trim())}`;
-    }
+    // if (this.selectedYear) {
+    //   url +=`&year=${this.selectedYear}`;};
+    // // Add employeeIds if available
+    // if (this.employeeId) {
+    //   url += `&entityValues=${encodeURIComponent(this.employeeId)}`;
+    // }
+    // // Only add searchValue if it's not empty/null/undefined
+    // if (this.searchValue && this.searchValue.trim() !== '') {
+    //   url += `&search=${encodeURIComponent(this.searchValue.trim())}`;
+    // }
+    let url =`RateCard?status=active`
     this.http
       .getData(url)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           this.isloading = false;
-          this.getActiveRateCardDetails$.next(res.data.items || []);
+          this.getActiveRateCardDetails$.next(res.data || []);
           this.collectionSize = res.data.totalCount;
           this.hasNextPage = res.data.hasNextPage;
           this.hasPreviousPage = res.data.hasPreviousPage;

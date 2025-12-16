@@ -1,20 +1,27 @@
 export interface IRateCardActiveViewModel {
 id: number,
-entityValue: IEmployeeResponse, 
-flexibleAllocation: boolean, 
-allowedDays: 10,
-createdAt: any
-createdBy: IEmployeeResponse
-effectiveFromDate: string,
-effectiveToDate: string,
-isLatest?: boolean,
-status?: string,
-entityType?:string,
-halfDayMinHrs?:string,
-fullDayMinHrs?:string
-shiftDetails?:any
+subLocationName?:string,
+locationName?:string,
+roleName?:string,
+effectiveFrom?:any,
+effectiveTo?:any,
+status?:string,
+experienceBands?:IExperienceResponse[] |undefined
 }
-export interface IEmployeeResponse{
-    id: number, 
-    name: string
+export interface IExperienceResponse {
+  id: number;
+  experienceFrom: number;
+  experienceTo: number;
+  status: string;
+  comment: string;
+  createdDate?: any;
+  currencies?: ICurrencyResponse[]  |undefined
+}
+export interface ICurrencyResponse{
+id: number, 
+currencyCode: string, 
+currencyName: string, 
+symbol: string, 
+rate: number, 
+status: string
 }

@@ -36,8 +36,9 @@
               <th class="text-center">{{'Location'|translate}}</th>
               <th class="text-center">{{'Sub-Location'|translate}}</th>
               <th class="text-center">{{'Experience'|translate}}</th>
-              <th class="text-center">{{'Rate'|translate}}s</th>
+              <th class="text-center">{{'Rate'|translate}}</th>
               <th class="text-center">{{'Currency'|translate}}</th>
+              <th class="text-center">{{'Status'|translate}}</th>
               <th></th>
               <!-- <th>Last Updated By</th>
                 <th>Last Updated On</th> -->
@@ -48,17 +49,17 @@
             @if (!isloading && getAllDetails.length > 0) {
             @for (item of getAllDetails; track item) {
             <tr>
-              <td class="text-center">{{ item?.entityValue?.name || '-' }}</td>
+              <td class="text-center">{{ item?.roleName || '-' }}</td>
               <!-- <td class="text-center">{{ item?.shiftDetails?.name || '-' }}</td> -->
-              <td class="text-center">{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
-              <td class="text-center">{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
-              <td class="text-center">{{ item?.halfDayMinHrs || '-' }}</td>
-              <td class="text-center">{{ item?.fullDayMinHrs || '-' }}</td>
-              <td class="text-center">{{ item?.createdBy?.name || '-' }}</td>
-              <td class="text-center">{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
+              <td class="text-center">{{ item?.effectiveFrom ? (item?.effectiveFrom | dateformat) : '-' }}</td>
+              <td class="text-center">{{ item?.locationName ? item?.locationName : '-' }}</td>
+              <td class="text-center">{{ item?.subLocationName?item?.subLocationName : '-' }}</td>
+              <td class="text-center">{{ getExperienceFrom(item) }}</td>
+              <td class="text-center">{{ item?.experienceBands?.[0]?.currencies?.[0]?.rate ?? '-' }}</td>
+              <td class="text-center">{{ item?.experienceBands?.[0]?.currencies?.[0]?.currencyCode ?? '-'   }}</td>
               <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
               <td>
-                <div class="dropdown" *ngIf="item.isLatest">
+                <div class="dropdown">
                   <a type="button" data-bs-toggle="dropdown" *ngIf="item.status==='Active'">
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>

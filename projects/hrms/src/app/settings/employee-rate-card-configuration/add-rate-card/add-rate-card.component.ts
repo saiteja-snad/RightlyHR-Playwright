@@ -11,10 +11,11 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-add-rate-card',
-  imports: [RouterModule, Select, ReactiveFormsModule,
+  imports: [RouterModule, Select, ReactiveFormsModule, MultiSelectModule,
     CommonModule, TabsModule, TranslateModule, InfoIconComponent,NgbPopoverModule],
   templateUrl: './add-rate-card.component.html',
   styleUrl: './add-rate-card.component.scss'
@@ -28,6 +29,8 @@ export class AddRateCardComponent implements OnInit,OnDestroy {
   locations=[] as any;
   subLocations=[] as any;
   sublocatiodis = false;
+  ProjectroleDetails=[] as any;
+  FrequencyDetail=[] as any;
    @ViewChild('deletepopup') deletepopup: any;
   constructor(
     public router: Router,
@@ -41,8 +44,46 @@ export class AddRateCardComponent implements OnInit,OnDestroy {
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
+    this.getJobrole();
+    this.getFrequencies();
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
   }
+  //get the rate basics
+    getFrequencies() {
+    this.subscription = this.http.getData('Frequency').subscribe({
+      next: (data: any) => {
+        this.FrequencyDetail = data;
+        this.FrequencyDetail = data.map((item: any) => ({
+          label: item.frequency1,
+          value: item.frequency1
+        }));
+      }, error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+  getJobrole() {
+    this.subscription = this.http.getData('ProjectRoles?isActive=true').subscribe({
+      next: (response: any) => {
+        if (response && response.success && Array.isArray(response.data)) {
+          this.ProjectroleDetails = response.data.map((item: any) => ({
+            id: item.id,
+            projectrole: item.roleName,                // Job role name
+            entityname: item.entity?.entityName || '-',      // Department name
+            entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
+            entityType: item.entityType || 'department',    // Entity type
+            isActive: item.isActive,
+            color: item.meta?.graphData?.color || '#000000'
+          }));
+        } else {
+          this.ProjectroleDetails = [];
+        }
+      },
+      error: () => {
+      }
+    });
+  }
+
    geAllLocations() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
@@ -57,7 +98,10 @@ export class AddRateCardComponent implements OnInit,OnDestroy {
       year: [new Date().getFullYear(), Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
+      role:['',Validators.required],
+      effectivefrom:['',Validators.required],
       rateItems: this.fb.array([this.createShift()])
+      
     });
   }
    get rateItems(): FormArray {
@@ -68,18 +112,11 @@ export class AddRateCardComponent implements OnInit,OnDestroy {
   }
     createShift(): FormGroup {
     return this.fb.group({
-      shiftCode: ['', Validators.required],
-      shiftName: ['', Validators.required],
-      color: ['#FFFFFF'],
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
-      gracePeriod: [15, Validators.required],
-      latesAllowed: [3, Validators.required],
-      breakTime: [1, Validators.required],
-      halfDayMinHrs: [3, Validators.required],
-      fullDayMinHrs: [6, Validators.required],
-      punchBeginBefore: [0, [Validators.required, Validators.max(960)]],
-      punchEndAfter: [0, [Validators.max(960)]],
+      experienceMin: ['', Validators.required],
+      experienceMax: ['', Validators.required],
+      rateBasic: ['', Validators.required],
+      currency: ['', Validators.required],
+      rate: ['', Validators.required],
     });
   }
     isDeleteDisabled: boolean = false;

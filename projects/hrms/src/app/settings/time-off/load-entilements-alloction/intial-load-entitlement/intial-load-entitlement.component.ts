@@ -15,13 +15,13 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 
 @Component({
   selector: 'app-intial-load-entitlement',
-    imports: [CommonModule, PaginatorModule, DataLoaderContentComponent, Select, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, FormsModule, ModuleInformationComponent],
+  imports: [CommonModule, PaginatorModule, DataLoaderContentComponent, Select, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, FormsModule, ModuleInformationComponent],
 
   templateUrl: './intial-load-entitlement.component.html',
   styleUrl: './intial-load-entitlement.component.scss'
 })
 export class IntialLoadEntitlementComponent {
-loading = false;
+  loading = false;
   searchQuery = ''
   page = 1;
   pageSize = 10;
@@ -53,10 +53,10 @@ loading = false;
   }
   initializefilter() {
     this.leaveAllocationForm = this.fb.group({
-      year: ['', Validators.required],
-      location: [{ value: '', disabled: true }, Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      shift: [{ value: '', disabled: true }, Validators.required],
+      year: ['', ],
+      location: [''],
+      subLocation: [{ value: '', disabled: true },],
+      shift: [{ value: '', disabled: true },],
     });
     this.yearsList = this.getYears();
     this.leaveAllocationForm.valueChanges.subscribe(() => {
@@ -120,7 +120,7 @@ loading = false;
     const params: any = {
       pageNumber: this.page,
       pageSize: this.pageSize,
-      jobType:'	Initial Load',
+      jobType: '	Initial Load',
       searchTerm: this.searchQuery,
       ...this.activeFilters   // merge filters here
     };
@@ -208,6 +208,18 @@ loading = false;
   closeCanvas() {
     this.offcanvasService.dismiss();
     this.leaveAllocationForm.reset();
+    this.getdatacarryforword();
+
+  }
+  resetFormdata() {
+    this.leaveAllocationForm.reset();
+    this.isApplyDisabledFlag = true;
+
+    // 3. Remove active filters
+    this.activeFilters = {};
+    this.getdatacarryforword();
+    this.offcanvasService.dismiss();
+  
   }
   navigateView(jobId: number) {
     this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });
@@ -215,5 +227,10 @@ loading = false;
   toggleFilters(content: TemplateRef<any>) {
 
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+ ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

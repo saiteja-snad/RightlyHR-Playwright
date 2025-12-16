@@ -52,9 +52,9 @@ export class CarryForwardLeaveEntitlementComponent {
   }
   initializefilter() {
     this.leaveAllocationForm = this.fb.group({
-      year: ['', ],
-      location: ['', ],
-      subLocation: [{ value: '', disabled: true }, ],
+      year: ['',],
+      location: ['',],
+      subLocation: [{ value: '', disabled: true },],
       shift: [{ value: '', disabled: true },],
     });
     this.yearsList = this.getYears();
@@ -109,6 +109,18 @@ export class CarryForwardLeaveEntitlementComponent {
     this.getdatacarryforword();
     //localStorage.removeItem(l)
   }
+
+  resetFormdata() {
+    this.leaveAllocationForm.reset();
+    this.isApplyDisabledFlag = true;
+
+    // 3. Remove active filters
+    this.activeFilters = {};
+    this.getdatacarryforword();
+    this.offcanvasService.dismiss();
+  
+  }
+
   onSearchChange(value: string) {
     this.page = 1;   // reset to page 1 when searching
     this.searchQuery = value;
@@ -205,10 +217,12 @@ export class CarryForwardLeaveEntitlementComponent {
   }
 
   closeCanvas() {
+    this.getdatacarryforword();
     this.offcanvasService.dismiss();
     this.shiftDetails = [];
     this.subLocationDetails = [];
-    this.leaveAllocationForm.reset(); 
+    this.leaveAllocationForm.reset();
+
   }
   navigateView(jobId: number) {
     this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });

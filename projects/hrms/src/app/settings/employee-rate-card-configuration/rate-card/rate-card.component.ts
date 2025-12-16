@@ -133,7 +133,6 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
   }
   // get all wfh allocations
   getAllRateCardDetails(): void {
-    console.log('dsjfsdmf')
     this.isloading = true;
     if (
       !this.searchValue ||

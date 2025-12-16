@@ -45,10 +45,23 @@
         <div class="status-card " [ngClass]="{'success': duplicatecheck?.status === 'success',
                 'error': duplicatecheck?.status === 'failed'}">
             <div class="icon">{{ duplicatecheck?.status === 'success' ? '✔' : '✖' }}</div>
-            <div class="content">
-                <h4>Duplicate Check</h4>
-                <p class="m-0">No duplicate records for Year {{carryforwarddata?.year}}.</p>
+            <div class="content d-flex align-items-center justify-content-between w-100">
+                <div>
+                    <h4>Duplicate Check</h4>
+                    <p *ngIf="duplicatecheck?.status === 'success'" class="m-0">No duplicate records for Year
+                        {{carryforwarddata?.year}}.</p>
+
+                    <p *ngIf="duplicatecheck?.status === 'failed'" class="m-0">
+                        {{ duplicatecheck?.data?.length }} duplicate records found</p>
+                </div>
+                <div *ngIf="duplicatecheck?.status === 'failed'">
+                    <a type="button" [ngClass]="{'success': duplicatecheck?.status === 'success',
+                    'error': duplicatecheck?.status === 'failed' }" (click)="toggleFilters(duplicatecheckcontent)">
+                        <i class="bi bi-eye-fill me-1"></i>View
+                    </a>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -135,7 +148,7 @@
         <div class="offcanvas-filter-content">
             <div class="error-box" *ngFor="let item of policymapping?.data">
                 <div class="profile-content mb-3">
-                    <p class="designation m-0 mb-1"><b>Category Name</b> : 
+                    <p class="designation m-0 mb-1"><b>Category Name</b> :
                         <span class="name">{{ item.categories.name }} ({{ item.categories.code }})</span>
                     </p>
                     <p class="designation m-0"><b>Reason</b> : {{ item.categories.reason }}</p>
@@ -153,6 +166,25 @@
         </div>
         <div class="offcanvas-filter-content">
             <div class="error-box" *ngFor="let item of gradeAssignments?.data">
+                <div class="profile-content mb-3">
+                    <p class="name m-0 mb-1">{{ item.employee.name }}</p>
+                    <p class="designation m-0 mb-1"><b>Employee ID</b> : {{ item.employee.fusionEmpId }}</p>
+                    <p class="designation m-0"><b>Reason</b> : {{ item.employee.reason }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #duplicatecheckcontent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Duplicate Check Errors' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+        <div class="offcanvas-filter-content">
+            <div class="error-box" *ngFor="let item of duplicatecheck?.data">
                 <div class="profile-content mb-3">
                     <p class="name m-0 mb-1">{{ item.employee.name }}</p>
                     <p class="designation m-0 mb-1"><b>Employee ID</b> : {{ item.employee.fusionEmpId }}</p>

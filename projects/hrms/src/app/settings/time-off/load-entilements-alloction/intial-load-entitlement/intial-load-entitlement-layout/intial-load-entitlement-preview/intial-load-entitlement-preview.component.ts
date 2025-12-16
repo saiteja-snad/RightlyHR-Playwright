@@ -192,6 +192,8 @@ export class IntialLoadEntitlementPreviewComponent {
       },
       error: (err) => {
         console.error(err);
+        this.conformationPopup.openErrorModal(err.error.message);
+
       }
     });
   }

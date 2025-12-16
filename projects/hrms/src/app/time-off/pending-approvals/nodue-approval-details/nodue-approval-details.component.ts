@@ -18,6 +18,7 @@ import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-nodue-approval-details',
   imports: [
@@ -56,6 +57,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedNoDueData = {} as any;
   selectedLeaveStatus: any;
+  totalCount: any;
 
   constructor(
     private modalService: NgbModal,
@@ -197,6 +199,7 @@ onStatusApproveSelect(status: string) {
             'No Due request approved successfully'
           );
           this.getAllPendingApprovalsNoDue();
+          this.getApprovalStatusCounts();
         },
         error: (reason: any) => {
           this.isLoading = false;
@@ -204,7 +207,15 @@ onStatusApproveSelect(status: string) {
         },
       });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   //function to reject the nodue
   rejectNodue() {
 
@@ -241,6 +252,7 @@ onStatusApproveSelect(status: string) {
             'No Due request rejected successfully'
           );
           this.getAllPendingApprovalsNoDue();
+           this.getApprovalStatusCounts();
         },
         error: (reason: any) => {
           this.isLoading = false;

@@ -79,6 +79,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   enddate: any;
   globalSelectedEntries: any[] = [];
   selectedLeaveStatus: any;
+  totalCount: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder, public rbac: RbacService) { }
@@ -398,7 +399,9 @@ onStatusApproveSelect(status: string) {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+           this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
+         
         },
       });
     }
@@ -481,12 +484,21 @@ onStatusApproveSelect(status: string) {
           this.showhideaction = true;
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
+          this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
+           
         },
       });
     }
   }
-
+getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.timesheetModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
     if (!this.timesheetData || this.timesheetData.length === 0) return false;

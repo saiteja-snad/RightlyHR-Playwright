@@ -15,10 +15,11 @@ import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-rejected-tickets',
-  imports: [CommonModule, RouterModule, Select, NoDataFoundComponent, FormsModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, RouterModule, Select, NoDataFoundComponent, FormsModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, TranslateModule, DataLoaderContentComponent, SettingsUpdateIconComponent],
   templateUrl: './rejected-tickets.component.html',
   styleUrl: './rejected-tickets.component.scss'
 })

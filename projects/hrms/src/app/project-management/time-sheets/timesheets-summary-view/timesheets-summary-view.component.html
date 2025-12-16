@@ -131,8 +131,7 @@
             }
             <div class="d-flex gap-3 mb-3">
                 <div class="w-100">
-                    <div class="custom-table-content w-100"
-                        [ngClass]="{'custom-content-height': isShowtimesheetforteamRoute()}">
+                    <div class="custom-table-content w-100" [ngClass]="{'custom-content-height': isShowtimesheetforteamRoute()}">
                         @if (!loading) {
                         <table class="w-100">
                             <thead>
@@ -223,8 +222,7 @@
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Timesheet Summary</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent"
-                                class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="timesheetSummaryContent" class="module-icon" />
                             <ng-template #timesheetSummaryContent>
                                 <div class="module-info-text">{{TimesheetSummary}}</div>
                             </ng-template>
@@ -259,8 +257,9 @@
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Project Wise Hours Summary</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectwisehoursSummarydata"
-                                class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="projectwisehoursSummarydata"
+                                class="module-icon" />
+
                             <ng-template #projectwisehoursSummarydata>
                                 <div class="module-info-text">{{ProjectwisehoursSummary}}</div>
                             </ng-template>
@@ -307,8 +306,7 @@
                     <div class="summary-header d-flex gap-2 pb-3">
                         <div>Allocated vs Actual Hours</div>
                         <div>
-                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
-                                class="module-icon">
+                            <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent" class="module-icon" />
                             <ng-template #resourceSummaryContent>
                                 <div class="module-info-text">{{AllocatedActualhours}}</div>
                             </ng-template>

@@ -1,12 +1,10 @@
 <div class="custom-main-popup-container">
     <div class="component-header-content">
-
         <div class="heading-content">
             <div class="commpoment-name">Desk<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">Desk Management</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
 
@@ -15,11 +13,10 @@
                 <div class="d-flex gap-3 align-items-center">
                     <div class="d-flex gap-2 align-items-center">
                         <label for="location" class="form-label custom-label filter-labels text-nowrap m-0">Locations</label>
-                        <select id="location" formControlName="locationId" class="form-select custom-select"
-                            (change)="onLocationChange()">
+                        <select id="location" formControlName="locationId" class="form-select custom-select" (change)="onLocationChange()">
                             <option [ngValue]="null">All Locations</option>
-                            <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
-                                location.jobLocationName }}</option>
+                            <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">
+                                {{ location.jobLocationName }}</option>
                         </select>
                     </div>
 
@@ -123,7 +120,7 @@
 
 
     <div class="component-right-content">
-        <router-outlet></router-outlet>
+        <router-outlet />
     </div>
 </div>
 
@@ -138,45 +135,36 @@
             <form autocomplete="off" [formGroup]="deskForm" (ngSubmit)="postdesk(deskForm)">
                 <div class="row">
                     <div class="mb-3 col-md-6">
-                        <label for="location" class="form-label custom-label mb-2">Location<span
-                                class="text-danger">*</span></label>
+                        <label for="location" class="form-label custom-label mb-2">Location
+                            <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName"
-                                formControlName="locationId" placeholder="Please select location"
-                                class="form-select custom-select" (onChange)="getSubLocationByid($event.value)">
-                            </p-select>
+                            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="locationId"
+                                placeholder="Please select location" class="form-select custom-select"
+                                (onChange)="getSubLocationByid($event.value)" />
                         </div>
-                        <div *ngIf="deskForm.get('locationId')?.invalid && deskForm.get('locationId')?.touched"
-                            class="error-msg">
-                            Location is required
-                        </div>
+                        <div *ngIf="deskForm.get('locationId')?.invalid && deskForm.get('locationId')?.touched" class="error-msg">
+                            Location is required</div>
                     </div>
 
                     <!-- Sub Location Field -->
                     <div class="mb-3 col-md-6">
-                        <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
-                                class="text-danger">*</span></label>
+                        <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"
-                                formControlName="subLocationId" placeholder="Please select sub location"
-                                class="form-select custom-select"
-                                (onChange)="getShiftBYid($event.value);getdeskid()"></p-select>
+                            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" formControlName="subLocationId"
+                                placeholder="Please select sub location" class="form-select custom-select"
+                                (onChange)="getShiftBYid($event.value);getdeskid()" />
                         </div>
-                        <div *ngIf="deskForm.get('subLocationId')?.invalid && deskForm.get('subLocationId')?.touched"
-                            class="error-msg">
+                        <div *ngIf="deskForm.get('subLocationId')?.invalid && deskForm.get('subLocationId')?.touched" class="error-msg">
                             Sub Location is required
                         </div>
                     </div>
 
                     <!-- Desk Name Field -->
                     <div class="col-md-6 mb-3">
-                        <label for="assetId" class="form-label custom-label mb-2">Desk ID<span
-                                class="text-danger">*</span></label>
+                        <label for="assetId" class="form-label custom-label mb-2">Desk ID<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="deskdataid" optionLabel="deskId" optionValue="id"
-                                formControlName="deskid" placeholder="Please select desk id"
-                                class="form-select custom-select">
-                            </p-select>
+                            <p-select [options]="deskdataid" optionLabel="deskId" optionValue="id" formControlName="deskid"
+                                placeholder="Please select desk id" class="form-select custom-select" />
                         </div>
                         <div *ngIf="deskForm.get('deskid')?.invalid && deskForm.get('deskid')?.touched">
                             <div class="error-msg">Desk ID is required</div>
@@ -210,30 +198,26 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="subLocation" class="form-label custom-label mb-2">Select Shift<span
-                                class="text-danger" *ngIf="isToggled">*</span></label>
+                        <label for="subLocation" class="form-label custom-label mb-2">Select Shift
+                            <span class="text-danger" *ngIf="isToggled">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shifts"
-                                placeholder="Please select shift" class="form-select custom-select"
-                                (onChange)="getEmployeedata()"></p-select>
+                                placeholder="Please select shift" class="form-select custom-select" (onChange)="getEmployeedata()" />
                         </div>
-                        <div class="error-msg"
-                            *ngIf="deskForm.get('shifts')?.invalid && deskForm.get('shifts')?.touched">
+                        <div class="error-msg" *ngIf="deskForm.get('shifts')?.invalid && deskForm.get('shifts')?.touched">
                             Shift is required
                         </div>
                     </div>
                     <!-- Select Employee (Name) -->
                     <div class="col-md-6 mb-3 d-colourdata">
-                        <label for="asseTID" class="form-label custom-label mb-2">Select Employee<span
-                                class="text-danger" *ngIf="isToggled">*</span></label>
+                        <label for="asseTID" class="form-label custom-label mb-2">Select Employee
+                            <span class="text-danger" *ngIf="isToggled">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
-                                [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
-                                formControlName="employeid" placeholder="Please select employee"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true"
+                                filterBy="employeeName" (onChange)="onEmployeeSelect($event)" formControlName="employeid"
+                                placeholder="Please select employee" class="form-select custom-select" />
                         </div>
-                        <div class="error-msg"
-                            *ngIf="deskForm.get('employeid')?.invalid && deskForm.get('employeid')?.touched">
+                        <div class="error-msg" *ngIf="deskForm.get('employeid')?.invalid && deskForm.get('employeid')?.touched">
                             Employee is required
                         </div>
                     </div>
@@ -243,13 +227,11 @@
                             Select Approver<span class="error-msg" *ngIf="isToggled">*</span>
                         </label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="approvalname" optionLabel="employeeNames" [filter]="true"
-                                [resetFilterOnHide]="true" filterBy="employeeNames" formControlName="deskapprovalid"
-                                placeholder="Please select approver" class="form-select custom-select"
-                                (onChange)="onApprovalSelects($event)"></p-select>
+                            <p-select [options]="approvalname" optionLabel="employeeNames" [filter]="true" [resetFilterOnHide]="true"
+                                filterBy="employeeNames" formControlName="deskapprovalid" placeholder="Please select approver"
+                                class="form-select custom-select" (onChange)="onApprovalSelects($event)" />
                         </div>
-                        <div class="error-msg"
-                            *ngIf="deskForm.get('deskapprovalid')?.invalid && deskForm.get('deskapprovalid')?.touched">
+                        <div class="error-msg" *ngIf="deskForm.get('deskapprovalid')?.invalid && deskForm.get('deskapprovalid')?.touched">
                             Approver is required
                         </div>
                     </div>
@@ -257,8 +239,7 @@
 
                 <!-- Submit Button -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]=" deskForm.invalid">Submit</button>
                 </div>
             </form>
@@ -274,12 +255,8 @@
             <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-                No
-            </button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-                Yes
-            </button>
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
         </div>
     </div>
 </ng-template>

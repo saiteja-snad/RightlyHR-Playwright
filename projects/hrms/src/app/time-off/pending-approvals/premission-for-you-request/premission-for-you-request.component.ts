@@ -73,6 +73,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   selectedLeaveStatus: any;
+  totalCount: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -383,6 +384,8 @@ onStatusApproveSelect(status: string) {
             this.multiSelect = false;
             this.spinnerLoader = false;
             this.searchValue = null;
+            this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -458,6 +461,7 @@ onStatusApproveSelect(status: string) {
           this.signalService.permissionForYouTriggerSignal.set(true);
           this.signalService.permissionSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.searchValue = null;
         },
       });
@@ -529,13 +533,20 @@ onStatusApproveSelect(status: string) {
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
         });
     }
   }
-
+  getApprovalStatusCounts() {
+      this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+        this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+        this.http.updatePendingApprovalCounts(this.totalCount);
+    //Map counts to tabs
+      });
+    }
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

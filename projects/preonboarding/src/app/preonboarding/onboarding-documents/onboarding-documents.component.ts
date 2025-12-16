@@ -14,9 +14,11 @@ import { Ipersonal } from '../../models/personal-details.model';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { FormValidationService } from '../../common-services/form-validation.service';
+import { ConfirmationIconComponent } from "../../../../../hrms/src/app/icons/confirmation-icon/confirmation-icon.component";
+import { DocumentViewIconComponent } from "../../../../../hrms/src/app/icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-onboarding-documents',
-  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbPopoverModule, NgxDocViewerModule, RouterModule, DetailedStepProgressbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbPopoverModule, NgxDocViewerModule, RouterModule, DetailedStepProgressbarComponent, ConfirmationIconComponent, DocumentViewIconComponent],
   templateUrl: './onboarding-documents.component.html',
   styleUrl: './onboarding-documents.component.scss',
   encapsulation:ViewEncapsulation.None

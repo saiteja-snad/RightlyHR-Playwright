@@ -1,0 +1,1317 @@
+.blue-theme {
+    // body colors
+    --body-bg-color: #EEF5FB;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #046BC8;
+    --header-profile-dropdown-bg-color: #c4e1fe;
+    --header-info-border-color: #cce2ff;
+    --profile-info-separator-line: #046BC8;
+    --header-dropdown-border-color: #cce2ff;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #046BC8;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #046BC8;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #046BC8;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #046BC8;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #046BC8;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #cee1fd;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #ecf4fb;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #e0eaf3;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #DEEFFF;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #046BC8;
+    --custom-component-tabs-bg-color: #c4e1fe;
+    --card-tabs-active-bg-color: #75b6f133;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // font family
+    --font-family: 'Roboto-flex';
+
+    // card
+    --card-bg-color: #f6fbff;
+
+    //scroller colors
+    --Scroller-bar-color: #DEEFFF;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #cce2ff;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #EEF5FB;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #E1EAF2;
+    --dispaly-card-bg-gradient-three: #E1EAF2;
+    --dispaly-card-bg-gradient-four: #DAE9EF;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #E0E9F2;
+
+    --module-accordian-bg-color: #75b6f133;
+    --accordian-table-border-color: #d7ebfd;
+
+    --content-border-color: #cce2ff;
+
+    --popup-accordian-th-color: #f0f7ff;
+    --grid-border-color: #8db1e3;
+}
+
+.navy-blue-theme {
+    // body colors
+    --body-bg-color: #ECF1F5;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #012764;
+    --header-profile-dropdown-bg-color: #D9E0EB;
+    --header-info-border-color: #cce2ff;
+    --profile-info-separator-line: #012764;
+    --header-dropdown-border-color: #cce2ff;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #012764;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #012764;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #012764;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #012764;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #012764;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #d6dae3;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #eff1f5;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #ced5e7;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #DFE6F0;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #012764;
+    --custom-component-tabs-bg-color: #D9E0EB;
+    --card-tabs-active-bg-color: #D9E0EB;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // font family
+    --font-family: 'Roboto-flex';
+
+    // card
+    --card-bg-color: #f4f6f9;
+
+    //scroller colors
+    --Scroller-bar-color: #DFE6F0;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #d6dae3;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #ECF1F5;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #E8EEF4;
+    --dispaly-card-bg-gradient-three: #E1EAF2;
+    --dispaly-card-bg-gradient-four: #DAE9EF;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #D9E0EB;
+
+    --module-accordian-bg-color: #D9E0EB;
+    --accordian-table-border-color: #D9E0EB;
+
+    --content-border-color: #DFE6F0;
+
+    --popup-accordian-th-color: #EEF3FB;
+    --grid-border-color: #949db3;
+}
+
+.royal-blue-theme {
+    // body colors
+    --body-bg-color: #EDEDF5;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #191CC3;
+    --header-profile-dropdown-bg-color: #E5E5F8;
+    --header-info-border-color: #cce2ff;
+    --profile-info-separator-line: #191CC3;
+    --header-dropdown-border-color: #cce2ff;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #191CC3;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #191CC3;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #191CC3;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #191CC3;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #191CC3;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #d8d8fd;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #ededf5;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #dddaeb;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #E5E5F8;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #191CC3;
+    --custom-component-tabs-bg-color: #E5E5F8;
+    --card-tabs-active-bg-color: #E5E5F8;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // font family
+    --font-family: 'Roboto-flex';
+
+    // card
+    --card-bg-color: #f7f7fd;
+
+    //scroller colors
+    --Scroller-bar-color: #E5E5F8;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #d8d8fd;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #EDEDF5;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #E5EAF3;
+    --dispaly-card-bg-gradient-three: #E5E5F8;
+    --dispaly-card-bg-gradient-four: #DAE9EF;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #E5E5F8;
+
+    --module-accordian-bg-color: #E5E5F8;
+    --accordian-table-border-color: #d8d8fd;
+
+    --content-border-color: #d8d8fd;
+
+    --popup-accordian-th-color: #f2f2ff;
+    --grid-border-color: #b8b4f3;
+}
+
+.copper-wood-theme {
+    // body colors
+    --body-bg-color: #f3f3f3;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #382F38;
+    --header-profile-dropdown-bg-color: #F6E8E3;
+    --header-info-border-color: #e1e1e1;
+    --profile-info-separator-line: #382F38;
+    --header-dropdown-border-color: #e1e1e1;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #382F38;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #382F38;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #382F38;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #382F38;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #382F38;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #e1e1e1;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #f3efef;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #f5e3db;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #EFEFEF;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #382F38;
+    --custom-component-tabs-bg-color: #F6E8E3;
+    --card-tabs-active-bg-color: #F6E8E3;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #fcf8f7;
+
+    //scroller colors
+    --Scroller-bar-color: #EFEFEF;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #e1e1e1;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #f3f3f3;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #F6F0EC;
+    --dispaly-card-bg-gradient-three: #FAECE8;
+    --dispaly-card-bg-gradient-four: #DAE9EF;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #EDE6DF;
+
+    --module-accordian-bg-color: #F6E8E3;
+    --accordian-table-border-color: #e1e1e1;
+
+    --content-border-color: #e1e1e1;
+
+    --popup-accordian-th-color: #f3f3f3;
+    --grid-border-color: #a9a9a9;
+}
+
+.teal-theme {
+    // body colors
+    --body-bg-color: #EEF5F8;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #056583;
+    --header-profile-dropdown-bg-color: #DEECF0;
+    --header-info-border-color: #cedce1;
+    --profile-info-separator-line: #056583;
+    --header-dropdown-border-color: #cedce1;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #056583;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #056583;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #056583;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #056583;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #056583;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #cedce1;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #e6ecef;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #d1dde1;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #DEECF0;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #056583;
+    --custom-component-tabs-bg-color: #DEECF0;
+    --card-tabs-active-bg-color: #DEECF0;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #f3f8f9;
+
+    //scroller colors
+    --Scroller-bar-color: #DEECF0;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #cedce1;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #EEF5F8;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #E6EFF2;
+    --dispaly-card-bg-gradient-three: #E6EFF2;
+    --dispaly-card-bg-gradient-four: #DAE9EF;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #E6EFF2;
+
+    --module-accordian-bg-color: #DEECF0;
+    --accordian-table-border-color: #cedce1;
+
+    --content-border-color: #cedce1;
+
+    --popup-accordian-th-color: #f0f6f7;
+    --grid-border-color: #c3d9dd;
+}
+
+.lavendar-theme {
+    // body colors
+    --body-bg-color: #FAF6FF;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #966FD2;
+    --header-profile-dropdown-bg-color: #E7D8FF;
+    --header-info-border-color: #e5d1ff;
+    --profile-info-separator-line: #966FD2;
+    --header-dropdown-border-color: #e5d1ff;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #966FD2;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #966FD2;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #966FD2;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #966FD2;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #966FD2;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #e5d1ff;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #f6eeff;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #e1d2f3;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #F1E8FF;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #966FD2;
+    --custom-component-tabs-bg-color: #E7D8FF;
+    --card-tabs-active-bg-color: #E7D8FF;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #faf6ff;
+
+    //scroller colors
+    --Scroller-bar-color: #F1E8FF;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #e5d1ff;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #FAF6FF;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #F1E8FF;
+    --dispaly-card-bg-gradient-three: #EAE8FF;
+    --dispaly-card-bg-gradient-four: #DAE9EF;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #F7F2FF;
+
+    --module-accordian-bg-color: #E7D8FF;
+    --accordian-table-border-color: #e5d1ff;
+
+    --content-border-color: #e5d1ff;
+
+    --popup-accordian-th-color: #f8f2ff;
+    --grid-border-color: #c8ace3;
+}
+
+.black-theme {
+    // body colors
+    --body-bg-color: #F3F3F3;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #121212;
+    --header-profile-dropdown-bg-color: #E3E3E3;
+    --header-info-border-color: #d3d3d3;
+    --profile-info-separator-line: #121212;
+    --header-dropdown-border-color: #d3d3d3;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #121212;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #121212;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #121212;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #121212;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #121212;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #d3d3d3;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #ebebeb;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #e1e0e0;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #E3E3E3;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #121212;
+    --custom-component-tabs-bg-color: #E3E3E3;
+    --card-tabs-active-bg-color: #E3E3E3;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #F3F3F3;
+
+    //scroller colors
+    --Scroller-bar-color: #E3E3E3;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #d3d3d3;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #F3F3F3;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #E3E3E3;
+    --dispaly-card-bg-gradient-three: #E9E9E9;
+    --dispaly-card-bg-gradient-four: #C2C2C2;
+    --dispaly-card-bg-gradient-five: #CACACA;
+    --display-grid-cards-bg-color: #E3E3E3;
+
+    --module-accordian-bg-color: #E3E3E3;
+    --accordian-table-border-color: #d3d3d3;
+
+    --content-border-color: #d3d3d3;
+
+    --popup-accordian-th-color: #f3f3f3.;
+    --grid-border-color: #949494;
+}
+
+.enchanted-wine-theme {
+    // body colors
+    --body-bg-color: #fcf6f9;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #780946;
+    --header-profile-dropdown-bg-color: #F3DAE7;
+    --header-info-border-color: #EFD8E4;
+    --profile-info-separator-line: #780946;
+    --header-dropdown-border-color: #EFD8E4;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #780946;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #780946;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #780946;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #780946;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #780946;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #EFD8E4;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #fde9f2;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #efd2e0;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #F2E5EC;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #780946;
+    --custom-component-tabs-bg-color: #F3DAE7;
+    --card-tabs-active-bg-color: #F3DAE7;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #fcf6f9;
+
+    //scroller colors
+    --Scroller-bar-color: #F2E5EC;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #EFD8E4;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #fcf6f9;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #FAEDF4;
+    --dispaly-card-bg-gradient-three: #FEE9E9;
+    --dispaly-card-bg-gradient-four: #FFE2F9;
+    --dispaly-card-bg-gradient-five: #F6E3FF;
+    --display-grid-cards-bg-color: #FAEDF4;
+
+    --module-accordian-bg-color: #F3DAE7;
+    --accordian-table-border-color: #EFD8E4;
+
+    --content-border-color: #EFD8E4;
+
+    --popup-accordian-th-color: #fff2f9;
+    --grid-border-color: #db81ae;
+}
+
+.flare-red-theme {
+    // body colors
+    --body-bg-color: #FFF4F4;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #FF5252;
+    --header-profile-dropdown-bg-color: #FEDEDE;
+    --header-info-border-color: #F8CACA;
+    --profile-info-separator-line: #FF5252;
+    --header-dropdown-border-color: #F8CACA;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #FF5252;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #FF5252;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #FF5252;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #FF5252;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #FF5252;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #F8CACA;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #ffebeb;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #fddede;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #FEE6E6;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #FF5252;
+    --custom-component-tabs-bg-color: #FEDEDE;
+    --card-tabs-active-bg-color: #FEDEDE;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #FFF4F4;
+
+    //scroller colors
+    --Scroller-bar-color: #FEE6E6;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #F8CACA;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #FFF4F4;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #FFE6E6;
+    --dispaly-card-bg-gradient-three: #FFEDE8;
+    --dispaly-card-bg-gradient-four: #FFC5C2;
+    --dispaly-card-bg-gradient-five: #F6E3FF;
+    --display-grid-cards-bg-color: #FEDEDE;
+
+    --module-accordian-bg-color: #FEDEDE;
+    --accordian-table-border-color: #F8CACA;
+
+    --content-border-color: #F8CACA;
+
+    --popup-accordian-th-color: #fff7f7;
+    --grid-border-color: #f1a0a0;
+}
+
+.dark-slate-theme {
+    // body colors
+    --body-bg-color: #F5F2FB;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #483374;
+    --header-profile-dropdown-bg-color: #E0DAED;
+    --header-info-border-color: #DDD8E8;
+    --profile-info-separator-line: #483374;
+    --header-dropdown-border-color: #DDD8E8;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #483374;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #483374;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #483374;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #483374;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #483374;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #DDD8E8;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #ede9f3;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #dbd5e5;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #E9E5F3;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #483374;
+    --custom-component-tabs-bg-color: #E0DAED;
+    --card-tabs-active-bg-color: #E0DAED;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #F5F2FB;
+
+    //scroller colors
+    --Scroller-bar-color: #E9E5F3;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #DDD8E8;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #F5F2FB;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #DDD8E8;
+    --dispaly-card-bg-gradient-three: #F6F4F3;
+    --dispaly-card-bg-gradient-four: #DDD8E8;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #E0DAED;
+
+    --module-accordian-bg-color: #E0DAED;
+    --accordian-table-border-color: #DDD8E8;
+
+    --content-border-color: #DDD8E8;
+
+    --popup-accordian-th-color: #fff7f7;
+    --grid-border-color: #bcafd1;
+}
+
+.warm-brown-theme {
+    // body colors
+    --body-bg-color: #F5F3F2;
+    // body colors ends
+
+    // header colors
+    --header-background-color: #FFFFFF;
+    --btn-header-color: #6C5044;
+    --header-profile-dropdown-bg-color: #D9D0CB;
+    --header-info-border-color: #E3DAD7;
+    --profile-info-separator-line: #6C5044;
+    --header-dropdown-border-color: #E3DAD7;
+    // header colors ends
+
+    //sidebar colors
+    --side-nav-background-color: #6C5044;
+    --side-nav-item-color: #EAEAEA;
+    --side-nav-item-active-color: #6C5044;
+    --side-nav-active-bg-color: #FFFFFF4D;
+    //sidebar colors
+
+    // button colors
+    --btn-primary-color: #6C5044;
+    --btn-secondary-color: #FFFFFF;
+    --btn-color-tp: #FFFFFF;
+    --btn-color-ts: #6C5044;
+    --btn-success: #38930D;
+    --btn-failure: #D82D24;
+    --btn-publish: #26BD3D;
+    --btn-clone: #F6CA38;
+    // button colors ends
+
+    // colors
+    --white-color: #FFFFFF;
+    --primary-color: #6C5044;
+    --ash-color: #707070;
+    --black-color-100: #444444;
+    --ash-color-100: #efefef;
+
+    // input colors
+    --input-label-color: #303030;
+    --input-bg-color: #f7f7f7;
+    --input-border-color: #E3DAD7;
+    --input-color: #222222;
+    --input-placeholder-color: #A1A1A1;
+    --input-read-only-color: #ebeae9;
+    --search-input-placeholder-color: #acacac;
+    --phone-number-input-disabled-color: #dfd8d3;
+    // input color ends
+
+    // table colors
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #F0E8E5;
+    --table-header-color: #3B3B3B;
+    --table-data-bg-color: #FFFFFF;
+    --table-data-bg-even-color: #F0F4F8;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
+    // table colors ends
+
+    // nav tabs 
+    --navtab-item-color: #6C5044;
+    --custom-component-tabs-bg-color: #D9D0CB;
+    --card-tabs-active-bg-color: #D9D0CB;
+    // nav tabs 
+
+    // font sizes
+    --fontsize36: 2.25rem;
+    --fontsize32: 2rem;
+    --fontsize28: 1.75rem;
+    --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
+    --fontsize20: 1.25rem;
+    --fontsize18: 1.125rem;
+    --fontsize16: 1rem;
+    --fontsize15: 0.938rem;
+    --fontsize14: 0.875rem;
+    --fontsize13: 0.813rem;
+    --fontsize12: 0.75rem;
+    --fontsize10: 0.625rem;
+
+    // card
+    --card-bg-color: #F5F3F2;
+
+    //scroller colors
+    --Scroller-bar-color: #F0E8E5;
+    --scroller-bg-color: #FFF;
+
+    //events bg color
+    --events-bg-color: #D7E7FA;
+
+    //border color
+    --border-color: #E3DAD7;
+
+    //error msg
+    --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg: #F5F3F2;
+    --module-info-border: #ffffff;
+    --module-info-text-color: #7F7C7C;
+
+    //Dashboard
+    --dispaly-card-bg-gradient-one: #FFFFFF;
+    --dispaly-card-bg-gradient-two: #E3DAD7;
+    --dispaly-card-bg-gradient-three: #F6F4F3;
+    --dispaly-card-bg-gradient-four: #E3DAD7;
+    --dispaly-card-bg-gradient-five: #F4DAF2;
+    --display-grid-cards-bg-color: #D9D0CB;
+
+    --module-accordian-bg-color: #D9D0CB;
+    --accordian-table-border-color: #E3DAD7;
+
+    --content-border-color: #E3DAD7;
+
+    --popup-accordian-th-color: #fff7f7;
+    --grid-border-color: #a59a95;
+}

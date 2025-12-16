@@ -13,19 +13,17 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 import { TooltipModule } from 'primeng/tooltip';
-import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
-import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
-
-
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton, TooltipModule, NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent, TooltipModule, NgbPopoverModule, InfoIconComponent],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
 })
-export class ContactDetailsComponent implements OnInit, OnDestroy {
 
+export class ContactDetailsComponent implements OnInit, OnDestroy {
   contactForm!: FormGroup;
   subscription!: Subscription
   empinfo: any
@@ -49,42 +47,32 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   mobileNumberData: IphoneNumberData | null = null;
   isMyInfoRoute = false;
   fieldOptions = [] as any;                    // From approval fields API
-getFieldsApprovalStatusList: any[] = [];
+  getFieldsApprovalStatusList: any[] = [];
   activeMessage: string = '';
+  selectedworkcoutrycode = signal<any>('');
+  selectedpersonalnumbercode = signal<any>('');
 
-
-
-   selectedworkcoutrycode = signal<any>('');
-   selectedpersonalnumbercode = signal<any>('');
-
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService ,
-    private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
+  constructor(private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService,
+    public http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);
     })
-
   }
-  ngOnInit(): void {
 
+  ngOnInit(): void {
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.contactForm.disable();
     this.getBasicInfoFields()
     this.getFieldsApprovalStatus()
-
   }
 
   getBasicInfoFields() {
     const params = 'Personal';
     const param = 'Contact Info';
-    this.subscription = this.http
-      .getDatabyentityvalueForFieldUpdate(
-        `EmployeeInfoApprovalFields/getApprovalFields`,
-        params,
-        param
-      )
-      .subscribe({
+    this.subscription = this.http.getDatabyentityvalueForFieldUpdate(`EmployeeInfoApprovalFields/getApprovalFields`,
+      params, param).subscribe({
         next: (data: any) => {
           if (data.data.length > 0) {
             this.fieldOptions = data.data;
@@ -104,23 +92,18 @@ getFieldsApprovalStatusList: any[] = [];
       moduleName: 'Contact Info',
       employeeId: parseInt(this.empinfo.employeeId),
     };
-    this.subscription = this.http
-      .getDataIncludeParams(
-        `EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`,
-        params
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data.data.length > 0) {
-            this.getFieldsApprovalStatusList = data.data;
-          } else {
-            console.log('No data found.');
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching data:', err);
-        },
-      });
+    this.subscription = this.http.getDataIncludeParams(`EmployeeInfoFieldUpdate/getLatestFieldApprovalStatus`, params).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.getFieldsApprovalStatusList = data.data;
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      },
+    });
   }
 
   // Add this method in your BasicInfoComponent
@@ -133,28 +116,24 @@ getFieldsApprovalStatusList: any[] = [];
 
   getPendingApprovalMessage(fieldName: string): string {
     const pendingItem = this.getFieldsApprovalStatusList.find(
-      (item: any) =>
-        item.fieldName === fieldName && item.approvalStatus === 'Pending'
+      (item: any) => item.fieldName === fieldName && item.approvalStatus === 'Pending'
     );
     return (
       pendingItem?.message || 'This field change request is awaiting approval.'
     );
   }
 
-    setActiveMessage(fieldName: string) {
-  this.activeMessage = this.getPendingApprovalMessage(fieldName);
-}
+  setActiveMessage(fieldName: string) {
+    this.activeMessage = this.getPendingApprovalMessage(fieldName);
+  }
 
   // Add this method
   isFieldDisabledDueToPending(fieldName: string): boolean {
     return this.isFieldPendingApproval(fieldName);
   }
 
-
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.isMyInfoRoute = false;
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
@@ -162,7 +141,6 @@ getFieldsApprovalStatusList: any[] = [];
     } else if (fullPath.startsWith('/myinfo')) {
       this.isMyInfoRoute = true;
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-
       this.getEmployeeId();
     }
   }
@@ -172,10 +150,10 @@ getFieldsApprovalStatusList: any[] = [];
       personalEmail: ['', [Validators.required, Validators.email]],
       workMail: ['', [Validators.email]],
       countyCode1: [null,],
-       countyCode2: [null, [Validators.required]],
+      countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
       workNumber: [null,], // Required and 10-digit phone number
-      linkedinurl: [null, [ Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/)]], // Optional LinkedIn URL
+      linkedinurl: [null, [Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/)]], // Optional LinkedIn URL
     });
   }
 
@@ -196,26 +174,23 @@ getFieldsApprovalStatusList: any[] = [];
     this.disablePendingFields();
   }
 
-
   private disablePendingFields(): void {
-  const pendingFields = this.getFieldsApprovalStatusList
-    .filter((item: any) => item.approvalStatus === 'Pending')
-    .map((item: any) => item.fieldName);
-
-  const fieldToControlMap: { [key: string]: string } = {
-    'Personal Email': 'personalEmail',
-    'Work Email': 'workMail',
-    'Phone Number': 'phoneNumber',
-    'Work Number':'workPhone'
-  };
-
-  pendingFields.forEach((fieldName) => {
-    const controlName = fieldToControlMap[fieldName];
-    if (controlName && this.contactForm.get(controlName)) {
-      this.contactForm.get(controlName)?.disable();
-    }
-  });
-}
+    const pendingFields = this.getFieldsApprovalStatusList
+      .filter((item: any) => item.approvalStatus === 'Pending')
+      .map((item: any) => item.fieldName);
+    const fieldToControlMap: { [key: string]: string } = {
+      'Personal Email': 'personalEmail',
+      'Work Email': 'workMail',
+      'Phone Number': 'phoneNumber',
+      'Work Number': 'workPhone'
+    };
+    pendingFields.forEach((fieldName) => {
+      const controlName = fieldToControlMap[fieldName];
+      if (controlName && this.contactForm.get(controlName)) {
+        this.contactForm.get(controlName)?.disable();
+      }
+    });
+  }
 
   disableForm(): void {
     this.buttons = false;
@@ -230,7 +205,6 @@ getFieldsApprovalStatusList: any[] = [];
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data)
         this.employedata = data;
         this.patchForm(data);
         this.loading = false;
@@ -238,12 +212,11 @@ getFieldsApprovalStatusList: any[] = [];
         this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
         this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
       },
-      error: (reason) =>{
-        console.log(reason);
+      error: (reason) => {
         this.loading = false;
         this.dataLoader = false;
         console.error('Error fetching employee data:', reason)
-      } ,
+      },
       complete: () => {
         this.loading = false;
         this.dataLoader = false;
@@ -262,82 +235,83 @@ getFieldsApprovalStatusList: any[] = [];
   }
 
   updateAddressInfo(): void {
-  const formValue = this.contactForm.getRawValue();
+    const formValue = this.contactForm.getRawValue();
 
-  const targetStatuses = ['Pending', 'Cancelled'];
-      const pendingFieldNames = this.getFieldsApprovalStatusList
-        .filter((item) => targetStatuses.includes(item.approvalStatus))
-        .map((item) => item.fieldName);
+    const targetStatuses = ['Pending', 'Cancelled'];
+    const pendingFieldNames = this.getFieldsApprovalStatusList
+      .filter((item) => targetStatuses.includes(item.approvalStatus))
+      .map((item) => item.fieldName);
 
-  const fieldToApiMap: { [key: string]: string } = {
-    'Personal Email': 'emailaddress',
-    'Work Email': 'workEmail',
-    'Phone Number': 'contactnumber',
-    'Work Number':'workPhone'
-  };
+    const fieldToApiMap: { [key: string]: string } = {
+      'Personal Email': 'emailaddress',
+      'Work Email': 'workEmail',
+      'Phone Number': 'contactnumber',
+      'Work Number': 'workPhone'
+    };
 
-  const updatePayload: any = {
-    ...this.employedata,
-    updatedby: this.empinfo.employeeId.toString(),
-    selfUpdate: this.isMyInfoRoute,
-    moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
-    displayName: this.isMyInfoRoute ? 'Personal' : undefined,
-  };
+    const updatePayload: any = {
+      ...this.employedata,
+      updatedby: this.empinfo.employeeId.toString(),
+      selfUpdate: this.isMyInfoRoute,
+      moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
+      displayName: this.isMyInfoRoute ? 'Personal' : undefined,
+      workEmail: this.contactForm.get('workMail')?.value || this.employedata.workEmail,
+    };
 
-  // Only include non-pending fields
- Object.keys(fieldToApiMap).forEach((displayName) => {
-  if (!pendingFieldNames.includes(displayName)) {
-    const apiKey = fieldToApiMap[displayName];
-    let value;
+    // Only include non-pending fields
+    Object.keys(fieldToApiMap).forEach((displayName) => {
+      if (!pendingFieldNames.includes(displayName)) {
+        const apiKey = fieldToApiMap[displayName];
+        let value;
 
-    if (displayName === 'Personal Email') value = formValue.personalEmail;
-    else if (displayName === 'Phone Number') value = formValue.phoneNumber;
-    else if (displayName === 'Work Number') value = formValue.workNumber;
+        if (displayName === 'Personal Email') value = formValue.personalEmail;
+        else if (displayName === 'Phone Number') value = formValue.phoneNumber;
+        else if (displayName === 'Work Number') value = formValue.workNumber;
 
-    if (value !== undefined && value !== null && value !== '') {
-      if (displayName.includes('Number')) {
-        updatePayload[apiKey] = String(value).replace(/\D+/g, '');
-      } else {
-        updatePayload[apiKey] = value;
+        if (value !== undefined && value !== null && value !== '') {
+          if (displayName.includes('Number')) {
+            updatePayload[apiKey] = String(value).replace(/\D+/g, '');
+          } else {
+            updatePayload[apiKey] = value;
+          }
+        }
       }
-    }
-  }
-});
+    });
 
-  // Always include country codes/flags if changed
-  updatePayload.mobilePhoneCountryCode = this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode;
-  updatePayload.workPhoneCountryCode = this.selectedDialCode || this.employedata.workPhoneCountryCode;
-  updatePayload.contactnumbercountryflag = this.selectedCountryCodephoneflag || this.employedata.contactnumbercountryflag;
-  updatePayload.workPhoneCountryFlag = this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag;
+    // Always include country codes/flags if changed
+    updatePayload.mobilePhoneCountryCode = this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode;
+    updatePayload.workPhoneCountryCode = this.selectedDialCode || this.employedata.workPhoneCountryCode;
+    updatePayload.contactnumbercountryflag = this.selectedCountryCodephoneflag || this.employedata.contactnumbercountryflag;
+    updatePayload.workPhoneCountryFlag = this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag;
 
-  console.log('Contact Payload (excluding pending):', updatePayload);
+    console.log('Contact Payload (excluding pending):', updatePayload);
 
- this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
           if (data.statusCode === 200) {
             this.http.setBasicDetails();
             this.conformationPopup.openSuccessModal('Contact Information updated successfully');
-          this.contactForm.disable();
-          this.buttons = false; // Disable the button after successful update
-          this.getEmployeeId();
-          this.getFieldsApprovalStatus();
+            this.contactForm.disable();
+            this.buttons = false; // Disable the button after successful update
+            this.getEmployeeId();
+            this.getFieldsApprovalStatus();
 
           } else if (data.statusCode === 409) {
-          this.getEmployeeId();
+            this.getEmployeeId();
             this.conformationPopup.openErrorModal(data.message);
             this.patchForm(data); // Bind the data in case of conflict
           }
         },
         error: (reason: any) => {
-           this.getEmployeeId();
+          this.getEmployeeId();
           console.log(reason);
           this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
         },
       });
-}
-
+  }
+  
   onPhoneNumberInput(): void {
     const phoneNumberControl = this.contactForm.get('phoneNumber');
     if (phoneNumberControl?.value) {
@@ -357,17 +331,14 @@ getFieldsApprovalStatusList: any[] = [];
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;
-    console.log('Selected country code:', this.selectedCountryCodegflag);
-    console.log('Selected country dial code:', this.selectedDialCode);
     this.contactForm.get('workNumber')?.setValidators([this.phoneNumberValidator(this.selectedCountryCodegflag)]);
     this.employedata.workPhoneCountryCode = country.dialling_code;
     this.employedata.workphonecountryflag = country.code;
   }
+
   onCountryphoneChange(country: any) {
     this.selectedDialphoneCode = country.dialling_code;
     this.selectedCountryCodephoneflag = country.code;
-    console.log('Selected country code:', this.selectedDialphoneCode);
-    console.log('Selected country dial code:', this.selectedCountryCodephoneflag);
     this.contactForm.get('countyCode2')?.setValue(country.dialling_code);
     this.contactForm.get('countyCode2')?.markAsTouched();
     this.contactForm.get('phoneNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodephoneflag)]);
@@ -376,7 +347,7 @@ getFieldsApprovalStatusList: any[] = [];
     this.employedata.mobilephonecountryflag = country.code;
   }
 
-  formatPhoneNumber(value: any,countryCode:any) {
+  formatPhoneNumber(value: any, countryCode: any) {
     if (!countryCode || !value) return value;
     const stringValue = String(value); // Make sure it's a string
     const phoneNumber = parsePhoneNumberFromString(stringValue, countryCode);
@@ -387,13 +358,13 @@ getFieldsApprovalStatusList: any[] = [];
     return stringValue;
   }
 
- phoneNumberValidator(countryCode:any) {
+  phoneNumberValidator(countryCode: any) {
     return (control: AbstractControl) => {
       const value = String(control.value);
       if (!countryCode || !value) {
         return null;
       }
-      const phoneNumber = parsePhoneNumberFromString(value,countryCode);
+      const phoneNumber = parsePhoneNumberFromString(value, countryCode);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {
@@ -405,6 +376,7 @@ getFieldsApprovalStatusList: any[] = [];
   showButtons() {
     this.buttons = !this.buttons
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

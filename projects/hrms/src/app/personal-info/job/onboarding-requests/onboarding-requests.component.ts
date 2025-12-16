@@ -14,6 +14,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-onboarding-requests',
   imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
@@ -45,6 +46,7 @@ export class OnboardingRequestsComponent {
   changes = [] as any
   imgurl!: string;
   isEditing: boolean = false;
+  totalCount: any;
 
   constructor(private authService: AuthService, private router: Router, private http: HttpService, 
     private conformationPopup: OpenModalService,private modalService: NgbModal,public rbac:RbacService) {
@@ -115,6 +117,7 @@ export class OnboardingRequestsComponent {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal("Onboarding request submitted successfully")
         this.getOnboardrequest();
+        this.getApprovalStatusCounts();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message)
@@ -253,6 +256,7 @@ readyforonboardRequest() {
         }
         this.getEmployeeId();
         this.getOnboardrequest();
+        this.getApprovalStatusCounts();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -267,7 +271,15 @@ readyforonboardRequest() {
   closeonBoard() {
     this.modalService.dismissAll();
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.traineeoffboardingModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   updateOnboardingStatustoOnboard(Value: any) {
     let data = {
       employeeId: Value.employeeData.employeeId,

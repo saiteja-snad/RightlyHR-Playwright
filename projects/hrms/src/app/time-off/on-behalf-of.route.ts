@@ -17,7 +17,18 @@ import { OnBehalfOfRemoteloginApprovedComponent } from './on-behalf-of-remotelog
 import { OnBehalfOfRemoteloginProcessedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-processed/on-behalf-of-remotelogin-processed.component';
 import { OnBehalfOfRemoteloginRejectedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-rejected/on-behalf-of-remotelogin-rejected.component';
 import { OnBehalfOfRemoteloginCancellationComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-cancellation/on-behalf-of-remotelogin-cancellation.component';
-
+import { OnBehalfOfExpensesApprovedComponent } from './on-behalf-of-expenses/on-behalf-of-expenses/on-behalf-of-expenses-approved/on-behalf-of-expenses-approved.component';
+import { OnBehalfOfExpensesProcessedComponent } from './on-behalf-of-expenses/on-behalf-of-expenses/on-behalf-of-expenses-processed/on-behalf-of-expenses-processed.component';
+import { OnBehalfOfExpensesRejectedComponent } from './on-behalf-of-expenses/on-behalf-of-expenses/on-behalf-of-expenses-rejected/on-behalf-of-expenses-rejected.component';
+import { OnBehalfOfExpensesComponent } from './on-behalf-of-expenses/on-behalf-of-expenses/on-behalf-of-expenses.component';
+import { OnBehalfOfExpensesWaitingForApprovalComponent } from './on-behalf-of-expenses/on-behalf-of-expenses/on-behalf-of-expenses-waiting-for-approval/on-behalf-of-expenses-waiting-for-approval.component';
+import { AddClaimsandexpensesComponent } from '../claimsandexpenses/add-claimsandexpenses/add-claimsandexpenses.component';
+import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
+import { OnbehalfOfApprovalsComponent } from './onbehalf-of-approvals/onbehalf-of-approvals.component';
+import { TimeOffComponent } from './onbehalf-of-approvals/time-off/time-off.component';
+import { CompOffEntitlementComponent } from './onbehalf-of-approvals/comp-off-entitlement/comp-off-entitlement.component';
+import { WfhComponent } from './onbehalf-of-approvals/wfh/wfh.component';
+import { PermissionsComponent } from './onbehalf-of-approvals/permissions/permissions.component';
 export default [
     { path: '', redirectTo: '/on-behalf-of/on-behalf-of', pathMatch: 'full' },
     {
@@ -58,5 +69,29 @@ export default [
             { path: 'cancelled', component: OnBehalfOfRemoteloginCancellationComponent }
         ],
     },
+
+       {
+        path: 'on-behalf-of-expenses', component: OnBehalfOfExpensesComponent,
+        children: [
+            { path: 'waiting-for-approval', component: OnBehalfOfExpensesWaitingForApprovalComponent, },
+            { path: 'approved', component: OnBehalfOfExpensesApprovedComponent },
+            { path: 'processed', component: OnBehalfOfExpensesProcessedComponent },
+            { path: 'rejected', component: OnBehalfOfExpensesRejectedComponent },
+            { path: 'add', component: AddClaimsandexpensesComponent }
+        ],
+    },
+
+    { path: 'global-permissions', component: GlobalPermissionsComponent, data: { permission: 'Global Permissions Module.view' } },
+
+      {
+        path: 'on-behalf-of-approvals', component: OnbehalfOfApprovalsComponent,
+        children: [
+          { path: 'time-off', component: TimeOffComponent, data: { permission: 'Time Off (On Behalf Of Approvals).view' } },
+          { path: 'entitlement', component: CompOffEntitlementComponent, data: { permission: 'Comp Off (On Behalf Of Approvals).view' } },
+          { path: 'wfh', component: WfhComponent, data: { permission: 'WFH (On Behalf Of Approvals).view' } },
+          { path: 'permissions', component: PermissionsComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
+        ],
+      },
+
 
 ] as Route[];

@@ -55,21 +55,22 @@ export class WfhComponent {
   searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
-  selectedLeavesItems: AttendanceRequest[] =[];
+  selectedLeavesItems: AttendanceRequest[] = [];
   wfhsselect!: AttendanceRequest;
-  wfhsSelects : AttendanceRequest[] = [];
+  wfhsSelects: AttendanceRequest[] = [];
   requestBody = {} as any;
   dataload = false;
-  requestSummary!:any;
-  hasSelectedAllOnce = false; 
+  requestSummary!: any;
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
+  selectedLeaveStatus: any;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService, 
+    private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formValidation:FormValidationService,
+    public formValidation: FormValidationService,
     public formsValidation: FormValidationsService,
     private signalService: SignalsService,
   ) {
@@ -82,7 +83,7 @@ export class WfhComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
-          this.wfhsSelects  = [];
+          this.wfhsSelects = [];
         }
         this.http.resetTriggerSignal();
       }
@@ -101,14 +102,34 @@ export class WfhComponent {
   }
 
 
+  onStatusApproveSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'approved') {
+      this.approveForm.get('comments')?.setValue('Approved');
+    } else if (status === 'planned') {
+      this.approveForm.get('comments')?.setValue('planned Wfh');
+    } else if (status === 'unplanned') {
+      this.approveForm.get('comments')?.setValue('Unplanned Wfh');
+    }
+  }
 
-  
+  onStatusRejectSelect(status: string) {
+    this.selectedLeaveStatus = status;
+    if (status === 'reject') {
+      this.rejectForm.get('comments')?.setValue('Rejected');
+    } else if (status === 'planned') {
+      this.rejectForm.get('comments')?.setValue('planned Wfh');
+    } else if (status === 'unplanned') {
+      this.rejectForm.get('comments')?.setValue('Unplanned Wfh');
+    }
+  }
+
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -132,7 +153,7 @@ export class WfhComponent {
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -181,7 +202,7 @@ export class WfhComponent {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -189,13 +210,13 @@ export class WfhComponent {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
@@ -204,19 +225,20 @@ export class WfhComponent {
     this.dataload = true;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.wfhModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        if(response.data.length > 0){
-            this.leaves.next(response.data);
-            this.wfhsSelects = response.data;
-          }else{
-            this.leaves.next([]);
-            this.wfhsSelects  = [];
-          }
+        if (response.data.length > 0) {
+          this.leaves.next(response.data);
+          this.wfhsSelects = response.data;
+        } else {
+          this.leaves.next([]);
+          this.wfhsSelects = [];
+        }
       },
       error: (reason) => {
         this.dataload = false;
-        console.log(reason)},
+        console.log(reason)
+      },
       complete: () => {
-        this.dataload =  false;
+        this.dataload = false;
       },
     });
   }
@@ -224,7 +246,7 @@ export class WfhComponent {
 
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves =  this.wfhsSelects ?? [];
+    let leaves = this.wfhsSelects ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
@@ -246,7 +268,7 @@ export class WfhComponent {
     this.leaves.next([...selected, ...unselected]);
     return this.leaves.getValue();
   }
-bulkapprove(approverPopup: any) {
+  bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
     this.modalService.open(approverPopup, {
       centered: true,
@@ -275,8 +297,8 @@ bulkapprove(approverPopup: any) {
     );
   }
 
-   openModal(content: any) {
-     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {
@@ -312,7 +334,7 @@ bulkapprove(approverPopup: any) {
           status: 'Approved',
           comments: comments,
           moduleId: environment.wfhModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -324,7 +346,7 @@ bulkapprove(approverPopup: any) {
           status: 'Approved',
           comments: comments,
           moduleId: environment.wfhModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -383,7 +405,7 @@ bulkapprove(approverPopup: any) {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.wfhModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -395,7 +417,7 @@ bulkapprove(approverPopup: any) {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.wfhModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -443,7 +465,7 @@ bulkapprove(approverPopup: any) {
   }
 
   handleProcess(request: AttendanceRequest) {
-   this.selectedLeaveData = request;
+    this.selectedLeaveData = request;
     let approvedBy = this.empinfo.employeeId.toString();
     let message = null;
     if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
@@ -451,19 +473,19 @@ bulkapprove(approverPopup: any) {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.wfhModuleId,
-        onBehalfOfApproval : true,
+        onBehalfOfApproval: true,
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message = 'Processing Requests, Please wait...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.wfhModuleId,
-        onBehalfOfApproval : true,
+        onBehalfOfApproval: true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,
@@ -472,7 +494,7 @@ bulkapprove(approverPopup: any) {
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message = 'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -511,7 +533,7 @@ bulkapprove(approverPopup: any) {
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, {centered: true, backdrop: 'static', size: 'lg'});
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
     this.approverComments = value;
   }
 

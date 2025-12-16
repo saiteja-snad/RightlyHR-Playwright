@@ -102,9 +102,9 @@
                                             <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
-                                                <a class="view-btn" *ngIf="ed.attachment?.toLowerCase()?.endsWith('jpg') || ed.attachment?.toLowerCase().endsWith('jpeg') || 
-                                                ed.attachment?.toLowerCase().endsWith('png') ;else eddownloadView" (click)="onViewClick(ed.attachment);openModal(myModall)">
-                                                    <i class="bi bi-eye-fill me-2"></i>View</a>
+                                                <a class="view-btn" *ngIf="ed.attachment.endsWith('jpg') || ed.attachment.toLowerCase().endsWith('jpeg') || 
+                                                ed.attachment.toLowerCase().endsWith('png') ;else eddownloadView" (click)="onViewClick(ed.attachment);openModal(myModall)">
+                                                      <app-document-view-icon />View</a>
                                                 <ng-template #eddownloadView>
                                                     <a class="view-btn" (click)="onSelectDownload(ed.attachment)">
                                                         <i class="bi bi-download me-2"></i>Download</a>
@@ -151,9 +151,9 @@
                                             <ng-template #todate>-</ng-template>
                                             </td>
                                             <td>{{exp.attachment ? "" : ''}}
-                                                <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment?.toLowerCase().endsWith('jpeg') || 
-                                                exp.attachment?.toLowerCase().endsWith('png') ;else downloadView" (click)="onViewClick(exp.attachment);openModal(myModall)">
-                                                <i class="bi bi-eye-fill me-2"></i>View</a>
+                                                <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
+                                                exp.attachment.toLowerCase().endsWith('png') ;else downloadView" (click)="onViewClick(exp.attachment);openModal(myModall)">
+                                                  <app-document-view-icon />View</a>
                                                 <ng-template #downloadView>
                                                     <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">-</div>
                                                     <ng-template #documentdownload>
@@ -223,7 +223,7 @@
 <ng-template #submitornot let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+          <app-confirmation-icon />
             <p class="confirmation-text mb-4">Are you sure you want to submit?</p>
         </div>
         <div class="d-flex justify-content-center gap-5 pt-3">

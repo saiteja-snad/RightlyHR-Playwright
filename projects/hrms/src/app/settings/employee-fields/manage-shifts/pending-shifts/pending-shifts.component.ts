@@ -9,10 +9,13 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
+
 import { OpenModalService } from '../../../../services/open-modal.service';
+
 @Component({
   selector: 'app-pending-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, NgbPopoverModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, NgbPopoverModule, DataLoaderContentComponent, InfoIconComponent, SettingsUpdateIconComponent],
   templateUrl: './pending-shifts.component.html',
   styleUrl: './pending-shifts.component.scss'
 })

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -10,20 +10,22 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
 import { ChipModule } from 'primeng/chip';
 @Component({
   selector: 'app-project-timesheet-detailed',
-  imports: [CommonModule, DateformatPipe, NoDataFoundComponent,ChipModule, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NoDataFoundComponent, ChipModule, DataLoaderContentComponent],
   templateUrl: './project-timesheet-detailed.component.html',
-  styleUrl: './project-timesheet-detailed.component.scss'
+  styleUrl: './project-timesheet-detailed.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ProjectTimesheetDetailedComponent {
   projectEmployeeDetails: any;
   projectId: any;
   clientId: any;
-  employeeName: any
-  selectedEntries: any
-    selectedProject: any
+  employeeName: any;
+  selectedEntries: any;
+  selectedProject: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  loading = false
+  loading = false;
+
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -33,14 +35,11 @@ export class ProjectTimesheetDetailedComponent {
         this.projectId = projectid
         this.getResourceDetails(projectid)
       }
-
     });
   }
 
-
   getResourceDetails(clientID: any): void {
     let url = `ProjectResource/getClientProjectResourceSummary?projectId=${clientID}`;
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const rawProjects = res?.data || [];
@@ -56,7 +55,6 @@ export class ProjectTimesheetDetailedComponent {
             totalLoggedHoursHHMM: resource.totalLoggedHoursHHMM ?? 0
           }))
         );
-
         this.loading = false;
       },
       error: (err) => {
@@ -66,7 +64,6 @@ export class ProjectTimesheetDetailedComponent {
       }
     });
   }
-
 
   openModal(entry: any, content: any) {
 
@@ -79,7 +76,6 @@ export class ProjectTimesheetDetailedComponent {
     };
     // Convert the entry.phases into popup format
     this.selectedEntries = entry.phases.map((phase: any) => ({
-
       phaseName: phase.phaseName,
       resourceStartDate: phase.resourceStartDate,
       resourceEndDate: phase.resourceEndDate,
@@ -88,11 +84,8 @@ export class ProjectTimesheetDetailedComponent {
       resourceStatus: phase.resourceStatus,
       allocatedHours: phase.allocatedHours
     }));
-
     this.modalService.open(content, { size: 'lg', backdrop: 'static', centered: true });
   }
-
-
 
   navigateView(employeeId: any): void {
     const resourceData = {

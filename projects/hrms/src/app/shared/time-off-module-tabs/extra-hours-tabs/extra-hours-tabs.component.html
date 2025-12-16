@@ -1,7 +1,6 @@
 @if(!loading){
 <div class="custom-sub-tabs-container">
   <ul class="nav flex-column gap-2">
-
     @if(rbac.allowedToAccess('Waiting For Approval (Extra Hours).view')){
     <li class="nav-item">
       <div class="nav-link" [routerLink]="['/time-off/extra-hours/waiting-for-approval']"
@@ -31,7 +30,6 @@
       </div>
     </li>
     }
-
   </ul>
 </div>
 }

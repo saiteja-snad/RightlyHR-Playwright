@@ -2,8 +2,10 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by employee ID / employee name/ review cycle name / department / team / location / sub location / status" [(ngModel)]="searchQuery"
-            (ngModelChange)="fetchReviewCycles()" aria-label="Username" aria-describedby="basic-addon1">
+        <input type="search" class="form-control custom-search-input"
+            placeholder="Search by employee ID / employee name/ review cycle name / department / team / location / sub location / status"
+            [(ngModel)]="searchQuery" (ngModelChange)="fetchReviewCycles()" aria-label="Username"
+            aria-describedby="basic-addon1">
     </div>
     @if(!dataload){
     <div class="custom-table-content">
@@ -20,7 +22,8 @@
                     <th>{{'Due Date' | translate}}</th>
                     <th>{{'Review Template' | translate}}</th>
                     <th>{{'Status' | translate}}</th>
-                    @if(rbac.allowedToAccess('My Performance Assessment View.view') || rbac.allowedToAccess('My Performance Promotion Letter Download.view') ||
+                    @if(rbac.allowedToAccess('My Performance Assessment View.view') || rbac.allowedToAccess('My
+                    Performance Promotion Letter Download.view') ||
                     rbac.allowedToAccess('My Performance Appraisal Letter Download.view')){
                     <th class="text-center">{{'Action' | translate}}</th>
                     }
@@ -57,36 +60,35 @@
                         <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
                         <td>{{ item.formName }}</td>
                         <td>{{ item.rcItemStatus }}</td>
-                        @if(rbac.allowedToAccess('My Performance Assessment View.view') || rbac.allowedToAccess('My Performance Promotion Letter Download.view') ||
+                        @if(rbac.allowedToAccess('My Performance Assessment View.view') || rbac.allowedToAccess('My
+                        Performance Promotion Letter Download.view') ||
                         rbac.allowedToAccess('My Performance Appraisal Letter Download.view')){
                         <td class="text-center">
                             @if(showActionDropdownForItem(item)){
                             <div class="dropdown">
-                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu text-center">
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                     @if(rbac.allowedToAccess('My Performance Assessment View.view')){
-                                    <li class="dropdown-item"
+                                    <li
                                         (click)="selfAssessment(item.reviewCycleItemId, 0, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                        <a class="dropdown-custom-btn">{{item.assessorType}}
+                                        <a class="dropdown-item">{{item.assessorType}}
                                             {{'Assessment View' | translate}}</a>
                                     </li>
                                     }
                                     @if(rbac.allowedToAccess('My Performance Promotion Letter Download.view')){
-                                    <li class="dropdown-item"
-                                        *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
+                                    <li *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
                                         (click)="downloadPromotionletter(item)">
-                                        <a class="dropdown-custom-btn">
+                                        <a class="dropdown-item">
                                             {{'Promotion Letter Download' | translate}}
                                         </a>
                                     </li>
                                     }
                                     @if(rbac.allowedToAccess('My Performance Appraisal Letter Download.view')){
-                                    <li class="dropdown-item"
-                                        *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' ||  item.rcItemStatus=== 'Appraisal Letter Generated'"
+                                    <li *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' ||  item.rcItemStatus=== 'Appraisal Letter Generated'"
                                         (click)="downloadletter(item)">
-                                        <a class="dropdown-custom-btn">
+                                        <a class="dropdown-item">
                                             {{'Appraisal Letter Download' | translate}}
                                         </a>
                                     </li>

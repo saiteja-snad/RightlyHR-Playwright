@@ -1,36 +1,36 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name">On Behalf Of<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">On Behalf Of Approvals</div>
       <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
     <div class="d-flex gap-3 align-items-center">
       @if (rbac.allowedToAccess('On Behalf Of Approvals All Employees.view')) {
-           <div class="d-flex align-items-center gap-3" >
-             <label class="form-label component-sub-header m-0">Select Employee</label>
-            <div class="custom-p-select-content">
-                <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"  optionLabel="fullName" [filter]="true"
-                    filterBy="fullName" [showClear]="true" placeholder="Please select employee"  (onChange)="onEmployeeChange($event)"
-                    class="form-select custom-select" resetFilterOnHide="true">
-                </p-select>
-            </div>
-           </div>
-            }
+      <div class="d-flex align-items-center gap-3">
+        <label class="form-label component-sub-header m-0">Select Employee</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"
+            optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
+            placeholder="Please select employee" (onChange)="onEmployeeChange($event)" class="form-select custom-select"
+            resetFilterOnHide="true">
+          </p-select>
+        </div>
+      </div>
+      }
 
       @else if (rbac.allowedToAccess('My Team On Behalf Of Approvals.view')) {
-            <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
-            <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"
-                    resetFilterOnHide="true" [showClear]="true" [(ngModel)]="selectedMyTeamEmployee"  (onChange)="onMyTeamChange($event)">
-                </p-select>
-            </div>
-            }
-
-            
+      <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
+      <div class="custom-p-select-content">
+        <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
+          class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"
+          resetFilterOnHide="true" [showClear]="true" [(ngModel)]="selectedMyTeamEmployee"
+          (onChange)="onMyTeamChange($event)">
+        </p-select>
+      </div>
+      }
       <!-- <label class="form-label component-sub-header m-0" for="teamManager">Select Employee</label>
       <div class="custom-p-select-content">
         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
@@ -84,8 +84,33 @@
               <img src="/time-off-icon/permissions-icon.png" alt="Icon" class="icon mb-2">
               <div>Permissions ({{ permissionsCount }})</div>
             </div>
+            <div class="tabs-border-bottom"></div>
           </li>
           }
+          @if(rbac.allowedToAccess('Trainee Requests (On Behalf Of Approvals).view') ) {
+          <li class="nav-item">
+            <div class="nav-link" [class.active]="activeTab === 'traineeRequests'" (click)="setActiveTab('traineeRequests')">
+              <img src="/time-off-icon/trainee-icon.png" alt="Icon" class="icon mb-2">
+              <div>Trainee Requests ({{ traineeRequestsCount }})</div>
+            </div>
+          </li>
+          }
+          @if(rbac.allowedToAccess('Regularization (On Behalf Of Approvals).view') ) {
+          <li class="nav-item">
+            <div class="nav-link" [class.active]="activeTab === 'regularization'" (click)="setActiveTab('regularization')">
+              <img src="/time-off-icon/regularization-icon.png" alt="Icon" class="icon mb-2">
+              <div>Regularization ({{ regularizationCount }})</div>
+            </div>
+          </li>
+          }
+          @if(rbac.allowedToAccess('Expenses (On Behalf Of Approvals).view') ) {
+          <li class="nav-item">
+            <div class="nav-link" [class.active]="activeTab === 'expenses'" (click)="setActiveTab('expenses')">
+              <img src="/main-menu-icons/expenses-icon.png" alt="Icon" class="icon mb-2">
+              <div>Expenses ({{ expensesCount }})</div>
+            </div>
+          </li>
+        }
         </ul>
       </div>
     </div>
@@ -102,6 +127,13 @@
       </div>
       <div *ngIf="activeTab === 'permissions'">
         <app-permissions (dataEvent)="permissionsoff($event)"></app-permissions>
+      </div>
+      <div *ngIf="activeTab === 'regularization'">
+        <app-regularization (dataEvent)="regularizationoff($event)"></app-regularization>
+      </div>
+
+      <div *ngIf="activeTab === 'traineeRequests'">
+        <app-trainee-requests (dataEvent)="traineeRequestsOff($event)"></app-trainee-requests>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Bank Info</span></div>
         @if(canAccess('create','bank') ){
@@ -9,7 +9,7 @@
         </div>
         }}
     </div>
-
+     <div *ngIf="addedRecords.length>0" class="error-msg float-end">Note: Record addition request sent for approval</div>
     <div class="custom-table-content">
         @if (!loading) {
         <table class="w-100">
@@ -36,33 +36,39 @@
                         <td>{{bankiteams.ifscCode}}</td>
                         <td class="text-center">
                             <span *ngIf="bankiteams.docUrl;else noData" (click)="onSelectBankProofDownload(bankiteams)">
-                                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
+                                  <app-download-icon /></span>
                             <ng-template #noData>-</ng-template>
                         </td>
                         <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         @if( canAccess('update','bank') || canAccess('delete','bank')){
                         <td class="text-center">
+                            @if(disablePendingFields(bankiteams.bankId)){
+                                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                             popoverClass="pending-popover" (click)="setActiveMessage(bankiteams.bankId)"/>
+                            }@else{ 
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     @if( canAccess('update','bank')){
-                                    <li (click)="openModalupdate(updateBankmodal, bankiteams)">
-                                        <a class="dropdown-item">
+                                    <li >
+                                        <button class="dropdown-item"
+                                        (click)="openModalupdate(updateBankmodal, bankiteams)">
                                             <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
+                                        </button>
                                     </li>
                                     }
                                     @if( canAccess('delete','bank')){
-                                    <li (click)="opendeletModal(deleteconformation,bankiteams)">
-                                        <a class="dropdown-item">
+                                    <li >
+                                        <button type="button" class="dropdown-item"(click)="opendeletModal(deleteconformation,bankiteams)">
                                             <i class="bi bi-trash3 me-2"></i>Delete
-                                        </a>
+                                        </button>
                                     </li>
                                     }
                                 </ul>
                             </div>
+                        }
                         </td>
                         }
                     </tr>
@@ -392,4 +398,7 @@
             <button type="submit" class="custom-btn btn-primary" (click)="bankDelete()">Yes</button>
         </div>
     </div>
+</ng-template>
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
 </ng-template>

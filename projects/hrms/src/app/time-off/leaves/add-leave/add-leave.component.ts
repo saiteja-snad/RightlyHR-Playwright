@@ -18,11 +18,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
 import { LeavesApprovaltabsComponent } from '../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-add-leave',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, ConfirmationIconComponent],
   templateUrl: './add-leave.component.html',
   styleUrl: './add-leave.component.scss'
 })

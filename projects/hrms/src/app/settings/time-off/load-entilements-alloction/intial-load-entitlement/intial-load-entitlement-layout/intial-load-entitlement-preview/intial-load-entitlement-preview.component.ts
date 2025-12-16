@@ -76,7 +76,7 @@ export class IntialLoadEntitlementPreviewComponent {
 
     this.employeesTableData = employees.map(emp => {
       const leaveValues: any = {};
-      const leaveEntries: any[] = []; 
+      const leaveEntries: any[] = [];
 
       emp.leaveCategories.forEach((lc: any) => {
         const category = lc.orgLeaveCategories;
@@ -85,7 +85,7 @@ export class IntialLoadEntitlementPreviewComponent {
         leaveValues[code] = lc.allowedDays;
 
         leaveEntries.push({
-          leaveCategoryId: lc.categoryId, 
+          leaveCategoryId: lc.categoryId,
           categoryCode: code,
           allowedDays: lc.allowedDays
         });
@@ -158,7 +158,7 @@ export class IntialLoadEntitlementPreviewComponent {
     const body = this.buildCarryForwardPayload();
     this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
       next: (res: any) => {
-      localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
+        localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
         this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'])
       },
       error: (err) => {
@@ -172,6 +172,7 @@ export class IntialLoadEntitlementPreviewComponent {
     const body = this.buildCarryForwardPayload();
     this.http.postdata('LeaveEntitlementJobs/create-initial-load', body).subscribe({
       next: (res: any) => {
+        this.modalService.dismissAll();
         localStorage.setItem('carryForwardJobId', res?.data?.jobId.toString());
         this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'])
       },

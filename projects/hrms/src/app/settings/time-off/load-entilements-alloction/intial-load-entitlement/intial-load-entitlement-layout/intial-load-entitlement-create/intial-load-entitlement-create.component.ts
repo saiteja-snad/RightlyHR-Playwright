@@ -50,7 +50,9 @@ export class IntialLoadEntitlementCreateComponent {
       this.leaveAllocationForm.enable();
       this.leaveAllocationForm.patchValue({
         year: this.carryforwarddata.year,
-        location: this.carryforwarddata.location
+        location: this.carryforwarddata.location,
+       
+    
       });
     }
 
@@ -133,6 +135,7 @@ export class IntialLoadEntitlementCreateComponent {
           const selectedShift = this.shiftDetails.find((sh: any) => sh.shiftName === this.carryforwarddata.shift.shiftName);
           if (selectedShift) {
             this.leaveAllocationForm.patchValue({ shift: selectedShift });
+            this.getCategoryDetails(selectedShift);
           }
         }
       },
@@ -161,11 +164,16 @@ export class IntialLoadEntitlementCreateComponent {
     this.http.getDataWithQueryParams("OrgLeavesCategories", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.categoryDetails = res;
-
+        
+        // Pre-select categories from localStorage
+        if (this.carryforwarddata?.categoryIds?.length) {
+          this.leaveAllocationForm.patchValue({
+            categoryName: this.carryforwarddata.categoryIds
+          });
+        }
       },
       error: err => {
         console.error('Error fetching categories:', err);
-
       }
     });
   }
@@ -176,13 +184,13 @@ export class IntialLoadEntitlementCreateComponent {
 
   sumbitdata() {
     const formValue = this.leaveAllocationForm.value;
-
+    
     const payload = {
       year: formValue.year,
       location: formValue.location,
       subLocation: formValue.subLocation,
       shift: formValue.shift,
-      categoryIds: formValue.categoryName?.map((c: any) => c.id) || []
+      categoryIds: formValue.categoryName || []
     };
 
     localStorage.setItem(

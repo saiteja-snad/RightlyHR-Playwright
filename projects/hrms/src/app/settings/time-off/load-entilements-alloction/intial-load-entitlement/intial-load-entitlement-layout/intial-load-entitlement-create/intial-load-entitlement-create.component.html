@@ -8,7 +8,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                            class="form-select custom-select" formControlName="year" placeholder="Please select year"
+                            class="form-select custom-select" formControlName="year" placeholder="Please select year" 
                             (onChange)="enableLocation()">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
@@ -26,8 +26,8 @@
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
-                            class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-                            formControlName="location" placeholder="Please select location"
+                            class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"  [resetFilterOnHide]="true"
+                            formControlName="location" placeholder="Please select location" filterPlaceholder="Search location"
                             (onChange)="onLocationChange($event.value)">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
                                 }}</ng-template>
@@ -43,13 +43,13 @@
 
                 <!-- Sub Location -->
                 <div class="col-md-4 mb-3">
-                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" | translate }}
+                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub location" | translate }}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
-                            class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
+                            class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"  [resetFilterOnHide]="true"
                             formControlName="subLocation" placeholder="Please select sub location"
-                            (onChange)="getAllShifts($event.value)">
+                            (onChange)="getAllShifts($event.value)" filterPlaceholder="Search Sub location">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
                                 }}</ng-template>
                             <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
@@ -69,8 +69,8 @@
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
-                            [showClear]="false" formControlName="shift" placeholder="Please select shift"
-                            (onChange)="getCategoryDetails($event.value)" class="form-select custom-select">
+                            [showClear]="false" formControlName="shift" placeholder="Please select shift"  [resetFilterOnHide]="true"
+                            (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search Shift">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>
@@ -85,8 +85,8 @@
                     <label for="categoryName" class="form-label custom-label mb-2">{{ "Category Name" | translate
                         }} <span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multiSelect [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name"
-                            [showClear]="false" formControlName="categoryName" placeholder="Please select category name"
+                        <p-multiSelect [options]="categoryDetails" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" filterPlaceholder="Search Category Name"
+                            [showClear]="false" formControlName="categoryName" placeholder="Please select category name"  [resetFilterOnHide]="true"
                             class="form-select custom-select" display="chip">
 
                             <ng-template pTemplate="selectedItems" let-selectedItems>

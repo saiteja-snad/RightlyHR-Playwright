@@ -352,13 +352,14 @@ export class SettingsHeaderComponent implements OnInit {
 
   navigateTointialloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
+    localStorage.removeItem('carryForwardJobId'),
+      localStorage.removeItem('intialloadEntitlement')
   }
 
 
   navigateToSettings() {
-    this.router.navigate(['/settings']),
-      localStorage.removeItem('carryForwardJobId'),
-      localStorage.removeItem('loadEntitlement')
+    this.router.navigate(['/settings'])
+ 
   }
 
   navigateToloadentiments() {

@@ -43,6 +43,7 @@ export class LoadEntilementsAlloctionComponent {
   employeeDetails = [] as IEmployees[];
   selectedEmployee: any;
   selectedCategory: any;
+  isApplyDisabledFlag = true;
   leaveAllocationForm!: FormGroup;
   constructor(
     private router: Router,
@@ -69,6 +70,18 @@ export class LoadEntilementsAlloctionComponent {
       categoryName: [null, Validators.required],
       employeeName: [null, Validators.required],
     });
+    this.leaveAllocationForm.valueChanges.subscribe(() => {
+      this.isApplyDisabledFlag = this.checkIfFormIsEmpty();
+    });
+  }
+
+  checkIfFormIsEmpty(): boolean {
+    const v = this.leaveAllocationForm.value;
+    return !(
+      v.categoryName ||
+      v.employeeName
+
+    );
   }
 
   onPageSizeChange(newPageSize: number) {
@@ -96,12 +109,12 @@ export class LoadEntilementsAlloctionComponent {
     this.selectedCategory = event.id;
     this.getdatacarryforword();
   }
-clearFilters() {
-  this.selectedEmployee = null;
-  this.selectedCategory = null;
-  this.leaveAllocationForm.reset();
-  this.getdatacarryforword();
-}
+  clearFilters() {
+    this.selectedEmployee = null;
+    this.selectedCategory = null;
+    this.leaveAllocationForm.reset();
+    this.getdatacarryforword();
+  }
 
   getdatacarryforword() {
     const params = [

@@ -189,4 +189,7 @@ export class IntialLoadEntitlementPreviewComponent {
     this.offcanvasService.dismiss();
 
   }
+  back(){
+    this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create'])
+  }
 }

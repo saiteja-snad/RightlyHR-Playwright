@@ -75,7 +75,7 @@
 </div>
 
 <!--filter content-->
-<ng-template #filterContent let-offcanvas>
+<ng-template #filterContent let-offcanvas  >
   <div class="custom-filter-container">
     <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
       <p class="filter-header m-0">{{'Filters' | translate}}</p>
@@ -86,30 +86,30 @@
       <form autocomplete="off" [formGroup]="leaveAllocationForm">
         <div class="mb-3">
           <label for="year" class="form-label custom-label filter-labels mb-3">
-            {{ "Year" | translate }}<span class="text-danger">*</span>
+            {{ "Year" | translate }}
           </label>
           <div class="custom-p-select-content">
             <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
               class="form-select custom-select" formControlName="year" placeholder="Please select year"
-              (onChange)="enableLocation()">
+           >
               <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
               <ng-template let-year #item>{{ year }}</ng-template>
             </p-select>
           </div>
           <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
             class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">Please select year</div>
+            <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">Year is required</div>
           </div>
         </div>
 
         <!-- Location -->
         <div class="mb-3">
           <label for="location" class="form-label custom-label filter-labels mb-3">{{ "Location" | translate }}
-            <span class="text-danger">*</span></label>
+           </label>
           <div class="custom-p-select-content">
             <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
-              class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-              formControlName="location" placeholder="Please select location"
+              class="form-select custom-select" filterBy="jobLocationName" [showClear]="false" [resetFilterOnHide]="true"
+              formControlName="location" placeholder="Please select location"  filterPlaceholder="Search location"
               (onChange)="onLocationChange($event.value)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
               <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
@@ -117,7 +117,7 @@
           </div>
           <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid"
             class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">Please select location
+            <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">Location is required
             </div>
           </div>
         </div>
@@ -125,11 +125,11 @@
         <!-- Sub Location -->
         <div class="mb-3">
           <label for="subLocation" class="form-label custom-label filter-labels mb-3">{{ "Sub Location" | translate }}
-            <span class="text-danger">*</span></label>
+           </label>
           <div class="custom-p-select-content">
             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
-              class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-              formControlName="subLocation" placeholder="Please select sub location"
+              class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false" [resetFilterOnHide]="true"
+              formControlName="subLocation" placeholder="Please select sub location"  filterPlaceholder="Search Sub location"
               (onChange)="getAllShifts($event.value)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
               <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
@@ -138,17 +138,17 @@
           <div
             *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
             class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">Please select sub location</div>
+            <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">Sub location is required</div>
           </div>
         </div>
 
         <!-- Shifts -->
         <div class="mb-3">
           <label for="shift" class="form-label custom-label filter-labels mb-3">{{ "Shift" | translate }}
-            <span class="text-danger">*</span></label>
+            </label>
           <div class="custom-p-select-content">
-            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
-              [showClear]="false" formControlName="shift" placeholder="Please select shift"
+            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" [resetFilterOnHide]="true" filterBy="shiftName"
+              [showClear]="false" formControlName="shift" placeholder="Please select shift"  filterPlaceholder="Search shift"
               class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
               <ng-template let-location #item>{{ location.shiftName }}</ng-template>
@@ -156,13 +156,15 @@
           </div>
           <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid"
             class="error-msg">
-            <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">Please select shift</div>
+            <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">Shift is required</div>
           </div>
         </div>
 
         <!-- Submit -->
         <div class="d-flex offcanvas-footer-content gap-3">
-          <button type="button" class="custom-btn btn-secondary w-100" (click)="resetForm()">
+          <button type="button" *ngIf="isApplyDisabledFlag" class="custom-btn btn-secondary w-100" (click)="closeCanvas()"  >
+            {{'Close' | translate}}</button>
+          <button type="button" *ngIf="!isApplyDisabledFlag" class="custom-btn btn-secondary w-100" (click)="resetForm()"  >
             {{'Clear All' | translate}}</button>
           <button type="button" class="custom-btn btn-primary w-100" [disabled]="isApplyDisabledFlag"
             (click)="applydata()">

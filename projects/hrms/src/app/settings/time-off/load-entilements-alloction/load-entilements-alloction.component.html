@@ -42,7 +42,8 @@
             <ng-template let-user #item>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</ng-template>
           </p-select>
         </div>
-        <div *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
+        <div
+          *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
           class="error-msg">
           <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">Please select employee</div>
         </div>
@@ -59,13 +60,14 @@
           </p-select>
         </div>
 
-        <div *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
+        <div
+          *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
           class="error-msg">
           <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">Please select category name</div>
         </div>
       </div>
 
-      <div class="mb-3">
+      <div class="mb-3 pt-4" *ngIf="!isApplyDisabledFlag">
         <button type="button" class="clear-all-btn" (click)="clearFilters()">Clear All</button>
       </div>
     </div>
@@ -92,8 +94,8 @@
             <td class="text-center">{{ e?.carryForwardCount }}</td>
             <td [ngClass]="{'status-success': e.status === 'Success','status-failed': e.status === 'Failed',
             'status-partial': e.status === 'Partially Completed','status-processing': e.status === 'Processing',
-            'status-completed': e.status === 'Completed','status-pending': e?.status === 'Pending'}" 
-            class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'Failed'">
+            'status-completed': e.status === 'Completed','status-pending': e?.status === 'Pending'}"
+              class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'Failed'">
                 <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click" />
               </span>
             </td>

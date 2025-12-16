@@ -52,10 +52,10 @@ export class CarryForwardLeaveEntitlementComponent {
   }
   initializefilter() {
     this.leaveAllocationForm = this.fb.group({
-      year: ['', Validators.required],
-      location: [{ value: '', disabled: true }, Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      shift: [{ value: '', disabled: true }, Validators.required],
+      year: ['', ],
+      location: ['', ],
+      subLocation: [{ value: '', disabled: true }, ],
+      shift: [{ value: '', disabled: true },],
     });
     this.yearsList = this.getYears();
     this.leaveAllocationForm.valueChanges.subscribe(() => {
@@ -103,7 +103,7 @@ export class CarryForwardLeaveEntitlementComponent {
   resetForm() {
     this.leaveAllocationForm.reset();
     this.isApplyDisabledFlag = true;
-    this.offcanvasService.dismiss()
+
     // 3. Remove active filters
     this.activeFilters = {};
     this.getdatacarryforword();
@@ -119,7 +119,7 @@ export class CarryForwardLeaveEntitlementComponent {
     const params: any = {
       pageNumber: this.page,
       pageSize: this.pageSize,
-      jobType:'Carry Forward',
+      jobType: 'Carry Forward',
       searchTerm: this.searchQuery,
       ...this.activeFilters   // merge filters here
     };
@@ -206,13 +206,22 @@ export class CarryForwardLeaveEntitlementComponent {
 
   closeCanvas() {
     this.offcanvasService.dismiss();
-    this.leaveAllocationForm.reset();
+    this.shiftDetails = [];
+    this.subLocationDetails = [];
+    this.leaveAllocationForm.reset(); 
   }
   navigateView(jobId: number) {
     this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });
   }
+
+
   toggleFilters(content: TemplateRef<any>) {
 
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

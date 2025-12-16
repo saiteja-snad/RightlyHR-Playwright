@@ -67,8 +67,8 @@ export class LoadEntilementsAlloctionComponent {
   }
   initilaiztionFrom() {
     this.leaveAllocationForm = this.fb.group({
-      categoryName: [null, Validators.required],
-      employeeName: [null, Validators.required],
+      categoryName: [null,],
+      employeeName: [null,],
     });
     this.leaveAllocationForm.valueChanges.subscribe(() => {
       this.isApplyDisabledFlag = this.checkIfFormIsEmpty();

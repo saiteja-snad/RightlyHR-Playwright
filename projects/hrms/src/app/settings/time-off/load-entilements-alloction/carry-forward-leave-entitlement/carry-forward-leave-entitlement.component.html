@@ -20,10 +20,10 @@
       <thead>
         <th>Job Id</th>
         <th>Year</th>
-        <th>Job Type</th>
+         <th>Leave Carry Forward Count</th>
         <th>Created by</th>
         <th>Status </th>
-        <th>Emp Processed</th>
+       
       </thead>
       <tbody>
         <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
@@ -32,14 +32,14 @@
               <a class="project-name cursor" (click)="navigateView(item?.jobId)">{{ item?.jobId ?? '_' }}</a>
             </td>
             <td>{{ item?.year ?? '_' }}</td>
-            <td>{{ item?.jobType ?? '_' }}</td>
+              <td>{{ item?.successCount }}/{{ item?.totalEmployees }}</td>
             <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
             <td [ngClass]="{'status-success': item.status === 'Success',
             'status-queued': item.status === 'Queued',
             'status-failed': item.status === 'Failed','status-partial': item.status === 'Partially Completed',
             'status-processing': item.status === 'Processing','status-completed': item.status === 'Completed',
             'status-pending': item?.status === 'Pending'}" class="text-capitalize">{{ item?.status ?? '-'}}</td>
-            <td>{{ item?.successCount }}/{{ item?.totalEmployees }}</td>
+          
           </tr>
         </ng-container>
         <ng-template #noDataTemplate>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-intial-load-entitlement-progressbar',
@@ -9,12 +9,20 @@ import { Router } from '@angular/router';
   styleUrl: './intial-load-entitlement-progressbar.component.scss'
 })
 export class IntialLoadEntitlementProgressbarComponent {
-progress = 0;
+  progress = 0;
   subscription: any;
 
   constructor(public router: Router) { }
-
-    setProgress(url: string) {
+  ngOnInit(): void {
+    this.setProgress(this.router.url);
+    // listen for route changes
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.setProgress(event.urlAfterRedirects);
+      }
+    });
+  }
+  setProgress(url: string) {
     if (url.includes('/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create')) {
       this.progress = 1;   // 25%
     } else if (url.includes('/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview')) {

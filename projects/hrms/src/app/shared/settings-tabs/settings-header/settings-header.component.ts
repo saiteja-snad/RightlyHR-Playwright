@@ -240,6 +240,10 @@ export class SettingsHeaderComponent implements OnInit {
     this.moduleName='Time Off';
     this.componentName='Flexible Work Hours Allocation';
    }
+   else if(url.startsWith('/settings/employee-rate-card/rate-card')){
+    this.moduleName='Rate Card Configuration';
+    this.componentName='Employee Rate Card';
+   }
   }
 
   navigateToSettings() {

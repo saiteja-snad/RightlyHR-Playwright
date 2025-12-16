@@ -43,6 +43,7 @@ import {
   SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS,
   SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS,
   ATTENDANCE_ELIGIBILITY_CRITERIA_TABS,
+  SETTINGS_RATECARD_TABS,
   SETTINGS_EMPLOYEE_FIELDS_JOB_TABS,
   PMS_CONFIGURATION_TABS,
   TEAM_PERFORMANCE_TABS,
@@ -292,6 +293,13 @@ export class AccessNavigationService {
 
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
+        }
+         if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+           for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 
@@ -906,6 +914,16 @@ export class AccessNavigationService {
           }
         }
 
+        break;
+        case '/settings/employee-rate-card/rate-card':
+        if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+           // return (route = '/settings/employee-rate-card/rate-card');
+          for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
 
       case '/reports/standard-reports':

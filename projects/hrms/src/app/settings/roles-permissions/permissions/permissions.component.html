@@ -51,10 +51,9 @@
                         <ng-container *ngFor="let per of permissions">
                             <!-- <tr class="text-align-center"
                                 *ngIf="per.fields === 'Roles' || per.fields === 'Employee Fields Module'|| per.fields === 'Settings Timeoff Module' || -->
-                            <tr class="text-align-center"
-                                *ngIf="per.fields === 'Roles' || per.fields === 'Employee Fields Module'|| per.fields === 'Settings Timeoff Module' ||
-                                per.fields === 'Assets Management Configuration Module' || per.fields === 'Dynamic Forms Module' ||
-                                per.fields === 'Project Management Configuration Module' || per.fields === 'Attendance Configuration Module' ||
+                            <tr class="text-align-center" *ngIf="per.fields === 'Roles' || per.fields === 'Employee Fields Module'|| per.fields === 'Settings Timeoff Module' ||
+                                per.fields === 'Assets Management Configuration Module' || per.fields === 'Dynamic Forms Module' ||  per.fields === 'Employee Fields Config Update Module' ||
+                                per.fields === 'Project Management Configuration Module' || per.fields === 'Attendance Configuration Module' || 
                                 per.fields === 'Locking System Configuration Module'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -529,8 +528,9 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Leave Category Tab' || per.fields === 'Leave Allocation Tab' ||
-                            per.fields === 'Flexible Leave Allocation Tab' || per.fields === 'Attendance Eligibility Criteria Tab' || per.fields === 'Flexible WFH Allocation Tab' ||
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'Leave Category Tab' || per.fields === 'Leave Allocation Tab' || 
+                            per.fields === 'Flexible Leave Allocation Tab' || per.fields === 'Attendance Eligibility Criteria Tab' || per.fields === 'Flexible WFH Allocation Tab' || 
                             per.fields === 'Load Entitlements Tab' || per.fields ==='Flexible Work Hours Allocation Tab'">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
@@ -3958,7 +3958,9 @@
                                 <!-- Create -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
+
                                         (change)="onCheckboxChange(per, 'Create')" [disabled]="!roleToFilter?.id ||
+
                                         !['Employee Info Education Details','Employee Info Identity Details','Employee Info Family Details',
                                         'Employee Info Bank Details','Employee Info Visa Details'].includes(per.fields)">
                                 </td>
@@ -4562,8 +4564,7 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center"
-                                *ngIf="per.fields === 'Project Details Tab' || per.fields === 'Contact Info Tab'|| per.fields === 'Resources Tab'|| per.fields === 'Documents Tab'|| per.fields === 'Project Timesheets Tab'
+                            <tr class="text-align-center" *ngIf="per.fields === 'Project Details Tab' || per.fields === 'Contact Info Tab'|| per.fields === 'Resources Tab'|| per.fields === 'Documents Tab'|| per.fields === 'Project Timesheets Tab'
                                 || per.fields === 'Project Detailed Tab' || per.fields === 'Project Phases Tab'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
@@ -4673,7 +4674,7 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'On Behalf Of' || per.fields === 'On Behalf Of WFH' || per.fields === 'On Behalf Of RemoteLogin'">
+                                *ngIf="per.fields === 'On Behalf Of' || per.fields === 'On Behalf Of WFH' || per.fields === 'On Behalf Of RemoteLogin' || per.fields === 'On Behalf Of Expenses'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -4708,8 +4709,10 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (On Behalf Of WFH)' || per.fields === 'Approved (On Behalf Of WFH)'
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'Waiting For Approval (On Behalf Of WFH)' || per.fields === 'Approved (On Behalf Of WFH)'
                             || per.fields === 'Processed (On Behalf Of WFH)' || per.fields === 'Rejected (On Behalf Of WFH)' || per.fields === 'Cancelled (On Behalf Of WFH)'
+
                             || per.fields === 'On Behalf Of WFH All Employees' || per.fields === 'On Behalf Of WFH Team' || per.fields === 'Request On Behalf Of WFH Button'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
@@ -4767,13 +4770,49 @@
                                 </td>
                             </tr>
                         </ng-container>
-
+                        <!-- On behalf Of Expenses Tabs-->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectTabsOnBehalfOfExpenses
+                                        (change)="toggleSelectAll(selectAllOnBehalfOfExpenses,selectTabsOnBehalfOfExpenses?.checked, isOnBehalfOfExpensesTabsCheckboxDisabled.bind(this))"
+                                        [checked]="isAllSelected(selectAllOnBehalfOfExpenses)"
+                                        [indeterminate]="isSomeSelected(selectAllOnBehalfOfExpenses)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div>On Behalf Of Expenses Tabs </div>
+                                </div>
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (On Behalf Of Expenses)' || per.fields === 'Approved (On Behalf Of Expenses)' || per.fields === 'Processed (On Behalf Of Expenses)'
+                                     || per.fields === 'Rejected (On Behalf Of Expenses)' || per.fields === 'Cancelled (On Behalf Of Expenses)' || per.fields === 'On Behalf Of Expenses All Employees' || per.fields === 'On Behalf Of Expenses Team'
+                                     || per.fields === 'Request On Behalf Of Expenses Button'">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="true">
+                                </td>
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                        (change)="onCheckboxChange(per, 'Create')" [disabled]="true">
+                                </td>
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                </td>
+                            </tr>
+                        </ng-container>
                         <tr>
                             <th colspan="5" class="custom-header">Timesheet Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
+
                             <tr class="text-align-center" *ngIf="per.fields === 'My Team (Timesheet)' || per.fields === 'All Employees (Timesheet)'
-                            ||  per.fields === 'Team Time Sheet' ||  per.fields === 'Team Time Sheet Summary Tab'||  per.fields === 'Team Time Sheet Detailed Tab'||  per.fields === 'Team Time Sheet Filters Tab'">
+                            ||  per.fields === 'Team Time Sheet' ||  per.fields === 'Team Time Sheet Summary Tab'||  per.fields === 'Team Time Sheet Detailed Tab'||  per.fields === 'Team Time Sheet Filters Tab'||  per.fields === 'Team Time Sheet Detailed Tab'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -5052,9 +5091,11 @@
             </div>
             <div class="d-flex justify-content-end pt-3">
                 <div>
-                    <button type="button" class="custom-btn btn-secondary py-2 px-5 me-2" (click)="openModal(cancelconfirmationpopup)"
-                    [disabled]="!isSaveButtonEnabled"> {{'Cancel' | translate}}</button>
-                    <button class="custom-btn btn-primary py-2 px-5" [disabled]="!roleToFilter?.id">{{'Save' | translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary py-2 px-5 me-2"
+                        (click)="openModal(cancelconfirmationpopup)" [disabled]="!isSaveButtonEnabled"> {{'Cancel' |
+                        translate}}</button>
+                    <button class="custom-btn btn-primary py-2 px-5" [disabled]="!roleToFilter?.id">{{'Save' |
+                        translate}}</button>
                 </div>
             </div>
         </form>

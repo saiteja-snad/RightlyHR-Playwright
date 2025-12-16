@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { HttpService } from '../../../../services/http.service';
@@ -23,6 +23,8 @@ import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
+import { Router, RouterOutlet } from '@angular/router';
 import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
@@ -40,14 +42,15 @@ import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
+    ConfirmationIconComponent,
     DocumentViewIconComponent
 ],
+
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
 export class ClaimsandexpensesForYourRoleRequestComponent
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   totalRecords = 100;
   searchValue: any;
   first: any = 0;
@@ -75,7 +78,15 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
   subscription!: Subscription;
+
+  verifiedExpenseIds: number[] = [];
+  verifyModalRef: NgbModalRef | null = null;
+  isVerified: boolean = false;
+  verifyForm!: FormGroup;
+
   selectedLeaveStatus: any;
+  totalCount: any;
+
 
   constructor(
     private modalService: NgbModal,
@@ -86,7 +97,8 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     private sanitizer: DomSanitizer,
     public rbac: RbacService,
     public formsValidation: FormValidationsService,
-  ) {}
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -100,12 +112,22 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     }
   }
 
+
+
   onStatusRejectSelect(status: string) {
     this.selectedLeaveStatus = status;
     if (status === 'reject') {
       this.rejectForm.get('comments')?.setValue('Rejected');
     }
   }
+  onStatusVerifySelect(status: string) {
+    this.selectedLeaveStatus = status;
+
+    if (status === 'verified') {
+      this.verifyForm.get('comments')?.setValue('Verified');
+    }
+  }
+
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: [
@@ -113,11 +135,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         [Validators.required, Validators.maxLength(250)],
       ],
     });
-     this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-  });
+    this.approveForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
   intializeRejectForm() {
@@ -127,11 +149,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         [Validators.required, Validators.maxLength(250)],
       ],
     });
-      this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
-    if (!value || value.trim() === '') {
-      this.selectedLeaveStatus = null; // remove chip highlight if cleared
-    }
-     });
+    this.rejectForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null; // remove chip highlight if cleared
+      }
+    });
   }
 
   getAllPendingApprovals() {
@@ -184,10 +206,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     this.selectedLeaveData = request;
   }
 
-  openRejectModal(content: any, request: ExpenseApprovalResponse) {
+  openRejectModal(content: any, request: ExpenseApprovalResponse | IExpenseHeaders ) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
-    this.selectedLeaveData = request;
+    this.selectedLeaveData = request as any;
   }
 
   handleAccept(approveForm: FormGroup): void {
@@ -230,7 +252,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+            this.http.triggerActionSignal();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -276,7 +302,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
+            this.http.triggerActionSignal();
+            this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
           },
         });
     }
@@ -317,10 +347,21 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.http.triggerActionSignal();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
         },
       });
   }
+  getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+    });
+  }
+ 
 
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
@@ -434,6 +475,73 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       lowerUrl.endsWith('.png')
     );
   }
+  selectedItem: any = null;
+  openVerifyModal(item: any, content: any) {
+    this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.intializeVerifyForm();
+    this.selectedItem = item; // store clicked item
+  }
+  intializeVerifyForm() {
+    this.verifyForm = this.fb.group({
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
+    });
+
+    // Remove chip highlight if comment is cleared manually
+    this.verifyForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedLeaveStatus = null;
+      }
+    });
+  }
+
+  handleVerify(verifyForm: FormGroup): void {
+    if (!verifyForm.valid || !this.selectedItem) return;
+
+    const formData = verifyForm.value;
+    const verifiedItem = this.selectedItem;
+
+    const requestBody = {
+      isVerified: true,
+      verifiedBy: this.empinfo.employeeId?.toString(),
+      verifiedByName: `${this.empinfo.firstName || ''} ${this.empinfo.lastName || ''}`.trim(),
+      comments: formData.comments
+    };
+
+    this.http.putData(`Expenses_Header/ExpensesItemUpdate/${verifiedItem.expenseitem_id}`, requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Close only the Verify modal
+          this.verifyModalRef?.close();
+
+          // Show success popup
+          this.sharedModalService.openSuccessModal('Expense item verified successfully');
+
+          // Update local UI immediately
+          if (this.expenseheaderiteams?.expenseitem?.length) {
+            const idx = this.expenseheaderiteams.expenseitem.findIndex(
+              it => it.expenseitem_id === verifiedItem.expenseitem_id
+            );
+            if (idx > -1) {
+              this.expenseheaderiteams.expenseitem[idx].isVerified = true;
+            }
+          }
+
+          this.selectedItem = null;
+
+          // Update verified IDs for template checks
+          this.verifiedExpenseIds.push(verifiedItem.expenseitem_id);
+
+          // Refresh headers in background, but the modal stays open
+          this.getAllPendingApprovals();
+        },
+        error: (err: any) => {
+          this.verifyModalRef?.close();
+          this.sharedModalService.openErrorModal(err?.error?.Message || 'Verification failed');
+        }
+      });
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

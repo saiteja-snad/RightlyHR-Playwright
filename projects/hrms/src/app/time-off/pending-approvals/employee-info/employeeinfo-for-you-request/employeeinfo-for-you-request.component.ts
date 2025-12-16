@@ -77,6 +77,7 @@ export class EmployeeinfoForYouRequestComponent implements OnInit {
   allPendingApprovals: any;
   allPendingApprovalItems: any;
      selectedLeaveStatus: any;
+  totalCount: any;
   //emp: any;
 ImageUrl: any;
  ViewURL:any;
@@ -486,6 +487,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
            this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
         },
       });
     }
@@ -569,6 +571,7 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           this.timeSheetApproveForm.reset();
           this.timeSheetRejectForm.reset();
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.http.triggerActionSignal();
           this.signalService.employeinfoDetailsTriggerSignal.set(true);
           this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
@@ -577,6 +580,15 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
       });
     }
   }
+
+  getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.pendingapprovalemployeid}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.dataload = true;

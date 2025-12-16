@@ -120,6 +120,11 @@ export class HttpService {
   setnewcountDetails() {
     this.expensescount.next();
   }
+  expensescountOnBehalfof = new Subject<void>();
+  expensesprocesscountOnBehalfof$ = this.expensescountOnBehalfof.asObservable();
+  setnewcountDetailsforonBehalfof() {
+    this.expensescountOnBehalfof.next();
+  }
 
   clientcount = new Subject<void>();
   clientcountfuntion$ = this.clientcount.asObservable();
@@ -205,9 +210,29 @@ export class HttpService {
   // OnBehalfOf WFH
   onBehlafOfWFHSignal = signal<boolean>(false);
   onBehlafOfRemoteLoginSignal = signal<boolean>(false);
+  onBehlafOfExpensesSignal = signal<boolean>(false);
+
 
   onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
   onBehalfOfRemoteLoginSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfExpensesSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfSelectedEmpDetails$ = new BehaviorSubject<any>(null);
+
+  setOnBehalfOfExpensesSelectedEmp(emp: any): void {
+    this.onBehalfOfExpensesSelectedEmp$.next(emp);
+    this.onBehlafOfExpensesSignal.set(true);
+    console.log('Selected On Behalf Of Expenses Employee:', emp);
+  }
+
+// http.service.ts (add inside the service class)
+private _onBehalfExpensesUpdated$ = new BehaviorSubject<number | null>(null);
+public onBehalfExpensesUpdated$ = this._onBehalfExpensesUpdated$.asObservable();
+
+setOnBehalfExpensesUpdated(empId: number | null) {
+  // push empId (or null) to notify subscribers
+  this._onBehalfExpensesUpdated$.next(empId ?? null);
+}
+
 
   // function for employeid TIMEOFF
   private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
@@ -241,6 +266,15 @@ export class HttpService {
   // Method to update the employeeId
   setEmployeeIdCompOff(id: any): void {
     this.selectedEmployeeIdCompOff.next(id);
+  }
+
+  private selectedEmployeeIdExpensesforonbehalf = new BehaviorSubject<string | null>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdExpensesforonbehalf$ = this.selectedEmployeeIdExpensesforonbehalf.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdExpensesforonbehalf(id:any | null): void {
+    this.selectedEmployeeIdExpensesforonbehalf.next(id);
+    console.log('Selected Employee Expenses ID:', id);
   }
 
   // function for employeid wfh
@@ -338,6 +372,9 @@ export class HttpService {
   getitembyid(url: string, _params?: any) {
     const item_url = `${this.ApiUrl}${url}?Expenses_ID=${_params}`;
     return this.http.get(item_url);
+  }
+  getItembyid(url: string, params?: any) {
+    return this.http.get(`${this.ApiUrl}${url}`, { params });
   }
 
   getData(url: string) {
@@ -980,6 +1017,12 @@ export class HttpService {
   setDepartmentIds(ids: number[]) {
     this.departmentIdsSource.next(ids);
   }
+
+  // update count
+pendingApprovalCount$ = new BehaviorSubject<any[]>([]);
+updatePendingApprovalCounts(counts: any[]) {
+  this.pendingApprovalCount$.next(counts);
+}
 
   //store project types
   private projectTypeFilterSource = new BehaviorSubject<string[]>([]);

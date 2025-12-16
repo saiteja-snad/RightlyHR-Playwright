@@ -36,6 +36,7 @@ export class OnbehalfofMainTabsComponent {
               { label: 'Global-Permissions', link: '/on-behalf-of/global-permissions',icon:'/time-off-icon/Global-Permissions-icon.png', permission: { feature: 'Global Permissions Module', action: 'view' } },
 
           { label: 'On Behalf Of Approvals', link: '/on-behalf-of/on-behalf-of-approvals',icon:'/time-off-icon/on-behalf-of-approvals-icon.png', permission: { feature: 'On Behalf Of Approvals Module', action: 'view' } },
+          { label: 'Expenses', link: '/on-behalf-of/on-behalf-of-expenses', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'On Behalf Of Expenses', action: 'view' } },
       // { label: 'Regularization', link: '/time-off/regularization', icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },
     ];
     this.filterTabsByRbac();

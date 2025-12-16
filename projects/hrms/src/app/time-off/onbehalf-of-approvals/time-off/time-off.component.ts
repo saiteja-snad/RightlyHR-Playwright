@@ -60,6 +60,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+    selectedLeaveStatus: any;
   onRowsChange() {
     this.first = 0;
   }
@@ -129,6 +130,27 @@ export class TimeOffComponent implements OnInit, OnDestroy {
       }
     });
   }
+ onStatusRejectSelect(status: string) {
+  this.selectedLeaveStatus = status;
+  if (status === 'reject') {
+    this.selectedLeaveData.comments = 'Rejected';
+  } else if (status === 'planned') {
+    this.selectedLeaveData.comments = 'Planned Leave';
+  } else if (status === 'unplanned') {
+    this.selectedLeaveData.comments = 'Unplanned Leave';
+  }
+}
+onStatusApproveSelect(status: string) {
+  this.selectedLeaveStatus = status;
+
+  if (status === 'approved') {
+    this.selectedLeaveData.comments = 'Approved';
+  } else if (status === 'planned') {
+    this.selectedLeaveData.comments = 'Planned Leave';
+  } else if (status === 'unplanned') {
+    this.selectedLeaveData.comments = 'Unplanned Leave';
+  }
+}
 
   checkLeaveBalance(Value: any, checkbalancepopup: any) {
     this.modalService.open(checkbalancepopup, { centered: true, backdrop: 'static',size: 'lg' });

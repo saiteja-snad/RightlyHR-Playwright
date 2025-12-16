@@ -17,10 +17,10 @@ import { environment } from '../../../environments/environment';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ExpensesComponent } from './expenses/expenses.component';
 import { RegularizationComponent } from './regularization/regularization.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.component';
-
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -38,30 +38,37 @@ import { TraineeRequestsComponent } from './trainee-requests/trainee-requests.co
     ModuleInformationComponent,
     NgbPopoverModule,
     FormsModule,
+    ExpensesComponent,
     ModuleInfoIconComponent,
     TraineeRequestsComponent
 
 ],
+
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class OnbehalfOfApprovalsComponent {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   employeedata = {} as any;
   leaves = [] as any;
   compOff = [] as any;
   wfh = [] as any;
   permissions = [] as any;
+
+  expenses = [] as any;
+
   regularization = [] as any;
 
   traineeRequests = [] as any;
 
+
   teamManagerControl = new FormControl(null);
   timeOffCount = 0;
   compOffCount = 0;
+  expensesCount = 0;
   wfhCount = 0;
   traineeRequestsCount = 0;
   activeTab: string = 'timeOff';
@@ -86,6 +93,7 @@ export class OnbehalfOfApprovalsComponent {
           this.getCompoff(this.employeedata.employeeId);
           this.getWfhoff(this.employeedata.employeeId);
           this.getPermissionsoff(this.employeedata.employeeId);
+          this.getExpensesoff(this.employeedata.employeeId)
           this.getRegularizationoff(this.employeedata.employeeId);
           this.getTraineeRequestsOff(this.employeedata.employeeId)
 
@@ -96,6 +104,7 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   ngOnInit(): void {
+    
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     localStorage.removeItem("onbehalfofaproverData");
     this.getEmployeeId();
@@ -104,15 +113,15 @@ export class OnbehalfOfApprovalsComponent {
     this.getMyTeamData();
   }
 
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
-    onMyTeamChange(event: any): void {
+  onMyTeamChange(event: any): void {
     this.selectedOtherEmployee = null; // Clear the other dropdown
     this.OnclickMyTeam(event);
   }
@@ -167,18 +176,16 @@ export class OnbehalfOfApprovalsComponent {
             // No filter
             this.getEmployeeInfo = response.map((employee: any) => ({
               ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             }));
           }
         },
       });
   }
 
-   OnclickMyTeam($event: any) {
+  OnclickMyTeam($event: any) {
     if ($event.value) {
       this.employeedata = this.getEmployeeInfo.find((e: any) => e.employeeId == $event.value);
       localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
@@ -197,6 +204,9 @@ export class OnbehalfOfApprovalsComponent {
       this.compOffCount = 0;
       this.wfhCount = 0;
       this.permissionsCount = 0;
+
+      this.expensesCount = 0;
+
       this.regularizationCount = 0;
 
       this.traineeRequestsCount = 0;
@@ -224,6 +234,7 @@ export class OnbehalfOfApprovalsComponent {
 
       this.timeOffCount = 0;
       this.compOffCount = 0;
+      this.expensesCount = 0;
       this.wfhCount = 0;
       this.permissionsCount = 0;
       this.regularizationCount = 0;
@@ -282,6 +293,7 @@ export class OnbehalfOfApprovalsComponent {
   getPermissionsoff(employeeId: any) {
     this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.permissionsModuleId}`).subscribe({
       next: (data: any) => {
+        console.log(data)
         this.permissions = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.permissionsCount = this.permissions.length;
       },
@@ -290,6 +302,19 @@ export class OnbehalfOfApprovalsComponent {
       }
     });
   }
+  getExpensesoff(employeeId: any) {
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.expensesModuleId}`).subscribe({
+      next: (data: any) => {
+        console.log(data)
+        this.expenses = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
+        this.expensesCount = this.expenses.length;
+      },
+      error: (reason) => {
+        this.expenses = [];
+      }
+    });
+  }
+  
 
   getRegularizationoff(employeeId: any) {
   this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.attendanceRegularizationModuleId}`).subscribe({
@@ -332,6 +357,10 @@ export class OnbehalfOfApprovalsComponent {
   permissionsoff(value: any) {
     this.getPermissionsoff(this.employeedata.employeeId)
   }
+  expensesoff(value: any) {
+    this.getExpensesoff(this.employeedata.employeeId)
+  }
+
 
   regularizationoff(value: any) {
   this.getRegularizationoff(this.employeedata.employeeId);

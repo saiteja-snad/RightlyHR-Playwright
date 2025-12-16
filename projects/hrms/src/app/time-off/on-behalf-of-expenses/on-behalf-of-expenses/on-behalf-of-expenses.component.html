@@ -1,0 +1,91 @@
+<div class="custom-main-component-container">
+    @if(router.url != '/on-behalf-of/on-behalf-of-expenses/add'){
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">On Behalf Of<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'On Behalf Of Expenses'|translate}}</div>
+            <div>
+                  <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            @if (rbac.allowedToAccess('On Behalf Of Expenses All Employees.view')) {
+
+            <div class="d-flex align-items-center gap-3">
+                <label class="form-label filter-labels m-0">Select Employee</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="employeeiddetails" optionLabel="fullName" [(ngModel)]="selectedOtherEmployee"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="fullName" [showClear]="true"
+                        (onClear)="onClearEmployee()" placeholder="Please select employee"
+                        (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+                    </p-select>
+                </div>
+            </div>
+            }
+            @else if(rbac.allowedToAccess('On Behalf Of Expenses Team.view')){
+            <div class="d-flex align-items-center gap-2">
+                <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="myTeamData" optionLabel="fullName" showClear="true" optionValue="employeeId"
+                        name="myteamemployees" placeholder="Select employee name" [filter]="true"
+                        resetFilterOnHide="true" class="form-select custom-select" (onClear)="onClearEmployee()"
+                        [autoDisplayFirst]="false" required (onChange)="onEmployeeChange($event.value)">
+                    </p-select>
+                </div>
+            </div>
+            }
+            @if(rbac.allowedToAccess('Request On Behalf Of Expenses Button.view') ) {
+            <button type="button" class="custom-btn btn-primary" (click)="navigatetoAddExpenses()"
+                [disabled]="!selectedOtherEmployee">Apply On Behalf
+                Of</button>
+            }
+        </div>
+        <div class="graph-grid w-100 mb-3" *ngIf="showDashboard">
+            <div class="employee-category-container">
+                <p-tabs scrollable>
+                    <p-tablist>
+                        @for (tab of expenseSummaryTabs; track $index) {
+                        <p-tab>
+                            <div class="expense-grid-card gap-3">
+                                <div>
+                                    <img [src]="tab.icon" alt="Icon" class="icon">
+                                </div>
+                                <div>
+                                    <p class="content-text m-0">{{ tab.label }}</p>
+                                    <p class="m-0">
+                                        <span class="amount-value me-2">{{ tab.count }}</span><span
+                                            class="frequency-value">₹ {{ tab.value }}</span>
+                                        <span class="frequency-value"
+                                            *ngIf="tab.showFrequency && getExpenseSummaryDetails?.frequency"> / <b> {{
+                                                getExpenseSummaryDetails.frequency }}</b></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </p-tab>
+                        }
+                    </p-tablist>
+                </p-tabs>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
+    <div class="employee-fields-main-container d-flex gap-3 w-100">
+        @if(!isOnBehalfAddPage){
+        <div class="component-left-tabs-container">
+            <app-on-behalf-of-expenses-tabs />
+        </div>
+        }
+        <div class="component-right-content">
+            <router-outlet />
+        </div>
+    </div>
+</div>

@@ -85,7 +85,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   @ViewChild('acceptForm') acceptForm!: NgForm;
   selectedLeaveStatus: any;
-
+totalCount:any;
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -349,6 +349,7 @@ onCommentChange(value: string) {
           );
         }
         this.getseparationforyourequests();
+         this.getApprovalStatusCounts();
         this.acceptForm.resetForm();
         this.signalService.separationForYouTriggerSignal.set(true);
         this.signalService.separationForRoleTriggerSignal.set(true);
@@ -402,6 +403,7 @@ onCommentChange(value: string) {
           );
         }
         this.getseparationforyourequests();
+         this.getApprovalStatusCounts();
         this.signalService.separationForYouTriggerSignal.set(true);
         this.signalService.separationForRoleTriggerSignal.set(true);
         this.signalService.separationSidNavCountTriggerSignal.set(true);
@@ -474,6 +476,7 @@ onCommentChange(value: string) {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.getseparationforyourequests();
+          this.getApprovalStatusCounts();
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             separation: true,
@@ -494,7 +497,15 @@ onCommentChange(value: string) {
         },
       });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   getBlockedPastDate(date: string): string {
     const currentDateObj = moment(date).startOf('day'); // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"

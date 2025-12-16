@@ -128,6 +128,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   attendanceSummaryOptions: any;
   maxMonth: Date = new Date();
   extraHoursForm!: FormGroup;
+  totalCount: any;
   selectedDateTotalDuration: string = '00:00:00';
 
   constructor(
@@ -374,13 +375,22 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(err.error);
           },
           complete: () => {
+            this.getApprovalStatusCounts();
             this.spinnerLoader = false;
             this.regularizationForm.reset();
           },
         });
     }
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   navigateToLeave(data: any) {
     const modalRef = this.modalService.open(AddLeaveComponent, {
       centered: true,
@@ -680,6 +690,7 @@ onclickRegularization(date: Date | string) {
             this.conformationPopup.openErrorModal(errorMessage);
           },
           complete: () => {
+            this.getApprovalStatusCounts();
             this.extraHrsLoader = false;
             this.extraHoursForm.reset();
           },

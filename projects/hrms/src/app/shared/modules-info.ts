@@ -167,6 +167,8 @@ export const MODULE_INFOS = {
     //on behalf of module info
     ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
     ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO : "The Remote Login module enables HR or managers to apply and manage Remote login requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
+    ON_BEHALF_OF_EXPENSES_MODULE_INFO: "The On Behalf Of Expenses module enables HR or managers to efficiently submit and manage employee expense claims. It streamlines the approval process, ensures accurate tracking of reimbursements, maintains compliance with company policies, and provides a centralized view of all approved and pending expenses.",
+    ONBEHALF_OF_ADD_EXPENSES_MODULE_INFO:"The Add On-Behalf Expense Module allows HR/Admin to create new expense entries on behalf of employees by providing all necessary details. Upon addition, the expense is automatically approved and verified for immediate processing.",
 
     //Events Module Info
     EVENTS_MODULE_INFO: "The Events section displays all upcoming and past events, allowing users to view and manage event details. New events can be created under Custom Events with date, title, description, and attachments for effective communication.",

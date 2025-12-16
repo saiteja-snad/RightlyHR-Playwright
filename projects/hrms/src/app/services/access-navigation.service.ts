@@ -1848,6 +1848,20 @@ export class AccessNavigationService {
           return (route = '/pms/assign-kra-kpi');
         }
         break;
+
+        case '/pms/my-kra-kpi/view':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/my-kra-kpi');
+        }
+        break;
+
+        case '/pms/my-kra-kpi/dashboard':
+        if (this.rbac.allowedToAccess('Dashboard KRA KPI.view')) {
+          return (route = '/pms/my-kra-kpi/dashboard');
+        }
+        break;
+
+
     }
     return route;
   }

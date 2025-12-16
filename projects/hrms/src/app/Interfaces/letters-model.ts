@@ -195,6 +195,8 @@ export interface IRole {
   sno: number,
   jobRole1: string;
   isdeleted: string;
+  designationId: number;
+  designationName: string;
 }
 export interface IJobtype {
   sno: number,
@@ -402,7 +404,7 @@ export interface IProbationEmployees {
   probationExtendedDate: any;
   jobDetails?: IJobdetails;
   fullName?:IemployeeDetails;
-  
+
 }
 export interface IJobdetails {
   subdeptId: any;

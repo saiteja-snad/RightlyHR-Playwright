@@ -23,6 +23,8 @@ export class PmsMainTabsComponent {
     { label: 'KRA', link: '/pms/kra', icon: 'main-menu-icons/project-management-project.png', permission: { feature: 'KRA', action: 'view' } },
     { label: 'KPI', link: '/pms/kpi', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'KPI', action: 'view' } },
     { label: 'Assign KRA/KPI', link: '/pms/assign-kra-kpi', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Assign KRA KPI', action: 'view' } },
+    { label: 'My KRA/KPI', link: '/pms/my-kra-kpi/view', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'My KRA KPI', action: 'view' } },
+
   ];
 
   constructor(public readonly router: Router, private rbac: RbacService, private accessNav: AccessNavigationService) { }

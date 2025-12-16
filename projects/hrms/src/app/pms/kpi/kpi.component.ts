@@ -88,6 +88,10 @@ export class KpiComponent implements OnInit, OnDestroy {
   isEditMode = false;
   currentKpiId: number | null = null;
 
+  showOnlyInactive = false;
+inactiveButtonLabel = 'Inactive KPI';
+
+
   // Simplified single KPI form
   kpiForm = this.fb.group({
     kpiName: ['', [Validators.required, Validators.minLength(5)]],
@@ -129,11 +133,32 @@ export class KpiComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleInactiveFilter(): void {
+  this.showOnlyInactive = !this.showOnlyInactive;
+
+  if (this.showOnlyInactive) {
+    // Show ONLY inactive KPIs
+    this.filteredDetails = this.kpiList.filter(
+      kpi => kpi.status === 'Inactive'
+    );
+    this.inactiveButtonLabel = 'Active KPI';
+  } else {
+    // Show ALL KPIs
+    this.filteredDetails = [...this.kpiList];
+    this.inactiveButtonLabel = 'Inactive KPI';
+  }
+
+  // Reset pagination when filter changes
+  this.page = 1;
+  this.first = 0;
+}
+
+
   loadKpiList() {
   const params = {
     pageNumber: this.page,
     pageSize: this.rows,
-    ...(this.searchText && { searchQuery: this.searchText }),
+    ...(this.searchText && { search: this.searchText }),
   };
 
   this.dataload = true;
@@ -142,7 +167,9 @@ export class KpiComponent implements OnInit, OnDestroy {
       if (res.success) {
         this.kpiList = res.data || [];
         this.collectionSize = res.pagination?.totalRecords || 0;
-        this.filteredDetails = this.kpiList; // Flat list now
+        this.filteredDetails = this.showOnlyInactive
+    ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
+    : [...this.kpiList];
       } else {
         this.kpiList = [];
         this.filteredDetails = [];
@@ -192,46 +219,67 @@ export class KpiComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSubmitKpi() {
-    if (this.kpiForm.invalid) return;
+onSubmitKpi() {
+  const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  const employeeId = user?.employeeId || 0;
+  if (this.kpiForm.invalid) return;
 
-    this.isSubmitting = true;
+  this.isSubmitting = true;
 
-    // Safely extract values — all are guaranteed non-null due to Validators.required
-    const formValue = this.kpiForm.getRawValue();
+  const formValue = this.kpiForm.getRawValue();
 
-    const payload = {
-      kpiId: this.currentKpiId || 0,
-      kpiName: formValue.kpiName!.trim(),
-      targetType: formValue.uom!,
-      targetValue: String(formValue.targetValue!),
-      description: formValue.description!.trim(),
-      status: "Created"
-      // kraId: ... (add if required by backend)
-    };
+  // ✅ STEP 1: create SINGLE object
+  const kpiPayload: {
+    kpiId?: number;
+    kpiName: string;
+    targetType: string;
+    targetValue: string;
+    description: string;
+    status: string;
+    createdBy: string;
+    updatedBy: string
+  } = {
+    kpiName: formValue.kpiName!.trim(),
+    targetType: formValue.uom!,
+    targetValue: String(formValue.targetValue!),
+    description: formValue.description!.trim(),
+    status: 'Created',
+    createdBy: employeeId,
+    updatedBy: employeeId
+  };
 
-    const endpoint = this.isEditMode ? 'Kpi/upsertkra' : 'Kpi/upsertkra';
-
-    this.http.postdata(endpoint, payload).subscribe({
-      next: () => {
-        this.modalService.dismissAll();
-        this.loadKpiList();
-        this.conformationPopup.openSuccessModal(
-          this.isEditMode ? 'KPI updated successfully' : 'KPI created successfully'
-        );
-      },
-      error: (err) => {
-        console.error(err);
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save KPI');
-      },
-      complete: () => {
-        this.isSubmitting = false;
-        this.isEditMode = false;
-        this.currentKpiId = null;
-        this.kpiForm.reset();
-      }
-    });
+  // ✅ STEP 2: add kpiId ONLY in edit mode
+  if (this.isEditMode && this.currentKpiId) {
+    kpiPayload.kpiId = this.currentKpiId;
   }
+
+  // ✅ STEP 3: API expects ARRAY
+  const payload = [kpiPayload];
+
+  this.http.postdata('Kpi/upsertkra', payload).subscribe({
+    next: () => {
+      this.modalService.dismissAll();
+      this.loadKpiList();
+      this.conformationPopup.openSuccessModal(
+        this.isEditMode ? 'KPI updated successfully' : 'KPI created successfully'
+      );
+    },
+    error: (err) => {
+      console.error(err);
+      this.isSubmitting = false;
+      this.conformationPopup.openErrorModal(
+        err.error?.message || 'Failed to save KPI'
+      );
+    },
+    complete: () => {
+      this.isSubmitting = false;
+      this.isEditMode = false;
+      this.currentKpiId = null;
+      this.kpiForm.reset();
+    }
+  });
+}
+
 
     hasAnyActionPermission(): boolean {
     return true;
@@ -273,12 +321,17 @@ export class KpiComponent implements OnInit, OnDestroy {
   }
 
   onMakeInactive(kpi: any) {
-  if (confirm(`Are you sure you want to make "${kpi.kpiName}" Inactive?`)) {
-    const payload = {
+
+    const formValue = this.kpiForm.getRawValue();
+
+   {
+    const payload = [{
       kpiId: kpi.kpiId,
+      kpiName: kpi.kpiName,
       status: 'Inactive',
-      updatedBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0
-    };
+      updatedBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0,
+      createdBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0
+    }];
 
     this.http.postdata('Kpi/upsertkra', payload).subscribe({
       next: () => {

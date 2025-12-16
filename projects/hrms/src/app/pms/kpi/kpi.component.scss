@@ -17,3 +17,11 @@
 .status-onhold {
   color: #dc3545;
 }
+
+.inactive-btn {
+    font-weight: 700 !important;
+    font-style: Bold !important;
+    font-size: 14px !important;
+    color: var(--primary-color) !important;
+    text-decoration: underline !important;
+}

@@ -62,9 +62,13 @@ export class KraComponent implements OnInit, OnDestroy {
   ];
 
 kraCategories: { id: number; name: string }[] = [];
+private pendingKraPayload: any = null;
+
 
   isEditMode = false;
 currentEditingKraId: number | null = null;
+kraFilterApplied: boolean = true; // button text initially "Inactive KRA"
+showInactiveFilter: boolean = false; // page load: show all data
 
   kraForm: any;
   get f() { return this.kraForm.controls; }
@@ -97,12 +101,18 @@ dummyKpiList = [
 
 kpiList: any[] = [];
 
+pendingKraName: string = '';
+pendingNewStatus: string = '';
+pendingKraId: number = 0;
 
 
   private subscription!: Subscription;
   @ViewChild('createKraModal') createKraModal: any;
   @ViewChild('assignKpiModal') assignKpiModal: any;
   @ViewChild('assignByRoleModal') assignByRoleModal: any;
+
+  @ViewChild('statusConfirmModal') statusConfirmModal: any;
+
 
 
 
@@ -178,38 +188,59 @@ createRoleRow() {
     // this.moduleinfo = url.includes('/pms/kra') ? MODULE_INFOS.PMS_KRA_LIST_MODULE_INFO : '';
   }
 
-  loadKraList() {
-    const params = {
-      pageNumber: this.page,
-      pageSize: this.rows,
-      ...(this.searchText && { searchQuery: this.searchText }),
-    };
+ toggleInactiveKra(): void {
+  this.kraFilterApplied = !this.kraFilterApplied; // toggle button text
+  this.showInactiveFilter = !this.showInactiveFilter; // toggle filter
+  this.loadKraList();
+}
 
-    this.dataload = true;
-    this.subscription = this.http
-      .getDataIncludeParams('Kra/getAll', params)
-      .subscribe({
-        next: (res: any) => {
+loadKraList() {
+  const params: any = {
+    pageNumber: this.page,
+    pageSize: this.rows,
+    ...(this.searchText && { search: this.searchText }),
+  };
+
+  this.dataload = true;
+
+  this.subscription = this.http
+    .getDataIncludeParams('Kra/getAll', params)
+    .subscribe({
+      next: (res: any) => {
         if (res.success) {
-          this.kraList = res.data || [];
-          this.collectionSize = res.pagination?.totalRecords || 0;
+          let allData = res.data || [];
+
+          // Apply inactive filter AFTER data is fetched
+          if (this.showInactiveFilter) {
+            this.kraList = allData.filter(
+              (kra: any) => kra.status === 'Inactive'
+            );
+          } else {
+            this.kraList = allData;
+          }
+
           this.filteredDetails = this.kraList;
+
+          // ✅ THIS IS THE FIX
+          this.collectionSize = res.pagination?.totalRecords || 0;
+
         } else {
           this.kraList = [];
-          this.collectionSize = 0;
           this.filteredDetails = [];
+          this.collectionSize = 0;
         }
+
         this.dataload = false;
       },
-      error: (err) => {
-        console.error('Error loading KRAs:', err);
+      error: () => {
         this.kraList = [];
-        this.collectionSize = 0;
         this.filteredDetails = [];
+        this.collectionSize = 0;
         this.dataload = false;
-      }
+      },
     });
-  }
+}
+
 
   loadKraCategories(): void {
 
@@ -252,11 +283,51 @@ createRoleRow() {
     this.loadKraList();
   }
 
-openCreateModal() {
-  this.isEditMode = false;
-  this.currentEditingKraId = null;
-  this.kraForm.reset();
-  this.modalService.open(this.createKraModal, { centered: true, backdrop: 'static', size: 'lg' });
+openCreateModal(kra?: any) {  // Made optional param for create mode
+  this.isEditMode = !!kra;  // true if editing
+  this.currentEditingKraId = kra ? kra.kraId : null;
+
+  if (this.isEditMode) {
+    // Load categories first to ensure options are available
+    this.loadKraCategories();
+
+    // Pass the kra object via modal config (we'll use it after open)
+    this.modalService.open(this.createKraModal, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    }).result.then(() => {}, () => {
+      // Optional: reset on dismiss if needed
+    });
+
+    // Defer patching and disabling to after modal is opened
+    setTimeout(() => {
+      // Patch form values
+      this.kraForm.patchValue({
+        categoryId: kra.kraCategoryId,
+        kraName: kra.kraName,
+        description: kra.description,
+      });
+
+      // Disable category if status is NOT 'Created'
+      const categoryControl = this.kraForm.get('categoryId');
+      if (kra.status === 'Created') {
+        categoryControl?.enable();
+      } else {
+        categoryControl?.disable();
+      }
+    }, 300);  // Small delay to ensure modal & p-select are rendered
+
+  } else {
+    // Create mode
+    this.kraForm.reset();
+    this.kraForm.get('categoryId')?.enable();  // Always enabled for create
+    this.modalService.open(this.createKraModal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+}
+
+onUpdate(kra: any) {
+  this.openCreateModal(kra);  // Now passes the kra object
 }
 
 
@@ -265,50 +336,85 @@ openCreateModal() {
   }
 
 
-  uploadKraAttachment(payload: any): void {
-  const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-  const employeeId = user?.employeeId || 0;
+uploadKraAttachment(kraId: number, file: File): void {
 
-  const filePath = `/FusionDocuments/Employee Documents/KRA Documents/${employeeId}`;
+  const filePath = `/KRA/${kraId}/Documents`;
 
   this.http
-    .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.kraForm.value.attachment)
+    .uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filePath,
+      file
+    )
     .subscribe({
       next: (data: any) => {
-        if (data) {
-          payload.documentUrl = data.path;   // IMPORTANT → API needs this
-          this.saveKraData(payload);         // Continue saving KRA
+        if (data?.path && this.pendingKraPayload) {
+
+          this.pendingKraPayload.kraId = kraId;
+          this.pendingKraPayload.documentUrl = data.path;
+
+          this.http
+            .postdata('Kra/upsertkra', this.pendingKraPayload)
+            .subscribe(() => {
+              this.afterKraSaveSuccess();
+            });
         }
       },
       error: () => {
         this.isSubmitting = false;
-        this.conformationPopup.openErrorModal("File upload failed");
+        this.conformationPopup.openErrorModal('File upload failed');
       }
     });
 }
 
 
-saveKraData(payload: any): void {
-  this.http.postdata('Kra/upsertkra', payload).subscribe({
-    next: () => {
-      this.modalService.dismissAll();
-      this.loadKraList();
 
-      this.conformationPopup.openSuccessModal(
-        this.isEditMode ? 'KRA updated successfully' : 'KRA created successfully'
-      );
+afterKraSaveSuccess(): void {
+  this.modalService.dismissAll();
+  this.loadKraList();
+
+  this.conformationPopup.openSuccessModal(
+    this.isEditMode
+      ? 'KRA updated successfully'
+      : 'KRA created successfully'
+  );
+
+  this.isSubmitting = false;
+  this.isEditMode = false;
+  this.currentEditingKraId = null;
+  this.pendingKraPayload = null;
+  this.kraForm.reset();
+}
+
+
+
+saveKraData(payload: any): void {
+  const file: File | null = this.kraForm.value.attachment;
+
+  this.http.postdata('Kra/upsertkra', payload).subscribe({
+    next: (res: any) => {
+
+      const kraId =
+        this.isEditMode
+          ? this.currentEditingKraId
+          : res?.data?.kraId;
+
+      if (file && kraId) {
+        this.uploadKraAttachment(kraId, file);
+      } else {
+        this.afterKraSaveSuccess();
+      }
     },
     error: (err) => {
-      this.conformationPopup.openErrorModal(err.error?.message || 'Operation failed');
-    },
-    complete: () => {
       this.isSubmitting = false;
-      this.isEditMode = false;
-      this.currentEditingKraId = null;
-      this.kraForm.reset();
+      this.conformationPopup.openErrorModal(
+        err.error?.message || 'Operation failed'
+      );
     }
   });
 }
+
+
 
 
 onSubmitKra() {
@@ -325,43 +431,22 @@ onSubmitKra() {
     kraName: this.kraForm.value.kraName?.trim(),
     description: this.kraForm.value.description?.trim(),
      createdBy: this.isEditMode ? undefined : employeeId,
-    updatedBy: employeeId
+    updatedBy: employeeId,
+    documentUrl: null
   };
+
+  this.pendingKraPayload = payload;
 
   if (!this.isEditMode) {
     payload.createdBy = employeeId;
   }
 
-  const file = this.kraForm.value.attachment;
-
-  // If a file is selected → upload first and get documentUrl
-  if (file) {
-    this.uploadKraAttachment(payload);
-  } else {
-    // No file → directly save with documentUrl = null
-    payload.documentUrl = null;
-    this.saveKraData(payload);
-  }
+this.saveKraData(payload);
 }
 
   hasAnyActionPermission(): boolean {
     return true;
   }
-
-onUpdate(kra: any) {
-  this.isEditMode = true;
-  this.currentEditingKraId = kra.kraId;
-
-  // Patch the form with existing values
-  this.kraForm.patchValue({
-    categoryId: kra.categoryId,
-    kraName: kra.kraName,
-    description: kra.description,
-  });
-
-  // Open the same modal
-  this.modalService.open(this.createKraModal, { centered: true, backdrop: 'static', size: 'lg' });
-}
 
 onAssignKpi(kra: any) {
 
@@ -405,49 +490,69 @@ onAssignByRole(kra: any) {
 }
 
 
-onMakeInactive(kra: any) {
-  if (confirm(`Are you sure you want to make "${kra.kraName}" Inactive?`)) {
-    this.updateKraStatus(kra.kraId, 'Inactive');
-  }
+openStatusConfirmModal(kra: any, newStatus: string) {
+  this.pendingKraName = kra.kraName;
+  this.pendingNewStatus = newStatus;
+  this.pendingKraId = kra.kraId;
+
+  this.modalService.open(this.statusConfirmModal, {
+    centered: true,
+    backdrop: 'static',
+    size: 'md'
+  });
 }
 
-onHold(kra: any) {
-  if (confirm(`Put "${kra.kraName}" on Hold?`)) {
-    this.updateKraStatus(kra.kraId, 'On Hold');
-  }
-}
+confirmStatusChange() {
+  this.isSubmitting = true;
 
-onResume(kra: any) {
-  if (confirm(`Resume "${kra.kraName}"?`)) {
-    this.updateKraStatus(kra.kraId, 'Active');
-  }
-}
-
-onView(kra: any) {
-  alert(`Viewing details of: ${kra.kraName}`);
-}
-
-private updateKraStatus(kraId: number, newStatus: string) {
   const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
   const employeeId = user?.employeeId || 0;
 
   const payload = {
-    kraId: kraId,
-    status: newStatus,
+    kraId: this.pendingKraId,
+    kraName: this.pendingKraName,
+    status: this.pendingNewStatus,
     updatedBy: employeeId,
+    createdBy: employeeId
   };
 
   this.http.postdata('Kra/upsertkra', payload).subscribe({
     next: () => {
+      this.modalService.dismissAll();
       this.loadKraList();
-      this.conformationPopup.openSuccessModal(`KRA status updated to ${newStatus}`);
+      this.conformationPopup.openSuccessModal(`KRA status updated to ${this.pendingNewStatus}`);
+      this.isSubmitting = false;
     },
     error: (err) => {
-      console.error(err);
+      this.isSubmitting = false;
       this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
     }
   });
 }
+
+// private updateKraStatus(kraId: number, kraName: string, newStatus: string) {
+//   const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+//   const employeeId = user?.employeeId || 0;
+
+//   const payload = {
+//     kraId: kraId,
+//     status: newStatus,
+//     kraName: kraName,
+//     updatedBy: employeeId,
+//     createdBy:employeeId
+//   };
+
+//   this.http.postdata('Kra/upsertkra', payload).subscribe({
+//     next: () => {
+//       this.loadKraList();
+//       this.conformationPopup.openSuccessModal(`KRA status updated to ${newStatus}`);
+//     },
+//     error: (err) => {
+//       console.error(err);
+//       this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
+//     }
+//   });
+// }
 
 onFileChange(event: any) {
   const file = event.target.files[0] as File;

@@ -4049,7 +4049,8 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Review Cycle List' ||  per.fields === 'Review Cycle Employee List' ||
-                            per.fields === 'My Performance Review' || per.fields === 'My Team Performance Review' || per.fields === 'KRA' || per.fields === 'KPI' || per.fields === 'Assign KRA KPI'">
+                            per.fields === 'My Performance Review' || per.fields === 'My Team Performance Review' || per.fields === 'KRA' || per.fields === 'KPI'
+                            || per.fields === 'Assign KRA KPI' || per.fields === 'My KRA KPI' || per.fields === 'Dashboard KRA KPI'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

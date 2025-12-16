@@ -465,6 +465,9 @@ export const PMS_TABS = [
   { route: '/pms/kra', permission: 'KRA.view' },
   { route: '/pms/kpi', permission: 'KPI.view' },
   { route: '/pms/assign-kra-kpi', permission: 'Assign KRA KPI.view' },
+  { route: '/pms/my-kra-kpi/view', permission: 'My KRA KPI.view' },
+  { route: '/pms/my-kra-kpi/dashboard', permission: 'Dashboard KRA KPI.view' },
+
 ]
 
 export const MY_PERFORMANCE_TABS = [

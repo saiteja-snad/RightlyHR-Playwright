@@ -861,6 +861,8 @@ export const permissionsData = [
   { fields: 'KRA', View: false, Update: false, Create: false, Delete: false },
   { fields: 'KPI', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assign KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Dashboard KRA KPI', View: false, Update: false, Create: false, Delete: false },
 
 
 

@@ -15,72 +15,39 @@
     </div>
 
     <!-- Wrap all filter dropdowns in a form -->
-    <form [formGroup]="filterForm" class="d-flex flex-wrap gap-3 align-items-end">
+    <!-- FILTERS ROW -->
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mt-3">
+      <!-- <div>
+    <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+      Clear All
+    </button>
+  </div> -->
+
       <div>
-        <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
-          Clear All
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
         </button>
       </div>
-      <div class="flex-grow-1" style="min-width: 200px;">
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
-            resetFilterOnHide="true" filterBy="designationName" formControlName="jobRole" placeholder="Job Role"
-            class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <div class="flex-grow-1" style="min-width: 200px;">
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="departmentDetails" optionLabel="departmentName" formControlName="department"
-            placeholder="Department" (onChange)="onDepartmentChange($event.value)" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <div class="flex-grow-1" style="min-width: 200px;">
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="teamDropdownValues" optionLabel="subdepartmentName" formControlName="team"
-            placeholder="Team" class="form-select custom-select" (onChange)="onTeamChange($event.value)">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <div class="flex-grow-1" style="min-width: 200px;">
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="location"
-            placeholder="Location" (onChange)="getSubLocationByid($event.value)" class="form-select custom-select">
-          </p-multiSelect>
-        </div>
-      </div>
-
-      <div class="flex-grow-1" style="min-width: 200px;">
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="subLocationsDropdown" optionLabel="jobSubLocationName" formControlName="subLocation"
-            placeholder="Sub Location" class="form-select custom-select" (onChange)="onSubLocationChange($event.value)">
-          </p-multiSelect>
-        </div>
-      </div>
 
       <div>
-        <button class="custom-btn btn-primary" (click)="openAssignModal(assignKraKpiModal)">
+        <button class="custom-btn btn-primary" (click)="openAssignModal(assignKraKpiModal)"
+          [disabled]="!canOpenAssignModal">
           {{ 'Assign KRA' | translate }}
         </button>
       </div>
-    </form>
+    </div>
   </div>
 
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-  <!-- Selected Records Header (Bulk Actions Placeholder - can be extended later) -->
   @if (selectedItems.length > 0 && multiSelect) {
   <div class="component-header-content mt-3">
     <div class="component-sub-header">Selected Records: {{ selectedItems.length }}</div>
     <div class="d-flex gap-3">
-      <!-- Placeholder for future bulk actions -->
-      <!-- Example: <button class="custom-btn btn-primary-approve">Bulk Approve</button> -->
+
     </div>
   </div>
   }
@@ -94,90 +61,149 @@
 
   <!-- Table -->
   @if (!dataload) {
-  <div class="custom-p-multi-select-table">
-    <p-table #dt [value]="kraList" [(selection)]="selectedItems" dataKey="kraId" [tableStyle]="{'min-width': '50rem'}">
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-          <th>{{ 'Employee Name' | translate }}</th>
-          <th class="text-center">{{ 'Review Cycle' | translate }}</th>
-          <th class="text-center">{{ 'KRA' | translate }}</th>
-          <th class="text-center">{{ 'Total KPIs' | translate }}</th>
-          <th class="text-center">{{ 'Weightage (%)' | translate }}</th>
-          <th class="text-center">{{ 'Effective Date' | translate }}</th>
-          <th class="text-center">{{ 'Target Date' | translate }}</th>
-          <th class="text-center">{{ 'Action' | translate }}</th>
-        </tr>
-      </ng-template>
+  <div class="custom-accordians">
+    <div class="custom-accordian-data-content">
 
-      <ng-template pTemplate="body" let-kra>
-        <tr>
-          <td><p-tableCheckbox [value]="kra" /></td>
-          <td>{{ kra.employeedata.fullName  || "-" }}</td>
-          <td class="text-center">{{ kra?.reviewCycleData?.reviewCycleName || "-" }}</td>
-          <td class="text-center">{{ kra.kraName || "-" }}</td>
-          <td class="text-center">{{ kra.kpiCount || "-" }}</td>
-          <td class="text-center">{{ kra.weightageValue || "-" }}</td>
-          <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
-          <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
-          <td class="text-center">
-            <div class="dropdown">
-              <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
-                <i class="bi bi-three-dots-vertical text-muted"></i>
-              </span>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li class="dropdown-item" (click)="onUpdate(kra)">
-                  <a class="dropdown-custom-btn">
-                    <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
-                  </a>
-                </li>
-                <li class="dropdown-item" (click)="onHold(kra)">
-                  <a class="dropdown-custom-btn text-warning">
-                    <i class="bi bi-pause-circle me-2"></i>{{ 'On Hold' | translate }}
-                  </a>
-                </li>
-              </ul>
+      @if (groupedKraList.length > 0) {
+      <p-accordion>
+
+        <p-accordion-panel *ngFor="let emp of groupedKraList; let i = index" [value]="i">
+
+          <!-- ACCORDION HEADER -->
+          <p-accordion-header>
+            <div class="d-flex align-items-center gap-3 w-100">
+
+              <p-checkbox [(ngModel)]="emp.selected" [binary]="true"></p-checkbox>
+
+              <div class="flex-grow-1 text-truncate fw-semibold">
+                {{ emp.fullName }} - ({{emp.fusionId}})
+              </div>
+
+              <!-- <small class="text-muted">
+              ({{ emp.assignments.length }} Assigned)
+            </small> -->
+
             </div>
-          </td>
-        </tr>
-      </ng-template>
+          </p-accordion-header>
 
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="7" class="text-center py-4">
-            <app-no-data-found />
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
+          <!-- ACCORDION CONTENT -->
+          <p-accordion-content>
+            <div class="custom-p-multi-select-table custom-accordian-table">
+              <p-table [value]="emp.assignments">
 
-  <!-- Pagination -->
-  @if (kraList.length > 0) {
-  <div class="pagination-content">
-    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-      <div class="d-flex align-items-center gap-3 p-2">
-        <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-          (ngModelChange)="onPageSizeChange($event)">
-          @for (option of options; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-        <span class="pagination-label text-nowrap">
-          Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{
-          collectionSize }}
-        </span>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="text-center">Review Cycle</th>
+                    <th class="text-center">KRA</th>
+                    <th class="text-center">Total KPIs</th>
+                    <th class="text-center">Weightage (%)</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Effective Date</th>
+                    <th class="text-center">Target Date</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-kra>
+                  <tr>
+                    <td class="text-center">
+                      {{ kra?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}
+                    </td>
+                    <td class="text-center">
+                      {{ kra.kpis?.[0]?.kraName || kra.kra?.kraName || '-' }}
+                    </td>
+                    <td class="text-center">
+                      <a class="kpis-count" [class.cursor]="kra.kpisCount > 0" [class.text-muted]="kra.kpisCount === 0"
+                        [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
+                        (click)="kra.kpisCount > 0 && openAssignedKpiCanvas(assignKpiCanvas, kra, kra.employeeId, kra.fullName)">
+                        {{ kra.kpisCount }}
+                      </a>
+                    </td>
+
+                    <td class="text-center">
+                      {{ kra.kra?.weightageValue || kra.weightageValue || '-' }}
+                    </td>
+
+                    <td class="text-center kpi-status" [ngClass]="getStatusClass(kra.kra?.status)">
+                      {{ kra.kra?.status || kra.status || '-' }}
+                    </td>
+
+                    <td class="text-center">
+                      {{ kra.kra?.effectiveDate | date:'mediumDate' }}
+                    </td>
+                    <td class="text-center">
+                      {{ kra.kpis?.[0]?.kraTargetDate | date:'mediumDate' }}
+                    </td>
+                    <td class="text-center">
+                      <div class="dropdown">
+                        <span data-bs-toggle="dropdown" class="cursor-pointer">
+                          <i class="bi bi-three-dots-vertical text-muted"></i>
+                        </span>
+                        <ul class="dropdown-menu custom-dropdown-menu">
+                          <li class="dropdown-item" (click)="onUpdate(kra)">
+                            <a class="dropdown-custom-btn">
+                              <i class="bi bi-pencil me-2"></i>Update
+                            </a>
+                          </li>
+                          <li class="dropdown-item" (click)="onHold(kra)">
+                            <a class="dropdown-custom-btn text-warning">
+                              <i class="bi bi-pause-circle me-2"></i>On Hold
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+
+              </p-table>
+            </div>
+          </p-accordion-content>
+
+        </p-accordion-panel>
+      </p-accordion>
+
+      <!-- ✅ PAGINATION STARTS HERE -->
+      <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+
+          <div class="d-flex align-items-center gap-3 p-2">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+              (ngModelChange)="onPageSizeChange($event)">
+
+              @for (option of options; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+
+            <span class="pagination-label text-nowrap">
+              Showing {{ first + 1 }} -
+              {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }}
+              of {{ collectionSize }}
+            </span>
+          </div>
+
+          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)">
+          </p-paginator>
+
+        </div>
       </div>
-      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-        (onPageChange)="onPageChange($event)"></p-paginator>
+      <!-- ✅ PAGINATION ENDS HERE -->
+
+      } @else {
+      <app-no-data-found />
+      }
+
     </div>
   </div>
-  }
   } @else {
   <div class="custom-compoent-data-loader">
     <app-data-loader-content />
   </div>
   }
+
+
 </div>
 
 <!-- ASSIGN KRA/KPI MODAL - UNCHANGED -->
@@ -185,7 +211,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <p class="popup-heading mb-0">
-        {{ 'Assign KRA & KPIs' | translate }}
+        {{ isEditMode ? 'Update KRA & KPIs' : 'Assign KRA & KPIs' }}
       </p>
     </div>
 
@@ -353,8 +379,20 @@
             </tbody>
           </table>
 
-          <div class="text-danger small m-3" *ngIf="totalNewKpiWeightage > 100">
-            Note: Total KPI weightage cannot exceed 100%.
+          <!-- KPI Weightage Feedback Messages -->
+          <div class="m-3">
+            <!-- Red Error: Over 100% -->
+            <div class="text-danger small fw-medium" *ngIf="totalNewKpiWeightage > 100">
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              Note: Total KPI weightage cannot exceed 100%.
+              <!-- Current: {{ totalNewKpiWeightage }}% -->
+            </div>
+
+            <!-- Green Success: Exactly 100% -->
+            <div class="text-success small fw-medium" *ngIf="totalNewKpiWeightage === 100">
+              <i class="bi bi-check-circle-fill me-1"></i>
+              Great! Total weightage is 100% — Ready to assign!
+            </div>
           </div>
 
         </div>
@@ -365,7 +403,7 @@
             {{ 'Cancel' | translate }}
           </button>
           <button type="submit" class="custom-btn btn-primary"
-            [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canAddRow()">
+            [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage()">
             @if (isSubmitting) {
             <span class="spinner-border spinner-border-sm me-2"></span> Assigning...
             } @else {
@@ -374,6 +412,124 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Filters Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container" [formGroup]="filterForm">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{ 'Filters' | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content p-4">
+      <!-- Job Role -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Job Role' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="JobroleDesignation" optionLabel="designationName" formControlName="jobRole"
+            [filter]="true" placeholder="Select Job Role" class="form-select custom-select" (onChange)="applyFilters()"
+            (onClear)="applyFilters()">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Department -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Department' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentDetails" optionLabel="departmentName" formControlName="department"
+            placeholder="Select Department" [filter]="true" class="form-select custom-select"
+            (onChange)="onDepartmentChange($event.value)" (onClear)="onDepartmentChange([])">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Team' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="teamDropdownValues" optionLabel="subdepartmentName" formControlName="team"
+            placeholder="Select Team" class="form-select custom-select" (onChange)="onTeamChange($event.value)"
+            (onClear)="onTeamChange([])">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Location' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="location"
+            placeholder="Select Location" class="form-select custom-select"
+            (onChange)="getSubLocationByid($event.value)" (onClear)="getSubLocationByid([])">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Sub Location -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Sub Location' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="subLocationsDropdown" optionLabel="jobSubLocationName" formControlName="subLocation"
+            placeholder="Select Sub Location" class="form-select custom-select"
+            (onChange)="onSubLocationChange($event.value)" (onClear)="onSubLocationChange([])">
+          </p-multiSelect>
+        </div>
+      </div>
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+          {{ 'Clear All' | translate }}
+        </button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{ 'Close' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #assignKpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">KPI's ({{ assignKpiList.length }})</p>
+      <a (click)="closeAssignedKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+        <div *ngIf="assignKpiList.length === 0" class="text-center py-5 text-muted">
+          <app-no-data-found></app-no-data-found>
+        </div>
+
+        <div *ngFor="let kpi of assignKpiList" class="project-card mb-3">
+          <p class="project-name">{{ kpi.kpiName }}</p>
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates fw-bold">{{ kpi.targetDate | date:'MMM dd, yyyy' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </ng-template>

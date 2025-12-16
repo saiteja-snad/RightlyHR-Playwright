@@ -93,7 +93,7 @@
 
                 <ng-template pTemplate="header">
                   <tr>
-                    <th class="text-center">Review Cycle</th>
+                    <th>Review Cycle</th>
                     <th class="text-center">KRA</th>
                     <th class="text-center">Total KPIs</th>
                     <th class="text-center">Weightage (%)</th>
@@ -106,7 +106,7 @@
 
                 <ng-template pTemplate="body" let-kra>
                   <tr>
-                    <td class="text-center">
+                    <td>
                       {{ kra?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}
                     </td>
                     <td class="text-center">
@@ -145,11 +145,11 @@
                               <i class="bi bi-pencil me-2"></i>Update
                             </a>
                           </li>
-                          <li class="dropdown-item" (click)="onHold(kra)">
+                          <!-- <li class="dropdown-item" (click)="onHold(kra)">
                             <a class="dropdown-custom-btn text-warning">
                               <i class="bi bi-pause-circle me-2"></i>On Hold
                             </a>
-                          </li>
+                          </li> -->
                         </ul>
                       </div>
                     </td>

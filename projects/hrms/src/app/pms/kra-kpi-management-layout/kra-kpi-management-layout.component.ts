@@ -15,9 +15,9 @@ import {RbacService} from '../../services/rbac.service'
 export class KraKpiManagementLayoutComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'My KRA/KPI', link: '/pms/my-kra-kpi/view', icon: 'main-menu-icons/skill-dashboard.png',
+    { label: 'My KRA/KPI', link: '/pms/my-kra-kpi/view', icon: 'main-menu-icons/my-kra-kpi.png',
       permission: { feature: 'My KRA KPI', action: 'view' } },
-    { label: 'Dashboard', link: '/pms/my-kra-kpi/dashboard', icon: 'main-menu-icons/skill-directory.png',
+    { label: 'Dashboard', link: '/pms/my-kra-kpi/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
       permission: { feature: 'My KRA KPI', action: 'view' } },
   ];
 

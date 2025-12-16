@@ -185,7 +185,7 @@ createRoleRow() {
 
   updateModuleInfo() {
     const url = this.router.url;
-    // this.moduleinfo = url.includes('/pms/kra') ? MODULE_INFOS.PMS_KRA_LIST_MODULE_INFO : '';
+    this.moduleinfo = url.includes('/pms/kra') ? MODULE_INFOS.PMS_KRA_LIST_MODULE_INFO : '';
   }
 
  toggleInactiveKra(): void {

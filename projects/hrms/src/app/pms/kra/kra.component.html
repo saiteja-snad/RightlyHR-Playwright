@@ -17,11 +17,12 @@
         {{ kraFilterApplied ? 'Inactive KRA' : 'Active KRA' }}
       </a>
 
-       @if(rbac.allowedToAccess('KRA.create')){
+      @if(rbac.allowedToAccess('KRA.create')){
       <button class="custom-btn btn-primary" (click)="openCreateModal()">
         {{ 'Create KRA' | translate }}
       </button>
     }
+
     </div>
 
     <!-- } -->
@@ -89,7 +90,7 @@
                   <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
                 </li>
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
-                  <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Active' |
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
                     translate }}</a>
                 </li>
                 }
@@ -526,6 +527,7 @@
 <ng-template #statusConfirmModal let-modal>
   <div class="result-popup-content" ngbAutofocus>
         <div>
+          <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text"> Are you sure you want to change the status of "{{ pendingKraName }}"</p>
     </div>
 

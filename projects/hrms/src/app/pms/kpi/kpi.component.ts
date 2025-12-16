@@ -1,6 +1,6 @@
 import { OpenModalService } from './../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
@@ -18,6 +18,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { MODULE_INFOS } from '../../shared/modules-info';
+
 
 @Component({
   selector: 'app-kpi',
@@ -90,6 +92,13 @@ export class KpiComponent implements OnInit, OnDestroy {
 
   showOnlyInactive = false;
 inactiveButtonLabel = 'Inactive KPI';
+@ViewChild('statusConfirmModal') statusConfirmModal!: any;
+
+pendingKpi: any = null;
+pendingKpiName = '';
+pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
+
+
 
 
   // Simplified single KPI form
@@ -119,7 +128,7 @@ inactiveButtonLabel = 'Inactive KPI';
 
   updateModuleInfo() {
     const url = this.router.url;
-    // this.moduleinfo = url.includes('/pms/kpi') ? MODULE_INFOS.PMS_KPI_LIST_MODULE_INFO : '';
+    this.moduleinfo = url.includes('/pms/kpi') ? MODULE_INFOS.PMS_KPI_LIST_MODULE_INFO : '';
   }
 
   loadKraList() {
@@ -344,6 +353,112 @@ onSubmitKpi() {
     });
   }
 }
+
+updateKpiStatus(kpi: any, status: 'Active' | 'Inactive' | 'On Hold') {
+  const employeeId =
+    JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0;
+
+  const payload = [
+    {
+      kpiId: kpi.kpiId,
+      kpiName: kpi.kpiName,
+      status,
+      updatedBy: employeeId,
+      createdBy: employeeId
+    }
+  ];
+
+  this.http.postdata('Kpi/upsertkra', payload).subscribe({
+    next: () => {
+      this.loadKpiList();
+      this.conformationPopup.openSuccessModal(
+        `KPI status updated to ${status}`
+      );
+    },
+    error: (err) => {
+      this.conformationPopup.openErrorModal(
+        err.error?.message || 'Failed to update KPI status'
+      );
+    }
+  });
+}
+
+canUpdate(status: string): boolean {
+  return status === 'Created' || status === 'Active';
+}
+
+canActivate(status: string): boolean {
+  return status === 'Inactive' || status === 'On Hold' || status === 'Created';
+}
+
+canInactivate(status: string): boolean {
+  return status === 'Active' || status === 'On Hold';
+}
+
+canHold(status: string): boolean {
+  return status === 'Active';
+}
+
+openStatusConfirmModal(
+  kpi: any,
+  newStatus: 'Active' | 'Inactive' | 'On Hold'
+) {
+  this.pendingKpi = kpi;
+  this.pendingKpiName = kpi.kpiName;
+  this.pendingNewStatus = newStatus;
+
+  this.modalService.open(this.statusConfirmModal, {
+    centered: true,
+    backdrop: 'static'
+  });
+}
+
+
+confirmStatusChange() {
+  if (!this.pendingKpi || !this.pendingNewStatus) return;
+
+  const employeeId =
+    JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0;
+
+  this.isSubmitting = true;
+
+  const payload = [
+    {
+      kpiId: this.pendingKpi.kpiId,
+      kpiName: this.pendingKpi.kpiName,
+      status: this.pendingNewStatus,
+      updatedBy: employeeId,
+      createdBy: employeeId
+    }
+  ];
+
+  this.http.postdata('Kpi/upsertkra', payload).subscribe({
+    next: () => {
+      this.modalService.dismissAll();
+      this.loadKpiList();
+
+      this.conformationPopup.openSuccessModal(
+        `KPI status updated to ${this.pendingNewStatus}`
+      );
+
+      // cleanup
+      this.pendingKpi = null;
+      this.pendingNewStatus = '';
+    },
+    error: (err) => {
+      this.isSubmitting = false;
+      this.conformationPopup.openErrorModal(
+        err.error?.message || 'Failed to update KPI status'
+      );
+    },
+    complete: () => {
+      this.isSubmitting = false;
+    }
+  });
+}
+
+
+
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();

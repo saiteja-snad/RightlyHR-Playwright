@@ -79,6 +79,14 @@ export const MODULE_INFOS = {
     PMS_CONFIGURATION_INCREMENT_PERCENTAGE_MODULE_INFO: "This screen enables configuration of increment percentages based on employee ratings within a selected review cycle. Admins can define rating scales, set percentage slabs for specific salary ranges, and associate them with departments, teams, and locations.",
     PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO: "This section allows administrators to configure assessors for a selected review cycle by mapping them to departments, teams, and locations. Each assessor can be assigned a deadline date, rating responsibility, and the ability to add comments for evaluations.",
 
+
+    // KRA KPI Configuration Module Info
+    PMS_KRA_LIST_MODULE_INFO: "The KRA section allows HR/Admin to define role-specific responsibility areas for employees. It outlines the expected outcomes and focus areas to ensure clarity and accountability in performance expectations.",
+    PMS_KPI_LIST_MODULE_INFO: "The KPI section allows HR/Admin to configure measurable performance indicators linked to KRAs. It helps track employee performance using defined metrics for objective evaluation and analysis.",
+    PMS_KRA_KPI_ASSIGN_MODULE_INFO: "The Assign KRA/KPI section allows managers or HR/Admin to assign relevant KRAs and KPIs to employees or roles. It ensures alignment of individual performance goals with organizational objectives and enables effective performance tracking.",
+
+
+
     //Desk Allocation Module Info
     DESK_ALLOCATION_MODULE_INFO: "The Desk Allocation page enables efficient workspace management by displaying desk statuses and allowing actions like reallocation, inactivation, maintenance scheduling, and viewing details. Users can filter by location, desk ID, type, shift, employee, and approver for precise control.",
 

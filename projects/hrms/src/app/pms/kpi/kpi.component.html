@@ -12,7 +12,7 @@
     </div>
 
     <div class="d-flex align-items-center gap-4">
-     <a class="inactive-btn" (click)="toggleInactiveFilter()">{{ inactiveButtonLabel | translate }}</a>
+      <a class="inactive-btn" (click)="toggleInactiveFilter()">{{ inactiveButtonLabel | translate }}</a>
       <button class="custom-btn btn-primary" (click)="openModal(createKpiModal)">
         {{ 'Create KPI' | translate }}
       </button>
@@ -75,17 +75,45 @@
                 <i class="bi bi-three-dots-vertical text-muted"></i>
               </span>
               <ul class="dropdown-menu custom-dropdown-menu">
+
+                <!-- UPDATE -->
+                @if (canUpdate(kpi.status)) {
                 <li class="dropdown-item" (click)="onUpdate(kpi, createKpiModal)">
                   <a class="dropdown-custom-btn">
                     <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
                   </a>
                 </li>
-                <li class="dropdown-item" (click)="onMakeInactive(kpi)">
+                }
+
+                <!-- ACTIVATE -->
+                @if (canActivate(kpi.status)) {
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Active')">
+                  <a class="dropdown-custom-btn text-success">
+                    <i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}
+                  </a>
+                </li>
+                }
+
+                <!-- INACTIVE -->
+                @if (canInactivate(kpi.status)) {
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Inactive')">
                   <a class="dropdown-custom-btn text-warning">
                     <i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}
                   </a>
                 </li>
+                }
+
+                <!-- HOLD -->
+                @if (canHold(kpi.status)) {
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'On Hold')">
+                  <a class="dropdown-custom-btn text-secondary">
+                    <i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate }}
+                  </a>
+                </li>
+                }
+
               </ul>
+
             </div>
           </td>
           }
@@ -206,6 +234,31 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- STATUS CHANGE CONFIRMATION MODAL -->
+<ng-template #statusConfirmModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="confirmation icon" class="confirmation-delete-icon" />
+      <p class="confirmation-text">
+        Are you sure you want to change the status of
+        <strong>"{{ pendingKpiName }}"</strong>
+        to
+        <strong>{{ pendingNewStatus }}</strong>?
+      </p>
+    </div>
+
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+        No
+      </button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmStatusChange()" [disabled]="isSubmitting">
+        Yes
+      </button>
     </div>
   </div>
 </ng-template>

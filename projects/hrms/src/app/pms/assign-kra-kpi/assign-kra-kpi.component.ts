@@ -33,6 +33,8 @@ import { IDepartment } from '../apprisal-list/review-cycle-emp.model';
 import { ChipModule } from 'primeng/chip';
 import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
+import { MODULE_INFOS } from '../../shared/modules-info';
+
 
 @Component({
   selector: 'app-assign-kra-kpi',
@@ -205,7 +207,7 @@ selectedKraAssignment: any;
 
   updateModuleInfo() {
     const url = this.router.url;
-    // this.moduleinfo = url.includes('/pms/kpi') ? MODULE_INFOS.PMS_KPI_LIST_MODULE_INFO : '';
+    this.moduleinfo = url.includes('/pms/assign-kra-kpi') ? MODULE_INFOS.PMS_KRA_KPI_ASSIGN_MODULE_INFO : '';
   }
 
   getAllEmployeeDetails() {
@@ -661,21 +663,29 @@ removeKpiRow(index: number): void {
   const row = this.kpiRows.at(index);
   const rowValue = row.value;
 
-  if (this.isEditMode && rowValue.kpiId) {
+  if (
+    this.isEditMode &&
+    rowValue.kpiId && Number(rowValue.kpiId) > 0
+  ) {
     this.voidKpis.push({
-      ...rowValue,
-      status: 'void',
+      kpiId: rowValue.kpiId,
       kraId: this.assignForm.get('kraId')?.value,
-      kpiName: this.getKpiNameById(rowValue.kpiId) || 'Unknown',
+      kpiName: this.getKpiNameById(rowValue.kpiId),
+      weightageValue: String(rowValue.weightage),
+      targetValue: String(rowValue.targetValue),
+      targetDate: String(rowValue.targetDate),
+      targetType: String(rowValue.uom || ''),
+      description: String(rowValue.description || ''),
+      status: 'void',
     });
-    this.popup.openSuccessModal('KPI row deleted successfully!');
-  } else {
-    // New KPI → just remove
-    this.popup.openSuccessModal('KPI row deleted successfully!');
+
+    this.popup.openSuccessModal('KPI removed Succesfully');
   }
 
+  // ✅ Always remove from form
   this.kpiRows.removeAt(index);
 }
+
 
   openAssignModal(content: any): void {
     this.assignForm.reset();
@@ -761,7 +771,7 @@ onSubmitAssign(): void {
     description: row.description?.trim() || '',
     reviewCycleId: Number(formValue.reviewCycle),
     ratingScaleId: Number(formValue.ratingScale),
-    status: row.status || 'New',
+    status: row.status || 'Active',
     createdBy: loggedInEmployeeId,
     updatedBy: loggedInEmployeeId,
     employeeIds: selectedEmployeeIds,

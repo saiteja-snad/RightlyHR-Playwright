@@ -51,8 +51,8 @@ export class IntialLoadEntitlementCreateComponent {
       this.leaveAllocationForm.patchValue({
         year: this.carryforwarddata.year,
         location: this.carryforwarddata.location,
-       
-    
+
+
       });
     }
 
@@ -164,7 +164,7 @@ export class IntialLoadEntitlementCreateComponent {
     this.http.getDataWithQueryParams("OrgLeavesCategories", params).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.categoryDetails = res;
-        
+
         // Pre-select categories from localStorage
         if (this.carryforwarddata?.categoryIds?.length) {
           this.leaveAllocationForm.patchValue({
@@ -184,7 +184,7 @@ export class IntialLoadEntitlementCreateComponent {
 
   sumbitdata() {
     const formValue = this.leaveAllocationForm.value;
-    
+
     const payload = {
       year: formValue.year,
       location: formValue.location,
@@ -198,15 +198,20 @@ export class IntialLoadEntitlementCreateComponent {
       JSON.stringify(payload)
     );
 
-    this.route.navigate([
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview'
-    ]);
+    this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview']);
   }
 
   resetdata() {
     this.leaveAllocationForm.reset();
-    localStorage.removeItem('loadEntitlement');
+    this.modalService.dismissAll();
+    localStorage.removeItem('intialloadEntitlement')
+    this.route.navigate([
+      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'
+    ]);
+
   }
+
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

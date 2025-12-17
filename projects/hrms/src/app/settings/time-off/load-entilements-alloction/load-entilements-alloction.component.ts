@@ -179,9 +179,9 @@ export class LoadEntilementsAlloctionComponent {
       next: (res: any) => {
         this.employeeDetails = res.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: ` ${employee.fusionEmpId} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+           
         }));
-
       },
       error: err => {
         console.error('Error fetching employees:', err);

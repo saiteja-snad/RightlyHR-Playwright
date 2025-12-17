@@ -351,6 +351,14 @@ export class SettingsHeaderComponent implements OnInit {
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
+  isshowsettingsforcarryforword() {
+    const showPaths = [
+      '/settings/timeoff-configurations/load-entitlement/carry-forward',
+      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
   navigateTointialloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
     localStorage.removeItem('carryForwardJobId'),

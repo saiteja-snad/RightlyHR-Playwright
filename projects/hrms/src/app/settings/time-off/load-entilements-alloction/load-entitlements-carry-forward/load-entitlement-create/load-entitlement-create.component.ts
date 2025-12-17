@@ -153,10 +153,16 @@ export class LoadEntitlementCreateComponent {
     localStorage.setItem('loadEntitlement', JSON.stringify(this.leaveAllocationForm.value));
     this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview'])
   }
+
   resetdata() {
     this.leaveAllocationForm.reset();
-    localStorage.removeItem('loadEntitlement');
+    localStorage.removeItem('loadEntitlement')
+    this.route.navigate([
+      '/settings/timeoff-configurations/load-entitlement/carry-forward'
+    ]);
+
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

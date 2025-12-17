@@ -66,7 +66,7 @@ export class IntialLoadEntitlementPreviewComponent {
       next: (res: any) => {
         this.loading = false;
        if(res?.data?.employees?.length >0){
-         this.mapEmployees(res.data.employees);
+         this.mapEmployees(res?.data?.employees);
        }
        else{
         this.employeesTableData=[]

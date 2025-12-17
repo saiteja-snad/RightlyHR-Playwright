@@ -107,6 +107,10 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     openAdd() {
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-add']);
   }
+   updateNavigation(ratecard: any) {
+    localStorage.setItem('updateratecard', JSON.stringify(ratecard));
+    this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-update']);
+  }
  onCheckemployee(employeedId: any) {
     if (employeedId) {
       this.employeeId = employeedId;

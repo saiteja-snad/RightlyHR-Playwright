@@ -58,11 +58,11 @@
               <td class="text-center">{{ item?.experienceBands?.[0]?.currencies?.[0]?.rate ?? '-' }}</td>
               <td class="text-center">{{ item?.experienceBands?.[0]?.currencies?.[0]?.currencyCode ?? '-'   }}</td>
               <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
-              <td>
+              <td class="text-center" >
                 <div class="dropdown">
-                  <a type="button" data-bs-toggle="dropdown" *ngIf="item.status==='Active'">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
+                   <span type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </span>
                   <!-- <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Inactive'">
                 <li (click)="onClick(item,Activeconfirmationpopup)">
                   <a class="dropdown-item">Active</a>
@@ -70,8 +70,13 @@
               </ul> -->
                   <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
                     <li (click)="onClick(item,confirmationpopup)">
-                      <a class="dropdown-item">Inactive</a>
+                      <a class="dropdown-item"> <i class="bi bi-trash3 me-2"></i>Inactive</a>
                     </li>
+                     <li (click)="updateNavigation(item)">
+                        <a class="dropdown-item">
+                           <i class="bi bi-pencil me-2"></i>{{"Update" | translate}}
+                        </a>
+                       </li>
                   </ul>
                 </div>
               </td>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { LoadentilledmentprogressbarComponent } from "../../../../shared/loadentilledmentprogressbar/loadentilledmentprogressbar.component";
 import { RouterModule } from "@angular/router";
 @Component({
@@ -8,4 +8,10 @@ import { RouterModule } from "@angular/router";
   styleUrl: './load-entitlements-carry-forward.component.scss'
 })
 
-export class LoadEntitlementsCarryForwardComponent { }
+export class LoadEntitlementsCarryForwardComponent implements OnDestroy{
+
+  ngOnDestroy(): void {
+    localStorage.removeItem('loadEntitlement')
+    localStorage.removeItem('carryForwardJobId')
+  }
+}

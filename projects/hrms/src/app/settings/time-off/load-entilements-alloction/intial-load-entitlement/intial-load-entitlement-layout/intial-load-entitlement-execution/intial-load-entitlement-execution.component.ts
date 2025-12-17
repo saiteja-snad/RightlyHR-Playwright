@@ -29,6 +29,7 @@ export class IntialLoadEntitlementExecutionComponent {
             setTimeout(() => {
               this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
               localStorage.removeItem('intialloadEntitlement')
+              localStorage.removeItem('carryForwardJobId')
             }, 2000);
           },
           error: (err) => {

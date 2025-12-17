@@ -130,7 +130,7 @@ export class IntialLoadEntitlementComponent {
     const params: any = {
       pageNumber: this.page,
       pageSize: this.pageSize,
-      jobType: '	Initial Load',
+      jobType: 'Initial Load',
       searchTerm: this.searchQuery,
       ...this.activeFilters   // merge filters here
     };

@@ -1,6 +1,6 @@
 <div class="load-components-container">
-    <div class="status-cards mb-3" *ngIf="employeesTableData.length > 0">
-        <div class="status-card" [ngClass]="{'success': gradeAssignments?.status === 'success',
+    <div class="status-cards mb-3">
+        <div class="status-card" *ngIf="gradeAssignments?.status" [ngClass]="{'success': gradeAssignments?.status === 'success',
            'error': gradeAssignments?.status === 'failed' }">
             <div class="icon">{{ gradeAssignments?.status === 'success' ? '✔' : '✖' }}</div>
             <div class="content d-flex align-items-center justify-content-between w-100">
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <div class="status-card" [ngClass]="{'success': policymapping?.status === 'success',
+        <div class="status-card" *ngIf="policymapping?.status" [ngClass]="{'success': policymapping?.status === 'success',
                 'error': policymapping?.status === 'failed'}">
             <div class="icon">{{ policymapping?.status === 'success' ? '✔' : '✖' }}</div>
             <div class="content d-flex align-items-center justify-content-between w-100">
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div class="status-card " [ngClass]="{'success': duplicatecheck?.status === 'success',
+        <div class="status-card " *ngIf="duplicatecheck?.status" [ngClass]="{'success': duplicatecheck?.status === 'success',
                 'error': duplicatecheck?.status === 'failed'}">
             <div class="icon">{{ duplicatecheck?.status === 'success' ? '✔' : '✖' }}</div>
             <div class="content d-flex align-items-center justify-content-between w-100">
@@ -66,9 +66,9 @@
     </div>
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input"
-            placeholder="Search by employee name / grade " aria-label="Username" [(ngModel)]="searchQuery"
-            (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
+        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name / grade "
+            aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+            aria-describedby="basic-addon1">
     </div>
     <div class="custom-p-multi-select-table">
         @if (!loading) {
@@ -90,7 +90,7 @@
                         {{ header.name }}
                         <small>({{ header.code }})</small>
                     </th>
-                    <th class="text-center">Total Leave Entitlements</th>
+                    <th  *ngIf="leaveHeaders.length>0" class="text-center">Total Leave Entitlements</th>
                 </tr>
             </ng-template>
 
@@ -111,17 +111,25 @@
 
                     <td class="text-center">
                         <div class="d-flex justify-content-center">
-                            <div class="code-box text-center px-4">
+                            <div class="code-box text-center px-4"
+                                *ngIf="!(emp.isValid === false && emp.reason === 'Valid grade assignment not found'); else missingGrade">
                                 {{ emp.grade }}
                             </div>
+
+                            <ng-template #missingGrade>
+                                <div class=" text-center px-4 text-danger">
+                                    <i class="bi bi-exclamation-circle-fill me-2"></i>Missing Grade
+                                </div>
+                            </ng-template>
                         </div>
                     </td>
+
 
                     <!-- Dynamic leave values -->
                     <td *ngFor="let header of leaveHeaders" class="text-center">
                         {{ emp.leaveValues?.[header.code] ?? 0 }}
                     </td>
-                    <td class="text-center">
+                    <td class="text-center" *ngIf="leaveHeaders.length>0">
                         {{ emp.totalLeaveEntitlement }}
                     </td>
 

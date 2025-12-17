@@ -116,7 +116,6 @@ export class IntialLoadEntitlementPreviewComponent {
             isValid: lc.isValid
           });
 
-          // ✅ ADD to total
           totalLeaveEntitlement += lc.allowedDays || 0;
 
           // dynamic headers
@@ -132,7 +131,7 @@ export class IntialLoadEntitlementPreviewComponent {
       return {
         employeeId: emp.employeeId,
         gradeId: emp.gradeId,
-        employeeName: `${emp.firstName} ${emp.lastName}`,
+        employeeName: `${emp.firstName}  ${emp.middleName  ?? ''} ${emp.lastName}`,
         joinedDate: emp.dateOfJoining,
         location: emp.locationName,
         sublocationName: emp.sublocationName,
@@ -140,11 +139,9 @@ export class IntialLoadEntitlementPreviewComponent {
         grade: emp.gradeName,
         isValid: emp.isValid,
         selected: false,
-
+        reason:emp.reason,
         leaveValues,
         leaveEntries,
-
-        // ✅ expose total
         totalLeaveEntitlement
       };
     });

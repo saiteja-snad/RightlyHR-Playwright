@@ -65,13 +65,18 @@ export class IntialLoadEntitlementPreviewComponent {
     ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
-        this.mapEmployees(res.data.employees);
-        this.gradeAssignments = res.data.gradeAssignments;
-        this.policymapping = res.data.policyMapping;
-        this.duplicatecheck = res.data.duplicateCheck;
+       if(res?.data?.employees?.length >0){
+         this.mapEmployees(res.data.employees);
+       }
+       else{
+        this.employeesTableData=[]
+       }
+        this.gradeAssignments = res?.data?.gradeAssignments;
+        this.policymapping = res?.data?.policyMapping;
+        this.duplicatecheck = res?.data?.duplicateCheck;
         // Optional helpers
-        this.isGradeAssignmentSuccess = res.gradeAssignments?.status === 'success';
-        this.failedGradeEmployees = res.gradeAssignments?.data || [];
+        this.isGradeAssignmentSuccess = res?.gradeAssignments?.status === 'success';
+        this.failedGradeEmployees = res?.gradeAssignments?.data || [];
       },
       error: () => {
         this.loading = false;

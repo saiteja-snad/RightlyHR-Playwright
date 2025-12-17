@@ -44,23 +44,63 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
   FrequencyDetail = [] as any;
   @ViewChild('deletepopup') deletepopup: any;
   isloading = false;
-  loading = true;
-  selectedCountryConfig: {
-    hideCode: boolean;
-    hideName: boolean;
-    dialCode?: string;
-  } = {
-    hideCode: true,
-    hideName: true,
-  };
-  countryListConfig = {
-    hideCode: true,
-  };
-  selectedDialCode: any;
-  selectedCountryCodegflag: any;
-  selectedDialphoneCode: any;
-  selectedworkcoutrycode = signal<any>('');
-  buttons = false;
+  currencyCodes=[
+  {
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    symbol: "¥"
+  },
+  {
+    code: "GBP",
+    name: "British Pound Sterling",
+    symbol: "£"
+  },
+  {
+    code: "VND",
+    name: "Vietnamese Dong",
+    symbol: "₫"
+  },
+   {
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$"
+  },
+  {
+    code: "INR",
+    name: "Indian Rupee",
+    symbol: "₹"
+  },
+  {
+    code: "GBP",
+    name: "British Pound Sterling",
+    symbol: "£"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    symbol: "¥"
+  },
+  {
+    code: "VND",
+    name: "Vietnamese Dong",
+    symbol: "₫"
+  }
+];
   constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -68,13 +108,8 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private conformationPopup: OpenModalService
   ) {
-    effect(() => {
-      this.selectedworkcoutrycode.set(this.selectedDialCode);
-    });
   }
-
   ngOnInit(): void {
-    this.loading = false;
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
@@ -201,15 +236,13 @@ onRateChange(rateIndex: number, currencyIndex: number) {
 }
   onCountryChange(country: any, index: number) {
     console.log(country);
-    this.selectedDialCode = country.dialling_code;
-    this.selectedCountryCodegflag = country.code;
    const rateItem = this.rateItems.at(index) as FormGroup;
   const currenciesArray = rateItem.get('currencies') as FormArray;
   const rateValue = rateItem.get('rate')?.value;
   const currencyData = {
-    currencyCode: country.currency.code,
-    currencyName: country.currency.name,
-    symbol: country.currency.symbol,
+    currencyCode: country?.value?.code,
+    currencyName: country?.value?.name,
+    symbol: country?.value?.symbol,
     rate: currenciesArray.at(0).get('rate')?.value || ''
   };
    if (currenciesArray.length > 0) {
@@ -219,6 +252,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     // ➕ Create first currency
     currenciesArray.push(this.fb.group(currencyData));
   }
+  console.log(this.ratecardForm)
   }
   addRateCard() {
     let formValues = this.ratecardForm.getRawValue();
@@ -237,10 +271,10 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     this.subscription=this.http.postdata('RateCard',payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
-
             this.conformationPopup.openSuccessModal(
               'Rate Card created successfully'
             );
+            this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active'])
           },
           error: (err: any) => {
             this.isloading = false;

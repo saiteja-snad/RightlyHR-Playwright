@@ -2,7 +2,8 @@
     <div class="component-header-content pt-2">
         <div class="heading-content">
             <div class="commpoment-name navigator" (click)="nagvition()">Employee Rate Card
-                <i class="bi bi-chevron-double-right ms-1"></i></div>
+                <i class="bi bi-chevron-double-right ms-1"></i>
+            </div>
             <div class="component-header">{{'Update Rate Card'|translate}}</div>
         </div>
     </div>
@@ -20,20 +21,22 @@
                     </div>
                     <div class="error-msg" *ngIf="updateratecardForm.controls['year'].invalid && (updateratecardForm.controls['year'].touched || 
                                         updateratecardForm.controls['year'].dirty)">
-                        <div *ngIf="updateratecardForm.controls['year'].errors?.['required']">{{'Year is required '|translate}}</div>
+                        <div *ngIf="updateratecardForm.controls['year'].errors?.['required']">{{'Year is required'|translate}}
+                        </div>
                     </div>
                 </div>
-    
+
                 <!-- Location -->
                 <div>
                     <label for="location" class="form-label custom-label mb-2">{{'Location'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multi-select [options]="locations" optionLabel="jobLocationName" optionValue="id" class="form-select custom-select"
-                            placeholder="Please select location" filterBy="jobLocationName"[showClear]="false"[filter]="true"
-                            formControlName="location"  
+                        <p-multiSelect [options]="locations" optionLabel="jobLocationName" optionValue="id"
+                            class="form-select custom-select" formControlName="location"
+                            placeholder="Please select location" filterBy="jobLocationName" [resetFilterOnHide]="true"
+                            [showClear]="false" [filter]="true" display="chip"
                             (onChange)="onLocationChange($event.value)">
-                        </p-multi-select>
+                        </p-multiSelect>
                     </div>
                     <div class="error-msg"
                         *ngIf="updateratecardForm.controls['location'].invalid &&  (updateratecardForm.controls['location'].touched || updateratecardForm.controls['location'].dirty)">
@@ -42,16 +45,17 @@
                         </div>
                     </div>
                 </div>
-               
+
                 <!-- Sub Location -->
                 <div>
-                    <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multi-select   class="form-select custom-select"
-                            optionLabel="jobSubLocationName" optionValue="id"[options]="subLocations"
-                            filterBy="jobSubLocationName"[showClear]="false"[filter]="true"placeholder="Please select sub location"
-                             formControlName="subLocation">
-                        </p-multi-select>
+                        <p-multiSelect class="form-select custom-select" optionLabel="jobSubLocationName"
+                            optionValue="id" [options]="subLocations" display="chip" filterBy="jobSubLocationName"
+                            [showClear]="false" [filter]="true" placeholder="Please select sub location"
+                            formControlName="subLocation">
+                        </p-multiSelect>
                     </div>
                     <div class="error-msg"
                         *ngIf="updateratecardForm.controls['subLocation'].invalid &&  (updateratecardForm.controls['subLocation'].touched || updateratecardForm.controls['subLocation'].dirty)">
@@ -61,15 +65,14 @@
                     </div>
                 </div>
                 <!-- role -->
-                    <div>
+                <div>
                     <label class="form-label custom-label mb-2">{{'Role'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multi-select formControlName="role" placeholder="Please select role"
-                            optionLabel="projectrole" optionValue="id"
-                            filterBy="projectrole"[showClear]="false"[filter]="true" class="form-select custom-select"
-                            [options]="ProjectroleDetails">
-                        </p-multi-select>
+                        <p-multiSelect formControlName="role" placeholder="Please select role" optionLabel="projectrole"
+                            optionValue="id" display="chip" filterBy="projectrole" [showClear]="false" [filter]="true"
+                            class="form-select custom-select" [options]="ProjectroleDetails">
+                        </p-multiSelect>
                     </div>
                     <div class="error-msg"
                         *ngIf="updateratecardForm.controls['role'].invalid &&  (updateratecardForm.controls['role'].touched || updateratecardForm.controls['location'].dirty)">
@@ -79,29 +82,29 @@
                     </div>
                 </div>
                 <!-- effective from -->
-                  <div>
+                <div>
                     <label class="form-label custom-label mb-2">{{'Effective From'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                     <input type="date" class="form-control custom-input w-100" formControlName="effectivefrom" />
-                     <div class="error-msg"
-                        *ngIf="updateratecardForm.controls['effectivefrom'].invalid &&  (updateratecardForm.controls['effectivefrom'].touched || updateratecardForm.controls['effectivefrom'].dirty)">
-                        <div *ngIf="updateratecardForm.controls['effectivefrom'].errors?.['required']">
-                            {{'Effective From is required'|translate}}
+                        <input type="date" class="form-control custom-input w-100" formControlName="effectivefrom" />
+                        <div class="error-msg"
+                            *ngIf="updateratecardForm.controls['effectivefrom'].invalid &&  (updateratecardForm.controls['effectivefrom'].touched || updateratecardForm.controls['effectivefrom'].dirty)">
+                            <div *ngIf="updateratecardForm.controls['effectivefrom'].errors?.['required']">
+                                {{'Effective From is required'|translate}}
+                            </div>
                         </div>
                     </div>
-                        </div>
-                        </div>
-                 
+                </div>
+
                 <div class="pt-4 mt-1">
-                    <button type="button" class="custom-btn btn-primary px-4" (click)="addrow()">
+                    <button type="button" class="custom-btn btn-primary px-4" (click)="addRateCardItems()">
                         <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
                     </button>
                 </div>
             </div>
-    
+
             <div formArrayName="rateItems">
-                <div *ngFor="let shift of rateItems.controls; let i = index" [formGroupName]="i"
+                <div *ngFor="let ratecard of rateItems.controls; let i = index" [formGroupName]="i"
                     class="card custom-background-card p-3 mb-3">
                     <div class="d-flex w-100 gap-3 mb-3">
                         <!-- Experince -->
@@ -110,84 +113,99 @@
                                 <span class="text-danger">*</span></label>
                             <div class="d-flex">
                                 <div>
-                                    <input type="number" class="form-control custom-input"min="0" formControlName="experienceMin"
-                                        placeholder="min (year)" required />
+                                    <input type="number" class="form-control custom-input" min="0"
+                                        formControlName="experienceFrom" placeholder="min (year)" required />
                                 </div>
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
                                 </div>
                                 <div>
-                                    <input type="number" class="form-control custom-input" min="0" formControlName="experienceMax"
-                                        placeholder="max (year)" required />
+                                    <input type="number" class="form-control custom-input" min="0"
+                                        formControlName="experienceTo" placeholder="max (year)" required />
                                 </div>
                             </div>
                         </div>
-    
+
                         <!-- Rate Basic -->
                         <div class="w-100">
                             <label class="form-label custom-label">{{'Rate Basic'|translate}}<span
                                     class="text-danger">*</span></label>
-                                    <div class="custom-p-select-content">
-                            <p-select formControlName="rateBasic" placeholder="Please select rate basic"
-                            optionLabel="label" optionValue="value"
-                            class="form-select custom-select" 
-                            [options]="FrequencyDetail">
-                        </p-select>
-                        </div>
-                            <div *ngIf="shift.get('rateBasic')?.invalid && (shift.get('rateBasic')?.dirty || shift.get('rateBasic')?.touched)"
+                            <div class="custom-p-select-content">
+                                <p-select formControlName="frequencyType" placeholder="Please select rate basic"
+                                    optionLabel="label" optionValue="value" class="form-select custom-select"
+                                    [options]="FrequencyDetail">
+                                </p-select>
+                            </div>
+                            <div *ngIf="ratecard.get('frequencyType')?.invalid && (ratecard.get('frequencyType')?.dirty || ratecard.get('frequencyType')?.touched)"
                                 class="error-msg">
-                                <span *ngIf="shift.get('rateBasic')?.errors?.['required']">{{'Rate Basic is required'
-                                    | translate}}</span>
+                                <span *ngIf="ratecard.get('frequencyType')?.errors?.['required']">{{'Rate Basic is required'| translate}}</span>
                             </div>
-                        </div>
-    
-                        <!-- Currency -->
-                        <div class="w-100">
-                            <label class="form-label custom-label">{{'Currency' | translate}}<span class="text-danger">*</span></label>
-                            <input type="text" class="form-control custom-input w-100" placeholder="currency" 
-                            formControlName="currency" />
-                            <div *ngIf="shift.get('currency')?.invalid && (shift.get('currency')?.dirty || shift.get('currency')?.touched)"
-                                class="error-msg">
-                                <span *ngIf="shift.get('currency')?.errors?.['required']">{{'Currency is required'
-                                    | translate}}</span>
-                            </div>
-                        </div>
-    
-                        <!-- Rate -->
-                        <div class="w-100 ">
-                            <label class="form-label custom-label">{{'Rate' | translate}}<span class="text-danger">*</span></label>
-                            <div class="d-flex gap-2">
-                                <div>
-                                <input type="number" class="form-control custom-input w-100" formControlName="rate" placeholder="rate" />
-                                <div *ngIf="shift.get('rate')?.invalid && (shift.get('rate')?.dirty || shift.get('rate')?.touched)"
-                                class="error-msg">
-                                <span *ngIf="shift.get('rate')?.errors?.['required']">{{'Rate is required'
-                                    | translate}}</span>
-                            </div>
-                            </div>
-                            <div class="mb-2">
-                                <!-- Delete Icon -->
-                                <button type="button" class="custom-icon btn p-0" (click)="deleteShift(i)">
-                                    <i class="bi bi-trash text-danger"></i>
-                                </button>
-                            </div>
-                            </div>
-                            <div *ngIf="shift.get('startTime')?.invalid && (shift.get('startTime')?.dirty || shift.get('startTime')?.touched)"
-                                class="error-msg">
-                                <span *ngIf="shift.get('startTime')?.errors?.['required']">{{'Start Time is required'}}</span>
-                            </div>
-                        
                         </div>
 
+                        <!-- Currency -->
+                        <div class="w-100" formArrayName="currencies">
+                            <div *ngFor="let currency of getCurrencies(i).controls; let j = index" [formGroupName]="j">
+                        
+                                <label class="form-label custom-label">
+                                    {{'Currency' | translate}} <span class="text-danger">*</span>
+                                </label>
+                          <div class="custom-p-select-content">
+                                <p-select [options]="currencyCodes" optionLabel="code" optionValue="code" formControlName="currencyCode"
+                                    class="form-select custom-select" [filter]="true" placeholder="Please select currency"
+                                    (onChange)="onCountryChange($event, i, j)">
+                                </p-select>
+                        </div>
+                                <div *ngIf="currency.get('currencyCode')?.invalid && currency.get('currencyCode')?.touched" class="error-msg">
+                                    Currency is required
+                                </div>                  
+                        </div>                          
+                        </div>
+
+
+                       
+                        <!-- Rate -->
+                        <div class="w-100 ">
+                            <label class="form-label custom-label">{{'Rate' | translate}}<span
+                                    class="text-danger">*</span></label>
+                            <div class="d-flex gap-2">
+                                <div>
+                                    <!-- Currencies -->
+                                    <div formArrayName="currencies" class="w-100">
+                                        <div *ngFor="let currency of getCurrencies(i).controls; let j = index"
+                                            [formGroupName]="j">
+                                            <div class="d-flex gap-2">
+                                                <input type="number" class="form-control custom-input w-100"
+                                                    formControlName="rate" placeholder="rate"
+                                                    (input)="onRateChange(i, j)" />
+                                            </div>
+                                            <div *ngIf="currency.get('rate')?.invalid && (currency.get('rate')?.dirty || currency.get('rate')?.touched)"
+                                                class="error-msg">
+                                                <span *ngIf="currency.get('rate')?.errors?.['required']">Rate is
+                                                    required</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="mb-2">
+                                    <!-- Delete Icon -->
+                                    <button type="button" class="custom-icon btn p-0" (click)="deleteratecard(i)">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div> -->
-    
+
         </div>
         <div class="d-flex gap-3 justify-content-end">
-            <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary px-5" [disabled]="updateratecardForm.invalid" >{{'Submit'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary px-5"
+                (click)="Cancel()">{{'Cancel'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary px-5"
+                [disabled]="updateratecardForm.invalid||isloading">{{'Submit'|translate}}</button>
         </div>
     </form>
 </div>

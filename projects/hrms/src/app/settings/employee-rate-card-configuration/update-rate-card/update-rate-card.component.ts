@@ -34,46 +34,82 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 export class UpdateRateCardComponent {
   subscription!: Subscription;
   updateratecardForm!: FormGroup;
-  years: number[] = [];
-  Employeeinfo = {} as any;
-  currentYear: number = moment().year();
-  locations = [] as any;
-  subLocations = [] as any;
-  sublocatiodis = false;
-  ProjectroleDetails = [] as any;
-  FrequencyDetail = [] as any;
-    destroy$: Subject<boolean> = new Subject<boolean>();
-  @ViewChild('deletepopup') deletepopup: any;
-  isloading = false;
-  loading = true;
-  selectedCountryConfig: {
-    hideCode: boolean;
-    hideName: boolean;
-    dialCode?: string;
-  } = {
-    hideCode: true,
-    hideName: true,
-  };
-  countryListConfig = {
-    hideCode: true,
-  };
-  selectedDialCode: any;
-  selectedCountryCodegflag: any;
-  selectedDialphoneCode: any;
-  selectedworkcoutrycode = signal<any>('');
-  buttons = false;
+   years: number[] = [];
+   Employeeinfo = {} as any;
+   currentYear: number = moment().year();
+   locations = [] as any;
+   subLocations = [] as any;
+   sublocatiodis = false;
+   ProjectroleDetails = [] as any;
+   FrequencyDetail = [] as any;
+   @ViewChild('deletepopup') deletepopup: any;
+   isloading = false;
   employeedetails: any;
   updateratecardData: any;
-  constructor(
+    currencyCodes=[
+  {
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    symbol: "¥"
+  },
+  {
+    code: "GBP",
+    name: "British Pound Sterling",
+    symbol: "£"
+  },
+  {
+    code: "VND",
+    name: "Vietnamese Dong",
+    symbol: "₫"
+  },
+   {
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$"
+  },
+  {
+    code: "INR",
+    name: "Indian Rupee",
+    symbol: "₹"
+  },
+  {
+    code: "GBP",
+    name: "British Pound Sterling",
+    symbol: "£"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    symbol: "¥"
+  },
+  {
+    code: "VND",
+    name: "Vietnamese Dong",
+    symbol: "₫"
+  }
+];
+   constructor(
     public router: Router,
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService
   ) {
-    effect(() => {
-      this.selectedworkcoutrycode.set(this.selectedDialCode);
-    });
   }
 
     ngOnInit(): void {
@@ -96,76 +132,77 @@ export class UpdateRateCardComponent {
     });
   }
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-     //default year show selected
-    // this.updateratecardForm.patchValue({
-    //   year: this.years.find((x: any) => x.value === this.updateratecardData.createdDate)
-
-    // });
   }
 
-  getCurrencies(rateIndex: number): FormArray {
-  return this.rateItems.at(rateIndex).get('currencies') as FormArray;
-}
+
 
  getCurrenciesArray(rateItem: FormGroup): FormArray {
    return rateItem.get('currencies') as FormArray;
  }
- addRateCardItems() {
-    this.rateItems.push(this.createRateCardItems());
-  }
+ 
   //get the rate basics
-    getFrequencies() {
+ getFrequencies() {
     this.subscription = this.http.getData('Frequency').subscribe({
       next: (data: any) => {
         this.FrequencyDetail = data;
         this.FrequencyDetail = data.map((item: any) => ({
           label: item.frequency1,
-          value: item.frequency1
+          value: item.frequency1,
         }));
-      }, error: (error: any) => {
+      },
+      error: (error: any) => {
         console.log(error);
-      }
+      },
     });
   }
   
-  getJobrole() {
-    this.subscription = this.http.getData('ProjectRoles?isActive=true').subscribe({
-      next: (response: any) => {
-        if (response && response.success && Array.isArray(response.data)) {
-          this.ProjectroleDetails = response.data.map((item: any) => ({
-            id: item.id,
-            projectrole: item.roleName,                // Job role name
-            entityname: item.entity?.entityName || '-',      // Department name
-            entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
-            entityType: item.entityType || 'department',    // Entity type
-            isActive: item.isActive,
-            color: item.meta?.graphData?.color || '#000000'
-          }));
-           if (this.updateratecardData.roleId) {
+    getJobrole() {
+    this.subscription = this.http
+      .getData('ProjectRoles?isActive=true')
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.success && Array.isArray(response.data)) {
+            this.ProjectroleDetails = response.data.map((item: any) => ({
+              id: item.id,
+              projectrole: item.roleName, // Job role name
+              entityname: item.entity?.entityName || '-', // Department name
+              entityReferenceId:
+                item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
+              entityType: item.entityType || 'department', // Entity type
+              isActive: item.isActive,
+              color: item.meta?.graphData?.color || '#000000',
+            }));
+            if (this.updateratecardData.roleId) {
           this.updateratecardForm.patchValue({
             role: [this.updateratecardData.roleId]
           });
         }
-        } else {
-          this.ProjectroleDetails = [];
-        }
-      },
-      error: () => {
-      }
-    });
+          } else {
+            this.ProjectroleDetails = [];
+          }
+        },
+        error: () => {},
+      });
   }
 setExperienceBands() {
-  const rateArray = this.updateratecardForm.get('rateItems') as FormArray;
+  const rateArray = this.rateItems;
   rateArray.clear();
 
-  this.updateratecardData.experienceBands?.forEach((band: any) => {
+  this.updateratecardData.experienceBands.forEach((band: any) => {
     rateArray.push(
       this.fb.group({
-        experienceMin: [band.experienceFrom, Validators.required],
-        experienceMax: [band.experienceTo, Validators.required],
-        rateBasic: [band.frequencyType, Validators.required],
-        currency   : [band.currencies?.[0]?.currencyCode, Validators.required],
-        rate: [band.currencies?.[0]?.rate, Validators.required]
+        experienceFrom: [band.experienceFrom, Validators.required],
+        experienceTo: [band.experienceTo, Validators.required],
+        frequencyType: [band.frequencyType, Validators.required],
+        status: [band.status],
+        currencies: this.fb.array([
+          this.fb.group({
+            currencyCode: [band.currencies?.[0]?.currencyCode, Validators.required],
+            currencyName: [band.currencies?.[0]?.currencyName, Validators.required],
+            symbol: [band.currencies?.[0]?.symbol],
+            rate: [band.currencies?.[0]?.rate, Validators.required]
+          })
+        ])
       })
     );
   });
@@ -211,51 +248,45 @@ geAllLocations() {
 }
 
 
-   initializeForm() {
+  initializeForm() {
     this.updateratecardForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
-      location: [[], Validators.required],   // array
-      subLocation: [{ value: [], disabled: true }, Validators.required], 
-      role:['',Validators.required],
-      effectivefrom:['',Validators.required],
-       rateItems: this.fb.array([this.createRateCardItems()]),
-      
+      location: ['', Validators.required],
+      subLocation: ['', Validators.required],
+      role: ['', Validators.required],
+      effectivefrom: ['', Validators.required],
+      rateItems: this.fb.array([this.createRateCardItems()]),
     });
   }
-   get rateItems(): FormArray {
+  get rateItems(): FormArray {
     return this.updateratecardForm.get('rateItems') as FormArray;
   }
- addrow() {
+getCurrencies(rateIndex: number): FormArray {
+  return this.rateItems.at(rateIndex).get('currencies') as FormArray;
+}
+  addRateCardItems() {
     this.rateItems.push(this.createRateCardItems());
   }
- createRateCardItems(): FormGroup {
+createRateCardItems(): FormGroup {
   return this.fb.group({
-    experienceMin: ['', Validators.required],
-    experienceMax: ['', Validators.required],
-    rateBasic: ['', Validators.required],
+    experienceFrom: ['', Validators.required],
+    experienceTo: ['', Validators.required],
+    frequencyType: ['', Validators.required],
     currency: ['', Validators.required],
-    rate: ['', Validators.required]
+    rate: ['', Validators.required],
   });
 }
-  
-   createCurrencies(): FormGroup {
+  createCurrencies(): FormGroup {
     return this.fb.group({
       currencyCode: ['',Validators.required],
       currencyName: ['',Validators.required],
+      status: [''],
       symbol: [''],
       rate: ['', Validators.required]
     });
   }
-    isDeleteDisabled: boolean = false;
-     deleteratecard(index: number) {
-    if (this.rateItems.length > 1) {
-      this.rateItems.removeAt(index);
-      this.isDeleteDisabled = false; // allow delete if more than 1
-    } else {
-      this.isDeleteDisabled = true; // disable delete button
-    }
-  }
-  deleteShift(index: number) {
+  isDeleteDisabled: boolean = false;
+  deleteratecard(index: number) {
     if (this.rateItems.length > 1) {
       this.rateItems.removeAt(index);
       this.isDeleteDisabled = false; // allow delete if more than 1
@@ -268,13 +299,40 @@ geAllLocations() {
       this.years.push(i);
     }
   }
-   
- onRateChange(rateIndex: number, currencyIndex: number) {
+onRateChange(rateIndex: number, currencyIndex: number) {
   const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
                         .at(currencyIndex)
                         .get('rate');
   console.log(rateControl?.value);
 }
+onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
+  const currenciesArray = this.getCurrencies(rateIndex);
+
+  const selectedCurrency = this.currencyCodes.find(
+    c => c.code === event.value
+  );
+
+  if (!selectedCurrency) return;
+
+  currenciesArray.at(currencyIndex).patchValue({
+    currencyCode: selectedCurrency.code,
+    currencyName: selectedCurrency.name,
+    symbol: selectedCurrency.symbol
+  });
+}
+
+
+
+//   onCountryChange(event: any, index: number) {
+//   const rateItem = this.rateItems.at(index) as FormGroup;
+//   const currencies = rateItem.get('currencies') as FormArray;
+
+//   currencies.at(0).patchValue({
+//     currencyCode: event.value.code,
+//     currencyName: event.value.name,
+//     symbol: event.value.symbol
+//   });
+// }
 updateRateCard(){
     let formValues = this.updateratecardForm.getRawValue();
     console.log(formValues);
@@ -286,20 +344,21 @@ updateRateCard(){
       subLocationIds: formValues?.subLocation?.join(','),
       status: 'Active',
       createdBy: this.Employeeinfo.employeeId,
-         experienceBands: formValues.rateItems.map((item: any) => ({
-      experienceFrom: Number(item.experienceMin),
-      experienceTo: Number(item.experienceMax),
-      status: 'Active',
-      frequencyType: item.rateBasic,
-      currencies: [
-        {
-          currencyCode: item.currency,
-         currencyName: item.currency,
-          symbol: "string",
-          rate: item?.rate
-        }
-      ]
-    }))
+       experienceBands: formValues.rateItems,
+    //      experienceBands: formValues.rateItems.map((item: any) => ({
+    //   experienceFrom: Number(item.experienceMin),
+    //   experienceTo: Number(item.experienceMax),
+    //   status: 'Active',
+    //   frequencyType: item.rateBasic,
+    //   currencies: [
+    //     {
+    //       currencyCode: item.currency,
+    //      currencyName: item.currency,
+    //       symbol: "string",
+    //       rate: item?.rate
+    //     }
+    //   ]
+    // }))
     };
     console.log(payload);
     this.subscription=this.http.putData(`RateCard/${this.updateratecardData.id}`,payload).subscribe({
@@ -309,8 +368,7 @@ updateRateCard(){
             this.conformationPopup.openSuccessModal(
               'Rate Card Updated successfully'
             );
-          this.modalService.dismissAll();
-          this.getAllRateCardDetails();
+          // this.getAllRateCardDetails();
           this.nagvition();
           },
           error: (err: any) => {
@@ -326,40 +384,6 @@ updateRateCard(){
           },
         });
   
-  }
-  getAllRateCardDetails(): void {
-      this.isloading = true;
-      let url = `RateCard?status=active`;
-      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (res: any) => {
-            console.log(res);
-          },
-          error: (err) => {
-            this.isloading = false;
-            console.error('Error fetching shifts:', err);
-          },
-        });
-    }
-    onCountryChange(country: any, index: number) {
-    console.log(country);
-    this.selectedDialCode = country.dialling_code;
-    this.selectedCountryCodegflag = country.code;
-   const rateItem = this.rateItems.at(index) as FormGroup;
-  const currenciesArray = rateItem.get('currencies') as FormArray;
-  const rateValue = rateItem.get('rate')?.value;
-  const currencyData = {
-    currencyCode: country.currency.code,
-    currencyName: country.currency.name,
-    symbol: country.currency.symbol,
-    rate: currenciesArray.at(0).get('rate')?.value || ''
-  };
-   if (currenciesArray.length > 0) {
-    // 🔁 Update existing currency
-    currenciesArray.at(0).patchValue(currencyData, { emitEvent: false });
-  } else {
-    // ➕ Create first currency
-    currenciesArray.push(this.fb.group(currencyData));
-  }
   }
    // location changes
 onLocationChange(selectedLocationIds: number[] | null) {

@@ -29,7 +29,7 @@
         <ng-container *ngIf="jobData.length > 0; else noDataTemplate">
           <tr *ngFor="let item of jobData">
             <td>
-              <a class="project-name cursor" (click)="navigateView(item?.jobId)">{{ item?.jobId ?? '_' }}</a>
+              <a class="project-name cursor" (click)="navigateView(item?.jobId)">{{ item?.jobSequenceId ?? '_' }}</a>
             </td>
             <td>{{ item?.year ?? '_' }}</td>
             <td>{{ item?.successCount }}/{{ item?.totalEmployees }}</td>

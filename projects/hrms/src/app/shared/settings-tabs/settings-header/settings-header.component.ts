@@ -242,7 +242,7 @@ export class SettingsHeaderComponent implements OnInit {
     }
     else if (url.startsWith('/settings/employee-rate-card/rate-card')) {
       this.moduleName = 'Rate Card Configuration';
-      this.componentName = 'Employee Rate Card';
+      this.componentName = 'Rate Card';
     }
   }
 

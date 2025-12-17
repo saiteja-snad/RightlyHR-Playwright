@@ -3,7 +3,7 @@ import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/c
 import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../../services/http.service';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { NoDataFoundComponent } from "../../../../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../../../../services/open-modal.service';
@@ -15,13 +15,15 @@ import { TableModule } from "primeng/table";
   imports: [CommonModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, FormsModule, TableModule],
   templateUrl: './intial-load-entitlement-preview.component.html',
   styleUrl: './intial-load-entitlement-preview.component.scss',
-   encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class IntialLoadEntitlementPreviewComponent {
   empinfo: any = {};
   carryforwarddata: any = {}
   loading: boolean = false;
+  searchQuery = '';
+  private searchSubject = new Subject<string>();
   @ViewChild('conformation', { static: true }) conformation!: TemplateRef<any>;
   destroy$: Subject<boolean> = new Subject<boolean>();
   gradeAssignments: { status: any; data: any[]; } | null = null;
@@ -38,6 +40,19 @@ export class IntialLoadEntitlementPreviewComponent {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.carryforwarddata = JSON.parse(localStorage.getItem('intialloadEntitlement') ?? '{}');
     this.getdataforcarryforward(this.carryforwarddata);
+    this.searchSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(value => {
+        this.searchQuery = value;
+        this.getdataforcarryforward(this.carryforwarddata);
+      });
+  }
+
+  onSearchChange(value: string) {
+    this.searchSubject.next(value);
   }
 
   getdataforcarryforward(carryforwarddata: any) {
@@ -46,7 +61,7 @@ export class IntialLoadEntitlementPreviewComponent {
       `Employeedata/employees/with-leave-categories?locationIds=${carryforwarddata?.location?.id}
       &subLocationIds=${carryforwarddata?.subLocation?.id}
       &shiftIds=${carryforwarddata?.shift?.id}
-      &year=${carryforwarddata?.year}&categoryIds=${carryforwarddata?.categoryIds}&excludeJobProcessedEmployees=true`
+      &year=${carryforwarddata?.year}&categoryIds=${carryforwarddata?.categoryIds}&excludeJobProcessedEmployees=true&searchTerm=${this.searchQuery}`
     ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -60,6 +75,7 @@ export class IntialLoadEntitlementPreviewComponent {
       },
       error: () => {
         this.loading = false;
+        this.employeesTableData=[]
       }
     });
   }
@@ -70,27 +86,44 @@ export class IntialLoadEntitlementPreviewComponent {
   selectAll: boolean = false;
   mapEmployees(employees: any[]) {
     const headerMap = new Map<string, any>();
+
     this.employeesTableData = employees.map(emp => {
       const leaveValues: any = {};
       const leaveEntries: any[] = [];
-      emp.leaveCategories.forEach((lc: any) => {
-        const category = lc.orgLeaveCategories;
-        const code = category.categoryCode;
-        leaveValues[code] = lc.allowedDays;
-        leaveEntries.push({
-          leaveCategoryId: lc.categoryId,
-          categoryCode: code,
-          allowedDays: lc.allowedDays,
-          isValid: lc.isValid,
-        });
-        if (!headerMap.has(code)) {
-          headerMap.set(code, {
-            code,
-            name: category.name,
-            color: category.categoryColor
+      let totalLeaveEntitlement = 0; // ✅ total accumulator
+
+      emp.leaveCategories
+        // ✅ ONLY valid leave categories
+        .filter((lc: any) => lc.isValid === true)
+        .forEach((lc: any) => {
+
+          const category = lc.orgLeaveCategories;
+          const code = category.categoryCode;
+
+          // dynamic column values
+          leaveValues[code] = lc.allowedDays;
+
+          // payload entries
+          leaveEntries.push({
+            leaveCategoryId: lc.categoryId,
+            categoryCode: code,
+            allowedDays: lc.allowedDays,
+            isValid: lc.isValid
           });
-        }
-      });
+
+          // ✅ ADD to total
+          totalLeaveEntitlement += lc.allowedDays || 0;
+
+          // dynamic headers
+          if (!headerMap.has(code)) {
+            headerMap.set(code, {
+              code,
+              name: category.name,
+              color: category.categoryColor
+            });
+          }
+        });
+
       return {
         employeeId: emp.employeeId,
         gradeId: emp.gradeId,
@@ -102,12 +135,18 @@ export class IntialLoadEntitlementPreviewComponent {
         grade: emp.gradeName,
         isValid: emp.isValid,
         selected: false,
+
         leaveValues,
-        leaveEntries // attached correctly
+        leaveEntries,
+
+        // ✅ expose total
+        totalLeaveEntitlement
       };
     });
+
     this.leaveHeaders = Array.from(headerMap.values());
   }
+
 
   buildCarryForwardPayload() {
 
@@ -117,7 +156,7 @@ export class IntialLoadEntitlementPreviewComponent {
       this.selectedEmployees && this.selectedEmployees.length > 0
         ? this.selectedEmployees
         : this.employeesTableData;
-    console.log(sourceEmployees);
+
 
     return {
       jobType: 'InitialLoad',
@@ -158,7 +197,7 @@ export class IntialLoadEntitlementPreviewComponent {
 
   submit() {
     if (!this.canSubmit()) {
-      this.modalService.open(this.conformation, { centered: true, backdrop: 'static', keyboard: false, size: 'l' });
+      this.modalService.open(this.conformation, { centered: true, backdrop: 'static', keyboard: false });
       return;
     }
     const body = this.buildCarryForwardPayload();

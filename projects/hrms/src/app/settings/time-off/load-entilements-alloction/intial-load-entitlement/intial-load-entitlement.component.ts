@@ -2,7 +2,7 @@ import { Component, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, Subject, takeUntil } from 'rxjs';
+import { Subscription, Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { ILocation, ISubLocation, IShiftHeader } from '../../flexible-leave-allocation/leave-allocation.model';
 import { CommonModule } from '@angular/common';
@@ -22,7 +22,8 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 })
 export class IntialLoadEntitlementComponent {
   loading = false;
-  searchQuery = ''
+  searchQuery = '';
+  private searchSubject = new Subject<string>();
   page = 1;
   pageSize = 10;
   rows = 10;
@@ -50,10 +51,20 @@ export class IntialLoadEntitlementComponent {
     this.getdatacarryforword();
     this.initializefilter();
     this.getAllLocations();
+    this.searchSubject
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+      )
+      .subscribe(value => {
+        this.page = 1;
+        this.searchQuery = value;
+        this.getdatacarryforword();
+      });
   }
   initializefilter() {
     this.leaveAllocationForm = this.fb.group({
-      year: ['', ],
+      year: ['',],
       location: [''],
       subLocation: [{ value: '', disabled: true },],
       shift: [{ value: '', disabled: true },],
@@ -106,18 +117,15 @@ export class IntialLoadEntitlementComponent {
     this.isApplyDisabledFlag = true;
     this.offcanvasService.dismiss()
     // 3. Remove active filters
-    this.subLocationDetails=[];
-    this.shiftDetails=[];
+    this.subLocationDetails = [];
+    this.shiftDetails = [];
     this.activeFilters = {};
     this.getdatacarryforword();
     //localStorage.removeItem(l)
   }
   onSearchChange(value: string) {
-    this.page = 1;   // reset to page 1 when searching
-    this.searchQuery = value;
-    this.getdatacarryforword();
+    this.searchSubject.next(value);
   }
-
   getdatacarryforword() {
     const params: any = {
       pageNumber: this.page,
@@ -147,7 +155,7 @@ export class IntialLoadEntitlementComponent {
     const formValue = this.leaveAllocationForm?.value;
     // Check if any filter (except date & employee) has value
     return (
-      (formValue?.year ) ||
+      (formValue?.year) ||
       (formValue?.location && formValue?.location.jobLocationName?.length > 0) ||
       (formValue?.subLocation && formValue?.subLocation.jobSubLocationName?.length > 0) ||
       (formValue?.shift && formValue?.shift.shiftName?.length > 0)
@@ -221,7 +229,7 @@ export class IntialLoadEntitlementComponent {
     this.activeFilters = {};
     this.getdatacarryforword();
     this.offcanvasService.dismiss();
-  
+
   }
   navigateView(jobId: number) {
     this.router.navigate(['/settings/timeoff-configurations/jobview'], { queryParams: { id: jobId } });
@@ -231,7 +239,7 @@ export class IntialLoadEntitlementComponent {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
- ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }

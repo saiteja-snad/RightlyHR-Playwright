@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef } from '@angular/core';
 import { PaginatorModule } from 'primeng/paginator';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
@@ -21,7 +21,8 @@ import { ModuleInformationComponent } from "../../../../shared/module-informatio
 })
 export class CarryForwardLeaveEntitlementComponent {
   loading = false;
-  searchQuery = ''
+  searchQuery = '';
+  private searchSubject = new Subject<string>();
   page = 1;
   pageSize = 10;
   rows = 10;
@@ -49,6 +50,16 @@ export class CarryForwardLeaveEntitlementComponent {
     this.getdatacarryforword();
     this.initializefilter();
     this.getAllLocations();
+    this.searchSubject
+      .pipe(
+        debounceTime(500),          
+        distinctUntilChanged()      
+      )
+      .subscribe(value => {
+        this.page = 1;             
+        this.searchQuery = value;
+        this.getdatacarryforword(); 
+      });
   }
   initializefilter() {
     this.leaveAllocationForm = this.fb.group({
@@ -103,8 +114,8 @@ export class CarryForwardLeaveEntitlementComponent {
   resetForm() {
     this.leaveAllocationForm.reset();
     this.isApplyDisabledFlag = true;
-    this.subLocationDetails=[]
-    this.shiftDetails=[]
+    this.subLocationDetails = []
+    this.shiftDetails = []
     // 3. Remove active filters
     this.activeFilters = {};
     this.getdatacarryforword();
@@ -119,14 +130,13 @@ export class CarryForwardLeaveEntitlementComponent {
     this.activeFilters = {};
     this.getdatacarryforword();
     this.offcanvasService.dismiss();
-  
+
   }
 
   onSearchChange(value: string) {
-    this.page = 1;   // reset to page 1 when searching
-    this.searchQuery = value;
-    this.getdatacarryforword();
-  }
+  this.searchSubject.next(value);
+}
+
 
   getdatacarryforword() {
     const params: any = {

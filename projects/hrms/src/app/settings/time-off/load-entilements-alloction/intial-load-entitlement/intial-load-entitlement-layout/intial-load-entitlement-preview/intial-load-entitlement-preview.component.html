@@ -64,6 +64,12 @@
 
         </div>
     </div>
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input"
+            placeholder="Search by employee name/ grade " aria-label="Username" [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
+    </div>
     <div class="custom-p-multi-select-table">
         @if (!loading) {
 
@@ -75,17 +81,16 @@
                     <th style="width: 3rem">
                         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                     </th>
-                    <th>Employee</th>
+                    <th>Employee Name</th>
                     <th>Location</th>
                     <th>Sub Location</th>
                     <th>Shift</th>
                     <th class="text-center">Grade</th>
-
-                    <!-- Dynamic headers -->
                     <th *ngFor="let header of leaveHeaders" class="text-center">
                         {{ header.name }}
                         <small>({{ header.code }})</small>
                     </th>
+                    <th class="text-center">Total Leave Entitlements</th>
                 </tr>
             </ng-template>
 
@@ -117,13 +122,17 @@
                     <td *ngFor="let header of leaveHeaders" class="text-center">
                         {{ emp.leaveValues?.[header.code] ?? 0 }}
                     </td>
+                    <td class="text-center">
+                        {{ emp.totalLeaveEntitlement }}
+                    </td>
+
                 </tr>
             </ng-template>
 
             <!-- ================= EMPTY MESSAGE ================= -->
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td [attr.colspan]="6 + leaveHeaders.length">
+                    <td [attr.colspan]="7 + leaveHeaders.length">
                         <app-no-data-found></app-no-data-found>
                     </td>
                 </tr>
@@ -151,7 +160,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\error-icon.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4">Initial Load cannot be submitted due to failed validations</p>
+            <p class="confirmation-text mb-4">Leave entitlement processing detected validation issues</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

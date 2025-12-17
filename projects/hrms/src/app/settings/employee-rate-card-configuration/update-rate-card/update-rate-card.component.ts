@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,36 +12,68 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { updateratecardmodel } from '../rate-card/rate-card-model';
+import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 
 @Component({
   selector: 'app-update-rate-card',
-   imports: [RouterModule, Select, ReactiveFormsModule, MultiSelectModule,
-    CommonModule, TabsModule, TranslateModule, InfoIconComponent,NgbPopoverModule],
+  imports: [
+    RouterModule,
+    Select,
+    ReactiveFormsModule,
+    MultiSelectModule,
+    CommonModule,
+    TabsModule,
+    TranslateModule,
+    InfoIconComponent,
+    NgbPopoverModule,
+    NgxCountriesDropdownModule,
+  ],
   templateUrl: './update-rate-card.component.html',
   styleUrl: './update-rate-card.component.scss'
 })
 export class UpdateRateCardComponent {
   subscription!: Subscription;
-  updateratecardForm!:FormGroup
+  updateratecardForm!: FormGroup;
   years: number[] = [];
-  Employeeinfo={} as any;
+  Employeeinfo = {} as any;
   currentYear: number = moment().year();
-  locations=[] as any;
-  subLocations=[] as any;
+  locations = [] as any;
+  subLocations = [] as any;
   sublocatiodis = false;
-  ProjectroleDetails=[] as any;
-  FrequencyDetail=[] as any;
-    employeedetails = {} as any;
-    updateratecardData!: updateratecardmodel;
-   @ViewChild('deletepopup') deletepopup: any;
+  ProjectroleDetails = [] as any;
+  FrequencyDetail = [] as any;
+  @ViewChild('deletepopup') deletepopup: any;
+  isloading = false;
+  loading = true;
+  selectedCountryConfig: {
+    hideCode: boolean;
+    hideName: boolean;
+    dialCode?: string;
+  } = {
+    hideCode: true,
+    hideName: true,
+  };
+  countryListConfig = {
+    hideCode: true,
+  };
+  selectedDialCode: any;
+  selectedCountryCodegflag: any;
+  selectedDialphoneCode: any;
+  selectedworkcoutrycode = signal<any>('');
+  buttons = false;
+  employeedetails: any;
+  updateratecardData: any;
   constructor(
     public router: Router,
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
-    private conformationPopup: OpenModalService,
-  ) { }
+    private conformationPopup: OpenModalService
+  ) {
+    effect(() => {
+      this.selectedworkcoutrycode.set(this.selectedDialCode);
+    });
+  }
 
     ngOnInit(): void {
     this.employeedetails = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -69,8 +101,17 @@ export class UpdateRateCardComponent {
 
     // });
   }
- 
 
+  getCurrencies(rateIndex: number): FormArray {
+  return this.rateItems.at(rateIndex).get('currencies') as FormArray;
+}
+
+ getCurrenciesArray(rateItem: FormGroup): FormArray {
+   return rateItem.get('currencies') as FormArray;
+ }
+ addRateCardItems() {
+    this.rateItems.push(this.createRateCardItems());
+  }
   //get the rate basics
     getFrequencies() {
     this.subscription = this.http.getData('Frequency').subscribe({
@@ -176,7 +217,7 @@ geAllLocations() {
       subLocation: [{ value: [], disabled: true }, Validators.required], 
       role:['',Validators.required],
       effectivefrom:['',Validators.required],
-      rateItems: this.fb.array([this.createShift()])
+       rateItems: this.fb.array([this.createRateCardItems()]),
       
     });
   }
@@ -184,18 +225,34 @@ geAllLocations() {
     return this.updateratecardForm.get('rateItems') as FormArray;
   }
  addShift() {
-    this.rateItems.push(this.createShift());
+    this.rateItems.push(this.createRateCardItems());
   }
-    createShift(): FormGroup {
+    createRateCardItems(): FormGroup {
     return this.fb.group({
-      experienceMin: ['', Validators.required],
-      experienceMax: ['', Validators.required],
-      rateBasic: ['', Validators.required],
-      currency: ['', Validators.required],
-      rate: ['', Validators.required],
+      experienceFrom: ['', Validators.required],
+      experienceTo: ['', Validators.required],
+      frequencyType: ['', Validators.required],
+      currencies: this.fb.array([this.createCurrencies()]),
+      status: ['Active'],
+    });
+  }
+   createCurrencies(): FormGroup {
+    return this.fb.group({
+      currencyCode: ['',Validators.required],
+      currencyName: ['',Validators.required],
+      symbol: [''],
+      rate: ['', Validators.required]
     });
   }
     isDeleteDisabled: boolean = false;
+     deleteratecard(index: number) {
+    if (this.rateItems.length > 1) {
+      this.rateItems.removeAt(index);
+      this.isDeleteDisabled = false; // allow delete if more than 1
+    } else {
+      this.isDeleteDisabled = true; // disable delete button
+    }
+  }
   deleteShift(index: number) {
     if (this.rateItems.length > 1) {
       this.rateItems.removeAt(index);
@@ -209,8 +266,36 @@ geAllLocations() {
       this.years.push(i);
     }
   }
+   
+ onRateChange(rateIndex: number, currencyIndex: number) {
+  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
+                        .at(currencyIndex)
+                        .get('rate');
+  console.log(rateControl?.value);
+}
 addRateCard(){
 
+  }
+    onCountryChange(country: any, index: number) {
+    console.log(country);
+    this.selectedDialCode = country.dialling_code;
+    this.selectedCountryCodegflag = country.code;
+   const rateItem = this.rateItems.at(index) as FormGroup;
+  const currenciesArray = rateItem.get('currencies') as FormArray;
+  const rateValue = rateItem.get('rate')?.value;
+  const currencyData = {
+    currencyCode: country.currency.code,
+    currencyName: country.currency.name,
+    symbol: country.currency.symbol,
+    rate: currenciesArray.at(0).get('rate')?.value || ''
+  };
+   if (currenciesArray.length > 0) {
+    // 🔁 Update existing currency
+    currenciesArray.at(0).patchValue(currencyData, { emitEvent: false });
+  } else {
+    // ➕ Create first currency
+    currenciesArray.push(this.fb.group(currencyData));
+  }
   }
    // location changes
 onLocationChange(selectedLocationIds: number[] | null) {

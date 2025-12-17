@@ -52,6 +52,16 @@ export class UpdateRateCardComponent {
     this.geAllLocations();
     this.getJobrole();
     this.getFrequencies();
+      //  PATCH EXPERIENCE DATA
+  if (this.updateratecardData.experienceBands?.length) {
+    this.setExperienceBands();
+  }
+  // Effective from
+  if (this.updateratecardData.effectiveFrom) {
+    this.updateratecardForm.patchValue({
+      effectivefrom: this.updateratecardData.effectiveFrom.split('T')[0]
+    });
+  }
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
      //default year show selected
     // this.updateratecardForm.patchValue({
@@ -89,6 +99,11 @@ export class UpdateRateCardComponent {
             isActive: item.isActive,
             color: item.meta?.graphData?.color || '#000000'
           }));
+           if (this.updateratecardData.roleId) {
+          this.updateratecardForm.patchValue({
+            role: [this.updateratecardData.roleId]
+          });
+        }
         } else {
           this.ProjectroleDetails = [];
         }
@@ -97,30 +112,68 @@ export class UpdateRateCardComponent {
       }
     });
   }
+setExperienceBands() {
+  const rateArray = this.updateratecardForm.get('rateItems') as FormArray;
+  rateArray.clear();
+
+  this.updateratecardData.experienceBands?.forEach((band: any) => {
+    rateArray.push(
+      this.fb.group({
+        experienceMin: [band.experienceFrom, Validators.required],
+        experienceMax: [band.experienceTo, Validators.required],
+        rateBasic: [band.frequencyType, Validators.required],
+        currency: [band.currencies?.[0]?.currencyCode, Validators.required],
+        rate: [band.currencies?.[0]?.rate, Validators.required]
+      })
+    );
+  });
+}
 
    ////this method used for location list show in location dropdown 
-  geAllLocations() {
-    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
-      next: (data: any) => {
-        this.locations = data;
-         this.sublocatiodis = true;
-        const selectedLocation = this.locations.find(
-  (x: any) => x.jobLocationName === this.updateratecardData.locationName
-);
-this.updateratecardForm.patchValue({
-  location: selectedLocation ? [selectedLocation.id] : []
-});
-        // this.subLocationsDropdown = [];
-        //this.getSubLocationByid(this.updateHolidaysData.locationId)
-      }
-    });
+geAllLocations() {
+  this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+    next: (data: any) => {
+      this.locations = data;
 
+      // ---- LOCATION ----
+      const selectedLocation = this.locations.find(
+        (x: any) => x.jobLocationName === this.updateratecardData.locationName
+      );
+
+      const selectedLocationIds = selectedLocation
+        ? [selectedLocation.id]
+        : [];
+
+      this.updateratecardForm.patchValue({
+        location: selectedLocationIds
+      });
+
+      // Trigger sublocation loading
+      this.onLocationChange(selectedLocationIds);
+
+       // ---- SUB LOCATION BY NAME ----
+      if (this.updateratecardData.subLocationName) {
+        const matchedSubLocations = this.subLocations.filter(
+          (sub: any) =>
+            sub.jobSubLocationName === this.updateratecardData.subLocationName
+        );
+
+        const subLocationIds = matchedSubLocations.map((s: any) => s.id);
+
+        this.updateratecardForm.patchValue({
+          subLocation: subLocationIds
+        });
+    }
   }
+  });
+}
+
+
    initializeForm() {
     this.updateratecardForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
+      location: [[], Validators.required],   // ✅ array
+      subLocation: [{ value: [], disabled: true }, Validators.required], 
       role:['',Validators.required],
       effectivefrom:['',Validators.required],
       rateItems: this.fb.array([this.createShift()])
@@ -160,26 +213,29 @@ addRateCard(){
 
   }
    // location changes
-  onLocationChange(selectedLocationId: number | null) {
-    const subLocationControl = this.updateratecardForm.get('subLocation');
-    // Reset subLocation value
-    subLocationControl?.reset();
-    if (selectedLocationId) {
-      // Enable subLocation field
-      subLocationControl?.enable();
-      // Find the selected location object
-      const selectedLocation = this.locations.find(
-        (loc:any) => loc.id === selectedLocationId
-      );
-      // Extract subLocations
-      this.subLocations = selectedLocation?.subLocations || [];
-      this.updateratecardForm.get('subLocation')?.markAsTouched();
-    } else {
-      // Disable if location is invalid
-      subLocationControl?.disable();
-      this.subLocations = [];
-    }
+onLocationChange(selectedLocationIds: number[] | null) {
+  const subLocationControl = this.updateratecardForm.get('subLocation');
+
+  subLocationControl?.reset([]);
+
+  if (selectedLocationIds && selectedLocationIds.length > 0) {
+    subLocationControl?.enable();
+
+    const selectedLocations = this.locations.filter((loc: any) =>
+      selectedLocationIds.includes(loc.id)
+    );
+
+    // MUST contain subLocations from API
+    this.subLocations = selectedLocations.flatMap(
+      (loc: any) => loc.subLocations || []
+    );
+  } else {
+    subLocationControl?.disable();
+    this.subLocations = [];
   }
+}
+
+
 nagvition(){
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);
 }

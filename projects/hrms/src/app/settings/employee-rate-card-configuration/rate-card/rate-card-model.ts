@@ -34,5 +34,7 @@ effectiveFrom?:any,
 effectiveTo?:any,
 status?:string,
 experienceBands?:IExperienceResponse[] |undefined,
-createdDate?:string
+createdDate?:string,
+subLocationId:any;
+roleId:any;
 }

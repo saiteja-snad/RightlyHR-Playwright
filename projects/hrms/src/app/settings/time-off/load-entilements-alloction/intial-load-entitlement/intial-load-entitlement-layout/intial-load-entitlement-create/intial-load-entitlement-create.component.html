@@ -16,7 +16,7 @@
                     </div>
                     <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">Please select year</div>
+                        <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']"> Year is required</div>
                     </div>
                 </div>
 
@@ -36,7 +36,7 @@
                     </div>
                     <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">Please select location
+                        <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">Location is required
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                     <div *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
                         class="error-msg">
                         <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">
-                            Please select sub location
+                            Sub location is required
                         </div>
                     </div>
                 </div>
@@ -70,14 +70,14 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                             [showClear]="false" formControlName="shift" placeholder="Please select shift"  [resetFilterOnHide]="true"
-                            (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search Shift">
+                            (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search shift">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>
                     </div>
                     <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">Please select shift</div>
+                        <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']"> Shift is required</div>
                     </div>
                 </div>
 
@@ -104,8 +104,8 @@
 
                     <div *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">Please select
-                            category name</div>
+                        <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">
+                            Category name is required</div>
                     </div>
                 </div>
             </div>

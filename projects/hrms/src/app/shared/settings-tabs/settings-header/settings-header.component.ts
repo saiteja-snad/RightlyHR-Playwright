@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -6,8 +6,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../module-information/module-information.component";
-import { filter } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../modules-info';
+import { HttpService } from '../../../services/http.service';
 
 @Component({
   selector: 'app-settings-header',
@@ -16,14 +17,18 @@ import { MODULE_INFOS } from '../../modules-info';
   styleUrl: './settings-header.component.scss'
 })
 
-export class SettingsHeaderComponent implements OnInit {
+export class SettingsHeaderComponent implements OnInit,OnDestroy {
   moduleName: string = '';
   componentName: string = '';
   navigationname: string = '';
   moduleinfo: string = '';
+  subscription!: Subscription;
   jobid: any;
+  jobSummary: any = {};
+  jobSequenceId!: string;
+  destroy$ = new Subject<void>();
   routeToInfoMap!: { [key: string]: string };
-  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute,) { }
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService,) { }
 
   ngOnInit(): void {
 
@@ -35,13 +40,17 @@ export class SettingsHeaderComponent implements OnInit {
         this.ComponentnameDisplay();
       }
     });
-    this.route.queryParams.subscribe((params) => {
-      const jobid = params['id'];
-      if (jobid) {
-        this.jobid = jobid;
 
-      }
-    });
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        const jobid = params['id'];
+        if (jobid) {
+          this.jobid = jobid;
+          this.getdatacarryforword();
+        }
+      });
+
 
   }
 
@@ -302,7 +311,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
-      this.componentName = this.jobid;
+      this.componentName = this.jobSequenceId;
     }
 
     else if (url.startsWith('/settings/timeoff-configurations/leave-entitlements')) {
@@ -311,11 +320,29 @@ export class SettingsHeaderComponent implements OnInit {
       this.componentName = 'Leave Carry Forward';
     }
 
-      else if (url.startsWith('/settings/timeoff-configurations/intial-leave-entitlements')) {
+    else if (url.startsWith('/settings/timeoff-configurations/intial-leave-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Initial Leave Entitlements';
     }
+  }
+
+  getdatacarryforword() {
+    const url = `LeaveEntitlementJobs/${this.jobid}/details`;
+    this.subscription = this.http.get(url).subscribe({
+      next: (res: any) => {
+        this.jobSummary = res?.data?.jobSummary;
+        this.jobSequenceId = this.jobSummary?.jobSequenceId;
+        console.log(this.jobSequenceId);
+
+
+      },
+      error: (err) => {
+        console.error('Error fetching projects:', err);
+
+      },
+    });
+
   }
   isShowsettingsRoute(): boolean {
     const hidePaths = [
@@ -368,7 +395,7 @@ export class SettingsHeaderComponent implements OnInit {
 
   navigateToSettings() {
     this.router.navigate(['/settings'])
- 
+
   }
 
   navigateToloadentiments() {
@@ -376,4 +403,9 @@ export class SettingsHeaderComponent implements OnInit {
     localStorage.removeItem('carryForwardJobId'),
       localStorage.removeItem('loadEntitlement')
   }
+
+  ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
 }

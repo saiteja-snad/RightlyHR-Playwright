@@ -64,57 +64,78 @@
 
         </div>
     </div>
+    <div class="custom-p-multi-select-table">
+        @if (!loading) {
 
-    <div class="custom-table-content">
-        @if(!loading){
-        <table class="w-100">
-            <thead>
+        <p-table [value]="employeesTableData" [(selection)]="selectedEmployees" dataKey="employeeId" class="w-100"
+            [scrollable]="true" scrollHeight="50dvh">
+
+            <ng-template pTemplate="header">
                 <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
                     <th>Employee</th>
-                    <th>Location </th>
+                    <th>Location</th>
                     <th>Sub Location</th>
                     <th>Shift</th>
                     <th class="text-center">Grade</th>
+
                     <!-- Dynamic headers -->
                     <th *ngFor="let header of leaveHeaders" class="text-center">
                         {{ header.name }}
                         <small>({{ header.code }})</small>
                     </th>
                 </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="employeesTableData.length > 0; else noDataTemplate">
-                    <tr *ngFor="let emp of employeesTableData">
-                        <td>
-                            <strong>{{ emp.employeeName }}</strong><br />
-                            <small>Joined: {{ emp.joinedDate | date:'yyyy-MM-dd' }}</small>
-                        </td>
-                        <td>{{ emp.location }}</td>
-                        <td>{{emp.sublocationName}}</td>
-                        <td>{{ emp.shift }}</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center">
-                                <div class="code-box text-center px-4"> {{ emp.grade }}</div>
+            </ng-template>
+
+            <!-- ================= BODY ================= -->
+            <ng-template pTemplate="body" let-emp>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="emp"></p-tableCheckbox>
+                    </td>
+
+                    <td>
+                        <strong>{{ emp.employeeName }}</strong><br />
+                        <small>Joined: {{ emp.joinedDate | date:'yyyy-MM-dd' }}</small>
+                    </td>
+
+                    <td>{{ emp.location }}</td>
+                    <td>{{ emp.sublocationName }}</td>
+                    <td>{{ emp.shift }}</td>
+
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center">
+                            <div class="code-box text-center px-4">
+                                {{ emp.grade }}
                             </div>
-                        </td>
-                        <!-- Dynamic td -->
-                        <td *ngFor="let header of leaveHeaders" class="text-center">
-                            {{ emp.leaveValues[header.code] ?? 0 }}
-                        </td>
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-        }
-        @else {
+                        </div>
+                    </td>
+
+                    <!-- Dynamic leave values -->
+                    <td *ngFor="let header of leaveHeaders" class="text-center">
+                        {{ emp.leaveValues?.[header.code] ?? 0 }}
+                    </td>
+                </tr>
+            </ng-template>
+
+            <!-- ================= EMPTY MESSAGE ================= -->
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="6 + leaveHeaders.length">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+
+        } @else {
         <app-data-loader-content />
         }
     </div>
+
 
     <div class="footer-content">
         <div class="d-flex justify-content-end align-items-center gap-3">

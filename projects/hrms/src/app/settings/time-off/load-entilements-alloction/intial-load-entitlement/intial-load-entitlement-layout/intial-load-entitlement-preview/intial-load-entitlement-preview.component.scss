@@ -9,10 +9,12 @@
     }
 }
 
-.custom-table-content {
-    min-height: 30vh !important;
-    max-height: 50dvh !important;
-    border: 1px solid var(--table-header-bg-color);
+.custom-p-multi-select-table {
+    .p-datatable-table-container {
+        height: 50dvh !important;
+    }
+
+ 
 }
 
 .code-box {

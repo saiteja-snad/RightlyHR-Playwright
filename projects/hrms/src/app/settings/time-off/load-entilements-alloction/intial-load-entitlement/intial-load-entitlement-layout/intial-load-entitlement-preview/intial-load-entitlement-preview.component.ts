@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../../services/http.service';
 import { Router } from '@angular/router';
@@ -8,11 +8,14 @@ import { NoDataFoundComponent } from "../../../../../../shared/no-data-found/no-
 import { DataLoaderContentComponent } from "../../../../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from "primeng/table";
 @Component({
   selector: 'app-intial-load-entitlement-preview',
-  imports: [CommonModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule],
+  imports: [CommonModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, FormsModule, TableModule],
   templateUrl: './intial-load-entitlement-preview.component.html',
-  styleUrl: './intial-load-entitlement-preview.component.scss'
+  styleUrl: './intial-load-entitlement-preview.component.scss',
+   encapsulation: ViewEncapsulation.None,
 })
 
 export class IntialLoadEntitlementPreviewComponent {
@@ -26,6 +29,7 @@ export class IntialLoadEntitlementPreviewComponent {
   duplicatecheck: { status: any; data: any[]; } | null = null;
   isGradeAssignmentSuccess = false;
   failedGradeEmployees: any[] = [];
+  selectedEmployees: any[] = [];
 
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService,
     private route: Router, private http: HttpService, private offcanvasService: NgbOffcanvas) { }
@@ -63,6 +67,7 @@ export class IntialLoadEntitlementPreviewComponent {
   leaveHeaders: any[] = [];
   employeesTableData: any[] = [];
   leaveEntries: any[] = []
+  selectAll: boolean = false;
   mapEmployees(employees: any[]) {
     const headerMap = new Map<string, any>();
     this.employeesTableData = employees.map(emp => {
@@ -92,10 +97,11 @@ export class IntialLoadEntitlementPreviewComponent {
         employeeName: `${emp.firstName} ${emp.lastName}`,
         joinedDate: emp.dateOfJoining,
         location: emp.locationName,
-        sublocationName:emp.sublocationName,
+        sublocationName: emp.sublocationName,
         shift: emp.shiftName,
         grade: emp.gradeName,
         isValid: emp.isValid,
+        selected: false,
         leaveValues,
         leaveEntries // attached correctly
       };
@@ -104,8 +110,17 @@ export class IntialLoadEntitlementPreviewComponent {
   }
 
   buildCarryForwardPayload() {
+
+    // 🔹 If user selected employees → use selected
+    // 🔹 Else → use full table data
+    const sourceEmployees =
+      this.selectedEmployees && this.selectedEmployees.length > 0
+        ? this.selectedEmployees
+        : this.employeesTableData;
+    console.log(sourceEmployees);
+
     return {
-      jobType: "InitialLoad",
+      jobType: 'InitialLoad',
       year: this.carryforwarddata?.year,
       locationId: this.carryforwarddata?.location?.id,
       subLocationId: this.carryforwarddata?.subLocation?.id,
@@ -114,25 +129,27 @@ export class IntialLoadEntitlementPreviewComponent {
       initiatedBy: this.empinfo?.employeeId,
 
       requestPayload: {
-        employees: this.employeesTableData
-          // only valid employees
+        employees: sourceEmployees
+          // ✅ only valid employees
           .filter(emp => emp?.isValid === true)
           .map(emp => ({
             employeeId: emp?.employeeId,
             gradeId: emp?.gradeId,
+
             entitlementsData: (emp.leaveEntries || [])
-              // only valid + allowedDays > 0
+              // ✅ only valid + allowedDays > 0
               .filter((x: { isValid: boolean; allowedDays: number; }) => x.isValid === true && x.allowedDays > 0)
               .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
                 leaveCategoryId: x?.leaveCategoryId,
                 noOfDays: x?.allowedDays
               }))
           }))
-          // remove employees with empty entitlements
-          .filter(emp => emp?.entitlementsData?.length > 0)
+          // ✅ remove employees without entitlements
+          .filter(emp => emp.entitlementsData.length > 0)
       }
     };
   }
+
 
   canSubmit(): boolean {
     return this.policymapping?.status !== 'failed'
@@ -178,6 +195,10 @@ export class IntialLoadEntitlementPreviewComponent {
 
   closeCanvas() {
     this.offcanvasService.dismiss();
+  }
+
+  toggleSelectAll() {
+    this.employeesTableData.forEach(emp => emp.selected = this.selectAll);
   }
 
   back() {

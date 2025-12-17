@@ -109,6 +109,8 @@ export class AssignKraKpiComponent implements OnInit {
     { label: 25, value: 25 },
   ];
 
+  today: string = new Date().toISOString().split('T')[0];
+
   uomOptions = [
     { label: 'Percentage (%)', value: '%' },
     { label: 'Currency ($)', value: '$' },
@@ -161,8 +163,8 @@ selectedKraAssignment: any;
       null,
       [Validators.required, Validators.min(1), Validators.max(100)],
     ],
-    effectiveDate: ['', Validators.required],
-    targetDate: ['', Validators.required],
+    effectiveDate: ['', [Validators.required, this.noPastDateValidator]],
+    targetDate: ['', [Validators.required, this.noPastDateValidator]],
     reviewCycle: ['', Validators.required],
     ratingScale: ['', Validators.required],
     kpiRows: this.fb.array([]),
@@ -666,7 +668,7 @@ loadAssignedKraKpiListWithFilters(params: any): void {
           [Validators.required, Validators.min(1), Validators.max(100)],
         ],
         targetValue: [null, Validators.required],
-        targetDate: ['', Validators.required],
+        targetDate: ['', [Validators.required, this.noPastDateValidator]],
         description: ['', [Validators.required, Validators.minLength(10)]],
       })
     );
@@ -701,6 +703,14 @@ removeKpiRow(index: number): void {
 
 
   openAssignModal(content: any): void {
+          this.isEditMode = false;
+
+  this.assignForm.get('kraId')?.enable();
+  this.assignForm.get('weightage')?.enable();
+  this.assignForm.get('effectiveDate')?.enable();
+  this.assignForm.get('targetDate')?.enable();
+  this.assignForm.get('reviewCycle')?.enable();
+  this.assignForm.get('ratingScale')?.enable();
     this.assignForm.reset();
     this.kpiRows.clear();
     this.selectedKraKpis = [];
@@ -872,7 +882,15 @@ onSubmitAssign(): void {
 
 onUpdate(kraAssignment: any): void {
   this.isEditMode = true;
-  this.selectedKraAssignment = kraAssignment;  // Store for single employee update
+
+    this.assignForm.get('kraId')?.disable();
+  this.assignForm.get('weightage')?.disable();
+  this.assignForm.get('effectiveDate')?.disable();
+  this.assignForm.get('targetDate')?.disable();
+  this.assignForm.get('reviewCycle')?.disable();
+  this.assignForm.get('ratingScale')?.disable();
+
+  this.selectedKraAssignment = kraAssignment;
   this.voidKpis = [];                          // Reset deleted list
   this.originalKpis = JSON.parse(JSON.stringify(kraAssignment.kpis || [])); // Backup
 
@@ -896,13 +914,14 @@ onUpdate(kraAssignment: any): void {
   this.kpiRows.clear();
 
   kraAssignment.kpis?.forEach((kpi: any) => {
+    const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
     this.kpiRows.push(
       this.fb.group({
-        kpiId: [kpi.kpiId || null],
+        kpiId: [{ value: kpi.kpiId || null, disabled: true }],
         uom: [kpi.targetType || ''],
         weightage: [Number(kpi.weightageValue) || 0],
         targetValue: [kpi.targetValue || ''],
-        targetDate: [kpi.targetDate ? kpi.targetDate.split('T')[0] : ''],
+        targetDate: [targetDateValue, [Validators.required, this.noPastDateValidator]],
         description: [kpi.description || ''],
         status: [kpi.status || 'Created'],           // Preserve original status
       })
@@ -1212,6 +1231,16 @@ get isDepartmentSelected(): boolean {
 get isLocationSelected(): boolean {
   const loc = this.filterForm.get('location')?.value;
   return Array.isArray(loc) && loc.length > 0;
+}
+
+private noPastDateValidator(control: import('@angular/forms').AbstractControl) {
+  if (!control.value) return null;
+
+  const selectedDate = new Date(control.value);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return selectedDate < today ? { pastDate: true } : null;
 }
 
 

@@ -18,7 +18,6 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 
-
 @Component({
   selector: 'app-my-kra-kpi',
   standalone: true,
@@ -33,8 +32,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     DataLoaderContentComponent,
     KraKpiManagementLayoutComponent,
     InfoIconComponent,
-    ModuleInformationComponent
-
+    ModuleInformationComponent,
   ],
   templateUrl: './my-kra-kpi.component.html',
   styleUrl: './my-kra-kpi.component.scss',
@@ -58,13 +56,19 @@ export class MyKraKpiComponent implements OnInit {
   myKpiList: any[] = [];
   selectedKra: any;
 
+  totalAssignedWeightage = 0;
+  isWeightageExceeded = false;
+
+  isAllSelected = false;
+selectedKpis: any[] = [];
+
+
   constructor(
     private http: HttpService,
     private offcanvasService: NgbOffcanvas,
     public modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public readonly router: Router,
-
+    public readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +76,7 @@ export class MyKraKpiComponent implements OnInit {
     this.updateModuleInfo();
   }
 
-    updateModuleInfo() {
+  updateModuleInfo() {
     const url = this.router.url;
     this.moduleinfo = url.includes('/pms/my-kpi-kra/view')
       ? MODULE_INFOS.PMS_MY_KRA_KPI_LIST_MODULE_INFO
@@ -153,125 +157,144 @@ export class MyKraKpiComponent implements OnInit {
       backdrop: 'static',
       size: 'xl',
     });
+
   }
 
 
-async submitForApproval() {
-  try {
-    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    const employeeId = user?.employeeId || 0;
 
-    const payloadArray: any[] = [];
 
-    for (let kpi of this.myKpiList) {
-      let documentUrl = null;
+  async submitForApproval() {
+    try {
+      const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+      const employeeId = user?.employeeId || 0;
 
-      // Upload file if exists
-      if (kpi.attachment) {
-        documentUrl = await this.uploadKpiFile(this.selectedKra.kraId, kpi.kpiId || 0, kpi.attachment);
-      }
+      const payloadArray: any[] = [];
 
-      payloadArray.push({
-        id: kpi.assigneeId || 0,
-        employeeId: employeeId,
-        reviewCycleId: 0, // set if needed
-        kraId: this.selectedKra.kraId,
-        kpiId: kpi.kpiId || 0,
-        assignedTarget: kpi.targetValue?.toString() || '',
-        weightage: kpi.assignedWeightage?.toString() || '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        createdBy: employeeId,
-        updatedBy: employeeId,
-        targetedDate: kpi.targetDate || new Date().toISOString(),
-        status: 'Waiting for Approval', // or as per your workflow
-        documentUrl: documentUrl || ''
-      });
-    }
+      const selectedKpis = this.getSelectedKpis();
 
-    // Call API
-    this.http.postdata('Kpi/submitkrakpi', payloadArray).subscribe({
-      next: (res: any) => {
-        console.log('KPIs submitted successfully', res);
-        this.modalService.dismissAll();
-        this.getMyKraList()
-        this.conformationPopup.openSuccessModal('Submit for Approval Successful');
-      },
-      error: (err: any) => {
-        console.error('Submit for Approval failed', err);
-      }
-    });
-
-  } catch (err) {
-    console.error('Error uploading KPI files', err);
-  }
+if (selectedKpis.length === 0) {
+  this.conformationPopup.openErrorModal('Please select at least one KPI');
+  return;
 }
 
-async saveKpis() {
-  try {
-    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    const employeeId = user?.employeeId || 0;
+      for (let kpi of this.selectedKpis) {
+        let documentUrl = null;
 
-    const payloadArray: any[] = [];
-
-    for (let kpi of this.myKpiList) {
-      let documentUrl = null;
-
-      // Upload file if exists
-      if (kpi.attachment) {
-        documentUrl = await this.uploadKpiFile(
-          this.selectedKra.kraId,
-          kpi.kpiId || 0,
-          kpi.attachment
-        );
-      }
-
-      payloadArray.push({
-        id: kpi.assigneeId || 0,
-        employeeId: employeeId,
-        reviewCycleId: 0,
-        kraId: this.selectedKra.kraId,
-        kpiId: kpi.kpiId || 0,
-        assignedTarget: kpi.targetValue?.toString() || '',
-        weightage: kpi.assignedWeightage?.toString() || '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        createdBy: employeeId,
-        updatedBy: employeeId,
-        targetedDate: kpi.targetDate || new Date().toISOString(),
-        status: 'Draft',
-        documentUrl: documentUrl || ''
-      });
-    }
-
-    this.http.postdata('Kpi/submitkrakpi', payloadArray).subscribe({
-      next: (res: any) => {
-        console.log('KPIs saved as Draft', res);
-
-        // Close KPI modal first
-        this.modalService.dismissAll();
-
-        // Refresh list
-        this.getMyKraList();
-
-        // Show success popup AFTER modal close
-        setTimeout(() => {
-          this.conformationPopup.openSuccessModal(
-            'KPIs saved as Draft successfully'
+        // Upload file if exists
+        if (kpi.attachment) {
+          documentUrl = await this.uploadKpiFile(
+            this.selectedKra.kraId,
+            kpi.kpiId || 0,
+            kpi.attachment
           );
-        }, 300);
-      },
-      error: (err: any) => {
-        console.error('Save KPI Draft failed', err);
-      }
-    });
+        }
 
-  } catch (err) {
-    console.error('Error while saving KPI draft', err);
+        payloadArray.push({
+          id: kpi.assigneeId || 0,
+          employeeId: employeeId,
+          reviewCycleId: 0, // set if needed
+          kraId: this.selectedKra.kraId,
+          kpiId: kpi.kpiId || 0,
+          assignedTarget: kpi.targetValue?.toString() || '',
+          weightage: kpi.assignedWeightage?.toString() || '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: employeeId,
+          updatedBy: employeeId,
+          targetedDate: kpi.targetDate || new Date().toISOString(),
+          status: 'Waiting for Approval', // or as per your workflow
+          documentUrl: documentUrl || '',
+        });
+      }
+
+      // Call API
+      this.http.postdata('Kpi/submitkrakpi', payloadArray).subscribe({
+        next: (res: any) => {
+          console.log('KPIs submitted successfully', res);
+          this.modalService.dismissAll();
+          this.getMyKraList();
+          this.conformationPopup.openSuccessModal(
+            'Submit for Approval Successful'
+          );
+        },
+        error: (err: any) => {
+          console.error('Submit for Approval failed', err);
+        },
+      });
+    } catch (err) {
+      console.error('Error uploading KPI files', err);
+    }
   }
+
+  async saveKpis() {
+    try {
+      const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+      const employeeId = user?.employeeId || 0;
+
+      const payloadArray: any[] = [];
+
+      const selectedKpis = this.getSelectedKpis();
+
+if (selectedKpis.length === 0) {
+  this.conformationPopup.openErrorModal('Please select at least one KPI');
+  return;
 }
 
+      for (let kpi of this.selectedKpis) {
+        let documentUrl = null;
 
+        // Upload file if exists
+        if (kpi.attachment) {
+          documentUrl = await this.uploadKpiFile(
+            this.selectedKra.kraId,
+            kpi.kpiId || 0,
+            kpi.attachment
+          );
+        }
+
+        payloadArray.push({
+          id: kpi.assigneeId || 0,
+          employeeId: employeeId,
+          reviewCycleId: 0,
+          kraId: this.selectedKra.kraId,
+          kpiId: kpi.kpiId || 0,
+          assignedTarget: kpi.targetValue?.toString() || '',
+          weightage: kpi.assignedWeightage?.toString() || '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: employeeId,
+          updatedBy: employeeId,
+          targetedDate: kpi.targetDate || new Date().toISOString(),
+          status: 'Draft',
+          documentUrl: documentUrl || '',
+        });
+      }
+
+      this.http.postdata('Kpi/submitkrakpi', payloadArray).subscribe({
+        next: (res: any) => {
+          console.log('KPIs saved as Draft', res);
+
+          // Close KPI modal first
+          this.modalService.dismissAll();
+
+          // Refresh list
+          this.getMyKraList();
+
+          // Show success popup AFTER modal close
+          setTimeout(() => {
+            this.conformationPopup.openSuccessModal(
+              'KPIs saved as Draft successfully'
+            );
+          }, 300);
+        },
+        error: (err: any) => {
+          console.error('Save KPI Draft failed', err);
+        },
+      });
+    } catch (err) {
+      console.error('Error while saving KPI draft', err);
+    }
+  }
 
   onSearchTextChange() {
     this.page = 1;
@@ -331,6 +354,8 @@ async saveKpis() {
 
   loadKpisForMyKra(kra: any): void {
     this.myKpiList = [];
+      this.isAllSelected = false;
+  this.selectedKpis = [];
 
     if (kra?.kpis && kra.kpis.length > 0) {
       kra.kpis.forEach((kpi: any) => {
@@ -345,11 +370,14 @@ async saveKpis() {
             : null,
           description: kpi.description,
           assignedWeightage: kpi.assignedWeightage || 0,
+          selected: false,
           attachment: null,
-          assigneeId:kpi.assigneeId
+          assigneeId: kpi.assigneeId,
         });
       });
     }
+
+    this.calculateAssignedWeightage();
 
     console.log('My KPIs loaded:', this.myKpiList);
   }
@@ -361,33 +389,64 @@ async saveKpis() {
     return `${d.getFullYear()}-${month}-${day}`;
   }
 
-onFileChange(event: any, index: number) {
-  const file = event.target.files[0];
-  if (file) {
-    this.myKpiList[index].attachment = file;
-    this.myKpiList[index].attachmentName = file.name; // optional for display
-    console.log('File attached for row', index, file);
+  onFileChange(event: any, index: number) {
+    const file = event.target.files[0];
+    if (file) {
+      this.myKpiList[index].attachment = file;
+      this.myKpiList[index].attachmentName = file.name; // optional for display
+      console.log('File attached for row', index, file);
+    }
   }
+
+  uploadKpiFile(kraId: number, kpiId: number, file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const filePath = `/KRA/${kraId}/KPI/${kpiId}/Documents`;
+      this.http
+        .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
+        .subscribe({
+          next: (res: any) => {
+            if (res?.path) {
+              resolve(res.path); // Return uploaded file path
+            } else {
+              reject('No path returned');
+            }
+          },
+          error: (err) => {
+            console.error('File upload failed', err);
+            reject(err);
+          },
+        });
+    });
+  }
+
+  calculateAssignedWeightage(): void {
+    this.totalAssignedWeightage = this.myKpiList.reduce(
+      (sum, kpi) => sum + Number(kpi.assignedWeightage || 0),
+      0
+    );
+
+    this.isWeightageExceeded = this.totalAssignedWeightage > 100;
+  }
+
+  onRowSelectionChange(): void {
+  this.selectedKpis = this.myKpiList.filter(kpi => kpi.selected);
+
+  this.isAllSelected =
+    this.myKpiList.length > 0 &&
+    this.myKpiList.every(kpi => kpi.selected);
 }
 
-uploadKpiFile(kraId: number, kpiId: number, file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const filePath = `/KRA/${kraId}/KPI/${kpiId}/Documents`;
-    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
-      .subscribe({
-        next: (res: any) => {
-          if (res?.path) {
-            resolve(res.path); // Return uploaded file path
-          } else {
-            reject('No path returned');
-          }
-        },
-        error: (err) => {
-          console.error('File upload failed', err);
-          reject(err);
-        }
-      });
-  });
+toggleSelectAll(event: any): void {
+  const checked = event.target.checked;
+
+  this.myKpiList.forEach(kpi => (kpi.selected = checked));
+
+  this.isAllSelected = checked;
+  this.selectedKpis = checked ? [...this.myKpiList] : [];
+}
+
+getSelectedKpis(): any[] {
+  return this.myKpiList.filter(kpi => kpi.selected);
 }
 
 }

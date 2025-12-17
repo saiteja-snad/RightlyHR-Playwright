@@ -1865,7 +1865,6 @@ export class AccessNavigationService {
         case '/pms/my-kpi-kra':
         if (this.rbac.allowedToAccess('My KRA KPI.view')) {
           for (const item of MY_KRA_KPI_TABS) {
-            debugger
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1882,6 +1881,16 @@ export class AccessNavigationService {
         case '/pms/my-kpi-kra/dashboard':
         if (this.rbac.allowedToAccess('My KRA KPI.view')) {
           return (route = '/pms/my-kpi-kra/dashboard');
+        }
+        break;
+        case '/pms/my-kpi-kra/team':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/my-kpi-kra/team');
+        }
+        break;
+       case '/pms/my-kpi-kra/employee-kra-kpi-view':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/my-kpi-kra/employee-kra-kpi-view');
         }
         break;
     }

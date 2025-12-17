@@ -148,7 +148,7 @@ export class SettingsHeaderComponent implements OnInit {
     }
      else if (url.startsWith('/pmsconfiguration/kra')) {
       this.moduleName = 'PMS Configurations';
-      this.componentName = 'Kra Configuration';
+      this.componentName = 'KRA Configuration';
     }
 
     //Dynamic Forms

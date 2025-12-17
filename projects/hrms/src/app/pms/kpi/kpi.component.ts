@@ -1,7 +1,19 @@
 import { OpenModalService } from './../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+  inject,
+} from '@angular/core';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
@@ -20,7 +32,6 @@ import { SelectModule } from 'primeng/select';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
 
-
 @Component({
   selector: 'app-kpi',
   standalone: true,
@@ -38,7 +49,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     TooltipModule,
     SelectModule,
     TooltipModule,
-    InfoIconComponent
+    InfoIconComponent,
   ],
   templateUrl: './kpi.component.html',
   styleUrl: './kpi.component.scss',
@@ -74,15 +85,15 @@ export class KpiComponent implements OnInit, OnDestroy {
   // Dropdown options
   kpiTypes = [
     { label: 'Quantitative', value: 'Quantitative' },
-    { label: 'Qualitative', value: 'Qualitative' }
+    { label: 'Qualitative', value: 'Qualitative' },
   ];
 
   uomOptions = [
     { label: 'Percentage (%)', value: '%' },
     { label: 'Currency ($)', value: '$' },
-    { label: 'Numbers (Nos)', value: 'Nos' },
+    // { label: 'Numbers (Nos)', value: 'Nos' },
     { label: 'Hours (Hrs)', value: 'Hrs' },
-    { label: 'Days', value: 'Days' }
+    { label: 'Days', value: 'Days' },
   ];
 
   // KRA List (still loaded if needed elsewhere in template)
@@ -91,22 +102,26 @@ export class KpiComponent implements OnInit, OnDestroy {
   currentKpiId: number | null = null;
 
   showOnlyInactive = false;
-inactiveButtonLabel = 'Inactive KPI';
-@ViewChild('statusConfirmModal') statusConfirmModal!: any;
+  inactiveButtonLabel = 'Inactive KPI';
+  @ViewChild('statusConfirmModal') statusConfirmModal!: any;
 
-pendingKpi: any = null;
-pendingKpiName = '';
-pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
-
-
-
+  pendingKpi: any = null;
+  pendingKpiName = '';
+  pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
 
   // Simplified single KPI form
   kpiForm = this.fb.group({
     kpiName: ['', [Validators.required, Validators.minLength(5)]],
     uom: ['', Validators.required],
-    targetValue: [null as number | null, [Validators.required, Validators.min(0)]],
-    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]]
+    targetValue: [null as number | null, [Validators.required]],
+    description: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(1000),
+      ],
+    ],
   });
 
   // Getter for form controls
@@ -124,11 +139,26 @@ pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
     this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.updateModuleInfo());
+
+this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
+  if (!uom) {
+    this.kpiForm.get('targetValue')?.reset();
+    this.kpiForm.get('targetValue')?.clearValidators();
+    this.kpiForm.get('targetValue')?.updateValueAndValidity();
+    return;
+  }
+
+  this.kpiForm.get('targetValue')?.reset();
+  this.applyTargetValueValidation(uom);
+});
+
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-    this.moduleinfo = url.includes('/pms/kpi') ? MODULE_INFOS.PMS_KPI_LIST_MODULE_INFO : '';
+    this.moduleinfo = url.includes('/pms/kpi')
+      ? MODULE_INFOS.PMS_KPI_LIST_MODULE_INFO
+      : '';
   }
 
   loadKraList() {
@@ -142,61 +172,60 @@ pendingNewStatus: 'Active' | 'Inactive' | 'On Hold' | '' = '';
     });
   }
 
-toggleInactiveFilter(): void {
-  this.showOnlyInactive = !this.showOnlyInactive;
+  toggleInactiveFilter(): void {
+    this.showOnlyInactive = !this.showOnlyInactive;
 
-  if (this.showOnlyInactive) {
-    this.filteredDetails = this.kpiList.filter(
-      kpi => kpi.status === 'Inactive'
-    );
-    this.inactiveButtonLabel = 'Active KPI';
-  } else {
-    this.filteredDetails = this.kpiList.filter(
-      kpi => kpi.status !== 'Inactive'
-    );
-    this.inactiveButtonLabel = 'Inactive KPI';
+    if (this.showOnlyInactive) {
+      this.filteredDetails = this.kpiList.filter(
+        (kpi) => kpi.status === 'Inactive'
+      );
+      this.inactiveButtonLabel = 'Active KPI';
+    } else {
+      this.filteredDetails = this.kpiList.filter(
+        (kpi) => kpi.status !== 'Inactive'
+      );
+      this.inactiveButtonLabel = 'Inactive KPI';
+    }
+
+    // reset pagination
+    this.page = 1;
+    this.first = 0;
   }
 
-  // reset pagination
-  this.page = 1;
-  this.first = 0;
-}
-
-
-
   loadKpiList() {
-  const params = {
-    pageNumber: this.page,
-    pageSize: this.rows,
-    ...(this.searchText && { search: this.searchText }),
-  };
+    const params = {
+      pageNumber: this.page,
+      pageSize: this.rows,
+      ...(this.searchText && { search: this.searchText }),
+    };
 
-  this.dataload = true;
-  this.subscription = this.http.getDataIncludeParams('Kpi/getAll', params).subscribe({
-    next: (res: any) => {
-      if (res.success) {
-        this.kpiList = res.data || [];
-        this.collectionSize = res.pagination?.totalRecords || 0;
-        this.filteredDetails = this.showOnlyInactive
-  ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
-  : this.kpiList.filter(kpi => kpi.status !== 'Inactive');
-
-      } else {
-        this.kpiList = [];
-        this.filteredDetails = [];
-        this.collectionSize = 0;
-      }
-      this.dataload = false;
-    },
-    error: (err) => {
-      console.error(err);
-      this.kpiList = [];
-      this.filteredDetails = [];
-      this.collectionSize = 0;
-      this.dataload = false;
-    }
-  });
-}
+    this.dataload = true;
+    this.subscription = this.http
+      .getDataIncludeParams('Kpi/getAll', params)
+      .subscribe({
+        next: (res: any) => {
+          if (res.success) {
+            this.kpiList = res.data || [];
+            this.collectionSize = res.pagination?.totalRecords || 0;
+            this.filteredDetails = this.showOnlyInactive
+              ? this.kpiList.filter((kpi) => kpi.status === 'Inactive')
+              : this.kpiList.filter((kpi) => kpi.status !== 'Inactive');
+          } else {
+            this.kpiList = [];
+            this.filteredDetails = [];
+            this.collectionSize = 0;
+          }
+          this.dataload = false;
+        },
+        error: (err) => {
+          console.error(err);
+          this.kpiList = [];
+          this.filteredDetails = [];
+          this.collectionSize = 0;
+          this.dataload = false;
+        },
+      });
+  }
 
   onSearchTextChange() {
     this.page = 1;
@@ -226,73 +255,74 @@ toggleInactiveFilter(): void {
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
-      size: 'lg'
+      size: 'lg',
     });
   }
 
-onSubmitKpi() {
-  const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-  const employeeId = user?.employeeId || 0;
-  if (this.kpiForm.invalid) return;
+  onSubmitKpi() {
+    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    const employeeId = user?.employeeId || 0;
+    if (this.kpiForm.invalid) return;
 
-  this.isSubmitting = true;
+    this.isSubmitting = true;
 
-  const formValue = this.kpiForm.getRawValue();
+    const formValue = this.kpiForm.getRawValue();
 
-  // ✅ STEP 1: create SINGLE object
-  const kpiPayload: {
-    kpiId?: number;
-    kpiName: string;
-    targetType: string;
-    targetValue: string;
-    description: string;
-    status: string;
-    createdBy: string;
-    updatedBy: string
-  } = {
-    kpiName: formValue.kpiName!.trim(),
-    targetType: formValue.uom!,
-    targetValue: String(formValue.targetValue!),
-    description: formValue.description!.trim(),
-    status: 'Created',
-    createdBy: employeeId,
-    updatedBy: employeeId
-  };
+    // ✅ STEP 1: create SINGLE object
+    const kpiPayload: {
+      kpiId?: number;
+      kpiName: string;
+      targetType: string;
+      targetValue: string;
+      description: string;
+      status: string;
+      createdBy: string;
+      updatedBy: string;
+    } = {
+      kpiName: formValue.kpiName!.trim(),
+      targetType: formValue.uom!,
+      targetValue: String(formValue.targetValue!),
+      description: formValue.description!.trim(),
+      status: 'Created',
+      createdBy: employeeId,
+      updatedBy: employeeId,
+    };
 
-  // ✅ STEP 2: add kpiId ONLY in edit mode
-  if (this.isEditMode && this.currentKpiId) {
-    kpiPayload.kpiId = this.currentKpiId;
+    // ✅ STEP 2: add kpiId ONLY in edit mode
+    if (this.isEditMode && this.currentKpiId) {
+      kpiPayload.kpiId = this.currentKpiId;
+    }
+
+    // ✅ STEP 3: API expects ARRAY
+    const payload = [kpiPayload];
+
+    this.http.postdata('Kpi/upsertkra', payload).subscribe({
+      next: () => {
+        this.modalService.dismissAll();
+        this.loadKpiList();
+        this.conformationPopup.openSuccessModal(
+          this.isEditMode
+            ? 'KPI updated successfully'
+            : 'KPI created successfully'
+        );
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSubmitting = false;
+        this.conformationPopup.openErrorModal(
+          err.error?.message || 'Failed to save KPI'
+        );
+      },
+      complete: () => {
+        this.isSubmitting = false;
+        this.isEditMode = false;
+        this.currentKpiId = null;
+        this.kpiForm.reset();
+      },
+    });
   }
 
-  // ✅ STEP 3: API expects ARRAY
-  const payload = [kpiPayload];
-
-  this.http.postdata('Kpi/upsertkra', payload).subscribe({
-    next: () => {
-      this.modalService.dismissAll();
-      this.loadKpiList();
-      this.conformationPopup.openSuccessModal(
-        this.isEditMode ? 'KPI updated successfully' : 'KPI created successfully'
-      );
-    },
-    error: (err) => {
-      console.error(err);
-      this.isSubmitting = false;
-      this.conformationPopup.openErrorModal(
-        err.error?.message || 'Failed to save KPI'
-      );
-    },
-    complete: () => {
-      this.isSubmitting = false;
-      this.isEditMode = false;
-      this.currentKpiId = null;
-      this.kpiForm.reset();
-    }
-  });
-}
-
-
-    hasAnyActionPermission(): boolean {
+  hasAnyActionPermission(): boolean {
     return true;
   }
 
@@ -304,13 +334,15 @@ onSubmitKpi() {
       kpiName: kpi.kpiName || '',
       uom: kpi.targetType || '',
       targetValue: kpi.targetValue != null ? Number(kpi.targetValue) : null,
-      description: kpi.description || ''
+      description: kpi.description || '',
     });
+
+    this.applyTargetValueValidation(kpi.targetType);
 
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
-      size: 'lg'
+      size: 'lg',
     });
   }
 
@@ -332,135 +364,169 @@ onSubmitKpi() {
   }
 
   onMakeInactive(kpi: any) {
-
     const formValue = this.kpiForm.getRawValue();
 
-   {
-    const payload = [{
-      kpiId: kpi.kpiId,
-      kpiName: kpi.kpiName,
-      status: 'Inactive',
-      updatedBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0,
-      createdBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0
-    }];
+    {
+      const payload = [
+        {
+          kpiId: kpi.kpiId,
+          kpiName: kpi.kpiName,
+          status: 'Inactive',
+          updatedBy:
+            JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
+              ?.employeeId || 0,
+          createdBy:
+            JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
+              ?.employeeId || 0,
+        },
+      ];
+
+      this.http.postdata('Kpi/upsertkra', payload).subscribe({
+        next: () => {
+          this.loadKpiList();
+          this.conformationPopup.openSuccessModal(
+            'KPI status updated to Inactive'
+          );
+        },
+        error: (err) => {
+          this.conformationPopup.openErrorModal(
+            err.error?.message || 'Failed to update status'
+          );
+        },
+      });
+    }
+  }
+
+  updateKpiStatus(kpi: any, status: 'Active' | 'Inactive' | 'On Hold') {
+    const employeeId =
+      JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId ||
+      0;
+
+    const payload = [
+      {
+        kpiId: kpi.kpiId,
+        kpiName: kpi.kpiName,
+        status,
+        updatedBy: employeeId,
+        createdBy: employeeId,
+      },
+    ];
 
     this.http.postdata('Kpi/upsertkra', payload).subscribe({
       next: () => {
         this.loadKpiList();
-        this.conformationPopup.openSuccessModal('KPI status updated to Inactive');
+        this.conformationPopup.openSuccessModal(
+          `KPI status updated to ${status}`
+        );
       },
       error: (err) => {
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
-      }
+        this.conformationPopup.openErrorModal(
+          err.error?.message || 'Failed to update KPI status'
+        );
+      },
     });
   }
-}
 
-updateKpiStatus(kpi: any, status: 'Active' | 'Inactive' | 'On Hold') {
-  const employeeId =
-    JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0;
+  canUpdate(status: string): boolean {
+    return status === 'Created' || status === 'Active';
+  }
 
-  const payload = [
-    {
-      kpiId: kpi.kpiId,
-      kpiName: kpi.kpiName,
-      status,
-      updatedBy: employeeId,
-      createdBy: employeeId
+  canActivate(status: string): boolean {
+    return (
+      status === 'Inactive' || status === 'On Hold' || status === 'Created'
+    );
+  }
+
+  canInactivate(status: string): boolean {
+    return status === 'Active' || status === 'On Hold';
+  }
+
+  canHold(status: string): boolean {
+    return status === 'Active';
+  }
+
+  openStatusConfirmModal(
+    kpi: any,
+    newStatus: 'Active' | 'Inactive' | 'On Hold'
+  ) {
+    this.pendingKpi = kpi;
+    this.pendingKpiName = kpi.kpiName;
+    this.pendingNewStatus = newStatus;
+
+    this.modalService.open(this.statusConfirmModal, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  confirmStatusChange() {
+    if (!this.pendingKpi || !this.pendingNewStatus) return;
+
+    const employeeId =
+      JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId ||
+      0;
+
+    this.isSubmitting = true;
+
+    const payload = [
+      {
+        kpiId: this.pendingKpi.kpiId,
+        kpiName: this.pendingKpi.kpiName,
+        status: this.pendingNewStatus,
+        updatedBy: employeeId,
+        createdBy: employeeId,
+      },
+    ];
+
+    this.http.postdata('Kpi/upsertkra', payload).subscribe({
+      next: () => {
+        this.modalService.dismissAll();
+        this.loadKpiList();
+
+        this.conformationPopup.openSuccessModal(
+          `KPI status updated to ${this.pendingNewStatus}`
+        );
+
+        // cleanup
+        this.pendingKpi = null;
+        this.pendingNewStatus = '';
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.conformationPopup.openErrorModal(
+          err.error?.message || 'Failed to update KPI status'
+        );
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      },
+    });
+  }
+
+  private applyTargetValueValidation(uom: string) {
+    const control = this.kpiForm.get('targetValue');
+    if (!control) return;
+
+    let validators = [Validators.required];
+
+    switch (uom) {
+      case '%':
+        validators.push(Validators.min(1), Validators.max(100));
+        break;
+
+      case '$':
+        validators.push(Validators.min(1));
+        break;
+
+      case 'Hrs':
+      case 'Days':
+        validators.push(Validators.min(1), Validators.max(999));
+        break;
     }
-  ];
 
-  this.http.postdata('Kpi/upsertkra', payload).subscribe({
-    next: () => {
-      this.loadKpiList();
-      this.conformationPopup.openSuccessModal(
-        `KPI status updated to ${status}`
-      );
-    },
-    error: (err) => {
-      this.conformationPopup.openErrorModal(
-        err.error?.message || 'Failed to update KPI status'
-      );
-    }
-  });
-}
-
-canUpdate(status: string): boolean {
-  return status === 'Created' || status === 'Active';
-}
-
-canActivate(status: string): boolean {
-  return status === 'Inactive' || status === 'On Hold' || status === 'Created';
-}
-
-canInactivate(status: string): boolean {
-  return status === 'Active' || status === 'On Hold';
-}
-
-canHold(status: string): boolean {
-  return status === 'Active';
-}
-
-openStatusConfirmModal(
-  kpi: any,
-  newStatus: 'Active' | 'Inactive' | 'On Hold'
-) {
-  this.pendingKpi = kpi;
-  this.pendingKpiName = kpi.kpiName;
-  this.pendingNewStatus = newStatus;
-
-  this.modalService.open(this.statusConfirmModal, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
-
-
-confirmStatusChange() {
-  if (!this.pendingKpi || !this.pendingNewStatus) return;
-
-  const employeeId =
-    JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0;
-
-  this.isSubmitting = true;
-
-  const payload = [
-    {
-      kpiId: this.pendingKpi.kpiId,
-      kpiName: this.pendingKpi.kpiName,
-      status: this.pendingNewStatus,
-      updatedBy: employeeId,
-      createdBy: employeeId
-    }
-  ];
-
-  this.http.postdata('Kpi/upsertkra', payload).subscribe({
-    next: () => {
-      this.modalService.dismissAll();
-      this.loadKpiList();
-
-      this.conformationPopup.openSuccessModal(
-        `KPI status updated to ${this.pendingNewStatus}`
-      );
-
-      // cleanup
-      this.pendingKpi = null;
-      this.pendingNewStatus = '';
-    },
-    error: (err) => {
-      this.isSubmitting = false;
-      this.conformationPopup.openErrorModal(
-        err.error?.message || 'Failed to update KPI status'
-      );
-    },
-    complete: () => {
-      this.isSubmitting = false;
-    }
-  });
-}
-
-
-
+    control.setValidators(validators);
+    control.updateValueAndValidity();
+  }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();

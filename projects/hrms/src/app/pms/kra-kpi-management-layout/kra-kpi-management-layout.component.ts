@@ -20,6 +20,10 @@ export class KraKpiManagementLayoutComponent {
       permission: { feature: 'My KRA KPI', action: 'view' }
     },
     {
+      label: 'Team KRA/KPI', link: '/pms/my-kpi-kra/team', icon: 'main-menu-icons/kra-kpi-dashboard.png',
+      permission: { feature: 'My KRA KPI', action: 'view' }
+    },
+    {
       label: 'Dashboard', link: '/pms/my-kpi-kra/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
       permission: { feature: 'My KRA KPI', action: 'view' }
     },

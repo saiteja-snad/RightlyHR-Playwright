@@ -133,3 +133,23 @@
   max-height: 40dvh;
   border: 1px solid var(--content-border-color) !important;
 }
+
+.filter-indicator {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background-color: #0d6efd;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.badge {
+  font-size: 0.875rem;
+}
+
+.badge .bi-x-lg {
+  font-size: 1rem;
+  line-height: 1;
+}

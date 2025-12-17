@@ -17,6 +17,8 @@ import { KpiComponent } from "./kpi/kpi.component";
 import { AssignKraKpiComponent } from "./assign-kra-kpi/assign-kra-kpi.component";
 import { MyKraKpiComponent } from "./my-kra-kpi/my-kra-kpi.component";
 import { KraKpiDashboardComponent } from "./kra-kpi-dashboard/kra-kpi-dashboard.component";
+import { TeamKraKpiComponent } from "./team-kra-kpi/team-kra-kpi.component";
+import { EmployeeKraKpiViewComponent } from "./employee-kra-kpi-view/employee-kra-kpi-view.component";
 
 export default [
     { path: '', redirectTo: '/pms/review-cycle', pathMatch: 'full' },
@@ -47,6 +49,9 @@ export default [
         children: [
             { path: 'view', component: MyKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
             { path: 'dashboard', component: KraKpiDashboardComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
+             { path: 'team', component: TeamKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
+             { path: 'employee-kra-kpi-view/:employeeId', component: EmployeeKraKpiViewComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
+
         ]
     },
 ] as Route[];

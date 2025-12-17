@@ -36,7 +36,7 @@
           [disabled]="!canOpenAssignModal">
           {{ 'Assign KRA' | translate }}
         </button>
-      }
+        }
       </div>
     </div>
   </div>
@@ -92,13 +92,14 @@
           <p-accordion-content>
 
             <div class="custom-p-multi-select-table custom-accordian-table">
-               @if (emp.assignments && emp.assignments.length > 0) {
+              @if (emp.assignments && emp.assignments.length > 0) {
               <p-table [value]="emp.assignments">
 
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Review Cycle</th>
-                    <th class="text-center">KRA</th>
+
+                    <th>KRA</th>
+                    <th class="text-center">Review Cycle</th>
                     <th class="text-center">Total KPIs</th>
                     <th class="text-center">Weightage (%)</th>
                     <th class="text-center">Status</th>
@@ -112,10 +113,10 @@
                 <ng-template pTemplate="body" let-kra>
                   <tr>
                     <td>
-                      {{ kra?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}
+                      {{ kra.kpis?.[0]?.kraName || kra.kra?.kraName || '-' }}
                     </td>
                     <td class="text-center">
-                      {{ kra.kpis?.[0]?.kraName || kra.kra?.kraName || '-' }}
+                      {{ kra?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}
                     </td>
                     <td class="text-center">
                       <a class="kpis-count" [class.cursor]="kra.kpisCount > 0" [class.text-muted]="kra.kpisCount === 0"
@@ -176,12 +177,12 @@
 
               </p-table>
 
-            } @else {
-                  <div class="p-4 text-center text-muted">
-                    <app-no-data-found />
-                  </div>
-                }
-                 </div>
+              } @else {
+              <div class="p-4 text-center text-muted">
+                <app-no-data-found />
+              </div>
+              }
+            </div>
           </p-accordion-content>
 
         </p-accordion-panel>
@@ -266,6 +267,11 @@
             </label>
             <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
               placeholder="Enter weightage">
+            <div class="error-msg" *ngIf="assignForm.get('weightage')?.touched && assignForm.get('weightage')?.invalid">
+              <span *ngIf="assignForm.get('weightage')?.hasError('required')">Weightage is required</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('min')">Weightage must be at least 1</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('max')">Weightage cannot exceed 100%</span>
+            </div>
 
           </div>
 
@@ -278,7 +284,12 @@
               onkeydown="return false">
             <div class="error-msg"
               *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
-              Effective Date is required
+              <span *ngIf="assignForm.get('effectiveDate')?.hasError('required')">
+                Effective Date is required
+              </span>
+              <span *ngIf="assignForm.get('effectiveDate')?.hasError('pastDate')">
+                Effective Date cannot be in the past
+              </span>
             </div>
           </div>
 
@@ -290,7 +301,12 @@
             <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
             <div class="error-msg"
               *ngIf="assignForm.get('targetDate')?.touched && assignForm.get('targetDate')?.invalid">
-              Target Date is required
+              <span *ngIf="assignForm.get('targetDate')?.hasError('required')">
+                Target Date is required
+              </span>
+              <span *ngIf="assignForm.get('targetDate')?.hasError('pastDate')">
+                Target Date cannot be in the past
+              </span>
             </div>
           </div>
 
@@ -335,8 +351,8 @@
             <thead>
               <tr>
                 <th>{{ 'KPI Name' | translate }}</th>
-                <th>{{ 'Unit of Measurement' | translate }}</th>
                 <th>{{ 'Weightage' | translate }}</th>
+                <th>{{ 'Unit of Measurement' | translate }}</th>
                 <th>{{ 'Target Value' | translate }}</th>
                 <th>{{ 'Target Date' | translate }}</th>
                 <th>{{ 'Description' | translate }}</th>
@@ -354,6 +370,10 @@
                     </p-select>
                   </div>
                 </td>
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
+                    placeholder="e.g. 20">
+                </td>
                 <!-- Unit of Measurement -->
                 <td>
                   <div class="custom-p-select-content">
@@ -363,16 +383,17 @@
                   </div>
                 </td>
                 <td>
-                  <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
-                    placeholder="e.g. 20">
-                </td>
-                <td>
                   <input type="number" class="form-control custom-input" formControlName="targetValue"
                     placeholder="e.g. 95">
                 </td>
                 <td>
                   <input type="date" class="form-control custom-input" formControlName="targetDate"
                     onkeydown="return false">
+                  <div class="error-msg small mt-1"
+                    *ngIf="row.get('targetDate')?.touched && row.get('targetDate')?.invalid">
+                    <span *ngIf="row.get('targetDate')?.hasError('required')">Required</span>
+                    <span *ngIf="row.get('targetDate')?.hasError('pastDate')">Target Date cannot be past date</span>
+                  </div>
                 </td>
                 <!-- Description -->
                 <td>
@@ -413,10 +434,10 @@
             </div>
 
             <!-- Green Success: Exactly 100% -->
-            <div class="text-success small fw-medium" *ngIf="totalNewKpiWeightage === 100">
+            <!-- <div class="text-success small fw-medium" *ngIf="totalNewKpiWeightage === 100">
               <i class="bi bi-check-circle-fill me-1"></i>
               Great! Total weightage is 100% — Ready to assign!
-            </div>
+            </div> -->
           </div>
 
         </div>

@@ -725,4 +725,7 @@ export const CARDS_SUB_TABS = [
 export const MY_KRA_KPI_TABS = [
   { route: '/pms/my-kpi-kra/view', permission: 'My KRA KPI.view' },
   { route: '/pms/my-kpi-kra/dashboard', permission: 'My KRA KPI.view' },
+  { route: '/pms/my-kpi-kra/team', permission: 'My KRA KPI.view' },
+  { route: '/pms/my-kpi-kra/employee-kra-kpi-view', permission: 'My KRA KPI.view' },
+
 ]

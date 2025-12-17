@@ -5,11 +5,11 @@
       </div>
       <div class="component-header">{{"My KRA's / KPI's" | translate}}</div>
       <div>
-        <app-module-info-icon placement="bottom" [ngbPopover]="popContent"  />
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
   </div>
-    <ng-template #popContent>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
@@ -200,6 +200,10 @@
         <table class="w-100">
           <thead>
             <tr>
+              <th class="text-center p-checkbox-box p-checkbox-checked">
+                <input class="form-check-input" type="checkbox" [checked]="isAllSelected" (change)="toggleSelectAll($event)" />
+              </th>
+
               <th>{{ 'KPI Name' | translate }}</th>
               <th>{{ 'Weightage' | translate }}</th>
               <th>{{ 'Target Value' | translate }}</th>
@@ -211,6 +215,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let kpi of myKpiList; let i = index">
+              <td class="text-center">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="myKpiList[i].selected" (ngModelChange)="onRowSelectionChange()" />
+              </td>
+
               <!-- KPI Name -->
               <td>
                 <input type="text" class="form-control custom-input" [(ngModel)]="myKpiList[i].kpiName" disabled />
@@ -249,7 +257,7 @@
               <!-- Assigned Weightage -->
               <td>
                 <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].assignedWeightage"
-                  [min]="0" [max]="100" step="1" />
+                  (ngModelChange)="calculateAssignedWeightage()" [min]="0" [max]="100" step="1" />
               </td>
 
               <!-- Attachment -->
@@ -262,17 +270,22 @@
           </tbody>
 
         </table>
+        <div *ngIf="isWeightageExceeded" class="text-danger mt-2 fw-semibold">
+          Note: Total progress should not exceed 100.
+        </div>
       </div>
 
       <!-- Footer -->
       <div class="custom-modal-footer d-flex justify-content-end gap-3 m-3">
-        <a type="button" class="save-btn mt-2" (click)="saveKpis()">
+        <a type="button" class="save-btn mt-2" [class.disabled]="isWeightageExceeded || selectedKpis.length === 0"
+          [attr.disabled]="isWeightageExceeded ? true : null" (click)="!isWeightageExceeded && saveKpis()">
           {{ 'Save' | translate }}
         </a>
         <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
           {{ 'Cancel' | translate }}
         </button>
-        <button type="button" class="custom-btn btn-primary" (click)="submitForApproval()">
+        <button type="button" class="custom-btn btn-primary" [disabled]="isWeightageExceeded || selectedKpis.length === 0"
+          (click)="submitForApproval()">
           {{ 'Submit for Approval' | translate }}
         </button>
       </div>

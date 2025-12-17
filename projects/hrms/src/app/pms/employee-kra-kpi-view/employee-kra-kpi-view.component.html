@@ -1,0 +1,182 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <div class="heading-content">
+            <div class="commpoment-name">PMS
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="commpoment-name cursor" (click)="navigateTeamKRAKPI()"><u>Team KRA's / KPI's</u>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">
+        {{ currentEmployeeName || ('Employee KRA/KPI' | translate) }}
+      </div>
+      <!-- <div>
+        <app-module-info-icon placement="bottom" />
+      </div> -->
+    </div>
+
+    <!-- Employee Switcher Dropdown -->
+    <div class="d-flex align-items-center gap-3 mt-3">
+      @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team (Expenses).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+            (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+      @else if(rbac.allowedToAccess('All Employees (Expenses).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+            (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+      @else if(rbac.allowedToAccess('My Team (Expenses).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
+            placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
+            (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Main Content: Accordion View -->
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="w-100">
+      <!-- Search Bar -->
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search KRA / KPI..."
+          [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+      </div>
+
+
+      @if (loading) {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      } @else if (teamKpiData.length === 0 || !teamKpiData[0]) {
+      <div class="text-center py-5">
+        <app-no-data-found />
+      </div>
+      } @else {
+      <div class="custom-accordians">
+        <div class="custom-accordian-data-content">
+
+          <p-accordion [multiple]="false" [(activeIndex)]="activeAccordionIndex">
+            @for (kraItem of teamKpiData[0].kras; track kraItem.kra.kraId; let i = $index) {
+            <p-accordion-panel [value]="i">
+              <!-- Accordion Header -->
+              <p-accordion-header>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                  <div class="d-flex align-items-center gap-3">
+                    {{ kraItem.kra.kraName }}
+                  </div>
+                </div>
+              </p-accordion-header>
+
+              <!-- Accordion Content: KPI Table -->
+              <p-accordion-content>
+                <div class="custom-p-multi-select-table custom-accordian-table">
+                  @if (kraItem.kpis && kraItem.kpis.length > 0) {
+                  <p-table [value]="kraItem.kpis">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>KPI Name</th>
+                        <th class="text-center">Weightage (%)</th>
+                        <th class="text-center">Target Value</th>
+                        <th class="text-center">Target Date</th>
+                        <th class="text-center">Description</th>
+                        <th class="text-center">Progress</th>
+                        <!-- <th class="text-center">Status</th> -->
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-kpi>
+                      <tr>
+                        <td>{{ kpi.kpiName }}</td>
+                        <td class="text-center">{{ kpi.weightageValue || '-' }}</td>
+                        <td class="text-center">{{ kpi.targetValue || '-' }}</td>
+                        <td class="text-center">
+                          {{ kpi.targetDate | date:'mediumDate' }}
+                        </td>
+                        <td class="text-center">
+                          <div *ngIf="kpi.description; else noDescription">
+                            <app-info-icon ngbPopover="{{ kpi.description }}" container="body" class="cursor">
+                            </app-info-icon>
+                          </div>
+                          <ng-template #noDescription>NA</ng-template>
+                        </td>
+                        <td class="text-center">
+                          <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" [style.width.%]="kpi.assignedWeightage || 0"
+                              [attr.aria-valuenow]="kpi.assignedWeightage || 0" aria-valuemin="0" aria-valuemax="100"
+                              [ngClass]="getProgressClass(kpi.assignedWeightage || 0)">
+                            </div>
+                          </div>
+                          <small class="fw-semibold">
+                            {{ kpi.assignedWeightage || 0 }}%
+                          </small>
+                        </td>
+
+                        <!-- <td class="text-center">
+                          <span class="kpi-status" [ngClass]="getStatusClass(kpi.status)">
+                            {{ kpi.status || 'Active' }}
+                          </span>
+                        </td> -->
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  } @else {
+                  <div class="p-4 text-center text-muted">
+                    No KPIs assigned to this KRA
+                  </div>
+                  }
+                </div>
+              </p-accordion-content>
+            </p-accordion-panel>
+            }
+          </p-accordion>
+          <!-- Pagination -->
+          @if (teamKpiData.length > 0) {
+          <div class="pagination-content">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+              <div class="d-flex align-items-center gap-3 p-2">
+                <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                  (ngModelChange)="onPageSizeChange($event)">
+                  @for (option of options; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+                <span class="pagination-label text-nowrap">
+                  Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of
+                  {{ collectionSize }}
+                </span>
+              </div>
+              <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+      }
+
+    </div>
+  </div>
+</div>

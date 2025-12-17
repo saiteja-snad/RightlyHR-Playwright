@@ -79,7 +79,7 @@
               <ul class="dropdown-menu custom-dropdown-menu">
 
                 <!-- UPDATE -->
-                 @if(rbac.allowedToAccess('KPI.update')){
+                @if(rbac.allowedToAccess('KPI.update')){
                 @if (canUpdate(kpi.status)) {
                 <li class="dropdown-item" (click)="onUpdate(kpi, createKpiModal)">
                   <a class="dropdown-custom-btn">
@@ -87,10 +87,10 @@
                   </a>
                 </li>
                 }
-              }
+                }
 
                 <!-- ACTIVATE -->
-                 @if(rbac.allowedToAccess('KPI.update')){
+                @if(rbac.allowedToAccess('KPI.update')){
                 @if (canActivate(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Active')">
                   <a class="dropdown-custom-btn text-success">
@@ -98,21 +98,21 @@
                   </a>
                 </li>
                 }
-              }
+                }
 
                 <!-- INACTIVE -->
-                 @if(rbac.allowedToAccess('KPI.delete')){
+                @if(rbac.allowedToAccess('KPI.delete')){
                 @if (canInactivate(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Inactive')">
                   <a class="dropdown-custom-btn text-warning">
                     <i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}
                   </a>
                 </li>
-              }
+                }
                 }
 
                 <!-- HOLD -->
-                 @if(rbac.allowedToAccess('KPI.update')){
+                @if(rbac.allowedToAccess('KPI.update')){
                 @if (canHold(kpi.status)) {
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'On Hold')">
                   <a class="dropdown-custom-btn text-secondary">
@@ -120,7 +120,7 @@
                   </a>
                 </li>
                 }
-              }
+                }
 
               </ul>
 
@@ -210,9 +210,32 @@
               {{ 'Target Value' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="number" class="form-control custom-input" formControlName="targetValue" placeholder="e.g. 95">
-            <div class="error-msg" *ngIf="f['targetValue'].touched && f['targetValue'].invalid">
-              Target Value is required
+            <div class="error-msg" *ngIf="f['targetValue'].touched && f['targetValue'].errors">
+              <span *ngIf="f['targetValue'].errors['required']">
+                Target Value is required
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['min'] && f['uom'].value === '%'">
+                Percentage must be between 1 and 100
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['max'] && f['uom'].value === '%'">
+                Percentage must be between 1 and 100
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['min'] && f['uom'].value === '$'">
+                Currency must be greater than 0
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['min'] && (f['uom'].value === 'Hrs' || f['uom'].value === 'Days')">
+                Value must be between 1 and 999
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['max'] && (f['uom'].value === 'Hrs' || f['uom'].value === 'Days')">
+                Value must be between 1 and 999
+              </span>
             </div>
+
           </div>
 
           <div class="col-12">

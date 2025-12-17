@@ -12,7 +12,8 @@ export default [
             { path: 'rate-card-active', loadComponent: () => import('./rate-card/rate-card.component').then((m) => m.RateCardComponent) },
             { path: 'rate-card-inactive', loadComponent: () => import('./rate-card-inactive/rate-card-inactive.component').then((m) => m.RateCardInactiveComponent) },
             {path:'rate-card-add',loadComponent: () => import('./add-rate-card/add-rate-card.component').then((m) => m.AddRateCardComponent)},
-            {path:'rate-card-update',loadComponent: () => import('./update-rate-card/update-rate-card.component').then((m)=> m.UpdateRateCardComponent)}
+            {path:'rate-card-update',loadComponent: () => import('./update-rate-card/update-rate-card.component').then((m)=> m.UpdateRateCardComponent)},
+            {path:'rate-card-view',loadComponent: () => import('./view-rate-card/view-rate-card.component').then((m)=> m.ViewRateCardComponent)}
         ]
     },
 ] as Route[]

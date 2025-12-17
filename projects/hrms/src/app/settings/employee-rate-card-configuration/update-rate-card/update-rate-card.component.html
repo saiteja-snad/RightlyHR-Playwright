@@ -7,7 +7,7 @@
         </div>
     </div>
 
-    <form autocomplete="off" [formGroup]="updateratecardForm" (ngSubmit)="addRateCard()">
+    <form autocomplete="off" [formGroup]="updateratecardForm" (ngSubmit)="updateRateCard()">
         <div class="custom-setting-right-content fields-data-container">
             <div class="data-header-content">
                 <!-- Year -->
@@ -94,7 +94,7 @@
                         </div>
                  
                 <div class="pt-4 mt-1">
-                    <button type="button" class="custom-btn btn-primary px-4" (click)="addShift()">
+                    <button type="button" class="custom-btn btn-primary px-4" (click)="addrow()">
                         <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
                     </button>
                 </div>

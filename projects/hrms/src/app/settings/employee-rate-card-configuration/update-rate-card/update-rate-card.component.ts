@@ -10,7 +10,7 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 
@@ -42,6 +42,7 @@ export class UpdateRateCardComponent {
   sublocatiodis = false;
   ProjectroleDetails = [] as any;
   FrequencyDetail = [] as any;
+    destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('deletepopup') deletepopup: any;
   isloading = false;
   loading = true;
@@ -163,7 +164,7 @@ setExperienceBands() {
         experienceMin: [band.experienceFrom, Validators.required],
         experienceMax: [band.experienceTo, Validators.required],
         rateBasic: [band.frequencyType, Validators.required],
-        currency: [band.currencies?.[0]?.currencyCode, Validators.required],
+        currency   : [band.currencies?.[0]?.currencyCode, Validators.required],
         rate: [band.currencies?.[0]?.rate, Validators.required]
       })
     );
@@ -213,7 +214,7 @@ geAllLocations() {
    initializeForm() {
     this.updateratecardForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
-      location: [[], Validators.required],   // ✅ array
+      location: [[], Validators.required],   // array
       subLocation: [{ value: [], disabled: true }, Validators.required], 
       role:['',Validators.required],
       effectivefrom:['',Validators.required],
@@ -224,18 +225,19 @@ geAllLocations() {
    get rateItems(): FormArray {
     return this.updateratecardForm.get('rateItems') as FormArray;
   }
- addShift() {
+ addrow() {
     this.rateItems.push(this.createRateCardItems());
   }
-    createRateCardItems(): FormGroup {
-    return this.fb.group({
-      experienceFrom: ['', Validators.required],
-      experienceTo: ['', Validators.required],
-      frequencyType: ['', Validators.required],
-      currencies: this.fb.array([this.createCurrencies()]),
-      status: ['Active'],
-    });
-  }
+ createRateCardItems(): FormGroup {
+  return this.fb.group({
+    experienceMin: ['', Validators.required],
+    experienceMax: ['', Validators.required],
+    rateBasic: ['', Validators.required],
+    currency: ['', Validators.required],
+    rate: ['', Validators.required]
+  });
+}
+  
    createCurrencies(): FormGroup {
     return this.fb.group({
       currencyCode: ['',Validators.required],
@@ -273,9 +275,71 @@ geAllLocations() {
                         .get('rate');
   console.log(rateControl?.value);
 }
-addRateCard(){
+updateRateCard(){
+    let formValues = this.updateratecardForm.getRawValue();
+    console.log(formValues);
+    let payload = {
+      effectiveFrom: formValues.effectivefrom,
+      //  effectiveTo: '2025-12-17T05:53:20.076Z',
+      roleIds: formValues?.role?.join(','),
+      locationIds: formValues?.location?.join(','),
+      subLocationIds: formValues?.subLocation?.join(','),
+      status: 'Active',
+      createdBy: this.Employeeinfo.employeeId,
+         experienceBands: formValues.rateItems.map((item: any) => ({
+      experienceFrom: Number(item.experienceMin),
+      experienceTo: Number(item.experienceMax),
+      status: 'Active',
+      frequencyType: item.rateBasic,
+      currencies: [
+        {
+          currencyCode: item.currency,
+         currencyName: item.currency,
+          symbol: "string",
+          rate: item?.rate
+        }
+      ]
+    }))
+    };
+    console.log(payload);
+    this.subscription=this.http.putData(`RateCard/${this.updateratecardData.id}`,payload).subscribe({
+          next: (res: any) => {
+            this.isloading = false;
 
+            this.conformationPopup.openSuccessModal(
+              'Rate Card Updated successfully'
+            );
+          this.modalService.dismissAll();
+          this.getAllRateCardDetails();
+          this.nagvition();
+          },
+          error: (err: any) => {
+            this.isloading = false;
+            this.modalService.dismissAll();
+            this.conformationPopup.openErrorModal(
+              err.error.message
+                ? err.error.message
+                : 'Failed to allocate Work Hours. Please try again later'
+            );
+          },
+          complete: () => {
+          },
+        });
+  
   }
+  getAllRateCardDetails(): void {
+      this.isloading = true;
+      let url = `RateCard?status=active`;
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (res: any) => {
+            console.log(res);
+          },
+          error: (err) => {
+            this.isloading = false;
+            console.error('Error fetching shifts:', err);
+          },
+        });
+    }
     onCountryChange(country: any, index: number) {
     console.log(country);
     this.selectedDialCode = country.dialling_code;

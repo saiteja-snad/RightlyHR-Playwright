@@ -273,6 +273,8 @@ export const permissionsData = [
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Filters Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet Department Filter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet RM/TM Filter', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },

@@ -25,3 +25,16 @@ symbol: string,
 rate: number, 
 status: string
 }
+export interface updateratecardmodel{
+id: number,
+subLocationName?:string,
+locationName?:string,
+roleName?:string,
+effectiveFrom?:any,
+effectiveTo?:any,
+status?:string,
+experienceBands?:IExperienceResponse[] |undefined,
+createdDate?:string,
+subLocationId:any;
+roleId:any;
+}

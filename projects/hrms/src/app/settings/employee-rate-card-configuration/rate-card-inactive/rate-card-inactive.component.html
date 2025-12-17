@@ -54,7 +54,7 @@
               <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
               <td>
                 <div class="dropdown">
-                  <a type="button" data-bs-toggle="dropdown" *ngIf="item.status==='Active'">
+                  <a type="button" data-bs-toggle="dropdown" *ngIf="item.status==='Inactive'">
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>
                   <!-- <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Inactive'">
@@ -62,7 +62,7 @@
                   <a class="dropdown-item">Active</a>
                 </li>
               </ul> -->
-                  <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
+                  <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Inactive'">
                     <li (click)="onClick(item,confirmationpopup)">
                       <a class="dropdown-item">Inactive</a>
                     </li>
@@ -163,7 +163,7 @@
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
         No
       </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="InactiveWFHAllocation(); model.close()">
+      <button type="submit" class="custom-btn btn-primary" (click)="InactiveRateCard(); model.close()">
         Yes
       </button>
     </div>

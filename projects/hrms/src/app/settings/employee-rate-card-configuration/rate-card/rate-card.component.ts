@@ -18,6 +18,7 @@ import { AddRateCardComponent } from '../add-rate-card/add-rate-card.component';
 import { Router } from '@angular/router';
 import { RateCardTabsComponent } from "../rate-card-tabs/rate-card-tabs.component";
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-rate-card',
@@ -69,6 +70,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     private modalService: NgbModal,
     public rbac: RbacService,
     public router: Router,
+    private AuthService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -230,17 +232,19 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
         },
       });
   }
-   activeWFHAllocation() {
+   activeRateCard() {
+    let loggedInUser=this.AuthService.getToken()
+    console.log(loggedInUser)
     const payload = {
-      status: 'Active',
+      headerStatus: 'Inactive',
+      updatedBy: loggedInUser.employeeId,
     };
     this.http
-      .putData(`FlexibleWorkhoursAllocation/update/${this.selectedId}`, payload)
+      .putData(`RateCard/${this.selectedId}/status`, payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          
-          this.modal.openSuccessModal(`${res.data.entityValue.name} Work hours allocation has been activated`);
+          this.modal.openSuccessModal(`Record inactivated successfully`);
           this.getAllRateCardDetails();
         },
         error: (err: any) => {

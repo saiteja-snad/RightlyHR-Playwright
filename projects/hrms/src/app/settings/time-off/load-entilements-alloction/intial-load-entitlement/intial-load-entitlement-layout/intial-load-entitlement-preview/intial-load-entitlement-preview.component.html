@@ -70,7 +70,7 @@
             aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
             aria-describedby="basic-addon1">
     </div>
-    <div class="custom-p-multi-select-table">
+    <div class="custom-p-multi-select-table mb-2">
         @if (!loading) {
 
         <p-table [value]="employeesTableData" [(selection)]="selectedEmployees" dataKey="employeeId" class="w-100"
@@ -159,6 +159,18 @@
 
 
     <div class="footer-content">
+        <div class="d-flex align-items-center flex-wrap gap-3 mb-2">
+            <div class="d-flex align-items-center gap-1">
+                <div class="circular-dot circle-holiday"></div>
+                <div class="status-text">Entitled</div>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <div class="circular-dot circle-leave"></div>
+                <div class="status-text">Yet to entitled</div>
+            </div>
+
+
+        </div>
         <div class="d-flex justify-content-end align-items-center gap-3">
             <button type="button" class="custom-btn btn-secondary" (click)="back()">Back</button>
             <button type="button" class="custom-btn btn-primary" (click)="submit()"

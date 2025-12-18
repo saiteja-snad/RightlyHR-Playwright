@@ -11,7 +11,7 @@
 
 .custom-p-multi-select-table {
     .p-datatable-table-container {
-        height: 50dvh !important;
+        height: 45dvh !important;
     }
 
  
@@ -140,4 +140,19 @@
         color: #6b7280;
         font-size: var(--fontsize12);
     }
+}
+
+
+.circular-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.circle-holiday {
+    background-color: #00A912;
+}
+
+.circle-leave {
+    background-color: #F29000;
 }

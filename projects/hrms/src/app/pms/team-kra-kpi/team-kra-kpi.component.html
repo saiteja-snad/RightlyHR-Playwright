@@ -113,7 +113,7 @@
                 @for (item of teamKpiData; track item.employeedata.employeeId) {
                   <tr>
                     <td class="employee-bold cursor" (click)="goToEmployeeKraKpi(item.employeedata.employeeId)">
-                          {{ item.employeedata.firstName }} {{ item.employeedata.lastName }}
+                          {{ item.employeedata.firstName }} {{item.employeedata.middleName}} {{ item.employeedata.lastName }}
                     </td>
                     <td class="text-center">
                       <span>{{ item.krasCount }}</span>

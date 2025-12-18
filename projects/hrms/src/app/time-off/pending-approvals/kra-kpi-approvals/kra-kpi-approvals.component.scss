@@ -1,0 +1,16 @@
+.custom-p-multi-select-table {
+  position: relative !important;
+  height: 35dvh;
+}
+
+.popup-icon {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+}
+
+.no-data-wrapper {
+  min-height: 60vh;              /* adjust if needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

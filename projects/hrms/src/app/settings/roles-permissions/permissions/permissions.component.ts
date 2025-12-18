@@ -762,7 +762,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Contractors main Tab',
     'Offboarding main Tab',
     'Onboarding main Tab',
-    'Time Sheet approval Tab'
+    'Time Sheet approval Tab',
+    'KRA KPI approval Tab'
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];

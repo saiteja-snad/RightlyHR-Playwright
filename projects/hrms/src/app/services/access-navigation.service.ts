@@ -1462,6 +1462,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/pending-approvals/kra-kpi':
+        if (this.rbac.allowedToAccess('KRA KPI approval Tab.view')) {
+          return (route = '/pending-approvals/kra-kpi');
+        }
+        break;
+
       case '/pending-approvals/time-off':
         if (this.rbac.allowedToAccess('Time Off main Tab.view')) {
           for (const item of TIMEOFF_APPROVALS_TABS) {

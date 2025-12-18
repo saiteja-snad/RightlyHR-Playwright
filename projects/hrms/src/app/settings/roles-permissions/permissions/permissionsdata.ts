@@ -390,6 +390,7 @@ export const permissionsData = [
   { fields: 'Desk Requests Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet approval Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'KRA KPI approval Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contractor Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contract-Conversion Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'EmployeeInfo Tab', View: false, Update: false, Create: false, Delete: false },

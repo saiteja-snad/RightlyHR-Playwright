@@ -270,7 +270,7 @@
                         </ng-template>
                     </p-carousel>
                     <!-- Custom 3-dot indicators -->
-                    <div class="custom-indicators" *ngIf="eventItems.length > 1">
+                    <div class="custom-indicators" *ngIf="eventItems.length > 0">
                         <span *ngFor="let dot of [0,1,2]; let i = index" class="indicator-dot"
                             [class.active]="i === activeIndicatorIndex"></span>
                     </div>

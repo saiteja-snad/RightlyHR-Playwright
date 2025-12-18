@@ -69,7 +69,7 @@ export class SettingsTimeOffTabsComponent {
       label: 'Bulk Load Entitlements',
       link: '/settings/timeoff-configurations/load-entitlement',
       permission: { feature: 'Bulk Load Entitlements Tab', action: 'view' },
-      icon: '/settings-icon/working-hours.png',
+      icon: '/settings-icon/leave-entitlements-icon.png',
       subjectText: MODULE_INFOS.SETTINGS_LOAD_Entitlements,
     }
   ];

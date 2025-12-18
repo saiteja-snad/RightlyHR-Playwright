@@ -272,19 +272,21 @@ createRateCardItems(): FormGroup {
     experienceFrom: ['', Validators.required],
     experienceTo: ['', Validators.required],
     frequencyType: ['', Validators.required],
-    currency: ['', Validators.required],
-    rate: ['', Validators.required],
+    status: ['Active'],
+    currencies: this.fb.array([
+      this.createCurrencies()
+    ])
   });
 }
-  createCurrencies(): FormGroup {
-    return this.fb.group({
-      currencyCode: ['',Validators.required],
-      currencyName: ['',Validators.required],
-      status: [''],
-      symbol: [''],
-      rate: ['', Validators.required]
-    });
-  }
+ createCurrencies(): FormGroup {
+  return this.fb.group({
+    currencyCode: ['', Validators.required],
+    currencyName: [''],
+    status: [''],
+    symbol: [''],
+    rate: ['', Validators.required]   // user fills this
+  });
+}
   isDeleteDisabled: boolean = false;
   deleteratecard(index: number) {
     if (this.rateItems.length > 1) {

@@ -123,6 +123,7 @@ export class IntialLoadEntitlementCreateComponent {
   }
 
   getAllShifts(subLocation: ISubLocation): void {
+    this.shiftDetails = [];
     const params = {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id
@@ -133,6 +134,8 @@ export class IntialLoadEntitlementCreateComponent {
         this.leaveAllocationForm.get('shift')?.enable();
         this.leaveAllocationForm.get('shift')?.reset();
         this.leaveAllocationForm.get('categoryName')?.reset();
+         this.categoryDetails = [];
+        
         // Auto-select saved shift
         if (this.carryforwarddata?.shift) {
           const selectedShift = this.shiftDetails.find((sh: any) => sh.shiftName === this.carryforwarddata.shift.shiftName);
@@ -153,7 +156,7 @@ export class IntialLoadEntitlementCreateComponent {
 
 
   getCategoryDetails(policy: any): void {
-    console.log(policy);
+    this.leaveAllocationForm.get('categoryName')?.reset();
 
     let params = {
       locationId: this.leaveAllocationForm.get('location')?.value?.id,
@@ -177,6 +180,8 @@ export class IntialLoadEntitlementCreateComponent {
       },
       error: err => {
         console.error('Error fetching categories:', err);
+        this.categoryDetails = [];
+        this.leaveAllocationForm.get('categoryName')?.reset();
       }
     });
   }

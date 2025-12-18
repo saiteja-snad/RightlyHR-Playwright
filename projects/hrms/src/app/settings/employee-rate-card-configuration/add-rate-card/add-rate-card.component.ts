@@ -199,9 +199,10 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
   }
   createRateCardItems(): FormGroup {
     return this.fb.group({
-      experienceFrom: ['', Validators.required],
-      experienceTo: ['', Validators.required],
+      experienceFrom: ['',[ Validators.required,Validators.min(0), Validators.max(999)]],
+      experienceTo: ['', [Validators.required,Validators.min(0), Validators.max(999)]],
       frequencyType: ['', Validators.required],
+      currency: ['', Validators.required],
       currencies: this.fb.array([this.createCurrencies()]),
       status: ['Active'],
     });
@@ -228,6 +229,12 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
       this.years.push(i);
     }
   }
+  limitDigits(event: any, maxDigits: number) {
+  const value = event.target.value;
+  if (value.length > maxDigits) {
+    event.target.value = value.slice(0, maxDigits);
+  }
+}
 onRateChange(rateIndex: number, currencyIndex: number) {
   const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
                         .at(currencyIndex)
@@ -305,7 +312,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
       this.subLocations = selectedLocations.flatMap(
         (loc: any) => loc.subLocations || []
       );
-      subLocationControl?.markAsTouched();
+      //subLocationControl?.markAsTouched();
     } else {
       // Disable if no location selected
       subLocationControl?.disable();

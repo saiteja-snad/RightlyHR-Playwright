@@ -75,7 +75,7 @@
                         </p-multiSelect>
                     </div>
                     <div class="error-msg"
-                        *ngIf="ratecardForm.controls['role'].invalid &&  (ratecardForm.controls['role'].touched || ratecardForm.controls['location'].dirty)">
+                        *ngIf="ratecardForm.controls['role'].invalid &&  (ratecardForm.controls['role'].touched || ratecardForm.controls['role'].dirty)">
                         <div *ngIf="ratecardForm.controls['role'].errors?.['required']">
                             {{'Role is required'|translate}}
                         </div>
@@ -113,14 +113,14 @@
                                 <span class="text-danger">*</span></label>
                             <div class="d-flex">
                                 <div>
-                                    <input type="number" class="form-control custom-input" min="0"
+                                    <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
                                         formControlName="experienceFrom" placeholder="min (year)" required />
                                 </div>
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
                                 </div>
                                 <div>
-                                    <input type="number" class="form-control custom-input" min="0"
+                                    <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
                                         formControlName="experienceTo" placeholder="max (year)" required />
                                 </div>
                             </div>
@@ -148,15 +148,14 @@
                                     class="text-danger">*</span></label>
                                     <div class="custom-p-select-content">
                                         <p-select [options]="currencyCodes" optionLabel="code" [filter]="true" class="form-select custom-select"
-                                            filterBy="code" [showClear]="false" placeholder="Please select currency" resetFilterOnHide="true"
+                                            filterBy="code" [showClear]="false" placeholder="Please select currency" resetFilterOnHide="true" formControlName="currency"
                                             (onChange)="onCountryChange($event,i)">
                                         </p-select>
                                     </div>
-                            <div *ngIf="ratecard.get('currencies')?.invalid && (ratecard.get('currencies')?.dirty || ratecard.get('currencies')?.touched)"
+                            <div *ngIf="ratecard.get('currency')?.invalid && (ratecard.get('currency')?.dirty || ratecard.get('currency')?.touched)"
                                 class="error-msg">
-                                <span *ngIf="ratecard.get('currencies')?.errors?.['required']">{{'Currency is required'
-                                    | translate}}</span>
-                            </div> 
+                                <span>Currency is required</span>
+                            </div>
                         </div>
 
                         <!-- Rate -->

@@ -12,6 +12,7 @@ import { Select } from 'primeng/select';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { ModuleInformationComponent } from '../../../../shared/module-information/module-information.component';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { OpenModalService } from '../../../../services/open-modal.service';
 
 @Component({
   selector: 'app-intial-load-entitlement',
@@ -45,7 +46,7 @@ export class IntialLoadEntitlementComponent {
   shiftDetails = [] as IShiftHeader[];
   isApplyDisabledFlag = true;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas) { }
+  constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.getdatacarryforword();
@@ -238,6 +239,21 @@ export class IntialLoadEntitlementComponent {
 
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
+
+  postretryrecoder(jobid: any) {
+    this.http.postbyId(`LeaveEntitlementJobs/${jobid}/retry`)
+      .subscribe({
+        next: (res: any) => {
+          this.conformationPopup.openSuccessModal("Initial Leave Entitlements Retryed Successfully");
+
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
+
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

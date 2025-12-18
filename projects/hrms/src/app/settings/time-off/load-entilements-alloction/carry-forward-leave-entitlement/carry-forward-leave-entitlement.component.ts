@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ILocation, IShiftHeader, ISubLocation } from '../../flexible-leave-allocation/leave-allocation.model';
 import { Select } from 'primeng/select';
 import { ModuleInformationComponent } from "../../../../shared/module-information/module-information.component";
+import { OpenModalService } from '../../../../services/open-modal.service';
 
 @Component({
   selector: 'app-carry-forward-leave-entitlement',
@@ -44,7 +45,7 @@ export class CarryForwardLeaveEntitlementComponent {
   shiftDetails = [] as IShiftHeader[];
   isApplyDisabledFlag = true;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas) { }
+  constructor(private http: HttpService, private fb: FormBuilder, private router: Router, private offcanvasService: NgbOffcanvas,private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.getdatacarryforword();
@@ -244,6 +245,20 @@ export class CarryForwardLeaveEntitlementComponent {
 
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
+
+    postretryrecoder(jobid: any) {
+    this.http.postbyId(`LeaveEntitlementJobs/${jobid}/retry`)
+      .subscribe({
+        next: (res: any) => {
+          this.conformationPopup.openSuccessModal("Initial Leave Entitlements Retryed Successfully");
+
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

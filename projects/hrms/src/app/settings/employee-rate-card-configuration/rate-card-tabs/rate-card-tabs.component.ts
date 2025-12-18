@@ -16,14 +16,14 @@ export class RateCardTabsComponent {
   navTabs: any[] = [
     {
       label: 'Active',
-      icon: '/settings-icon/active-allocation.png',
+      icon: '/settings-icon/Active.png',
       route:
         '/settings/employee-rate-card/rate-card/rate-card-active',
       permission: { feature: 'Rate Card Active Tab', action: 'view' },
     },
     {
       label: 'Inactive',
-      icon: '/settings-icon/allocation-history.png',
+      icon: '/settings-icon/Inactive.png',
       route:
         '/settings/employee-rate-card/rate-card/rate-card-inactive',
       permission: { feature: 'Rate Card In-active Tab', action: 'view' },

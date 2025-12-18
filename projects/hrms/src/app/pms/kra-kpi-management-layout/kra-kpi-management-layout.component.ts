@@ -3,15 +3,14 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
-
 import { RbacService } from '../../services/rbac.service'
-
 @Component({
   selector: 'app-kra-kpi-management-layout',
   imports: [CommonModule, RouterModule, TabsModule, TranslateModule],
   templateUrl: './kra-kpi-management-layout.component.html',
   styleUrl: './kra-kpi-management-layout.component.scss'
 })
+
 export class KraKpiManagementLayoutComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
@@ -21,11 +20,11 @@ export class KraKpiManagementLayoutComponent {
     },
     {
       label: 'Team KRA/KPI', link: '/pms/my-kpi-kra/team', icon: 'main-menu-icons/kra-kpi-dashboard.png',
-      permission: { feature: 'My KRA KPI', action: 'view' }
+      permission: { feature: 'Team KRA KPI', action: 'view' }
     },
     {
       label: 'Dashboard', link: '/pms/my-kpi-kra/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
-      permission: { feature: 'My KRA KPI', action: 'view' }
+      permission: { feature: 'Dashboard KRA KPI', action: 'view' }
     },
   ];
 

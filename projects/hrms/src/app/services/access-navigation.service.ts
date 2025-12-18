@@ -1885,17 +1885,19 @@ export class AccessNavigationService {
         break;
 
         case '/pms/my-kpi-kra/dashboard':
-        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+        if (this.rbac.allowedToAccess('Dashboard KRA KPI.view')) {
           return (route = '/pms/my-kpi-kra/dashboard');
         }
         break;
+        
         case '/pms/my-kpi-kra/team':
-        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+        if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
           return (route = '/pms/my-kpi-kra/team');
         }
         break;
+
        case '/pms/my-kpi-kra/employee-kra-kpi-view':
-        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+        if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
           return (route = '/pms/my-kpi-kra/employee-kra-kpi-view');
         }
         break;

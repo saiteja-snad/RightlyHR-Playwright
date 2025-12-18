@@ -26,8 +26,8 @@ import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-assign-kra-kpi',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule, SelectModule, TableModule, DataLoaderContentComponent, 
-    NoDataFoundComponent, ModuleInformationComponent, ModuleInfoIconComponent, NgbPopoverModule, PaginatorModule, MultiSelectModule, 
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslateModule, SelectModule, TableModule, DataLoaderContentComponent,
+    NoDataFoundComponent, ModuleInformationComponent, ModuleInfoIconComponent, NgbPopoverModule, PaginatorModule, MultiSelectModule,
     ChipModule, AccordionModule, CheckboxModule],
   templateUrl: './assign-kra-kpi.component.html',
   styleUrl: './assign-kra-kpi.component.scss',
@@ -77,10 +77,8 @@ export class AssignKraKpiComponent implements OnInit {
   uomOptions = [
     { label: 'Percentage (%)', value: '%' },
     { label: 'Currency ($)', value: '$' },
-    { label: 'Numbers (Nos)', value: 'Nos' },
     { label: 'Hours (Hrs)', value: 'Hrs' },
     { label: 'Days', value: 'Days' },
-    { label: 'Rating', value: 'Rating' },
   ];
   filterForm = this.fb.group({
     jobRole: this.fb.control<number | null>(null),
@@ -111,7 +109,6 @@ export class AssignKraKpiComponent implements OnInit {
   voidKpis: any[] = [];            // Track KPIs marked for deletion (void)
   originalKpis: any[] = [];        // Backup of original KPIs (optional, for safety)
   selectedKraAssignment: any;
-
   assignForm = this.fb.group({
     kraId: [null, Validators.required],
     weightage: [
@@ -551,16 +548,66 @@ export class AssignKraKpiComponent implements OnInit {
       this.popup.openErrorModal('Total weightage cannot exceed 100%');
       return;
     }
-    this.kpiRows.push(
-      this.fb.group({
-        kpiId: [null], // For selecting existing KPI
-        uom: ['', Validators.required],
-        weightage: [null,[Validators.required, Validators.min(1), Validators.max(100)],],
-        targetValue: [null, Validators.required],
-        targetDate: ['', [Validators.required, this.noPastDateValidator]],
-        description: ['', [Validators.required, Validators.minLength(10)]],
-      })
-    );
+    const row = this.fb.group({
+      kpiId: [null, Validators.required],
+      uom: [{ value: null, disabled: true }, Validators.required],
+      weightage: [null,[Validators.required, Validators.min(1), Validators.max(100)]],
+      targetValue: [null],
+      targetDate: ['', [Validators.required, this.noPastDateValidator]],
+      description: ['', [Validators.required, Validators.minLength(10)]],
+    });
+    // KPI selection → auto UOM + target validation
+    row.get('kpiId')?.valueChanges.subscribe((kpiId: number | null) => {
+      if (!kpiId) {
+        row.get('uom')?.reset();
+        row.get('uom')?.disable();
+        row.get('targetValue')?.reset();
+        return;
+      }
+      this.kpiRows.push(
+        this.fb.group({
+          kpiId: [null], // For selecting existing KPI
+          uom: ['', Validators.required],
+          weightage: [null, [Validators.required, Validators.min(1), Validators.max(100)],],
+          targetValue: [null, Validators.required],
+          targetDate: ['', [Validators.required, this.noPastDateValidator]],
+          description: ['', [Validators.required, Validators.minLength(10)]],
+        })
+      )
+      const selectedKpi = this.allKpiOptions.find(
+        (k) => k.kpiId === kpiId
+      );
+      if (selectedKpi) {
+        // AUTO POPULATE UOM
+        row.get('uom')?.enable();
+        row.get('uom')?.setValue(selectedKpi.targetType);
+        // Reset target value
+        row.get('targetValue')?.reset();
+        // Apply validation based on UOM
+        this.applyTargetValueValidation(
+          row.get('targetValue'),
+          selectedKpi.targetType
+        );
+      }
+    });
+    this.kpiRows.push(row);
+  }
+
+  applyTargetValueValidation(control: any, uom: string) {
+    if (!control) return;
+    if (uom === '%') {
+      control.setValidators([
+        Validators.required,
+        Validators.min(0),
+        Validators.max(100),
+      ]);
+    } else {
+      control.setValidators([
+        Validators.required,
+        Validators.min(0),
+      ]);
+    }
+    control.updateValueAndValidity();
   }
 
   removeKpiRow(index: number): void {
@@ -580,8 +627,6 @@ export class AssignKraKpiComponent implements OnInit {
       });
       this.popup.openSuccessModal('KPI removed Succesfully');
     }
-    // Always remove from form
-    this.kpiRows.removeAt(index);
   }
 
   openAssignModal(content: any): void {
@@ -775,7 +820,7 @@ export class AssignKraKpiComponent implements OnInit {
         })
       );
     });
-    this.modalService.open(this.assignKraKpiModal, {backdrop: 'static',size: 'xl'});
+    this.modalService.open(this.assignKraKpiModal, { backdrop: 'static', size: 'xl' });
   }
 
   private addKpiRowWithData(kpi: any) {
@@ -796,7 +841,7 @@ export class AssignKraKpiComponent implements OnInit {
       const payload = {
         assignmentId: kraAssignment.id, // or whatever your ID field is
         status: 'On Hold',
-        updatedBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')  ?.employeeId || 0,
+        updatedBy: JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0,
       };
       this.http.postdata('KraAssignment/hold', payload).subscribe({
         next: () => {
@@ -911,7 +956,7 @@ export class AssignKraKpiComponent implements OnInit {
   }
 
   toggleFilters(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, {position: 'end',backdrop: 'static',keyboard: false});
+    this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
   }
 
   closeCanvas() {

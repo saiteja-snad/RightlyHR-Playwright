@@ -63,6 +63,63 @@ export class ViewRateCardComponent {
   buttons = false;
   employeedetails: any;
   viewratecardData: any;
+   currencyCodes=[
+  {
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    symbol: "¥"
+  },
+  {
+    code: "GBP",
+    name: "British Pound Sterling",
+    symbol: "£"
+  },
+  {
+    code: "VND",
+    name: "Vietnamese Dong",
+    symbol: "₫"
+  },
+   {
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$"
+  },
+  {
+    code: "INR",
+    name: "Indian Rupee",
+    symbol: "₹"
+  },
+  {
+    code: "GBP",
+    name: "British Pound Sterling",
+    symbol: "£"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    symbol: "€"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    symbol: "¥"
+  },
+  {
+    code: "VND",
+    name: "Vietnamese Dong",
+    symbol: "₫"
+  }
+];
   constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -271,27 +328,22 @@ onRateChange(rateIndex: number, currencyIndex: number) {
                         .get('rate');
   console.log(rateControl?.value);
 }
-  onCountryChange(country: any, index: number) {
-    console.log(country);
-    this.selectedDialCode = country.dialling_code;
-    this.selectedCountryCodegflag = country.code;
-   const rateItem = this.rateItems.at(index) as FormGroup;
-  const currenciesArray = rateItem.get('currencies') as FormArray;
-  const rateValue = rateItem.get('rate')?.value;
-  const currencyData = {
-    currencyCode: country.currency.code,
-    currencyName: country.currency.name,
-    symbol: country.currency.symbol,
-    rate: currenciesArray.at(0).get('rate')?.value || ''
-  };
-   if (currenciesArray.length > 0) {
-    // 🔁 Update existing currency
-    currenciesArray.at(0).patchValue(currencyData, { emitEvent: false });
-  } else {
-    // ➕ Create first currency
-    currenciesArray.push(this.fb.group(currencyData));
-  }
-  }
+ onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
+  const currenciesArray = this.getCurrencies(rateIndex);
+
+  const selectedCurrency = this.currencyCodes.find(
+    c => c.code === event.value
+  );
+
+  if (!selectedCurrency) return;
+
+  currenciesArray.at(currencyIndex).patchValue({
+    currencyCode: selectedCurrency.code,
+    currencyName: selectedCurrency.name,
+    symbol: selectedCurrency.symbol
+  });
+}
+
 
   // location changes
   onLocationChange(selectedLocationIds: number[] | null) {

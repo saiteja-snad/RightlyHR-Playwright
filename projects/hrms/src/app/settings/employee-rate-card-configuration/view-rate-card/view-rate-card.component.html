@@ -136,29 +136,25 @@
                             </div>
                         </div>
 
-                        <!-- Currency -->
-                        <div class="w-100">
-                            <label class="form-label custom-label">{{'Currency' | translate}}<span
-                                    class="text-danger">*</span></label>
-                            <div class="custom-p-select-content">
-                                <div *ngIf="!loading; else loadingTemplate">
-                                    <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-                                        [selectedCountryCode]="selectedworkcoutrycode()"
-                                        [countryListConfig]="countryListConfig" class="country-input"
-                                        [ngClass]="{ 'disabled-country-code': !buttons }"
-                                        (onCountryChange)="onCountryChange($event,i)">
-                                    </lib-country-list>
-                                </div>
-                                <ng-template #loadingTemplate>
-                                    <p>Loading...</p>
-                                </ng-template>
-                            </div>
-                            <div *ngIf="ratecard.get('currencies')?.invalid && (ratecard.get('currencies')?.dirty || ratecard.get('currencies')?.touched)"
-                                class="error-msg">
-                                <span *ngIf="ratecard.get('currencies')?.errors?.['required']">{{'Currency is required'
-                                    | translate}}</span>
-                            </div> 
+                       <!-- Currency -->
+                        <div class="w-100" formArrayName="currencies">
+                            <div *ngFor="let currency of getCurrencies(i).controls; let j = index" [formGroupName]="j">
+                        
+                                <label class="form-label custom-label">
+                                    {{'Currency' | translate}} <span class="text-danger">*</span>
+                                </label>
+                          <div class="custom-p-select-content">
+                                <p-select [options]="currencyCodes" optionLabel="code" optionValue="code" formControlName="currencyCode"
+                                    class="form-select custom-select" [filter]="true" placeholder="Please select currency"
+                                    (onChange)="onCountryChange($event, i, j)">
+                                </p-select>
                         </div>
+                                <div *ngIf="currency.get('currencyCode')?.invalid && currency.get('currencyCode')?.touched" class="error-msg">
+                                    Currency is required
+                                </div>                  
+                        </div>                          
+                        </div>
+
 
                         <!-- Rate -->
                         <div class="w-100 ">

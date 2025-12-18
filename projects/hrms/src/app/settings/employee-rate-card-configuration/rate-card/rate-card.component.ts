@@ -113,6 +113,10 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     localStorage.setItem('updateratecard', JSON.stringify(ratecard));
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-update']);
   }
+  closeNavigation(ratecard: any){
+    localStorage.setItem('updateratecard', JSON.stringify(ratecard));
+    this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-clone']);
+  }
   viewNavigation(viewratecard:any){
         localStorage.setItem('viewratecard', JSON.stringify(viewratecard));
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-view']);

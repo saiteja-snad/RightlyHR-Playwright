@@ -263,7 +263,6 @@ onRateChange(rateIndex: number, currencyIndex: number) {
   }
   addRateCard() {
     let formValues = this.ratecardForm.getRawValue();
-    console.log(formValues);
     let payload = {
       effectiveFrom: formValues.effectivefrom,
       //  effectiveTo: '2025-12-17T05:53:20.076Z',
@@ -274,7 +273,6 @@ onRateChange(rateIndex: number, currencyIndex: number) {
       createdBy: this.Employeeinfo.employeeId,
       experienceBands: formValues.rateItems,
     };
-    console.log(payload);
     this.subscription=this.http.postdata('RateCard',payload).subscribe({
           next: (res: any) => {
             this.isloading = false;

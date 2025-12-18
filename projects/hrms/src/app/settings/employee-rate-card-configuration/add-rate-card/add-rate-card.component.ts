@@ -305,7 +305,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
       this.subLocations = selectedLocations.flatMap(
         (loc: any) => loc.subLocations || []
       );
-      subLocationControl?.markAsTouched();
+      //subLocationControl?.markAsTouched();
     } else {
       // Disable if no location selected
       subLocationControl?.disable();

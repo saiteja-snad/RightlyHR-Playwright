@@ -398,9 +398,35 @@
                   </div>
                 </td>
                 <td>
-                  <input type="number" class="form-control custom-input" formControlName="targetValue"
-                    placeholder="e.g. 95">
-                </td>
+  <input
+    type="number"
+    class="form-control custom-input"
+    formControlName="targetValue"
+    placeholder="e.g. 95" />
+
+  <div
+    class="error-msg small mt-1"
+    *ngIf="row.get('targetValue')?.touched && row.get('targetValue')?.invalid">
+
+    <span *ngIf="row.get('targetValue')?.hasError('required')">
+      Target value is required
+    </span>
+
+    <span *ngIf="row.get('targetValue')?.hasError('min')">
+      Value must be at least 1
+    </span>
+
+    <span *ngIf="row.get('targetValue')?.hasError('max')">
+      <ng-container [ngSwitch]="row.get('uom')?.value">
+        <span *ngSwitchCase="'%'">Percentage must be between 1 and 100</span>
+        <span *ngSwitchCase="'Hrs'">Hours must be between 1 and 999</span>
+        <span *ngSwitchCase="'Days'">Days must be between 1 and 999</span>
+      </ng-container>
+    </span>
+
+  </div>
+</td>
+
                 <td>
                   <input type="date" class="form-control custom-input" formControlName="targetDate"
                     onkeydown="return false">
@@ -444,7 +470,6 @@
           <div class="m-3">
             <!-- Red Error: Over 100% -->
             <div class="text-danger small fw-medium" *ngIf="totalNewKpiWeightage > 100">
-              <i class="bi bi-exclamation-triangle me-1"></i>
               Note: Total KPI weightage cannot exceed 100%.
               <!-- Current: {{ totalNewKpiWeightage }}% -->
             </div>

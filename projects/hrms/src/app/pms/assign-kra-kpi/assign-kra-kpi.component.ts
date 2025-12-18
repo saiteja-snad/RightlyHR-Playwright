@@ -13,6 +13,7 @@ import {
   Validators,
   ReactiveFormsModule,
   FormsModule,
+  FormGroup,
 } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
@@ -682,70 +683,80 @@ addKpiRow(): void {
     const selectedKpi = this.allKpiOptions.find(
       (k) => k.kpiId === kpiId
     );
+if (selectedKpi) {
+      // Auto populate UOM and KEEP IT DISABLED
+      row.get('uom')?.setValue(selectedKpi.targetType);   // put value
+      row.get('uom')?.disable();                          // ← this line makes it non-editable!
 
-    if (selectedKpi) {
-      // 🔥 AUTO POPULATE UOM
-      row.get('uom')?.enable();
-      row.get('uom')?.setValue(selectedKpi.targetType);
-
-      // 🔁 Reset target value
+      // Reset target value + apply validation
       row.get('targetValue')?.reset();
-
-      // 🔐 Apply validation based on UOM
-      this.applyTargetValueValidation(
-        row.get('targetValue'),
-        selectedKpi.targetType
-      );
+      this.applyTargetValueValidation(row.get('targetValue'), selectedKpi.targetType);
     }
   });
 
   this.kpiRows.push(row);
 }
 
+
 applyTargetValueValidation(control: any, uom: string) {
   if (!control) return;
 
-  if (uom === '%') {
-    control.setValidators([
-      Validators.required,
-      Validators.min(0),
-      Validators.max(100),
-    ]);
-  } else {
-    control.setValidators([
-      Validators.required,
-      Validators.min(0),
-    ]);
+  let validators = [Validators.required, Validators.min(1)];
+
+  switch (uom) {
+    case '%':
+      validators.push(Validators.max(100));
+      break;
+
+    case '$': // Currency
+      // Only min(1) → no upper limit
+      break;
+
+    case 'Hrs':
+    case 'Days':
+      validators.push(Validators.max(999));
+      break;
   }
 
+  control.setValidators(validators);
   control.updateValueAndValidity();
 }
 
 
+
 removeKpiRow(index: number): void {
-  const row = this.kpiRows.at(index);
-  const rowValue = row.value;
+  const row = this.kpiRows.at(index) as FormGroup;
+  const rowValue = row.getRawValue(); // ← Use getRawValue() to include disabled controls!
 
   if (
     this.isEditMode &&
     rowValue.kpiId && Number(rowValue.kpiId) > 0
   ) {
+    // Get the original KPI name
+    const kpiName = this.getKpiNameById(rowValue.kpiId);
+
+    // Get UOM even if control is disabled
+    const uomValue = row.get('uom')?.value || '';
+
     this.voidKpis.push({
       kpiId: rowValue.kpiId,
       kraId: this.assignForm.get('kraId')?.value,
-      kpiName: this.getKpiNameById(rowValue.kpiId),
-      weightageValue: String(rowValue.weightage),
-      targetValue: String(rowValue.targetValue),
-      targetDate: String(rowValue.targetDate),
-      targetType: String(rowValue.uom || ''),
-      description: String(rowValue.description || ''),
+      kpiName: kpiName,
+      weightageValue: String(rowValue.weightage || 0),
+      targetValue: String(rowValue.targetValue || ''),
+      targetDate: rowValue.targetDate || null,
+      targetType: uomValue, // ← This was the bug! Use actual UOM
+      description: rowValue.description?.trim() || '',
       status: 'void',
+      // Optional: include these if backend needs them
+      reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
+      ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
     });
 
-    this.popup.openSuccessModal('KPI removed Succesfully');
+    this.popup.openSuccessModal('KPI removed successfully');
   }
 
-  // ✅ Always remove from form
+  // Always remove from form array
   this.kpiRows.removeAt(index);
 }
 
@@ -848,16 +859,25 @@ onSubmitAssign(): void {
   }));
 
   // 4. Append void KPIs only in edit mode
-  if (this.isEditMode && this.voidKpis.length > 0) {
-    const voidPayload = this.voidKpis.map((voidKpi: any) => ({
-      ...voidKpi,
-      status: 'void',
-      createdBy: loggedInEmployeeId,
-      updatedBy: loggedInEmployeeId,
-      employeeIds: selectedEmployeeIds,
-    }));
-    kpis.push(...voidPayload);
-  }
+if (this.isEditMode && this.voidKpis.length > 0) {
+  const voidPayload = this.voidKpis.map((voidKpi: any) => ({
+    kpiId: voidKpi.kpiId,
+    kraId: voidKpi.kraId,
+    kpiName: voidKpi.kpiName,
+    weightageValue: voidKpi.weightageValue,
+    targetValue: voidKpi.targetValue,
+    targetDate: voidKpi.targetDate,
+    targetType: voidKpi.targetType,
+    description: voidKpi.description,
+    reviewCycleId: Number(formValue.reviewCycle),
+    ratingScaleId: Number(formValue.ratingScale),
+    status: 'void',
+    createdBy: loggedInEmployeeId,
+    updatedBy: loggedInEmployeeId,
+    employeeIds: selectedEmployeeIds,
+  }));
+  kpis.push(...voidPayload);
+}
 
   // 5. Final payload
   const payload = {
@@ -963,17 +983,24 @@ onUpdate(kraAssignment: any): void {
 
   kraAssignment.kpis?.forEach((kpi: any) => {
     const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
-    this.kpiRows.push(
-      this.fb.group({
-        kpiId: [{ value: kpi.kpiId || null, disabled: true }],
-        uom: [kpi.targetType || ''],
-        weightage: [Number(kpi.weightageValue) || 0],
-        targetValue: [kpi.targetValue || ''],
-        targetDate: [targetDateValue, [Validators.required, this.noPastDateValidator]],
-        description: [kpi.description || ''],
-        status: [kpi.status || 'Created'],           // Preserve original status
-      })
-    );
+const rowGroup = this.fb.group({
+  kpiId: [{ value: kpi.kpiId || null, disabled: true }],
+  uom: [{ value: kpi.targetType || '', disabled: true }],
+  weightage: [Number(kpi.weightageValue) || 0],
+  targetValue: [kpi.targetValue || ''],
+  targetDate: [targetDateValue, [Validators.required, this.noPastDateValidator]],
+  description: [kpi.description || ''],
+  status: [kpi.status || 'Created'],
+});
+
+// ✅ APPLY RANGE VALIDATION BASED ON UOM
+this.applyTargetValueValidation(
+  rowGroup.get('targetValue'),
+  kpi.targetType
+);
+
+this.kpiRows.push(rowGroup);
+
   });
 
   this.modalService.open(this.assignKraKpiModal, {

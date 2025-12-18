@@ -34,6 +34,12 @@ export class IntialLoadEntitlementExecutionComponent {
           },
           error: (err) => {
             console.error(err);
+            this.conformationPopup.openErrorModal(err.error.message || "Initial Leave Entitlements Failed" );
+                setTimeout(() => {
+              this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
+              localStorage.removeItem('intialloadEntitlement')
+              localStorage.removeItem('carryForwardJobId')
+            }, 2000);
           }
         });
     }

@@ -34,6 +34,12 @@ export class LoadEntitlemetexecutionComponent {
           },
           error: (err) => {
             console.error(err);
+            this.conformationPopup.openErrorModal(err.error.message || "Carry Forward Entilement Failed");
+            setTimeout(() => {
+              this.route.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward']),
+                localStorage.removeItem('carryForwardJobId'),
+                localStorage.removeItem('loadEntitlement')
+            }, 3000);
           }
         });
     }

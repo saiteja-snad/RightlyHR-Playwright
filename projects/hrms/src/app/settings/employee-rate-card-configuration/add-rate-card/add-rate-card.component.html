@@ -75,7 +75,7 @@
                         </p-multiSelect>
                     </div>
                     <div class="error-msg"
-                        *ngIf="ratecardForm.controls['role'].invalid &&  (ratecardForm.controls['role'].touched || ratecardForm.controls['location'].dirty)">
+                        *ngIf="ratecardForm.controls['role'].invalid &&  (ratecardForm.controls['role'].touched || ratecardForm.controls['role'].dirty)">
                         <div *ngIf="ratecardForm.controls['role'].errors?.['required']">
                             {{'Role is required'|translate}}
                         </div>

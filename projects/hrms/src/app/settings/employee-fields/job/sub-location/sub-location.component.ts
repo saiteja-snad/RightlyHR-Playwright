@@ -12,10 +12,12 @@ import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 
 @Component({
   selector: 'app-sub-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NgbPopoverModule, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NgbPopoverModule, InfoIconComponent, DataLoaderContentComponent,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })

@@ -52,6 +52,9 @@ export class HttpService {
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
+  assetscategoryIdSubject = new BehaviorSubject<string | null>(null);
+  assetssubcategeoryIdSubject = new BehaviorSubject<string | null>(null);
+  assetsdaterangeIdSubject = new BehaviorSubject<string | null>(null);
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
@@ -119,6 +122,11 @@ export class HttpService {
   expensesprocesscount$ = this.expensescount.asObservable();
   setnewcountDetails() {
     this.expensescount.next();
+  }
+  expensescountOnBehalfof = new Subject<void>();
+  expensesprocesscountOnBehalfof$ = this.expensescountOnBehalfof.asObservable();
+  setnewcountDetailsforonBehalfof() {
+    this.expensescountOnBehalfof.next();
   }
 
   clientcount = new Subject<void>();
@@ -205,9 +213,29 @@ export class HttpService {
   // OnBehalfOf WFH
   onBehlafOfWFHSignal = signal<boolean>(false);
   onBehlafOfRemoteLoginSignal = signal<boolean>(false);
+  onBehlafOfExpensesSignal = signal<boolean>(false);
+
 
   onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
   onBehalfOfRemoteLoginSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfExpensesSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfSelectedEmpDetails$ = new BehaviorSubject<any>(null);
+
+  setOnBehalfOfExpensesSelectedEmp(emp: any): void {
+    this.onBehalfOfExpensesSelectedEmp$.next(emp);
+    this.onBehlafOfExpensesSignal.set(true);
+    console.log('Selected On Behalf Of Expenses Employee:', emp);
+  }
+
+// http.service.ts (add inside the service class)
+private _onBehalfExpensesUpdated$ = new BehaviorSubject<number | null>(null);
+public onBehalfExpensesUpdated$ = this._onBehalfExpensesUpdated$.asObservable();
+
+setOnBehalfExpensesUpdated(empId: number | null) {
+  // push empId (or null) to notify subscribers
+  this._onBehalfExpensesUpdated$.next(empId ?? null);
+}
+
 
   // function for employeid TIMEOFF
   private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
@@ -241,6 +269,15 @@ export class HttpService {
   // Method to update the employeeId
   setEmployeeIdCompOff(id: any): void {
     this.selectedEmployeeIdCompOff.next(id);
+  }
+
+  private selectedEmployeeIdExpensesforonbehalf = new BehaviorSubject<string | null>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdExpensesforonbehalf$ = this.selectedEmployeeIdExpensesforonbehalf.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdExpensesforonbehalf(id:any | null): void {
+    this.selectedEmployeeIdExpensesforonbehalf.next(id);
+    console.log('Selected Employee Expenses ID:', id);
   }
 
   // function for employeid wfh
@@ -302,6 +339,9 @@ export class HttpService {
 
   assetslocationId$ = this.assetslocationIdSubject.asObservable();
   assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
+  assetscategoryId$ = this.assetscategoryIdSubject.asObservable();
+  assetssubcategeoryId$ = this.assetssubcategeoryIdSubject.asObservable();
+  assetsdaterangeId$ = this.assetsdaterangeIdSubject.asObservable();
   //function to update the desk Updatelocation
   assetsUpdateLocationId(id: string | null) {
     this.assetslocationIdSubject.next(id);
@@ -311,7 +351,36 @@ export class HttpService {
   assetsUpdateSubLocationId(id: string | null) {
     this.assetssublocationIdSubject.next(id);
   }
+  //function to update the desk sublocation
+  assetsUpdateCatageoryId(id: string | null) {
+    this.assetscategoryIdSubject.next(id);
+  }
+    //function to update the desk sublocation
+  assetsUpdateSubCatageoryId(id: string | null) {
+    this.assetssubcategeoryIdSubject.next(id);
+  }
+    // ---------- FROM DATE ----------
+  private fromDateSubject = new BehaviorSubject<string | null>(null);
+  fromDate$ = this.fromDateSubject.asObservable();
 
+  assetsUpdateFromDate(date: string | null) {
+    this.fromDateSubject.next(date);
+  }
+
+  // ---------- TO DATE ----------
+  private toDateSubject = new BehaviorSubject<string | null>(null);
+  toDate$ = this.toDateSubject.asObservable();
+
+  assetsUpdateToDate(date: string | null) {
+    this.toDateSubject.next(date);
+  }
+
+//availlableSearchCount = new BehaviorSubject<number>(0);
+setAvaillableSearchCount(count: number) {
+  //this.availlableSearchCount.next(count);
+     this.avilableassetCountSubject.next(count);
+  
+}
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
@@ -338,6 +407,9 @@ export class HttpService {
   getitembyid(url: string, _params?: any) {
     const item_url = `${this.ApiUrl}${url}?Expenses_ID=${_params}`;
     return this.http.get(item_url);
+  }
+  getItembyid(url: string, params?: any) {
+    return this.http.get(`${this.ApiUrl}${url}`, { params });
   }
 
   getData(url: string) {
@@ -499,6 +571,10 @@ export class HttpService {
     url: string,
     selectedLocationId: any,
     selectedSubLocationId: any,
+    category:any,
+    subcatageory:any,
+    fromDate:any,
+    toDate:any,
     status: string,
     page: number,
     pageSize: number,
@@ -507,6 +583,10 @@ export class HttpService {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
+      category:category,
+      subcategory:subcatageory,
+      fromDate:fromDate,
+      toDate:toDate,
       status: status,
       page: page,
       pageSize: pageSize,
@@ -641,6 +721,14 @@ export class HttpService {
       responseType: 'blob', // Set response type to 'blob' to handle file download
     });
   }
+
+  downloadMonthlyAttendanceReportV2(url: string, startDate: string, endDate: string): Observable<Blob> {
+    const apiurl = `${this.ApiUrl}${url}?startDate=${startDate}&endDate=${endDate}`;
+    // Make the GET request and return the file as a Blob
+    return this.http.get(apiurl, {
+      responseType: 'blob', // Set response type to 'blob' to handle file download
+    });
+  }
   downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
     const apiurl = `${this.ApiUrl}${url}`;
     return this.http.get(apiurl, {
@@ -761,26 +849,41 @@ export class HttpService {
   allocatedassetCountSubject = new BehaviorSubject<number>(0);
   undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
   inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
+   blockassetCountSubject = new BehaviorSubject<number>(0);
   setAssetCount(count: number) {
     this.assetCountSubject.next(count);
   }
 
-  setavilableAssetCount(count: number) {
+  setavilableAssetCount(count: any) {
     this.avilableassetCountSubject.next(count);
   }
 
-  setallocatedAssetCount(count: number) {
+  setallocatedAssetCount(count: any) {
     this.allocatedassetCountSubject.next(count);
   }
-
-  setundermatinaceAssetCount(count: number) {
+setAllocatedSearchCount(count: any) {
+     this.allocatedassetCountSubject.next(count);
+}
+  setundermatinaceAssetCount(count: any) {
     this.undermatinaceassetCountSubject.next(count);
   }
+  setundermatinaceSearchCount(count: any) {
+     this.undermatinaceassetCountSubject.next(count);
+}
+ setblockAssetCount(count: any) {
+    this.blockassetCountSubject.next(count);
+  }
 
-  setinactiveSubjectAssetCount(count: number) {
+setblockSearchCount(count: any) {
+     this.blockassetCountSubject.next(count);
+}
+  setinactiveSubjectAssetCount(count: any) {
     this.inactiveaceassetCountSubject.next(count);
   }
 
+setinactiveSearchCount(count: any) {
+     this.inactiveaceassetCountSubject.next(count);
+}
   getFilteredleavesDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/${employeeId}?year=${params}`);
   }
@@ -980,6 +1083,12 @@ export class HttpService {
   setDepartmentIds(ids: number[]) {
     this.departmentIdsSource.next(ids);
   }
+
+  // update count
+pendingApprovalCount$ = new BehaviorSubject<any[]>([]);
+updatePendingApprovalCounts(counts: any[]) {
+  this.pendingApprovalCount$.next(counts);
+}
 
   //store project types
   private projectTypeFilterSource = new BehaviorSubject<string[]>([]);

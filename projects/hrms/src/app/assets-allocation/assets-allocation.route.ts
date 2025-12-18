@@ -15,6 +15,7 @@ export default [
             { path: 'allocated-assets', loadComponent: () => import('./allocated-assets-list/allocated-assets-list.component').then((m) => m.AllocatedAssetsListComponent), canActivate: [PermissionsGuard], data: { permission: 'Asset Management - Allocated.view' } },
             { path: 'under-maintenance-assets', loadComponent: () => import('./under-maintenace-assets-list/under-maintenace-assets-list.component').then((m) => m.UnderMaintenaceAssetsListComponent), canActivate: [PermissionsGuard], data: { permission: 'Asset Management - Under Maintenance.view' } },
             { path: 'inactive-assets', loadComponent: () => import('./inactive-assets-list/inactive-assets-list.component').then((m) => m.InactiveAssetsListComponent), canActivate: [PermissionsGuard], data: { permission: 'Asset Management - Inactive.view' } },
+            { path: 'block-assets', loadComponent: () => import('./block-assets-list/block-assets-list.component').then((m) => m.BlockAssetsListComponent), canActivate: [PermissionsGuard], data: { permission: 'Asset Management - Block.view' } },
         ]
     },
     {

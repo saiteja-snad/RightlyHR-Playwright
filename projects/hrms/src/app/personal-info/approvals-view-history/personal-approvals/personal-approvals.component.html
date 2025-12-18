@@ -13,9 +13,9 @@
             <table class="popup-table">
               <thead>
                 <tr>
-                  <th>Field Name</th>
-                  <th>Previous Details</th>
-                  <th>Requested Details</th>
+                  <th>Field/Action Name</th>
+                  <th>Current Data</th>
+                  <th>Requested Data</th>
                   <th>Updated Date</th>
                   <!-- <th>Description</th> -->
                   <th>Status</th>
@@ -29,7 +29,6 @@
                 @for (item of module.items; track item.itemId) {
                 <tr>
                   <td>{{ item.fieldName || "-" }}</td>
-
                   <td> 
                     <span #oldEl class="ellipsis-cell" [pTooltip]="shouldShowTooltip(oldEl) ? item.oldValue : undefined"
                       tooltipPosition="top">
@@ -37,7 +36,13 @@
                         {{ item.oldValue ? (item.oldValue | dateformat) : "-" }}
                        }
                        @else{
-                        {{ item.oldValue ? item.oldValue : "-" }}
+                         @if(item?.approvalScope?.toLowerCase()==='action' && item.oldValue && item.oldValue!='-'){
+                          <div class="d-inline-flex cursor" (click)="openModalforaction(popupforcurrentaction,item)">
+                      <app-info-icon />
+                    </div>
+                        }@else{{{ item.oldValue ? item.oldValue : "-" }}
+                      }
+                        <!-- {{ item.oldValue ? item.oldValue : "-" }} -->
                        }
                        
                       
@@ -51,7 +56,12 @@
                         {{ item.newValue ? (item.newValue | dateformat) : "-" }}
                        }
                        @else{
-                        {{ item.newValue ? item.newValue : "-" }}
+                         @if(item?.approvalScope?.toLowerCase()==='action' && item.newValue && item.newValue!='-'){
+                          <div class="d-inline-flex cursor" (click)="openModalfornewvalueAction(popupforaction,item)">
+                      <app-info-icon />
+                    </div>
+                        }@else{{{ item.newValue ? item.newValue : "-" }}
+                      }
                        }
                       <!-- {{ item.newValue || "-" }} -->
                     </span>
@@ -80,7 +90,7 @@
                   <td class="text-capitalize" [ngClass]="getStatusClass(item.approvalStatus)">
                      <div class=" align-items-center gap-1">
                     {{ item.approvalStatus.toLowerCase() }}  @if(item?.comments && item?.comments !== '-'){
-                    <div [ngbPopover]="desprictionContent" class="d-inline-flex">
+                    <div [ngbPopover]="desprictionContent" class="d-inline-flex cursor">
                       <app-info-icon />
                     </div>
                     <ng-template #desprictionContent>
@@ -192,5 +202,176 @@
         </button>
       </div>
     </form>
+  </div>
+</ng-template>
+<ng-template #popupforaction let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{actionsDetails.fieldName}} ({{actionsDetails.moduleName}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss('Cross click')">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon">
+        </a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Field Requested</th>
+                <th>Current Data</th>
+                <th>Requested Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of mergedValues">
+                <td>{{ row.key }}</td>
+                <!-- Old Value -->
+                <td>
+                  @if (row.key === 'Document' && row.oldValue) {
+                  <a class="view-btn" (click)="onViewAttachement(row.oldValue,viewattamchment)"
+                    [ngClass]="{ 'back-ground': row.isChanged }">
+                    <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
+                  </a>
+                  } @else {
+                  <span [ngClass]="{ 'font-highlight': row.isChanged }">{{ row.oldValue ? row.oldValue:'-' }}</span>
+                  }
+                </td>
+                <!-- New Value -->
+                <td>
+                  @if (row.key === 'Document' && row.newValue) {
+                  <a class="view-btn" (click)="onViewAttachement(row.newValue,viewattamchment)"
+                    [ngClass]="{ 'back-ground': row.isChanged }">
+                    <img src="/my-info-icons/View-Policy-icon.png" class="view-icon">
+                  </a>
+                  } @else {
+                  <span [ngClass]="{ 'font-highlight': row.isChanged }"> {{ row.newValue ? row.newValue :'-' }}</span>
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="custom-main-popup-content" >
+            <div class="p-1">
+                    <div class="mb-0" *ngFor="let item of actionsDetails.oldValue | keyvalue">
+                         <p><span class="heading-name">{{ item.key }}:</span> <span class="sub-name"> 
+                          @if(item.key==='Document'){
+                            <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value)">
+                              <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                            </a>
+                          }@else{
+                      {{ item.value }}
+                          }
+                          </span></p>
+                    </div>
+            </div>
+        </div> -->
+  </div>
+</ng-template>
+
+<!--View Popup-->
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchment(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+          <div class="popup-view-image-content">
+            <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+          </div>
+        </div>
+        <ng-template #imageView>
+         <div class="popup-view-image-content">
+        <img [src]="ImageUrl" alt="My Image" class="modal-image" />
+      </div>
+      </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #popupforcurrentaction let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">{{actionsDetails.fieldName}} ({{actionsDetails.moduleName}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss('Cross click')">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon">
+        </a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      <div class="popup-table-wrapper">
+        <div class="popup-table-scroll-container">
+          <table class="popup-table">
+            <thead>
+              <tr>
+                <th>Field Requested</th>
+                <th>Current Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of actionsDetails.oldValue | keyvalue">
+                <td>{{ item.key }}</td>
+                <!-- Old Value -->
+                <td>
+                  @if(item.key==='Document'){
+                  <a type="button" class="view-btn text-nowrap me-2" (click)="onViewAttachement(item.value,viewattamchmentforcurrent)">
+                    <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
+                  </a>
+                  }@else{
+                  {{ item.value ? item.value:'-' }}
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #viewattamchmentforcurrent let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{actionsDetails.moduleName}} Document</p>
+      </div>
+      <div>
+        <a (click)="closeonlyattemchmentforcurrent(); ImageUrl = null; ImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ImageUrl; else imageView">
+            <ngx-doc-viewer [url]="ViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+        </div>
+        <ng-template #imageView>
+         <div class="popup-view-image-content">
+        <img [src]="ImageUrl" alt="My Image"  class="image"/>
+      </div>
+      </ng-template>
+      </div>
+    </div>
   </div>
 </ng-template>

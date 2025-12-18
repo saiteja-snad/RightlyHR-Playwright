@@ -9,10 +9,12 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })

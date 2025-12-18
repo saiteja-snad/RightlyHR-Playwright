@@ -155,6 +155,40 @@
                             <input type="number" class="form-control custom-input w-100" [readonly]="isDisabled"
                                 formControlName="fullDayMinHrs" placeholder="Full day min hrs" />
                         </div>
+
+                        <!-- Punch Begin Before -->
+                        <div class="w-100">
+                            <div class="d-flex gap-1">
+                                <label for="punchBeginBefore" class="form-label custom-label mb-2">{{'Pre-Shift Buffer (mins)' | translate}}</label>
+                                <div>
+                                    <a type="button" [ngbPopover]="punchBeginBeforeDescription">
+                                        <app-info-icon />
+                                    </a>
+                                </div>
+                                <ng-template #punchBeginBeforeDescription>
+                                    <p class="mb-0">{{ 'Minutes allowed before shift start for considering punch-in as valid'}}</p>
+                                </ng-template>
+                            </div>
+                            <input type="number" class="form-control custom-input w-100" [readonly]="isDisabled"
+                                formControlName="punchBeginBefore" placeholder="Please enter pre-shift buffer" />
+                        </div>
+
+                        <!-- Punch End After -->
+                        <div class="w-100">
+                            <div class="d-flex gap-1">
+                                <label for="punchEndAfter" class="form-label custom-label mb-2">{{'Punch End After (mins)' | translate}}</label>
+                                <div>
+                                    <a type="button" [ngbPopover]="punchEndAfterDescription">
+                                        <app-info-icon />
+                                    </a>
+                                </div>
+                                <ng-template #punchEndAfterDescription>
+                                    <p class="mb-0">{{ 'Minutes allowed after shift end for considering punch-out as valid'}}</p>
+                                </ng-template>
+                            </div>
+                            <input type="number" class="form-control custom-input w-100" [readonly]="isDisabled"
+                                formControlName="punchEndAfter" placeholder="Punch end after" />
+                        </div>
                     </div>
                 </div>
             </div>

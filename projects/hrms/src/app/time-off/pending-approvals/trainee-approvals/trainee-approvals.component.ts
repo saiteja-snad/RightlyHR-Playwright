@@ -72,7 +72,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
   }
-
+totalCount:any;
   ngOnInit(): void {
     this.getAllPendingApprovals();
   }
@@ -230,6 +230,7 @@ onCommentChange(value: string) {
         this.isLoading = false;
         f.reset();
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
         this.selectedLeaveData.trcomments = '';
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
@@ -267,6 +268,7 @@ onCommentChange(value: string) {
       complete: () => {
         this.isLoading = false;
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
         this.selectedLeaveData = {};
       },
     });
@@ -288,6 +290,7 @@ onCommentChange(value: string) {
       },
       complete: () => {
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,
@@ -295,7 +298,15 @@ onCommentChange(value: string) {
       },
     });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.traineeoffboardingModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   //function to get the employeedata
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.empId;

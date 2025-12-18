@@ -241,6 +241,7 @@ export const permissionsData = [
 
   //New Side Nav Section
   { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
@@ -260,6 +261,7 @@ export const permissionsData = [
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contacts Directory', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Skill Set Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
@@ -271,6 +273,8 @@ export const permissionsData = [
   { fields: 'Team Time Sheet Detailed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Summary Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Time Sheet Filters Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet Department Filter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Time Sheet RM/TM Filter', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -464,6 +468,9 @@ export const permissionsData = [
   { fields: 'Comp Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Regularization (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Trainee Requests (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Expenses (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
 
@@ -590,6 +597,11 @@ export const permissionsData = [
   { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
 
+{ fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+{ fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+
+
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },
@@ -597,6 +609,8 @@ export const permissionsData = [
   { fields: 'Asset Management - Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Inactive', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Asset Management - Block', View: false, Update: false, Create: false, Delete: false },
+
 
   //Asset Management All Tab Actions
   // { fields: 'All Allocate Asset', View: false, Update: false, Create: false, Delete: false },
@@ -617,6 +631,7 @@ export const permissionsData = [
   { fields: 'Available Transfer Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Available View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Available Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Available Block Asset', View: false, Update: false, Create: false, Delete: false },
 
   //Asset Management Allocated Tab Actions
   { fields: 'Allocated Reallocate Asset', View: false, Update: false, Create: false, Delete: false },
@@ -633,6 +648,10 @@ export const permissionsData = [
   { fields: 'Inactive Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+ //Asset Management Block Tab Actions
+  { fields: 'Block View Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Block Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Block Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
 
   // My Info Sub Tabs Section
   { fields: 'My Info Personal Tab', View: false, Update: false, Create: false, Delete: false },
@@ -658,7 +677,7 @@ export const permissionsData = [
   //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
-  
+
   // { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
@@ -1011,6 +1030,19 @@ export const permissionsData = [
   { fields: 'On Behalf Of RemoteLogin All Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of RemoteLogin Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of RemoteLogin Button', View: false, Update: false, Create: false, Delete: false },
+
+
+  //On-Behalf of Expenses
+  { fields: 'On Behalf Of Expenses', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Waiting For Approval (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of Expenses All Employees', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of Expenses Team', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request On Behalf Of Expenses Button', View: false, Update: false, Create: false, Delete: false },
+
+
   //Cards Management Tabs Section
   { fields: 'Cards Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Available', View: false, Update: false, Create: false, Delete: false },

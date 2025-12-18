@@ -19,6 +19,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { Table, TableModule } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-regularization-for-you-request',
   imports: [
@@ -72,9 +73,11 @@ selectedLeaveStatus: any;
     { label: 25, value: 25 },
   ];
   rejectcomments: any;
+  totalCount: any;
 
   constructor(
     private modalService: NgbModal,
+     private authService:AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -423,6 +426,7 @@ onStatusApproveSelect(status: string) {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.selectedProducts = [];
             this.searchValue = null;
 
@@ -497,6 +501,7 @@ onStatusApproveSelect(status: string) {
           this.signalService.regularizationForYouTriggerSignal.set(true);
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.selectedProducts = [];
           this.searchValue = null;
 
@@ -576,6 +581,7 @@ onStatusApproveSelect(status: string) {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
             this.selectedProducts = [];
             this.searchValue = null;
 
@@ -583,7 +589,15 @@ onStatusApproveSelect(status: string) {
         });
     }
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

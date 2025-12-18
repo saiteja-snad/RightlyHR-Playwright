@@ -14,9 +14,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-allocated-assets-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent, ConfirmationIconComponent],
   templateUrl: './allocated-assets-list.component.html',
   styleUrl: './allocated-assets-list.component.scss',
   providers: [DatePipe]
@@ -82,6 +83,10 @@ export class AllocatedAssetsListComponent {
   employeid: any;
   minpurchesDate: any;
   maxpurchesDate: any;
+    todate:any;
+  formdate:any;
+  selectedSubcategeoryname:any;
+  selectedcatageoryname:any;
   constructor(
     private readonly fb: FormBuilder,
     private readonly http: HttpService,
@@ -100,8 +105,8 @@ export class AllocatedAssetsListComponent {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
 
-  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-     this.http.assetsUpdateLocationId(this.selectedLocationId); 
+    this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+    this.http.assetsUpdateLocationId(this.selectedLocationId);
 
     this.getFilteredData();
     this.getassetsCategory()
@@ -237,14 +242,33 @@ export class AllocatedAssetsListComponent {
 
   }
 
+  // getFilteredData() {
+  //   this.subscription = this.http.assetslocationId$.subscribe({
+  //     next: (Value: any) => {
+  //       console.log(Value);
+  //       this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+  //       this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+  //       this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+  //       this.getcount(Value, this.selectedSubLocationId, this.Status);
+  //     }
+  //   })
+  // }
   getFilteredData() {
     this.subscription = this.http.assetslocationId$.subscribe({
       next: (Value: any) => {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-        this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
-        this.getcount(Value, this.selectedSubLocationId, this.Status);
+        this.selectedcatageoryname= JSON.parse(localStorage.getItem('assetcategeory') ?? 'null');
+        this.selectedSubcategeoryname = JSON.parse(localStorage.getItem('assetsubcategeory') ?? 'null');
+        this.formdate = JSON.parse(localStorage.getItem('formDate') ?? 'null');
+       this.todate = JSON.parse(localStorage.getItem('toDate') ?? 'null');
+        if(this.selectedLocationId || this.selectedSubLocationId || this.selectedcatageoryname || this.selectedSubcategeoryname || this.todate|| this.formdate){
+        this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       }else{
+         this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       }
+        this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
       }
     })
   }
@@ -329,120 +353,129 @@ export class AllocatedAssetsListComponent {
     this.isToggledvender = false
   }
 
-//   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+  //   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
 
-//     const params = {
-//       first: pagenum,
-//       rows: pagesize,
-//       searchQuery: this.searchQuery,
-//       locationid: locationid,
-//       status: Assetsstatus,
-//       sublocationid: sublocationid
-//     };
-//     this.loading = true;
-//     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
-//       next: (res: any) => {
-//          let items = res.items;
-//     // Frontend filtering by assigned person's name (if searchQuery exists)
-//  if (this.searchQuery && this.searchQuery.trim().length > 0) {
-//   const lowerSearch = this.searchQuery.toLowerCase().trim();
+  //     const params = {
+  //       first: pagenum,
+  //       rows: pagesize,
+  //       searchQuery: this.searchQuery,
+  //       locationid: locationid,
+  //       status: Assetsstatus,
+  //       sublocationid: sublocationid
+  //     };
+  //     this.loading = true;
+  //     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
+  //       next: (res: any) => {
+  //          let items = res.items;
+  //     // Frontend filtering by assigned person's name (if searchQuery exists)
+  //  if (this.searchQuery && this.searchQuery.trim().length > 0) {
+  //   const lowerSearch = this.searchQuery.toLowerCase().trim();
 
-//   items = items.filter((item: any) => {
-//     const assignedTo = item.assignedTo;
-//     if (!assignedTo) return false;
+  //   items = items.filter((item: any) => {
+  //     const assignedTo = item.assignedTo;
+  //     if (!assignedTo) return false;
 
-//     const firstName = assignedTo.firstName?.trim() || '';
-//     const middleName = assignedTo.middleName?.trim() || '';
-//     const lastName = assignedTo.lastName?.trim() || '';
+  //     const firstName = assignedTo.firstName?.trim() || '';
+  //     const middleName = assignedTo.middleName?.trim() || '';
+  //     const lastName = assignedTo.lastName?.trim() || '';
 
-//     // Build full name and normalize spacing
-//     const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').toLowerCase();
+  //     // Build full name and normalize spacing
+  //     const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').toLowerCase();
 
-//     // Match full or partial name
-//     return fullName.includes(lowerSearch);
-//   });
-// }
+  //     // Match full or partial name
+  //     return fullName.includes(lowerSearch);
+  //   });
+  // }
 
-//        this.assetslist.next(items);
-//         this.loading = false;
-//         this.collectionSize = res.totalCount;
-//       },
-//       error: (error: any) => {
-//         this.loading = false;
-//         console.error('Error fetching assets:', error);
-//         this.loading = false
+  //        this.assetslist.next(items);
+  //         this.loading = false;
+  //         this.collectionSize = res.totalCount;
+  //       },
+  //       error: (error: any) => {
+  //         this.loading = false;
+  //         console.error('Error fetching assets:', error);
+  //         this.loading = false
 
-//       }
-//     });
-//   }
+  //       }
+  //     });
+  //   }
 
-getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
-  const params = {
-    first: pagenum,
-    rows: pagesize,
-    searchQuery: this.searchQuery,
-    locationid: locationid,
-    status: Assetsstatus,
-    sublocationid: sublocationid
-  };
+  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,catageory:any,subcatageory:any,fromDate:any,toDate:any, Assetsstatus: any) {
+      const params = {
+      first: pagenum,
+      rows: pagesize,
+      searchQuery: this.searchQuery,
+      locationid: locationid,
+      status: Assetsstatus,
+      sublocationid: sublocationid,
+       catageory:catageory,
+      subcatageory:subcatageory,
+      fromDate:fromDate,
+      toDate:toDate,
+    };
 
-  this.loading = true;
+    this.loading = true;
 
-  this.subscription = this.http.getassetsdesk(
-    "AssetMaster",
-    params.locationid,
-    params.sublocationid,
-    params.status,
-    params.first,
-    params.rows,
-    params.searchQuery
-  ).subscribe({
-    next: (res: any) => {
-      let items = res.items;
+    this.subscription = this.http.getassetsdesk(
+      "AssetMaster",
+      params.locationid,
+      params.sublocationid,
+      params.catageory,
+      params.subcatageory,
+      params.fromDate,
+      params.toDate,
+      params.status,
+      params.first,
+      params.rows,
+      params.searchQuery
+    ).subscribe({
+      next: (res: any) => {
+        // if (this.searchQuery && this.searchQuery.trim().length > 0) {
+        //   const lowerSearch = this.searchQuery.toLowerCase();
 
-      if (this.searchQuery && this.searchQuery.trim().length > 0) {
-        const lowerSearch = this.searchQuery.toLowerCase();
+        //   items = items.filter((item: any) => {
+        //     const assetCategory = (item.assetCategory || '').toLowerCase();
+        //     const assetSubCategory = (item.assetSubCategory || '').toLowerCase();
+        //     const serialNumber = (item.serialNumber || '').toLowerCase();
+        //     const assetModel = (item.assetModel || '').toLowerCase();
+        //     const status = (item.status || '').toLowerCase();
+        //     const assetId = (item.assignedTo?.assetIdName || '').toLowerCase();
 
-        items = items.filter((item: any) => {
-          const assetCategory = (item.assetCategory || '').toLowerCase();
-          const assetSubCategory = (item.assetSubCategory || '').toLowerCase();
-          const serialNumber = (item.serialNumber || '').toLowerCase();
-          const assetModel = (item.assetModel || '').toLowerCase();
-          const status = (item.status || '').toLowerCase();
-          const assetId = (item.assignedTo?.assetIdName || '').toLowerCase();
+        //       const assignedTo = item.assignedTo || {};
+        //       const firstName = (assignedTo.firstName || '').toLowerCase();
+        //       const middleName = (assignedTo.middleName || '').toLowerCase();
+        //       const lastName = (assignedTo.lastName || '').toLowerCase();
+        //       const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+        //       const lowerSearch = this.searchQuery.toLowerCase().trim();
 
-            const assignedTo = item.assignedTo || {};
-            const firstName = (assignedTo.firstName || '').toLowerCase();
-            const middleName = (assignedTo.middleName || '').toLowerCase();
-            const lastName = (assignedTo.lastName || '').toLowerCase();
-            const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
-            const lowerSearch = this.searchQuery.toLowerCase().trim();
+        //     return (
+        //       assetCategory.includes(lowerSearch) ||
+        //       assetSubCategory.includes(lowerSearch) ||
+        //       serialNumber.includes(lowerSearch) ||
+        //       assetModel.includes(lowerSearch) ||
+        //       status.includes(lowerSearch) ||
+        //       fullName.includes(lowerSearch) ||
+        //       firstName.includes(lowerSearch) ||
+        //       middleName.includes(lowerSearch) ||
+        //       assetId.includes(lowerSearch) ||
+        //       lastName.includes(lowerSearch)
+        //     );
+        //   });
+        // }
 
-          return (
-            assetCategory.includes(lowerSearch) ||
-            assetSubCategory.includes(lowerSearch) ||
-            serialNumber.includes(lowerSearch) ||
-            assetModel.includes(lowerSearch) ||
-            status.includes(lowerSearch) ||
-            fullName.includes(lowerSearch) ||
-            firstName.includes(lowerSearch) ||
-            middleName.includes(lowerSearch) ||
-            assetId.includes(lowerSearch) ||
-            lastName.includes(lowerSearch)
-          );
-        });
+      this.assetslist.next(res.items);
+        this.loading = false;
+        this.collectionSize = res.totalCount;
+          if(this.searchQuery){
+        this.http.setAllocatedSearchCount(res.totalCount);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error fetching assets:', error);
+        this.loading = false;
       }
-
-      this.assetslist.next(items);
-      this.collectionSize = items.length;
-      this.loading = false;
-    },
-    error: (error: any) => {
-      console.error('Error fetching assets:', error);
-      this.loading = false;
-    }
-  });
-}
+    });
+  }
 
 
 
@@ -536,14 +569,14 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
   }
 
   // Called when first size changes
@@ -552,16 +585,16 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize,  this.selectedLocationId, this.selectedSubLocationId, this.Status);
+     this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
   }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
       // localStorage.setItem('assetsdata', JSON.stringify(this.assets.value))
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+       this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
     }
     if (event === '') {
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+        this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
     }
   }
 
@@ -619,7 +652,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset information updated successfully ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
           this.assetForm.reset();
         },
         error: (error) => {
@@ -866,15 +899,15 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
     });
   }
 
-getEmployeedata() {
-  if (!this.loactionid || !this.sublocation) {
-    return;
-  }
-  this.http
-    .getData(
-      `JobDetails/empslocansublocation?locationId=${this.loactionid}&sublocationId=${this.sublocation}`
-    )
-     .pipe(takeUntil(this.destroy$))
+  getEmployeedata() {
+    if (!this.loactionid || !this.sublocation) {
+      return;
+    }
+    this.http
+      .getData(
+        `JobDetails/empslocansublocation?locationId=${this.loactionid}&sublocationId=${this.sublocation}`
+      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.employeeiddetails = data
@@ -896,7 +929,7 @@ getEmployeedata() {
           console.error('Error fetching employee data:', reason);
         },
       });
-}
+  }
 
 
 
@@ -957,7 +990,7 @@ getEmployeedata() {
             this.conformationPopup.openErrorModal(error.error.message)
           },
           complete: () => {
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
           },
         });
     } else {
@@ -1026,7 +1059,7 @@ getEmployeedata() {
 
           },
           complete: () => {
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
           },
         });
     } else {
@@ -1059,8 +1092,8 @@ getEmployeedata() {
           next: (res) => {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset released successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null, this.selectedSubLocationId, this.Status);
+           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
           },
           error: (error) => {
             this.conformationPopup.openErrorModal("Asset Assigned Failed")
@@ -1104,7 +1137,7 @@ getEmployeedata() {
 
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset allocated successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+              this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -1147,8 +1180,8 @@ getEmployeedata() {
 
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset reallocated successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null, this.selectedSubLocationId, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -1284,7 +1317,7 @@ getEmployeedata() {
             console.log(res);
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset inactivated successfully');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+         this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
             this.inactiveForm.reset()
           },
           error: (err) => {
@@ -1456,7 +1489,7 @@ getEmployeedata() {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
 
         },
         error: (err) => {
@@ -1494,7 +1527,7 @@ getEmployeedata() {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset has been marked as active ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);
@@ -1509,11 +1542,15 @@ getEmployeedata() {
   navigateToAsset(assetId: any) {
     this.router.navigate(['/assets-management/view-assets-details'], { queryParams: { id: assetId } });
   }
-
-  getcount(locationId: string | null, subLocationId: string | null, status: string) {
+    getcount(locationId: string | null, subLocationId: string | null,category:any,subcategory:any,fromDate:any,toDate:any,status:any) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
+    if (category) params.append('category', category);
+    if (subcategory) params.append('subcategory', subcategory);
+    if (fromDate) params.append('fromDate', fromDate);
+    if (toDate) params.append('toDate', toDate);
+    params.append('status', status);
     params.append('status', status);
 
     this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
@@ -1526,7 +1563,7 @@ getEmployeedata() {
         const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
         const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
         const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
-
+        
         const availableCount = availableData?.count || 0;
         const allocateCount = allocateData?.count || 0;
         const inactiveCount = inactivedata?.count || 0;

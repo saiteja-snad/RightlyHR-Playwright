@@ -7,7 +7,7 @@
   width: 100%;
 
   &.active {
-    background: linear-gradient(180deg, #FFFFFF 0%, #D8E2F2 100%);
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
   }
 }
 

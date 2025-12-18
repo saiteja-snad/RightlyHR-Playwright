@@ -14,10 +14,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-available-assets-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, Select, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, Select, NoDataFoundComponent, DataLoaderContentComponent, ConfirmationIconComponent],
   templateUrl: './available-assets-list.component.html',
   styleUrl: './available-assets-list.component.scss',
   providers: [DatePipe]
@@ -51,6 +52,7 @@ export class AvailableAssetsListComponent {
   inactiveForm!: FormGroup
   releaseform!: FormGroup
   assiginForm!: FormGroup;
+  blockform!: FormGroup;
   Status = 'Available';
   destroy$: Subject<boolean> = new Subject<boolean>();
   assetsid: IAssetid[] = [];
@@ -72,6 +74,10 @@ export class AvailableAssetsListComponent {
   sublocation: any;
   minpurchesDate: any;
   maxpurchesDate: any;
+  todate:any;
+  formdate:any;
+  selectedSubcategeoryname:any;
+  selectedcatageoryname:any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -118,6 +124,7 @@ export class AvailableAssetsListComponent {
     this.initialReleaseform();
     this.intialfromundermatince();
     this.intialtransferfrom();
+    this.initialblockform();
     this.http.assetDetailesadded$.subscribe(() => {
       this.getFilteredData();
     });
@@ -205,7 +212,11 @@ export class AvailableAssetsListComponent {
       reason: [null, [Validators.maxLength(250)]]
     })
   }
-
+ initialblockform(){
+ this.blockform = this.fb.group({
+      reason: [null, [Validators.required,Validators.maxLength(250)]]
+    })
+}
   purchaseDateEqualWarrantyDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const purchaseDate = control.get('purchasedate')?.value;
@@ -253,8 +264,17 @@ export class AvailableAssetsListComponent {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-        this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
-        this.getcount(Value, this.selectedSubLocationId, this.Status);
+        this.selectedcatageoryname= JSON.parse(localStorage.getItem('assetcategeory') ?? 'null');
+        this.selectedSubcategeoryname = JSON.parse(localStorage.getItem('assetsubcategeory') ?? 'null');
+        this.formdate = JSON.parse(localStorage.getItem('formDate') ?? 'null');
+       this.todate = JSON.parse(localStorage.getItem('toDate') ?? 'null');
+       if(this.selectedLocationId || this.selectedSubLocationId || this.selectedcatageoryname || this.selectedSubcategeoryname || this.todate|| this.formdate){
+        this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       }else{
+         this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+       }
+       // this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+        this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
       }
     })
   }
@@ -329,6 +349,14 @@ export class AvailableAssetsListComponent {
     this.reassiginForm.reset()
     this.locationfromdata.reset()
   }
+  resetblockform() {
+    this.modalService.dismissAll()
+    this.blockform.reset();
+     this.undermainteenceForm.reset()
+    this.inactiveForm.reset()
+    this.releaseform.reset()
+    this.isToggledvender = false
+  }
 
   conformationpoppup() {
     this.modalService.dismissAll()
@@ -339,22 +367,30 @@ export class AvailableAssetsListComponent {
     this.isToggledvender = false
   }
 
-  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
-
+getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any,category:any,subcatageory:any,fromDate:any,toDate:any, Assetsstatus: any) {
     const params = {
       first: pagenum,
       rows: pagesize,
       searchQuery: this.searchQuery,
       locationid: locationid,
       status: Assetsstatus,
-      sublocationid: sublocationid
+      sublocationid: sublocationid,
+      category:category,
+      subcatageory:subcatageory,
+      fromDate:fromDate,
+      toDate:toDate
+      
     };
     this.loading = true;
-    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
+    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid,params.category,
+      params.subcatageory,params.fromDate,params.toDate, params.status, params.first, params.rows, params.searchQuery).subscribe({
       next: (res: any) => {
         this.assetslist.next(res.items);
         this.loading = false;
         this.collectionSize = res.totalCount;
+        if(this.searchQuery){
+        this.http.setAvaillableSearchCount(res.totalCount);
+        }
       },
       error: (error: any) => {
         this.loading = false;
@@ -482,14 +518,14 @@ export class AvailableAssetsListComponent {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+   this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getassetsdata(this.page, this.pageSize,this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
   }
 
   // Called when first size changes
@@ -498,16 +534,22 @@ export class AvailableAssetsListComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
   }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
       // localStorage.setItem('assetsdata', JSON.stringify(this.assets.value))
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+   // this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+    // this.getcount(this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status, this.searchQuery  );
+    this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+    this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status,this.searchQuery );
     }
     if (event === '') {
-      this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+   //this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+    //  this.getcount(this.selectedLocationId, this.selectedSubLocationId, null, null, null, null, this.Status, this.searchQuery);
+    this.getassetsdata(1, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate, this.Status);
+    this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status,this.searchQuery);
     }
   }
 
@@ -565,7 +607,8 @@ export class AvailableAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset information updated successfully ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+         // this.getcount(this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
           this.assetForm.reset();
         },
         error: (error) => {
@@ -914,8 +957,8 @@ export class AvailableAssetsListComponent {
 
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset allocated successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null, null, this.Status);
+           this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
 
           },
           error: (error) => {
@@ -956,8 +999,8 @@ export class AvailableAssetsListComponent {
           next: (res) => {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset transferred  successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null, this.selectedSubLocationId, this.Status);
+          this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
             this.locationfromdata.reset();
           },
           error: (error) => {
@@ -999,7 +1042,7 @@ export class AvailableAssetsListComponent {
 
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset reallocated successfully ');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
 
           },
           error: (error) => {
@@ -1136,8 +1179,8 @@ export class AvailableAssetsListComponent {
             console.log(res);
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset inactivated successfully');
-            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null, this.selectedSubLocationId, this.Status);
+            this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
             this.inactiveForm.reset()
           },
           error: (err) => {
@@ -1218,8 +1261,8 @@ export class AvailableAssetsListComponent {
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset set under maintenance successfully ');
-          this.getcount(null, this.selectedSubLocationId, this.Status);
-          this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+           this.getcount(this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);
@@ -1231,7 +1274,49 @@ export class AvailableAssetsListComponent {
       });
 
   }
+  blockdata(blockform: FormGroup, assetId: number) {
+    console.log(this.selectedAsset);
+    const payload = {
+      'asset': {
+        id: assetId,
+        employeeId: parseInt(this.empinfo.employeeId),
+        status: "Block",
+        createdAt: new Date().toISOString(),
+        createdBy: this.selectedAsset.createdBy,
+        vendorId: this.selectedAsset.vendorId,
+        fromDate: this.selectedAsset.fromDate,
+        toDate: this.selectedAsset.toDate,
+        reason: this.selectedAsset.reson,
+        additionalComments: this.selectedAsset.additionalComments,
+        vendorContactNumber: this.selectedAsset.vendorContactNumber,
+        vendorName: this.selectedAsset.vendorName
+      }
 
+
+    };
+    console.log('Payload for asset update:', payload);
+
+    this.http.putData(`AssetMaster/update/${assetId}?assetId=${assetId}`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          console.log("Update Response:", res);
+          this.blockform.reset()
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Asset blocked successfully ');
+          this.getcount(this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
+            this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.selectedcatageoryname,this.selectedSubcategeoryname,this.formdate,this.todate,this.Status);
+        },
+        error: (error) => {
+          console.error("Error updating asset:", error);
+
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal("Asset Maintenance Failed")
+
+        }
+      });
+
+  }
   viewupdate(data: any) {
     console.log(data);
     // Patching form values
@@ -1310,7 +1395,7 @@ export class AvailableAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
 
         },
         error: (err) => {
@@ -1348,7 +1433,7 @@ export class AvailableAssetsListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset has been marked as active ');
-          this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+         this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,null,null,null,null, this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);
@@ -1361,10 +1446,15 @@ export class AvailableAssetsListComponent {
   }
 
 
-  getcount(locationId: string | null, subLocationId: string | null, status: string) {
+   getcount(locationId: string | null, subLocationId: string | null,category:any,subcategory:any,fromDate:any,toDate:any,status:any,  searchQuery?: string | null) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
+    if (category) params.append('category', category);
+    if (subcategory) params.append('subcategory', subcategory);
+    if (fromDate) params.append('fromDate', fromDate);
+    if (toDate) params.append('toDate', toDate);
+    if (searchQuery) params.append('searchQuery', searchQuery);
     params.append('status', status);
 
     this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
@@ -1377,16 +1467,18 @@ export class AvailableAssetsListComponent {
         const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
         const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
         const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
-
+          const blockcounts = statusCounts.find((item: any) => item.status === "Block");
         const availableCount = availableData?.count || 0;
         const allocateCount = allocateData?.count || 0;
         const inactiveCount = inactivedata?.count || 0;
         const undermaintenceCount = undermaintence?.count || 0;
+         const blockCount = blockcounts?.count || 0;
 
         this.http.setavilableAssetCount(availableCount);
         this.http.setallocatedAssetCount(allocateCount);
         this.http.setundermatinaceAssetCount(undermaintenceCount);
         this.http.setinactiveSubjectAssetCount(inactiveCount);
+        this.http.setblockAssetCount(blockCount);
       },
       error: (error) => {
         console.error('Error fetching count:', error);
@@ -1401,6 +1493,52 @@ export class AvailableAssetsListComponent {
     this.modalService.dismissAll();
   }
 
+  postblock(blockform: FormGroup, removeAsset: number) {
+      if (blockform.invalid) {
+    blockform.markAllAsTouched();
+    return;
+  }
+    if (blockform.valid) {
+      // Create the payload for the asset assignment
+
+      // Create the payload for the asset assignment
+      const payload: any = {
+        assetId: removeAsset,
+        employeeId: parseInt(this.empinfo.employeeId),
+        status: 'Block',
+        vendorId: this.selectedAsset.vendorId,
+        createdBy: parseInt(this.empinfo.employeeId),
+        additionalComments: this.blockform.get('reason')?.value
+      };
+
+      console.log("Payload for assignment:", payload);
+      console.log(this.selectedAsset);
+      this.http.postdata('AssetTransaction', payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log("Assignment Response:", res);
+            // Call the updateAssets function if the assignment is successful
+            this.blockdata(blockform, removeAsset);
+          },
+          error: (error) => {
+
+          },
+
+        });
+    } else {
+      console.log("Assignment Form is invalid.");
+    
+  }
+
+  }
+  resetAllFilters() {
+  this.http.setavilableAssetCount(null);
+  this.http.setallocatedAssetCount(null);
+  this.http.setundermatinaceAssetCount(null);
+  this.http.setinactiveSubjectAssetCount(null);
+   this.http.setblockAssetCount(null);
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
@@ -1408,5 +1546,6 @@ export class AvailableAssetsListComponent {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
+     this.resetAllFilters(); 
   }
 }

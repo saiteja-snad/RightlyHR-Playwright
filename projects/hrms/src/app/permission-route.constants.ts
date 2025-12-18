@@ -218,7 +218,8 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/inactive-employee-report', permission: 'Inactive Empolyee Report.view' },
   { route: '/reports/attendence-reports/yearly-summary-report', permission: 'Yearly Summary Report.view' },
   { route: '/reports/attendence-reports/permission-report', permission: 'Permission Report.view' },
-  { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' }
+  { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' },
+  { route: '/reports/attendence-reports/extraloghour-report', permission: 'Extra Log Hours Report.view' },
 ];
 
 export const TIMESHEET_REPORTS_TABS = [
@@ -242,6 +243,7 @@ export const ASSEST_ALLOCATION_TABS = [
   { route: '/assets-management/allocated-assets', permission: 'Asset Management - Allocated.view' },
   { route: '/assets-management/under-maintenance-assets', permission: 'Asset Management - Under Maintenance.view' },
   { route: '/assets-management/inactive-assets', permission: 'Asset Management - Inactive.view' },
+   { route: '/assets-management/block-assets', permission: 'Asset Management - Block.view' },
 ];
 
 export const DESK_ALLOCATION_TABS = [
@@ -700,6 +702,14 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/processed', permission: 'Processed (On Behalf Of RemoteLogin).view' },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/rejected', permission: 'Rejected (On Behalf Of RemoteLogin).view', },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
+]
+
+export const ON_BEHALF_OF_EXPENSES_TABS = [
+  { route: '/on-behalf-of/on-behalf-of-expenses/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of Expenses).view' },
+  { route: '/on-behalf-of/on-behalf-of-expenses/approved', permission: 'Approved (On Behalf Of Expenses).view' },
+  { route: '/on-behalf-of/on-behalf-of-expenses/processed', permission: 'Processed (On Behalf Of Expenses).view' },
+  { route: '/on-behalf-of/on-behalf-of-expenses/rejected', permission: 'Rejected (On Behalf Of Expenses).view', },
+  { route: '/on-behalf-of/on-behalf-of-expenses/cancelled', permission: 'Cancelled (On Behalf Of Expenses).view', },
 ]
 
 export const SKILL_MANAGEMENT_TABS = [

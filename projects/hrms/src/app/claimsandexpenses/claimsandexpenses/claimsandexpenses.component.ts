@@ -121,7 +121,6 @@ export class ClaimsandexpensesComponent implements OnInit {
   onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
-
     this.http.setSelectedYear(selectedYear);
   }
 
@@ -197,7 +196,6 @@ export class ClaimsandexpensesComponent implements OnInit {
       if (tab.key === 'requestedAmountFormatted') tab.count = this.pendingCount;
        if (tab.key === 'rejectAmountFormatted') tab.count = this.rejectedCount;
     });
-
   }
 
 
@@ -226,13 +224,13 @@ export class ClaimsandexpensesComponent implements OnInit {
   }
 
   expenseSummaryTabs: any[] = [
-       { label: 'Total Expenses', icon: 'expenses-icons/total-expenes-icon.png', key: 'totalReimbursementLimitFormatted', value: 0,showFrequency: true },
+    { label: 'Total Expenses', icon: 'expenses-icons/total-expenes-icon.png', key: 'totalReimbursementLimitFormatted', value: 0, showFrequency: true },
     { label: 'Available Limit', icon: 'expenses-icons/avaliable-icon.png', key: 'remainingReimbursementFormatted', value: 0 },
     // { label: 'Frequency', icon: 'expenses-icons/frequency-icon.png', key: 'frequency', },
-    { label: 'Requested', icon: 'expenses-icons/requested-icon.png', key: 'requestedAmountFormatted', value: 0 ,count:0},
-    { label: 'Approved', icon: 'expenses-icons/approved-icon.png', key: 'approvedAmountFormatted', value: 0 ,count:0},
-    { label: 'Processed', icon: 'expenses-icons/processed-icon.png', key: 'processedAmountFormatted', value: 0,count:0 },
-       { label: 'Rejected', icon: 'expenses-icons/reject-icon.png', key: 'rejectAmountFormatted', value: 0,count:0 },
+    { label: 'Requested', icon: 'expenses-icons/requested-icon.png', key: 'requestedAmountFormatted', value: 0, count: 0 },
+    { label: 'Approved', icon: 'expenses-icons/approved-icon.png', key: 'approvedAmountFormatted', value: 0, count: 0 },
+    { label: 'Processed', icon: 'expenses-icons/processed-icon.png', key: 'processedAmountFormatted', value: 0, count: 0 },
+    { label: 'Rejected', icon: 'expenses-icons/reject-icon.png', key: 'rejectAmountFormatted', value: 0, count: 0 },
 
   ];
 

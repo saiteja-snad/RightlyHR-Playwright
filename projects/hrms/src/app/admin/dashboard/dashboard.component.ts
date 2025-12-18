@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { filter, forkJoin, Observable, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
+import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { MODULE_INFOS } from '../../shared/modules-info';
@@ -16,11 +17,14 @@ import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
 import { AccordionModule } from 'primeng/accordion';
+import { DashAttIconComponent } from "../../icons/dash-att-icon/dash-att-icon.component";
+import { FingerPrintIconComponent } from "../../icons/finger-print-icon/finger-print-icon.component";
+import { LeaveIconComponent } from "../../icons/leave-icon/leave-icon.component";
+import { WfhIconComponent } from "../../icons/wfh-icon/wfh-icon.component";
 @Component({
   selector: 'app-dashboard',
-  imports: [ CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel,
-     ChartModule, DateformatPipe, Skeleton, AccordionModule
-  ],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel,
+    ChartModule, DateformatPipe, Skeleton, AccordionModule, DashAttIconComponent, FingerPrintIconComponent, LeaveIconComponent, WfhIconComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -339,8 +343,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getAttendenceLogsOfLoginedUser( empId: number, currentYear: number, currentMonth: number, currentDay: number ) {
     this.attendanceLoader = true;
+    
+    // Calculate start and end dates for the current day
+    const startDate = moment().year(currentYear).month(currentMonth - 1).date(currentDay).format('YYYY-MM-DD');
+    const endDate = startDate; // Same day for both start and end
+    
     this.subscription = this.http.getData(
-      `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
+      `v2/AttendanceData/employee/${empId}?fromdate=${startDate}&todate=${endDate}`
     )
       .subscribe({
         next: (data: any) => {

@@ -23,12 +23,12 @@ import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
-
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, NgbPopoverModule,
     PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent,
-    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent],
+    TranslateModule, Select, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
 })
@@ -58,7 +58,7 @@ export class ProbationPendingApprovalsComponent {
   @ViewChild('assessmentForm') assessmentForm!: NgbModal;
   @ViewChild('commentspopup') commentspopup!: NgbModal;
   selectedLeaveStatus: any;
-
+totalCount:any;
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService, 
     private authService: AuthService, private openModalService: OpenModalService, 
     public formsValidation: FormValidationsService) { }
@@ -394,10 +394,19 @@ export class ProbationPendingApprovalsComponent {
       },
       complete: () => {
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
       },
     });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.ProbationrequestmoduleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   reset() {
     this.modalService.dismissAll();
     this.clearApproveData();

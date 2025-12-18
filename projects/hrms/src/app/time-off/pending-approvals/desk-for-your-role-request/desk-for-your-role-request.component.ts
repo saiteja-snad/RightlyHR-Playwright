@@ -14,9 +14,12 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { environment } from '../../../../environments/environment';
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+
 @Component({
   selector: 'app-desk-for-your-role-request',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './desk-for-your-role-request.component.html',
   styleUrl: './desk-for-your-role-request.component.scss'
 })
@@ -34,6 +37,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   searchValue: any
   selectedLeaveStatus: any;
+  totalCount: any;
   constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService, public rbac: RbacService,
     private fb: FormBuilder, public formValidation: FormValidationService,
     private signalService: SignalsService,) { }
@@ -106,6 +110,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.conformationPopup.openSuccessModal('Desk allocation request processed successfully');
         this.getexpensespendingforyou();
+         this.getApprovalStatusCounts();
         this.signalService.deskForRoleTriggerSignal.set(true);
         this.updatedeskitem();
       },
@@ -164,6 +169,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
+        this.getApprovalStatusCounts();
         this.signalService.deskForRoleTriggerSignal.set(true);
         this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
         this.rejectForm.reset();
@@ -174,7 +180,13 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+ getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.deskAllocationModuleId}&EmployeeId=${this.employdata.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   cleardata() {
     this.rejectForm.reset();
     this.modalService.dismissAll();

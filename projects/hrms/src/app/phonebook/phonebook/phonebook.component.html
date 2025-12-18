@@ -3,11 +3,11 @@
     <div class="heading-content">
       <div class="component-header">Phone Book</div>
       <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
-
   </div>
+
   <!--Module Information-->
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
@@ -49,13 +49,16 @@
         <div class="phone-book-card" *ngFor="let emp of filteredPhoneDetails()">
           <div class="profile-content">
             <div>
-              <img [src]="emp.profileUrl" alt="profile" class="profile-icon" />
+              <ng-container *ngIf="emp.profileUrl; else showProfileIcon">
+                <img [src]="emp.profileUrl" alt="profile" class="profile-icon">
+              </ng-container>
+          
+              <ng-template #showProfileIcon>
+                <app-profile-icon [iconWidth]="'28'" [iconHeight]="'28'" />
+              </ng-template>
             </div>
-            <div>
-              <p class="name text-truncate m-0">
-                {{ emp.fullName }}
-                <span class="employe-number ms-1">({{ emp.employeeId }})</span>
-              </p>
+            <div class="name text-truncate m-0">
+              {{ emp.fullName }} <span class="employe-number ms-1">({{ emp.employeeId }})</span>
             </div>
           </div>
           <div class="data-content">
@@ -91,3 +94,4 @@
     </div>
 
   </div>
+</div>

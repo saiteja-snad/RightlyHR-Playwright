@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 @Component({
   selector: 'app-form-settings',
   imports: [
@@ -19,8 +21,10 @@ import { RbacService } from '../../../services/rbac.service';
     FormsModule,
     ReactiveFormsModule,
     FormsModule,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    SettingsUpdateIconComponent,
+    SettingsDeleteIconComponent
+],
   templateUrl: './form-settings.component.html',
   styleUrl: './form-settings.component.scss',
 })

@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    
+
     @if (selectedLeavesItems && selectedLeavesItems.length > 0 &&multiSelect) {
     <div class="component-header-content">
         @if(selectedLeavesItems){
@@ -30,15 +30,16 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-             placeholder="Search by employee name / availed" aria-label="Username" autocomplete="off" (ngModelChange)="onSearchChange()">
+            placeholder="Search by employee name / availed" aria-label="Username" autocomplete="off"
+            (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">
         @if(!dataload){
-              <p-table  #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems" 
-             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}" >
-                <ng-template #header>
-                    <tr>
+        <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
+                <tr>
                     <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
                     <th>{{'Employee ID' | translate}} </th>
                     <th>{{'Employee Name' | translate}}</th>
@@ -47,12 +48,13 @@
                     <th class="text-center">{{'Reason' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
-                    @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
+                    @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For
+                    You (Comp Off).delete'))){
                     <th class="text-center">{{'Action' | translate}}</th>
                     }
-                    </tr>
-                </ng-template>
-                <ng-template #body let-leave>
+                </tr>
+            </ng-template>
+            <ng-template #body let-leave>
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
@@ -79,14 +81,15 @@
                     <td class="text-center">
                         <div *ngIf="leave?.entity?.attendanceApprovalcomments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave?.entity?.attendanceApprovalcomments,commentspopup)">
-                               <app-info-icon />
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
-                        
+
                     </td>
                     <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
-                    @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
+                    @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For
+                    You (Comp Off).delete'))){
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
@@ -120,16 +123,16 @@
                     </td>
                     }
                 </tr>
-                </ng-template>
-                <ng-template #emptymessage>
+            </ng-template>
+            <ng-template #emptymessage>
                 <tr>
                     <app-no-data-found />
                 </tr>
-                </ng-template>
-                
-            </p-table>
+            </ng-template>
+
+        </p-table>
         }@else{
-            <app-data-loader-content />
+        <app-data-loader-content />
         }
     </div>
 </div>
@@ -146,26 +149,30 @@
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2">{{'Approver Comments' | translate}}
                         <span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide approver comments"
-                        formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" ></textarea>
+                    <textarea class="form-control custom-input" id="comments"
+                        placeholder="Please provide approver comments" formControlName="comments" maxlength="250"
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
-                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed 250
+                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required
+                        </div>
+                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed
+                            250
                             characters</div>
                     </div>
                 </div>
             </div>
-                 <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'approved'"
-                    (click)="onStatusApproveSelect('approved')">
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn"
+                    [class.active]="selectedLeaveStatus === 'approved'" (click)="onStatusApproveSelect('approved')">
                     Approved
                 </button>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]="spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();"
+                    [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -194,9 +201,9 @@
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2">{{"Reject Reason" | translate}}
                         <span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments"
-                        placeholder="Please provide reject reason" formControlName="comments"
-                        maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide reject reason"
+                        formControlName="comments" maxlength="250"
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
@@ -209,15 +216,16 @@
                     </div>
                 </div>
             </div>
-             <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-                    <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedLeaveStatus === 'reject'"
-                        (click)="onStatusRejectSelect('reject')">
-                        Rejected
-                    </button>
-                </div>
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn"
+                    [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
+            </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -295,4 +303,3 @@
         </div>
     </div>
 </ng-template>
-

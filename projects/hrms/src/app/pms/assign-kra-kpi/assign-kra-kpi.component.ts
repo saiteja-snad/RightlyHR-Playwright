@@ -1,20 +1,7 @@
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 // assign-kra-kpi.component.ts
-import {
-  Component,
-  OnInit,
-  inject,
-  ViewChild,
-  TemplateRef,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormArray,
-  Validators,
-  ReactiveFormsModule,
-  FormsModule,
-  FormGroup,
-} from '@angular/forms';
+import { Component, OnInit, inject, ViewChild, TemplateRef } from '@angular/core';
+import { FormBuilder, FormArray, Validators, ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -36,8 +23,6 @@ import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
-
-
 @Component({
   selector: 'app-assign-kra-kpi',
   standalone: true,
@@ -58,16 +43,13 @@ import { RbacService } from '../../services/rbac.service';
     ChipModule,
     AccordionModule,
     CheckboxModule,
-    ChipModule
   ],
   templateUrl: './assign-kra-kpi.component.html',
   styleUrl: './assign-kra-kpi.component.scss',
 })
 export class AssignKraKpiComponent implements OnInit {
   @ViewChild('dt') table!: Table;
-    @ViewChild('assignKraKpiModal') assignKraKpiModal!: TemplateRef<any>;
-
-
+  @ViewChild('assignKraKpiModal') assignKraKpiModal!: TemplateRef<any>;
   private fb = inject(FormBuilder);
   private http = inject(HttpService);
   private modalService = inject(NgbModal);
@@ -75,21 +57,18 @@ export class AssignKraKpiComponent implements OnInit {
   private router = inject(Router);
   private offcanvasService = inject(NgbOffcanvas);
   public rbac = inject(RbacService);
-
   kraList: any[] = [];
   allKraData: any[] = []; // For filtering/sorting in table
   selectedKraKpis: any[] = [];
   allKpiOptions: any[] = []; // For KPI dropdown in modal
   isSubmitting = false;
   moduleinfo = '';
-
   // Table selection logic
   selectedItems: any[] = [];
   multiSelect = false;
   dataLoad = false;
   previousSearchValue = '';
   hasSelectedAllOnce = false;
-
   page = 1;
   rows = 10;
   first = 0;
@@ -99,36 +78,29 @@ export class AssignKraKpiComponent implements OnInit {
   kraListForDropdown: any[] = [];
   joblocid: string = '';
   groupedKraList: any[] = [];
-
   // Static dropdown options
   reviewCycleOptions: { label: string; value: string }[] = [];
   ratingScaleOptions: { label: string; value: string }[] = [];
-
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-
   today: string = new Date().toISOString().split('T')[0];
-
   uomOptions = [
     { label: 'Percentage (%)', value: '%' },
     { label: 'Currency ($)', value: '$' },
     { label: 'Hours (Hrs)', value: 'Hrs' },
     { label: 'Days', value: 'Days' },
   ];
-
   filterForm = this.fb.group({
     jobRole: this.fb.control<number | null>(null),
-
     department: this.fb.control<any[]>([]),
     team: this.fb.control<any[]>({ value: [], disabled: true }),
     location: this.fb.control<any[]>([]),
     subLocation: this.fb.control<any[]>({ value: [], disabled: true }),
   });
-
   activeEmplist = [] as any;
   JobroleDesignation = [] as IRole[];
   departmentDetails = [] as IDepartment[];
@@ -138,25 +110,19 @@ export class AssignKraKpiComponent implements OnInit {
   selectedlocationid: any;
   filteredEmployees: any[] = []; // Will hold the list from JobDetails API
   selectedEmployeeIds: string = '';
-
   selectedJobRole: any = null;
   selectedDepartments: any[] = [];
   selectedTeams: any[] = [];
   selectedLocations: any[] = [];
   selectedSubLocations: any[] = [];
-
   assignKpiList: any[] = [];
   selectedEmployeeId!: number;
   selectedEmployeeName: string = '';
-   isEditMode: boolean = false;
-    selectedKra: any;
-
-voidKpis: any[] = [];               // Track KPIs marked for deletion (void)
-originalKpis: any[] = [];           // Backup of original KPIs (optional, for safety)
-selectedKraAssignment: any;
-
-
-
+  isEditMode: boolean = false;
+  selectedKra: any;
+  voidKpis: any[] = []; // Track KPIs marked for deletion (void)
+  originalKpis: any[] = []; // Backup of original KPIs (optional, for safety)
+  selectedKraAssignment: any;
   assignForm = this.fb.group({
     kraId: [null, Validators.required],
     weightage: [
@@ -211,7 +177,9 @@ selectedKraAssignment: any;
 
   updateModuleInfo() {
     const url = this.router.url;
-    this.moduleinfo = url.includes('/pms/assign-kra-kpi') ? MODULE_INFOS.PMS_KRA_KPI_ASSIGN_MODULE_INFO : '';
+    this.moduleinfo = url.includes('/pms/assign-kra-kpi')
+      ? MODULE_INFOS.PMS_KRA_KPI_ASSIGN_MODULE_INFO
+      : '';
   }
 
   getAllEmployeeDetails() {
@@ -221,9 +189,8 @@ selectedKraAssignment: any;
       .subscribe({
         next: (res: any) => {
           this.activeEmplist = res.map((employee: any) => ({
-            label: `${employee.fusionEmpId ?? ''} - ${
-              employee.firstName ?? ''
-            }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+            label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}
+            ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
             value: employee.employeeId,
           }));
         },
@@ -251,20 +218,17 @@ selectedKraAssignment: any;
 
   onDepartmentChange(selectedDepartments: any[]): void {
     const departmentIds = selectedDepartments?.map((d) => d.sno) || [];
-     const teamControl = this.filterForm.get('team');
-
+    const teamControl = this.filterForm.get('team');
     if (departmentIds.length === 0) {
       teamControl?.disable();
-    teamControl?.setValue([]);
+      teamControl?.setValue([]);
       this.teamDropdownValues = [];
       this.JobroleDesignation = []; // Clear job roles if no department
       this.onTeamChange([]);
       return;
     }
     teamControl?.enable();
-
     const departmentIdStr = departmentIds.join(',');
-
     // Load Teams (existing)
     this.http
       .getData(`Subdepartments/Getnames/V2/${departmentIdStr}`)
@@ -283,7 +247,6 @@ selectedKraAssignment: any;
   private loadJobDetailsIfPossible(): void {
     const selectedDepts = this.filterForm.get('department')?.value || [];
     const selectedTeams = this.filterForm.get('team')?.value || [];
-
     const deptIds = selectedDepts
       .map((d: any) => d.sno)
       .filter(Boolean)
@@ -292,11 +255,9 @@ selectedKraAssignment: any;
       .map((t: any) => t.sno || t.id || t.subdepartmentId)
       .filter(Boolean)
       .join(',');
-
     // Clear previous employee filter
     this.filteredEmployees = [];
     this.selectedEmployeeIds = '';
-
     if (!deptIds) {
       // No department → no employee filter from dept/team
       this.page = 1;
@@ -304,20 +265,16 @@ selectedKraAssignment: any;
       this.applyFilters(); // refresh table with no employee filter
       return;
     }
-
     let query = `departmentId=${deptIds}`;
     if (teamIds) query += `&teamId=${teamIds}`;
-
     this.http.getData(`JobDetails/getdepartmentteam?${query}`).subscribe({
       next: (res: any) => {
         const employees = Array.isArray(res) ? res : res.data || [];
-
         this.filteredEmployees = employees;
         this.selectedEmployeeIds = employees
           .map((emp: any) => emp.employeeId)
           .filter(Boolean)
           .join(',');
-
         // Only now refresh the table after getting employees
         this.page = 1;
         this.first = 0;
@@ -350,7 +307,7 @@ selectedKraAssignment: any;
     const subLocationControl = this.filterForm.get('subLocation');
     if (!selectedLocations || selectedLocations.length === 0) {
       subLocationControl?.disable();
-    subLocationControl?.setValue([]);
+      subLocationControl?.setValue([]);
       this.subLocationsDropdown = [];
       this.joblocid = '';
       this.onSubLocationChange([]);
@@ -359,10 +316,7 @@ selectedKraAssignment: any;
       return;
     }
     subLocationControl?.enable();
-
-
     this.joblocid = selectedLocations.map((loc) => loc.id).join(',');
-
     this.http
       .get(`SubLocation/getsublocations?joblocid=${this.joblocid}`)
       .subscribe({
@@ -386,7 +340,6 @@ selectedKraAssignment: any;
     const selectedLocations = this.filterForm.get('location')?.value || [];
     const selectedSubLocations =
       this.filterForm.get('subLocation')?.value || [];
-
     const locationIds = selectedLocations
       .map((loc: any) => loc.id)
       .filter(Boolean)
@@ -395,31 +348,25 @@ selectedKraAssignment: any;
       .map((sub: any) => sub.id || sub.sno)
       .filter(Boolean)
       .join(',');
-
     // Clear previous
     this.filteredEmployees = [];
     this.selectedEmployeeIds = '';
-
     if (!locationIds) {
       this.page = 1;
       this.first = 0;
       this.applyFilters();
       return;
     }
-
     let query = `locationId=${locationIds}`;
     if (subLocationIds) query += `&subLocationId=${subLocationIds}`;
-
     this.http.getData(`JobDetails/getlocationsublocation?${query}`).subscribe({
       next: (res: any) => {
         const employees = Array.isArray(res) ? res : res.data || [];
-
         this.filteredEmployees = employees;
         this.selectedEmployeeIds = employees
           .map((emp: any) => emp.employeeId)
           .filter(Boolean)
           .join(',');
-
         this.page = 1;
         this.first = 0;
         this.applyFilters(); // Only refresh after final employee list
@@ -481,7 +428,6 @@ selectedKraAssignment: any;
       pageSize: 100,
       ...(this.searchText && { search: this.searchText }),
     };
-
     this.dataload = true;
     this.http.getDataIncludeParams('Kra/getAll', params).subscribe({
       next: (res: any) => {
@@ -505,12 +451,10 @@ selectedKraAssignment: any;
 
   applyFilters(): void {
     const filters = this.filterForm.getRawValue(); // Use getRawValue() to get actual values
-
     const params: any = {
       pageNumber: this.page,
       pageSize: this.rows,
     };
-
     // Only add param if value exists and is not null/undefined
     if (this.searchText?.trim()) {
       params.search = this.searchText.trim();
@@ -518,93 +462,84 @@ selectedKraAssignment: any;
     if (filters.jobRole) {
       params.designationId = filters.jobRole;
     }
-
     if (this.selectedEmployeeIds) {
       params.employeeIds = this.selectedEmployeeIds;
     }
-
     this.loadAssignedKraKpiListWithFilters(params);
   }
 
   // New method — for showing assigned KRA/KPI records in the table
-loadAssignedKraKpiListWithFilters(params: any): void {
-  this.dataload = true;
-
-  this.http.getDataIncludeParams('Kpi/getAllAssignKpiKra', params).subscribe({
-    next: (res: any) => {
-      if (res.success && Array.isArray(res.data)) {
-        const processedData = res.data.map((x: any) => ({
-          ...x,
-          employeeId: x.employeedata.employeeId,
-          employeedata: {
-            ...x.employeedata,
-            fullName: [
-              x.employeedata.firstName,
-              x.employeedata.middleName,
-              x.employeedata.lastName,
-            ]
-              .filter(Boolean)
-              .join(' ')
-              .trim(),
-          },
-          // ✅ NEW: Transform kras array to assignments format
-          assignments: x.kras || []  // Each KRA becomes one row
-        }));
-
-        this.kraList = processedData;
-
-        const groupedMap = processedData.reduce(
-          (acc: Map<number, any>, curr: any) => {
-            if (!acc.has(curr.employeeId)) {
-              acc.set(curr.employeeId, {
-                employeeId: curr.employeeId,
-                fullName: curr.employeedata.fullName,
-                fusionId: curr.employeedata.fusionEmpId,
-                assignments: [],
-                selected: false,  // ✅ Add selected property
+  loadAssignedKraKpiListWithFilters(params: any): void {
+    this.dataload = true;
+    this.http.getDataIncludeParams('Kpi/getAllAssignKpiKra', params).subscribe({
+      next: (res: any) => {
+        if (res.success && Array.isArray(res.data)) {
+          const processedData = res.data.map((x: any) => ({
+            ...x,
+            employeeId: x.employeedata.employeeId,
+            employeedata: {
+              ...x.employeedata,
+              fullName: [
+                x.employeedata.firstName,
+                x.employeedata.middleName,
+                x.employeedata.lastName,
+              ]
+                .filter(Boolean)
+                .join(' ')
+                .trim(),
+            },
+            // NEW: Transform kras array to assignments format
+            assignments: x.kras || [], // Each KRA becomes one row
+          }));
+          this.kraList = processedData;
+          const groupedMap = processedData.reduce(
+            (acc: Map<number, any>, curr: any) => {
+              if (!acc.has(curr.employeeId)) {
+                acc.set(curr.employeeId, {
+                  employeeId: curr.employeeId,
+                  fullName: curr.employeedata.fullName,
+                  fusionId: curr.employeedata.fusionEmpId,
+                  assignments: [],
+                  selected: false, // Add selected property
+                });
+              }
+              // Add each KRA as an assignment row
+              curr.assignments.forEach((kraItem: any) => {
+                acc.get(curr.employeeId)!.assignments.push({
+                  ...kraItem,
+                  employeeId: curr.employeeId, // For action buttons
+                  fullName: curr.employeedata.fullName,
+                  kpisCount: kraItem.kpisCount || 0,
+                });
               });
-            }
-            // ✅ Add each KRA as an assignment row
-            curr.assignments.forEach((kraItem: any) => {
-              acc.get(curr.employeeId)!.assignments.push({
-                ...kraItem,
-                employeeId: curr.employeeId,  // For action buttons
-                fullName: curr.employeedata.fullName,
-                kpisCount: kraItem.kpisCount || 0
-              });
-            });
-            return acc;
-          },
-          new Map<number, any>()
-        );
-
-        this.groupedKraList = Array.from(groupedMap.values());
-        this.collectionSize = res.pagination?.totalRecords || 0;
-      } else {
+              return acc;
+            },
+            new Map<number, any>()
+          );
+          this.groupedKraList = Array.from(groupedMap.values());
+          this.collectionSize = res.pagination?.totalRecords || 0;
+        } else {
+          this.kraList = [];
+          this.groupedKraList = [];
+          this.collectionSize = 0;
+        }
+        this.dataload = false;
+      },
+      error: () => {
         this.kraList = [];
         this.groupedKraList = [];
         this.collectionSize = 0;
-      }
-      this.dataload = false;
-    },
-    error: () => {
-      this.kraList = [];
-      this.groupedKraList = [];
-      this.collectionSize = 0;
-      this.dataload = false;
-    },
-  });
-}
-
+        this.dataload = false;
+      },
+    });
+  }
 
   private getCurrentFilters(): any {
     const filters = this.filterForm.getRawValue();
-
     const params: any = {
       pageNumber: this.page,
       pageSize: this.rows,
     };
-
     if (this.searchText?.trim()) {
       params.search = this.searchText.trim();
     }
@@ -613,7 +548,6 @@ loadAssignedKraKpiListWithFilters(params: any): void {
     if (filters.team) params.subDepartmentId = filters.team;
     if (filters.location) params.locationId = filters.location;
     if (filters.subLocation) params.subLocationId = filters.subLocation;
-
     return params;
   }
 
@@ -641,7 +575,6 @@ loadAssignedKraKpiListWithFilters(params: any): void {
       this.selectedKraKpis = [];
       return;
     }
-
     // Load assigned KPIs only—not auto populate form fields
     this.http.getDataIncludeParams('Kpi/getAll', { kraId }).subscribe({
       next: (res: any) => {
@@ -671,110 +604,91 @@ addKpiRow(): void {
     description: ['', [Validators.required, Validators.minLength(10)]],
   });
 
-  // ✅ KPI selection → auto UOM + target validation
+  // Listen to KPI selection to auto-fill UOM and apply validation
   row.get('kpiId')?.valueChanges.subscribe((kpiId: number | null) => {
     if (!kpiId) {
       row.get('uom')?.reset();
       row.get('uom')?.disable();
       row.get('targetValue')?.reset();
+      row.get('targetValue')?.setValidators(null);
+      row.get('targetValue')?.updateValueAndValidity();
       return;
     }
 
-    const selectedKpi = this.allKpiOptions.find(
-      (k) => k.kpiId === kpiId
-    );
-if (selectedKpi) {
-      // Auto populate UOM and KEEP IT DISABLED
-      row.get('uom')?.setValue(selectedKpi.targetType);   // put value
-      row.get('uom')?.disable();                          // ← this line makes it non-editable!
+    const selectedKpi = this.allKpiOptions.find((k) => k.kpiId === kpiId);
+    if (selectedKpi) {
+      // Auto-fill UOM and keep it disabled
+      row.get('uom')?.setValue(selectedKpi.targetType);
+      row.get('uom')?.disable(); // Ensures non-editable
 
-      // Reset target value + apply validation
+      // Reset and re-validate target value
       row.get('targetValue')?.reset();
       this.applyTargetValueValidation(row.get('targetValue'), selectedKpi.targetType);
     }
   });
 
+  // Only push the current row — NO extra push here!
   this.kpiRows.push(row);
 }
 
-
-applyTargetValueValidation(control: any, uom: string) {
-  if (!control) return;
-
-  let validators = [Validators.required, Validators.min(1)];
-
-  switch (uom) {
-    case '%':
-      validators.push(Validators.max(100));
-      break;
-
-    case '$': // Currency
-      // Only min(1) → no upper limit
-      break;
-
-    case 'Hrs':
-    case 'Days':
-      validators.push(Validators.max(999));
-      break;
+  applyTargetValueValidation(control: any, uom: string) {
+    if (!control) return;
+    let validators = [Validators.required, Validators.min(1)];
+    switch (uom) {
+      case '%':
+        validators.push(Validators.max(100));
+        break;
+      case '$': // Currency
+        break;
+      case 'Hrs':
+      case 'Days':
+        validators.push(Validators.max(999));
+        break;
+    }
+    control.setValidators(validators);
+    control.updateValueAndValidity();
   }
 
-  control.setValidators(validators);
-  control.updateValueAndValidity();
-}
-
-
-
-removeKpiRow(index: number): void {
-  const row = this.kpiRows.at(index) as FormGroup;
-  const rowValue = row.getRawValue(); // ← Use getRawValue() to include disabled controls!
-
-  if (
-    this.isEditMode &&
-    rowValue.kpiId && Number(rowValue.kpiId) > 0
-  ) {
-    // Get the original KPI name
-    const kpiName = this.getKpiNameById(rowValue.kpiId);
-
-    // Get UOM even if control is disabled
-    const uomValue = row.get('uom')?.value || '';
-
-    this.voidKpis.push({
-      kpiId: rowValue.kpiId,
-      kraId: this.assignForm.get('kraId')?.value,
-      kpiName: kpiName,
-      weightageValue: String(rowValue.weightage || 0),
-      targetValue: String(rowValue.targetValue || ''),
-      targetDate: rowValue.targetDate || null,
-      targetType: uomValue, // ← This was the bug! Use actual UOM
-      description: rowValue.description?.trim() || '',
-      status: 'void',
-      // Optional: include these if backend needs them
-      reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
-      ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
-    });
-
-    this.popup.openSuccessModal('KPI removed successfully');
+  removeKpiRow(index: number): void {
+    const row = this.kpiRows.at(index) as FormGroup;
+    const rowValue = row.getRawValue(); // ← Use getRawValue() to include disabled controls!
+    if (this.isEditMode && rowValue.kpiId && Number(rowValue.kpiId) > 0) {
+      // Get the original KPI name
+      const kpiName = this.getKpiNameById(rowValue.kpiId);
+      // Get UOM even if control is disabled
+      const uomValue = row.get('uom')?.value || '';
+      this.voidKpis.push({
+        kpiId: rowValue.kpiId,
+        kraId: this.assignForm.get('kraId')?.value,
+        kpiName: kpiName,
+        weightageValue: String(rowValue.weightage || 0),
+        targetValue: String(rowValue.targetValue || ''),
+        targetDate: rowValue.targetDate || null,
+        targetType: uomValue, // ← This was the bug! Use actual UOM
+        description: rowValue.description?.trim() || '',
+        status: 'void',
+        // Optional: include these if backend needs them
+        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
+        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
+      });
+      this.popup.openSuccessModal('KPI removed successfully');
+    }
+    // Always remove from form array
+    this.kpiRows.removeAt(index);
   }
-
-  // Always remove from form array
-  this.kpiRows.removeAt(index);
-}
-
 
   openAssignModal(content: any): void {
-          this.isEditMode = false;
-
-  this.assignForm.get('kraId')?.enable();
-  this.assignForm.get('weightage')?.enable();
-  this.assignForm.get('effectiveDate')?.enable();
-  this.assignForm.get('targetDate')?.enable();
-  this.assignForm.get('reviewCycle')?.enable();
-  this.assignForm.get('ratingScale')?.enable();
+    this.isEditMode = false;
+    this.assignForm.get('kraId')?.enable();
+    this.assignForm.get('weightage')?.enable();
+    this.assignForm.get('effectiveDate')?.enable();
+    this.assignForm.get('targetDate')?.enable();
+    this.assignForm.get('reviewCycle')?.enable();
+    this.assignForm.get('ratingScale')?.enable();
     this.assignForm.reset();
     this.kpiRows.clear();
     this.selectedKraKpis = [];
     this.voidKpis = [];
-
     // Explicitly reset new fields
     this.assignForm.patchValue({
       kraId: null,
@@ -784,143 +698,124 @@ removeKpiRow(index: number): void {
       reviewCycle: '',
       ratingScale: '',
     });
-
     this.addKpiRow(); // Start with one row
-    this.modalService.open(content, {
-      backdrop: 'static',
-      size: 'xl',
+    this.modalService.open(content, { backdrop: 'static', size: 'xl' });
+  }
+
+  onSubmitAssign(): void {
+    let selectedEmployeeIds: string;
+    if (this.isEditMode) {
+      // Update mode: single employee from the clicked row
+      if (!this.selectedKraAssignment?.employeeId) {
+        this.popup.openErrorModal('No employee selected for update');
+        return;
+      }
+      selectedEmployeeIds = this.selectedKraAssignment.employeeId.toString();
+    } else {
+      // Assign mode: multiple employees from checkboxes
+      const selectedEmployees = this.groupedKraList
+        .filter((emp) => emp.selected === true)
+        .map((emp) => emp.employeeId);
+      if (selectedEmployees.length === 0) {
+        this.popup.openErrorModal('Please select at least one employee');
+        return;
+      }
+      selectedEmployeeIds = selectedEmployees.join(',');
+    }
+    // 2. Basic validations
+    if (
+      this.assignForm.invalid ||
+      this.kpiRows.length === 0 ||
+      this.totalNewKpiWeightage > 100
+    ) {
+      return;
+    }
+    const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    const loggedInEmployeeId = user?.employeeId || 0;
+    this.isSubmitting = true;
+    const formValue = this.assignForm.getRawValue();
+    const selectedKra = this.kraListForDropdown.find(
+      (k) => k.kraId === formValue.kraId
+    );
+    if (!selectedKra) {
+      this.popup.openErrorModal('Selected KRA not found');
+      this.isSubmitting = false;
+      return;
+    }
+    const kpis = this.kpiRows.getRawValue().map((row: any) => ({
+      kpiId: row.kpiId || 0,
+      kraId: formValue.kraId,
+      kpiName: this.getKpiNameById(row.kpiId),
+      weightageValue: String(row.weightage || 0),
+      targetValue: String(row.targetValue || ''),
+      targetDate: row.targetDate || null,
+      targetType: row.uom || '',
+      description: row.description?.trim() || '',
+      reviewCycleId: Number(formValue.reviewCycle),
+      ratingScaleId: Number(formValue.ratingScale),
+      status: row.status || 'Active',
+      createdBy: loggedInEmployeeId,
+      updatedBy: loggedInEmployeeId,
+      employeeIds: selectedEmployeeIds,
+    }));
+    // 4. Append void KPIs only in edit mode
+    if (this.isEditMode && this.voidKpis.length > 0) {
+      const voidPayload = this.voidKpis.map((voidKpi: any) => ({
+        kpiId: voidKpi.kpiId,
+        kraId: voidKpi.kraId,
+        kpiName: voidKpi.kpiName,
+        weightageValue: voidKpi.weightageValue,
+        targetValue: voidKpi.targetValue,
+        targetDate: voidKpi.targetDate,
+        targetType: voidKpi.targetType,
+        description: voidKpi.description,
+        reviewCycleId: Number(formValue.reviewCycle),
+        ratingScaleId: Number(formValue.ratingScale),
+        status: 'void',
+        createdBy: loggedInEmployeeId,
+        updatedBy: loggedInEmployeeId,
+        employeeIds: selectedEmployeeIds,
+      }));
+      kpis.push(...voidPayload);
+    }
+    // 5. Final payload
+    const payload = {
+      kraId: formValue.kraId,
+      kraName: selectedKra.kraName,
+      kraCategoryId: selectedKra.kraCategoryId || selectedKra.categoryId || 0,
+      kraCategoryName: selectedKra.kraCategoryName || '',
+      employeeIds: selectedEmployeeIds,
+      effectiveDate: formValue.effectiveDate,
+      targetDate: formValue.targetDate,
+      weightageValue: String(selectedKra.weightageValue || 100),
+      reviewCycleId: Number(formValue.reviewCycle),
+      ratingScaleId: Number(formValue.ratingScale),
+      status: 'Active',
+      createdBy: loggedInEmployeeId,
+      updatedBy: loggedInEmployeeId,
+      kpis: kpis,
+    };
+    this.http.postdata('Kpi/updatekrakpi', payload).subscribe({
+      next: () => {
+        this.modalService.dismissAll();
+        this.popup.openSuccessModal('KRA & KPIs updated successfully!');
+        this.clearAllFilters();
+        this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
+        this.groupedKraList.forEach((emp) => (emp.selected = false));
+        this.voidKpis = []; // Clear after success
+      },
+      error: (err: any) => {
+        console.error('Assignment failed:', err);
+        this.popup.openErrorModal(
+          err.error?.message || 'Failed to assign/update KRA/KPIs'
+        );
+        this.isSubmitting = false;
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      },
     });
   }
-
-onSubmitAssign(): void {
-  let selectedEmployeeIds: string;
-
-  if (this.isEditMode) {
-    // Update mode: single employee from the clicked row
-    if (!this.selectedKraAssignment?.employeeId) {
-      this.popup.openErrorModal('No employee selected for update');
-      return;
-    }
-    selectedEmployeeIds = this.selectedKraAssignment.employeeId.toString();
-  } else {
-    // Assign mode: multiple employees from checkboxes
-    const selectedEmployees = this.groupedKraList
-      .filter((emp) => emp.selected === true)
-      .map((emp) => emp.employeeId);
-
-    if (selectedEmployees.length === 0) {
-      this.popup.openErrorModal('Please select at least one employee');
-      return;
-    }
-    selectedEmployeeIds = selectedEmployees.join(',');
-  }
-
-  // 2. Basic validations
-  if (
-    this.assignForm.invalid ||
-    this.kpiRows.length === 0 ||
-    this.totalNewKpiWeightage > 100
-  ) {
-    return;
-  }
-
-  const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-  const loggedInEmployeeId = user?.employeeId || 0;
-
-  this.isSubmitting = true;
-
-  const formValue = this.assignForm.getRawValue();
-
-  const selectedKra = this.kraListForDropdown.find(
-    (k) => k.kraId === formValue.kraId
-  );
-
-  if (!selectedKra) {
-    this.popup.openErrorModal('Selected KRA not found');
-    this.isSubmitting = false;
-    return;
-  }
-
-  const kpis = this.kpiRows.getRawValue().map((row: any) => ({
-    kpiId: row.kpiId || 0,
-    kraId: formValue.kraId,
-    kpiName: this.getKpiNameById(row.kpiId),
-    weightageValue: String(row.weightage || 0),
-    targetValue: String(row.targetValue || ''),
-    targetDate: row.targetDate || null,
-    targetType: row.uom || '',
-    description: row.description?.trim() || '',
-    reviewCycleId: Number(formValue.reviewCycle),
-    ratingScaleId: Number(formValue.ratingScale),
-    status: row.status || 'Active',
-    createdBy: loggedInEmployeeId,
-    updatedBy: loggedInEmployeeId,
-    employeeIds: selectedEmployeeIds,
-  }));
-
-  // 4. Append void KPIs only in edit mode
-if (this.isEditMode && this.voidKpis.length > 0) {
-  const voidPayload = this.voidKpis.map((voidKpi: any) => ({
-    kpiId: voidKpi.kpiId,
-    kraId: voidKpi.kraId,
-    kpiName: voidKpi.kpiName,
-    weightageValue: voidKpi.weightageValue,
-    targetValue: voidKpi.targetValue,
-    targetDate: voidKpi.targetDate,
-    targetType: voidKpi.targetType,
-    description: voidKpi.description,
-    reviewCycleId: Number(formValue.reviewCycle),
-    ratingScaleId: Number(formValue.ratingScale),
-    status: 'void',
-    createdBy: loggedInEmployeeId,
-    updatedBy: loggedInEmployeeId,
-    employeeIds: selectedEmployeeIds,
-  }));
-  kpis.push(...voidPayload);
-}
-
-  // 5. Final payload
-  const payload = {
-    kraId: formValue.kraId,
-    kraName: selectedKra.kraName,
-    kraCategoryId: selectedKra.kraCategoryId || selectedKra.categoryId || 0,
-    kraCategoryName: selectedKra.kraCategoryName || '',
-    employeeIds: selectedEmployeeIds,
-    effectiveDate: formValue.effectiveDate,
-    targetDate: formValue.targetDate,
-    weightageValue: String(selectedKra.weightageValue || 100),
-    reviewCycleId: Number(formValue.reviewCycle),
-    ratingScaleId: Number(formValue.ratingScale),
-    status: 'Active',
-    createdBy: loggedInEmployeeId,
-    updatedBy: loggedInEmployeeId,
-    kpis: kpis,
-  };
-
-  console.log('Submitting payload:', payload);
-
-  this.http.postdata('Kpi/updatekrakpi', payload).subscribe({
-    next: () => {
-      this.modalService.dismissAll();
-      this.popup.openSuccessModal('KRA & KPIs updated successfully!');
-      this.clearAllFilters();
-      this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
-
-      this.groupedKraList.forEach((emp) => (emp.selected = false));
-      this.voidKpis = [];           // Clear after success
-    },
-    error: (err: any) => {
-      console.error('Assignment failed:', err);
-      this.popup.openErrorModal(
-        err.error?.message || 'Failed to assign/update KRA/KPIs'
-      );
-      this.isSubmitting = false;
-    },
-    complete: () => {
-      this.isSubmitting = false;
-    },
-  });
-}
 
   getKpiNameById(id: number | null): string {
     if (!id) return 'Select KPI';
@@ -948,81 +843,73 @@ if (this.isEditMode && this.voidKpis.length > 0) {
     this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
   }
 
-onUpdate(kraAssignment: any): void {
-  this.isEditMode = true;
-
+  onUpdate(kraAssignment: any): void {
+    this.isEditMode = true;
     this.assignForm.get('kraId')?.disable();
-  this.assignForm.get('weightage')?.disable();
-  this.assignForm.get('effectiveDate')?.disable();
-  this.assignForm.get('targetDate')?.disable();
-  this.assignForm.get('reviewCycle')?.disable();
-  this.assignForm.get('ratingScale')?.disable();
-
-  this.selectedKraAssignment = kraAssignment;
-  this.voidKpis = [];                          // Reset deleted list
-  this.originalKpis = JSON.parse(JSON.stringify(kraAssignment.kpis || [])); // Backup
-
-  const firstKpi = kraAssignment.kpis?.[0];
-
-  if (!firstKpi || !kraAssignment.kra) {
-    this.popup.openErrorModal('No KRA/KPI data found for update');
-    return;
+    this.assignForm.get('weightage')?.disable();
+    this.assignForm.get('effectiveDate')?.disable();
+    this.assignForm.get('targetDate')?.disable();
+    this.assignForm.get('reviewCycle')?.disable();
+    this.assignForm.get('ratingScale')?.disable();
+    this.selectedKraAssignment = kraAssignment;
+    this.voidKpis = []; // Reset deleted list
+    this.originalKpis = JSON.parse(JSON.stringify(kraAssignment.kpis || [])); // Backup
+    const firstKpi = kraAssignment.kpis?.[0];
+    if (!firstKpi || !kraAssignment.kra) {
+      this.popup.openErrorModal('No KRA/KPI data found for update');
+      return;
+    }
+    // Patch form with existing KRA data
+    this.assignForm.patchValue({
+      kraId: kraAssignment.kra.kraId,
+      weightage: kraAssignment.kra.weightageValue,
+      effectiveDate: kraAssignment.kra.effectiveDate?.split('T')[0] || '',
+      targetDate: firstKpi.kraTargetDate?.split('T')[0] || '',
+      reviewCycle: firstKpi.reviewCycleData?.id,
+      ratingScale: firstKpi.optionsRating?.id,
+    });
+    this.kpiRows.clear();
+    kraAssignment.kpis?.forEach((kpi: any) => {
+      const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
+      const rowGroup = this.fb.group({
+        kpiId: [{ value: kpi.kpiId || null, disabled: true }],
+        uom: [{ value: kpi.targetType || '', disabled: true }],
+        weightage: [Number(kpi.weightageValue) || 0],
+        targetValue: [kpi.targetValue || ''],
+        targetDate: [ targetDateValue,
+          [Validators.required, this.noPastDateValidator],
+        ],
+        description: [kpi.description || ''],
+        status: [kpi.status || 'Created'],
+      });
+      // APPLY RANGE VALIDATION BASED ON UOM
+      this.applyTargetValueValidation(
+        rowGroup.get('targetValue'),
+        kpi.targetType
+      );
+      this.kpiRows.push(rowGroup);
+    });
+    this.modalService.open(this.assignKraKpiModal, {backdrop: 'static', size: 'xl'});
   }
 
-  // Patch form with existing KRA data
-  this.assignForm.patchValue({
-    kraId: kraAssignment.kra.kraId,
-    weightage: kraAssignment.kra.weightageValue,
-    effectiveDate: kraAssignment.kra.effectiveDate?.split('T')[0] || '',
-    targetDate: firstKpi.kraTargetDate?.split('T')[0] || '',
-    reviewCycle: firstKpi.reviewCycleData?.id,
-    ratingScale: firstKpi.optionsRating?.id,
-  });
-
-  this.kpiRows.clear();
-
-  kraAssignment.kpis?.forEach((kpi: any) => {
-    const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
-const rowGroup = this.fb.group({
-  kpiId: [{ value: kpi.kpiId || null, disabled: true }],
-  uom: [{ value: kpi.targetType || '', disabled: true }],
-  weightage: [Number(kpi.weightageValue) || 0],
-  targetValue: [kpi.targetValue || ''],
-  targetDate: [targetDateValue, [Validators.required, this.noPastDateValidator]],
-  description: [kpi.description || ''],
-  status: [kpi.status || 'Created'],
-});
-
-// ✅ APPLY RANGE VALIDATION BASED ON UOM
-this.applyTargetValueValidation(
-  rowGroup.get('targetValue'),
-  kpi.targetType
-);
-
-this.kpiRows.push(rowGroup);
-
-  });
-
-  this.modalService.open(this.assignKraKpiModal, {
-    backdrop: 'static',
-    size: 'xl'
-  });
-}
-
-
   private addKpiRowWithData(kpi: any) {
-  this.kpiRows.push(
-    this.fb.group({
-      kpiId: [kpi.kpiId || null, Validators.required],
-      uom: [kpi.targetType || null],
-      weightage: [kpi.weightageValue || 0, [Validators.required, Validators.min(1), Validators.max(100)]],
-      targetValue: [kpi.targetValue || '', Validators.required],
-      targetDate: [kpi.targetDate ? kpi.targetDate.split('T')[0] : '', Validators.required],
-      description: [kpi.description || ''],
-    })
-  );
-}
-
+    this.kpiRows.push(
+      this.fb.group({
+        kpiId: [kpi.kpiId || null, Validators.required],
+        uom: [kpi.targetType || null],
+        weightage: [
+          kpi.weightageValue || 0,
+          [Validators.required, Validators.min(1), Validators.max(100)],
+        ],
+        targetValue: [kpi.targetValue || '', Validators.required],
+        targetDate: [
+          kpi.targetDate ? kpi.targetDate.split('T')[0] : '',
+          Validators.required,
+        ],
+        description: [kpi.description || ''],
+      })
+    );
+  }
 
   onHold(kraAssignment: any): void {
     if (confirm(`Put "${kraAssignment.employeeName}"'s KRA on Hold?`)) {
@@ -1033,7 +920,6 @@ this.kpiRows.push(rowGroup);
           JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
             ?.employeeId || 0,
       };
-
       this.http.postdata('KraAssignment/hold', payload).subscribe({
         next: () => {
           this.popup.openSuccessModal('KRA assignment put on hold');
@@ -1059,10 +945,8 @@ this.kpiRows.push(rowGroup);
     this.filteredEmployees = [];
     this.teamDropdownValues = [];
     this.subLocationsDropdown = [];
-
     this.page = 1;
     this.first = 0;
-
     this.loadAssignedKraKpiListWithFilters({
       pageNumber: 1,
       pageSize: this.rows,
@@ -1070,91 +954,89 @@ this.kpiRows.push(rowGroup);
   }
 
   isFilterApplied(): boolean {
-return this.getSelectedFilters().length > 0;
+    return this.getSelectedFilters().length > 0;
   }
 
-getSelectedFilters(): any[] {
-  const filters: any[] = [];
-  const formValue = this.filterForm.getRawValue();
-
-  // Department
-  if (formValue.department?.length) {
-    formValue.department.forEach((dept: any) => {
-      filters.push({
-        type: 'department',
-        label: dept.departmentName,
-        value: dept,
+  getSelectedFilters(): any[] {
+    const filters: any[] = [];
+    const formValue = this.filterForm.getRawValue();
+    // Department
+    if (formValue.department?.length) {
+      formValue.department.forEach((dept: any) => {
+        filters.push({
+          type: 'department',
+          label: dept.departmentName,
+          value: dept,
+        });
       });
-    });
-  }
-
-  // Team
-  if (formValue.team?.length) {
-    formValue.team.forEach((team: any) => {
-      filters.push({
-        type: 'team',
-        label: team.subdepartmentName || team.name,
-        value: team,
+    }
+    // Team
+    if (formValue.team?.length) {
+      formValue.team.forEach((team: any) => {
+        filters.push({
+          type: 'team',
+          label: team.subdepartmentName || team.name,
+          value: team,
+        });
       });
-    });
-  }
-
-  // Location
-  if (formValue.location?.length) {
-    formValue.location.forEach((loc: any) => {
-      filters.push({
-        type: 'location',
-        label: loc.jobLocationName,
-        value: loc,
+    }
+    // Location
+    if (formValue.location?.length) {
+      formValue.location.forEach((loc: any) => {
+        filters.push({
+          type: 'location',
+          label: loc.jobLocationName,
+          value: loc,
+        });
       });
-    });
-  }
-
-  // Sub Location
-  if (formValue.subLocation?.length) {
-    formValue.subLocation.forEach((sub: any) => {
-      filters.push({
-        type: 'subLocation',
-        label: sub.jobSubLocationName || sub.name,
-        value: sub,
+    }
+    // Sub Location
+    if (formValue.subLocation?.length) {
+      formValue.subLocation.forEach((sub: any) => {
+        filters.push({
+          type: 'subLocation',
+          label: sub.jobSubLocationName || sub.name,
+          value: sub,
+        });
       });
-    });
+    }
+    return filters;
   }
 
-  return filters;
-}
-
-removeFilter(filter: any) {
-  const current = this.filterForm.getRawValue();
-
-  if (filter.type === 'department') {
-    const updated = (current.department ?? []).filter((d: any) => d.sno !== filter.value.sno);
-    this.filterForm.patchValue({ department: updated });
-    this.onDepartmentChange(updated);
-  } else if (filter.type === 'team') {
-    const updated = (current.team ?? []).filter((t: any) =>
-      (t.sno || t.id || t.subdepartmentId) !== (filter.value.sno || filter.value.id || filter.value.subdepartmentId)
-    );
-    this.filterForm.patchValue({ team: updated });
-    this.onTeamChange(updated);
-  } else if (filter.type === 'location') {
-    const updated = (current.location ?? []).filter((l: any) => l.id !== filter.value.id);
-    this.filterForm.patchValue({ location: updated });
-    this.getSubLocationByid(updated);
-  } else if (filter.type === 'subLocation') {
-    const updated = (current.subLocation ?? []).filter((s: any) =>
-      (s.id || s.sno) !== (filter.value.id || filter.value.sno)
-    );
-    this.filterForm.patchValue({ subLocation: updated });
-    this.onSubLocationChange(updated);
+  removeFilter(filter: any) {
+    const current = this.filterForm.getRawValue();
+    if (filter.type === 'department') {
+      const updated = (current.department ?? []).filter(
+        (d: any) => d.sno !== filter.value.sno
+      );
+      this.filterForm.patchValue({ department: updated });
+      this.onDepartmentChange(updated);
+    } else if (filter.type === 'team') {
+      const updated = (current.team ?? []).filter(
+        (t: any) =>
+          (t.sno || t.id || t.subdepartmentId) !==
+          (filter.value.sno || filter.value.id || filter.value.subdepartmentId)
+      );
+      this.filterForm.patchValue({ team: updated });
+      this.onTeamChange(updated);
+    } else if (filter.type === 'location') {
+      const updated = (current.location ?? []).filter(
+        (l: any) => l.id !== filter.value.id
+      );
+      this.filterForm.patchValue({ location: updated });
+      this.getSubLocationByid(updated);
+    } else if (filter.type === 'subLocation') {
+      const updated = (current.subLocation ?? []).filter(
+        (s: any) => (s.id || s.sno) !== (filter.value.id || filter.value.sno)
+      );
+      this.filterForm.patchValue({ subLocation: updated });
+      this.onSubLocationChange(updated);
+    }
+    // Refresh table
+    this.page = 1;
+    this.first = 0;
+    this.applyFilters();
   }
-
-  // Refresh table
-  this.page = 1;
-  this.first = 0;
-  this.applyFilters();
-}
-
 
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, {
@@ -1170,11 +1052,9 @@ removeFilter(filter: any) {
 
   get canOpenAssignModal(): boolean {
     const hasFilter = this.isFilterApplied();
-
     const hasSelection = this.groupedKraList?.some(
       (emp) => emp.selected === true
     );
-
     return hasFilter || hasSelection;
   }
 
@@ -1187,10 +1067,8 @@ removeFilter(filter: any) {
     this.selectedEmployeeId = employeeId;
     this.selectedEmployeeName = employeeName;
     this.selectedKra = kra;
-
     this.loadKpisForEmployee(employeeId);
     this.loadKpisForKra(kra);
-
     setTimeout(() => {
       this.offcanvasService.open(content, {
         position: 'end',
@@ -1204,63 +1082,53 @@ removeFilter(filter: any) {
     this.offcanvasService.dismiss();
   }
 
-
-
-loadKpisForKra(kra: any) {
-  this.assignKpiList = [];
-
-  // ✅ SHOW ONLY THIS SPECIFIC KRA's KPIs
-  if (kra?.kpis && kra.kpis.length > 0) {
-    kra.kpis.forEach((kpi: any) => {
-      this.assignKpiList.push({
-        ...kpi,
-        kpiName: kpi.kpiName,
-        weightageValue: kpi.weightageValue,
-        targetValue: kpi.targetValue,
-        targetType: kpi.targetType,
-        targetDate: kpi.targetDate,
-        kraName: kpi.kraName || kra.kra?.kraName,
-        description: kpi.description
-      });
-    });
-  }
-
-  console.log('🔥 KPIs for KRA:', kra.kra?.kraName, this.assignKpiList);
-}
-
-
-loadKpisForEmployee(employeeId: number) {
-  const employeeData = this.kraList.filter(
-    (k) => k.employeeId === employeeId
-  );
-
-  this.assignKpiList = [];
-
-  employeeData.forEach((emp) => {
-    // ✅ NEW: Extract from kras array
-    if (emp.kras && emp.kras.length) {
-      emp.kras.forEach((kraItem: any) => {
-        if (kraItem.kpis && kraItem.kpis.length) {
-          kraItem.kpis.forEach((kpi: any) => {
-            this.assignKpiList.push({
-              ...kpi,
-              // ✅ Ensure all required fields are available
-              kpiName: kpi.kpiName,
-              weightageValue: kpi.weightageValue,
-              targetValue: kpi.targetValue,
-              targetType: kpi.targetType,
-              targetDate: kpi.targetDate,
-              kraName: kpi.kraName || kraItem.kra?.kraName,  // Fallback to KRA name
-              description: kpi.description
-            });
-          });
-        }
+  loadKpisForKra(kra: any) {
+    this.assignKpiList = [];
+    // SHOW ONLY THIS SPECIFIC KRA's KPIs
+    if (kra?.kpis && kra.kpis.length > 0) {
+      kra.kpis.forEach((kpi: any) => {
+        this.assignKpiList.push({
+          ...kpi,
+          kpiName: kpi.kpiName,
+          weightageValue: kpi.weightageValue,
+          targetValue: kpi.targetValue,
+          targetType: kpi.targetType,
+          targetDate: kpi.targetDate,
+          kraName: kpi.kraName || kra.kra?.kraName,
+          description: kpi.description,
+        });
       });
     }
-  });
+  }
 
-  console.log('assignKpiList populated:', this.assignKpiList);
-}
+  loadKpisForEmployee(employeeId: number) {
+    const employeeData = this.kraList.filter(
+      (k) => k.employeeId === employeeId
+    );
+    this.assignKpiList = [];
+    employeeData.forEach((emp) => {
+      // NEW: Extract from kras array
+      if (emp.kras && emp.kras.length) {
+        emp.kras.forEach((kraItem: any) => {
+          if (kraItem.kpis && kraItem.kpis.length) {
+            kraItem.kpis.forEach((kpi: any) => {
+              this.assignKpiList.push({
+                ...kpi,
+                // Ensure all required fields are available
+                kpiName: kpi.kpiName,
+                weightageValue: kpi.weightageValue,
+                targetValue: kpi.targetValue,
+                targetType: kpi.targetType,
+                targetDate: kpi.targetDate,
+                kraName: kpi.kraName || kraItem.kra?.kraName, // Fallback to KRA name
+                description: kpi.description,
+              });
+            });
+          }
+        });
+      }
+    });
+  }
 
   getStatusClass(status: string) {
     switch (status) {
@@ -1276,45 +1144,39 @@ loadKpisForEmployee(employeeId: number) {
   }
 
   getKraProgress(kra: any): number {
-  if (!kra?.kpis || kra.kpis.length === 0) {
-    return 0;
+    if (!kra?.kpis || kra.kpis.length === 0) {
+      return 0;
+    }
+    const total = kra.kpis.reduce(
+      (sum: number, kpi: any) => sum + Number(kpi.weightageValue || 0),
+      0
+    );
+    return Math.round(total / kra.kpis.length);
   }
 
-  const total = kra.kpis.reduce(
-    (sum: number, kpi: any) => sum + Number(kpi.weightageValue || 0),
-    0
-  );
+  getProgressClass(value: number): string {
+    if (value >= 80) return 'bg-success';
+    if (value >= 50) return 'bg-warning';
+    return 'bg-danger';
+  }
 
-  return Math.round(total / kra.kpis.length);
-}
+  get isDepartmentSelected(): boolean {
+    const dept = this.filterForm.get('department')?.value;
+    return Array.isArray(dept) && dept.length > 0;
+  }
 
-getProgressClass(value: number): string {
-  if (value >= 80) return 'bg-success';
-  if (value >= 50) return 'bg-warning';
-  return 'bg-danger';
-}
+  get isLocationSelected(): boolean {
+    const loc = this.filterForm.get('location')?.value;
+    return Array.isArray(loc) && loc.length > 0;
+  }
 
-get isDepartmentSelected(): boolean {
-  const dept = this.filterForm.get('department')?.value;
-  return Array.isArray(dept) && dept.length > 0;
-}
-
-get isLocationSelected(): boolean {
-  const loc = this.filterForm.get('location')?.value;
-  return Array.isArray(loc) && loc.length > 0;
-}
-
-private noPastDateValidator(control: import('@angular/forms').AbstractControl) {
-  if (!control.value) return null;
-
-  const selectedDate = new Date(control.value);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  return selectedDate < today ? { pastDate: true } : null;
-}
-
-
-
-
+  private noPastDateValidator(
+    control: import('@angular/forms').AbstractControl
+  ) {
+    if (!control.value) return null;
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return selectedDate < today ? { pastDate: true } : null;
+  }
 }

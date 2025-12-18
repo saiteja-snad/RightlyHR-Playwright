@@ -13,12 +13,12 @@
 }
 
 .filter-indicator {
-  position: absolute ;
-  top: 8px ;
+  position: absolute;
+  top: 8px;
   right: 8px;
   width: 8px;
   height: 8px;
-  background-color: #0B3A83;
+  background-color: var(--primary-color);
   border-radius: 50%;
   border: 2px solid white;
   animation: pulse 2s infinite;
@@ -26,7 +26,7 @@
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 #0B3A83;
+    box-shadow: 0 0 0 0 var(--primary-color);
   }
 
   70% {
@@ -41,7 +41,7 @@
 .kpis-count {
   font-weight: 700 !important;
   font-style: Bold !important;
-  font-size: 14px;
+  font-size: var(--fontsize14);
   text-decoration: none;
   color: var(--primary-color);
   text-decoration: underline;
@@ -53,7 +53,7 @@
 }
 
 :host ::ng-deep .p-checkbox-box.p-highlight {
-  background: #0B3A83 !important;
+  background: var(--primary-color) !important;
   /* Blue background */
 }
 
@@ -104,7 +104,7 @@
 
 /* Blue for Created */
 .status-created {
-  color: #0B3A83;
+  color: var(--primary-color);
 }
 
 /* Green for Active */
@@ -126,7 +126,6 @@
   position: relative !important;
   height: 35dvh;
 }
-
 
 .custom-popup-table {
   min-height: 30dvh !important;

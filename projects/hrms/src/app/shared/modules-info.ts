@@ -301,6 +301,8 @@ export const MODULE_INFOS = {
 
     JOB_VIEW: 'This module helps to display the detailed results of the selected processing job, including all employees covered in that run and their individual processing statuses. It allows you to verify the outcomes, identify any errors, and review whether the carry-forward or encashment updates were processed correctly.',
     CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward & Encashment workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward or encashment job updates seamlessly.',
+    Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',
+    Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
 
 
 }

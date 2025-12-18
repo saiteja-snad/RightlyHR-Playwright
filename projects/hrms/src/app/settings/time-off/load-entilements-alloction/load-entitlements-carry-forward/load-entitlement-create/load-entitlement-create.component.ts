@@ -99,6 +99,8 @@ export class LoadEntitlementCreateComponent {
       this.subLocationDetails = location.jobSubLocations;
       this.leaveAllocationForm.get('subLocation')?.enable();
       this.leaveAllocationForm.get('subLocation')?.reset();
+      this.leaveAllocationForm.get('shift')?.reset();
+      
       //Auto-populate subLocation if stored
       if (this.carryforwarddata?.subLocation) {
         const selectedSub = this.subLocationDetails.find((item: any) =>

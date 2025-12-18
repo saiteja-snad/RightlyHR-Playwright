@@ -102,6 +102,8 @@ export class IntialLoadEntitlementCreateComponent {
       this.subLocationDetails = location.jobSubLocations;
       this.leaveAllocationForm.get('subLocation')?.enable();
       this.leaveAllocationForm.get('subLocation')?.reset();
+      this.leaveAllocationForm.get('shift')?.reset();
+      this.leaveAllocationForm.get('categoryName')?.reset();
       //Auto-populate subLocation if stored
       if (this.carryforwarddata?.subLocation) {
         const selectedSub = this.subLocationDetails.find((item: any) =>
@@ -130,6 +132,7 @@ export class IntialLoadEntitlementCreateComponent {
         this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
         this.leaveAllocationForm.get('shift')?.enable();
         this.leaveAllocationForm.get('shift')?.reset();
+        this.leaveAllocationForm.get('categoryName')?.reset();
         // Auto-select saved shift
         if (this.carryforwarddata?.shift) {
           const selectedShift = this.shiftDetails.find((sh: any) => sh.shiftName === this.carryforwarddata.shift.shiftName);

@@ -41,6 +41,21 @@
     </div>
   </div>
 
+  <div class="fliter-chip-content mb-3" *ngIf="isFilterApplied()">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+        (onRemove)="removeFilter(filter)" />
+
+      <!-- +X More chip -->
+      <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+        [label]="'+' + (getSelectedFilters().length - 3) + ' More'" (click)="toggleFilters(filterContent)" />
+
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+        {{ 'Clear All' | translate }}
+      </button>
+    </div>
+  </div>
+
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
@@ -402,23 +417,24 @@
                 </td>
                 <td class="text-center align-middle">
                   <div class="d-flex justify-content-center align-items-center gap-2">
+
                     @if (i === kpiRows.length - 1) {
-                    <button type="button"
-                      class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
-                      style="width: 32px; height: 32px;" [disabled]="!canAddRow()"
-                      [ngClass]="{'btn-outline-secondary': !canAddRow()}" (click)="addKpiRow()">
-                      <i class="bi bi-plus-circle"></i>
+                    <button type="button" class="p-0 border-0 bg-transparent" [disabled]="!canAddRow()"
+                      [style.pointer-events]="canAddRow() ? 'auto' : 'none'" [style.opacity]="canAddRow() ? '1' : '0.4'"
+                      (click)="addKpiRow()">
+                      <i class="bi bi-plus-circle-fill custom-action-btn-icon" style="font-size: 18px;"></i>
                     </button>
                     }
+
                     @if (kpiRows.length > 1) {
-                    <button type="button"
-                      class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
-                      style="width: 32px; height: 32px;" (click)="removeKpiRow(i)">
-                      <i class="bi bi-trash"></i>
+                    <button type="button" class="p-0 border-0 bg-transparent" (click)="removeKpiRow(i)">
+                      <i class="bi bi-trash3 text-danger custom-action-btn-icon" style="font-size: 18px;"></i>
                     </button>
                     }
+
                   </div>
                 </td>
+
               </tr>
               }
             </tbody>

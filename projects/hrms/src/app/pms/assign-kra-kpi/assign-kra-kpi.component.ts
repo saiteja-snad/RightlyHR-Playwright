@@ -57,6 +57,7 @@ import { RbacService } from '../../services/rbac.service';
     ChipModule,
     AccordionModule,
     CheckboxModule,
+    ChipModule
   ],
   templateUrl: './assign-kra-kpi.component.html',
   styleUrl: './assign-kra-kpi.component.scss',
@@ -995,95 +996,91 @@ onUpdate(kraAssignment: any): void {
   }
 
   isFilterApplied(): boolean {
-    const v = this.filterForm.getRawValue();
-    return (
-      !!v.jobRole ||
-      !!v.department?.length ||
-      !!v.team?.length ||
-      !!v.location?.length ||
-      !!v.subLocation?.length
-    );
+return this.getSelectedFilters().length > 0;
   }
 
-  getSelectedFilters(): any[] {
-    const filters: any[] = [];
+getSelectedFilters(): any[] {
+  const filters: any[] = [];
+  const formValue = this.filterForm.getRawValue();
 
-    if (this.selectedJobRole) {
-      const role = this.JobroleDesignation.find(
-        (r) => r.designationId === this.selectedJobRole
-      );
-      if (role) {
-        filters.push({
-          type: 'jobRole',
-          label: role.designationName,
-          value: this.selectedJobRole,
-        });
-      }
-    }
-
-    this.selectedDepartments.forEach((dept) => {
+  // Department
+  if (formValue.department?.length) {
+    formValue.department.forEach((dept: any) => {
       filters.push({
         type: 'department',
         label: dept.departmentName,
         value: dept,
       });
     });
+  }
 
-    this.selectedTeams.forEach((team) => {
+  // Team
+  if (formValue.team?.length) {
+    formValue.team.forEach((team: any) => {
       filters.push({
         type: 'team',
-        label: team.subdepartmentName,
+        label: team.subdepartmentName || team.name,
         value: team,
       });
     });
+  }
 
-    this.selectedLocations.forEach((loc) => {
+  // Location
+  if (formValue.location?.length) {
+    formValue.location.forEach((loc: any) => {
       filters.push({
         type: 'location',
         label: loc.jobLocationName,
         value: loc,
       });
     });
+  }
 
-    this.selectedSubLocations.forEach((sub) => {
+  // Sub Location
+  if (formValue.subLocation?.length) {
+    formValue.subLocation.forEach((sub: any) => {
       filters.push({
         type: 'subLocation',
-        label: sub.jobSubLocationName,
+        label: sub.jobSubLocationName || sub.name,
         value: sub,
       });
     });
-
-    return filters;
   }
 
-  removeFilter(filter: any) {
-    if (filter.type === 'jobRole') {
-      this.selectedJobRole = null;
-      this.filterForm.patchValue({ jobRole: null });
-    } else if (filter.type === 'department') {
-      this.selectedDepartments = this.selectedDepartments.filter(
-        (d) => d !== filter.value
-      );
-      this.filterForm.patchValue({ department: this.selectedDepartments });
-      this.onDepartmentChange(this.selectedDepartments);
-    } else if (filter.type === 'team') {
-      this.selectedTeams = this.selectedTeams.filter((t) => t !== filter.value);
-      this.filterForm.patchValue({ team: this.selectedTeams });
-      this.onTeamChange(this.selectedTeams);
-    } else if (filter.type === 'location') {
-      this.selectedLocations = this.selectedLocations.filter(
-        (l) => l !== filter.value
-      );
-      this.filterForm.patchValue({ location: this.selectedLocations });
-      this.getSubLocationByid(this.selectedLocations);
-    } else if (filter.type === 'subLocation') {
-      this.selectedSubLocations = this.selectedSubLocations.filter(
-        (s) => s !== filter.value
-      );
-      this.filterForm.patchValue({ subLocation: this.selectedSubLocations });
-      this.onSubLocationChange(this.selectedSubLocations);
-    }
+  return filters;
+}
+
+removeFilter(filter: any) {
+  const current = this.filterForm.getRawValue();
+
+  if (filter.type === 'department') {
+    const updated = (current.department ?? []).filter((d: any) => d.sno !== filter.value.sno);
+    this.filterForm.patchValue({ department: updated });
+    this.onDepartmentChange(updated);
+  } else if (filter.type === 'team') {
+    const updated = (current.team ?? []).filter((t: any) =>
+      (t.sno || t.id || t.subdepartmentId) !== (filter.value.sno || filter.value.id || filter.value.subdepartmentId)
+    );
+    this.filterForm.patchValue({ team: updated });
+    this.onTeamChange(updated);
+  } else if (filter.type === 'location') {
+    const updated = (current.location ?? []).filter((l: any) => l.id !== filter.value.id);
+    this.filterForm.patchValue({ location: updated });
+    this.getSubLocationByid(updated);
+  } else if (filter.type === 'subLocation') {
+    const updated = (current.subLocation ?? []).filter((s: any) =>
+      (s.id || s.sno) !== (filter.value.id || filter.value.sno)
+    );
+    this.filterForm.patchValue({ subLocation: updated });
+    this.onSubLocationChange(updated);
   }
+
+  // Refresh table
+  this.page = 1;
+  this.first = 0;
+  this.applyFilters();
+}
+
 
   toggleFilters(content: TemplateRef<any>) {
     this.offcanvasService.open(content, {

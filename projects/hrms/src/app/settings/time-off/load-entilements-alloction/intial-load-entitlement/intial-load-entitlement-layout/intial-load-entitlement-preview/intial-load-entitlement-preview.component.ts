@@ -65,12 +65,12 @@ export class IntialLoadEntitlementPreviewComponent {
     ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
-       if(res?.data?.employees?.length >0){
-         this.mapEmployees(res?.data?.employees);
-       }
-       else{
-        this.employeesTableData=[]
-       }
+        if (res?.data?.employees?.length > 0) {
+          this.mapEmployees(res?.data?.employees);
+        }
+        else {
+          this.employeesTableData = []
+        }
         this.gradeAssignments = res?.data?.gradeAssignments;
         this.policymapping = res?.data?.policyMapping;
         this.duplicatecheck = res?.data?.duplicateCheck;
@@ -80,7 +80,7 @@ export class IntialLoadEntitlementPreviewComponent {
       },
       error: () => {
         this.loading = false;
-        this.employeesTableData=[]
+        this.employeesTableData = []
       }
     });
   }
@@ -99,31 +99,38 @@ export class IntialLoadEntitlementPreviewComponent {
 
       emp.leaveCategories
         // ✅ ONLY valid leave categories
-        .filter((lc: any) => lc.isValid === true)
+        // .filter((lc: any) => lc.isValid === true)
         .forEach((lc: any) => {
 
-          const category = lc.orgLeaveCategories;
-          const code = category.categoryCode;
+          const category = lc?.orgLeaveCategories;
+          const code = category?.categoryCode;
 
           // dynamic column values
-          leaveValues[code] = lc.allowedDays;
-
+          leaveValues[code] = lc?.allowedDays;
+          leaveValues[code] = {
+            allowedDays: lc?.allowedDays,
+            isAlreadyEntitled: lc?.isAlreadyEntitled,
+            color: lc?.color 
+          };
           // payload entries
           leaveEntries.push({
             leaveCategoryId: lc.categoryId,
             categoryCode: code,
             allowedDays: lc.allowedDays,
-            isValid: lc.isValid
+            isValid: lc.isValid,
+            isAlreadyEntitled: lc.isAlreadyEntitled,
+            color: lc.color
+
           });
 
-          totalLeaveEntitlement += lc.allowedDays || 0;
+          totalLeaveEntitlement += lc?.allowedDays || 0;
 
           // dynamic headers
           if (!headerMap.has(code)) {
             headerMap.set(code, {
               code,
-              name: category.name,
-              color: category.categoryColor
+              name: category?.name,
+              color: category?.categoryColor
             });
           }
         });
@@ -131,7 +138,7 @@ export class IntialLoadEntitlementPreviewComponent {
       return {
         employeeId: emp.employeeId,
         gradeId: emp.gradeId,
-        employeeName: `${emp.firstName}  ${emp.middleName  ?? ''} ${emp.lastName}`,
+        employeeName: `${emp.firstName}  ${emp.middleName ?? ''} ${emp.lastName}`,
         joinedDate: emp.dateOfJoining,
         location: emp.locationName,
         sublocationName: emp.sublocationName,
@@ -139,7 +146,9 @@ export class IntialLoadEntitlementPreviewComponent {
         grade: emp.gradeName,
         isValid: emp.isValid,
         selected: false,
-        reason:emp.reason,
+        reason: emp.reason,
+        isAlreadyEntitled: emp.isAlreadyEntitled,
+        color: emp.color,
         leaveValues,
         leaveEntries,
         totalLeaveEntitlement
@@ -147,6 +156,8 @@ export class IntialLoadEntitlementPreviewComponent {
     });
 
     this.leaveHeaders = Array.from(headerMap.values());
+    console.log("leaves",this.leaveHeaders);
+    
   }
 
 
@@ -172,7 +183,7 @@ export class IntialLoadEntitlementPreviewComponent {
       requestPayload: {
         employees: sourceEmployees
           // ✅ only valid employees
-          .filter(emp => emp?.isValid === true)
+          .filter(emp => emp?.isValid === true )
           .map(emp => ({
             employeeId: emp?.employeeId,
             gradeId: emp?.gradeId,

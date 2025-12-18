@@ -90,7 +90,7 @@
                         {{ header.name }}
                         <small>({{ header.code }})</small>
                     </th>
-                    <th  *ngIf="leaveHeaders.length>0" class="text-center">Total Leave Entitlements</th>
+                    <th *ngIf="leaveHeaders.length>0" class="text-center">Total Leave Entitlements</th>
                 </tr>
             </ng-template>
 
@@ -127,8 +127,13 @@
 
                     <!-- Dynamic leave values -->
                     <td *ngFor="let header of leaveHeaders" class="text-center">
-                        {{ emp.leaveValues?.[header.code] ?? 0 }}
+                        <span [ngStyle]="{
+                                                    color: emp.leaveValues?.[header.code]?.isAlreadyEntitled
+                                                        ? emp.leaveValues?.[header.code]?.color: emp.leaveValues?.[header.code]?.color
+                                                    }"><b>{{ emp.leaveValues?.[header.code]?.allowedDays ?? 0 }}</b>
+                        </span>
                     </td>
+
                     <td class="text-center" *ngIf="leaveHeaders.length>0">
                         {{ emp.totalLeaveEntitlement }}
                     </td>

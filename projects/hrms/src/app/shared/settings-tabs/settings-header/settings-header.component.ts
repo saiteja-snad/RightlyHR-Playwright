@@ -83,8 +83,8 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       '/settings/timeoff-configurations/leave-entitlements',
       '/settings/timeoff-configurations/load-entitlement/carry-forward',
       '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements',
-      '/settings/timeoff-configurations/intial-leave-entitlements'
-
+      '/settings/timeoff-configurations/intial-leave-entitlements',
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'
 
     ];
     return showPaths.some(path => this.router.url.startsWith(path));

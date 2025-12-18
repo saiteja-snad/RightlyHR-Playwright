@@ -391,9 +391,9 @@
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage()">
             @if (isSubmitting) {
-            <span class="spinner-border spinner-border-sm me-2"></span> Assigning...
+            <span class="spinner-border spinner-border-sm me-2"></span>{{ isEditMode ? 'Updating...' : 'Assigning...'}}
             } @else {
-            {{ 'Assign' | translate }}
+            {{ isEditMode ? 'Update' : 'Assign' }}
             }
           </button>
         </div>

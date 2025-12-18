@@ -251,7 +251,7 @@ export class CarryForwardLeaveEntitlementComponent {
       .subscribe({
         next: (res: any) => {
           this.conformationPopup.openSuccessModal("Initial Leave Entitlements Retryed Successfully");
-
+          this.getdatacarryforword();
         },
         error: (err) => {
           console.error(err);

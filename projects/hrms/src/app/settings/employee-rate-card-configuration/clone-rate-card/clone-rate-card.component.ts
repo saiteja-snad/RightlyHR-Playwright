@@ -46,11 +46,6 @@ export class CloneRateCardComponent {
   updateratecardData: any;
     currencyCodes=[
   {
-    code: "USD",
-    name: "United States Dollar",
-    symbol: "$"
-  },
-  {
     code: "EUR",
     name: "Euro",
     symbol: "€"
@@ -101,6 +96,8 @@ export class CloneRateCardComponent {
     symbol: "₫"
   }
 ];
+minDate: string = '';
+maxDate: string = '';
    constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -125,15 +122,47 @@ export class CloneRateCardComponent {
   }
   // Effective from
   if (this.updateratecardData.effectiveFrom) {
+    const effectiveMoment = moment(this.updateratecardData.effectiveFrom);
+    const selectedYear = effectiveMoment.year();
+   this.minDate = `${selectedYear}-01-01`;
+    this.maxDate = `${selectedYear}-12-31`;
     this.updateratecardForm.patchValue({
       effectivefrom: this.updateratecardData.effectiveFrom.split('T')[0]
     });
   }
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      
+    this.updateratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
+    const effectiveFromCtrl = this.updateratecardForm.get('effectivefrom');
+
+    if (year) {
+      this.minDate = `${year}-01-01`;
+      this.maxDate = `${year}-12-31`;
+      effectiveFromCtrl?.enable();
+      effectiveFromCtrl?.reset();
+    } else {
+      effectiveFromCtrl?.disable();
+      this.minDate = '';
+      this.maxDate = '';
+    }
+  });
   }
+   limitDigits(event: any, maxDigits: number) {
+  const value = event.target.value;
+  if (value.length > maxDigits) {
+    event.target.value = value.slice(0, maxDigits);
+  }
+}
+preventInvalidKeys(event: KeyboardEvent) {
+  const invalidKeys = ['-', '+', 'e', 'E'];
 
-
-
+  if (invalidKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+}
+disableScroll(event: WheelEvent) {
+  event.preventDefault();
+}
  getCurrenciesArray(rateItem: FormGroup): FormArray {
    return rateItem.get('currencies') as FormArray;
  }

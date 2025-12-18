@@ -46,11 +46,6 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
   isloading = false;
   currencyCodes=[
   {
-    code: "USD",
-    name: "United States Dollar",
-    symbol: "$"
-  },
-  {
     code: "EUR",
     name: "Euro",
     symbol: "€"
@@ -101,6 +96,8 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     symbol: "₫"
   }
 ];
+minDate: string = '';
+maxDate: string = '';
   constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -118,6 +115,22 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     this.Employeeinfo = JSON.parse(
       localStorage.getItem('rightlyHrUser') || '{}'
     );
+    this.minDate = `${this.currentYear}-01-01`;
+    this.maxDate = `${this.currentYear}-12-31`;
+    this.ratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
+    const effectiveFromCtrl = this.ratecardForm.get('effectivefrom');
+
+    if (year) {
+      this.minDate = `${year}-01-01`;
+      this.maxDate = `${year}-12-31`;
+      effectiveFromCtrl?.enable();
+      effectiveFromCtrl?.reset();
+    } else {
+      effectiveFromCtrl?.disable();
+      this.minDate = '';
+      this.maxDate = '';
+    }
+  });
   }
 
   //get the rate basics
@@ -235,18 +248,23 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
     event.target.value = value.slice(0, maxDigits);
   }
 }
+preventInvalidKeys(event: KeyboardEvent) {
+  const invalidKeys = ['-', '+', 'e', 'E'];
+
+  if (invalidKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+}
+disableScroll(event: WheelEvent) {
+  event.preventDefault();
+}
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
-                        .at(currencyIndex)
-                        .get('rate');
-  console.log(rateControl?.value);
+  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray).at(currencyIndex).get('rate');
 }
   onCountryChange(country: any, index: number) {
-    console.log(country);
    const rateItem = this.rateItems.at(index) as FormGroup;
-  const currenciesArray = rateItem.get('currencies') as FormArray;
-  const rateValue = rateItem.get('rate')?.value;
-  const currencyData = {
+   const currenciesArray = rateItem.get('currencies') as FormArray;
+   const currencyData = {
     currencyCode: country?.value?.code,
     currencyName: country?.value?.name,
     symbol: country?.value?.symbol,
@@ -259,7 +277,6 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     // ➕ Create first currency
     currenciesArray.push(this.fb.group(currencyData));
   }
-  console.log(this.ratecardForm)
   }
   addRateCard() {
     let formValues = this.ratecardForm.getRawValue();

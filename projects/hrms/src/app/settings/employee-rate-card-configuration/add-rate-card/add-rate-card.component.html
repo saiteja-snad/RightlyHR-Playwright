@@ -86,7 +86,7 @@
                     <label class="form-label custom-label mb-2">{{'Effective From'|translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <input type="date" class="form-control custom-input w-100" formControlName="effectivefrom" />
+                        <input type="date" class="form-control custom-input w-100" formControlName="effectivefrom" [min]="minDate"[max]="maxDate" />
                         <div class="error-msg"
                             *ngIf="ratecardForm.controls['effectivefrom'].invalid &&  (ratecardForm.controls['effectivefrom'].touched || ratecardForm.controls['effectivefrom'].dirty)">
                             <div *ngIf="ratecardForm.controls['effectivefrom'].errors?.['required']">
@@ -114,14 +114,14 @@
                             <div class="d-flex">
                                 <div>
                                     <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
-                                        formControlName="experienceFrom" placeholder="min (year)" required />
+                                        formControlName="experienceFrom" placeholder="min (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required />
                                 </div>
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
                                 </div>
                                 <div>
                                     <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
-                                        formControlName="experienceTo" placeholder="max (year)" required />
+                                        formControlName="experienceTo" placeholder="max (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required />
                                 </div>
                             </div>
                         </div>
@@ -170,8 +170,8 @@
                                             [formGroupName]="j">
                                             <div class="d-flex gap-2">
                                                 <input type="number" class="form-control custom-input w-100"
-                                                    formControlName="rate" placeholder="rate"
-                                                    (input)="onRateChange(i, j)" />
+                                                    formControlName="rate" placeholder="rate" max="10"
+                                                    (input)="onRateChange(i, j);limitDigits($event, 20)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
                                             </div>
                                             <div *ngIf="currency.get('rate')?.invalid && (currency.get('rate')?.dirty || currency.get('rate')?.touched)"
                                                 class="error-msg">

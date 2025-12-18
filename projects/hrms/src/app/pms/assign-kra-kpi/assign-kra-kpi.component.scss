@@ -47,22 +47,6 @@
   text-decoration: underline;
 }
 
-/* Force PrimeNG checkbox BLUE & correct direction */
-:host ::ng-deep .p-checkbox {
-  transform: none !important;
-}
-
-:host ::ng-deep .p-checkbox-box.p-highlight {
-  background: var(--primary-color) !important;
-  /* Blue background */
-}
-
-:host ::ng-deep .p-checkbox-icon {
-  color: #ffffff !important;
-  /* White tick */
-  transform: none !important;
-  /* Fix reversed tick */
-}
 
 .projects-container {
   .project-card {
@@ -131,4 +115,15 @@
   min-height: 30dvh !important;
   max-height: 40dvh;
   border: 1px solid var(--content-border-color) !important;
+}
+
+::ng-deep .custom-accordian-data-content {
+  .p-checkbox-box {
+    transform: rotate(180deg) !important;
+  }
+
+  .p-checkbox-checked .p-checkbox-box {
+    border-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+  }
 }

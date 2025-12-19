@@ -209,7 +209,7 @@
             <label class="form-label custom-label mb-2">
               {{ 'Target Value' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="number" class="form-control custom-input" formControlName="targetValue" placeholder="e.g. 95">
+            <input type="number" class="form-control custom-input" formControlName="targetValue">
             <div class="error-msg" *ngIf="f['targetValue'].touched && f['targetValue'].errors">
               <span *ngIf="f['targetValue'].errors['required']">
                 Target Value is required

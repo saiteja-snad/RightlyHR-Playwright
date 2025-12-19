@@ -190,7 +190,9 @@ export class IntialLoadEntitlementPreviewComponent {
 
             entitlementsData: (emp.leaveEntries || [])
               // ✅ only valid + allowedDays > 0
-              .filter((x: { isValid: boolean; allowedDays: number; }) => x.isValid === true && x.allowedDays > 0)
+              .filter((x:{ isValid: boolean; isAlreadyEntitled:boolean; allowedDays: number; }) => x.isValid === true && x.isAlreadyEntitled===false && x.allowedDays > 0)
+             
+              
               .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
                 leaveCategoryId: x?.leaveCategoryId,
                 noOfDays: x?.allowedDays

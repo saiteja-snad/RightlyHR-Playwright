@@ -54,7 +54,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
           <i class="bi bi-search"></i>
         </span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="onSearchChange()" class="form-control custom-search-input"
           placeholder="Search by client name / project name / project type" aria-label="Search"
           aria-describedby="basic-addon1">
       </div>
@@ -69,7 +69,7 @@
       </ng-container>
 
       <ng-template #maincontent>
-        <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients')}">
+        <div class="custom-table-content" [ngClass]="{'project-client-table': isActive('/project-management/clients'), 'has-data': projectsData.length > 0}">
           <table class="w-100">
             <thead>
               @if(!isActive('/project-management/clients')){
@@ -90,9 +90,8 @@
               }
             </thead>
             <tbody>
-              <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
-                <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
-                  <tr *ngFor="let project of filteredProjects; let i = index">
+              <ng-container *ngIf="projectsData.length > 0; else noDataTemplate">
+                  <tr *ngFor="let project of projectsData; let i = index">
                     @if(!isActive('/project-management/clients')){
                     <td>{{ project.client.clientName }}</td>
                     }
@@ -137,7 +136,6 @@
                     </td>
                     }
                   </tr>
-                </ng-container>
               </ng-container>
               <ng-template #noDataTemplate>
                 <tr>
@@ -146,6 +144,23 @@
               </ng-template>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-content" *ngIf="projectsData.length > 0">
+          <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+              <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+              </select>
+              <span class="pagination-label text-nowrap">
+                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+              </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+              (onPageChange)="onPageChange($event)"></p-paginator>
+          </div>
         </div>
       </ng-template>
       <!-- </div>

@@ -147,7 +147,6 @@ export class IntialLoadEntitlementPreviewComponent {
         isValid: emp.isValid,
         selected: false,
         reason: emp.reason,
-        isAlreadyEntitled: emp.isAlreadyEntitled,
         color: emp.color,
         leaveValues,
         leaveEntries,
@@ -162,6 +161,7 @@ export class IntialLoadEntitlementPreviewComponent {
 
 
   buildCarryForwardPayload() {
+    debugger
 
     // 🔹 If user selected employees → use selected
     // 🔹 Else → use full table data
@@ -190,7 +190,7 @@ export class IntialLoadEntitlementPreviewComponent {
 
             entitlementsData: (emp.leaveEntries || [])
               // ✅ only valid + allowedDays > 0
-              .filter((x:{ isValid: boolean; isAlreadyEntitled:boolean; allowedDays: number; }) => x.isValid === true && x.isAlreadyEntitled===false && x.allowedDays > 0)
+              .filter((x:{ isValid: boolean; isAlreadyEntitled:boolean; allowedDays: number; }) => x.isValid == true && x.isAlreadyEntitled==false && x.allowedDays > 0)
              
               
               .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({

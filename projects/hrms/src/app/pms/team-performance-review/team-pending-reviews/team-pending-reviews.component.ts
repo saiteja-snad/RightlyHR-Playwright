@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -11,13 +10,13 @@ import { PaginatorModule } from 'primeng/paginator';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
-
 @Component({
   selector: 'app-team-pending-reviews',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, PaginatorModule, TranslateModule],
   templateUrl: './team-pending-reviews.component.html',
   styleUrl: './team-pending-reviews.component.scss'
 })
+
 export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   Status: any;
   employeeId!: any;
@@ -31,7 +30,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   pendingReviews: any[] = [];
   filteredReviews: any[] = [];
   filteredCompletedReviews: any[] = [];
-
   page = 1;
   pageSize = 10;
   collectionSize = 100;
@@ -43,16 +41,10 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-
   first = 0;
 
-
-  constructor(
-    private modal: OpenModalService,
-    private router: Router,
-    private http: HttpService,
-    public rbac : RbacService
-  ) { }
+  constructor(private modal: OpenModalService,private router: Router,private http: HttpService,
+    public rbac : RbacService) { }
 
   ngOnInit(): void {
     const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -62,8 +54,8 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
 
   fetchReviewCycles() {
     this.dataload = true
-    this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft')
-      .subscribe({
+    this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, 
+      this.employeeId, 'Team Manager,Reporting Manager,HR', 'Pending,Draft').subscribe({
         next: (data: any) => {
           this.reviewCycles = data.items;
           this.totalItems = data.totalCount || 0;
@@ -81,7 +73,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
         }
       });
   }
-
 
   isPendingReview(status: string): boolean {
     const pendingStatuses = [
@@ -139,9 +130,7 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
       reviewcycleitemformresponseid: reviewcycleitemformresponseid,
       formresponseid: formresponseid
     };
-
     localStorage.setItem('queryParams', JSON.stringify(queryParams));
-
     this.router.navigate(['/pms/assessment-form']);
   }
 
@@ -163,7 +152,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
 
   downloadPromotionletter(iteamid: any) {
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
       next: (data: Blob) => {
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
@@ -185,9 +173,7 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   }
 
   downloadletter(iteamid: any) {
-
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
       next: (data: Blob) => {
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
@@ -211,10 +197,8 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first
-
     this.fetchReviewCycles();
   }
-
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;

@@ -15,16 +15,16 @@ export class KraKpiManagementLayoutComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
     {
-      label: 'My KRA/KPI', link: '/pms/my-kpi-kra/view', icon: 'main-menu-icons/my-kra-kpi.png',
+      label: 'Dashboard', link: '/pms/kpi-kra/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
+      permission: { feature: 'Dashboard KRA KPI', action: 'view' }
+    },
+    {
+      label: 'My KRA/KPI', link: '/pms/kpi-kra/my-kpi-kra', icon: 'main-menu-icons/my-kra-kpi.png',
       permission: { feature: 'My KRA KPI', action: 'view' }
     },
     {
-      label: 'Team KRA/KPI', link: '/pms/my-kpi-kra/team', icon: 'main-menu-icons/team-kra-kpi.png',
+      label: 'Team KRA/KPI', link: '/pms/kpi-kra/team', icon: 'main-menu-icons/team-kra-kpi.png',
       permission: { feature: 'Team KRA KPI', action: 'view' }
-    },
-    {
-      label: 'Dashboard', link: '/pms/my-kpi-kra/dashboard', icon: 'main-menu-icons/kra-kpi-dashboard.png',
-      permission: { feature: 'Dashboard KRA KPI', action: 'view' }
     },
   ];
 

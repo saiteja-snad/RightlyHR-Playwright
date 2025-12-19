@@ -525,12 +525,12 @@
           </div>
 
           <div class="d-flex align-items-center justify-content-end mb-2">
-            <p class="project-role mb-1">Rating : </p>
-            <p class="project-dates m-0">{{ kpi.assignedApproverRating || '-' }}</p>
+            <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">Rating : </p>
+            <p class="project-dates m-1">{{ kpi.assignedApproverRating || '-' }}</p>
           </div>
 
           <div class="d-flex align-items-center justify-content-end gap-2">
-            <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)">{{ kpi.assignedStatus || '-' }}</div>
+            <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">{{ kpi.assignedStatus || '-' }}</div>
             <div><app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" /></div>
           </div>
         </div>

@@ -373,6 +373,9 @@ if (selectedKpis.length === 0) {
           selected: false,
           attachment: null,
           assigneeId: kpi.assigneeId,
+          assignedStatus: kpi.assignedStatus || 'Draft',
+        assignedApproverRating: kpi.assignedApproverRating,
+        assignedApproverRejectedComments: kpi.assignedApproverRejectedComments || '',
         });
       });
     }
@@ -448,5 +451,24 @@ toggleSelectAll(event: any): void {
 getSelectedKpis(): any[] {
   return this.myKpiList.filter(kpi => kpi.selected);
 }
+
+  getApproverStatusClass(status: string | null | undefined): string {
+    switch (status) {
+      case 'Approved':
+        return 'status-active';
+
+      case 'Rejected':
+        return 'status-onhold';
+
+      case 'Waiting for Approval':
+      case 'Pending':
+      case null:
+      case undefined:
+        return 'status-waiting';
+
+      default:
+        return 'bg-secondary';
+    }
+  }
 
 }

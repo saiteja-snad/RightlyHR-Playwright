@@ -149,42 +149,70 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="offcanvas-filter-content p-3">
-      <div class="projects-container">
+<div class="offcanvas-filter-content p-3">
+  <div class="projects-container">
 
-        <div *ngIf="myKpiList.length === 0" class="text-center py-5 text-muted">
-          <app-no-data-found></app-no-data-found>
+    <!-- <div *ngIf="myKpiList.length === 0" class="text-center py-5 text-muted">
+      <app-no-data-found></app-no-data-found>
+    </div> -->
+
+    <div *ngFor="let kpi of myKpiList" class="project-card mb-3">
+      <p class="project-name">{{ kpi.kpiName }}</p>
+
+      <!-- THREE COLUMN SECTION -->
+      <div class="d-flex justify-content-between gap-3 mb-3">
+        <div class="text-center">
+          <p class="project-role mb-1">Weightage</p>
+          <p class="project-dates m-0">{{ kpi.weightageValue }}%</p>
         </div>
 
-        <div *ngFor="let kpi of myKpiList" class="project-card mb-3">
-          <p class="project-name">{{ kpi.kpiName }}</p>
-
-          <div class="d-flex justify-content-between align-items-start gap-3">
-            <div class="text-center">
-              <p class="project-role mb-1">Weightage</p>
-              <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
-            </div>
-
-            <div class="text-center">
-              <p class="project-role mb-1">Target Value</p>
-              <p class="project-dates fw-bold">
-                {{ kpi.targetValue }}
-                <span class="text-muted small">{{ kpi.targetType }}</span>
-              </p>
-            </div>
-
-            <div class="text-center">
-              <p class="project-role mb-1">Target Date</p>
-              <p class="project-dates fw-bold">
-                {{ kpi.targetDate | date:'MMM dd, yyyy' }}
-              </p>
-            </div>
-          </div>
-
+        <div class="text-center">
+          <p class="project-role mb-1">Target Value</p>
+          <p class="project-dates m-0">
+            {{ kpi.targetValue }}
+            <span class="text-muted small">{{ kpi.targetType }}</span>
+          </p>
         </div>
 
+        <div class="text-center">
+          <p class="project-role mb-1">Target Date</p>
+          <p class="project-dates m-0">
+            {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+          </p>
+        </div>
       </div>
+
+      <!-- RATING -->
+      <div class="d-flex align-items-center justify-content-end mb-2">
+        <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">
+          Rating :
+        </p>
+        <p class="project-dates m-1">
+          {{ kpi.assignedApproverRating || '-' }}
+        </p>
+      </div>
+
+      <!-- STATUS + INFO -->
+      <div class="d-flex align-items-center justify-content-end gap-2">
+        <div
+          [ngClass]="getApproverStatusClass(kpi.assignedStatus)"
+          class="fw-bold"
+        >
+          {{ kpi.assignedStatus || '-' }}
+        </div>
+        <div>
+          <app-info-icon
+            ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}"
+            container="body"
+          />
+        </div>
+      </div>
+
     </div>
+
+  </div>
+</div>
+
   </div>
 </ng-template>
 

@@ -19,6 +19,10 @@
   color: #dc3545;
 }
 
+.status-waiting{
+  color: rgb(255, 166, 0);
+}
+
 .kras-bold {
     font-weight: 700 !important;
     font-style: Bold !important;
@@ -34,7 +38,7 @@
     border-radius: 0.75rem;
     padding: 1rem;
     border-left: 4px solid var(--primary-color);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: all 0.2s ease;
 
     .project-name {
@@ -46,17 +50,15 @@
     }
 
     .project-role {
-      font-size: 0.8rem;
+      font-size: var(--fontsize12);
       color: #6c757d;
-      margin-bottom: 0.25rem;
       font-weight: 500;
     }
 
     .project-dates {
-      font-size: 1rem;
+      font-size: var(--fontsize13);
       color: #212529;
       font-weight: 600;
-      margin: 0;
     }
   }
 }

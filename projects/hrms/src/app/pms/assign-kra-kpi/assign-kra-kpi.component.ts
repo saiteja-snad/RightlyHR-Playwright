@@ -1152,7 +1152,7 @@ export class AssignKraKpiComponent implements OnInit {
     const total = kra.kpis.reduce((sum: number, kpi: any) => {
       // Priority: assignedApproverWeightage → assignedWeightage
       const weightage = kpi.assignedApproverWeightage !== undefined &&
-        kpi.assignedApproverWeightage !== null && kpi.assignedApproverWeightage !== '' ? 
+        kpi.assignedApproverWeightage !== null && kpi.assignedApproverWeightage !== '' ?
         Number(kpi.assignedApproverWeightage) : Number(kpi.assignedWeightage || 0);
       return sum + weightage;
     }, 0);
@@ -1191,16 +1191,13 @@ export class AssignKraKpiComponent implements OnInit {
   getApproverStatusClass(status: string | null | undefined): string {
     switch (status) {
       case 'Approved':
-        return 'bg-success';
+        return 'status-active';
 
       case 'Rejected':
-        return 'bg-danger';
+        return 'status-onhold';
 
       case 'Waiting for Approval':
-      case 'Pending':
-      case null:
-      case undefined:
-        return 'bg-warning';
+        return 'status-waiting';
 
       default:
         return 'bg-secondary';

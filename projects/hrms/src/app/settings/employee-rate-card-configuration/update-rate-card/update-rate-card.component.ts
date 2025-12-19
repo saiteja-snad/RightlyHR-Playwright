@@ -43,9 +43,11 @@ export class UpdateRateCardComponent {
    ProjectroleDetails = [] as any;
    FrequencyDetail = [] as any;
    @ViewChild('deletepopup') deletepopup: any;
+   @ViewChild('Summary') Summary: any;
+   responseSummary!: any;
    isloading = false;
-  employeedetails: any;
-  updateratecardData: any;
+   employeedetails: any;
+   updateratecardData: any;
     currencyCodes=[
   {
     code: "EUR",
@@ -330,10 +332,21 @@ createRateCardItems(): FormGroup {
     }
   }
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
-                        .at(currencyIndex)
-                        .get('rate');
-  console.log(rateControl?.value);
+     const currenciesArray = this.rateItems
+    .at(rateIndex)
+    .get('currencies') as FormArray;
+
+  const rateControl = currenciesArray
+    .at(currencyIndex)
+    .get('rate');
+
+  if (!rateControl) return;
+
+  // Ensure rate is always updated in the currency object
+  currenciesArray.at(currencyIndex).patchValue(
+    { rate: rateControl.value },
+    { emitEvent: false }
+  );
 }
 onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
   const currenciesArray = this.getCurrencies(rateIndex);
@@ -350,19 +363,9 @@ onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
     symbol: selectedCurrency.symbol
   });
 }
-
-
-
-//   onCountryChange(event: any, index: number) {
-//   const rateItem = this.rateItems.at(index) as FormGroup;
-//   const currencies = rateItem.get('currencies') as FormArray;
-
-//   currencies.at(0).patchValue({
-//     currencyCode: event.value.code,
-//     currencyName: event.value.name,
-//     symbol: event.value.symbol
-//   });
-// }
+   openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  }
 updateRateCard(){
     let formValues = this.updateratecardForm.getRawValue();
     console.log(formValues);
@@ -375,29 +378,24 @@ updateRateCard(){
       status: 'Active',
       createdBy: this.Employeeinfo.employeeId,
        experienceBands: formValues.rateItems,
-    //      experienceBands: formValues.rateItems.map((item: any) => ({
-    //   experienceFrom: Number(item.experienceMin),
-    //   experienceTo: Number(item.experienceMax),
-    //   status: 'Active',
-    //   frequencyType: item.rateBasic,
-    //   currencies: [
-    //     {
-    //       currencyCode: item.currency,
-    //      currencyName: item.currency,
-    //       symbol: "string",
-    //       rate: item?.rate
-    //     }
-    //   ]
-    // }))
     };
     console.log(payload);
     this.subscription=this.http.putData(`RateCard/${this.updateratecardData.id}`,payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
 
-            this.conformationPopup.openSuccessModal(
-              'Rate Card Updated successfully'
+              this.responseSummary = res.data;
+          if (res.failureCount==0) {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+           
+          } else {
+             this.conformationPopup.openSuccessModal(
+              'Rate Card updated successfully'
             );
+          }
           // this.getAllRateCardDetails();
           this.nagvition();
           },

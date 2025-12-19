@@ -41,9 +41,11 @@ export class CloneRateCardComponent {
    ProjectroleDetails = [] as any;
    FrequencyDetail = [] as any;
    @ViewChild('deletepopup') deletepopup: any;
+   @ViewChild('Summary') Summary: any;
    isloading = false;
   employeedetails: any;
   updateratecardData: any;
+  responseSummary!: any;
     currencyCodes=[
   {
     code: "EUR",
@@ -329,10 +331,21 @@ createRateCardItems(): FormGroup {
     }
   }
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
-                        .at(currencyIndex)
-                        .get('rate');
-  console.log(rateControl?.value);
+    const currenciesArray = this.rateItems
+    .at(rateIndex)
+    .get('currencies') as FormArray;
+
+  const rateControl = currenciesArray
+    .at(currencyIndex)
+    .get('rate');
+
+  if (!rateControl) return;
+
+  // ✅ Ensure rate is always updated in the currency object
+  currenciesArray.at(currencyIndex).patchValue(
+    { rate: rateControl.value },
+    { emitEvent: false }
+  );
 }
 onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
   const currenciesArray = this.getCurrencies(rateIndex);
@@ -349,7 +362,10 @@ onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
     symbol: selectedCurrency.symbol
   });
 }
-updateRateCard(){
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+cloneRateCard(){
     let formValues = this.updateratecardForm.getRawValue();
     let payload = {
       effectiveFrom: formValues.effectivefrom,
@@ -363,9 +379,17 @@ updateRateCard(){
     this.subscription=this.http.postdata(`RateCard`,payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
+             this.responseSummary = res.data;
+          if (res.failureCount==0) {
             this.conformationPopup.openSuccessModal(
               'Rate Card created successfully'
             );
+          } else {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+          }
           // this.getAllRateCardDetails();
           this.nagvition();
           },

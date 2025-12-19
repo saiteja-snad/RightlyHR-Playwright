@@ -13,6 +13,9 @@ import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { ErrorContentPopupComponent } from '../../../shared/error-content-popup/error-content-popup.component';
+import { SuccessContentPopupComponent } from '../../../shared/success-content-popup/success-content-popup.component';
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-add-rate-card',
@@ -43,7 +46,9 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
   ProjectroleDetails = [] as any;
   FrequencyDetail = [] as any;
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('Summary') Summary: any;
   isloading = false;
+  responseSummary!: any;
   currencyCodes=[
   {
     code: "EUR",
@@ -103,7 +108,7 @@ maxDate: string = '';
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
   ) {
   }
   ngOnInit(): void {
@@ -177,7 +182,7 @@ maxDate: string = '';
       .getData(`JobLocation/getAllLocations`)
       .subscribe({
         next: (data: any) => {
-          this.locations = data;
+          this.locations = data.filter((location: any) => location?.subLocations && location?.subLocations?.length > 0);
           this.sublocatiodis = true;
         },
         error: (reason: any) => console.log(reason),
@@ -259,7 +264,21 @@ disableScroll(event: WheelEvent) {
   event.preventDefault();
 }
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray).at(currencyIndex).get('rate');
+   const currenciesArray = this.rateItems
+    .at(rateIndex)
+    .get('currencies') as FormArray;
+
+  const rateControl = currenciesArray
+    .at(currencyIndex)
+    .get('rate');
+
+  if (!rateControl) return;
+
+  // ✅ Ensure rate is always updated in the currency object
+  currenciesArray.at(currencyIndex).patchValue(
+    { rate: rateControl.value },
+    { emitEvent: false }
+  );
 }
   onCountryChange(country: any, index: number) {
    const rateItem = this.rateItems.at(index) as FormGroup;
@@ -278,6 +297,9 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     currenciesArray.push(this.fb.group(currencyData));
   }
   }
+   openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  }
   addRateCard() {
     let formValues = this.ratecardForm.getRawValue();
     let payload = {
@@ -293,9 +315,18 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     this.subscription=this.http.postdata('RateCard',payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
+            
+            this.responseSummary = res.data;
+          if (res.failureCount==0) {
             this.conformationPopup.openSuccessModal(
               'Rate Card created successfully'
             );
+          } else {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+          }
             this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active'])
           },
           error: (err: any) => {
@@ -304,7 +335,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
             this.conformationPopup.openErrorModal(
               err.error.message
                 ? err.error.message
-                : 'Failed to allocate Work Hours. Please try again later'
+                : 'Failed to create rate card. Please try again later'
             );
           },
           complete: () => {

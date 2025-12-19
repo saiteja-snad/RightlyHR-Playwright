@@ -56,13 +56,13 @@ export const permissionsData = [
   { fields: 'Identity Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Relationship', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bank Names', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
 
   // Attendance Locking
   { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Published Tab', View: false, Update: false, Create: false, Delete: false },
 
-    // Timesheet Locking
+  // Timesheet Locking
   { fields: 'Timesheet Locking Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Locking Published Tab', View: false, Update: false, Create: false, Delete: false },
 
@@ -241,7 +241,7 @@ export const permissionsData = [
 
   //New Side Nav Section
   { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
@@ -261,7 +261,7 @@ export const permissionsData = [
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contacts Directory', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Skill Set Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
@@ -864,8 +864,7 @@ export const permissionsData = [
   { fields: 'Assign KRA KPI', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My KRA KPI', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard KRA KPI', View: false, Update: false, Create: false, Delete: false },
-
-
+  { fields: 'Team KRA KPI', View: false, Update: false, Create: false, Delete: false },
 
   //Review Cycle List Actions
   { fields: 'Create Review Cycle', View: false, Update: false, Create: false, Delete: false },
@@ -945,7 +944,7 @@ export const permissionsData = [
   { fields: 'Assessor Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
-    //Kra Configuration Actions
+  //Kra Configuration Actions
   { fields: 'Kra Create', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Kra Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Kra Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
@@ -1057,7 +1056,7 @@ export const permissionsData = [
   { fields: 'Work Hours Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Work Hours Allocations Tab', View: false, Update: false, Create: false, Delete: false },
 
-     //View History Approvals
+  //View History Approvals
   { fields: 'My Info Personal Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Documents Approval History', View: false, Update: false, Create: false, Delete: false },
@@ -1066,4 +1065,3 @@ export const permissionsData = [
   { fields: 'Employee Job Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Documents Approval History', View: false, Update: false, Create: false, Delete: false },
 ];
-

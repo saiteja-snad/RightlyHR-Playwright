@@ -45,8 +45,8 @@
                     @for(item of filteredReviews; track item){
                     <tr>
                         <td>{{ item.reviewCycleName }}</td>
-                        <td>{{item.reviewEmployeeName}}</td>
-                        <td>{{item.reviewFusionEmployeeId}}</td>
+                        <td>{{ item.reviewEmployeeName }}</td>
+                        <td>{{ item.reviewFusionEmployeeId }}</td>
                         <td>{{ getDepartments(item.deptName) }}</td>
                         <td>{{ getSubDepartments(item.subdeptName) }}</td>
                         <td>{{ getLocations(item.locationName) }}</td>
@@ -61,11 +61,9 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li
-                                        (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, 
+                                    <li (click)="selfAssessment(item.reviewCycleItemId, item.currentStage,item.assessorType, 
                                     item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                        <a class="dropdown-item">{{item.assessorType}} {{'Assessment' |
-                                            translate}}</a>
+                                        <a class="dropdown-item">{{item.assessorType}} {{'Assessment' | translate}}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -76,7 +74,7 @@
                     }@else {
                     <tr>
                         <td colspan="11">
-                            <app-no-data-found></app-no-data-found>
+                            <app-no-data-found />
                         </td>
                     </tr>
                     }
@@ -90,12 +88,11 @@
             <div class="d-flex align-items-center gap-3 p-2">
                 <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
                     (ngModelChange)="onPageSizeChange($event)">
-                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                    </option>
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
-                    }} of {{ collectionSize }}
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : 
+                    (+first + +rows) }} of {{ collectionSize }}
                 </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

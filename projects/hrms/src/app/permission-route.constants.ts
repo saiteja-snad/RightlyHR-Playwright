@@ -723,8 +723,13 @@ export const CARDS_SUB_TABS = [
 ]
 
 export const MY_KRA_KPI_TABS = [
-  { route: '/pms/my-kpi-kra/view', permission: 'My KRA KPI.view' },
-  { route: '/pms/my-kpi-kra/dashboard', permission: 'Dashboard KRA KPI.view' },
-  { route: '/pms/my-kpi-kra/team', permission: 'Team KRA KPI.view' },
-  { route: '/pms/my-kpi-kra/employee-kra-kpi-view', permission: 'Team KRA KPI.view' },
+  { route: '/pms/kpi-kra/dashboard', permission: 'Dashboard KRA KPI.view' },
+  { route: '/pms/kpi-kra/my-kpi-kra', permission: 'My KRA KPI.view' },
+  { route: '/pms/kpi-kra/team', permission: 'Team KRA KPI.view' },
+  { route: '/pms/kpi-kra/employee-kra-kpi-view', permission: 'Team KRA KPI.view' },
+]
+
+export const PERFORMANCE_REVIEW_TABS = [
+  { route: '/pms/performace-review/myPerformance', permission: 'My Performance Review.view' },
+  { route: '/pms/performace-review/team-performance', permission: 'My Team Performance Review.view' },
 ]

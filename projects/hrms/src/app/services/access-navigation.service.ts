@@ -83,7 +83,8 @@ import {
   ONBOARDING_APPROVALS_TABS,
   Employee_TEAM_NUMBERS,
   MyINFO_TEAM_NUMBERS,
-  MY_KRA_KPI_TABS
+  MY_KRA_KPI_TABS,
+  PERFORMANCE_REVIEW_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -1072,7 +1073,6 @@ export class AccessNavigationService {
       //timesheet locking
       case '/settings/timesheet-locking-configuration':
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
-
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1850,6 +1850,28 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/pms/performace-review':
+        if (this.rbac.allowedToAccess('My Performance Review.view')) {
+          for (const item of PERFORMANCE_REVIEW_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/pms/performace-review/myPerformance':
+        if (this.rbac.allowedToAccess('My Performance Review.view')) {
+          return (route = '/pms/performace-review/myPerformance');
+        }
+        break;
+
+      case '/pms/performace-review/team-performance':
+        if (this.rbac.allowedToAccess('My Team Performance Review.view')) {
+          return (route = '/pms/performace-review/team-performance');
+        }
+        break;
+
       case '/pms/kpi':
         if (this.rbac.allowedToAccess('KPI.view')) {
           return (route = '/pms/kpi');
@@ -1862,13 +1884,13 @@ export class AccessNavigationService {
         }
         break;
 
-       case '/pms/assign-kra-kpi':
+      case '/pms/assign-kra-kpi':
         if (this.rbac.allowedToAccess('Assign KRA KPI.view')) {
           return (route = '/pms/assign-kra-kpi');
         }
         break;
 
-        case '/pms/my-kpi-kra':
+      case '/pms/kpi-kra':
         if (this.rbac.allowedToAccess('My KRA KPI.view')) {
           for (const item of MY_KRA_KPI_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1878,25 +1900,25 @@ export class AccessNavigationService {
         }
         break;
 
-        case '/pms/my-kpi-kra/view':
-        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
-          return (route = '/pms/my-kpi-kra/view');
-        }
-        break;
-
-        case '/pms/my-kpi-kra/dashboard':
+      case '/pms/kpi-kra/dashboard':
         if (this.rbac.allowedToAccess('Dashboard KRA KPI.view')) {
-          return (route = '/pms/my-kpi-kra/dashboard');
-        }
-        break;
-        
-        case '/pms/my-kpi-kra/team':
-        if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
-          return (route = '/pms/my-kpi-kra/team');
+          return (route = '/pms/kpi-kra/dashboard');
         }
         break;
 
-       case '/pms/my-kpi-kra/employee-kra-kpi-view':
+      case '/pms/kpi-kra/my-kpi-kra':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/kpi-kra/my-kpi-kra');
+        }
+        break;
+
+      case '/pms/kpi-kra/team':
+        if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
+          return (route = '/pms/kpi-kra/team');
+        }
+        break;
+
+      case '/pms/my-kpi-kra/employee-kra-kpi-view':
         if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
           return (route = '/pms/my-kpi-kra/employee-kra-kpi-view');
         }

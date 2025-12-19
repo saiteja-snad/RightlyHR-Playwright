@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbPaginationModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,16 +11,16 @@ import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-
 @Component({
   selector: 'app-team-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, PaginatorModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, PaginatorModule,
+    TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './team-complete-reviews.component.html',
   styleUrl: './team-complete-reviews.component.scss'
 })
+
 export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
   Status: any;
-
   employeeId!: any;
   reviewCycles: any[] = [];
   searchQuery = '';
@@ -32,7 +32,6 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
   pendingReviews: any[] = [];
   filteredReviews: any[] = [];
   filteredCompletedReviews: any[] = [];
-
   page = 1;
   pageSize = 10;
   collectionSize = 100;
@@ -44,15 +43,10 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-
   first = 0;
 
-  constructor(
-    private router: Router,
-    private http: HttpService,
-    private modal: OpenModalService,
-    public rbac: RbacService
-  ) { }
+  constructor(private router: Router,private http: HttpService,private modal: OpenModalService,
+    public rbac: RbacService) { }
 
   ngOnInit(): void {
     const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -62,8 +56,8 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
 
   fetchReviewCycles() {
     this.dataload = true
-    this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery, this.employeeId, 'Team Manager,Reporting Manager,HR', 'Submitted,Re-Submitted')
-      .subscribe({
+    this.http.getReviewCyclesteam('reviewCycleHeader/getallperformances', this.page, this.pageSize, this.searchQuery,
+      this.employeeId, 'Team Manager,Reporting Manager,HR', 'Submitted,Re-Submitted').subscribe({
         next: (data: any) => {
           this.reviewCycles = data.items;
           this.totalItems = data.totalCount || 0;
@@ -134,7 +128,8 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
     this.filterReviews();
   }
 
-  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorType: string, assessorItemId: number, 
+    reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
@@ -145,9 +140,7 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
       reviewcycleitemformresponseid: reviewcycleitemformresponseid,
       formresponseid: formresponseid
     };
-
     localStorage.setItem('queryParams', JSON.stringify(queryParams));
-
     // Navigate to the assessment route
     this.router.navigate(['/pms/assessment-form']);
   }
@@ -191,8 +184,8 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
   }
 
   downloadletter(iteamid: any) {
-    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
-
+    this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, 
+      { responseType: 'blob' as 'json' }).subscribe({
       next: (data: Blob) => {
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
         const url = window.URL.createObjectURL(blob);
@@ -217,7 +210,6 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first
-
     this.fetchReviewCycles();
   }
 
@@ -233,9 +225,9 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
     return (
       (this.rbac.allowedToAccess('Team Assessment View.view')) ||
       (this.rbac.allowedToAccess('Team Promotion Letter Download.view') &&
-        (item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated')) ||
+      (item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated')) ||
       (this.rbac.allowedToAccess('Team Appraisal Letter Download.view') &&
-        (item.rcItemStatus === 'Appraisal Letter Sent' || item.rcItemStatus === 'Appraisal Letter Generated'))
+      (item.rcItemStatus === 'Appraisal Letter Sent' || item.rcItemStatus === 'Appraisal Letter Generated'))
     );
   }
 
@@ -244,5 +236,4 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
 }

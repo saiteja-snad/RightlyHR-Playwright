@@ -6,45 +6,39 @@ import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
-
+import { PerformaceReviewTabsComponent } from "../../shared/pms-module-tabs/performace-review-tabs/performace-review-tabs.component";
 @Component({
   selector: 'app-team-performance-review',
-  imports: [RouterOutlet, TeamPerformanceTabsComponent, ModuleInformationComponent, TranslateModule, NgbPopoverModule, PmsTabsComponent,ModuleInfoIconComponent],
+  imports: [RouterOutlet, TeamPerformanceTabsComponent, ModuleInformationComponent, TranslateModule, NgbPopoverModule,
+    ModuleInfoIconComponent, PerformaceReviewTabsComponent],
   templateUrl: './team-performance-review.component.html',
   styleUrl: './team-performance-review.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class TeamPerformanceReviewComponent implements OnInit {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
 
-  constructor(public readonly router: Router){
-
-  }
+  constructor(public readonly router: Router) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
-      '/pms/team-performance': MODULE_INFOS.PMS_MY_TEAM_PERFORMACE_REVIEW_MODULE_INFO
+      '/pms/performace-review/team-performance': MODULE_INFOS.PMS_MY_TEAM_PERFORMACE_REVIEW_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-
 }

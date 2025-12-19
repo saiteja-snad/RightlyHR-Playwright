@@ -43,15 +43,12 @@ export class UpdateRateCardComponent {
    ProjectroleDetails = [] as any;
    FrequencyDetail = [] as any;
    @ViewChild('deletepopup') deletepopup: any;
+   @ViewChild('Summary') Summary: any;
+   responseSummary!: any;
    isloading = false;
-  employeedetails: any;
-  updateratecardData: any;
+   employeedetails: any;
+   updateratecardData: any;
     currencyCodes=[
-  {
-    code: "USD",
-    name: "United States Dollar",
-    symbol: "$"
-  },
   {
     code: "EUR",
     name: "Euro",
@@ -103,6 +100,8 @@ export class UpdateRateCardComponent {
     symbol: "₫"
   }
 ];
+minDate: string = '';
+maxDate: string = '';
    constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -127,15 +126,46 @@ export class UpdateRateCardComponent {
   }
   // Effective from
   if (this.updateratecardData.effectiveFrom) {
+     const effectiveMoment = moment(this.updateratecardData.effectiveFrom);
+        const selectedYear = effectiveMoment.year();
+       this.minDate = `${selectedYear}-01-01`;
+        this.maxDate = `${selectedYear}-12-31`;
     this.updateratecardForm.patchValue({
       effectivefrom: this.updateratecardData.effectiveFrom.split('T')[0]
     });
   }
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.updateratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
+    const effectiveFromCtrl = this.updateratecardForm.get('effectivefrom');
+
+    if (year) {
+      this.minDate = `${year}-01-01`;
+      this.maxDate = `${year}-12-31`;
+      effectiveFromCtrl?.enable();
+      effectiveFromCtrl?.reset();
+    } else {
+      effectiveFromCtrl?.disable();
+      this.minDate = '';
+      this.maxDate = '';
+    }
+  });
   }
+   limitDigits(event: any, maxDigits: number) {
+  const value = event.target.value;
+  if (value.length > maxDigits) {
+    event.target.value = value.slice(0, maxDigits);
+  }
+}
+preventInvalidKeys(event: KeyboardEvent) {
+  const invalidKeys = ['-', '+', 'e', 'E'];
 
-
-
+  if (invalidKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+}
+disableScroll(event: WheelEvent) {
+  event.preventDefault();
+}
  getCurrenciesArray(rateItem: FormGroup): FormArray {
    return rateItem.get('currencies') as FormArray;
  }
@@ -302,10 +332,21 @@ createRateCardItems(): FormGroup {
     }
   }
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
-                        .at(currencyIndex)
-                        .get('rate');
-  console.log(rateControl?.value);
+     const currenciesArray = this.rateItems
+    .at(rateIndex)
+    .get('currencies') as FormArray;
+
+  const rateControl = currenciesArray
+    .at(currencyIndex)
+    .get('rate');
+
+  if (!rateControl) return;
+
+  // Ensure rate is always updated in the currency object
+  currenciesArray.at(currencyIndex).patchValue(
+    { rate: rateControl.value },
+    { emitEvent: false }
+  );
 }
 onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
   const currenciesArray = this.getCurrencies(rateIndex);
@@ -322,19 +363,9 @@ onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
     symbol: selectedCurrency.symbol
   });
 }
-
-
-
-//   onCountryChange(event: any, index: number) {
-//   const rateItem = this.rateItems.at(index) as FormGroup;
-//   const currencies = rateItem.get('currencies') as FormArray;
-
-//   currencies.at(0).patchValue({
-//     currencyCode: event.value.code,
-//     currencyName: event.value.name,
-//     symbol: event.value.symbol
-//   });
-// }
+   openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  }
 updateRateCard(){
     let formValues = this.updateratecardForm.getRawValue();
     console.log(formValues);
@@ -347,29 +378,24 @@ updateRateCard(){
       status: 'Active',
       createdBy: this.Employeeinfo.employeeId,
        experienceBands: formValues.rateItems,
-    //      experienceBands: formValues.rateItems.map((item: any) => ({
-    //   experienceFrom: Number(item.experienceMin),
-    //   experienceTo: Number(item.experienceMax),
-    //   status: 'Active',
-    //   frequencyType: item.rateBasic,
-    //   currencies: [
-    //     {
-    //       currencyCode: item.currency,
-    //      currencyName: item.currency,
-    //       symbol: "string",
-    //       rate: item?.rate
-    //     }
-    //   ]
-    // }))
     };
     console.log(payload);
     this.subscription=this.http.putData(`RateCard/${this.updateratecardData.id}`,payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
 
-            this.conformationPopup.openSuccessModal(
-              'Rate Card Updated successfully'
+              this.responseSummary = res.data;
+          if (res.failureCount==0) {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+           
+          } else {
+             this.conformationPopup.openSuccessModal(
+              'Rate Card updated successfully'
             );
+          }
           // this.getAllRateCardDetails();
           this.nagvition();
           },

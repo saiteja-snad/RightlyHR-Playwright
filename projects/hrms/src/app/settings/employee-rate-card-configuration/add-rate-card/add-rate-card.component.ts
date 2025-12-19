@@ -13,6 +13,9 @@ import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { ErrorContentPopupComponent } from '../../../shared/error-content-popup/error-content-popup.component';
+import { SuccessContentPopupComponent } from '../../../shared/success-content-popup/success-content-popup.component';
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-add-rate-card',
@@ -43,13 +46,10 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
   ProjectroleDetails = [] as any;
   FrequencyDetail = [] as any;
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('Summary') Summary: any;
   isloading = false;
+  responseSummary!: any;
   currencyCodes=[
-  {
-    code: "USD",
-    name: "United States Dollar",
-    symbol: "$"
-  },
   {
     code: "EUR",
     name: "Euro",
@@ -101,12 +101,14 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     symbol: "₫"
   }
 ];
+minDate: string = '';
+maxDate: string = '';
   constructor(
     public router: Router,
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
   ) {
   }
   ngOnInit(): void {
@@ -118,6 +120,22 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     this.Employeeinfo = JSON.parse(
       localStorage.getItem('rightlyHrUser') || '{}'
     );
+    this.minDate = `${this.currentYear}-01-01`;
+    this.maxDate = `${this.currentYear}-12-31`;
+    this.ratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
+    const effectiveFromCtrl = this.ratecardForm.get('effectivefrom');
+
+    if (year) {
+      this.minDate = `${year}-01-01`;
+      this.maxDate = `${year}-12-31`;
+      effectiveFromCtrl?.enable();
+      effectiveFromCtrl?.reset();
+    } else {
+      effectiveFromCtrl?.disable();
+      this.minDate = '';
+      this.maxDate = '';
+    }
+  });
   }
 
   //get the rate basics
@@ -164,7 +182,7 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
       .getData(`JobLocation/getAllLocations`)
       .subscribe({
         next: (data: any) => {
-          this.locations = data;
+          this.locations = data.filter((location: any) => location?.subLocations && location?.subLocations?.length > 0);
           this.sublocatiodis = true;
         },
         error: (reason: any) => console.log(reason),
@@ -235,18 +253,37 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
     event.target.value = value.slice(0, maxDigits);
   }
 }
+preventInvalidKeys(event: KeyboardEvent) {
+  const invalidKeys = ['-', '+', 'e', 'E'];
+
+  if (invalidKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+}
+disableScroll(event: WheelEvent) {
+  event.preventDefault();
+}
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
-                        .at(currencyIndex)
-                        .get('rate');
-  console.log(rateControl?.value);
+   const currenciesArray = this.rateItems
+    .at(rateIndex)
+    .get('currencies') as FormArray;
+
+  const rateControl = currenciesArray
+    .at(currencyIndex)
+    .get('rate');
+
+  if (!rateControl) return;
+
+  // ✅ Ensure rate is always updated in the currency object
+  currenciesArray.at(currencyIndex).patchValue(
+    { rate: rateControl.value },
+    { emitEvent: false }
+  );
 }
   onCountryChange(country: any, index: number) {
-    console.log(country);
    const rateItem = this.rateItems.at(index) as FormGroup;
-  const currenciesArray = rateItem.get('currencies') as FormArray;
-  const rateValue = rateItem.get('rate')?.value;
-  const currencyData = {
+   const currenciesArray = rateItem.get('currencies') as FormArray;
+   const currencyData = {
     currencyCode: country?.value?.code,
     currencyName: country?.value?.name,
     symbol: country?.value?.symbol,
@@ -259,7 +296,9 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     // ➕ Create first currency
     currenciesArray.push(this.fb.group(currencyData));
   }
-  console.log(this.ratecardForm)
+  }
+   openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
   addRateCard() {
     let formValues = this.ratecardForm.getRawValue();
@@ -276,9 +315,18 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     this.subscription=this.http.postdata('RateCard',payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
+            
+            this.responseSummary = res.data;
+          if (res.failureCount==0) {
             this.conformationPopup.openSuccessModal(
               'Rate Card created successfully'
             );
+          } else {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+          }
             this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active'])
           },
           error: (err: any) => {
@@ -287,7 +335,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
             this.conformationPopup.openErrorModal(
               err.error.message
                 ? err.error.message
-                : 'Failed to allocate Work Hours. Please try again later'
+                : 'Failed to create rate card. Please try again later'
             );
           },
           complete: () => {

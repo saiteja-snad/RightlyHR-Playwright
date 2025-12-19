@@ -19,6 +19,8 @@ import { Router } from '@angular/router';
 import { RateCardTabsComponent } from "../rate-card-tabs/rate-card-tabs.component";
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 import { AuthService } from '../../../services/auth.service';
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 
 @Component({
   selector: 'app-rate-card',
@@ -31,7 +33,7 @@ import { AuthService } from '../../../services/auth.service';
     DataLoaderContentComponent,
     FormsModule,
     Paginator,
-    NgbPopoverModule, RateCardTabsComponent, SettingsHeaderComponent],
+    NgbPopoverModule, RateCardTabsComponent, SettingsHeaderComponent, SettingsUpdateIconComponent, DocumentViewIconComponent],
   templateUrl: './rate-card.component.html',
   styleUrl: './rate-card.component.scss'
 })

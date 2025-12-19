@@ -205,7 +205,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     this.selectedId=data.id;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-   InactiveRateCard() {
+   activeRateCard() {
     let loggedInUser=this.AuthService.getToken()
     console.log(loggedInUser)
     const payload = {

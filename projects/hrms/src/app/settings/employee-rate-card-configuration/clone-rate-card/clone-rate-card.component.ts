@@ -41,15 +41,12 @@ export class CloneRateCardComponent {
    ProjectroleDetails = [] as any;
    FrequencyDetail = [] as any;
    @ViewChild('deletepopup') deletepopup: any;
+   @ViewChild('Summary') Summary: any;
    isloading = false;
   employeedetails: any;
   updateratecardData: any;
+  responseSummary!: any;
     currencyCodes=[
-  {
-    code: "USD",
-    name: "United States Dollar",
-    symbol: "$"
-  },
   {
     code: "EUR",
     name: "Euro",
@@ -101,6 +98,8 @@ export class CloneRateCardComponent {
     symbol: "₫"
   }
 ];
+minDate: string = '';
+maxDate: string = '';
    constructor(
     public router: Router,
     private fb: FormBuilder,
@@ -125,15 +124,47 @@ export class CloneRateCardComponent {
   }
   // Effective from
   if (this.updateratecardData.effectiveFrom) {
+    const effectiveMoment = moment(this.updateratecardData.effectiveFrom);
+    const selectedYear = effectiveMoment.year();
+   this.minDate = `${selectedYear}-01-01`;
+    this.maxDate = `${selectedYear}-12-31`;
     this.updateratecardForm.patchValue({
       effectivefrom: this.updateratecardData.effectiveFrom.split('T')[0]
     });
   }
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      
+    this.updateratecardForm.get('year')?.valueChanges.subscribe((year: number) => {
+    const effectiveFromCtrl = this.updateratecardForm.get('effectivefrom');
+
+    if (year) {
+      this.minDate = `${year}-01-01`;
+      this.maxDate = `${year}-12-31`;
+      effectiveFromCtrl?.enable();
+      effectiveFromCtrl?.reset();
+    } else {
+      effectiveFromCtrl?.disable();
+      this.minDate = '';
+      this.maxDate = '';
+    }
+  });
   }
+   limitDigits(event: any, maxDigits: number) {
+  const value = event.target.value;
+  if (value.length > maxDigits) {
+    event.target.value = value.slice(0, maxDigits);
+  }
+}
+preventInvalidKeys(event: KeyboardEvent) {
+  const invalidKeys = ['-', '+', 'e', 'E'];
 
-
-
+  if (invalidKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+}
+disableScroll(event: WheelEvent) {
+  event.preventDefault();
+}
  getCurrenciesArray(rateItem: FormGroup): FormArray {
    return rateItem.get('currencies') as FormArray;
  }
@@ -300,10 +331,21 @@ createRateCardItems(): FormGroup {
     }
   }
 onRateChange(rateIndex: number, currencyIndex: number) {
-  const rateControl = (this.rateItems.at(rateIndex).get('currencies') as FormArray)
-                        .at(currencyIndex)
-                        .get('rate');
-  console.log(rateControl?.value);
+    const currenciesArray = this.rateItems
+    .at(rateIndex)
+    .get('currencies') as FormArray;
+
+  const rateControl = currenciesArray
+    .at(currencyIndex)
+    .get('rate');
+
+  if (!rateControl) return;
+
+  // ✅ Ensure rate is always updated in the currency object
+  currenciesArray.at(currencyIndex).patchValue(
+    { rate: rateControl.value },
+    { emitEvent: false }
+  );
 }
 onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
   const currenciesArray = this.getCurrencies(rateIndex);
@@ -320,7 +362,10 @@ onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
     symbol: selectedCurrency.symbol
   });
 }
-updateRateCard(){
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+cloneRateCard(){
     let formValues = this.updateratecardForm.getRawValue();
     let payload = {
       effectiveFrom: formValues.effectivefrom,
@@ -334,9 +379,17 @@ updateRateCard(){
     this.subscription=this.http.postdata(`RateCard`,payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
+             this.responseSummary = res.data;
+          if (res.failureCount==0) {
             this.conformationPopup.openSuccessModal(
               'Rate Card created successfully'
             );
+          } else {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+          }
           // this.getAllRateCardDetails();
           this.nagvition();
           },

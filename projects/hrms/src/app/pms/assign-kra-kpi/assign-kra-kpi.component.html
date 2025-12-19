@@ -240,8 +240,10 @@
             <label class="form-label custom-label mb-2">
               {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control custom-input" formControlName="effectiveDate" onkeydown="return false">
-            <div class="error-msg" *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
+            <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+              onkeydown="return false">
+            <div class="error-msg"
+              *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
               <span *ngIf="assignForm.get('effectiveDate')?.hasError('required')">
                 Effective Date is required</span>
               <span *ngIf="assignForm.get('effectiveDate')?.hasError('pastDate')">
@@ -255,7 +257,8 @@
               {{ 'Target Date' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
-            <div class="error-msg" *ngIf="assignForm.get('targetDate')?.touched && assignForm.get('targetDate')?.invalid">
+            <div class="error-msg"
+              *ngIf="assignForm.get('targetDate')?.touched && assignForm.get('targetDate')?.invalid">
               <span *ngIf="assignForm.get('targetDate')?.hasError('required')">Target Date is required</span>
               <span *ngIf="assignForm.get('targetDate')?.hasError('pastDate')">Target Date cannot be in the past</span>
             </div>
@@ -267,10 +270,12 @@
               {{ 'Review Cycle' | translate }} <span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value" placeholder="Select Review Cycle"
-                class="form-select custom-select" [filter]="true" formControlName="reviewCycle" />
+              <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
+                formControlName="reviewCycle" />
             </div>
-            <div class="error-msg" *ngIf="assignForm.get('reviewCycle')?.touched && assignForm.get('reviewCycle')?.invalid">
+            <div class="error-msg"
+              *ngIf="assignForm.get('reviewCycle')?.touched && assignForm.get('reviewCycle')?.invalid">
               Please select a review cycle
             </div>
           </div>
@@ -281,10 +286,12 @@
               {{ 'Rating Scale' | translate }} <span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select [options]="ratingScaleOptions" optionLabel="label" optionValue="value" placeholder="Select Rating Scale"
-                class="form-select custom-select" [filter]="true" formControlName="ratingScale" />
+              <p-select [options]="ratingScaleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select Rating Scale" class="form-select custom-select" [filter]="true"
+                formControlName="ratingScale" />
             </div>
-            <div class="error-msg" *ngIf="assignForm.get('ratingScale')?.touched && assignForm.get('ratingScale')?.invalid">
+            <div class="error-msg"
+              *ngIf="assignForm.get('ratingScale')?.touched && assignForm.get('ratingScale')?.invalid">
               Please select a rating scale
             </div>
           </div>
@@ -309,8 +316,9 @@
               <tr [formGroupName]="i">
                 <td>
                   <div class="custom-p-select-content">
-                    <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true" [showClear]="true"
-                      placeholder="Select or search KPI" class="form-select custom-select" formControlName="kpiId" />
+                    <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true"
+                      [showClear]="true" placeholder="Select or search KPI" class="form-select custom-select"
+                      formControlName="kpiId" />
                   </div>
                 </td>
                 <td>
@@ -325,8 +333,10 @@
                   </div>
                 </td>
                 <td>
-                  <input type="number" class="form-control custom-input" formControlName="targetValue" placeholder="e.g. 95">
-                  <div class="error-msg small mt-1" *ngIf="row.get('targetValue')?.touched && row.get('targetValue')?.invalid">
+                  <input type="number" class="form-control custom-input" formControlName="targetValue"
+                    placeholder="e.g. 95">
+                  <div class="error-msg small mt-1"
+                    *ngIf="row.get('targetValue')?.touched && row.get('targetValue')?.invalid">
                     <span *ngIf="row.get('targetValue')?.hasError('required')">Target value is required</span>
                     <span *ngIf="row.get('targetValue')?.hasError('min')">Value must be at least 1</span>
                     <span *ngIf="row.get('targetValue')?.hasError('max')">
@@ -339,8 +349,10 @@
                   </div>
                 </td>
                 <td>
-                  <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
-                  <div class="error-msg small mt-1" *ngIf="row.get('targetDate')?.touched && row.get('targetDate')?.invalid">
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
+                  <div class="error-msg small mt-1"
+                    *ngIf="row.get('targetDate')?.touched && row.get('targetDate')?.invalid">
                     <span *ngIf="row.get('targetDate')?.hasError('required')">Required</span>
                     <span *ngIf="row.get('targetDate')?.hasError('pastDate')">Target Date cannot be past date</span>
                   </div>
@@ -387,7 +399,8 @@
 
         <!-- Footer -->
         <div class="custom-modal-footer mt-4">
-          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate }}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate
+            }}</button>
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage()">
             @if (isSubmitting) {
@@ -493,34 +506,32 @@
 
         <div *ngFor="let kpi of assignKpiList" class="project-card mb-3">
           <p class="project-name">{{ kpi.kpiName }}</p>
-          <div class="d-flex justify-content-between align-items-start gap-3">
+          <div class="d-flex justify-content-between gap-3 mb-3">
             <div class="text-center">
               <p class="project-role mb-1">Weightage</p>
-              <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
+              <p class="project-dates m-0">{{ kpi.weightageValue }}%</p>
             </div>
             <div class="text-center">
               <p class="project-role mb-1">Target Value</p>
-              <p class="project-dates fw-bold">
+              <p class="project-dates m-0">
                 {{ kpi.targetValue }}
                 <span class="text-muted small">{{ kpi.targetType }}</span>
               </p>
             </div>
             <div class="text-center">
               <p class="project-role mb-1">Target Date</p>
-              <p class="project-dates fw-bold">{{ kpi.targetDate | date:'MMM dd, yyyy' }}</p>
+              <p class="project-dates m-0">{{ kpi.targetDate | date:'MMM dd, yyyy' }}</p>
             </div>
-                        <!-- <div class="text-center">
-              <p class="project-role mb-1">Approver Comments</p>
-              <p class="project-dates fw-bold">{{ kpi.assignedApproverRejectedComments || '-' }}</p>
-            </div>
-            <div class="text-center">
-              <p class="project-role mb-1">Rating</p>
-              <p class="project-dates fw-bold">{{ kpi.assignedApproverRating || '-' }}</p>
-            </div>
-            <div class="text-center">
-              <p class="project-role mb-1">Approver Status</p>
-              <p class="project-dates fw-bold">{{ kpi.assignedStatus || '-' }}</p>
-            </div> -->
+          </div>
+
+          <div class="d-flex align-items-center justify-content-end mb-2">
+            <p class="project-role mb-1">Rating : </p>
+            <p class="project-dates m-0">{{ kpi.assignedApproverRating || '-' }}</p>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-end gap-2">
+            <div class="">{{ kpi.assignedStatus || '-' }}</div>
+            <div><app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" /></div>
           </div>
         </div>
       </div>

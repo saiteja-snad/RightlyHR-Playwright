@@ -530,7 +530,7 @@
           </div>
 
           <div class="d-flex align-items-center justify-content-end gap-2">
-            <div class="">{{ kpi.assignedStatus || '-' }}</div>
+            <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)">{{ kpi.assignedStatus || '-' }}</div>
             <div><app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" /></div>
           </div>
         </div>

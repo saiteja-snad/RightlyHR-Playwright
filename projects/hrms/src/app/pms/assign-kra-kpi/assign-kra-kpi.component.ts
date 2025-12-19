@@ -23,6 +23,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
+import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-assign-kra-kpi',
   standalone: true,
@@ -43,6 +44,7 @@ import { RbacService } from '../../services/rbac.service';
     ChipModule,
     AccordionModule,
     CheckboxModule,
+    InfoIconComponent
   ],
   templateUrl: './assign-kra-kpi.component.html',
   styleUrl: './assign-kra-kpi.component.scss',
@@ -586,50 +588,50 @@ export class AssignKraKpiComponent implements OnInit {
     });
   }
 
-addKpiRow(): void {
-  if (!this.canAddRow()) {
-    this.popup.openErrorModal('Total weightage cannot exceed 100%');
-    return;
-  }
-
-  const row = this.fb.group({
-    kpiId: [null, Validators.required],
-    uom: [{ value: null, disabled: true }, Validators.required],
-    weightage: [
-      null,
-      [Validators.required, Validators.min(1), Validators.max(100)],
-    ],
-    targetValue: [null],
-    targetDate: ['', [Validators.required, this.noPastDateValidator]],
-    description: ['', [Validators.required, Validators.minLength(10)]],
-  });
-
-  // Listen to KPI selection to auto-fill UOM and apply validation
-  row.get('kpiId')?.valueChanges.subscribe((kpiId: number | null) => {
-    if (!kpiId) {
-      row.get('uom')?.reset();
-      row.get('uom')?.disable();
-      row.get('targetValue')?.reset();
-      row.get('targetValue')?.setValidators(null);
-      row.get('targetValue')?.updateValueAndValidity();
+  addKpiRow(): void {
+    if (!this.canAddRow()) {
+      this.popup.openErrorModal('Total weightage cannot exceed 100%');
       return;
     }
 
-    const selectedKpi = this.allKpiOptions.find((k) => k.kpiId === kpiId);
-    if (selectedKpi) {
-      // Auto-fill UOM and keep it disabled
-      row.get('uom')?.setValue(selectedKpi.targetType);
-      row.get('uom')?.disable(); // Ensures non-editable
+    const row = this.fb.group({
+      kpiId: [null, Validators.required],
+      uom: [{ value: null, disabled: true }, Validators.required],
+      weightage: [
+        null,
+        [Validators.required, Validators.min(1), Validators.max(100)],
+      ],
+      targetValue: [null],
+      targetDate: ['', [Validators.required, this.noPastDateValidator]],
+      description: ['', [Validators.required, Validators.minLength(10)]],
+    });
 
-      // Reset and re-validate target value
-      row.get('targetValue')?.reset();
-      this.applyTargetValueValidation(row.get('targetValue'), selectedKpi.targetType);
-    }
-  });
+    // Listen to KPI selection to auto-fill UOM and apply validation
+    row.get('kpiId')?.valueChanges.subscribe((kpiId: number | null) => {
+      if (!kpiId) {
+        row.get('uom')?.reset();
+        row.get('uom')?.disable();
+        row.get('targetValue')?.reset();
+        row.get('targetValue')?.setValidators(null);
+        row.get('targetValue')?.updateValueAndValidity();
+        return;
+      }
 
-  // Only push the current row — NO extra push here!
-  this.kpiRows.push(row);
-}
+      const selectedKpi = this.allKpiOptions.find((k) => k.kpiId === kpiId);
+      if (selectedKpi) {
+        // Auto-fill UOM and keep it disabled
+        row.get('uom')?.setValue(selectedKpi.targetType);
+        row.get('uom')?.disable(); // Ensures non-editable
+
+        // Reset and re-validate target value
+        row.get('targetValue')?.reset();
+        this.applyTargetValueValidation(row.get('targetValue'), selectedKpi.targetType);
+      }
+    });
+
+    // Only push the current row — NO extra push here!
+    this.kpiRows.push(row);
+  }
 
   applyTargetValueValidation(control: any, uom: string) {
     if (!control) return;
@@ -876,7 +878,7 @@ addKpiRow(): void {
         uom: [{ value: kpi.targetType || '', disabled: true }],
         weightage: [Number(kpi.weightageValue) || 0],
         targetValue: [kpi.targetValue || ''],
-        targetDate: [ targetDateValue,
+        targetDate: [targetDateValue,
           [Validators.required, this.noPastDateValidator],
         ],
         description: [kpi.description || ''],
@@ -889,7 +891,7 @@ addKpiRow(): void {
       );
       this.kpiRows.push(rowGroup);
     });
-    this.modalService.open(this.assignKraKpiModal, {backdrop: 'static', size: 'xl'});
+    this.modalService.open(this.assignKraKpiModal, { backdrop: 'static', size: 'xl' });
   }
 
   private addKpiRowWithData(kpi: any) {
@@ -1143,28 +1145,21 @@ addKpiRow(): void {
     }
   }
 
-getKraProgress(kra: any): number {
-  if (!kra?.kpis || kra.kpis.length === 0) {
-    return 0;
+  getKraProgress(kra: any): number {
+    if (!kra?.kpis || kra.kpis.length === 0) {
+      return 0;
+    }
+    const total = kra.kpis.reduce((sum: number, kpi: any) => {
+      // Priority: assignedApproverWeightage → assignedWeightage
+      const weightage = kpi.assignedApproverWeightage !== undefined &&
+        kpi.assignedApproverWeightage !== null && kpi.assignedApproverWeightage !== '' ? 
+        Number(kpi.assignedApproverWeightage) : Number(kpi.assignedWeightage || 0);
+      return sum + weightage;
+    }, 0);
+    const average = total / kra.kpis.length;
+    // Ensure 0–100 & round
+    return Math.min(100, Math.max(0, Math.round(average)));
   }
-
-  const total = kra.kpis.reduce((sum: number, kpi: any) => {
-    // ✅ Priority: assignedApproverWeightage → assignedWeightage
-    const weightage =
-      kpi.assignedApproverWeightage !== undefined &&
-      kpi.assignedApproverWeightage !== null &&
-      kpi.assignedApproverWeightage !== ''
-        ? Number(kpi.assignedApproverWeightage)
-        : Number(kpi.assignedWeightage || 0);
-
-    return sum + weightage;
-  }, 0);
-
-  const average = total / kra.kpis.length;
-
-  // ✅ Ensure 0–100 & round
-  return Math.min(100, Math.max(0, Math.round(average)));
-}
 
 
   getProgressClass(value: number): string {
@@ -1191,5 +1186,24 @@ getKraProgress(kra: any): number {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return selectedDate < today ? { pastDate: true } : null;
+  }
+
+  getApproverStatusClass(status: string | null | undefined): string {
+    switch (status) {
+      case 'Approved':
+        return 'bg-success';
+
+      case 'Rejected':
+        return 'bg-danger';
+
+      case 'Waiting for Approval':
+      case 'Pending':
+      case null:
+      case undefined:
+        return 'bg-warning';
+
+      default:
+        return 'bg-secondary';
+    }
   }
 }

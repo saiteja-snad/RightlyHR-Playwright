@@ -89,7 +89,7 @@ export class KraKpiApprovalsComponent implements OnInit {
   private modalRef!: NgbModalRef;
 
   currentMinRating!: number;
-currentMaxRating!: number;
+  currentMaxRating!: number;
 
   @ViewChild('approveModal') approveModal!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectModal!: TemplateRef<any>;
@@ -101,9 +101,7 @@ currentMaxRating!: number;
     private modalService: NgbModal,
     private fb: FormBuilder,
     private conformationPopup: OpenModalService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
     this.parent.setHeaderTemplate(this.kraKpiHeader);
@@ -119,22 +117,21 @@ currentMaxRating!: number;
   }
 
   // ===== FORM INITIALIZATION =====
-private initActionForm(min: number, max: number): void {
-  this.currentMinRating = min;
-  this.currentMaxRating = max;
-  this.actionForm = this.fb.group({
-    rating: [
-      '',
-      [
-        Validators.required,
-        Validators.min(min),
-        Validators.max(max),
+  private initActionForm(min: number, max: number): void {
+    this.currentMinRating = min;
+    this.currentMaxRating = max;
+    this.actionForm = this.fb.group({
+      percentage: [
+        '',
+        [Validators.required, Validators.min(0), Validators.max(100)],
       ],
-    ],
-    comments: [''],
-  });
-}
-
+      rating: [
+        '',
+        [Validators.required, Validators.min(min), Validators.max(max)],
+      ],
+      comments: [''],
+    });
+  }
 
   // ===== API CALL =====
   loadKraKpiData(employeeId?: number | null): void {
@@ -143,11 +140,16 @@ private initActionForm(min: number, max: number): void {
     const params: any = {
       pageNumber: this.page,
       pageSize: this.rows,
-      ...(this.searchText && { search: this.searchText }),
+
+      managerEmployeeId: this.empinfo?.employeeId,
     };
 
+    if (this.searchText) {
+      params.search = this.searchText;
+    }
+
     if (employeeId) {
-      params.employeeId = employeeId;
+      params.employeeIds = employeeId;
     }
 
     this.http
@@ -161,7 +163,9 @@ private initActionForm(min: number, max: number): void {
 
             return {
               employeeId: emp.employeeId,
-              employeeName: `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''} - (${emp.fusionEmpId ?? ''})`.trim(),
+              employeeName: `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${
+                emp.lastName ?? ''
+              } - (${emp.fusionEmpId ?? ''})`.trim(),
               rows: item.kpiKraList || [],
             };
           });
@@ -169,7 +173,6 @@ private initActionForm(min: number, max: number): void {
           this.collectionSize = res?.pagination?.totalRecords || 0;
           this.loading = false;
         },
-
         error: () => {
           this.teamKpiData = [];
           this.collectionSize = 0;
@@ -200,10 +203,12 @@ private initActionForm(min: number, max: number): void {
   }
 
   loadAllActiveEmployees(): void {
-    const statuses = ['Active', 'Trainee Active'];
+    const employeeId = this.empinfo?.employeeId;
 
     this.http
-      .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
+      .getData(
+        `v2/Employeedata/GetReporteesAndTeamMembersReportees/${employeeId}`
+      )
       .subscribe((res: any) => {
         this.activeEmplist = (res || [])
           .filter((e: any) => e.employeeId !== this.empinfo?.employeeId)
@@ -231,12 +236,15 @@ private initActionForm(min: number, max: number): void {
   }
 
   // ===== ACTION MODAL HANDLERS =====
-  openApproveModal(row: any, modal: TemplateRef<any>, employeeId: number): void {
+  openApproveModal(
+    row: any,
+    modal: TemplateRef<any>,
+    employeeId: number
+  ): void {
     this.selectedRow = { ...row, employeeId };
 
-
-  const min = row?.optionsRating?.minimumRatingScale;
-  const max = row?.optionsRating?.maximumRatingScale;
+    const min = row?.optionsRating?.minimumRatingScale;
+    const max = row?.optionsRating?.maximumRatingScale;
     this.initActionForm(min, max); // Reset form
     this.selectedFile = null;
     this.selectedFileName = '';
@@ -254,8 +262,8 @@ private initActionForm(min: number, max: number): void {
   openRejectModal(row: any, modal: TemplateRef<any>, employeeId: number): void {
     this.selectedRow = { ...row, employeeId };
 
-     const min = row?.optionsRating?.minimumRatingScale;
-  const max = row?.optionsRating?.maximumRatingScale;
+    const min = row?.optionsRating?.minimumRatingScale;
+    const max = row?.optionsRating?.maximumRatingScale;
     this.initActionForm(min, max); // Reset form
     this.selectedFile = null;
     this.selectedFileName = '';
@@ -280,71 +288,79 @@ private initActionForm(min: number, max: number): void {
 
   private pendingApprovalPayload: any = null;
 
-async submitAction(status: 'Approved' | 'Rejected'): Promise<void> {
-  if (!this.selectedRow || this.actionForm.invalid || this.isSubmitting) return;
+  async submitAction(status: 'Approved' | 'Rejected'): Promise<void> {
+    if (!this.selectedRow || this.actionForm.invalid || this.isSubmitting)
+      return;
 
-  this.isSubmitting = true;
+    this.isSubmitting = true;
 
-  const employeeId = this.empinfo?.employeeId || 0;
+    const employeeId = this.empinfo?.employeeId || 0;
 
-  const payload = {
-    id: this.selectedRow.assigneeId || 0,
-    employeeId: this.selectedRow.employeeId || 0,
-    reviewCycleId: this.selectedRow.reviewCycleData?.id || 0,
-    kraId: this.selectedRow.kraId || 0,
-    kpiId: this.selectedRow.kpiId || 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: employeeId,
-    updatedBy: employeeId,
-    status: status,
-    approverRating: String(this.actionForm.get('rating')?.value),
-    approverRejectedComments: this.actionForm.get('comments')?.value?.trim(),
-    approverAttachmentUrl: '',
-  };
+    const payload = {
+      id: this.selectedRow.assigneeId || 0,
+      employeeId: this.selectedRow.employeeId || 0,
+      reviewCycleId: this.selectedRow.reviewCycleData?.id || 0,
+      kraId: this.selectedRow.kraId || 0,
+      kpiId: this.selectedRow.kpiId || 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: employeeId,
+      updatedBy: employeeId,
+      status: status,
+      approverWeightage: String(this.actionForm.get('percentage')?.value),
+      approverRating: String(this.actionForm.get('rating')?.value),
+      approverRejectedComments: this.actionForm.get('comments')?.value?.trim(),
+      approverAttachmentUrl: '',
+    };
 
-  try {
-    // Upload file first if selected
-    if (this.selectedFile) {
-      const uploadedPath = await this.uploadAttachment(
-        this.selectedRow.kraId,
-        this.selectedRow.kpiId,
-        this.selectedRow.employeeId,
-        this.selectedFile
-      );
-      payload.approverAttachmentUrl = uploadedPath;
+    try {
+      // Upload file first if selected
+      if (this.selectedFile) {
+        const uploadedPath = await this.uploadAttachment(
+          this.selectedRow.kraId,
+          this.selectedRow.kpiId,
+          this.selectedRow.employeeId,
+          this.selectedFile
+        );
+        payload.approverAttachmentUrl = uploadedPath;
+      }
+
+      // Submit payload
+      await this.http.postdata('Kpi/submitkrakpi', [payload]).toPromise();
+
+      // Success handler
+      this.afterApprovalSuccess(status);
+    } catch (err) {
+      console.error('Error submitting approval:', err);
+      this.isSubmitting = false;
+      this.conformationPopup.openErrorModal('Failed to submit approval');
     }
-
-    // Submit payload
-    await this.http.postdata('Kpi/submitkrakpi', [payload]).toPromise();
-
-    // Success handler
-    this.afterApprovalSuccess(status);
-  } catch (err) {
-    console.error('Error submitting approval:', err);
-    this.isSubmitting = false;
-    this.conformationPopup.openErrorModal('Failed to submit approval');
   }
-}
-
 
   // Upload file using the exact pattern from KraComponent
- private uploadAttachment(kraId: number, kpiId: number, employeeId: number, file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const filePath = `/KRA/${kraId}/KPI/${kpiId}/Documents/${employeeId}/Attachments`;
+  private uploadAttachment(
+    kraId: number,
+    kpiId: number,
+    employeeId: number,
+    file: File
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const filePath = `/KRA/${kraId}/KPI/${kpiId}/Documents/${employeeId}/Attachments`;
 
-    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
-      next: (data: any) => {
-        if (data?.path) {
-          resolve(data.path); // return the uploaded file path
-        } else {
-          reject('File upload returned no path');
-        }
-      },
-      error: (err) => reject(err),
+      this.http
+        .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
+        .subscribe({
+          next: (data: any) => {
+            if (data?.path) {
+              resolve(data.path); // return the uploaded file path
+            } else {
+              reject('File upload returned no path');
+            }
+          },
+          error: (err) => reject(err),
+        });
     });
-  });
-}
+  }
 
   // Success handler (called after final step)
   private afterApprovalSuccess(status: string): void {
@@ -380,4 +396,11 @@ async submitAction(status: 'Approved' | 'Rejected'): Promise<void> {
         return '';
     }
   }
+
+
+      getProgressClass(progress: number): string {
+      if (progress >= 80) return 'bg-success';
+      if (progress >= 50) return 'bg-warning';
+      return 'bg-danger';
+    }
 }

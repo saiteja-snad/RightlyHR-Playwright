@@ -88,8 +88,9 @@
                         <th>Review Cycle</th>
                         <th>KRA Name</th>
                         <th>KPI Name</th>
-                        <th class="text-center">Target</th>
-                        <th class="text-center">Weightage</th>
+                        <!-- <th class="text-center">Target</th>
+                        <th class="text-center">Weightage</th> -->
+                        <th class="text-center">Progress</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Actions</th>
                       </tr>
@@ -103,11 +104,22 @@
                         </td>
                         <td>{{ row.kraName }}</td>
                         <td>{{ row.kpiName }}</td>
-                        <td class="text-center">
+                        <!-- <td class="text-center">
                           {{ row.targetValue || '-' }}
                         </td>
                         <td class="text-center">
                           {{ row.weightageValue || '-' }}
+                        </td> -->
+                                                                        <td class="text-center">
+                          <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" [style.width.%]="row.assignedWeightage || 0"
+                              [attr.aria-valuenow]="row.assignedWeightage || 0" aria-valuemin="0" aria-valuemax="100"
+                              [ngClass]="getProgressClass(row.assignedWeightage || 0)">
+                            </div>
+                          </div>
+                          <small class="fw-semibold">
+                            {{ row.assignedWeightage || 0 }}%
+                          </small>
                         </td>
                         <td class="text-center">
                           {{ row.assignedStatus }}
@@ -180,35 +192,53 @@
     <form [formGroup]="actionForm" (ngSubmit)="submitAction('Approved')">
       <div class="custom-main-popup-content">
 
-<!-- Rating -->
-<div class="mb-3">
-  <label class="form-label custom-label mb-2">
-    Rating <span class="text-danger">*</span>
-  </label>
-  <input
-    type="number"
-    class="form-control custom-input"
-    formControlName="rating"
-    placeholder="Enter rating"
-    [attr.min]="currentMinRating"
-  [attr.max]="currentMaxRating"
-  />
-<div class="error-msg"
-     *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
-  Rating is required
-</div>
+        <!-- Percentage -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            Percentage <span class="text-danger">*</span>
+          </label>
 
-<div class="error-msg"
-     *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
-  Minimum rating is {{ currentMinRating }}
-</div>
+          <input type="number" class="form-control custom-input" formControlName="percentage"
+            placeholder="Enter percentage" min="0" max="100" />
 
-<div class="error-msg"
-     *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
-  Maximum rating is {{ currentMaxRating }}
-</div>
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['required']">
+            Percentage is required
+          </div>
 
-</div>
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['min']">
+            Percentage cannot be less than 0
+          </div>
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['max']">
+            Percentage cannot be more than 100
+          </div>
+        </div>
+
+
+        <!-- Rating -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            Rating <span class="text-danger">*</span>
+          </label>
+          <input type="number" class="form-control custom-input" formControlName="rating" placeholder="Enter rating"
+            [attr.min]="currentMinRating" [attr.max]="currentMaxRating" />
+          <div class="error-msg"
+            *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
+            Rating is required
+          </div>
+
+          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
+            Minimum rating is {{ currentMinRating }}
+          </div>
+
+          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
+            Maximum rating is {{ currentMaxRating }}
+          </div>
+
+        </div>
 
         <!-- Approver Comments -->
         <div class="mb-3">
@@ -225,9 +255,9 @@
           <label class="form-label custom-label mb-2">Attachment</label>
           <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
             accept=".pdf,.jpg,.jpeg,.png">
-          @if (selectedFileName) {
+          <!-- @if (selectedFileName) {
           <small class="text-success d-block mt-1">{{ selectedFileName }}</small>
-          }
+          } -->
         </div>
 
       </div>
@@ -238,7 +268,7 @@
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
           @if (!isSubmitting) {
-          Yes
+          Approve
           } @else {
           <div class="button-loader-content">
             <div class="spinner-border button-spinner text-light" role="status"></div>
@@ -251,7 +281,6 @@
   </div>
 </ng-template>
 
-<!-- REJECT MODAL (Same structure, different icon and text) -->
 <ng-template #rejectModal let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div class="text-center mb-2">
@@ -264,35 +293,53 @@
     <form [formGroup]="actionForm" (ngSubmit)="submitAction('Rejected')">
       <div class="custom-main-popup-content">
 
-<!-- Rating -->
-<div class="mb-3">
-  <label class="form-label custom-label mb-2">
-    Rating <span class="text-danger">*</span>
-  </label>
-  <input
-    type="number"
-    class="form-control custom-input"
-    formControlName="rating"
-    placeholder="Enter rating"
-    [attr.min]="currentMinRating"
-  [attr.max]="currentMaxRating"
-  />
-<div class="error-msg"
-     *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
-  Rating is required
-</div>
+        <!-- Percentage -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            Percentage <span class="text-danger">*</span>
+          </label>
 
-<div class="error-msg"
-     *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
-  Minimum rating is {{ currentMinRating }}
-</div>
+          <input type="number" class="form-control custom-input" formControlName="percentage"
+            placeholder="Enter percentage" min="0" max="100" />
 
-<div class="error-msg"
-     *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
-  Maximum rating is {{ currentMaxRating }}
-</div>
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['required']">
+            Percentage is required
+          </div>
 
-</div>
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['min']">
+            Percentage cannot be less than 0
+          </div>
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['max']">
+            Percentage cannot be more than 100
+          </div>
+        </div>
+
+
+        <!-- Rating -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            Rating <span class="text-danger">*</span>
+          </label>
+          <input type="number" class="form-control custom-input" formControlName="rating" placeholder="Enter rating"
+            [attr.min]="currentMinRating" [attr.max]="currentMaxRating" />
+          <div class="error-msg"
+            *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
+            Rating is required
+          </div>
+
+          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
+            Minimum rating is {{ currentMinRating }}
+          </div>
+
+          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
+            Maximum rating is {{ currentMaxRating }}
+          </div>
+
+        </div>
 
 
         <!-- Approver Comments -->
@@ -316,9 +363,9 @@
           <label class="form-label custom-label mb-2">Attachment</label>
           <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
             accept=".pdf,.jpg,.jpeg,.png">
-          @if (selectedFileName) {
+          <!-- @if (selectedFileName) {
           <small class="text-success d-block mt-1">{{ selectedFileName }}</small>
-          }
+          } -->
         </div>
 
       </div>
@@ -329,7 +376,7 @@
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
           @if (!isSubmitting) {
-          Yes
+          Reject
           } @else {
           <div class="button-loader-content">
             <div class="spinner-border button-spinner text-light" role="status"></div>

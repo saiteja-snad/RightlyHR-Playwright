@@ -1143,16 +1143,29 @@ addKpiRow(): void {
     }
   }
 
-  getKraProgress(kra: any): number {
-    if (!kra?.kpis || kra.kpis.length === 0) {
-      return 0;
-    }
-    const total = kra.kpis.reduce(
-      (sum: number, kpi: any) => sum + Number(kpi.weightageValue || 0),
-      0
-    );
-    return Math.round(total / kra.kpis.length);
+getKraProgress(kra: any): number {
+  if (!kra?.kpis || kra.kpis.length === 0) {
+    return 0;
   }
+
+  const total = kra.kpis.reduce((sum: number, kpi: any) => {
+    // ✅ Priority: assignedApproverWeightage → assignedWeightage
+    const weightage =
+      kpi.assignedApproverWeightage !== undefined &&
+      kpi.assignedApproverWeightage !== null &&
+      kpi.assignedApproverWeightage !== ''
+        ? Number(kpi.assignedApproverWeightage)
+        : Number(kpi.assignedWeightage || 0);
+
+    return sum + weightage;
+  }, 0);
+
+  const average = total / kra.kpis.length;
+
+  // ✅ Ensure 0–100 & round
+  return Math.min(100, Math.max(0, Math.round(average)));
+}
+
 
   getProgressClass(value: number): string {
     if (value >= 80) return 'bg-success';

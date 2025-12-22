@@ -27,7 +27,7 @@
         <button class="custom-btn btn-primary px-5" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value" (click)="this.getAllRateCardDetails()">Apply</button>
       </form>
 
-      <button class="custom-btn btn-primary px-5" *ngIf="rbac.allowedToAccess('Rate Card Module.create')" (click)="openAdd()">Create</button>
+      <button class="custom-btn btn-primary px-5" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')" (click)="openAdd()">Create</button>
     </div>
   </div>
 
@@ -71,7 +71,7 @@
               <td class="text-center">{{ item?.subLocationName?item?.subLocationName : '-' }}</td>
               <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
               <td class="text-center" >
-                <div class="dropdown">
+                <div class="dropdown" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')">
                    <span type="button" data-bs-toggle="dropdown">
                       <i class="bi bi-three-dots-vertical"></i>
                     </span>
@@ -81,20 +81,20 @@
                 </li>
               </ul> -->
                   <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
-                    <li (click)="onClick(item,confirmationpopup)">
+                    <li (click)="onClick(item,confirmationpopup)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.delete')">
                       <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> Inactive</a>
                     </li>
-                     <li (click)="updateNavigation(item)">
+                     <li (click)="updateNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.update')">
                         <a class="dropdown-item">
                            <app-settings-update-icon /> {{"Update" | translate}}
                         </a>
                        </li>
-                       <li (click)="closeNavigation(item)">
+                       <li (click)="closeNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')">
                         <a class="dropdown-item">
                            <i class="bi bi-copy me-2"></i>{{"Clone" | translate}}
                         </a>
                        </li>
-                        <li (click)="viewNavigation(item)">
+                        <li (click)="viewNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.view')">
                         <a class="dropdown-item">
                           <div class="d-flex">
                           <div > <app-document-view-icon /> </div>

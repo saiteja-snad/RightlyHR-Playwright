@@ -54,7 +54,7 @@
                             <tr class="text-align-center" *ngIf="per.fields === 'Roles' || per.fields === 'Employee Fields Module'|| per.fields === 'Settings Timeoff Module' ||
                                 per.fields === 'Assets Management Configuration Module' || per.fields === 'Dynamic Forms Module' ||  per.fields === 'Employee Fields Config Update Module' ||
                                 per.fields === 'Project Management Configuration Module' || per.fields === 'Attendance Configuration Module' || 
-                                per.fields === 'Locking System Configuration Module'|| per.fields === 'Rate Card Module'|| per.fields === 'Rate Card In-active Tab'|| per.fields === 'Rate Card Active Tab'">
+                                per.fields === 'Locking System Configuration Module'|| per.fields === 'Rate Card Module'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -66,12 +66,54 @@
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
-                                        (change)="onCheckboxChange(per, 'Create')"
+                                        (change)="onCheckboxChange(per, 'Create')" 
                                         [disabled]="!isActionEnabled(per.fields, 'Create') || !roleToFilter?.id">
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
                                         [disabled]="true">
+                                </td>
+                            </tr>
+                        </ng-container>
+                         <!-- cards management tabs actions -->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectAllratecardstabs
+                                        (change)="toggleSelectAll(ratecardsModuleFields, selectAllratecardstabs?.checked, iscardsDisabled.bind(this))"
+                                        [checked]="isAllSelected(ratecardsModuleFields)"
+                                        [indeterminate]="isSomeSelected(ratecardsModuleFields)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div> Rate Card Configuration Module</div>
+                                </div>
+
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'Rate Card In-active Tab'|| per.fields === 'Rate Card Active Tab'">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
+                                        (change)="onCheckboxChange(per, 'update')" [disabled]="!roleToFilter?.id || ![
+                                    'Rate Card Active Tab','Rate Card In-active Tab'
+                                ].includes(per.fields)">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
+                                        (change)="onCheckboxChange(per, 'create')" [disabled]="!roleToFilter?.id || ![
+                                    'Rate Card Active Tab',
+                                ].includes(per.fields)">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
+                                        (change)="onCheckboxChange(per, 'delete')" [disabled]="!roleToFilter?.id || ![
+                                    'Rate Card Active Tab',
+                                ].includes(per.fields)">
                                 </td>
                             </tr>
                         </ng-container>
@@ -2460,7 +2502,7 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Time Off (On Behalf Of Approvals)'  || per.fields === 'WFH (On Behalf Of Approvals)' ||
-                                 per.fields === 'Comp Off (On Behalf Of Approvals)' || per.fields === 'Permission (On Behalf Of Approvals)' || 'Regularization (On Behalf Of Approvals)' || per.fields === 'Trainee Requests (On Behalf Of Approvals)' ||
+                                 per.fields === 'Comp Off (On Behalf Of Approvals)' || per.fields === 'Permission (On Behalf Of Approvals)' || per.fields ==='Regularization (On Behalf Of Approvals)' || per.fields === 'Trainee Requests (On Behalf Of Approvals)' ||
                                  per.fields === 'My Team On Behalf Of Approvals' || per.fields === 'On Behalf Of Approvals All Employees' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

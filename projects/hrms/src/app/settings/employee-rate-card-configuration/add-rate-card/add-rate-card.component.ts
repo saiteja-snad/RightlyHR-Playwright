@@ -49,6 +49,7 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
   @ViewChild('Summary') Summary: any;
   isloading = false;
   responseSummary!: any;
+  removeRowdata: any;
   currencyCodes=[
   {
     code: "EUR",
@@ -278,7 +279,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
   }
   }
    openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   addRateCard() {
     let formValues = this.ratecardForm.getRawValue();

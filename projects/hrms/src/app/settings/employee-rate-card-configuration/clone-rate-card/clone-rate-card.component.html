@@ -187,9 +187,9 @@
                                     </div>
 
                                 </div>
-                                <div class="mb-2" *ngIf="rateItems.length > 1">
+                                <div class="mb-2" *ngIf="i>0">
                                     <!-- Delete Icon -->
-                                    <button type="button" class="custom-icon btn p-0" (click)="deleteratecard(i)">
+                                    <button type="button" class="custom-icon btn p-0" (click)="openModal(deleterowassessor);removeRowdata=i">
                                         <i class="bi bi-trash text-danger"></i>
                                     </button>
                                 </div>
@@ -254,4 +254,27 @@
             </div>
         </div>
     </div>
+</ng-template>
+<ng-template #deleterowassessor let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to Delete?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="deleteratecard(removeRowdata);modal.dismiss()"
+        [disabled]="isloading">
+        @if(!isloading){
+        {{'Yes'|translate}}
+        }
+        @else {
+        <div class="d-flex">
+          <div *ngIf="isloading" class="spinner-border spinner-border text-light" role="status"></div>
+          <div> {{'Submitting'|translate}}</div>
+        </div>
+        }
+      </button>
+    </div>
+  </div>
 </ng-template>

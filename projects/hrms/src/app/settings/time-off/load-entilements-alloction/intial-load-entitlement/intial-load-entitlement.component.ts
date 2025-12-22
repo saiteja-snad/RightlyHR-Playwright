@@ -1,4 +1,4 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
   templateUrl: './intial-load-entitlement.component.html',
   styleUrl: './intial-load-entitlement.component.scss'
 })
-export class IntialLoadEntitlementComponent {
+export class IntialLoadEntitlementComponent implements OnInit, OnDestroy {
   loading = false;
   searchQuery = '';
   private searchSubject = new Subject<string>();
@@ -256,6 +256,9 @@ export class IntialLoadEntitlementComponent {
 
 
   ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
     this.destroy$.next(true);
     this.destroy$.complete();
   }

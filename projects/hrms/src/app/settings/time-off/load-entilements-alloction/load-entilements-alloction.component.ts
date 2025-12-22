@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { LeaveEntitlementSideBarComponent } from "../../../shared/leave-entitlement-side-bar/leave-entitlement-side-bar.component";
 import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ import { Select, SelectModule } from 'primeng/select';
   templateUrl: './load-entilements-alloction.component.html',
   styleUrl: './load-entilements-alloction.component.scss'
 })
-export class LoadEntilementsAlloctionComponent {
+export class LoadEntilementsAlloctionComponent implements OnInit,OnDestroy {
   loading = false;
   subscription!: Subscription;
   page = 1;
@@ -188,6 +188,12 @@ export class LoadEntilementsAlloctionComponent {
 
       }
     });
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+   
+    }
   }
 
 }

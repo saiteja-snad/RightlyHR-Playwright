@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../../../services/http.service';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ import { TableModule } from "primeng/table";
   encapsulation: ViewEncapsulation.None,
 })
 
-export class IntialLoadEntitlementPreviewComponent {
+export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   carryforwarddata: any = {}
   loading: boolean = false;
@@ -110,7 +110,7 @@ export class IntialLoadEntitlementPreviewComponent {
           leaveValues[code] = {
             allowedDays: lc?.allowedDays,
             isAlreadyEntitled: lc?.isAlreadyEntitled,
-            color: lc?.color 
+            color: lc?.color
           };
           // payload entries
           leaveEntries.push({
@@ -155,8 +155,8 @@ export class IntialLoadEntitlementPreviewComponent {
     });
 
     this.leaveHeaders = Array.from(headerMap.values());
-    console.log("leaves",this.leaveHeaders);
-    
+    console.log("leaves", this.leaveHeaders);
+
   }
 
 
@@ -183,16 +183,16 @@ export class IntialLoadEntitlementPreviewComponent {
       requestPayload: {
         employees: sourceEmployees
           // ✅ only valid employees
-          .filter(emp => emp?.isValid === true )
+          .filter(emp => emp?.isValid === true)
           .map(emp => ({
             employeeId: emp?.employeeId,
             gradeId: emp?.gradeId,
 
             entitlementsData: (emp.leaveEntries || [])
               // ✅ only valid + allowedDays > 0
-              .filter((x:{ isValid: boolean; isAlreadyEntitled:boolean; allowedDays: number; }) => x.isValid == true && x.isAlreadyEntitled==false && x.allowedDays > 0)
-             
-              
+              .filter((x: { isValid: boolean; isAlreadyEntitled: boolean; allowedDays: number; }) => x.isValid == true && x.isAlreadyEntitled == false && x.allowedDays > 0)
+
+
               .map((x: { leaveCategoryId: any; allowedDays: any; }) => ({
                 leaveCategoryId: x?.leaveCategoryId,
                 noOfDays: x?.allowedDays
@@ -257,5 +257,10 @@ export class IntialLoadEntitlementPreviewComponent {
 
   back() {
     this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create'])
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

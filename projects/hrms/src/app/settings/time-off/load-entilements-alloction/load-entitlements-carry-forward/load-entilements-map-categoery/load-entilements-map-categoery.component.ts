@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ICarryForward, ILeaveCategory } from '../../../flexible-leave-allocation/leave-allocation.model';
 import { FormValidationsService } from '../../../../../services/form-validations.service';
 import { HttpService } from '../../../../../services/http.service';
@@ -14,7 +14,7 @@ import { Select } from 'primeng/select';
   styleUrl: './load-entilements-map-categoery.component.scss'
 })
 
-export class LoadEntilementsMapCategoeryComponent {
+export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
   carryforwarddata: any = {}
   empinfo: any = {};
   loading: boolean = false
@@ -171,4 +171,9 @@ export class LoadEntilementsMapCategoeryComponent {
   isAllDropdownsSelected(): boolean {
     return this.currentYearData.length > 0 && this.currentYearData.every(item => item.selectedDestinationId);
   }
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
+
 }

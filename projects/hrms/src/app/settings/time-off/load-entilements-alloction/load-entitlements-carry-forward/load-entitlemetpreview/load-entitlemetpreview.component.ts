@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
@@ -15,7 +15,7 @@ import { NoDataFoundComponent } from '../../../../../shared/no-data-found/no-dat
   styleUrl: './load-entitlemetpreview.component.scss'
 })
 
-export class LoadEntitlemetpreviewComponent {
+export class LoadEntitlemetpreviewComponent implements OnInit,OnDestroy {
   carryforwarddata: any = {}
   selectedEmployeeDetail: any = null;
   selectemployeename: any
@@ -93,5 +93,10 @@ export class LoadEntitlemetpreviewComponent {
 
   navigationtoback() {
     this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-create'])
+  }
+
+   ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

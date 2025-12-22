@@ -172,7 +172,8 @@ export class IntialLoadEntitlementCreateComponent {
         this.categoryDetails = res;
 
         // Pre-select categories from localStorage
-        if (this.carryforwarddata?.categoryIds?.length) {
+        // if (this.carryforwarddata?.categoryIds?.length) {
+           if (this.categoryDetails?.length) {
           this.leaveAllocationForm.patchValue({
             categoryName: this.carryforwarddata.categoryIds
           });

@@ -21,12 +21,12 @@ export class LeaveEntitlementSideBarComponent {
   navTabs: any[] = [
     {
       label: 'Initial Leave Entitlements ', link: '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements',
-      icon: 'project-mangement-icons/activeprojects.png', statusKey: 'active',
+      icon: '/settings-icon/load-entitlement-icon.png', statusKey: 'active',
       permission: { feature: 'Initial Load Entitlements', action: 'view' }
     },
     {
       label: 'Leave Carry Forward', link: '/settings/timeoff-configurations/load-entitlement/carry-forward',
-      icon: 'project-mangement-icons/Inactiveprojects.png', statusKey: 'inactive',
+      icon: '/settings-icon/leave-allocations-icon.png', statusKey: 'inactive',
       permission: { feature: 'Carry Forward Load Entitlements', action: 'view' },
     },
   ];

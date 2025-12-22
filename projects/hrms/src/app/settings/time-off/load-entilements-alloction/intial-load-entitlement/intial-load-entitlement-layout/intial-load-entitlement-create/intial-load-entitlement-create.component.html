@@ -82,22 +82,12 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="categoryName" class="form-label custom-label mb-2">{{ "Category Name" | translate
+                    <label for="categoryName" class="form-label custom-label mb-2">{{ "Leave Category" | translate
                         }} <span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
-                        <p-multiSelect [options]="categoryDetails" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" filterPlaceholder="Search Category Name"
-                            [showClear]="false" formControlName="categoryName"  placeholder="Please select category name"  [resetFilterOnHide]="true"
+                        <p-multiSelect [options]="categoryDetails" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" filterPlaceholder="Search Leave Category"
+                            [showClear]="false" formControlName="categoryName"  placeholder="Please select leave category"  [resetFilterOnHide]="true"
                             class="form-select custom-select" multiple="true">
-
-                            <ng-template pTemplate="selectedItems" let-selectedItems>
-                                <span *ngFor="let item of selectedItems; let i = index">
-                                    {{ item.name }}<span *ngIf="i < selectedItems.length - 1">, </span>
-                                </span>
-                            </ng-template>
-
-                            <ng-template pTemplate="item" let-item>
-                                {{ item.name }}
-                            </ng-template>
                         </p-multiSelect>
 
                     </div>
@@ -105,7 +95,7 @@
                     <div *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
                         class="error-msg">
                         <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">
-                            Category name is required</div>
+                            Leave category is required</div>
                     </div>
                 </div>
             </div>

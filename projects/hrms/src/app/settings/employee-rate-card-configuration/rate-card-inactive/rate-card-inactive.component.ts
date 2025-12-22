@@ -272,31 +272,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     this.selectedId=data.id;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-   InactiveWFHAllocation() {
-    const payload = {
-      status: 'Inactive',
-    };
-    this.http
-      .putData(`FlexibleWorkhoursAllocation/update/${this.selectedId}`, payload)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          
-          this.modal.openSuccessModal(`${res.data.entityValue.name} Work hours allocation has been Inactivated.`);
-          this.getAllRateCardDetails();
-        },
-        error: (err: any) => {
-          this.modalService.dismissAll();
-          this.modal.openErrorModal(
-            err.error.message
-              ? err.error.message
-              : 'Failed to allocate WFH. Please try again later'
-          );
-        },
-        complete: () => {
-        },
-      });
-  }
+
    activeRateCard() {
     let loggedInUser=this.AuthService.getToken()
     console.log(loggedInUser)
@@ -309,7 +285,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.modal.openSuccessModal(`Record activated successfully`);
+          this.modal.openSuccessModal(`Rate Card activated successfully`);
           this.getAllRateCardDetails();
         },
         error: (err: any) => {

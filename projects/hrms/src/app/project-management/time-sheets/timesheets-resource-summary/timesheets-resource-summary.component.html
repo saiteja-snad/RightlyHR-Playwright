@@ -383,7 +383,7 @@
           </div>
         </div>
 
-        <div class="mb-3">
+       <div class="mb-3" *ngIf="rbac.allowedToAccess('Team Time Sheet Department Filter.view')">
           <label class="form-label custom-label filter-labels mb-3">{{'Select Department'| translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="departmentDetails" [filter]="true" filterBy="departmentName"
@@ -393,7 +393,7 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" *ngIf="rbac.allowedToAccess('Team Time Sheet RM/TM Filter.view')">
           <label class="form-label custom-label filter-labels mb-3">{{'Select RM/TM' | translate}}</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="tmandRmDetails" [filter]="true" filterBy="fullName" [resetFilterOnHide]="true"

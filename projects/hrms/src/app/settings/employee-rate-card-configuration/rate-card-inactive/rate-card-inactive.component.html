@@ -3,13 +3,30 @@
   <div class="component-header-content">
     <app-settings-header />
     <div class="d-flex align-items-center gap-3">
+       <button type="button" class="clear-all-btn" (click)="resetall()" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value">
+        Clear All</button>
       <form autocomplete="off" [formGroup]="yearSelectionForm" class="d-flex align-items-center gap-2">
         <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
         <div class="custom-p-select-content">
           <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
-            class="form-select custom-select" (onChange)="onYearChange()" />
+            class="form-select custom-select"  (onChange)="onYearChange()" />
         </div>
+        <label class="form-label custom-label filter-labels m-0" for="">Location</label>
+        <div class="custom-p-select-content">
+          <p-select formControlName="location" [options]="locations" placeholder="Select location"
+          [resetFilterOnHide]="true"[showClear]="false" [filter]="true"filterBy="jobLocationName" optionLabel="jobLocationName" optionValue="id"
+            class="form-select custom-select" (onChange)="onLocationChange($event.value)" />
+        </div>
+        <label class="form-label custom-label filter-labels m-0" for="">Sub-Location</label>
+        <div class="custom-p-select-content">
+          <p-select formControlName="subLocation" [options]="subLocations" placeholder="Select sub-location"  
+          filterBy="jobSubLocationName"optionLabel="jobSubLocationName" optionValue="id"
+          [resetFilterOnHide]="true" [showClear]="false" [filter]="true"
+            class="form-select custom-select"  />
+        </div>
+        <button class="custom-btn btn-primary px-5" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value" (click)="this.getAllRateCardDetails()">Apply</button>
       </form>
+
       <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
     </div>
   </div>
@@ -28,6 +45,7 @@
           aria-describedby="basic-addon1">
       </div>
       <div class="custom-table-content">
+           @if (!isloading) {
         <table class="w-100">
           <thead>
             <tr>
@@ -81,6 +99,10 @@
             }
           </tbody>
         </table>
+        }
+        @else {
+       <app-data-loader-content />
+       }
       </div>
       <!--Pagination-->
       @if (getActiveRateCardDetails$ | async; as getAllocationDetails) {

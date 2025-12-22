@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Paginator } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
-import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -14,13 +13,13 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { IRateCardActiveViewModel } from './rate-card-model';
-import { AddRateCardComponent } from '../add-rate-card/add-rate-card.component';
 import { Router } from '@angular/router';
 import { RateCardTabsComponent } from "../rate-card-tabs/rate-card-tabs.component";
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 import { AuthService } from '../../../services/auth.service';
 import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import moment from 'moment';
 
 @Component({
   selector: 'app-rate-card',
@@ -65,6 +64,9 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
   employeeId:number | null = null;
   records: IRateCardActiveViewModel[] = [];
   selectedId:number | null = null;
+  locations = [] as any;
+  subLocations = [] as any;
+  sublocatiodis = false;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -77,17 +79,66 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
 
   ngOnInit(): void {
      // year selection values
-    this.currentYear = new Date().getFullYear();
-    this.selectedYear = this.currentYear; // Move this up
-    // Populate years list
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-      this.years.push(i);
+    const range = 1; // years before & after
+    this.currentYear = moment().year();
+    this.selectedYear = this.currentYear;
+
+    this.years = [];
+
+    for (let i = -range; i <= range; i++) {
+      this.years.push(moment().add(i, 'year').year());
     }
      // Now initialize the form with the selectedYear
     this.yearSelectionForm = new FormGroup({
-      selectedYear: new FormControl(this.selectedYear)
+      selectedYear: new FormControl(this.selectedYear),
+      location: new FormControl(null),
+      subLocation: new FormControl({ value: null, disabled: true })
     });
+    this.getAllLocations();
     this.getAllEmployeeDetails();
+    this.getAllRateCardDetails();
+    
+  }
+  
+  getAllLocations() {
+     this.http
+      .getData(`JobLocation/getAllLocations`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.locations = data.filter((location: any) => location?.subLocations && location?.subLocations?.length > 0);
+          this.sublocatiodis = true;
+        },
+        error: (reason: any) => console.log(reason),
+      });
+  }
+    // location changes
+  onLocationChange(selectedLocationIds: number[] | null) {
+    const subLocationControl = this.yearSelectionForm.get('subLocation');
+    // Reset subLocation value
+    subLocationControl?.reset();
+   if (selectedLocationIds) {
+      // Enable subLocation field
+      subLocationControl?.enable();
+      // Find the selected location object
+      const selectedLocation = this.locations.find(
+        (loc:any) => loc.id === selectedLocationIds
+      );
+      // Extract subLocations
+      this.subLocations = selectedLocation?.subLocations || [];
+      this.yearSelectionForm.get('subLocation')?.markAsTouched();
+    } else {
+      // Disable if location is invalid
+      subLocationControl?.disable();
+      this.subLocations = [];
+    }
+  }
+  resetall(){
+    this.yearSelectionForm.reset({
+    selectedYear: this.currentYear,
+    location: null,
+    subLocation: { value: null, disabled: true }
+  });
     this.getAllRateCardDetails();
   }
   getExperienceFrom(item?: IRateCardActiveViewModel): number | string {
@@ -149,6 +200,8 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
   }
   // get all wfh allocations
   getAllRateCardDetails(): void {
+    const subLocationControl = this.yearSelectionForm.get('subLocation')?.value;
+    const LocationControl = this.yearSelectionForm.get('location')?.value;
     this.isloading = true;
     if (
       !this.searchValue ||
@@ -162,10 +215,10 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
 
     if (this.selectedYear) {
       url +=`&year=${this.selectedYear}`}
-    // Add employeeIds if available
-    if (this.employeeId) {
-      url += `&entityValues=${encodeURIComponent(this.employeeId)}`;
-    }
+    if(LocationControl){
+      url+=`&locationIds=${LocationControl}`}
+      if(subLocationControl){
+      url+=`&subLocationIds=${subLocationControl}`}
     // Only add searchValue if it's not empty/null/undefined
     if (this.searchValue && this.searchValue.trim() !== '') {
       url += `&search=${encodeURIComponent(this.searchValue.trim())}`;

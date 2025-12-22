@@ -133,7 +133,7 @@
                             <div class="custom-p-select-content">
                                 <p-select formControlName="frequencyType" placeholder="Please select rate basic"
                                     optionLabel="label" optionValue="value" class="form-select custom-select"
-                                    [options]="FrequencyDetail" [filter]="true">
+                                    [options]="FrequencyDetail" [filter]="true"  filterBy="value" [showClear]="false" resetFilterOnHide="true">
                                 </p-select>
                             </div>
                             <div *ngIf="ratecard.get('frequencyType')?.invalid && (ratecard.get('frequencyType')?.dirty || ratecard.get('frequencyType')?.touched)"

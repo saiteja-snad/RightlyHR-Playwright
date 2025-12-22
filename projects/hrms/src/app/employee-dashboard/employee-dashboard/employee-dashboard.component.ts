@@ -92,8 +92,6 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     today.setDate(today.getDate() - 1);
     const previousDate = today;
     this.previousDate = previousDate.getDate();
-    console.log(this.previousDate);
-
     this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
     this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
@@ -179,47 +177,67 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
 
-
   getworkanniversary() {
-    this.http
-      .getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth =this.currentMonth; // 0-based
+  console.log(currentMonth);
+  
+  const nextMonth =this.nextMonth;
+  let yearParam: string;
+  let monthParam: string;
 
-          const today = new Date();
-          const next30 = new Date();
-          next30.setDate(today.getDate() + 30); // next 30 days
+  // ✅ December case → pass current + next year
+  if (currentMonth === 12) {
+    yearParam = `${currentYear},${currentYear + 1}`;
+    monthParam = `12,1`; // Dec & Jan
+  } else {
+    yearParam = `${currentYear}`;
+    monthParam = `${currentMonth},${nextMonth}`;
+  }
 
-          this.anniversaries = data.filter((item: any) => {
+  this.http
+    .getData(
+      `Employeedata/ActiveEmployeesAnniversaries?year=${yearParam}&months=${monthParam}`
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        const today = new Date();
+        const next30 = new Date();
+        next30.setDate(today.getDate() + 30);
+
+        this.anniversaries = data
+          .filter((item: any) => {
             const doj = new Date(item.dateOfJoining);
 
-            // Anniversary THIS year (ignore original joining year)
             const anniversaryThisYear = new Date(
               today.getFullYear(),
               doj.getMonth(),
               doj.getDate()
             );
 
-            // Birthday next year (for crossing Dec → Jan)
-            const anniversarynextYear = new Date(
+            const anniversaryNextYear = new Date(
               today.getFullYear() + 1,
               doj.getMonth(),
               doj.getDate()
             );
 
-            return ((anniversarynextYear >= today && anniversarynextYear <= next30) || (anniversaryThisYear >= today && anniversaryThisYear <= next30))
-
-
-          }) .sort((a: any, b: any) => {
-            // SORT HERE by upcoming birthday date
-            return this.getDobWithCurrentYear(a.dateOfJoining).getTime() -
-                   this.getDobWithCurrentYear(b.dateOfJoining).getTime();
+            return (
+              (anniversaryThisYear >= today && anniversaryThisYear <= next30) ||
+              (anniversaryNextYear >= today && anniversaryNextYear <= next30)
+            );
+          })
+          .sort((a: any, b: any) => {
+            return (
+              this.getDobWithCurrentYear(a.dateOfJoining).getTime() -
+              this.getDobWithCurrentYear(b.dateOfJoining).getTime()
+            );
           });
-        },
-
-        error: (err: any) => console.log(err),
-      });
-  }
+      },
+      error: err => console.log(err),
+    });
+}
 
 
   getbrithday() {
@@ -256,11 +274,11 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
               (birthdayNextYear >= today && birthdayNextYear <= next30)
             );
           })
-          .sort((a: any, b: any) => {
-            // SORT HERE by upcoming birthday date
-            return this.getDobWithCurrentYear(a.dob).getTime() -
-                   this.getDobWithCurrentYear(b.dob).getTime();
-          });
+            .sort((a: any, b: any) => {
+              // SORT HERE by upcoming birthday date
+              return this.getDobWithCurrentYear(a.dob).getTime() -
+                this.getDobWithCurrentYear(b.dob).getTime();
+            });
 
         },
 
@@ -428,7 +446,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         if (events.length) {
           this.eventItems = events;
           console.log(this.eventItems);
-          
+
         } else {
           this.quotationsData();
         }

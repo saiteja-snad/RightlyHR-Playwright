@@ -46,16 +46,11 @@ export class CloneRateCardComponent {
   employeedetails: any;
   updateratecardData: any;
   responseSummary!: any;
-    currencyCodes=[
+   currencyCodes=[
   {
     code: "EUR",
     name: "Euro",
     symbol: "€"
-  },
-  {
-    code: "JPY",
-    name: "Japanese Yen",
-    symbol: "¥"
   },
   {
     code: "GBP",
@@ -78,25 +73,10 @@ export class CloneRateCardComponent {
     symbol: "₹"
   },
   {
-    code: "GBP",
-    name: "British Pound Sterling",
-    symbol: "£"
-  },
-  {
-    code: "EUR",
-    name: "Euro",
-    symbol: "€"
-  },
-  {
     code: "JPY",
     name: "Japanese Yen",
     symbol: "¥"
   },
-  {
-    code: "VND",
-    name: "Vietnamese Dong",
-    symbol: "₫"
-  }
 ];
 minDate: string = '';
 maxDate: string = '';

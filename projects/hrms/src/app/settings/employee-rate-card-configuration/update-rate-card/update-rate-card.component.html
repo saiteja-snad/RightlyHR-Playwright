@@ -151,7 +151,7 @@
                                 </label>
                           <div class="custom-p-select-content">
                                 <p-select [options]="currencyCodes" optionLabel="code" optionValue="code" formControlName="currencyCode"
-                                    class="form-select custom-select" [filter]="true" placeholder="Please select currency"
+                                    class="form-select custom-select" [filter]="true" placeholder="Please select currency" filterBy="value" [showClear]="false" resetFilterOnHide="true"
                                     (onChange)="onCountryChange($event, i, j)">
                                 </p-select>
                         </div>

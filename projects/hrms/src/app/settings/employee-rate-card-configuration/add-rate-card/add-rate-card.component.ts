@@ -56,11 +56,6 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     symbol: "€"
   },
   {
-    code: "JPY",
-    name: "Japanese Yen",
-    symbol: "¥"
-  },
-  {
     code: "GBP",
     name: "British Pound Sterling",
     symbol: "£"
@@ -81,25 +76,10 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     symbol: "₹"
   },
   {
-    code: "GBP",
-    name: "British Pound Sterling",
-    symbol: "£"
-  },
-  {
-    code: "EUR",
-    name: "Euro",
-    symbol: "€"
-  },
-  {
     code: "JPY",
     name: "Japanese Yen",
     symbol: "¥"
   },
-  {
-    code: "VND",
-    name: "Vietnamese Dong",
-    symbol: "₫"
-  }
 ];
 minDate: string = '';
 maxDate: string = '';

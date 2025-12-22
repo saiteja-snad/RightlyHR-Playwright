@@ -45,6 +45,7 @@
           aria-describedby="basic-addon1">
       </div>
       <div class="custom-table-content">
+           @if (!isloading) {
         <table class="w-100">
           <thead>
             <tr>
@@ -98,6 +99,10 @@
             }
           </tbody>
         </table>
+        }
+        @else {
+       <app-data-loader-content />
+       }
       </div>
       <!--Pagination-->
       @if (getActiveRateCardDetails$ | async; as getAllocationDetails) {

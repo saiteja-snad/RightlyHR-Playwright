@@ -132,7 +132,7 @@
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select formControlName="frequencyType" placeholder="Please select rate basic"
-                                    optionLabel="label" optionValue="value" class="form-select custom-select"
+                                    optionLabel="label" optionValue="value" class="form-select custom-select"  [filter]="true"  filterBy="value" [showClear]="false" resetFilterOnHide="true"
                                     [options]="FrequencyDetail">
                                 </p-select>
                             </div>

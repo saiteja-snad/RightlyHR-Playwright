@@ -45,6 +45,7 @@
           aria-describedby="basic-addon1">
       </div>
       <div class="custom-table-content">
+         @if (!isloading) {
         <table class="w-100">
           <thead>
             <tr>
@@ -81,11 +82,11 @@
               </ul> -->
                   <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
                     <li (click)="onClick(item,confirmationpopup)">
-                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i> Inactive</a>
+                      <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> Inactive</a>
                     </li>
                      <li (click)="updateNavigation(item)">
                         <a class="dropdown-item">
-                           <app-settings-update-icon />{{"Update" | translate}}
+                           <app-settings-update-icon /> {{"Update" | translate}}
                         </a>
                        </li>
                        <li (click)="closeNavigation(item)">
@@ -95,7 +96,10 @@
                        </li>
                         <li (click)="viewNavigation(item)">
                         <a class="dropdown-item">
-                          <app-document-view-icon />{{"View" | translate}}
+                          <div class="d-flex">
+                          <div > <app-document-view-icon /> </div>
+                          <div class="mt-2 me-3"> {{"View" | translate}}</div>
+                          </div>
                         </a>
                        </li>
                   </ul>
@@ -113,6 +117,10 @@
             }
           </tbody>
         </table>
+      }
+        @else {
+       <app-data-loader-content />
+       }
       </div>
       <!--Pagination-->
       @if (getActiveRateCardDetails$ | async; as getAllocationDetails) {

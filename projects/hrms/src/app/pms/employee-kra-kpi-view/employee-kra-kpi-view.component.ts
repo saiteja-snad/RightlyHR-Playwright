@@ -77,12 +77,12 @@ export class EmployeeKraKpiViewComponent implements OnInit, OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     // Fix: Use correct PMS permissions
-    if (this.rbac.allowedToAccess('All Employees (Expenses).view')) {
-      this.loadAllActiveEmployees();
-    }
-    if (this.rbac.allowedToAccess('My Team (Expenses).view')) {
-      this.loadMyTeamEmployees();
-    }
+    // if (this.rbac.allowedToAccess('All Employees (Expenses).view')) {
+    //   this.loadAllActiveEmployees();
+    // }
+    // if (this.rbac.allowedToAccess('My Team (Expenses).view')) {
+    //   this.loadMyTeamEmployees();
+    // }
 
     // Listen to route params
     this.route.paramMap.subscribe((params) => {
@@ -256,7 +256,7 @@ export class EmployeeKraKpiViewComponent implements OnInit, OnDestroy {
   }
 
   navigateTeamKRAKPI() {
-    this.router.navigate(['/pms/my-kpi-kra/team']);
+    this.router.navigate(['/pms/kpi-kra/team']);
   }
 
   ngOnDestroy(): void {

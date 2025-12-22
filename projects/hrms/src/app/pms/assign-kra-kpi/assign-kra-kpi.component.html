@@ -302,12 +302,12 @@
           <table class="w-100">
             <thead>
               <tr>
-                <th>{{ 'KPI Name' | translate }}</th>
-                <th>{{ 'Weightage' | translate }}</th>
-                <th>{{ 'Unit of Measurement' | translate }}</th>
-                <th>{{ 'Target Value' | translate }}</th>
-                <th>{{ 'Target Date' | translate }}</th>
-                <th>{{ 'Description' | translate }}</th>
+                <th class="text-center">{{ 'KPI Name' | translate }}</th>
+                <th class="text-center">{{ 'Weightage' | translate }}</th>
+                <th class="text-center">{{ 'Unit of Measurement' | translate }}</th>
+                <th class="text-center">{{ 'Target Value' | translate }}</th>
+                <th class="text-center">{{ 'Target Date' | translate }}</th>
+                <th class="text-center">{{ 'Description' | translate }}</th>
                 <th class="text-center">{{ 'Actions' | translate }}</th>
               </tr>
             </thead>
@@ -318,12 +318,15 @@
                   <div class="custom-p-select-content">
                     <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true"
                       [showClear]="true" placeholder="Select or search KPI" class="form-select custom-select"
-                      formControlName="kpiId" />
+                      formControlName="kpiId"  />
+                  </div>
+                  <div class="error-msg small mt-1" *ngIf="row.get('kpiId')?.touched && row.get('kpiId')?.hasError('duplicateKpi')">
+                    This KPI is already added. Please select another KPI.
                   </div>
                 </td>
                 <td>
                   <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
-                    placeholder="e.g. 20">
+                    placeholder="e.g. 20" >
                 </td>
                 <!-- Unit of Measurement -->
                 <td>
@@ -334,7 +337,7 @@
                 </td>
                 <td>
                   <input type="number" class="form-control custom-input" formControlName="targetValue"
-                    placeholder="e.g. 95">
+                    >
                   <div class="error-msg small mt-1"
                     *ngIf="row.get('targetValue')?.touched && row.get('targetValue')?.invalid">
                     <span *ngIf="row.get('targetValue')?.hasError('required')">Target value is required</span>
@@ -402,7 +405,7 @@
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate
             }}</button>
           <button type="submit" class="custom-btn btn-primary"
-            [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage()">
+            [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage() || hasDuplicateKpis()">
             @if (isSubmitting) {
             <span class="spinner-border spinner-border-sm me-2"></span>{{ isEditMode ? 'Updating...' : 'Assigning...'}}
             } @else {

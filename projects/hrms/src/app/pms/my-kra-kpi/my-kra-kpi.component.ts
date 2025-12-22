@@ -78,7 +78,7 @@ selectedKpis: any[] = [];
 
   updateModuleInfo() {
     const url = this.router.url;
-    this.moduleinfo = url.includes('/pms/my-kpi-kra/view')
+    this.moduleinfo = url.includes('/pms/kpi-kra/my-kpi-kra')
       ? MODULE_INFOS.PMS_MY_KRA_KPI_LIST_MODULE_INFO
       : '';
   }

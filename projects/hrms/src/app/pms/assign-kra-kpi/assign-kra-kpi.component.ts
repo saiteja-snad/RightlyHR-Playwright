@@ -424,32 +424,37 @@ export class AssignKraKpiComponent implements OnInit {
     });
   }
 
-  loadKraList(): void {
-    const params = {
-      pageNumber: this.page,
-      pageSize: 100,
-      ...(this.searchText && { search: this.searchText }),
-    };
-    this.dataload = true;
-    this.http.getDataIncludeParams('Kra/getAll', params).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.kraListForDropdown = res.data || [];
-          this.collectionSize = res.pagination?.totalRecords || 0;
-        } else {
-          this.kraListForDropdown = [];
-          this.collectionSize = 0;
-        }
-        this.dataload = false;
-      },
-      error: (err) => {
-        console.error('Failed to load KRAs', err);
+loadKraList(): void {
+  const params = {
+    pageNumber: this.page,
+    pageSize: 100,
+    ...(this.searchText && { search: this.searchText }),
+  };
+
+  this.dataload = true;
+
+  this.http.getDataIncludeParams('Kra/getAll', params).subscribe({
+    next: (res: any) => {
+      if (res?.success && Array.isArray(res.data)) {
+        this.kraListForDropdown = res.data.filter(
+          (kra: any) => kra.status === 'Active'
+        );
+        this.collectionSize = this.kraListForDropdown.length;
+      } else {
         this.kraListForDropdown = [];
         this.collectionSize = 0;
-        this.dataload = false;
-      },
-    });
-  }
+      }
+      this.dataload = false;
+    },
+    error: (err) => {
+      console.error('Failed to load KRAs', err);
+      this.kraListForDropdown = [];
+      this.collectionSize = 0;
+      this.dataload = false;
+    },
+  });
+}
+
 
   applyFilters(): void {
     const filters = this.filterForm.getRawValue(); // Use getRawValue() to get actual values
@@ -553,18 +558,24 @@ export class AssignKraKpiComponent implements OnInit {
     return params;
   }
 
-  loadAllKpis(): void {
-    this.http.getData('Kpi/getAll').subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.allKpiOptions = res.data || [];
-        }
-      },
-      error: (err) => {
-        console.error('Failed to load KPIs', err);
-      },
-    });
-  }
+loadAllKpis(): void {
+  this.http.getData('Kpi/getAll').subscribe({
+    next: (res: any) => {
+      if (res?.success && Array.isArray(res.data)) {
+        this.allKpiOptions = res.data.filter(
+          (kpi: any) => kpi.status === 'Active'
+        );
+      } else {
+        this.allKpiOptions = [];
+      }
+    },
+    error: (err) => {
+      console.error('Failed to load KPIs', err);
+      this.allKpiOptions = [];
+    },
+  });
+}
+
 
   onSelectionChange(value: any[]) {
     this.multiSelect = value.length > 0;
@@ -601,7 +612,7 @@ export class AssignKraKpiComponent implements OnInit {
         null,
         [Validators.required, Validators.min(1), Validators.max(100)],
       ],
-      targetValue: [null],
+      targetValue: [{ value: null, disabled: true }],
       targetDate: ['', [Validators.required, this.noPastDateValidator]],
       description: ['', [Validators.required, Validators.minLength(10)]],
     });
@@ -614,8 +625,29 @@ export class AssignKraKpiComponent implements OnInit {
         row.get('targetValue')?.reset();
         row.get('targetValue')?.setValidators(null);
         row.get('targetValue')?.updateValueAndValidity();
+
+        row.get('kpiId')?.setErrors(null);
         return;
       }
+
+        const currentIndex = this.kpiRows.controls.indexOf(row);
+        const selectedKpis = this.getSelectedKpiIds(currentIndex);
+
+        if (selectedKpis.includes(kpiId)) {
+          row.get('kpiId')?.setErrors({ duplicateKpi: true });
+          row.get('uom')?.reset();
+          row.get('uom')?.disable();
+          return;
+        }
+
+        // 🟢 CLEAR DUPLICATE ERROR (if fixed)
+        const errors = row.get('kpiId')?.errors;
+        if (errors?.['duplicateKpi']) {
+          delete errors['duplicateKpi'];
+          if (Object.keys(errors).length === 0) {
+            row.get('kpiId')?.setErrors(null);
+          }
+        }
 
       const selectedKpi = this.allKpiOptions.find((k) => k.kpiId === kpiId);
       if (selectedKpi) {
@@ -624,7 +656,11 @@ export class AssignKraKpiComponent implements OnInit {
         row.get('uom')?.disable(); // Ensures non-editable
 
         // Reset and re-validate target value
-        row.get('targetValue')?.reset();
+        if (selectedKpi.targetValue !== undefined && selectedKpi.targetValue !== null) {
+        row.get('targetValue')?.setValue(selectedKpi.targetValue);
+      } else {
+        row.get('targetValue')?.reset(); // Clear if no default
+      }
         this.applyTargetValueValidation(row.get('targetValue'), selectedKpi.targetType);
       }
     });
@@ -1203,4 +1239,21 @@ export class AssignKraKpiComponent implements OnInit {
         return 'bg-secondary';
     }
   }
+
+private getSelectedKpiIds(excludeIndex?: number): number[] {
+  return this.kpiRows.controls
+    .map((ctrl, index) =>
+      index !== excludeIndex ? ctrl.get('kpiId')?.value : null
+    )
+    .filter((id) => id !== null);
+}
+
+hasDuplicateKpis(): boolean {
+  const ids = this.kpiRows.controls
+    .map(r => r.get('kpiId')?.value)
+    .filter(Boolean);
+  return new Set(ids).size !== ids.length;
+}
+
+
 }

@@ -105,11 +105,11 @@ export class KraKpiApprovalsComponent implements OnInit {
 
   ngOnInit(): void {
     this.parent.setHeaderTemplate(this.kraKpiHeader);
-    if (this.rbac.allowedToAccess('All Employees (Expenses).view')) {
+    if (this.rbac.allowedToAccess('All Employees (KRA KPI).view')) {
       this.loadAllActiveEmployees();
     }
 
-    if (this.rbac.allowedToAccess('My Team (Expenses).view')) {
+    if (this.rbac.allowedToAccess('My Team (KRA KPI).view')) {
       this.loadMyTeamEmployees();
     }
 
@@ -403,4 +403,18 @@ export class KraKpiApprovalsComponent implements OnInit {
       if (progress >= 50) return 'bg-warning';
       return 'bg-danger';
     }
+
+  getKpiStatusClass(status: string) {
+    switch (status) {
+      case 'Waiting for Approval':
+        return 'status-waiting';
+      case 'Rejected':
+        return 'status-rejected';
+      case 'Approved':
+        return 'status-approved';
+      default:
+        return '';
+    }
+  }
+
 }

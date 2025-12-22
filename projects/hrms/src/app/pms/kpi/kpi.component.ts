@@ -101,6 +101,9 @@ export class KpiComponent implements OnInit, OnDestroy {
   isEditMode = false;
   currentKpiId: number | null = null;
 
+  totalRecordsFromApi = 0;   // actual backend count
+
+
   showOnlyInactive = false;
   inactiveButtonLabel = 'Inactive KPI';
   @ViewChild('statusConfirmModal') statusConfirmModal!: any;
@@ -172,25 +175,15 @@ this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
     });
   }
 
-  toggleInactiveFilter(): void {
-    this.showOnlyInactive = !this.showOnlyInactive;
+toggleInactiveFilter(): void {
+  this.showOnlyInactive = !this.showOnlyInactive;
+  this.inactiveButtonLabel = this.showOnlyInactive
+    ? 'Active KPI'
+    : 'Inactive KPI';
 
-    if (this.showOnlyInactive) {
-      this.filteredDetails = this.kpiList.filter(
-        (kpi) => kpi.status === 'Inactive'
-      );
-      this.inactiveButtonLabel = 'Active KPI';
-    } else {
-      this.filteredDetails = this.kpiList.filter(
-        (kpi) => kpi.status !== 'Inactive'
-      );
-      this.inactiveButtonLabel = 'Inactive KPI';
-    }
+  this.applyStatusFilter();
+}
 
-    // reset pagination
-    this.page = 1;
-    this.first = 0;
-  }
 
   loadKpiList() {
     const params = {
@@ -206,7 +199,9 @@ this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
         next: (res: any) => {
           if (res.success) {
             this.kpiList = res.data || [];
-            this.collectionSize = res.pagination?.totalRecords || 0;
+            this.totalRecordsFromApi = res.pagination?.totalRecords || 0;
+
+          this.applyStatusFilter();
             this.filteredDetails = this.showOnlyInactive
               ? this.kpiList.filter((kpi) => kpi.status === 'Inactive')
               : this.kpiList.filter((kpi) => kpi.status !== 'Inactive');
@@ -226,6 +221,20 @@ this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
         },
       });
   }
+
+  private applyStatusFilter(): void {
+  this.filteredDetails = this.showOnlyInactive
+    ? this.kpiList.filter(kpi => kpi.status === 'Inactive')
+    : this.kpiList.filter(kpi => kpi.status !== 'Inactive');
+
+  // paginator must match table rows
+  this.collectionSize = this.filteredDetails.length;
+
+  // reset pagination safely
+  this.page = 1;
+  this.first = 0;
+}
+
 
   onSearchTextChange() {
     this.page = 1;

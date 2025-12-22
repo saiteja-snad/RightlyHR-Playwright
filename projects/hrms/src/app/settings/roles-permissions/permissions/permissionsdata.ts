@@ -295,6 +295,8 @@ export const permissionsData = [
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Time Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
 
   //Work From Home Sub Tabs Section
   { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
@@ -865,6 +867,8 @@ export const permissionsData = [
   { fields: 'My KRA KPI', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard KRA KPI', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (KRA)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (KRA)', View: false, Update: false, Create: false, Delete: false },
 
   //Review Cycle List Actions
   { fields: 'Create Review Cycle', View: false, Update: false, Create: false, Delete: false },

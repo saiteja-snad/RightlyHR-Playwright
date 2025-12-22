@@ -244,7 +244,7 @@ export class KraComponent implements OnInit, OnDestroy {
               : allData.filter((kra: any) => kra.status !== 'Inactive');
 
             this.filteredDetails = this.kraList;
-            this.collectionSize = res.pagination?.totalRecords || 0;
+            this.collectionSize = this.filteredDetails.length;
           } else {
             this.kraList = [];
             this.filteredDetails = [];

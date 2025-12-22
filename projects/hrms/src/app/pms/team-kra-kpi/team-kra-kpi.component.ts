@@ -13,6 +13,11 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PaginatorModule } from 'primeng/paginator';
+import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
+
 
 interface TeamKpiResponse {
   success: boolean;
@@ -39,7 +44,11 @@ interface TeamKpiResponse {
     DataLoaderContentComponent,
     NoDataFoundComponent,
     FormsModule,
-    PaginatorModule
+    PaginatorModule,
+    InfoIconComponent,
+    ModuleInfoIconComponent,
+    NgbPopoverModule,
+    ModuleInformationComponent
   ],
   templateUrl: './team-kra-kpi.component.html',
   styleUrl: './team-kra-kpi.component.scss'
@@ -52,6 +61,8 @@ export class TeamKraKpiComponent implements OnInit, OnDestroy {
   teamKpiData: any[] = [];
   loading = true;
   searchText = '';
+
+    moduleinfo = '';
 
 page = 1;
 rows = 10;           // default page size
@@ -78,20 +89,28 @@ options = [
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     // Load dropdowns based on correct PMS permissions
-    if (this.rbac.allowedToAccess('All Employees (Expenses).view')) {
+    if (this.rbac.allowedToAccess('All Employees (KRA).view')) {
       this.loadAllActiveEmployees();
     }
-    if (this.rbac.allowedToAccess('My Team (Expenses).view')) {
+    if (this.rbac.allowedToAccess('My Team (KRA).view')) {
       this.loadMyTeamEmployees();
     }
 
     // Default: load data for current logged-in user
     this.loadTeamKpiData();
+    this.updateModuleInfo();
+  }
+
+    updateModuleInfo() {
+    const url = this.router.url;
+    this.moduleinfo = url.includes('/pms/kpi-kra/team')
+      ? MODULE_INFOS.PMS_TEAM_KRA_KPI_LIST_MODULE_INFO
+      : '';
   }
 
   goToEmployeeKraKpi(employeeId: number): void {
   this.router.navigate([
-    '/pms/my-kpi-kra/employee-kra-kpi-view',
+    '/pms/kpi-kra/employee-kra-kpi-view',
     employeeId
   ]);
 }

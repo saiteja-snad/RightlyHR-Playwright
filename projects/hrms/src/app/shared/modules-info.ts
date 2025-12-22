@@ -85,6 +85,9 @@ export const MODULE_INFOS = {
     PMS_KPI_LIST_MODULE_INFO: "The KPI section allows HR/Admin to configure measurable performance indicators linked to KRAs. It helps track employee performance using defined metrics for objective evaluation and analysis.",
     PMS_KRA_KPI_ASSIGN_MODULE_INFO: "The Assign KRA/KPI section allows managers or HR/Admin to assign relevant KRAs and KPIs to employees or roles. It ensures alignment of individual performance goals with organizational objectives and enables effective performance tracking.",
     PMS_MY_KRA_KPI_LIST_MODULE_INFO: "The My KRA/KPI module allows employees to view the KRAs and KPIs assigned to them by their manager. It provides clear visibility into performance goals, targets, and expectations for effective self-tracking and alignment.",
+    PMS_TEAM_KRA_KPI_LIST_MODULE_INFO: "The Team KRI/KPI module enables managers and authorized users to view and monitor KRIs and KPIs assigned to their team members. It provides a consolidated view to track performance, assess risks, and ensure alignment with organizational goals.",
+
+
 
 
 

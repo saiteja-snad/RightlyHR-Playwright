@@ -6,14 +6,14 @@
       </div>
       <div class="component-header">{{"Team KRA's / KPI's" | translate}}</div>
       <div>
-        <app-module-info-icon placement="bottom" />
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
 
 
     <!-- Employee Selection Dropdown -->
     <div class="d-flex align-items-center gap-3 mt-3">
-      @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team (Expenses).view')) {
+      @if(rbac.allowedToAccess('All Employees (KRA).view') && rbac.allowedToAccess('My Team (KRA).view')) {
         <div class="d-flex align-items-center gap-2">
           <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
           <div class="custom-p-select-content">
@@ -32,7 +32,7 @@
           </div>
         </div>
       }
-      @else if(rbac.allowedToAccess('All Employees (Expenses).view')) {
+      @else if(rbac.allowedToAccess('All Employees (KRA).view')) {
         <div class="d-flex align-items-center gap-2">
           <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
           <div class="custom-p-select-content">
@@ -51,7 +51,7 @@
           </div>
         </div>
       }
-      @else if(rbac.allowedToAccess('My Team (Expenses).view')) {
+      @else if(rbac.allowedToAccess('My Team (KRA).view')) {
         <div class="d-flex align-items-center gap-2">
           <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
           <div class="custom-p-select-content">
@@ -72,6 +72,10 @@
       }
     </div>
   </div>
+
+    <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
   <!-- Main Content -->
   <div class="main-content d-flex w-100 gap-3">

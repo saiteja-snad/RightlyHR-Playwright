@@ -161,7 +161,7 @@ export class IntialLoadEntitlementPreviewComponent {
 
 
   buildCarryForwardPayload() {
-    debugger
+
 
     // 🔹 If user selected employees → use selected
     // 🔹 Else → use full table data

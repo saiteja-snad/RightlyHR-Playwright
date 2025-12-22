@@ -71,6 +71,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  totalCount: any;
 
   onRowsChange() {
     this.first = 0;
@@ -526,6 +527,7 @@ onStatusRejectSelect(status: string) {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
+             this.getApprovalStatusCounts();
           this.selectedProducts = [];
           this.searchValue = null;
 
@@ -604,6 +606,7 @@ onStatusRejectSelect(status: string) {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
+             this.getApprovalStatusCounts();
           this.selectedProducts = [];
           this.searchValue = null;
         },
@@ -676,12 +679,21 @@ onStatusRejectSelect(status: string) {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
           this.selectedProducts = [];
           this.searchValue = null;
         },
       });
   }
-
+getApprovalStatusCounts() {
+    let EmployeeId = parseInt(this.LOGIN.employeeId);
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   closeSummary() {
     this.modalService.dismissAll();
     this.responseSummary = null;

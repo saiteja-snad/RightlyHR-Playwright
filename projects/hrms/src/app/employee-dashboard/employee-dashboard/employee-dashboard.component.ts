@@ -16,9 +16,10 @@ import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
 import { TabsModule } from 'primeng/tabs';
 import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule],
+  imports: [CommonModule, DateformatPipe, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, ProfileIconComponent],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -30,6 +31,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   loading = false;
   avaliabletlyloading = false;
   hasRealEvents: boolean = false;
+  weaklyloghrsloader = false;
   subscription: any;
   empinfo = {} as Ipersonal;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -90,8 +92,6 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     today.setDate(today.getDate() - 1);
     const previousDate = today;
     this.previousDate = previousDate.getDate();
-    console.log(this.previousDate);
-
     this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
     this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
@@ -177,64 +177,115 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
 
-
   getworkanniversary() {
-    this.http
-      .getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth =this.currentMonth; // 0-based
+  console.log(currentMonth);
+  
+  const nextMonth =this.nextMonth;
+  let yearParam: string;
+  let monthParam: string;
 
-          const today = new Date();
-          const next30 = new Date();
-          next30.setDate(today.getDate() + 30); // next 30 days
+  // ✅ December case → pass current + next year
+  if (currentMonth === 12) {
+    yearParam = `${currentYear},${currentYear + 1}`;
+    monthParam = `12,1`; // Dec & Jan
+  } else {
+    yearParam = `${currentYear}`;
+    monthParam = `${currentMonth},${nextMonth}`;
+  }
 
-          this.anniversaries = data.filter((item: any) => {
+  this.http
+    .getData(
+      `Employeedata/ActiveEmployeesAnniversaries?year=${yearParam}&months=${monthParam}`
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        const today = new Date();
+        const next30 = new Date();
+        next30.setDate(today.getDate() + 30);
+
+        this.anniversaries = data
+          .filter((item: any) => {
             const doj = new Date(item.dateOfJoining);
 
-            // Anniversary THIS year (ignore original joining year)
             const anniversaryThisYear = new Date(
               today.getFullYear(),
               doj.getMonth(),
               doj.getDate()
             );
 
-            return anniversaryThisYear >= today && anniversaryThisYear <= next30;
+            const anniversaryNextYear = new Date(
+              today.getFullYear() + 1,
+              doj.getMonth(),
+              doj.getDate()
+            );
+
+            return (
+              (anniversaryThisYear >= today && anniversaryThisYear <= next30) ||
+              (anniversaryNextYear >= today && anniversaryNextYear <= next30)
+            );
+          })
+          .sort((a: any, b: any) => {
+            return (
+              this.getDobWithCurrentYear(a.dateOfJoining).getTime() -
+              this.getDobWithCurrentYear(b.dateOfJoining).getTime()
+            );
           });
-        },
-
-        error: (err: any) => console.log(err),
-      });
-  }
-
+      },
+      error: err => console.log(err),
+    });
+}
 
 
   getbrithday() {
     this.http
-      .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$))
+      .getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
 
           const today = new Date();
           const next30 = new Date();
-          next30.setDate(today.getDate() + 30); // next 30 days
+          next30.setDate(today.getDate() + 30);
 
           this.employeesBirthdays = data.filter((item: any) => {
             const dob = new Date(item.dob);
 
-            // birthday in CURRENT year
+            // Birthday this year
             const birthdayThisYear = new Date(
               today.getFullYear(),
               dob.getMonth(),
               dob.getDate()
             );
 
-            return birthdayThisYear >= today && birthdayThisYear <= next30;
-          });
+            // Birthday next year (for crossing Dec → Jan)
+            const birthdayNextYear = new Date(
+              today.getFullYear() + 1,
+              dob.getMonth(),
+              dob.getDate()
+            );
+
+            // Check for next 30 days including next-year birthdays
+            return (
+              (birthdayThisYear >= today && birthdayThisYear <= next30) ||
+              (birthdayNextYear >= today && birthdayNextYear <= next30)
+            );
+          })
+            .sort((a: any, b: any) => {
+              // SORT HERE by upcoming birthday date
+              return this.getDobWithCurrentYear(a.dob).getTime() -
+                this.getDobWithCurrentYear(b.dob).getTime();
+            });
+
         },
 
         error: (err: any) => console.log(err),
       });
   }
+
 
 
 
@@ -262,7 +313,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
               name: item.category?.name,
               allowed: item.allowedDays,
               used: item.utilizedDays,
-              percentage: (item.utilizedDays / item.allowedDays) * 100
+              percentage:
+                item.allowedDays === 0
+                  ? 0
+                  : (item.utilizedDays / item.allowedDays) * 100
             }));
 
             // ✅ NEW: Total leaves calculation
@@ -391,6 +445,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         this.hasRealEvents = events.length > 0;
         if (events.length) {
           this.eventItems = events;
+          console.log(this.eventItems);
+
         } else {
           this.quotationsData();
         }
@@ -424,6 +480,16 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   genderChartData: any = {};
   genderChartOptions: any = {};
 
+  // Custom carousel indicator properties
+  currentCarouselIndex = 0;
+  get activeIndicatorIndex() {
+    return this.currentCarouselIndex % 3;
+  }
+
+  onCarouselPageChange(event: any) {
+    this.currentCarouselIndex = event.page;
+  }
+
   getGenderCountChart() {
     this.genderCountLoader = true;
 
@@ -446,6 +512,13 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         const labels = data.map((item: any) => item.gender);
         const counts = data.map((item: any) => item.count);
 
+        // Dynamic color assignment based on gender
+        const colors = labels.map((gender: string) => {
+          if (gender === 'Female') return '#E91CAB';
+          if (gender === 'Male') return '#1E88E5';
+          return '#B146C3'; // Others
+        });
+
         // Assign chart data (same style as your reference)
         this.genderChartData = {
           labels: labels,
@@ -453,7 +526,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             {
               label: 'Gender Count',
               data: counts,
-              backgroundColor: ['#E91CAB', '#1E88E5', '#B146C3'],
+              backgroundColor: colors,
               barThickness: 10,
               borderRadius: {
                 topRight: 12,
@@ -587,10 +660,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
       cutout: "70%",
       plugins: {
         legend: { display: false },
-        
+
         tooltip: { enabled: false }
       },
-    
+
     };
   }
 
@@ -672,21 +745,30 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     };
 
     this.todayChartOptions = {
+      responsive: true,
       cutout: '75%',
       plugins: {
         legend: { display: false },
         tooltip: { enabled: false }
       },
+      interaction: {
+        mode: false
+      },
+      hover: {
+        mode: null,
+        intersect: false
+      },
+      events: []
 
     };
   }
 
 
   getWeeklyWorkLogHours() {
-    this.http
-      .getData(
-        `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
-      ).pipe(takeUntil(this.destroy$))
+    this.weaklyloghrsloader = true;
+    this.http.getData(
+      `v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`
+    ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           const attendance = res.data.attendanceData;
@@ -701,8 +783,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           this.totalHours = this.sumDurations(
             attendance.map((item: any) => item.duration.totalDuration)
           );
+          this.weaklyloghrsloader = false;
         },
-        error: (err) => console.log(err),
+        error: (err) => {
+          this.weaklyloghrsloader = false;
+          console.log(err);
+        }
       });
   }
 
@@ -722,6 +808,36 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  getDobWithCurrentYear(dob: string) {
+    const date = new Date(dob);
+    const today = new Date();
+
+    // Set year as current year first
+    date.setFullYear(today.getFullYear());
+
+    // If that birthday already passed → move to next year
+    if (date < today) {
+      date.setFullYear(today.getFullYear() + 1);
+    }
+
+    return date;
+  }
+
+  getannuservierWithCurrentYear(dob: string) {
+    const date = new Date(dob);
+    const today = new Date();
+
+    // Set anniversary to the current year first
+    date.setFullYear(today.getFullYear());
+
+    // If the anniversary already passed this year → move to next year
+    if (date < today) {
+      date.setFullYear(today.getFullYear() + 1);
+    }
+
+    return date;
   }
 
   nagvition() {

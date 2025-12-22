@@ -87,6 +87,13 @@ export class AttandaceReportTabsComponent {
       description: MODULE_INFOS.ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO,
       permission: { feature: 'Leave Carry Forward & Encashment Report', action: 'view' }
     },
+    {
+      label: 'Extra Log Hours Report',
+      route: '/reports/attendence-reports/extraloghour-report',
+      icon: '/time-off-icon/WFH-icon.png',
+      description: MODULE_INFOS.ATTENDANCE_EXTRA_HOURS_MODULE_INFO,
+      permission: { feature: 'Extra Log Hours Report', action: 'view' }
+    }
   ];
 
   constructor(public rbac: RbacService) { }

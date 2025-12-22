@@ -35,6 +35,7 @@ export class ProbationDetailsComponent implements OnInit {
   appcomment = {} as any;
   loggedinuser = {} as any;
   loading = false;
+  totalCount: any;
 
   constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
     private modalService: NgbModal, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
@@ -139,6 +140,7 @@ export class ProbationDetailsComponent implements OnInit {
         this.getProbationRequest();
         this.modalService.dismissAll();
         this.openModalService.openSuccessModal('Probation request raised successfully');
+        this.getApprovalStatusCounts();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -167,6 +169,7 @@ export class ProbationDetailsComponent implements OnInit {
       next: (response: any) => {
         this.modalService.dismissAll();
         this.getProbationRequest();
+         this.getApprovalStatusCounts();
         this.openModalService.openSuccessModal('Probation Request raised successfully');
       },
       error: (error: any) => {
@@ -179,7 +182,15 @@ export class ProbationDetailsComponent implements OnInit {
   closeModel() {
     this.modalService.dismissAll();
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.traineeoffboardingModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   openview(content: any) {
     this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static' });
   }

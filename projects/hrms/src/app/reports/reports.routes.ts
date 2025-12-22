@@ -32,8 +32,8 @@ export default [
             { path: 'regularization-report', loadComponent: () => import('./attendence-reports/regularization-reports/regularization-reports.component').then((m) => m.RegularizationReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Regularization Report.view' } },
             { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
             { path: 'leave-carryforward-report', loadComponent: () => import('./attendence-reports/leave-carry-forward-report/leave-carry-forward-report.component').then((m) => m.LeaveCarryForwardReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Leave Carry Forward & Encashment Report.view' } },
-
-        
+            { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
+            { path: 'extraloghour-report', loadComponent: () => import('./attendence-reports/extraloghour-report/extraloghour-report.component').then((m) => m.ExtraloghourReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Extra Log Hours Report.view' } },
         ]
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },

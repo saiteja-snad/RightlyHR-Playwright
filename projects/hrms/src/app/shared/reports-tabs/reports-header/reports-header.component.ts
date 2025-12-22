@@ -102,6 +102,12 @@ export class ReportsHeaderComponent implements OnInit {
     else if (this.router.url === '/reports/attendence-reports/remotelogin-report') {
       this.componentname = 'Remote Login Report';
     }
+    else if (this.router.url === '/reports/attendence-reports/remotelogin-report') {
+      this.componentname = 'Remote Login Report';
+    }
+    else if (this.router.url === '/reports/attendence-reports/extraloghour-report') {
+      this.componentname = 'Extra Log Hours Report';
+    }
     else if(this.router.url === '/reports/expense-reports'){
       this.componentname = 'Expense Report'
 

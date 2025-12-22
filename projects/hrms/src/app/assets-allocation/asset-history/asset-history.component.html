@@ -137,6 +137,56 @@
                                 </div>
                             </div>
                         </div>
+                        <div *ngFor="let transaction of transactionsData">
+                            <div class="card mb-3 mt-3"
+                                *ngIf="transaction.status === 'Block' ">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col"><strong>Asset Category</strong><br>{{
+                                            assetDetails?.assetCategory}}</div>
+                                        <div class="col"><strong>Asset Sub
+                                                Category</strong><br>{{assetDetails?.assetSubCategory}}</div>
+                                        <div class="col"><strong>Serial Number</strong><br>{{
+                                            assetDetails?.serialNumber }}</div>
+                                        <div class="col"><strong>Asset Model</strong> <br> {{
+                                            assetDetails?.assetModel }}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <strong>Reason</strong><br>                                 
+                                            <div class="d-flex align-items-center gap-1">
+                                                <!-- Show info icon only when comment exists -->
+                                                <ng-container 
+                                                *ngIf="transaction.additionalComments?.length > 0 &&transaction.additionalComments &&
+                                                transaction.additionalComments.trim() !== '' && transaction.additionalComments.trim() !== '-';
+                                                else noComment">                                  
+                                                    <div [ngbPopover]="commentPopup">
+                                                        <app-info-icon></app-info-icon>
+                                                    </div>                                 
+                                                </ng-container>                             
+                                                <!-- Fallback when no comments -->
+                                                <ng-template #noComment>
+                                                    <div>-</div>
+                                                </ng-template>                                
+                                                <!-- Popup content -->
+                                                <ng-template #commentPopup>
+                                                    {{ transaction.additionalComments}}
+                                                </ng-template>                                
+                                            </div>
+                                        </div>
+                                        <div class="col"><strong> Asset Status</strong><br>{{ transaction.status }}
+                                        </div>
+                                        <!-- <div class="col" *ngIf="transaction.status !== 'Inactive'">
+                                            <strong>Maintenance Start Date</strong><br>
+                                            {{ transaction.fromDate ? (transaction.fromDate | dateformat) : 'N/A' }}
+                                        </div>
+                                        <div class="col" *ngIf="transaction.status !== 'Inactive'"><strong>
+                                                Maintenance End Date</strong><br>{{ transaction.toDate ?
+                                            (transaction.toDate | dateformat) : 'N/A' }}</div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div *ngFor="let transaction of transactionsData">
                             <div class="card mb-3 mt-3 "

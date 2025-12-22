@@ -81,6 +81,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   joiningDate: any;
   selectedlocationid: any;
   dojDate:any;
+  totalCount: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
     private http: HttpService, public formValidations: FormValidationsService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
@@ -869,6 +870,7 @@ showContractDetailSeperationDots= true;
           this.conformationPopup.openSuccessModal('Separation request raised successfully');
           this.getSeparationRequest();
           this.webNotificationformanager();
+          this.getApprovalStatusCounts();
         }
       },
       error: (err: any) => {
@@ -893,6 +895,7 @@ showContractDetailSeperationDots= true;
       next: (response: any) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Contract Conversion Request raised successfully');
+        this.raiseConversionRequest();
         this.isLoading = false;
         setTimeout(() => {
             window.location.reload();
@@ -922,7 +925,24 @@ showContractDetailSeperationDots= true;
     // Open the delete confirmation modal
     this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.SeparationrequestmoduleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+   getApprovalStatusCountscontract() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.contractorModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   updateJobDetails(): void {
     const formData = this.jobDetailsupdateForm.value;
     const sdata = {

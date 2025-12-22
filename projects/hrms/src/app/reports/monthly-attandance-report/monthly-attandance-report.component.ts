@@ -107,9 +107,13 @@ export class MonthlyAttandanceReportComponent  {
     this.spinnerLoader= true;
     const formData= f.value;
     const month= formData.month.value;
-    const year= formData.year.label;
+    const year= formData.year.value;
     
-    this.http.downloadMonthlyAttendanceReport(`Reports/MonthlyAttendanceReport`, month, year).subscribe({
+    // Calculate start and end dates for the selected month
+    const startDate = moment().year(year).month(month - 1).startOf('month').format('YYYY-MM-DD');
+    const endDate = moment().year(year).month(month - 1).endOf('month').format('YYYY-MM-DD');
+    
+    this.http.downloadMonthlyAttendanceReportV2(`Reports/MonthlyAttendanceReportV2`, startDate, endDate).subscribe({
       next: (response: any) => {
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);

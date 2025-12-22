@@ -904,6 +904,21 @@ select:focus {
         background-color: #e8f0fb !important;
         color: #222222 !important;
     }
+}
+
+// Global styling for p-select with appendTo="body"
+.p-select-overlay {
+    .p-select-option.p-select-option-selected.p-focus {
+        background: #e8f0fb !important;
+        background-color: #e8f0fb !important;
+        color: #222222 !important;
+    }
+
+    .p-select-option.p-select-option-selected {
+        background: #e8f0fb !important;
+        background-color: #e8f0fb !important;
+        color: #222222 !important;
+    }
 
     .p-select:hover {
         border: 1px solid var(--input-border-color) !important;

@@ -250,8 +250,9 @@ export class CarryForwardLeaveEntitlementComponent {
     this.http.postbyId(`LeaveEntitlementJobs/${jobid}/retry`)
       .subscribe({
         next: (res: any) => {
+              this.getdatacarryforword();
           this.conformationPopup.openSuccessModal("Initial Leave Entitlements Retryed Successfully");
-          this.getdatacarryforword();
+      
         },
         error: (err) => {
           console.error(err);

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -28,7 +28,7 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
   jobSequenceId!: string;
   destroy$ = new Subject<void>();
   routeToInfoMap!: { [key: string]: string };
-  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService,) { }
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService, private location: Location) { }
 
   ngOnInit(): void {
 
@@ -38,6 +38,13 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.ComponentnameDisplay();
+        // Store source route in localStorage
+        const url = event.url;
+        if (url.includes('/load-entitlement/carry-forward')) {
+          localStorage.setItem('sourceRoute', '/settings/timeoff-configurations/load-entitlement/carry-forward');
+        } else if (url.includes('/load-entitlement/initial-load-entitlements')) {
+          localStorage.setItem('sourceRoute', '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements');
+        }
       }
     });
 
@@ -404,9 +411,9 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
   }
 
   navigateToloadentiments() {
-    this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
-    localStorage.removeItem('carryForwardJobId'),
-      localStorage.removeItem('loadEntitlement')
+    this.location.back();
+    localStorage.removeItem('carryForwardJobId');
+    localStorage.removeItem('loadEntitlement');
   }
 
   ngOnDestroy() {

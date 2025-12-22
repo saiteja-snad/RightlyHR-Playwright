@@ -1,6 +1,6 @@
 <div class="load-components-container">
     <form autocomplete="off" [formGroup]="leaveAllocationForm" (ngSubmit)="sumbitdata()">
-        <div class="card custom-background-card p-4">
+        <div class="card custom-background-card p-5">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="year" class="form-label custom-label mb-2">
@@ -81,12 +81,12 @@
                     </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
+                <div class="col-md-4 ">
                     <label for="categoryName" class="form-label custom-label mb-2">{{ "Leave Category" | translate
                         }} <span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="categoryDetails" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" filterPlaceholder="Search Leave Category"
-                            [showClear]="false" formControlName="categoryName"  placeholder="Please select leave category"  [resetFilterOnHide]="true"
+                            [showClear]="false" formControlName="categoryName"  placeholder="Please select leave category"  [resetFilterOnHide]="true" 
                             class="form-select custom-select" multiple="true">
                         </p-multiSelect>
 

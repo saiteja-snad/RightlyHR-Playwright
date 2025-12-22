@@ -301,7 +301,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
     let loggedInUser=this.AuthService.getToken()
     console.log(loggedInUser)
     const payload = {
-      headerStatus: 'Inactive',
+      headerStatus: 'Active',
       updatedBy: loggedInUser.employeeId,
     };
     this.http
@@ -309,7 +309,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.modal.openSuccessModal(`Record inactivated successfully`);
+          this.modal.openSuccessModal(`Record activated successfully`);
           this.getAllRateCardDetails();
         },
         error: (err: any) => {

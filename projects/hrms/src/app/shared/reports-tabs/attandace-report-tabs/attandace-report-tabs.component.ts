@@ -84,7 +84,7 @@ export class AttandaceReportTabsComponent {
       label: 'Leave Carry Forward & Encashment Report',
       route: '/reports/attendence-reports/leave-carryforward-report',
       icon: '/time-off-icon/WFH-icon.png',
-      description: MODULE_INFOS.ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO,
+      description: MODULE_INFOS.LEAVE_CARRYFORWARD_ENCASHMENT_REPORTS_MODULE_INFO,
       permission: { feature: 'Leave Carry Forward & Encashment Report', action: 'view' }
     },
     {

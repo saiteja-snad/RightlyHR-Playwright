@@ -169,9 +169,9 @@ getTeam() {
 
 
   getAttendanceReports() {
-    this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
+    this.subscription = this.reportsService.getLeaveCarryForwardReport({}).subscribe({
       next: (res: any) => {
-        this.extractUniqueYearlyFilters(res);
+        this.extractUniqueYearlyFilters(res.data || []);
       }
     });
   }
@@ -274,6 +274,7 @@ getTeam() {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
       department: 'DEPARTMENT',
+      subDepartment: 'TEAM',
       teamManagerName: 'TEAM MANAGER',
       year: 'YEAR',
       shift: 'SHIFT',
@@ -296,6 +297,7 @@ getTeam() {
       'EMPLOYEE ID',
       'EMPLOYEE NAME',
       'DEPARTMENT',
+      'TEAM',
       'TEAM MANAGER',
       'YEAR',
       'SHIFT',

@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
+import { OpenModalService } from '../../../../../services/open-modal.service';
 @Component({
   selector: 'app-load-entilements-map-categoery',
   imports: [CommonModule, Select, FormsModule],
@@ -27,7 +28,7 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
   employeesList: any[] = [];
 
   constructor(public formValidations: FormValidationsService, private route: Router,
-    private http: HttpService, public formValidation: FormValidationsService,) { }
+    private http: HttpService, public formValidation: FormValidationsService, private conformationPopup: OpenModalService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -142,7 +143,10 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
         this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'])
       },
       error: (err) => {
+
         console.error(err);
+        this.conformationPopup.openErrorModal(err.error.message || "Carry Forward Entilement Failed");
+
       }
     });
   }

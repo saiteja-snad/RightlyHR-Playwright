@@ -74,7 +74,12 @@ export class IntialLoadEntitlementCreateComponent {
       this.leaveAllocationForm.get('shift')?.reset();
       this.leaveAllocationForm.get('categoryName')?.reset();
       this.leaveAllocationForm.get('location')?.enable();
-
+         this.leaveAllocationForm.get('subLocation')?.disable();
+      this.leaveAllocationForm.get('shift')?.disable();
+      this.leaveAllocationForm.get('categoryName')?.disable();
+      this.shiftDetails = [];
+      this.categoryDetails = [];
+      this.subLocationDetails = [];
     }
   }
 
@@ -162,7 +167,7 @@ export class IntialLoadEntitlementCreateComponent {
 
   getCategoryDetails(policy: any): void {
     this.leaveAllocationForm.get('categoryName')?.reset();
-     this.leaveAllocationForm.get('categoryName')?.enable();
+    this.leaveAllocationForm.get('categoryName')?.enable();
 
     let params = {
       locationId: this.leaveAllocationForm.get('location')?.value?.id,
@@ -179,11 +184,11 @@ export class IntialLoadEntitlementCreateComponent {
 
         // Pre-select categories from localStorage
         // if (this.carryforwarddata?.categoryIds?.length) {
-       // Only auto-patch on BACK navigation, NOT on manual shift change
+        // Only auto-patch on BACK navigation, NOT on manual shift change
         if (this.carryforwarddata?.categoryIds?.length) {
           const validCategoryIds = this.categoryDetails.map((c: any) => c.id).filter((id: any) =>
-              this.carryforwarddata.categoryIds.includes(id)
-            );
+            this.carryforwarddata.categoryIds.includes(id)
+          );
 
           this.leaveAllocationForm.patchValue({
             categoryName: validCategoryIds
@@ -210,9 +215,9 @@ export class IntialLoadEntitlementCreateComponent {
       location: formValue.location,
       subLocation: formValue.subLocation,
       shift: formValue.shift,
-       categoryIds: Array.isArray(formValue.categoryName)
-      ? formValue.categoryName
-      : Object.values(formValue.categoryName || [])
+      categoryIds: Array.isArray(formValue.categoryName)
+        ? formValue.categoryName
+        : Object.values(formValue.categoryName || [])
     };
 
     localStorage.setItem(

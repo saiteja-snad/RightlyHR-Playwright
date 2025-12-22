@@ -70,6 +70,10 @@ export class LoadEntitlementCreateComponent {
       this.leaveAllocationForm.get('subLocation')?.reset();
       this.leaveAllocationForm.get('shift')?.reset();
       this.leaveAllocationForm.get('location')?.enable();
+               this.leaveAllocationForm.get('subLocation')?.disable();
+      this.leaveAllocationForm.get('shift')?.disable();
+      this.leaveAllocationForm.get('categoryName')?.disable();
+      this.subLocationDetails = [];
     }
   }
 

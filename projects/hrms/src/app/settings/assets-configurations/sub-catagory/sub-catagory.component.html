@@ -27,13 +27,11 @@
               *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || rbac.allowedToAccess('Asset Sub Catagory.delete')">
               <div class="d-flex gap-4">
                 <div *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update')">
-                  <a (click)="openupdate(updateassetescataerys, asset)"><img src="/settings-icon/edit.png"
-                      alt="edit icon" class="settings-common-icon">
+                  <a (click)="openupdate(updateassetescataerys, asset)"> <app-settings-update-icon />
                   </a>
                 </div>
                 <div *ngIf="rbac.allowedToAccess('Asset Sub Catagory.delete')">
-                  <a (click)="opendelete(deleteconformation,asset)"><img src="/settings-icon/trash-2.png"
-                      alt="edit icon" class="settings-common-icon"></a>
+                  <a (click)="opendelete(deleteconformation,asset)">  <app-settings-delete-icon /></a>
                 </div>
               </div>
             </td>

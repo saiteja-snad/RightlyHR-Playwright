@@ -63,11 +63,11 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    this.loading=true
+    this.loading = true;
     let empId = this.empinfo.employeeId;
     this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.loading=false
+        this.loading = false;
         this.compOff = response;
         this.waitingForApprovalCompOffCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
         this.approvalCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
@@ -75,7 +75,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
         this.processedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
       },
       error: (error) => {
-        this.loading=false
+        this.loading = false;
         console.error('Error fetching data:', error);
         this.compOff = []; // Set to empty array on error
       },

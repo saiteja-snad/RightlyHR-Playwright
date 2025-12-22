@@ -13,9 +13,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SettingsLoaderComponent } from "../../../shared/settings-loader/settings-loader.component";
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 @Component({
   selector: 'app-asset-catagory',
-  imports: [ReactiveFormsModule, CommonModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, SettingsLoaderComponent],
+  imports: [ReactiveFormsModule, CommonModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, SettingsLoaderComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './asset-catagory.component.html',
   styleUrl: './asset-catagory.component.scss'
 })

@@ -44,6 +44,7 @@ import {
   SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS,
   SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS,
   ATTENDANCE_ELIGIBILITY_CRITERIA_TABS,
+  SETTINGS_RATECARD_TABS,
   SETTINGS_EMPLOYEE_FIELDS_JOB_TABS,
   PMS_CONFIGURATION_TABS,
   TEAM_PERFORMANCE_TABS,
@@ -74,6 +75,7 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  ON_BEHALF_OF_EXPENSES_TABS,
   SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS,
   SETTINGS_TIMESHEET_LOCKING_TABS,
   MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES,
@@ -299,6 +301,13 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
         }
+         if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+           for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
 
 
@@ -308,6 +317,15 @@ export class AccessNavigationService {
           return (route = '/policies');
         }
         break;
+
+
+
+      case '/employee-dashboard':
+        if (this.rbac.allowedToAccess('Employee Dashboard.view')) {
+          return (route = '/employee-dashboard');
+        }
+        break;
+
 
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
@@ -467,7 +485,7 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
-          return (route = 'time-off/global-permissions');
+          return (route = 'on-behalf-of/global-permissions');
         }
 
 
@@ -504,6 +522,15 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -691,6 +718,12 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        break;
+
+      case '/theme':
+        if (this.rbac.allowedToAccess('Themes.view')) {
+          return (route = '/theme');
         }
         break;
 
@@ -890,6 +923,16 @@ export class AccessNavigationService {
         }
 
         break;
+        case '/settings/employee-rate-card/rate-card':
+        if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+           // return (route = '/settings/employee-rate-card/rate-card');
+          for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
 
       case '/reports/standard-reports':
         if (this.rbac.allowedToAccess('Standard Reports.view')) {
@@ -1020,6 +1063,7 @@ export class AccessNavigationService {
       //   }
       //   break;
 
+
       case '/settings/locking-configuration':
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           for (const item of SETTINGS_AttendanceLock_TABS) {
@@ -1057,6 +1101,7 @@ export class AccessNavigationService {
       //timesheet locking
       case '/settings/timesheet-locking-configuration':
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
+
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1442,6 +1487,15 @@ export class AccessNavigationService {
           }
         }
         break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
 
       case 'attendance':
         if (this.rbac.allowedToAccess('Attendance.view')) {
@@ -1449,15 +1503,15 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/time-off/on-behalf-of-approvals':
+      case '/on-behalf-of/on-behalf-of-approvals':
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
-          return (route = '/time-off/on-behalf-of-approvals/time-off');
+          return (route = '/on-behalf-of/on-behalf-of-approvals/time-off');
         }
         break;
 
-      case '/time-off/global-permissions':
+      case '/on-behalf-of/global-permissions':
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
-          return (route = '/time-off/global-permissions');
+          return (route = '/on-behalf-of/global-permissions');
         }
         break;
 

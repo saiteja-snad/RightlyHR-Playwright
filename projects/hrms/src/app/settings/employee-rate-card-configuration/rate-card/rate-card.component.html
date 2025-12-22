@@ -1,0 +1,171 @@
+<div class="custom-main-component-container">
+  <!--header-->
+  <div class="component-header-content">
+    <app-settings-header />
+    <div class="d-flex align-items-center gap-3">
+       <button type="button" class="clear-all-btn" (click)="resetall()" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value">
+        Clear All</button>
+      <form autocomplete="off" [formGroup]="yearSelectionForm" class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+        <div class="custom-p-select-content">
+          <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
+            class="form-select custom-select"  (onChange)="onYearChange()" />
+        </div>
+        <label class="form-label custom-label filter-labels m-0" for="">Location</label>
+        <div class="custom-p-select-content">
+          <p-select formControlName="location" [options]="locations" placeholder="Select location"
+          [resetFilterOnHide]="true"[showClear]="false" [filter]="true"filterBy="jobLocationName" optionLabel="jobLocationName" optionValue="id"
+            class="form-select custom-select" (onChange)="onLocationChange($event.value)" />
+        </div>
+        <label class="form-label custom-label filter-labels m-0" for="">Sub-Location</label>
+        <div class="custom-p-select-content">
+          <p-select formControlName="subLocation" [options]="subLocations" placeholder="Select sub-location"  
+          filterBy="jobSubLocationName"optionLabel="jobSubLocationName" optionValue="id"
+          [resetFilterOnHide]="true" [showClear]="false" [filter]="true"
+            class="form-select custom-select"  />
+        </div>
+        <button class="custom-btn btn-primary px-5" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value" (click)="this.getAllRateCardDetails()">Apply</button>
+      </form>
+
+      <button class="custom-btn btn-primary px-5" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')" (click)="openAdd()">Create</button>
+    </div>
+  </div>
+
+  <div class="d-flex gap-3 w-100">
+    <div class="component-left-tabs-container">
+      <app-rate-card-tabs />
+    </div>
+    <!--Content-->
+    <div class="custom-setting-right-content">
+      <!--Input search-->
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="getAllRateCardDetails()"
+          class="form-control custom-search-input" placeholder="Search with role, location, sublocation" aria-label="Username"
+          aria-describedby="basic-addon1">
+      </div>
+      <div class="custom-table-content">
+         @if (!isloading) {
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th class="text-center">{{'Role'|translate}}</th>
+              <th class="text-center">{{'Effective From'|translate}}</th>
+              <th class="text-center">{{'Location'|translate}}</th>
+              <th class="text-center">{{'Sub-Location'|translate}}</th>
+              <th class="text-center">{{'Status'|translate}}</th>
+              <th class="text-center" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')">{{'Action'|translate}}</th>
+              <!-- <th>Last Updated By</th>
+                <th>Last Updated On</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            @if (getActiveRateCardDetails$ | async; as getAllDetails) {
+            @if (!isloading && getAllDetails.length > 0) {
+            @for (item of getAllDetails; track item) {
+            <tr>
+              <td class="text-center">{{ item?.roleName || '-' }}</td>
+              <!-- <td class="text-center">{{ item?.shiftDetails?.name || '-' }}</td> -->
+              <td class="text-center">{{ item?.effectiveFrom ? (item?.effectiveFrom | dateformat) : '-' }}</td>
+              <td class="text-center">{{ item?.locationName ? item?.locationName : '-' }}</td>
+              <td class="text-center">{{ item?.subLocationName?item?.subLocationName : '-' }}</td>
+              <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
+              <td class="text-center" >
+                <div class="dropdown" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')">
+                   <span type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </span>
+                  <!-- <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Inactive'">
+                <li (click)="onClick(item,Activeconfirmationpopup)">
+                  <a class="dropdown-item">Active</a>
+                </li>
+              </ul> -->
+                  <ul class="dropdown-menu custom-dropdown-menu" *ngIf="item.status==='Active'">
+                    <li (click)="onClick(item,confirmationpopup)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.delete')">
+                      <a class="dropdown-item"><i class="bi bi-slash-circle me-2"></i> Inactive</a>
+                    </li>
+                     <li (click)="updateNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.update')">
+                        <a class="dropdown-item">
+                           <app-settings-update-icon /> {{"Update" | translate}}
+                        </a>
+                       </li>
+                       <li (click)="closeNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')">
+                        <a class="dropdown-item">
+                           <i class="bi bi-copy me-2"></i>{{"Clone" | translate}}
+                        </a>
+                       </li>
+                        <!-- <li (click)="viewNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.view')">
+                        <a class="dropdown-item">
+                          <div class="d-flex">
+                          <div > <app-document-view-icon /> </div>
+                          <div class="mt-2 me-3"> {{"View" | translate}}</div>
+                          </div>
+                        </a>
+                       </li> -->
+
+                        <li (click)="viewNavigation(item)" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.view')">
+                        <a class="dropdown-item">
+                           <i class="bi bi-eye me-2"></i>{{"View" | translate}}
+                        </a>
+                       </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+            }
+            } @else {
+            <tr><app-no-data-found /></tr>
+            }
+            } @else {
+            <div class="custom-compoent-data-loader">
+              <app-data-loader-content />
+            </div>
+            }
+          </tbody>
+        </table>
+      }
+        @else {
+       <app-data-loader-content />
+       }
+      </div>
+      <!--Pagination-->
+      @if (getActiveRateCardDetails$ | async; as getAllocationDetails) {
+      @if (!isloading && getAllocationDetails.length > 0) {
+      <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+          <div class="d-flex align-items-center gap-3 p-2">
+            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+              (ngModelChange)="onPageSizeChange($event)">
+              <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+            </select>
+            <span class="pagination-label text-nowrap">
+              Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+              (+first + + rows) }} of {{ collectionSize }}
+            </span>
+          </div>
+          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+      </div>
+      }}
+
+    </div>
+  </div>
+</div>
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to Inactive ?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="activeRateCard(); model.close()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>

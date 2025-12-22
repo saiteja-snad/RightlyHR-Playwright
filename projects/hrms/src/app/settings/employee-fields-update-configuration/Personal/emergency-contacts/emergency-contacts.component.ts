@@ -224,6 +224,7 @@ get isReadOnlyMode(): boolean {
           approvalAuthority: approvalAuthority.toString(),
           approvalEntity: formValue.approvalType === 'MANAGER' ? formValue.selectedManager : '',
           updatedBy: loggedInUser.employeeId,
+          ApprovalScope: 'Field'
         };
 
         this.subscription = this.http
@@ -258,6 +259,7 @@ get isReadOnlyMode(): boolean {
           return {
             ColumnName: fieldName,
             SourceFieldName: field?.actualFieldName ?? '',
+            ApprovalScope:'Field'
           };
         });
         const request = {

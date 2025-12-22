@@ -11,16 +11,16 @@
       <thead>
         <th>Asset Category</th>
         <th>Asset Sub Category</th>
+          <th>Asset Modal</th>
         <th>Serial Number</th>
         <th>Asset Status</th>
+        <th>Purchase Date</th>
         <th>Allocated To</th>
         <th>Asset ID</th>
         <th>Location </th>
         <th>Sub Location </th>
-        @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release
-        Asset.view') ||
-        rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset
-        Details.view')){
+        @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release Asset.view') ||
+        rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset Details.view')){
         <th class="text-center">Action</th>
         }
       </thead>
@@ -29,8 +29,10 @@
           <tr *ngFor="let asset of assetslist | async">
             <td>{{ asset.assetCategory }}</td>
             <td>{{ asset.assetSubCategory }}</td>
+            <td>{{ asset.assetModel }}</td>
             <td>{{ asset.serialNumber }}</td>
             <td>{{ asset.status }}</td>
+             <td>{{ asset.purchaseDate | date }}</td>
             <td>
               <ng-container *ngIf="asset.assignedTo; else unassigned">
                 {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
@@ -409,7 +411,7 @@
 <ng-template #conformationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+    <app-confirmation-icon />
       <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
@@ -490,7 +492,7 @@
 <ng-template #inativeconfromation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+    <app-confirmation-icon />
       <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
@@ -774,7 +776,7 @@
 <ng-template #avilableasstes let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+    <app-confirmation-icon />
       <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -788,7 +790,7 @@
 <ng-template #activeanasstes let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+    <app-confirmation-icon />
       <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">

@@ -12,9 +12,12 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-asset-vendor',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, ConfirmationIconComponent],
   templateUrl: './asset-vendor.component.html',
   styleUrl: './asset-vendor.component.scss'
 })

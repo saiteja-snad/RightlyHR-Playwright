@@ -204,7 +204,8 @@ export interface Iidentity {
     identityNumber: string,
     attachment: string,
     isDeleted: boolean,
-    referenceId:any
+    referenceId:any,
+    referenceCategory:any
 }
 export interface Iidentitydrop {
     sno: number,

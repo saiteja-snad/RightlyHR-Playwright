@@ -15,8 +15,7 @@
         height: max-content;
         padding: 0.75rem;
         border-radius: 0.75rem;
-        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-        border: 1px solid #DCE3E9;
+        background: var(--card-bg-color);
 
         .blood-group {
             background: #EA362C1A;
@@ -37,6 +36,7 @@
             font-weight: 400;
             font-size: var(--fontsize10);
             color: var(--primary-color);
+            line-break: anywhere;
         }
     }
 
@@ -45,11 +45,10 @@
         height: max-content;
         padding: 0.75rem;
         border-radius: 0.75rem;
-        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-        border: 1px solid #DCE3E9;
+        background: var(--card-bg-color);
 
         .blood-group {
-            background: #DCE3E9;
+            background: var(--content-border-color);
         }
     }
 }
@@ -103,6 +102,6 @@
 
     .bloodGroupTab {
         box-shadow: none !important;
-        background: linear-gradient(180deg, #FFFFFF 0%, #CFDBEE 100%) !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, var(--card-tabs-active-bg-color) 100%) !important;
     }
 }

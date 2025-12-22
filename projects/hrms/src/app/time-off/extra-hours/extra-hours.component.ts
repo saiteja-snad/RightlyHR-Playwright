@@ -14,10 +14,11 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { ExtraHoursTabsComponent } from "../../shared/time-off-module-tabs/extra-hours-tabs/extra-hours-tabs.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-extra-hours',
-  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent],
+  imports: [RouterModule, ReactiveFormsModule, TranslateModule, CommonModule, Select,ModuleInfoIconComponent, ModuleInformationComponent, NgbPopoverModule, ExtraHoursTabsComponent],
   templateUrl: './extra-hours.component.html',
   styleUrl: './extra-hours.component.scss',
   encapsulation: ViewEncapsulation.None,

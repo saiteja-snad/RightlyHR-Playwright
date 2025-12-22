@@ -10,10 +10,12 @@ import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-attendance-regularization-types',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './attendance-regularization-types.component.html',
   styleUrl: './attendance-regularization-types.component.scss'
 })

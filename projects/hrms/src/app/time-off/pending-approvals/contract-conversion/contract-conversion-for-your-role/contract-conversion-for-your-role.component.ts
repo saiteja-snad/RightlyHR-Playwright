@@ -65,7 +65,7 @@ isLoading = false;
     { label: 25, value: 25 },
   ];
   selectedLeaveStatus: any;
-
+  totalCount:any;
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
     private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
     this.customsetup = environment.dateformat;
@@ -245,6 +245,7 @@ onCommentChange(value: string) {
         this.isLoading = false;
         f.reset();
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
         this.selectedContractData.trcomments = '';
         this.signalService.contractForyouTriggerSignal.set(true);
       },
@@ -279,6 +280,7 @@ onCommentChange(value: string) {
       complete: () => {
         this.isLoading = false;
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
         this.selectedContractData = {};
       },
     });
@@ -307,11 +309,20 @@ onCommentChange(value: string) {
       },
       complete: () => {
         this.getAllPendingApprovals();
+        this.getApprovalStatusCounts();
         this.signalService.contractForyouTriggerSignal.set(true);
       },
     });
   }
-
+ getApprovalStatusCounts() {
+      let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.contractEmployeeConversionModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   //function to get the employeedata
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.employeeId;

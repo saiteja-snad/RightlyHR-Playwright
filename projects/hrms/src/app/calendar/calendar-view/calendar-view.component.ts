@@ -15,9 +15,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-calendar-view',
-  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent,ModuleInfoIconComponent],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -49,6 +50,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     this.filterEventsByTitle();
     this.employeeInfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     const currentDate = new Date();
+    this.currentMonth = currentDate.getMonth() + 1;
     this.mixedMonth = currentDate.getMonth() + 1; // getMonth() returns 0 for January, so add 1
     this.changeYear = new Date(currentDate).getFullYear();
     this.updateModuleInfo();
@@ -179,7 +181,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
 
   async LoadEvents(): Promise<any[]> {
     try {
-      const employeeId = parseInt(this.employeeInfo.employeeId, 10);
+      const employeeId = parseInt(this.employeeInfo.employeeId);
       const apiEndpoints = [
         `Employeedata/ActiveEmployeesbday?months=${this.mixedMonth}`,
         `Employeedata/ActiveEmployeesAnniversaries?year=${this.changeYear}&months=${this.mixedMonth}`,
@@ -251,8 +253,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
           const orgHolidaysItems = holidaysResult.orgHolidaysItems;
           for (let j = 0; j < orgHolidaysItems?.length; j++) {
             const holidayDate = new Date(orgHolidaysItems[j].holidayDate);
-            const formattedHolidayDate = `${this.changeYear}-${String(holidayDate.getMonth() + 1).padStart(2, '0')}-
-            ${String(holidayDate.getDate()).padStart(2,'0')}`;
+            const formattedHolidayDate = `${this.changeYear}-${String(holidayDate.getMonth() + 1).padStart(2, '0')}-${String(holidayDate.getDate()).padStart(2,'0')}`;
             const eventTitle = `${orgHolidaysItems[j].holidayName}${orgHolidaysItems[j].isOptional ? ' (Optional)' : ''}`;
             if (orgHolidaysItems[j].status === 'Published' && !this.isEventDuplicate(events, eventTitle, formattedHolidayDate)) {
               events.push({

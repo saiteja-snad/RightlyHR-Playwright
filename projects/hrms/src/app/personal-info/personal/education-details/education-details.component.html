@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container employee-label-info">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Academic Qualifications </span></div>
     @if(canAccess('create','education')){
@@ -8,7 +8,7 @@
     }
     }
   </div>
-
+     <div *ngIf="addedRecords.length>0" class="error-msg float-end">Note: Record addition request sent for approval</div>
   <div class="custom-table-content">
     @if (!loading) {
     <table class="w-100">
@@ -41,13 +41,17 @@
             <td class="text-center">
               <span *ngIf="edacationDetails.attachment;else noData"
                 (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template #noData>-</ng-template>
+                  <app-download-icon /></span><ng-template #noData>-</ng-template>
             </td>
             @if( canAccess('update','education' ) || canAccess('delete','education')){
             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
             'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
             employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
             <td class="text-center">
+              @if(disablePendingFields(edacationDetails.id)){
+                <app-info-icon [ngbPopover]="pendingPopover" triggers="click" class="cursor"
+                popoverClass="pending-popover" (click)="setActiveMessage(edacationDetails.id)"/>
+              }@else{
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -56,18 +60,19 @@
                   @if( canAccess('update','education' )){
                   <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
                     <a class="dropdown-item">
-                      <i class="bi bi-pencil me-2"></i>Update
+                       <i class="bi bi-pencil me-2"></i>Update
                     </a>
                   </li>
                   }@if( canAccess('delete','education' )){
                   <li (click)="opendeletModal(deleteconformation,edacationDetails)">
                     <a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Delete
+                         <i class="bi bi-trash3 me-2"></i>Delete
                     </a>
                   </li>
                   }
                 </ul>
               </div>
+              }
             </td>
             }}
           </tr>
@@ -378,4 +383,7 @@
       <button type="submit" class="custom-btn btn-primary" (click)="educationDelete()">Yes</button>
     </div>
   </div>
+</ng-template>
+<ng-template #pendingPopover>
+  <div class="module-info-text">{{activeMessage}}</div>
 </ng-template>

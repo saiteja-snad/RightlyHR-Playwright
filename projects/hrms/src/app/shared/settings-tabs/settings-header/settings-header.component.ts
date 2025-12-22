@@ -312,6 +312,7 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       this.moduleName = 'Time Off';
       this.componentName = 'Flexible Work Hours Allocation';
     }
+
     else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
@@ -338,6 +339,10 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       this.moduleName = 'Time Off';
       this.navigationname = 'Bulk Entitlements'
       this.componentName = 'Initial Leave Entitlements';
+    }
+    else if (url.startsWith('/settings/employee-rate-card/rate-card')) {
+      this.moduleName = 'Rate Card Configuration';
+      this.componentName = 'Rate Card';
     }
   }
 
@@ -410,6 +415,7 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
 
   }
 
+
   navigateToloadentiments() {
     this.location.back();
     localStorage.removeItem('carryForwardJobId');
@@ -420,4 +426,6 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
   this.destroy$.next();
   this.destroy$.complete();
 }
+
 }
+

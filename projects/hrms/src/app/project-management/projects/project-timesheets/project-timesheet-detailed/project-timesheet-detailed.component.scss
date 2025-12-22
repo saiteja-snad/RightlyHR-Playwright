@@ -16,6 +16,7 @@
     border: 1px solid #E1E7F2 !important;
 
     th,td {
+    th, td {
         font-size: var(--fontsize14) !important;
     }
 
@@ -46,6 +47,10 @@
 
     td:last-child {
         border-right: 0px !important;
+    }
+
+    .p-chip {
+        background: var(--card-bg-color) !important;
     }
 }
 

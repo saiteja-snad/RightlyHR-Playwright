@@ -41,11 +41,11 @@
   padding: 0.5rem;
   border: 1px solid #FFFFFF;
   border-radius: 0.5rem;
-  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+  background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
 
   .no-data-image {
-    width: 7rem !important;
-    height: 6rem !important;
+    --no-data-icon-width: 7rem !important;
+    --no-data-icon-height: 6rem !important;
   }
 
   .no-data-text {
@@ -128,8 +128,8 @@
   border: 1px solid #FFFFFF;
   border-radius: 0.5rem;
   padding: 0.75rem;
-  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-  border: 1px solid #DCE3E9;
+  background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
+  border: 1px solid var(--content-border-color);
   box-shadow: 0px 0px 5px 0px #0B3A831A;
 
   .profile-image {
@@ -254,11 +254,10 @@
 //  Table chips styles 
 .skill-overview-table {
   height: 320px !important;
-  border: 1px solid #CCDAEC;
+  border: 1px solid var(--content-border-color);
   border-radius: 0.25rem !important;
 
-  th,
-  td {
+  th, td {
     padding: 0.75rem !important;
     font-size: var(--fontsize12) !important;
     text-align: center !important;
@@ -291,8 +290,8 @@
   }
 
   .p-chip {
-    border: 1px solid #D1D9E2 !important;
-    background: #F8FBFF !important;
+    border: 1px solid var(--content-border-color) !important;
+    background:  var(--card-bg-color) !important;
     font-weight: 400;
     padding: 0.25rem 0.5rem;
     border-radius: 0.5rem;
@@ -322,7 +321,7 @@
   background: transparent;
 
   .p-skeleton {
-    background: linear-gradient(180deg, #FFFFFF 0%, #dbe3f2 100%) !important;
+    background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%) !important;
   }
 }
 

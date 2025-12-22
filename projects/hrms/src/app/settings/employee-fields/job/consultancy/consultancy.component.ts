@@ -10,11 +10,13 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { RbacService } from '../../../../services/rbac.service';
 import { Iconsoltancy } from './consoltancy-model';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
+import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
+import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
 
 
 @Component({
   selector: 'app-consultancy',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, SettingsUpdateIconComponent, SettingsDeleteIconComponent],
   templateUrl: './consultancy.component.html',
   styleUrl: './consultancy.component.scss'
 })

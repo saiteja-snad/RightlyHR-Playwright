@@ -43,13 +43,13 @@
                             <!--Update-->
                             <div>
                                 <a (click)="openupdate(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                     <app-settings-update-icon />
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
                                 <a (click)="opendelete(e)" *ngIf="rbac.allowedToAccess('Eligible For Rehire.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                       <app-settings-delete-icon />
                                 </a>
                             </div>
                         </div>

@@ -205,7 +205,9 @@ export class IntialLoadEntitlementCreateComponent {
       location: formValue.location,
       subLocation: formValue.subLocation,
       shift: formValue.shift,
-      categoryIds: formValue.categoryName || []
+       categoryIds: Array.isArray(formValue.categoryName)
+      ? formValue.categoryName
+      : Object.values(formValue.categoryName || [])
     };
 
     localStorage.setItem(

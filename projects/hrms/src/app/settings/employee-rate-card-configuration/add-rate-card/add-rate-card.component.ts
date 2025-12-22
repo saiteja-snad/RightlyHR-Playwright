@@ -323,6 +323,44 @@ onRateChange(rateIndex: number, currencyIndex: number) {
           },
         });
   }
+  normalizeExperience(value: number): number {
+  if (value == null || isNaN(value)) return value;
+
+  const years = Math.floor(value);
+  const decimalPart = value - years;
+
+  // convert decimal to months
+  let months = Math.round(decimalPart * 100);
+
+  // convert overflow months to years
+  const extraYears = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  const finalYears = years + extraYears;
+
+  // keep months as two-digit decimal
+  const normalized =
+    remainingMonths === 0
+      ? finalYears
+      : parseFloat(`${finalYears}.${remainingMonths < 10 ? '0' : ''}${remainingMonths}`);
+
+  return normalized;
+}
+
+  onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
+    const rateItem = this.rateItems.at(index) as FormGroup;
+    const control = rateItem.get(controlName);
+
+    if (!control) return;
+
+    const value = parseFloat(control.value);
+    if (isNaN(value)) return;
+
+    const normalizedValue = this.normalizeExperience(value);
+
+    control.setValue(normalizedValue, { emitEvent: false });
+  }
+
   // location changes
   onLocationChange(selectedLocationIds: number[] | null) {
     const subLocationControl = this.ratecardForm.get('subLocation');

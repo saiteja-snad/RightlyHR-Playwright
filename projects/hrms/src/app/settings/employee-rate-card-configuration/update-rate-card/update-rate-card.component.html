@@ -113,15 +113,23 @@
                                 <span class="text-danger">*</span></label>
                             <div class="d-flex">
                                 <div>
-                                    <input type="number" class="form-control custom-input" min="0" (input)="limitDigits($event, 4)"(keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)"
-                                        formControlName="experienceFrom" placeholder="min (year)" required />
+                                    <!-- <input type="number" class="form-control custom-input" min="0" (input)="limitDigits($event, 4)"(keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)"
+                                        formControlName="experienceFrom" placeholder="min (year)" required /> -->
+
+                                        <input type="number" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"
+                                        (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
+                                        (wheel)="disableScroll($event)" />
                                 </div>
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
                                 </div>
                                 <div>
-                                    <input type="number" class="form-control custom-input" min="0"(input)="limitDigits($event, 4)"(keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)"
-                                        formControlName="experienceTo" placeholder="max (year)" required />
+                                    <!-- <input type="number" class="form-control custom-input" min="0"(input)="limitDigits($event, 4)"(keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)"
+                                        formControlName="experienceTo" placeholder="max (year)" required /> -->
+
+                                         <input type="number" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
+                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)"
+                                        (wheel)="disableScroll($event)" />
                                 </div>
                             </div>
                         </div>

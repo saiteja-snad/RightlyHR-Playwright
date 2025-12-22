@@ -100,14 +100,16 @@ export class LoadEntilementsAlloctionComponent implements OnInit,OnDestroy {
   }
 
   onSelectedEmployee(event: any) {
-    this.page=1
+      this.page = 1;
+    this.first = 0;
     this.selectedEmployee = event.employeeId;
     this.getdatacarryforword();
   }
 
   changeCategory(event: any) {
     console.log(event)
-    this.page=1
+      this.page = 1;
+    this.first = 0;
     this.selectedCategory = event.id;
     this.getdatacarryforword();
   }

@@ -341,15 +341,13 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
         this.jobSummary = res?.data?.jobSummary;
         this.jobSequenceId = this.jobSummary?.jobSequenceId;
         console.log(this.jobSequenceId);
-
-
+        // Update module name after getting jobSequenceId
+        this.updateModuleInfo();
       },
       error: (err) => {
         console.error('Error fetching projects:', err);
-
       },
     });
-
   }
   isShowsettingsRoute(): boolean {
     const hidePaths = [

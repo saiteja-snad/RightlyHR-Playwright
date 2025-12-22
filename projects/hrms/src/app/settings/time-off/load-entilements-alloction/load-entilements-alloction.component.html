@@ -34,12 +34,12 @@
         <label for="employeeName" class="form-label custom-label mb-2">{{ "Employee Name" | translate }}</label>
         <div class="custom-p-select-content">
           <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-            [showClear]="false" class="form-select custom-select" formControlName="employeeName"
-            (onChange)="onSelectedEmployee($event.value)" placeholder="Please select employee">
+            [showClear]="false" class="form-select custom-select" formControlName="employeeName"  [resetFilterOnHide]="true"
+            (onChange)="onSelectedEmployee($event.value)" placeholder="Please select employee"   filterPlaceholder="Search Employee">
             <ng-template let-selectedOption #selectedItem>
-              {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+               {{ selectedOption.fusionEmpId }} <span *ngIf="selectedOption.fusionEmpId">-</span> {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
             </ng-template>
-            <ng-template let-user #item>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</ng-template>
+            <ng-template let-user #item>  {{ user.fusionEmpId }} <span class="me-2 ms-2" *ngIf=" user.fusionEmpId">-</span>  {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</ng-template>
           </p-select>
         </div>
         <div
@@ -54,7 +54,7 @@
         <div class="custom-p-select-content">
           <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="false"
             formControlName="categoryName" class="form-select custom-select" placeholder="Please select category name"
-            (onChange)="changeCategory($event.value)">
+            (onChange)="changeCategory($event.value)"  [resetFilterOnHide]="true"   filterPlaceholder="Search category name">
             <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
             <ng-template let-location #item>{{ location.name }}</ng-template>
           </p-select>
@@ -88,7 +88,7 @@
       <tbody>
         <ng-container *ngIf="employees.length > 0; else noDataTemplate">
           <tr *ngFor="let e of employees">
-            <td>{{e?.employee?.fusionEmpId}}</td>
+            <td>{{e?.employee?.fusionEmpId || '-'}} </td>
             <td>{{ e?.employee?.name }}</td>
             <td>{{ e?.leaveCategory }}</td>
             <td class="text-center">{{ e?.carryForwardCount }}</td>

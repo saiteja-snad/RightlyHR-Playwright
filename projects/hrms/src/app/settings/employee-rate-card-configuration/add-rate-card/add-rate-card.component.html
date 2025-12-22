@@ -182,9 +182,9 @@
                                     </div>
 
                                 </div>
-                                <div class="mb-2">
+                                <div class="mb-2" *ngIf="rateItems.length > 1">
                                     <!-- Delete Icon -->
-                                    <button type="button" class="custom-icon btn p-0" (click)="deleteratecard(i)">
+                                    <button type="button" class="custom-icon btn p-0"  (click)="deleteratecard(i) ">
                                         <i class="bi bi-trash text-danger"></i>
                                     </button>
                                 </div>

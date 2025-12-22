@@ -54,7 +54,7 @@
               <th class="text-center">{{'Location'|translate}}</th>
               <th class="text-center">{{'Sub-Location'|translate}}</th>
               <th class="text-center">{{'Status'|translate}}</th>
-              <th></th>
+              <th class="text-center" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')">{{'Action'|translate}}</th>
               <!-- <th>Last Updated By</th>
                 <th>Last Updated On</th> -->
             </tr>

@@ -54,7 +54,7 @@
               <th class="text-center">{{'Location'|translate}}</th>
               <th class="text-center">{{'Sub-Location'|translate}}</th>
               <th class="text-center">{{'Status'|translate}}</th>
-              <th></th>
+              <th class="text-center" *ngIf="rbac.allowedToAccess('Rate Card In-active Tab.update')">{{'Action'|translate}}</th>
               <!-- <th>Last Updated By</th>
                 <th>Last Updated On</th> -->
             </tr>
@@ -70,7 +70,7 @@
               <td class="text-center">{{ item?.locationName ? item?.locationName : '-' }}</td>
               <td class="text-center">{{ item?.subLocationName?item?.subLocationName : '-' }}</td>
               <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
-              <td>
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Rate Card In-active Tab.update')">
                 <div class="dropdown" *ngIf="rbac.allowedToAccess('Rate Card In-active Tab.update')">
                   <a type="button" data-bs-toggle="dropdown" *ngIf="item.status==='Inactive'">
                     <i class="bi bi-three-dots-vertical"></i>

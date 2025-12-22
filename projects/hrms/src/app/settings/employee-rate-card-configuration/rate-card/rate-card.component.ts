@@ -311,7 +311,7 @@ getActiveRateCardDetails$ = new BehaviorSubject<IRateCardActiveViewModel[]>([]);
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.modal.openSuccessModal(`Record inactivated successfully`);
+          this.modal.openSuccessModal(`Rate Card inactivated successfully`);
           this.getAllRateCardDetails();
         },
         error: (err: any) => {

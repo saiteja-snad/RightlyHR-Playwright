@@ -46,6 +46,7 @@ export class CloneRateCardComponent {
   employeedetails: any;
   updateratecardData: any;
   responseSummary!: any;
+  removeRowdata: any;
    currencyCodes=[
   {
     code: "EUR",
@@ -343,7 +344,7 @@ onCountryChange(event: any, rateIndex: number, currencyIndex: number) {
   });
 }
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 cloneRateCard(){
     let formValues = this.updateratecardForm.getRawValue();

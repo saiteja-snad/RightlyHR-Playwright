@@ -27,7 +27,7 @@
         <button class="custom-btn btn-primary px-5" *ngIf="this.yearSelectionForm.get('location')?.value||this.yearSelectionForm.get('subLocation')?.value" (click)="this.getAllRateCardDetails()">Apply</button>
       </form>
 
-      <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
+      <button class="custom-btn btn-primary px-5" *ngIf="rbac.allowedToAccess('Rate Card Module.create')" (click)="openAdd()">Create</button>
     </div>
   </div>
 

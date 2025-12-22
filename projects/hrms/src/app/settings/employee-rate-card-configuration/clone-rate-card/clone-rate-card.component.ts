@@ -109,9 +109,9 @@ maxDate: string = '';
     const selectedYear = effectiveMoment.year();
    this.minDate = `${selectedYear}-01-01`;
     this.maxDate = `${selectedYear}-12-31`;
-    this.updateratecardForm.patchValue({
-      effectivefrom: this.updateratecardData.effectiveFrom.split('T')[0]
-    });
+    // this.updateratecardForm.patchValue({
+    //   effectivefrom: this.updateratecardData.effectiveFrom.split('T')[0]
+    // });
   }
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       
@@ -183,9 +183,9 @@ disableScroll(event: WheelEvent) {
               color: item.meta?.graphData?.color || '#000000',
             }));
             if (this.updateratecardData.roleId) {
-          this.updateratecardForm.patchValue({
-            role: [this.updateratecardData.roleId]
-          });
+          // this.updateratecardForm.patchValue({
+          //   role: [this.updateratecardData.roleId]
+          // });
         }
           } else {
             this.ProjectroleDetails = [];
@@ -233,9 +233,9 @@ geAllLocations() {
         ? [selectedLocation.id]
         : [];
 
-      this.updateratecardForm.patchValue({
-        location: selectedLocationIds
-      });
+      // this.updateratecardForm.patchValue({
+      //   location: selectedLocationIds
+      // });
 
       // Trigger sublocation loading
       this.onLocationChange(selectedLocationIds);
@@ -247,11 +247,11 @@ geAllLocations() {
             sub.jobSubLocationName === this.updateratecardData.subLocationName
         );
 
-        const subLocationIds = matchedSubLocations.map((s: any) => s.id);
+      //  const subLocationIds = matchedSubLocations.map((s: any) => s.id);
 
-        this.updateratecardForm.patchValue({
-          subLocation: subLocationIds
-        });
+        // this.updateratecardForm.patchValue({
+        //   subLocation: subLocationIds
+        // });
     }
   }
   });

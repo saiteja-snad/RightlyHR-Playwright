@@ -116,7 +116,7 @@ export class IntialLoadEntitlementComponent implements OnInit, OnDestroy {
   resetForm() {
     this.leaveAllocationForm.reset();
     this.isApplyDisabledFlag = true;
-    this.offcanvasService.dismiss()
+ 
     // 3. Remove active filters
     this.subLocationDetails = [];
     this.shiftDetails = [];

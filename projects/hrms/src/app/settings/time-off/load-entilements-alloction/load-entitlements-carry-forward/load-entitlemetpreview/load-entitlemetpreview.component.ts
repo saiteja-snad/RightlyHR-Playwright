@@ -15,7 +15,7 @@ import { NoDataFoundComponent } from '../../../../../shared/no-data-found/no-dat
   styleUrl: './load-entitlemetpreview.component.scss'
 })
 
-export class LoadEntitlemetpreviewComponent implements OnInit,OnDestroy {
+export class LoadEntitlemetpreviewComponent implements OnInit, OnDestroy {
   carryforwarddata: any = {}
   selectedEmployeeDetail: any = null;
   selectemployeename: any
@@ -95,7 +95,7 @@ export class LoadEntitlemetpreviewComponent implements OnInit,OnDestroy {
     this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-create'])
   }
 
-   ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();
   }

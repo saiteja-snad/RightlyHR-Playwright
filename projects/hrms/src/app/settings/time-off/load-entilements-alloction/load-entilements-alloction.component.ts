@@ -112,6 +112,7 @@ export class LoadEntilementsAlloctionComponent implements OnInit,OnDestroy {
     this.getdatacarryforword();
   }
   clearFilters() {
+    this.page=1
     this.selectedEmployee = null;
     this.selectedCategory = null;
     this.leaveAllocationForm.reset();

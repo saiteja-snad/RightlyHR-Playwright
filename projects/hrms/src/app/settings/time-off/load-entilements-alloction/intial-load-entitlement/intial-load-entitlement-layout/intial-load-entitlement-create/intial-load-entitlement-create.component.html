@@ -70,7 +70,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                             [showClear]="false" formControlName="shift" placeholder="Please select shift"  [resetFilterOnHide]="true"
-                            (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search shift">
+                            (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search Shift">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>

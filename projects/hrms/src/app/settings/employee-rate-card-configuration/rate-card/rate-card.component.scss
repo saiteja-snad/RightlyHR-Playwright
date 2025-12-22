@@ -6,6 +6,8 @@
     height: calc(100dvh - 18rem);
     border: 1px solid var(--content-border-color);
     border-bottom: 0px !important;
+    border-bottom-left-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
 }
 
 .pagination-content {

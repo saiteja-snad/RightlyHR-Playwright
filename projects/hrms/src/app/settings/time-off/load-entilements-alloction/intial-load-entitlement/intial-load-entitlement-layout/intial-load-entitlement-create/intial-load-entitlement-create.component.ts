@@ -179,14 +179,9 @@ export class IntialLoadEntitlementCreateComponent {
 
         // Pre-select categories from localStorage
         // if (this.carryforwarddata?.categoryIds?.length) {
-       // ✅ Only auto-patch on BACK navigation, NOT on manual shift change
-        if (
-          // !this.isManualShiftChange &&
-          this.carryforwarddata?.categoryIds?.length
-        ) {
-          const validCategoryIds = this.categoryDetails
-            .map((c: any) => c.id)
-            .filter((id: any) =>
+       // Only auto-patch on BACK navigation, NOT on manual shift change
+        if (this.carryforwarddata?.categoryIds?.length) {
+          const validCategoryIds = this.categoryDetails.map((c: any) => c.id).filter((id: any) =>
               this.carryforwarddata.categoryIds.includes(id)
             );
 

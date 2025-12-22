@@ -10,6 +10,9 @@ export const permissionsData = [
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rate Card Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rate Card In-active Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rate Card Active Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Config Update Tabs Sections
   { fields: 'Personal Config Update Tab', View: false, Update: false, Create: false, Delete: false },

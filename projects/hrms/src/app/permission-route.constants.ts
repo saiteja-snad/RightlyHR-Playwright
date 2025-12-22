@@ -208,7 +208,10 @@ export const STANDARD_REPORTS_TABS = [
   { route: '/reports/standard-reports/branch-data', permission: 'Branch Location Wise Data.view' },
   { route: '/reports/standard-reports/family-data', permission: 'Family Members Data.view' },
 ]
-
+export const SETTINGS_RATECARD_TABS = [
+  { route: '/settings/employee-rate-card/rate-card/rate-card-active', permission: 'Rate Card Active Tab.view' },
+  { route: '/settings/employee-rate-card/rate-card/rate-card-inactive', permission: 'Rate Card In-active Tab.view' },
+]
 export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/leave-report', permission: 'Leave Report.view' },
   { route: '/reports/attendence-reports/leave-summary-report', permission: 'Leave Summary Report.view' },

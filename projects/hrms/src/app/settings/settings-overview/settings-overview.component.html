@@ -222,6 +222,22 @@
                         </p-accordion-panel>
                     </li>
                     }
+                     @if(rbac.allowedToAccess('Rate Card Module.view')){
+                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/employee-rate-card/rate-card')">
+                        <p-accordion-panel value="9">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="settings-icon/Rate Card.png" alt="Icon"
+                                            class="list-icon">
+                                        <div class="list-label-name">Rate Card Configuration</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingrateCardModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                        </p-accordion-panel>
+                    </li>
+                    }
                 </p-accordion>
             </ul>
         </div>

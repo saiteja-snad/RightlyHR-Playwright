@@ -253,8 +253,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
           const orgHolidaysItems = holidaysResult.orgHolidaysItems;
           for (let j = 0; j < orgHolidaysItems?.length; j++) {
             const holidayDate = new Date(orgHolidaysItems[j].holidayDate);
-            const formattedHolidayDate = `${this.changeYear}-${String(holidayDate.getMonth() + 1).padStart(2, '0')}-
-            ${String(holidayDate.getDate()).padStart(2,'0')}`;
+            const formattedHolidayDate = `${this.changeYear}-${String(holidayDate.getMonth() + 1).padStart(2, '0')}-${String(holidayDate.getDate()).padStart(2,'0')}`;
             const eventTitle = `${orgHolidaysItems[j].holidayName}${orgHolidaysItems[j].isOptional ? ' (Optional)' : ''}`;
             if (orgHolidaysItems[j].status === 'Published' && !this.isEventDuplicate(events, eventTitle, formattedHolidayDate)) {
               events.push({

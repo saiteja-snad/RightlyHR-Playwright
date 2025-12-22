@@ -4,8 +4,18 @@
     this.router.url !== '/settings/timeoff-configurations/cloneleavecategory' &&
     this.router.url !== '/settings/timeoff-configurations/viewleavecategory') {
     <!--header-->
-    <div class="component-header-content pt-2">
-        <app-settings-header />
+    <div class="component-header-content">
+        <div class="heading-content">
+            <app-settings-header />
+        </div>
+
+        <div *ngIf="isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')">
+            <button type="button" class="custom-btn btn-primary" (click)="initialentitlements()">Initiate Initial Leave Entitlements </button>
+        </div>
+
+        <div *ngIf="isActive('/settings/timeoff-configurations/load-entitlement/carry-forward')">
+            <button type="button" class="custom-btn btn-primary" (click)="carryforwordnavigation()">Initiate Carry Forward</button>
+        </div>
     </div>
 
     <!--Content-->
@@ -20,10 +30,8 @@
             @if(isActive('/settings/timeoff-configurations/leave-categoery')) {
             <app-leave-category-tabs />
             }
-        
         </div>
         }
-
         @if(isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation') ||
         isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view')) {
         <div class="component-left-tabs-container">
@@ -33,7 +41,13 @@
         @if(isActive('/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation') ||
         isActive('/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view')) {
         <div class="component-left-tabs-container">
-           <app-hours-allocation-tabs/>
+            <app-hours-allocation-tabs />
+        </div>
+        }
+        @if(isActive('/settings/timeoff-configurations/load-entitlement/carry-forward') ||
+        isActive('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')){
+        <div class="component-left-tabs-container">
+            <app-leave-entitlement-side-bar />
         </div>
         }
 

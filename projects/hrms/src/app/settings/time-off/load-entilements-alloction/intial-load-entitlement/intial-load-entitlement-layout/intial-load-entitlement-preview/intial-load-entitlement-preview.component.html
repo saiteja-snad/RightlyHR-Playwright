@@ -1,0 +1,253 @@
+<div class="load-components-container">
+    <div class="status-cards mb-3">
+        <div class="status-card" *ngIf="gradeAssignments?.status" [ngClass]="{'success': gradeAssignments?.status === 'success',
+           'error': gradeAssignments?.status === 'failed' }">
+            <div class="icon">{{ gradeAssignments?.status === 'success' ? '✔' : '✖' }}</div>
+            <div class="content d-flex align-items-center justify-content-between w-100">
+                <div>
+                    <h4>Grade Assignments</h4>
+                    <p *ngIf="gradeAssignments?.status === 'success'" class="m-0">
+                        All selected employees have valid grades.</p>
+                    <p *ngIf="gradeAssignments?.status === 'failed'" class="m-0">
+                        {{ gradeAssignments?.data?.length }} employees failed grade assignment.</p>
+                </div>
+                <div *ngIf="gradeAssignments?.status === 'failed'">
+                    <a type="button" [ngClass]="{'success': gradeAssignments?.status === 'success',
+                    'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(gradeassignments)">
+                        <i class="bi bi-eye-fill me-1"></i>View
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-card" *ngIf="policymapping?.status" [ngClass]="{'success': policymapping?.status === 'success',
+                'error': policymapping?.status === 'failed'}">
+            <div class="icon">{{ policymapping?.status === 'success' ? '✔' : '✖' }}</div>
+            <div class="content d-flex align-items-center justify-content-between w-100">
+                <div>
+                    <h4>Policy Mapping</h4>
+                    <!-- SUCCESS -->
+                    <p *ngIf="policymapping?.status === 'success'" class="m-0">Leave policies found for all grades.</p>
+                    <!-- FAILED -->
+                    <p *ngIf="policymapping?.status === 'failed'" class="m-0">
+                        {{ policymapping?.data?.length }} leave policy configuration issue(s) found.
+                    </p>
+                </div>
+                <div *ngIf="policymapping?.status === 'failed'">
+                    <a type="button" [ngClass]="{'success': gradeAssignments?.status === 'success',
+                    'error': gradeAssignments?.status === 'failed' }" (click)="toggleFilters(filterContent)">
+                        <i class="bi bi-eye-fill me-1"></i>View
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-card " *ngIf="duplicatecheck?.status" [ngClass]="{'success': duplicatecheck?.status === 'success',
+                'error': duplicatecheck?.status === 'failed'}">
+            <div class="icon">{{ duplicatecheck?.status === 'success' ? '✔' : '✖' }}</div>
+            <div class="content d-flex align-items-center justify-content-between w-100">
+                <div>
+                    <h4>Duplicate Check</h4>
+                    <p *ngIf="duplicatecheck?.status === 'success'" class="m-0">No duplicate records for Year
+                        {{carryforwarddata?.year}}.</p>
+
+                    <p *ngIf="duplicatecheck?.status === 'failed'" class="m-0">
+                        {{ duplicatecheck?.data?.length }} duplicate records found</p>
+                </div>
+                <div *ngIf="duplicatecheck?.status === 'failed'">
+                    <a type="button" [ngClass]="{'success': duplicatecheck?.status === 'success',
+                    'error': duplicatecheck?.status === 'failed' }" (click)="toggleFilters(duplicatecheckcontent)">
+                        <i class="bi bi-eye-fill me-1"></i>View
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="d-flex justify-content-between gap-2 ">
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search by employee name / grade "
+                aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
+                aria-describedby="basic-addon1">
+        </div>
+        <div class="d-flex align-items-center  gap-3 mb-2" *ngIf="leaveHeaders.length>0">
+            <div class="d-flex align-items-center text-nowrap gap-1">
+                <div class="circular-dot circle-holiday"></div>
+                <div class="status-text">Entitled</div>
+            </div>
+            <div class="d-flex align-items-center text-nowrap gap-1">
+                <div class="circular-dot circle-leave"></div>
+                <div class="status-text">Yet to Entitled</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-p-multi-select-table mb-2">
+        @if (!loading) {
+
+        <p-table [value]="employeesTableData" [(selection)]="selectedEmployees" dataKey="employeeId" class="w-100"
+            [scrollable]="true" scrollHeight="50dvh">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th>Employee Name</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Shift</th>
+                    <th class="text-center">Grade</th>
+                    <th *ngFor="let header of leaveHeaders" class="text-center">
+                        {{ header.name }}
+                        <small>({{ header.code }})</small>
+                    </th>
+                    <th *ngIf="leaveHeaders.length>0" class="text-center">Total Leave Entitlements</th>
+                </tr>
+            </ng-template>
+
+            <!-- ================= BODY ================= -->
+            <ng-template pTemplate="body" let-emp>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="emp"></p-tableCheckbox>
+                    </td>
+
+                    <td>
+                        <strong>{{ emp.employeeName }}</strong><br />
+                        <small>Joined: {{ emp.joinedDate | date:'yyyy-MM-dd' }}</small>
+                    </td>
+                    <td>{{ emp.location }}</td>
+                    <td>{{ emp.sublocationName }}</td>
+                    <td>{{ emp.shift }}</td>
+
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center">
+                            <div class="code-box text-center px-4"
+                                *ngIf="!(emp.isValid === false && emp.reason === 'Valid grade assignment not found'); else missingGrade">
+                                {{ emp.grade }}
+                            </div>
+
+                            <ng-template #missingGrade>
+                                <div class=" text-center px-4 text-danger">
+                                    <i class="bi bi-exclamation-circle-fill me-2"></i>Missing Grade
+                                </div>
+                            </ng-template>
+                        </div>
+                    </td>
+
+
+                    <!-- Dynamic leave values -->
+                    <td *ngFor="let header of leaveHeaders" class="text-center">
+                        <span [ngStyle]="{
+                                                    color: emp.leaveValues?.[header.code]?.isAlreadyEntitled
+                                                        ? emp.leaveValues?.[header.code]?.color: emp.leaveValues?.[header.code]?.color
+                                                    }"><b>{{ emp.leaveValues?.[header.code]?.allowedDays ?? 0 }}</b>
+                        </span>
+                    </td>
+
+                    <td class="text-center" *ngIf="leaveHeaders.length>0">
+                        {{ emp.totalLeaveEntitlement }}
+                    </td>
+
+                </tr>
+            </ng-template>
+
+            <!-- ================= EMPTY MESSAGE ================= -->
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="7 + leaveHeaders.length">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+
+        } @else {
+        <app-data-loader-content />
+        }
+    </div>
+
+
+    <div class="footer-content">
+
+        <div class="d-flex justify-content-end align-items-center gap-3">
+            <button type="button" class="custom-btn btn-secondary" (click)="back()">Back</button>
+            <button type="button" class="custom-btn btn-primary" (click)="submit()"
+                [disabled]="employeesTableData.length===0">Submit</button>
+        </div>
+    </div>
+</div>
+
+<!--Delete popup-->
+<ng-template #conformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\error-icon.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4">Leave entitlement processing detected validation issues</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary " (click)="skipped()"> Skip and Continue</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #filterContent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Policy Mapping Errors' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+        <div class="offcanvas-filter-content">
+            <div class="error-box" *ngFor="let item of policymapping?.data">
+                <div class="profile-content mb-3">
+                    <p class="designation m-0 mb-1"><b>Category Name</b> :
+                        <span class="name">{{ item.categories.name }} ({{ item.categories.code }})</span>
+                    </p>
+                    <p class="designation m-0"><b>Reason</b> : {{ item.categories.reason }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #gradeassignments let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Grade Assignments Errors' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+        <div class="offcanvas-filter-content">
+            <div class="error-box" *ngFor="let item of gradeAssignments?.data">
+                <div class="profile-content mb-3">
+                    <p class="name m-0 mb-1">{{ item.employee.name }}</p>
+                    <p class="designation m-0 mb-1"><b>Employee ID</b> : {{ item.employee.fusionEmpId }}</p>
+                    <p class="designation m-0"><b>Reason</b> : {{ item.employee.reason }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #duplicatecheckcontent let-offcanvas>
+    <div class="custom-filter-container">
+        <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+            <p class="filter-header m-0">{{'Duplicate Check Errors' | translate}}</p>
+            <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+        <div class="offcanvas-filter-content">
+            <div class="error-box" *ngFor="let item of duplicatecheck?.data">
+                <div class="profile-content mb-3">
+                    <p class="name m-0 mb-1">{{ item.employee.name }}</p>
+                    <p class="designation m-0 mb-1"><b>Employee ID</b> : {{ item.employee.fusionEmpId }}</p>
+                    <p class="designation m-0"><b>Reason</b> : {{ item.employee.reason }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

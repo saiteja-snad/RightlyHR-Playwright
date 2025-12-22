@@ -1,0 +1,47 @@
+.load-components-container {
+    position: relative;
+    height: calc(100dvh - 17rem);
+
+    .footer-content {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}
+
+.custom-table-content {
+    height: max-content !important;
+    max-height: 50dvh !important;
+    border: 1px solid var(--table-header-bg-color);
+}
+
+.custom-p-select-content {
+    .p-select {
+        width: 280px !important;
+    }
+}
+.leave-icon {
+    width: 1.5rem;
+}
+
+.map-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: #00A912;
+}
+
+.categoryname {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.eligible-text {
+    font-size: 10px;
+    font-weight: 400;
+    color: #AFAFAF;
+}
+
+.code-box {
+    padding: 0.5rem;
+    border-radius: 0.325rem;
+}

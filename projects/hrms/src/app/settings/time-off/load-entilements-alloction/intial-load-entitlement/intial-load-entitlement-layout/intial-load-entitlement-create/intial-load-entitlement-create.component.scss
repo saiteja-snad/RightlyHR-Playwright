@@ -1,0 +1,10 @@
+.load-components-container{
+    position: relative;
+    height: calc(100dvh - 17rem);
+
+    .footer-content {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}

@@ -1,0 +1,84 @@
+<div class="load-components-container">
+   
+
+    <div class="custom-table-content">
+        @if(!loading){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th *ngFor="let type of leaveTypes">{{type}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="employeesList.length > 0; else noDataTemplate">
+                    <tr *ngFor="let row of employeesList">
+                        <td>
+                            <a class="project-name cursor" (click)="openLeaveDetails(row,viewmodal)">{{ row.employee }}</a>
+                        </td>
+                        <td *ngFor="let type of leaveTypes">{{ row[type] ?? 0 }}</td>
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
+
+    <div class="footer-content">
+        <div class="d-flex justify-content-end align-items-center gap-3">
+            <button type="button" class="custom-btn btn-secondary" (click)="navigationtoback()">Back</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="leaveTypes.length===0"
+                (click)="navigationtomapcategory()">Proceed to Mapping</button>
+        </div>
+    </div>
+</div>
+
+<!--View Modal-->
+<ng-template #viewmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0"> Leave Carry Forward Summary - {{selectemployeename}} ({{selectedfusionEmpId}})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>Entitled</th>
+                                <th>Availed</th>
+                                <th>Balance</th>
+                                <th>Max CF</th>
+                                <th>Actual CF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let l of selectedEmployeeDetail">
+                                <td>{{l.leaveType}}</td>
+                                <td>{{l.entitled}}</td>
+                                <td>{{l.availed}}</td>
+                                <td>{{l.balance}}</td>
+                                <td>{{l.maxCarryForward}}</td>
+                                <td>{{l.actualCarryForward}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

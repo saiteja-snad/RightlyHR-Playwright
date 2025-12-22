@@ -511,6 +511,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
+
+   loadEntitlementsTab = [
+    'Initial Load Entitlements',
+    'Carry Forward Load Entitlements',
+  ];
   flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'

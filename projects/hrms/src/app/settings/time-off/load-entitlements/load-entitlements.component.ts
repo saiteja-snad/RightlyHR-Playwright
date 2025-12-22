@@ -100,12 +100,12 @@ export class LoadEntitlementsComponent {
         const fullName = employee.middleName
           ? `${employee.firstName} ${employee.middleName} ${employee.lastName}`
           : `${employee.firstName} ${employee.lastName}`;
-        const displayText = `${employee.fusionEmpId} - ${fullName}`;
+        const displayText = `${employee.fusionEmpId || ''} - ${fullName}`;
         const option = this.renderer.createElement('a');
         option.textContent = displayText;
         option.className = 'dropdown-item';
         this.renderer.listen(option, 'click', () =>
-          this.onOptionClick(employee.fusionEmpId)
+          this.onOptionClick(employee.employeeId)
         );
         this.renderer.appendChild(dropdownElement, option);
       });
@@ -130,16 +130,16 @@ export class LoadEntitlementsComponent {
     }
   }
 
-  onOptionClick(fusionEmpId: string) {
+  onOptionClick(employeeId: string) {
     try {
-      this.fetchEmployeeDetails(fusionEmpId);
-      this.fusionEmployeeId = fusionEmpId;
-      // Close the dropdown menu
-      this.dropdownMenu.nativeElement.style.display = 'none';
       // Find corresponding details in Employeedata/ActiveEmployees
       this.selectedEmployeeDetails = this.employeeiddetails.find(
-        (detail) => detail.fusionEmpId === fusionEmpId
+        (detail) => detail.employeeId === employeeId
       );
+      this.fusionEmployeeId = this.selectedEmployeeDetails?.fusionEmpId || '';
+      // Close the dropdown menu
+      this.dropdownMenu.nativeElement.style.display = 'none';
+      this.fetchEmployeeDetails(employeeId);
       // Check if details are found for the selected employee
       if (this.selectedEmployeeDetails) {
         // Update HTML input boxes with retrieved employee details
@@ -196,13 +196,13 @@ export class LoadEntitlementsComponent {
     }
   }
 
-  findEmployeeId(fusionEmpId: string): string | undefined {
-    // employee data stored in this.employeeiddetails
-    const employee = this.employeeiddetails.find(
-      (emp) => emp.fusionEmpId === fusionEmpId
-    );
-    return employee ? employee.employeeId : undefined;
-  }
+  // findEmployeeId(fusionEmpId: string): string | undefined {
+  //   // employee data stored in this.employeeiddetails
+  //   const employee = this.employeeiddetails.find(
+  //     (emp) => emp.fusionEmpId === fusionEmpId
+  //   );
+  //   return employee ? employee.employeeId : undefined;
+  // }
 
   leavePolicyRecords: any[] = [];
   // Method to process API response data and populate leavePolicyRecords
@@ -386,44 +386,79 @@ export class LoadEntitlementsComponent {
   }
 
   StatusMsg: any;
-  sendEntitlementRequest() {
-    // Iterate through each record in tableData and construct the request body for each record
-    this.tableData.forEach((record) => {
-      const requestBody = {
-        employeeId: this.selectedEmployeeDetails.employeeId,
-        year: record.year,
-        addedBy: this.loggedinuser.employeeId,
-        leaveEntitlements: [
-          {
-            employeeId: this.selectedEmployeeDetails.employeeId,
-            year: record.year,
-            addedBy: this.loggedinuser.employeeId,
-            leaveCategoryId: record.categoryId,
-            entitlementDays: record.entitledLeaves,
-          },
-        ],
-      };
-      this.http.postdata('LeaveEntitlements/load', requestBody).subscribe((response: any) => {
-       this.confirmation.openSuccessModal('Leaves entitled successfully');
-        setTimeout(function () {
-          location.reload();
-        }, 2000);
-      });
-    });
-  }
+  // sendEntitlementRequest() {
+  //   // Iterate through each record in tableData and construct the request body for each record
+  //   this.tableData.forEach((record) => {
+  //     const requestBody = {
+  //       employeeId: this.selectedEmployeeDetails.employeeId,
+  //       year: record.year,
+  //       addedBy: this.loggedinuser.employeeId,
+  //       leaveEntitlements: [
+  //         {
+  //           employeeId: this.selectedEmployeeDetails.employeeId,
+  //           year: record.year,
+  //           addedBy: this.loggedinuser.employeeId,
+  //           leaveCategoryId: record.categoryId,
+  //           entitlementDays: record.entitledLeaves,
+  //         },
+  //       ],
+  //     };
+  //     this.http.postdata('LeaveEntitlements/load', requestBody).subscribe((response: any) => {
+  //      this.confirmation.openSuccessModal('Leaves entitled successfully');
+  //       setTimeout(function () {
+  //         location.reload();
+  //       }, 2000);
+  //     });
+  //   });
+  // }
 
-  fetchEmployeeDetails(fusionEmpId: string) {
-    // Step 1: Find the employeeId for the given fusionEmpId
-    const employeeId = this.findEmployeeId(fusionEmpId);
-    // Step 2: Check if employeeId is available
+  sendEntitlementRequest() {
+  const requestBody = {
+    employeeId: this.selectedEmployeeDetails.employeeId,
+    year: new Date().getFullYear(), // Or take from first record if year differs
+    addedBy: this.loggedinuser.employeeId,
+    leaveEntitlements: this.tableData.map(record => ({
+      employeeId: this.selectedEmployeeDetails.employeeId,
+      year: record.year,
+      addedBy: this.loggedinuser.employeeId,
+      leaveCategoryId: record.categoryId,
+      entitlementDays: record.entitledLeaves,
+    }))
+  };
+
+  this.http.postdata('LeaveEntitlements/load', requestBody)
+    .subscribe((response: any) => {
+      const modalElement = document.getElementById('successhide');
+      if (modalElement) {
+        modalElement.classList.add('show');
+        modalElement.style.display = 'block';
+        this.StatusMsg = 'Leaves entitled successfully';
+      }
+      setTimeout(() => location.reload(), 2000);
+    });
+}
+
+  // fetchEmployeeDetails(fusionEmpId: string) {
+  //   // Step 1: Find the employeeId for the given fusionEmpId
+  //   const employeeId = this.findEmployeeId(fusionEmpId);
+  //   // Step 2: Check if employeeId is available
+  //   if (employeeId) {
+  //     // Step 3: Call the API endpoint with the employeeId
+  //     this.sendAPIRequest(employeeId);
+  //   } else {
+  //     // Step 4: Handle scenarios where the employeeId is not provided
+  //     console.log('Step 4: EmployeeId not provided.');
+  //   }
+  // }
+
+  fetchEmployeeDetails(employeeId: string) {
     if (employeeId) {
-      // Step 3: Call the API endpoint with the employeeId
       this.sendAPIRequest(employeeId);
     } else {
-      // Step 4: Handle scenarios where the employeeId is not provided
-      console.log('Step 4: EmployeeId not provided.');
+      console.log('EmployeeId not provided.');
     }
   }
+
 
   sendAPIRequest(employeeId: string) {
     // Clear the tableData array

@@ -1256,4 +1256,9 @@ hasDuplicateKpis(): boolean {
 }
 
 
+trackByKpiId(index: number, row: any): any {
+  return row.get('kpiId')?.value || index; // Stable ID when KPI selected, fallback to index
+}
+
+
 }

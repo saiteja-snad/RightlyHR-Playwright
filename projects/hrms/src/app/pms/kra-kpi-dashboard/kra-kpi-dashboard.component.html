@@ -1,41 +1,120 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div class="heading-content">
-            <div class="commpoment-name">PMS
-                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-            </div>
-            <div class="component-header">{{"Dashboard" | translate}}</div>
-            <div>
-                <app-module-info-icon placement="bottom" />
-            </div>
-        </div>
-
-        <!-- <div class="d-flex align-items-center gap-3">
-            <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
-
-            <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
-                    optionValue="value" placeholder="Please Select Proficiency" [filter]="false" [showToggleAll]="false"
-                    selectedItemsLabel="{0} items selected" [maxSelectedLabels]="3" class="form-select custom-select"
-                    (onChange)="onCheckemployeeProficiency($event)" />
-            </div>
-
-            <div class="custom-p-multiSelect-content">
-                <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills"
-                    placeholder="Please Select Skills" optionLabel="label" optionValue="value" [maxSelectedLabels]="3"
-                    selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
-                    class="form-select custom-select" (onChange)="onSkillSelectionChange($event)" />
-            </div>
-        </div> -->
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">PMS
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{"Dashboard" | translate}}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
     </div>
 
-    <div class="main-content d-flex w-100 gap-3">
-        <div class="component-left-tabs-container">
-            <app-kra-kpi-management-layout />
+    <div class="d-flex align-items-center gap-3 mt-2">
+      @if(rbac.allowedToAccess('All Employees (KRA).view') && rbac.allowedToAccess('My Team (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+            (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
         </div>
-
-        <div class="w-100 right-content">
-
+      </div>
+      }
+      @else if(rbac.allowedToAccess('All Employees (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+            (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
         </div>
+      </div>
+      }
+      @else if(rbac.allowedToAccess('My Team (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
+            placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
+            (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true" />
+        </div>
+      </div>
     </div>
+
+  </div>
+
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="component-left-tabs-container">
+      <app-kra-kpi-management-layout />
+    </div>
+
+    <div class="w-100 right-content">
+
+      @if(chartLoader){
+      <div class="cards-grid-container mb-3">
+        <div *ngFor="let card of summaryCards" class="summary-card">
+          <div>
+            <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
+          </div>
+          <div>
+            <div class="summary-title mb-1 d-flex align-items-center gap-1">
+              <div>{{ card.title }}</div>
+              <!-- INFO ICON -->
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="card.popover" class="module-icon" />
+                <ng-template #popoverTemplate let-text="text">{{text}}</ng-template>
+              </div>
+            </div>
+            <div class="summary-value">
+              {{card.value}}
+            </div>
+          </div>
+        </div>
+      </div>
+      }@else {
+      <p-skeleton height="11rem" />
+      }
+
+      <div class="row">
+        <!-- Performance Distribution Chart -->
+        <div class="col-xl-7 col-lg-6 mb-3">
+          <div class="graph-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">Performance Distribution</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion Status chart -->
+        <div class="col-xl-5 col-lg-6 mb-3">
+          <div class="graph-card">
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="col-xl-12 col-lg-12 mb-3">
+          <div class="graph-card">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>

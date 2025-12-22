@@ -312,7 +312,7 @@
               </tr>
             </thead>
             <tbody formArrayName="kpiRows">
-              @for (row of kpiRows.controls; track $index; let i = $index) {
+              @for (row of kpiRows.controls; track trackByKpiId($index, row); let i = $index) {
               <tr [formGroupName]="i">
                 <td>
                   <div class="custom-p-select-content">

@@ -259,6 +259,20 @@ export class EmployeeKraKpiViewComponent implements OnInit, OnDestroy {
     this.router.navigate(['/pms/kpi-kra/team']);
   }
 
+
+  getEffectiveKpiWeightage(kpi: any): number {
+  if (
+    kpi?.assignedApproverWeightage !== undefined &&
+    kpi?.assignedApproverWeightage !== null &&
+    kpi?.assignedApproverWeightage !== ''
+  ) {
+    return Number(kpi.assignedApproverWeightage);
+  }
+
+  return Number(kpi?.assignedWeightage || 0);
+}
+
+
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
   }

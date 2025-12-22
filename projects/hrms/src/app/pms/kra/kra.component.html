@@ -251,14 +251,28 @@
             </div>
           </div>
 
-          <div class="col-md-6">
-            <label class="form-label custom-label mb-2">
-              {{ 'Upload Document' | translate }}
-            </label>
+<div class="col-md-6">
+  <label class="form-label custom-label mb-2">
+    {{ 'Upload Document' | translate }}
+  </label>
 
-            <input type="file" class="form-control custom-input" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
-              (change)="onFileChange($event)" />
-          </div>
+  <div class="flex-grow-1">
+    <input
+      type="file"
+      class="form-control custom-input"
+      accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+      (change)="onFileChange($event)"
+    />
+
+    <!-- Show file name BELOW input -->
+    @if (isEditMode && existingAttachmentName) {
+      <small class="text-muted d-block mt-1">
+        {{ existingAttachmentName }}
+      </small>
+    }
+  </div>
+</div>
+
 
           <!-- Description -->
           <div class="col-12">

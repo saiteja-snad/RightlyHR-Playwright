@@ -105,18 +105,6 @@ selectedKpis: any[] = [];
               (emp.kras || []).map((k: any) => {
                 const kpis = k.kpis || [];
 
-                // 🔹 Progress = avg of assignedWeightage
-                const progress =
-                  kpis.length > 0
-                    ? Math.round(
-                        kpis.reduce(
-                          (sum: number, kp: any) =>
-                            sum + Number(kp.assignedWeightage || 0),
-                          0
-                        ) / kpis.length
-                      )
-                    : 0;
-
                 return {
                   kraId: k.kra.kraId,
                   kraName: k.kra.kraName,
@@ -126,7 +114,7 @@ selectedKpis: any[] = [];
                   status: k.kra.status,
                   kpisCount: k.kpisCount,
                   kpis: k.kpis || [],
-                  progress,
+                  progress: this.calculateKraProgress(kpis),
                 };
               })
             );
@@ -147,6 +135,30 @@ selectedKpis: any[] = [];
         },
       });
   }
+
+
+
+  calculateKraProgress(kpis: any[]): number {
+  if (!kpis || kpis.length === 0) {
+    return 0;
+  }
+
+  const total = kpis.reduce((sum: number, kp: any) => {
+    const weightage =
+      kp.assignedApproverWeightage !== undefined &&
+      kp.assignedApproverWeightage !== null &&
+      kp.assignedApproverWeightage !== ''
+        ? Number(kp.assignedApproverWeightage)
+        : Number(kp.assignedWeightage || 0);
+
+    return sum + weightage;
+  }, 0);
+
+  const average = total / kpis.length;
+
+  return Math.min(100, Math.max(0, Math.round(average)));
+}
+
 
   openKraKpiModal(kra: any, content: any) {
     this.selectedKra = kra;

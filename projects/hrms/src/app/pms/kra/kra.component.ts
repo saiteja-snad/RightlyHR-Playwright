@@ -35,7 +35,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SelectModule } from 'primeng/select';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { DocumentViewIconComponent } from '../../icons/document-view-icon/document-view-icon.component';
 
@@ -102,6 +102,9 @@ export class KraComponent implements OnInit, OnDestroy {
   selectedKraTitle = '';
   selectedKpiCount = 0;
 
+  existingAttachmentName: string = '';
+existingDocumentUrl: string = '';
+
   jobRoleOptions = [
     { label: 'Software Engineer', value: 1 },
     { label: 'Senior Developer', value: 2 },
@@ -128,7 +131,7 @@ export class KraComponent implements OnInit, OnDestroy {
   pendingKraId: number = 0;
 
   ExpenseImageUrl: SafeUrl | null = null;
-  ExpenseViewURL: string | null = null;
+  ExpenseViewURL: SafeResourceUrl | null = null;
 
   private subscription!: Subscription;
   @ViewChild('createKraModal') createKraModal: any;
@@ -332,7 +335,18 @@ export class KraComponent implements OnInit, OnDestroy {
           categoryId: kra.kraCategoryId,
           kraName: kra.kraName,
           description: kra.description,
+          attachment: null
         });
+
+        if (kra.documentUrl) {
+    this.existingDocumentUrl = kra.documentUrl;
+    // Extract filename from the URL
+    const fileName = kra.documentUrl.split('/').pop() || 'attachment';
+    this.existingAttachmentName = decodeURIComponent(fileName);
+  } else {
+    this.existingAttachmentName = '';
+    this.existingDocumentUrl = '';
+  }
 
         // Disable category if status is NOT 'Created'
         const categoryControl = this.kraForm.get('categoryId');
@@ -564,12 +578,14 @@ export class KraComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-  onFileChange(event: any) {
-    const file = event.target.files[0] as File;
-    if (file) {
-      this.kraForm.patchValue({ attachment: file });
-    }
+onFileChange(event: any) {
+  const file = event.target.files[0] as File;
+  if (file) {
+    this.kraForm.patchValue({ attachment: file });
+    // Show the newly selected file name (replaces existing name display)
+    this.existingAttachmentName = file.name;
   }
+}
 
   getStatusClass(status: string) {
     switch (status) {
@@ -667,32 +683,46 @@ export class KraComponent implements OnInit, OnDestroy {
     });
   }
 
-  onViewAttachement(url: string) {
-    const lowerUrl = url?.toLowerCase();
+onViewAttachement(url: string) {
+  const lowerUrl = url.toLowerCase();
 
-    if (
-      lowerUrl.endsWith('jpg') ||
-      lowerUrl.endsWith('jpeg') ||
-      lowerUrl.endsWith('png')
-    ) {
-      this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
-        .subscribe({
-          next: (res: any) => {
-            const blob = new Blob([res.body], { type: 'image/png' });
-            const objectURL = URL.createObjectURL(blob);
-            this.ExpenseImageUrl =
-              this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            this.ExpenseViewURL = null;
-            this.toggleViewModal();
-          },
-        });
-    } else {
-      this.ExpenseImageUrl = null;
-      this.ExpenseViewURL = `${environment.viewUrl}${url}`;
-      this.toggleViewModal();
-    }
+  // Handle images (keep your working logic)
+  if (lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png')) {
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+      next: (res: any) => {
+        const blob = new Blob([res.body], { type: 'image/jpeg' }); // or 'image/png' as needed
+        const objectURL = URL.createObjectURL(blob);
+        this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        this.ExpenseViewURL = null;
+        this.toggleViewModal();
+      },
+      error: (err) => console.error('Image load failed', err)
+    });
   }
+  // Handle PDF and Excel
+  else if (lowerUrl.endsWith('.pdf') || lowerUrl.endsWith('.xls') || lowerUrl.endsWith('.xlsx')) {
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+      next: (res: any) => {
+        const mimeType = lowerUrl.endsWith('.pdf')
+          ? 'application/pdf'
+          : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; // for .xlsx
+
+        const blob = new Blob([res.body], { type: mimeType });
+        const blobUrl = URL.createObjectURL(blob);
+
+        this.ExpenseViewURL = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+        this.ExpenseImageUrl = null;
+        this.toggleViewModal();
+
+        // Optional: Revoke later when modal closes (see cleanup below)
+      },
+      error: (err) => {
+        console.error('File load failed', err);
+        // Optional: show error in modal
+      }
+    });
+  }
+}
 
   toggleViewModal() {
     this.modalService.dismissAll();

@@ -87,7 +87,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="categoryDetails" optionLabel="name" optionValue="id" [filter]="true" filterBy="name" filterPlaceholder="Search Category Name"
                             [showClear]="false" formControlName="categoryName"  placeholder="Please select category name"  [resetFilterOnHide]="true"
-                            class="form-select custom-select" display="chip">
+                            class="form-select custom-select" multiple="true">
 
                             <ng-template pTemplate="selectedItems" let-selectedItems>
                                 <span *ngFor="let item of selectedItems; let i = index">

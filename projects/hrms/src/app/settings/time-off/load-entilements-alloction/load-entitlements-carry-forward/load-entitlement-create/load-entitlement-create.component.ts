@@ -66,6 +66,9 @@ export class LoadEntitlementCreateComponent {
 
   enableLocation(): void {
     if (this.leaveAllocationForm.get('year')?.value) {
+      this.leaveAllocationForm.get('location')?.reset();
+      this.leaveAllocationForm.get('subLocation')?.reset();
+      this.leaveAllocationForm.get('shift')?.reset();
       this.leaveAllocationForm.get('location')?.enable();
     }
   }
@@ -100,7 +103,7 @@ export class LoadEntitlementCreateComponent {
       this.leaveAllocationForm.get('subLocation')?.enable();
       this.leaveAllocationForm.get('subLocation')?.reset();
       this.leaveAllocationForm.get('shift')?.reset();
-      
+
       //Auto-populate subLocation if stored
       if (this.carryforwarddata?.subLocation) {
         const selectedSub = this.subLocationDetails.find((item: any) =>

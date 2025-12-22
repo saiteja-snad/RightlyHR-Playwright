@@ -43,16 +43,15 @@ export class IntialLoadEntitlementCreateComponent {
       location: [{ value: '', disabled: true }, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-      categoryName: [null, Validators.required],
+      categoryName: [{ value: null, disabled: true }, Validators.required],
     });
     this.getAllLocations();
-    if (this.carryforwarddata) {
+
+    if (this.carryforwarddata && Object.keys(this.carryforwarddata).length > 0) {
       this.leaveAllocationForm.enable();
       this.leaveAllocationForm.patchValue({
         year: this.carryforwarddata.year,
         location: this.carryforwarddata.location,
-
-
       });
     }
 
@@ -68,8 +67,14 @@ export class IntialLoadEntitlementCreateComponent {
   }
 
   enableLocation(): void {
+
     if (this.leaveAllocationForm.get('year')?.value) {
+      this.leaveAllocationForm.get('location')?.reset();
+      this.leaveAllocationForm.get('subLocation')?.reset();
+      this.leaveAllocationForm.get('shift')?.reset();
+      this.leaveAllocationForm.get('categoryName')?.reset();
       this.leaveAllocationForm.get('location')?.enable();
+
     }
   }
 
@@ -134,8 +139,8 @@ export class IntialLoadEntitlementCreateComponent {
         this.leaveAllocationForm.get('shift')?.enable();
         this.leaveAllocationForm.get('shift')?.reset();
         this.leaveAllocationForm.get('categoryName')?.reset();
-         this.categoryDetails = [];
-        
+        this.categoryDetails = [];
+
         // Auto-select saved shift
         if (this.carryforwarddata?.shift) {
           const selectedShift = this.shiftDetails.find((sh: any) => sh.shiftName === this.carryforwarddata.shift.shiftName);
@@ -157,6 +162,7 @@ export class IntialLoadEntitlementCreateComponent {
 
   getCategoryDetails(policy: any): void {
     this.leaveAllocationForm.get('categoryName')?.reset();
+     this.leaveAllocationForm.get('categoryName')?.enable();
 
     let params = {
       locationId: this.leaveAllocationForm.get('location')?.value?.id,
@@ -173,9 +179,9 @@ export class IntialLoadEntitlementCreateComponent {
 
         // Pre-select categories from localStorage
         // if (this.carryforwarddata?.categoryIds?.length) {
-           if (this.categoryDetails?.length) {
+        if (this.categoryDetails?.length) {
           this.leaveAllocationForm.patchValue({
-            categoryName: this.carryforwarddata.categoryIds
+            categoryName: this.carryforwarddata?.categoryIds
           });
         }
       },

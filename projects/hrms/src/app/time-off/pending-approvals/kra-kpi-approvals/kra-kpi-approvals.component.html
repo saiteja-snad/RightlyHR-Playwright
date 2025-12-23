@@ -358,17 +358,11 @@
 
         <!-- Approver Comments -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">
-            Approver Comments <span class="text-danger">*</span>
-          </label>
+          <label class="form-label custom-label mb-2">Approver Comments</label>
           <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="500"
-            placeholder="Enter rejection reason (required)" required></textarea>
+            placeholder="Enter comments (optional)"></textarea>
           <div class="textarea-count-text">
             {{ actionForm.get('comments')?.value?.length || 0 }} / 500
-          </div>
-          <div class="error-msg"
-            *ngIf="actionForm.get('comments')?.touched && actionForm.get('comments')?.errors?.['required']">
-            Rejection reason is required
           </div>
         </div>
 

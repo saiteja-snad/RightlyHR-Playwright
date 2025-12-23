@@ -113,7 +113,7 @@
                         </td>
                         <td class="text-center">
                           <div *ngIf="kpi.description; else noDescription">
-                            <app-info-icon ngbPopover="{{ kpi.description }}" container="body" class="cursor">
+                            <app-info-icon class="cursor" ngbPopover="{{ kpi.description }}" container="body" class="cursor">
                             </app-info-icon>
                           </div>
                           <ng-template #noDescription>NA</ng-template>

@@ -260,16 +260,25 @@ export class EmployeeKraKpiViewComponent implements OnInit, OnDestroy {
   }
 
 
-  getEffectiveKpiWeightage(kpi: any): number {
-  if (
-    kpi?.assignedApproverWeightage !== undefined &&
-    kpi?.assignedApproverWeightage !== null &&
-    kpi?.assignedApproverWeightage !== ''
-  ) {
-    return Number(kpi.assignedApproverWeightage);
+getEffectiveKpiWeightage(kpi: any): number {
+  if (!kpi) {
+    return 0;
   }
 
-  return Number(kpi?.assignedWeightage || 0);
+  if (kpi.assignedStatus === 'Approved') {
+    return Number(kpi.assignedApproverWeightage || 0);
+  }
+
+
+  if (kpi.assignedStatus === 'Rejected') {
+    return Number(kpi.assignedApproverWeightage || 0);
+  }
+
+  if (kpi.assignedStatus === 'Waiting for Approval') {
+    return Number(kpi.assignedWeightage || 0);
+  }
+
+  return Number(kpi.assignedWeightage || 0);
 }
 
 

@@ -606,6 +606,7 @@ loadAllKpis(): void {
     }
 
     const row = this.fb.group({
+      assigneeId: [null],
       kpiId: [null, Validators.required],
       uom: [{ value: null, disabled: true }, Validators.required],
       weightage: [
@@ -614,7 +615,7 @@ loadAllKpis(): void {
       ],
       targetValue: [{ value: null, disabled: true }],
       targetDate: ['', [Validators.required, this.noPastDateValidator]],
-      description: ['', [Validators.required, Validators.minLength(10)]],
+      description: ['', [Validators.required]],
     });
 
     // Listen to KPI selection to auto-fill UOM and apply validation
@@ -696,6 +697,7 @@ loadAllKpis(): void {
       // Get UOM even if control is disabled
       const uomValue = row.get('uom')?.value || '';
       this.voidKpis.push({
+        assigneeId: rowValue.assigneeId,
         kpiId: rowValue.kpiId,
         kraId: this.assignForm.get('kraId')?.value,
         kpiName: kpiName,
@@ -780,25 +782,35 @@ loadAllKpis(): void {
       this.isSubmitting = false;
       return;
     }
-    const kpis = this.kpiRows.getRawValue().map((row: any) => ({
-      kpiId: row.kpiId || 0,
-      kraId: formValue.kraId,
-      kpiName: this.getKpiNameById(row.kpiId),
-      weightageValue: String(row.weightage || 0),
-      targetValue: String(row.targetValue || ''),
-      targetDate: row.targetDate || null,
-      targetType: row.uom || '',
-      description: row.description?.trim() || '',
-      reviewCycleId: Number(formValue.reviewCycle),
-      ratingScaleId: Number(formValue.ratingScale),
-      status: row.status || 'Active',
-      createdBy: loggedInEmployeeId,
-      updatedBy: loggedInEmployeeId,
-      employeeIds: selectedEmployeeIds,
-    }));
+    const kpis = this.kpiRows.getRawValue().map((row: any) => {
+  const kpiPayload: any = {
+    kpiId: row.kpiId || 0,
+    kraId: formValue.kraId,
+    kpiName: this.getKpiNameById(row.kpiId),
+    weightageValue: String(row.weightage || 0),
+    targetValue: String(row.targetValue || ''),
+    targetDate: row.targetDate || null,
+    targetType: row.uom || '',
+    description: row.description?.trim() || '',
+    reviewCycleId: Number(formValue.reviewCycle),
+    ratingScaleId: Number(formValue.ratingScale),
+    status: row.status || 'Active',
+    createdBy: loggedInEmployeeId,
+    updatedBy: loggedInEmployeeId,
+    employeeIds: selectedEmployeeIds,
+  };
+
+  // Only include assigneeId if in edit mode AND it exists (i.e., existing KPI)
+  if (this.isEditMode && row.assigneeId != null) {
+    kpiPayload.assigneeId = row.assigneeId;
+  }
+
+  return kpiPayload;
+});
     // 4. Append void KPIs only in edit mode
     if (this.isEditMode && this.voidKpis.length > 0) {
       const voidPayload = this.voidKpis.map((voidKpi: any) => ({
+        assigneeId: voidKpi.assigneeId,
         kpiId: voidKpi.kpiId,
         kraId: voidKpi.kraId,
         kpiName: voidKpi.kpiName,
@@ -910,6 +922,7 @@ loadAllKpis(): void {
     kraAssignment.kpis?.forEach((kpi: any) => {
       const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
       const rowGroup = this.fb.group({
+        assigneeId: [kpi.assigneeId || null],
         kpiId: [{ value: kpi.kpiId || null, disabled: true }],
         uom: [{ value: kpi.targetType || '', disabled: true }],
         weightage: [Number(kpi.weightageValue) || 0],
@@ -1181,21 +1194,63 @@ loadAllKpis(): void {
     }
   }
 
-  getKraProgress(kra: any): number {
-    if (!kra?.kpis || kra.kpis.length === 0) {
-      return 0;
-    }
-    const total = kra.kpis.reduce((sum: number, kpi: any) => {
-      // Priority: assignedApproverWeightage → assignedWeightage
-      const weightage = kpi.assignedApproverWeightage !== undefined &&
-        kpi.assignedApproverWeightage !== null && kpi.assignedApproverWeightage !== '' ?
-        Number(kpi.assignedApproverWeightage) : Number(kpi.assignedWeightage || 0);
-      return sum + weightage;
-    }, 0);
-    const average = total / kra.kpis.length;
-    // Ensure 0–100 & round
-    return Math.min(100, Math.max(0, Math.round(average)));
+getKraProgress(kra: any): number {
+  if (!kra?.kpis || kra.kpis.length === 0) {
+    return 0;
   }
+
+  const validKpis = kra.kpis.filter(
+    (kpi: any) =>
+      kpi.assignedStatus === 'Waiting for Approval' ||
+      kpi.assignedStatus === 'Approved'
+  );
+
+  if (validKpis.length === 0) {
+    return 0;
+  }
+
+  let total = 0;
+
+  validKpis.forEach((kpi: any, index: number) => {
+    let weightage: number;
+    let source: string;
+
+    if (kpi.assignedStatus === 'Approved') {
+      // For Approved: always use the approver's final weightage
+      weightage = Number(kpi.assignedApproverWeightage || 0);
+      source = 'assignedApproverWeightage (Approved)';
+    } else if (kpi.assignedStatus === 'Waiting for Approval') {
+      // For Waiting: use employee's submitted value
+      weightage = Number(kpi.assignedWeightage || 0);
+      source = 'assignedWeightage (Waiting for Approval)';
+    } else {
+      // Fallback (should not happen due to filter)
+      weightage = 0;
+      source = 'fallback (0)';
+    }
+
+    console.log(
+      `KPI ${index + 1} (ID: ${kpi.kpiId}, Name: ${kpi.kpiName || 'N/A'}): ` +
+      `Status = ${kpi.assignedStatus}, ` +
+      `Picking weightage = ${weightage} from ${source} ` +
+      `(assignedWeightage = '${kpi.assignedWeightage}', approverWeightage = '${kpi.assignedApproverWeightage}')`
+    );
+
+    total += weightage;
+  });
+
+  const average = total / validKpis.length;
+  const rounded = Math.round(average);
+
+  console.log(
+    `KRA Progress Summary: Total Weightage = ${total}, ` +
+    `Valid KPIs Count = ${validKpis.length}, ` +
+    `Average = ${average.toFixed(2)}, ` +
+    `Final Progress = ${rounded}%`
+  );
+
+  return Math.min(100, Math.max(0, rounded));
+}
 
 
   getProgressClass(value: number): string {
@@ -1227,6 +1282,7 @@ loadAllKpis(): void {
   getApproverStatusClass(status: string | null | undefined): string {
     switch (status) {
       case 'Approved':
+      case 'Active':
         return 'status-active';
 
       case 'Rejected':

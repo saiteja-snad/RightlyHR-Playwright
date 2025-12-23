@@ -244,7 +244,7 @@
           <tbody>
             <tr *ngFor="let kpi of myKpiList; let i = index">
               <td class="text-center">
-                <input class="form-check-input" type="checkbox" [(ngModel)]="myKpiList[i].selected" (ngModelChange)="onRowSelectionChange()" />
+                <input class="form-check-input" type="checkbox" [(ngModel)]="myKpiList[i].selected" (ngModelChange)="onRowSelectionChange()" [class.opacity-50]="isWaitingForApproval(kpi)" [disabled]="isWaitingForApproval(myKpiList[i])" />
               </td>
 
               <!-- KPI Name -->
@@ -277,15 +277,15 @@
 
               <td class="text-center">
                 <div *ngIf="myKpiList[i].description; else noDescription">
-                  <app-info-icon ngbPopover="{{ myKpiList[i].description }}" container="body">
+                  <app-info-icon class="cursor" ngbPopover="{{ myKpiList[i].description }}" container="body">
                   </app-info-icon>
                 </div>
                 <ng-template #noDescription>NA</ng-template>
               </td>
               <!-- Assigned Weightage -->
               <td>
-                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].assignedWeightage"
-                  (ngModelChange)="calculateAssignedWeightage()" [min]="0" [max]="100" step="1" />
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].assignedWeightage" placeholder="0-100"
+                 pattern="[0-9]*" step="1" (input)="onWeightageInput($event, i)" (blur)="clampWeightage(i)" [disabled]="isWaitingForApproval(myKpiList[i])" (ngModelChange)="onAssignedWeightageChange()" />
               </td>
 
               <!-- Attachment -->
@@ -298,9 +298,18 @@
           </tbody>
 
         </table>
-        <div *ngIf="isWeightageExceeded" class="text-danger mt-2">
-          Note: Total progress should not exceed 100.
-        </div>
+<!-- <div class="mt-2 text-end fw-bold"
+     [class.text-danger]="isWeightageExceeded"
+     [class.text-success]="totalAssignedWeightage === 100"
+     [class.text-warning]="totalAssignedWeightage > 80 && totalAssignedWeightage <= 100">
+  Total Assigned Progress: {{ totalAssignedWeightage }}%
+  <span class="text-info ms-2" *ngIf="!isWeightageExceeded && totalAssignedWeightage < 100">
+    ({{ 100 - totalAssignedWeightage }}% remaining)
+  </span>
+</div> -->
+<div *ngIf="isWeightageExceeded" class="text-danger mt-2">
+  Note: Total progress should not exceed 100.
+</div>
       </div>
 
       <!-- Footer -->

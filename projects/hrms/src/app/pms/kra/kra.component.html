@@ -66,7 +66,7 @@
           <td class="text-center">{{ kra.kraName }}</td>
           <td class="text-center">
             <div *ngIf="kra.description; else noDescription">
-              <app-info-icon ngbPopover="{{ kra.description }}" container="body">
+              <app-info-icon class="cursor" ngbPopover="{{ kra.description }}" container="body">
               </app-info-icon>
             </div>
             <ng-template #noDescription>NA</ng-template>

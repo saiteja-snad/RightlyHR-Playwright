@@ -60,8 +60,7 @@ export class MyKraKpiComponent implements OnInit {
   isWeightageExceeded = false;
 
   isAllSelected = false;
-selectedKpis: any[] = [];
-
+  selectedKpis: any[] = [];
 
   constructor(
     private http: HttpService,
@@ -136,29 +135,44 @@ selectedKpis: any[] = [];
       });
   }
 
-
-
-  calculateKraProgress(kpis: any[]): number {
+calculateKraProgress(kpis: any[]): number {
   if (!kpis || kpis.length === 0) {
     return 0;
   }
 
-  const total = kpis.reduce((sum: number, kp: any) => {
-    const weightage =
-      kp.assignedApproverWeightage !== undefined &&
-      kp.assignedApproverWeightage !== null &&
-      kp.assignedApproverWeightage !== ''
-        ? Number(kp.assignedApproverWeightage)
-        : Number(kp.assignedWeightage || 0);
+  // ✅ Include only allowed statuses
+  const validKpis = kpis.filter(
+    (kp: any) =>
+      kp.assignedStatus === 'Waiting for Approval' ||
+      kp.assignedStatus === 'Approved'
+  );
+
+  if (validKpis.length === 0) {
+    return 0; // no eligible KPIs → no progress
+  }
+
+  const total = validKpis.reduce((sum: number, kp: any) => {
+    let weightage: number;
+
+    if (kp.assignedStatus === 'Approved') {
+      // For Approved: use final approver value
+      weightage = Number(kp.assignedApproverWeightage || 0);
+    } else if (kp.assignedStatus === 'Waiting for Approval') {
+      // For Waiting: use employee's submitted value
+      weightage = Number(kp.assignedWeightage || 0);
+    } else {
+      // Fallback (should not happen)
+      weightage = 0;
+    }
 
     return sum + weightage;
   }, 0);
 
-  const average = total / kpis.length;
+  const average = total / validKpis.length;
+  const rounded = Math.round(average);
 
-  return Math.min(100, Math.max(0, Math.round(average)));
+  return Math.min(100, Math.max(0, rounded));
 }
-
 
   openKraKpiModal(kra: any, content: any) {
     this.selectedKra = kra;
@@ -169,11 +183,7 @@ selectedKpis: any[] = [];
       backdrop: 'static',
       size: 'xl',
     });
-
   }
-
-
-
 
   async submitForApproval() {
     try {
@@ -184,10 +194,10 @@ selectedKpis: any[] = [];
 
       const selectedKpis = this.getSelectedKpis();
 
-if (selectedKpis.length === 0) {
-  this.conformationPopup.openErrorModal('Please select at least one KPI');
-  return;
-}
+      if (selectedKpis.length === 0) {
+        this.conformationPopup.openErrorModal('Please select at least one KPI');
+        return;
+      }
 
       for (let kpi of this.selectedKpis) {
         let documentUrl = null;
@@ -247,10 +257,11 @@ if (selectedKpis.length === 0) {
 
       const selectedKpis = this.getSelectedKpis();
 
-if (selectedKpis.length === 0) {
-  this.conformationPopup.openErrorModal('Please select at least one KPI');
-  return;
-}
+
+      if (selectedKpis.length === 0) {
+        this.conformationPopup.openErrorModal('Please select at least one KPI');
+        return;
+      }
 
       for (let kpi of this.selectedKpis) {
         let documentUrl = null;
@@ -365,37 +376,59 @@ if (selectedKpis.length === 0) {
   }
 
   loadKpisForMyKra(kra: any): void {
-    this.myKpiList = [];
-      this.isAllSelected = false;
+  this.myKpiList = [];
+  this.isAllSelected = false;
   this.selectedKpis = [];
 
-    if (kra?.kpis && kra.kpis.length > 0) {
-      kra.kpis.forEach((kpi: any) => {
-        this.myKpiList.push({
-          kpiId: kpi.kpiId,
-          kpiName: kpi.kpiName,
-          weightageValue: kpi.weightageValue,
-          targetValue: kpi.targetValue,
-          targetType: kpi.targetType,
-          targetDate: kpi.targetDate
-            ? this.formatDateForInput(kpi.targetDate)
-            : null,
-          description: kpi.description,
-          assignedWeightage: kpi.assignedWeightage || 0,
-          selected: false,
-          attachment: null,
-          assigneeId: kpi.assigneeId,
-          assignedStatus: kpi.assignedStatus || 'Draft',
+  if (kra?.kpis && kra.kpis.length > 0) {
+    kra.kpis.forEach((kpi: any) => {
+      // Determine the correct CURRENT committed weightage
+      let currentCommittedWeightage = 0;
+
+      if (kpi.assignedStatus === 'Approved') {
+        currentCommittedWeightage = Number(kpi.assignedApproverWeightage || 0);
+      } else if (kpi.assignedStatus === 'Waiting for Approval') {
+        currentCommittedWeightage = Number(kpi.assignedWeightage || 0);
+      } else if (kpi.assignedStatus === 'Rejected') {
+        currentCommittedWeightage = Number(kpi.assignedApproverWeightage || 0);
+      } else {
+        currentCommittedWeightage = Number(kpi.assignedWeightage || 0);
+      }
+
+      this.myKpiList.push({
+        kpiId: kpi.kpiId,
+        kpiName: kpi.kpiName,
+        weightageValue: kpi.weightageValue,
+        targetValue: kpi.targetValue,
+        targetType: kpi.targetType,
+        targetDate: kpi.targetDate
+          ? this.formatDateForInput(kpi.targetDate)
+          : null,
+        description: kpi.description,
+
+        // Use the committed value as the base
+        assignedWeightage: currentCommittedWeightage,
+
+        selected: false,
+        attachment: null,
+        assigneeId: kpi.assigneeId,
+        assignedStatus: kpi.assignedStatus || 'Draft',
+
+        // Optional: preserve original fields if needed later
+        assignedApproverWeightage: kpi.assignedApproverWeightage,
         assignedApproverRating: kpi.assignedApproverRating,
         assignedApproverRejectedComments: kpi.assignedApproverRejectedComments || '',
-        });
       });
-    }
-
-    this.calculateAssignedWeightage();
-
-    console.log('My KPIs loaded:', this.myKpiList);
+    });
   }
+
+  console.log('My KPIs loaded:', this.myKpiList);
+
+  // Trigger validation after load
+  setTimeout(() => {
+    this.updateWeightageValidation();
+  }, 0);
+}
 
   formatDateForInput(dateStr: string) {
     const d = new Date(dateStr);
@@ -434,39 +467,44 @@ if (selectedKpis.length === 0) {
     });
   }
 
-  calculateAssignedWeightage(): void {
-    this.totalAssignedWeightage = this.myKpiList.reduce(
-      (sum, kpi) => sum + Number(kpi.assignedWeightage || 0),
-      0
-    );
 
-    this.isWeightageExceeded = this.totalAssignedWeightage > 100;
-  }
 
-  onRowSelectionChange(): void {
-  this.selectedKpis = this.myKpiList.filter(kpi => kpi.selected);
+onRowSelectionChange(): void {
+  this.selectedKpis = this.myKpiList.filter((kpi) => kpi.selected);
 
   this.isAllSelected =
     this.myKpiList.length > 0 &&
-    this.myKpiList.every(kpi => kpi.selected);
+    this.myKpiList.every((kpi) => kpi.selected || this.isWaitingForApproval(kpi));
+
+  this.updateWeightageValidation(); // ← Must be called here
 }
 
-toggleSelectAll(event: any): void {
-  const checked = event.target.checked;
+  toggleSelectAll(event: any): void {
+    const checked = event.target.checked;
 
-  this.myKpiList.forEach(kpi => (kpi.selected = checked));
+    this.myKpiList.forEach((kpi) => {
+      if (!this.isWaitingForApproval(kpi)) {
+        kpi.selected = checked;
+      }
+    });
 
-  this.isAllSelected = checked;
-  this.selectedKpis = checked ? [...this.myKpiList] : [];
-}
+    this.selectedKpis = this.getSelectedKpis();
+    this.isAllSelected =
+      this.myKpiList.length > 0 &&
+      this.myKpiList.every(
+        (kpi) => kpi.selected || this.isWaitingForApproval(kpi)
+      );
+      this.onRowSelectionChange();
+  }
 
-getSelectedKpis(): any[] {
-  return this.myKpiList.filter(kpi => kpi.selected);
-}
+  getSelectedKpis(): any[] {
+    return this.myKpiList.filter((kpi) => kpi.selected);
+  }
 
   getApproverStatusClass(status: string | null | undefined): string {
     switch (status) {
       case 'Approved':
+      case 'Active':
         return 'status-active';
 
       case 'Rejected':
@@ -483,4 +521,109 @@ getSelectedKpis(): any[] {
     }
   }
 
+  isWaitingForApproval(kpi: any): boolean {
+    return (
+      kpi?.assignedStatus === 'Waiting for Approval' ||
+      kpi?.assignedStatus === 'Approved'
+    );
+  }
+
+updateWeightageValidation(): void {
+  let totalProgress = 0;
+
+  this.myKpiList.forEach((kpi) => {
+    let weightageToAdd = 0;
+
+    const isLocked = this.isWaitingForApproval(kpi); // Approved or Waiting
+
+    if (isLocked) {
+      // For locked KPIs: always count their current committed value
+      weightageToAdd = Number(kpi.assignedWeightage || 0);
+    } else {
+      // For editable KPIs: only count if selected
+      if (kpi.selected) {
+        weightageToAdd = Number(kpi.assignedWeightage || 0);
+      }
+    }
+
+    totalProgress += weightageToAdd;
+  });
+
+  this.totalAssignedWeightage = Math.round(totalProgress);
+  this.isWeightageExceeded = totalProgress > 100;
 }
+onAssignedWeightageChange(): void {
+  // Clamp value to 0-100 per field
+  this.myKpiList.forEach(kpi => {
+    if (!this.isWaitingForApproval(kpi)) {
+      if (kpi.assignedWeightage > 100) kpi.assignedWeightage = 100;
+      if (kpi.assignedWeightage < 0) kpi.assignedWeightage = 0;
+    }
+  });
+
+  this.updateWeightageValidation();
+}
+
+onWeightageInput(event: any, index: number): void {
+  let input = event.target;
+  let value = input.value.replace(/[^0-9]/g, ''); // Remove any non-digit
+
+  let num = value === '' ? 0 : parseInt(value, 10);
+
+  // Strictly enforce: if > 100, cap at 100 and stop further typing
+  if (num > 100) {
+    num = 100;
+    value = '100';
+    input.value = '100'; // Immediately reflect in UI
+  } else {
+    input.value = value; // Update input to cleaned value
+  }
+
+  // Update model
+  this.myKpiList[index].assignedWeightage = num;
+
+  // Trigger total validation
+  this.updateWeightageValidation();
+}
+
+clampWeightage(index: number): void {
+  const kpi = this.myKpiList[index];
+
+  if (this.isWaitingForApproval(kpi)) return;
+
+  let value = kpi.assignedWeightage;
+
+  if (isNaN(value) || value < 0) {
+    kpi.assignedWeightage = 0;
+  } else if (value > 100) {
+    kpi.assignedWeightage = 100;
+  }
+
+  this.updateWeightageValidation();
+}
+}
+
+
+  // calculateAssignedWeightage(): void {
+  //   debugger;
+  //   this.totalAssignedWeightage = this.myKpiList
+  //     .filter(
+  //       (kpi : any) =>
+  //         kpi.selected &&
+  //         (kpi.assignedStatus === 'Waiting for Approval' ||
+  //           kpi.assignedStatus === 'Active' ||
+  //           kpi.assignedStatus === 'Approved')
+  //     )
+  //     .reduce((sum, kpi) => {
+  //       return sum + kpi.assignedWeightage || 0;
+  //     }, 0);
+
+  //   this.isWeightageExceeded = this.totalAssignedWeightage > 100;
+  //   console.log(
+  //     this.myKpiList.map((k) => ({
+  //       name: k.kpiName,
+  //       selected: k.selected,
+  //       weight: k.assignedWeightage,
+  //     }))
+  //   );
+  // }

@@ -94,23 +94,147 @@
 
       <div class="row">
         <!-- Performance Distribution Chart -->
-        <div class="col-xl-7 col-lg-6 mb-3">
-          <div class="graph-card">
-            <div class="d-flex align-items-center gap-2 mb-3">
-              <div class="graph-header">Performance Distribution</div>
+        <div class="col-xl-8 col-lg-7 mb-3">
+          @if (!performanceLoader) {
+          <div class="time-sheet-graph-card">
+
+            <!-- Header -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
+              <div class="summary-header d-flex gap-2 mb-2">
+                <div>Performance Distribution</div>
+                <div>
+                  <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
+
+                  <ng-template #performanceInfo>
+                    <div class="module-info-text">
+                      Shows employee distribution by performance category.
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+
+              <!-- Legends -->
+              <!-- <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-1" *ngFor="let item of performanceLegends">
+                  <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }">
+                  </span>
+                  <span class="legend-label">{{ item.label }}</span>
+                </div>
+              </div> -->
             </div>
+
+            <!-- Chart -->
+            <div class="bar-chart graph-no-data-content">
+              <ng-container *ngIf="hasPerformanceData; else noData">
+                <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions">
+                </p-chart>
+              </ng-container>
+
+              <ng-template #noData>
+                <app-no-data-found />
+              </ng-template>
+            </div>
+
+          </div>
+          } @else {
+          <div class="chart-card-skeleton">
+            <p-skeleton width="100%" height="100%" borderRadius="12px" />
+          </div>
+          }
+        </div>
+
+
+        <!-- Completion Status chart -->
+        <div class="col-xl-4 col-lg-5 mb-3">
+          <div class="graph-card">
+            <p class="graph-header">Completion Status</p>
+
+            <div class="chart-content">
+              <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions"
+                class="doughnut-chart">
+              </p-chart>
+            </div>
+
+            <!-- <ul class="list-style-none ps-0 pt-3">
+      <li *ngFor="let status of dummyStatusCounts; trackBy: trackByIndex">
+        <div class="d-flex justify-content-between summart-text">
+          <div class="summary-name" [ngStyle]="{ color: status.colour }">
+            {{ status.status }}
+          </div>
+          <div>{{ status.value }}</div>
+        </div>
+      </li>
+    </ul> -->
+
           </div>
         </div>
 
-        <!-- Completion Status chart -->
-        <div class="col-xl-5 col-lg-6 mb-3">
-          <div class="graph-card">
-          </div>
-        </div>
 
         <!-- Table -->
         <div class="col-xl-12 col-lg-12 mb-3">
           <div class="graph-card">
+            <!-- Search -->
+            <div class="input-group custom-search mb-3">
+              <span class="input-group-text custom-input-group-search">
+                <i class="bi bi-search"></i>
+              </span>
+              <input type="search" class="form-control custom-search-input" placeholder="Search by KRA name..."
+                [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+            </div>
+
+            <!-- Table -->
+            @if (!dataload) {
+            <div class="custom-table-content w-100">
+              <table class="w-100">
+                <thead>
+                  <tr>
+                    <th>KRA Category</th>
+                    <th class="text-center">KRA Title</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @if (filteredDetails.length > 0) {
+                  @for (kra of filteredDetails; track kra.kraId) {
+                  <tr>
+                    <td>{{ kra.kraCategoryName }}</td>
+                    <td class="text-center">{{ kra.kraName }}</td>
+
+                    <td class="text-center">
+                      @if (kra.description) {
+                      <app-info-icon class="cursor" ngbPopover="{{ kra.description }}" container="body">
+                      </app-info-icon>
+                      } @else {
+                      NA
+                      }
+                    </td>
+
+                    <td class="text-center">
+                      <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
+                        {{ kra.status }}
+                      </span>
+                    </td>
+
+                    <td class="text-center">
+                      <i class="bi bi-three-dots-vertical cursor-pointer"></i>
+                    </td>
+                  </tr>
+                  }
+                  } @else {
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+            }
+
           </div>
         </div>
       </div>

@@ -54,3 +54,51 @@
   font-size: var(--fontsize14) !important;
   color: var(--primary-color);
 }
+
+  .summary-header {
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    color: var(--primary-color);
+  }
+
+  .chart-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    canvas {
+      width: 100px !important;
+      height: 100px !important;
+    }
+  }
+
+  .summart-text {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 100%;
+    color: var(--primary-color);
+  }
+
+  .summary-name {
+    font-weight: 600;
+  }
+
+  li {
+    padding: 0.75rem 0rem;
+    border-bottom: 1px solid #EFEFEF;
+  }
+
+  li:last-child {
+    border-bottom: none !important;
+}
+
+.custom-table-content {
+    width: 100%;
+    height: calc(100dvh - 40rem) !important;
+    overflow: auto;
+    background-color: var(--white-color);
+    border: 1px solid var(--table-main-content-border-color);
+    border-radius: 0.5rem;
+    position: relative;
+}
+

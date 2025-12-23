@@ -24,6 +24,7 @@ import { SummaryCard } from '../../Interfaces/skill-dashboard.model';
 import { Subscription } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 
 @Component({
   selector: 'app-kra-kpi-dashboard',
@@ -41,7 +42,8 @@ import { ChartModule } from 'primeng/chart';
     PaginatorModule,
     ReactiveFormsModule,
     SkeletonModule,
-    ChartModule
+    ChartModule,
+    NoDataFoundComponent
   ],
   templateUrl: './kra-kpi-dashboard.component.html',
   styleUrl: './kra-kpi-dashboard.component.scss',
@@ -66,76 +68,117 @@ export class KraKpiDashboardComponent {
   first = 0; // for PrimeNG paginator
   collectionSize = 0; // total records from API
 
-  performanceLegends = [
-  { label: 'Outstanding', color: '#2E7D32' },
-  { label: 'Meets Expectations', color: '#1976D2' },
-  { label: 'Needs Improvement', color: '#F9A825' },
+
+dummyStatusCounts = [
+  { status: 'Present', value: 18, colour: '#2E7D32' },
+  { status: 'Absent', value: 4, colour: '#C62828' },
+  { status: 'Leave', value: 6, colour: '#F9A825' },
+  { status: 'Holiday', value: 2, colour: '#1976D2' },
 ];
+
+attendanceSummaryData: any;
+attendanceSummaryOptions: any;
 
 performanceData = {
   labels: ['Team A', 'Team B', 'Team C', 'Team D'],
   datasets: [
     {
       label: 'Outstanding',
-      backgroundColor: '#2E7D32',
+      backgroundColor: '#A2B5E2',
       data: [8, 6, 7, 5],
     },
     {
       label: 'Meets Expectations',
-      backgroundColor: '#1976D2',
+      backgroundColor: '#0F358A',
       data: [10, 12, 9, 11],
-    },
-    {
-      label: 'Needs Improvement',
-      backgroundColor: '#F9A825',
-      data: [2, 3, 4, 3],
     },
   ],
 };
 
-performanceOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  barThickness: 28,
-  scales: {
-    x: {
-      stacked: true,
-      ticks: {
-        color: '#141414',
-        font: { size: 11 },
-      },
-    },
-    y: {
-      stacked: true,
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Employees',
-        color: '#505050',
-        font: { size: 10 },
-      },
-      ticks: {
-        color: '#72777B',
-        font: { size: 11 },
-      },
-    },
+dataload = false;
+
+dummyDetails = [
+  {
+    kraId: 1,
+    kraCategoryName: 'Productivity',
+    kraName: 'Code Quality',
+    description: 'Maintain clean and optimized code',
+    documentUrl: '',
+    status: 'Active',
   },
-  plugins: {
-    legend: {
-      display: false, // custom legend used
-    },
-    tooltip: {
-      callbacks: {
-        title: (tooltip: any) => {
-          return `Category: ${tooltip[0].label}`;
-        },
-        label: (context: any) => {
-          return `${context.dataset.label}: ${context.raw}`;
-        },
-      },
-    },
+  {
+    kraId: 2,
+    kraCategoryName: 'Delivery',
+    kraName: 'On-time Delivery',
+    description: 'Deliver tasks within deadline',
+    documentUrl: '',
+    status: 'Created',
   },
-};
+  {
+    kraId: 3,
+    kraCategoryName: 'Communication',
+    kraName: 'Team Collaboration',
+    description: '',
+    documentUrl: '',
+    status: 'On Hold',
+  },
+  {
+    kraId: 4,
+    kraCategoryName: 'Quality',
+    kraName: 'Bug Reduction',
+    description: 'Reduce production issues',
+    documentUrl: '',
+    status: 'Inactive',
+  },
+    {
+    kraId: 5,
+    kraCategoryName: 'Communication',
+    kraName: 'Team Collaboration',
+    description: '',
+    documentUrl: '',
+    status: 'On Hold',
+  },
+  {
+    kraId: 6,
+    kraCategoryName: 'Quality',
+    kraName: 'Bug Reduction',
+    description: 'Reduce production issues',
+    documentUrl: '',
+    status: 'Inactive',
+  },
+    {
+    kraId: 7,
+    kraCategoryName: 'Communication',
+    kraName: 'Team Collaboration',
+    description: '',
+    documentUrl: '',
+    status: 'On Hold',
+  },
+  {
+    kraId: 8,
+    kraCategoryName: 'Quality',
+    kraName: 'Bug Reduction',
+    description: 'Reduce production issues',
+    documentUrl: '',
+    status: 'Inactive',
+  },
+];
+
+filteredDetails = [...this.dummyDetails];
+
+
+performanceChartData: any;
+performanceChartOptions: any;
+
+performanceLegends = [
+  { label: 'Outstanding', color: '#0F358A' },
+  { label: 'Meets Expectations', color: '#A2B5E2' },
+
+];
+
+performanceLoader = false;
+hasPerformanceData = true;
+
 
 
   constructor(
@@ -158,6 +201,8 @@ performanceOptions = {
     this.updateModuleInfo();
     this.loadReviewCycles()
     this.getEmployeeSkillCount()
+    this.initAttendanceSummaryChart();
+    this.initPerformanceChart();
   }
 
   updateModuleInfo() {
@@ -289,4 +334,126 @@ performanceOptions = {
       }
     });
   }
+
+  initAttendanceSummaryChart() {
+  const data = this.dummyStatusCounts.map(item => item.value);
+  const backgroundColors = this.dummyStatusCounts.map(item => item.colour);
+
+  this.attendanceSummaryData = {
+    datasets: [
+      {
+        data,
+        backgroundColor: backgroundColors,
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  this.attendanceSummaryOptions = {
+    cutout: '70%',
+  };
+}
+
+trackByIndex(index: number): number {
+  return index;
+}
+
+onSearchTextChange(): void {
+  const search = this.searchText.toLowerCase().trim();
+
+  this.filteredDetails = this.dummyDetails.filter(kra =>
+    kra.kraName.toLowerCase().includes(search)
+  );
+}
+
+getStatusClass(status: string): string {
+  switch (status) {
+    case 'Active':
+      return 'status-active';
+    case 'Created':
+      return 'status-created';
+    case 'On Hold':
+      return 'status-hold';
+    case 'Inactive':
+      return 'status-inactive';
+    default:
+      return '';
+  }
+}
+
+initPerformanceChart(): void {
+  this.performanceLoader = true;
+
+  // Dummy categories (x-axis)
+  const labels = ['Team A', 'Team B', 'Team C', 'Team D'];
+
+  const outstanding = [8, 6, 7, 5];
+  const meets = [10, 12, 9, 11];
+  const needsImprovement = [2, 3, 4, 3];
+
+  this.performanceChartData = {
+    labels,
+    datasets: [
+      {
+        label: 'Outstanding',
+        backgroundColor: '#0F358A',
+        data: outstanding,
+        stack: 'Performance',
+      },
+      {
+        label: 'Meets Expectations',
+        backgroundColor: '#A2B5E2',
+        data: meets,
+        stack: 'Performance',
+      },
+    ],
+  };
+
+  this.performanceChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    barThickness: 30,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: (items: any) => labels[items[0].dataIndex],
+          label: (context: any) =>
+            `${context.dataset.label}: ${context.raw}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        stacked: true,
+        grid: { display: false },
+        ticks: {
+          color: '#141414',
+          font: { size: 11 },
+        },
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Employees',
+          color: '#505050',
+          font: { size: 12 },
+        },
+        ticks: {
+          color: '#72777B',
+          font: { size: 11 },
+        },
+      },
+    },
+  };
+
+  this.hasPerformanceData = true;
+  this.performanceLoader = false;
+}
+
+
+
+
 }

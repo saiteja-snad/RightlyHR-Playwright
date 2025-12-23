@@ -411,31 +411,6 @@ onLocationChange(selectedLocationIds: number[] | null) {
   }
 }
 
-normalizeExperience(value: string): string {
-  if (!value) return value;
-
-  const [yearStr, monthStr = '0'] = value.split('.');
-  const years = parseInt(yearStr, 10);
-  const months = parseInt(monthStr, 10);
-
-  // valid months (0–12)
-  if (months <= 12) {
-    return value;
-  }
-
-  // overflow months → years
-  const extraYears = Math.floor(months / 12);
-  const remainingMonths = months % 12;
-  const finalYears = years + extraYears;
-
-  if (remainingMonths === 0) {
-    return finalYears.toString();
-  }
-
-  // ❗ DO NOT pad
-  return `${finalYears}.${remainingMonths}`;
-}
-
 onExperienceInput(
   event: Event,
   index: number,
@@ -454,38 +429,47 @@ onExperienceInput(
   rateItem.get(controlName)?.setValue(value, { emitEvent: false });
 }
 
-
-onExperienceBlur(index: number, controlName: any) {
+onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
   const control = (this.rateItems.at(index) as FormGroup).get(controlName);
   if (!control?.value) return;
 
-  const normalized = this.normalizeExperience(control.value.toString());
-  control.setValue(normalized, { emitEvent: false });
+  const value = control.value.toString();
+
+  // format check
+  if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+    control.setValue('', { emitEvent: false });
+    control.setErrors({ invalidFormat: true });
+    return;
+  }
+
+  const [, monthStr] = value.split('.');
+  if (monthStr && Number(monthStr) > 12) {
+    //  CLEAR FIELD
+    control.setValue('', { emitEvent: false });
+
+    // SHOW ERROR
+    control.setErrors({ invalidMonth: true });
+    return;
+  }
+
+  // valid value → clear errors
+  control.setErrors(null);
 }
 
-restrictExperienceInput(event: KeyboardEvent) {
-  const input = event.target as HTMLInputElement;
-  const value = input.value;
 
-  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-  if (allowedKeys.includes(event.key)) return;
+validateExperience(value: string): { valid: boolean; error?: string } {
+  if (!value) return { valid: true };
 
-  if (!/[\d.]/.test(event.key)) {
-    event.preventDefault();
-    return;
+  if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+    return { valid: false, error: 'Invalid format' };
   }
 
-  if (event.key === '.' && value.includes('.')) {
-    event.preventDefault();
-    return;
+  const [, monthStr] = value.split('.');
+  if (monthStr && Number(monthStr) > 12) {
+    return { valid: false, error: 'Months cannot exceed 12' };
   }
 
-  if (value.includes('.')) {
-    const [, decimal] = value.split('.');
-    if (decimal.length >= 2) {
-      event.preventDefault();
-    }
-  }
+  return { valid: true };
 }
 
 nagvition(){

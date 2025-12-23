@@ -115,9 +115,13 @@
                                 <div>
                                     <!-- <input type="number" class="form-control custom-input" min="0" (input)="limitDigits($event, 4)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)"
                                         formControlName="experienceFrom" placeholder="min (year)" required /> -->
-                                        <input type="text" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"  (input)="onExperienceInput($event, i, 'experienceFrom')"
-                                         (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)" (keydown)="restrictExperienceInput($event)"
-                                        (wheel)="disableScroll($event)" />   
+                                        <input type="text" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"
+                                            (input)="onExperienceInput($event, i, 'experienceFrom')" (blur)="onExperienceBlur(i, 'experienceFrom')"
+                                            (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
+                                        
+                                        <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
+                                            Decimal value must be between 0 to 12
+                                        </div> 
                                 </div>
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
@@ -125,9 +129,13 @@
                                 <div>
                                     <!-- <input type="number" class="form-control custom-input" min="0" (input)="limitDigits($event, 4)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)"
                                         formControlName="experienceTo" placeholder="max (year)" required /> -->
-                                           <input type="text" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
-                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)"(keydown)="restrictExperienceInput($event)"
+                                             <input type="text" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
+                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
                                         (wheel)="disableScroll($event)" />
+
+                                    <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">
+                                            Decimal value must be between 0 to 12
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -117,9 +117,10 @@
                                         formControlName="experienceFrom" placeholder="min (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required /> -->
 
                                           <input type="number" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"
-                                        (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)"
+                                         (blur)="onExperienceBlur(i, 'experienceFrom')" (keydown)="preventInvalidKeys($event)" (keydown)="restrictExperienceInput($event)"
                                         (wheel)="disableScroll($event)" />
                                 </div>
+                                
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
                                 </div>
@@ -127,7 +128,7 @@
                                     <!-- <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
                                         formControlName="experienceTo" placeholder="max (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required /> -->
                                         <input type="number" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
-                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)"
+                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)"(keydown)="restrictExperienceInput($event)"
                                         (wheel)="disableScroll($event)" />
                                 </div>
                             </div>

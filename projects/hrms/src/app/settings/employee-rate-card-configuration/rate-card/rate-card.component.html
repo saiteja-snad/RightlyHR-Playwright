@@ -54,9 +54,10 @@
               <th class="text-center">{{'Location'|translate}}</th>
               <th class="text-center">{{'Sub-Location'|translate}}</th>
               <th class="text-center">{{'Status'|translate}}</th>
-              <th class="text-center" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')">{{'Action'|translate}}</th>
-              <!-- <th>Last Updated By</th>
-                <th>Last Updated On</th> -->
+               @if(rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||
+              rbac.allowedToAccess('Rate Card Active Tab.delete')){
+          <th class="text-center">{{'Action'|translate}}</th>
+          }
             </tr>
           </thead>
           <tbody>
@@ -70,6 +71,7 @@
               <td class="text-center">{{ item?.locationName ? item?.locationName : '-' }}</td>
               <td class="text-center">{{ item?.subLocationName?item?.subLocationName : '-' }}</td>
               <td class="text-center">{{ item?.status ? item?.status:'-' }}</td>
+               @if(rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')){
               <td class="text-center" >
                 <div class="dropdown" *ngIf="rbac.allowedToAccess('Rate Card Active Tab.create')||rbac.allowedToAccess('Rate Card Active Tab.update')||rbac.allowedToAccess('Rate Card Active Tab.delete')">
                    <span type="button" data-bs-toggle="dropdown">
@@ -111,6 +113,7 @@
                   </ul>
                 </div>
               </td>
+            }
             </tr>
             }
             } @else {

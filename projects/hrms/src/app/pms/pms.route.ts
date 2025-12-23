@@ -56,9 +56,9 @@ export default [
         path: 'kpi-kra',
         children: [
             { path: 'my-kpi-kra', component: MyKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
-            { path: 'dashboard', component: KraKpiDashboardComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
-            { path: 'team', component: TeamKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
-            { path: 'employee-kra-kpi-view/:employeeId', component: EmployeeKraKpiViewComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
+            { path: 'dashboard', component: KraKpiDashboardComponent, canActivate: [PermissionsGuard], data: { permission: 'Dashboard KRA KPI.view' } },
+            { path: 'team', component: TeamKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'Team KRA KPI.view' } },
+            { path: 'employee-kra-kpi-view/:employeeId', component: EmployeeKraKpiViewComponent, canActivate: [PermissionsGuard], data: { permission: 'Team KRA KPI.view' } },
         ]
     },
 ] as Route[];

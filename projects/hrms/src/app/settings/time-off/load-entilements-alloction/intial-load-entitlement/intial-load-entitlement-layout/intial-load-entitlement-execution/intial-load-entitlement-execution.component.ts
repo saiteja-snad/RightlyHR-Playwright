@@ -25,7 +25,7 @@ export class IntialLoadEntitlementExecutionComponent {
         .subscribe({
           next: (res: any) => {
 
-            this.conformationPopup.openSuccessModal("Initial Leave Entitlements Successfully");
+            this.conformationPopup.openSuccessModal("Initial leave entitlements processed successfully");
             setTimeout(() => {
               this.route.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
               localStorage.removeItem('intialloadEntitlement')

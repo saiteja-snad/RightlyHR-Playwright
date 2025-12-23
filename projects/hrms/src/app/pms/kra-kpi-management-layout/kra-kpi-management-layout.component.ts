@@ -19,11 +19,11 @@ export class KraKpiManagementLayoutComponent {
       permission: { feature: 'Dashboard KRA KPI', action: 'view' }
     },
     {
-      label: 'My KRA/KPI', link: '/pms/kpi-kra/my-kpi-kra', icon: 'main-menu-icons/my-kra-kpi.png',
+      label: "My KRA/KPI's", link: '/pms/kpi-kra/my-kpi-kra', icon: 'main-menu-icons/my-kra-kpi.png',
       permission: { feature: 'My KRA KPI', action: 'view' }
     },
     {
-      label: 'Team KRA/KPI', link: '/pms/kpi-kra/team', icon: 'main-menu-icons/team-kra-kpi.png',
+      label: "Team KRA/KPI's", link: '/pms/kpi-kra/team', icon: 'main-menu-icons/team-kra-kpi.png',
       permission: { feature: 'Team KRA KPI', action: 'view' }
     },
   ];

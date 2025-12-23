@@ -307,73 +307,34 @@
     <form [formGroup]="actionForm" (ngSubmit)="submitAction('Rejected')">
       <div class="custom-main-popup-content">
 
-        <!-- Percentage -->
+        <!-- Approver Rejecting Comments - REQUIRED for Reject -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">
-            Percentage <span class="text-danger">*</span>
+            Rejecting Comments <span class="text-danger">*</span>
           </label>
-
-          <input type="number" class="form-control custom-input" formControlName="percentage"
-            placeholder="Enter percentage" min="0" max="100" />
-
-          <div class="error-msg"
-            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['required']">
-            Percentage is required
-          </div>
-
-          <div class="error-msg"
-            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['min']">
-            Percentage cannot be less than 0
-          </div>
-
-          <div class="error-msg"
-            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['max']">
-            Percentage cannot be more than 100
-          </div>
-        </div>
-
-
-        <!-- Rating -->
-        <div class="mb-3">
-          <label class="form-label custom-label mb-2">
-            Rating <span class="text-danger">*</span>
-          </label>
-          <input type="number" class="form-control custom-input" formControlName="rating" placeholder="Enter rating"
-            [attr.min]="currentMinRating" [attr.max]="currentMaxRating" />
-          <div class="error-msg"
-            *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
-            Rating is required
-          </div>
-
-          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
-            Minimum rating is {{ currentMinRating }}
-          </div>
-
-          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
-            Maximum rating is {{ currentMaxRating }}
-          </div>
-
-        </div>
-
-
-        <!-- Approver Comments -->
-        <div class="mb-3">
-          <label class="form-label custom-label mb-2">Approver Comments</label>
-          <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="500"
-            placeholder="Enter comments (optional)"></textarea>
+          <textarea
+            class="form-control custom-input"
+            formControlName="comments"
+            rows="3"
+            maxlength="500"
+            placeholder="Please provide reason for rejection">
+          </textarea>
           <div class="textarea-count-text">
             {{ actionForm.get('comments')?.value?.length || 0 }} / 500
           </div>
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('comments')?.touched && actionForm.get('comments')?.errors?.['required']">
+            Rejecting comments are required
+          </div>
         </div>
 
-        <!-- Attachment -->
+        <!-- Attachment (Optional) -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Attachment</label>
+          <label class="form-label custom-label mb-2">Attachment (Optional)</label>
           <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
             accept=".pdf,.jpg,.jpeg,.png">
-          <!-- @if (selectedFileName) {
-          <small class="text-success d-block mt-1">{{ selectedFileName }}</small>
-          } -->
+          <!-- <small *ngIf="selectedFileName" class="text-success d-block mt-1">{{ selectedFileName }}</small> -->
         </div>
 
       </div>
@@ -384,12 +345,12 @@
         </button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
           @if (!isSubmitting) {
-          Reject
+            Reject
           } @else {
-          <div class="button-loader-content">
-            <div class="spinner-border button-spinner text-light" role="status"></div>
-            <span>Submitting...</span>
-          </div>
+            <div class="button-loader-content">
+              <div class="spinner-border button-spinner text-light" role="status"></div>
+              <span>Submitting...</span>
+            </div>
           }
         </button>
       </div>

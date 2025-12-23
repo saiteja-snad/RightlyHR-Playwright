@@ -246,12 +246,17 @@ export class KraKpiApprovalsComponent implements OnInit {
     const min = row?.optionsRating?.minimumRatingScale;
     const max = row?.optionsRating?.maximumRatingScale;
     this.initActionForm(min, max); // Reset form
+
+    // For Approve: percentage & rating REQUIRED, comments OPTIONAL
+  this.actionForm.get('percentage')?.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+  this.actionForm.get('rating')?.setValidators([Validators.required, Validators.min(min), Validators.max(max)]);
+  this.actionForm.get('comments')?.clearValidators();
+
+  this.actionForm.get('percentage')?.updateValueAndValidity();
+  this.actionForm.get('rating')?.updateValueAndValidity();
+  this.actionForm.get('comments')?.updateValueAndValidity();
     this.selectedFile = null;
     this.selectedFileName = '';
-
-    // Comments optional for approve
-    this.actionForm.get('comments')?.clearValidators();
-    this.actionForm.get('comments')?.updateValueAndValidity();
 
     this.modalRef = this.modalService.open(modal, {
       centered: true,
@@ -265,12 +270,17 @@ export class KraKpiApprovalsComponent implements OnInit {
     const min = row?.optionsRating?.minimumRatingScale;
     const max = row?.optionsRating?.maximumRatingScale;
     this.initActionForm(min, max); // Reset form
+
+    // For Reject: ONLY comments REQUIRED, percentage & rating NOT required
+  this.actionForm.get('percentage')?.clearValidators();
+  this.actionForm.get('rating')?.clearValidators();
+  this.actionForm.get('comments')?.setValidators([Validators.required]);
+
+  this.actionForm.get('percentage')?.updateValueAndValidity();
+  this.actionForm.get('rating')?.updateValueAndValidity();
+  this.actionForm.get('comments')?.updateValueAndValidity();
     this.selectedFile = null;
     this.selectedFileName = '';
-
-    // Comments required for reject
-    this.actionForm.get('comments')?.setValidators([Validators.required]);
-    this.actionForm.get('comments')?.updateValueAndValidity();
 
     this.modalRef = this.modalService.open(modal, {
       centered: true,

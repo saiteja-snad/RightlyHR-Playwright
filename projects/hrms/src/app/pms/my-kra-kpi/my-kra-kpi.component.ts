@@ -390,7 +390,7 @@ calculateKraProgress(kpis: any[]): number {
       } else if (kpi.assignedStatus === 'Waiting for Approval') {
         currentCommittedWeightage = Number(kpi.assignedWeightage || 0);
       } else if (kpi.assignedStatus === 'Rejected') {
-        currentCommittedWeightage = Number(kpi.assignedApproverWeightage || 0);
+        currentCommittedWeightage = 0;
       } else {
         currentCommittedWeightage = Number(kpi.assignedWeightage || 0);
       }

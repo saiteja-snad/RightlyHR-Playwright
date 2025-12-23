@@ -46,8 +46,8 @@
 
     .section-title {
         font-weight: 500;
-        font-size: var(--fontsize13);
-        color: #222222;
+        font-size: var(--fontsize14);
+        color: var(--primary-color);
     }
 
     .date-lable {
@@ -176,7 +176,7 @@
 }
 
 .previous-time-text {
-    font-size: var(--fontsize10);
+    font-size: var(--fontsize12);
     font-weight: 600;
     color: #656565;
 }
@@ -265,11 +265,13 @@
 
 // work anniversary content
 .work-anniversary-content {
+    overflow: hidden !important;
     background: linear-gradient(180deg, #FDF5FB 0%, #ECF0F4 100%);
 }
 
 // birthday-content
 .birthday-content {
+    overflow: hidden !important;
     background: linear-gradient(180deg, #EEF2FF 0%, #ECF0F4 100%);
 
     .circular-dot {
@@ -297,23 +299,49 @@
     }
 }
 
+.event-list-content {
+    position: relative;
+    height: 28dvh;
+    padding: 0rem 0.5rem;
+    overflow-y: auto;
+}
+
+.no-events-content {
+    position: relative;
+    width: 100%;
+    height: 28dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .party-image {
+        width: 10rem;
+    }
+
+    .no-data-text {
+        font-weight: 400;
+        font-size: var(--fontsize12);
+        color: #808080;
+    }
+}
+
+.party-image-content {
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+
+    .party-image {
+        width: 3.5rem;
+        transform: rotate(10deg);
+    }
+}
+
 .daliy-events-content {
     background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
     min-height: 8rem !important;
     position: relative;
     overflow: hidden;
-
-    .party-image-content {
-        position: absolute;
-        top: -1rem;
-        right: -1rem;
-
-        .party-image {
-            width: 3.5rem;
-            transform: rotate(10deg);
-
-        }
-    }
 
     .events-content {
         width: 100%;
@@ -377,61 +405,32 @@
     }
 }
 
-.leave-row {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-
-    .leave-name {
-        min-width: 6.5rem;
-        max-width: 6.5rem;
-        font-weight: 600;
-        font-size: var(--fontsize10);
-        color: #222222;
-    }
-
-    .progress-container {
-        width: 30rem;
-        min-width: 10rem;
-        height: 6px;
-        background: #dbe3ea;
-        border-radius: 4px;
-    }
-
-    .progress-bar {
-        height: 100%;
-        background: var(--primary-color);
-        border-radius: 0.25rem;
-    }
-
-    .leave-count {
-        width: 60px;
-        text-align: right;
-        font-size: var(--fontsize13);
-    }
-
-    .count {
-        min-width: 2rem;
-    }
-}
-
-.event-list-content {
-    height: 14dvh;
-    max-height: 26dvh;
-    padding: 0rem 0.5rem;
-    overflow-y: auto;
-}
-
-.birthday-event-list-content {
-    height: 18dvh;
-    max-height: 20dvh;
-    overflow-y: auto;
-}
-
 .leave-list-content {
-    height: 13dvh;
-    max-height: 20dvh;
+    max-height: 25dvh;
+    gap: 0.5rem;
     overflow-y: auto;
+
+    .leave-card {
+        min-width: 13rem;
+        width: max-content;
+        font-size: var(--fontsize12);
+        background-color: #FFF;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        box-shadow: 0px 0px 57.64px 0px #0000000D;
+
+        .leave-name {
+            font-weight: 500;
+        }
+
+        .leaves-used-count {
+            color: #353434;
+        }
+
+        .leaves-allowed-count {
+            color: #5C5C5C;
+        }
+    }
 }
 
 /* Team Members */
@@ -439,7 +438,7 @@
     width: 100%;
 
     .p-tab {
-        padding: 0rem 0.625rem !important;
+        padding: 0rem 0.75rem !important;
         cursor: auto !important;
     }
 
@@ -538,10 +537,12 @@
     }
 
     .count-text {
+        font-size: var(--fontsize12);
         font-weight: 600 !important;
         color: var(--primary-color) !important;
     }
 }
+
 /* Custom 3-dot indicators */
 .custom-indicators {
     display: flex;
@@ -567,4 +568,41 @@
 /* Hide PrimeNG default indicators */
 ::ng-deep .p-carousel .p-carousel-indicators {
     display: none !important;
+}
+
+.custom-poup-header-content {
+    padding: 0.75rem !important;
+}
+
+.custom-offcanvas-body {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 90dvh;
+}
+
+.profile-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #FFFFFF;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: linear-gradient(179.5deg, #FFFFFF 0.44%, var(--header-profile-dropdown-bg-color) 205.82%);
+    border: 1px solid var(--content-border-color);
+    box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+    .name {
+        font-size: var(--fontsize14);
+        font-weight: 600;
+        text-transform: capitalize;
+        color: var(--primary-color);
+    }
+
+    .designation {
+        color: #6b7280;
+        font-size: var(--fontsize12);
+        width: 175px;
+    }
 }

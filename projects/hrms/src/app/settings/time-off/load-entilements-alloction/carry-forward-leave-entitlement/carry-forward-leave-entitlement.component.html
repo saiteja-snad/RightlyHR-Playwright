@@ -3,7 +3,7 @@
     <div class="input-group custom-search">
       <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
       <input type="search" class="form-control custom-search-input"
-        placeholder="Search by year / status / created by" aria-label="Username" [(ngModel)]="searchQuery"
+        placeholder="Search by job id / year / status / created by" aria-label="Username" [(ngModel)]="searchQuery"
         (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
 
@@ -20,7 +20,7 @@
       <thead>
         <th>Job Id</th>
         <th>Year</th>
-        <th>Leave Carry Forward Count</th>
+        <th class="text-center">Leave Carry Forward Count</th>
         <th>Created by</th>
         <th>Status </th>
         <th class="text-center">Action</th>
@@ -32,7 +32,7 @@
               <a class="project-name cursor" (click)="navigateView(item?.jobId)">{{ item?.jobSequenceId ?? '_' }}</a>
             </td>
             <td>{{ item?.year ?? '_' }}</td>
-            <td>{{ item?.successCount }}/{{ item?.totalEmployees }}</td>
+            <td class="text-center">{{ item?.successCount }}/{{ item?.totalEmployees }}</td>
             <td>{{ item?.initiatedBy?.name ?? '-' }}</td>
             <td [ngClass]="{'status-success': item.status === 'Success',
             'status-queued': item.status === 'Queued',

@@ -411,35 +411,45 @@ onLocationChange(selectedLocationIds: number[] | null) {
   }
 }
 
-normalizeExperience(value: number): number {
-  if (value === null || isNaN(value)) return value;
+ normalizeExperience(value: number): number {
+  if (value == null || isNaN(value)) return value;
 
-  const parts = value.toString().split('.');
-  let years = parseInt(parts[0], 10);
-  let months = parts[1] ? parseInt(parts[1].substring(0, 2), 10) : 0;
+  const years = Math.floor(value);
+  const decimalPart = value - years;
 
-  if (months > 12) {
-    years += Math.floor(months / 12);
-    months = months % 12;
-  }
+  // convert decimal to months
+  let months = Math.round(decimalPart * 100);
 
-  // IMPORTANT: Do NOT pad months
-  return months === 0 ? years: parseFloat(`${years}.${months}`);
+  // convert overflow months to years
+  const extraYears = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  const finalYears = years + extraYears;
+
+  // keep months as two-digit decimal
+  const normalized =
+    remainingMonths === 0
+      ? finalYears
+      : parseFloat(`${finalYears}.${remainingMonths < 10 ? '0' : ''}${remainingMonths}`);
+
+  return normalized;
 }
 
   onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
-  const rateItem = this.rateItems.at(index) as FormGroup;
-  const control = rateItem.get(controlName);
+    const rateItem = this.rateItems.at(index) as FormGroup;
+    const control = rateItem.get(controlName);
 
-  if (!control || control.value === null || control.value === '') return;
+    if (!control) return;
 
-  const value = parseFloat(control.value);
-  if (isNaN(value)) return;
+    const value = parseFloat(control.value);
+    if (isNaN(value)) return;
 
-  const normalizedValue = this.normalizeExperience(value);
-  control.setValue(normalizedValue, { emitEvent: false });
-}
-restrictExperienceInput(event: KeyboardEvent) {
+    const normalizedValue = this.normalizeExperience(value);
+
+    control.setValue(normalizedValue, { emitEvent: false });
+  }
+
+  restrictExperienceInput(event: KeyboardEvent) {
   const input = event.target as HTMLInputElement;
   const value = input.value;
 
@@ -463,7 +473,6 @@ restrictExperienceInput(event: KeyboardEvent) {
     }
   }
 }
-
 nagvition(){
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);
 }

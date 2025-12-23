@@ -334,7 +334,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Compensation Details',
       'Draft Tab',
       "Letter Acknowledgment Configuration",
-      "Timesheet Locking Configuration Module"
+      "Timesheet Locking Configuration Module",
     ];
     return (
       enabledTabs.includes(field) &&
@@ -398,7 +398,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Settings Timeoff Module',
     'Assets Management Configuration Module',
     'Dynamic Forms Module',
-    "Timesheet Locking Configuration Module"
+    "Timesheet Locking Configuration Module",
+    "Rate Card Module",
+    "Rate Card In-active Tab",
+    "Rate Card Active Tab"
   ];
   employeeFields = [
     'Personal Tab',
@@ -508,6 +511,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
+
+   loadEntitlementsTab = [
+    'Initial Load Entitlements',
+    'Carry Forward Load Entitlements',
+  ];
   flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'
@@ -613,6 +621,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Cards Available',
     'Cards Expired',
     'Cards Hold',
+  ];
+  ratecardsModuleFields = [
+    'Rate Card View',
+    'Rate Card Active Tab',
+    'Rate Card In-active Tab',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',

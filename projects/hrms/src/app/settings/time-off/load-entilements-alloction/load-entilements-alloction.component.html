@@ -1,0 +1,136 @@
+<div class="custom-main-component-container">
+  <p class="component-header">Job Details & Mapping</p>
+
+  <div class="card criteria-card p-4 mb-3">
+    <p class="component-sub-header">Auto-Mapped Job Criteria (Fixed)</p>
+
+    <div class="row gy-2">
+      <div class="col-md-3 col-6">
+        <span class="label">Year:</span>
+        <b>{{jobSummary.processingYear}}</b>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <span class="label">Location:</span>
+        <b>{{jobSummary.location }}</b>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <span class="label">Sub-Location:</span>
+        <b>{{jobSummary.subLocation }}</b>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <span class="label">Shift:</span>
+        <b>{{ jobSummary.shiftName}}</b>
+      </div>
+    </div>
+  </div>
+
+  <form autocomplete="off" [formGroup]="leaveAllocationForm">
+    <div class="custom-grid align-items-center">
+      <!-- Employee Name -->
+      <div class="mb-3">
+        <label for="employeeName" class="form-label custom-label mb-2">{{ "Employee Name" | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+            [showClear]="false" class="form-select custom-select" formControlName="employeeName"  [resetFilterOnHide]="true"
+            (onChange)="onSelectedEmployee($event.value)" placeholder="Please select employee"   filterPlaceholder="Search Employee">
+            <ng-template let-selectedOption #selectedItem>
+               {{ selectedOption.fusionEmpId }} <span *ngIf="selectedOption.fusionEmpId">-</span> {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
+            </ng-template>
+            <ng-template let-user #item>  {{ user.fusionEmpId }} <span class="me-2 ms-2" *ngIf=" user.fusionEmpId">-</span>  {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</ng-template>
+          </p-select>
+        </div>
+        <div
+          *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
+          class="error-msg">
+          <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">Please select employee</div>
+        </div>
+      </div>
+      <!-- Category Name -->
+      <div class="mb-3">
+        <label for="categoryName" class="form-label custom-label mb-2">{{ "Category Name" | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name" [showClear]="false"
+            formControlName="categoryName" class="form-select custom-select" placeholder="Please select category name"
+            (onChange)="changeCategory($event.value)"  [resetFilterOnHide]="true"   filterPlaceholder="Search category name">
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+            <ng-template let-location #item>{{ location.name }}</ng-template>
+          </p-select>
+        </div>
+
+        <div
+          *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
+          class="error-msg">
+          <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">Please select category name</div>
+        </div>
+      </div>
+
+      <div class="mb-3 pt-4" *ngIf="!isApplyDisabledFlag">
+        <button type="button" class="clear-all-btn" (click)="clearFilters()">Clear All</button>
+      </div>
+    </div>
+  </form>
+
+  <p class="component-header mb-3">Employee Entitlement Mapping View</p>
+
+  <div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+      <thead>
+        <th>Employee ID</th>
+        <th>Employee Name</th>
+        <th>Leave Category</th>
+        <th class="text-center">Leave Carry Forward Count</th>
+        <th>Status </th>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="employees.length > 0; else noDataTemplate">
+          <tr *ngFor="let e of employees">
+            <td>{{e?.employee?.fusionEmpId || '-'}} </td>
+            <td>{{ e?.employee?.name }}</td>
+            <td>{{ e?.leaveCategory }}</td>
+            <td class="text-center">{{ e?.carryForwardCount }}</td>
+            <td [ngClass]="{'status-success': e.status === 'Success','status-failed': e.status === 'Failed',
+            'status-partial': e.status === 'Partially Completed','status-processing': e.status === 'Processing',
+            'status-completed': e.status === 'Completed','status-pending': e?.status === 'Pending'}"
+              class="text-capitalize">{{ e?.status }} <span *ngIf="e.status === 'Failed'">
+                <app-info-icon [ngbPopover]="pendingPopover" class=" info-pending" triggers="click" />
+              </span>
+            </td>
+            <ng-template #pendingPopover>
+              <div class="module-info-text">{{e?.reason }}</div>
+            </ng-template>
+          </tr>
+        </ng-container>
+        <ng-template #noDataTemplate>
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
+
+  <div class="pagination-content" *ngIf="employees.length > 0">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+          (+first + +rows) }} of {{ collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+</div>

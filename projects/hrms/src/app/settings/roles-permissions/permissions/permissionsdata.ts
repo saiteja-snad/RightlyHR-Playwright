@@ -10,6 +10,9 @@ export const permissionsData = [
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rate Card Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rate Card In-active Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rate Card Active Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Config Update Tabs Sections
   { fields: 'Personal Config Update Tab', View: false, Update: false, Create: false, Delete: false },
@@ -56,13 +59,13 @@ export const permissionsData = [
   { fields: 'Identity Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Relationship', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bank Names', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'SkillSet', View: false, Update: false, Create: false, Delete: false },
 
   // Attendance Locking
   { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Published Tab', View: false, Update: false, Create: false, Delete: false },
 
-    // Timesheet Locking
+  // Timesheet Locking
   { fields: 'Timesheet Locking Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Locking Published Tab', View: false, Update: false, Create: false, Delete: false },
 
@@ -160,6 +163,11 @@ export const permissionsData = [
   { fields: 'Attendance Eligibility Criteria Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Load Entitlements Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Flexible WFH Allocation Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Bulk Load Entitlements Tab', View: false, Update: false, Create: false, Delete: false },
+  //Settings Time OffBulk Load Entitlements Tab Section
+
+   { fields: 'Initial Load Entitlements', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Carry Forward Load Entitlements', View: false, Update: false, Create: false, Delete: false },
 
   //Settings Time Off Leave Category Tabs Section
   { fields: 'Leave Category Pending Tab', View: false, Update: false, Create: false, Delete: false },
@@ -1078,7 +1086,7 @@ export const permissionsData = [
   { fields: 'Work Hours Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Work Hours Allocations Tab', View: false, Update: false, Create: false, Delete: false },
 
-     //View History Approvals
+  //View History Approvals
   { fields: 'My Info Personal Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Documents Approval History', View: false, Update: false, Create: false, Delete: false },

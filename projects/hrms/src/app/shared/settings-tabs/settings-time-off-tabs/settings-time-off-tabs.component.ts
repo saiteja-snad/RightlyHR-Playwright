@@ -20,50 +20,57 @@ export class SettingsTimeOffTabsComponent {
       label: 'Leave Category',
       link: '/settings/timeoff-configurations/leave-categoery',
       permission: { feature: 'Leave Category Tab', action: 'view' },
-      icon:'/settings-icon/leave-category-icon.png',
-      subjectText:MODULE_INFOS.SETTINGS_LEAVE_CATEGORY_MODULE_INFO,
+      icon: '/settings-icon/leave-category-icon.png',
+      subjectText: MODULE_INFOS.SETTINGS_LEAVE_CATEGORY_MODULE_INFO,
     },
     {
       label: 'Leave Allocation',
       link: '/settings/timeoff-configurations/leave-allocation',
       permission: { feature: 'Leave Allocation Tab', action: 'view' },
-      icon:'/settings-icon/leave-allocations-icon.png',
-      subjectText:MODULE_INFOS.SETTINGS_LEAVE_ALLOCATION_MODULE_INFO,
+      icon: '/settings-icon/leave-allocations-icon.png',
+      subjectText: MODULE_INFOS.SETTINGS_LEAVE_ALLOCATION_MODULE_INFO,
     },
     {
       label: 'Flexible Leave Allocation',
       link: '/settings/timeoff-configurations/flexible-leave-allocation',
       permission: { feature: 'Flexible Leave Allocation Tab', action: 'view' },
-      icon:'/settings-icon/flexible-leave-allocation-icon.png',
-      subjectText:MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
+      icon: '/settings-icon/flexible-leave-allocation-icon.png',
+      subjectText: MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
     },
     {
       label: 'Attendance Eligibility Criteria',
       link: '/settings/timeoff-configurations/eligibility-criterias',
       permission: { feature: 'Attendance Eligibility Criteria Tab', action: 'view' },
-      icon:'/settings-icon/attendance-eligibility-icon.png',
-      subjectText:MODULE_INFOS.SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO,
+      icon: '/settings-icon/attendance-eligibility-icon.png',
+      subjectText: MODULE_INFOS.SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO,
     },
     {
       label: 'Load Entitlements',
       link: '/settings/timeoff-configurations/load-entitlements',
       permission: { feature: 'Load Entitlements Tab', action: 'view' },
-      icon:'/settings-icon/load-entitlement-icon.png',
-      subjectText:MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
+      icon: '/settings-icon/load-entitlement-icon.png',
+      subjectText: MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
     },
-     {
+    {
       label: 'Flexible WFH Allocation',
       link: '/settings/timeoff-configurations/flexible-wfh-allocation',
       permission: { feature: 'Flexible WFH Allocation Tab', action: 'view' },
-      icon:'/settings-icon/flexible.png',
-      subjectText:MODULE_INFOS.SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO,
+      icon: '/settings-icon/flexible.png',
+      subjectText: MODULE_INFOS.SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO,
     },
     {
       label: 'Flexible Work Hours Allocation',
       link: '/settings/timeoff-configurations/flexible-workhours-allocation',
       permission: { feature: 'Flexible Work Hours Allocation Tab', action: 'view' },
-      icon:'/settings-icon/working-hours.png',
-      subjectText:MODULE_INFOS.SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO,
+      icon: '/settings-icon/working-hours.png',
+      subjectText: MODULE_INFOS.SETTINGS_FLEXIBLE_WORKHOURS_ALLOCATION_MODULE_INFO,
+    },
+    {
+      label: 'Bulk Load Entitlements',
+      link: '/settings/timeoff-configurations/load-entitlement',
+      permission: { feature: 'Bulk Load Entitlements Tab', action: 'view' },
+      icon: '/settings-icon/leave-entitlements-icon.png',
+      subjectText: MODULE_INFOS.SETTINGS_LOAD_Entitlements,
     }
   ];
 
@@ -87,6 +94,8 @@ export class SettingsTimeOffTabsComponent {
   }
 
   navigateToAccessedRoute(route: string) {
+    console.log(route);
+    
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);

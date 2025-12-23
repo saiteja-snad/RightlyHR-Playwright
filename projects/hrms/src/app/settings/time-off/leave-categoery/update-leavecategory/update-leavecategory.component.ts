@@ -55,7 +55,7 @@ export class UpdateLeavecategoryComponent {
     private confirmation: OpenModalService,
     private router: Router,
     private modalService: NgbModal
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.intializeForm();
@@ -66,7 +66,8 @@ export class UpdateLeavecategoryComponent {
     this.patchFormValues(this.updateLeaveCategoryData);
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
+
+    for (let year = currentYear + 1; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
     }
   }
@@ -85,7 +86,7 @@ export class UpdateLeavecategoryComponent {
         '',
         [Validators.required, this.restrictInputLeavecodeValidator],
       ],
-      validity: ['', [Validators.required, this.restrictInputNumbersValidator,Validators.max(366)]],
+      validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
       categoryColor: ['#000000', Validators.required],
       parentId: [undefined],
       // Additional Information
@@ -161,32 +162,32 @@ export class UpdateLeavecategoryComponent {
   private updateDependentFieldState(parentControlName: string, dependentControlName: string) {
     const parentValue = this.leavePolicyForm.get(parentControlName)?.value;
     const dependentControl = this.leavePolicyForm.get(dependentControlName);
-    
+
     if (parentValue) {
-        dependentControl?.enable();
-        dependentControl?.setValidators([Validators.required, Validators.min(1)]);
+      dependentControl?.enable();
+      dependentControl?.setValidators([Validators.required, Validators.min(1)]);
     } else {
-        dependentControl?.disable();
-        dependentControl?.clearValidators();
-        dependentControl?.setValue(0);
+      dependentControl?.disable();
+      dependentControl?.clearValidators();
+      dependentControl?.setValue(0);
     }
     dependentControl?.updateValueAndValidity();
-}
+  }
 
 
 
-private setupDependentFieldListenerS() {
+  private setupDependentFieldListenerS() {
     // Keep your existing listener setup code
     this.leavePolicyForm.get('futureDatesAllowed')?.valueChanges.subscribe((value: any) => {
-        this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
+      this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
     });
 
     this.leavePolicyForm.get('pastDateAllowed')?.valueChanges.subscribe((value: any) => {
-        this.updateDependentFieldState('pastDateAllowed', 'pastDatesAllowedDays');
+      this.updateDependentFieldState('pastDateAllowed', 'pastDatesAllowedDays');
     });
 
     // ... rest of your listener setup
-}
+  }
   navigate() {
     this.router.navigate([
       '/settings/timeoff-configurations/leave-categoery/pendingleavecategory',
@@ -434,7 +435,7 @@ private setupDependentFieldListenerS() {
       noticePeriodFrequencyType: data.noticePeriodFrequencyType,
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
-      probationFrequencyType:data.probationFrequencyType,
+      probationFrequencyType: data.probationFrequencyType,
     });
     // Manually trigger value changes for dependent fields
     // Manually trigger the initial state for dependent fields
@@ -447,42 +448,42 @@ private setupDependentFieldListenerS() {
 
     this.setupDependentFieldListenerS();
     this.setupDependentFieldListeners();
-     this.validateAllowedDays()
+    this.validateAllowedDays()
 
   }
 
 
-  validateAllowedDays(){
-   this.setupMaxValidation('futureDatesAllowedDays', 'validity');
-   this.setupMaxValidation('pastDatesAllowedDays', 'validity');
-   this.setupMaxValidation('carryForwardAllowedValue', 'validity');
-   this.setupMaxValidation('encashAllowedValue', 'validity');
-   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
-   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
-   this.setupMaxValidation('probationDays', 'validity');
-}
+  validateAllowedDays() {
+    this.setupMaxValidation('futureDatesAllowedDays', 'validity');
+    this.setupMaxValidation('pastDatesAllowedDays', 'validity');
+    this.setupMaxValidation('carryForwardAllowedValue', 'validity');
+    this.setupMaxValidation('encashAllowedValue', 'validity');
+    this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+    this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+    this.setupMaxValidation('probationDays', 'validity');
+  }
 
 
-setupMaxValidation(controlName: string, maxControlName: string): void {
-  const control = this.leavePolicyForm.get(controlName);
-  const maxControl = this.leavePolicyForm.get(maxControlName);
+  setupMaxValidation(controlName: string, maxControlName: string): void {
+    const control = this.leavePolicyForm.get(controlName);
+    const maxControl = this.leavePolicyForm.get(maxControlName);
 
-  if (!control || !maxControl) return;
+    if (!control || !maxControl) return;
 
-  control.valueChanges.subscribe(value => {
-    const max = maxControl.value;
+    control.valueChanges.subscribe(value => {
+      const max = maxControl.value;
 
-    if (value && +value > max) {
-      control.setErrors({ ...control.errors, maxExceeded: true });
-    } else {
-      if (control.hasError('maxExceeded')) {
-        const errors = { ...control.errors };
-        delete errors['maxExceeded'];
-        control.setErrors(Object.keys(errors).length ? errors : null);
+      if (value && +value > max) {
+        control.setErrors({ ...control.errors, maxExceeded: true });
+      } else {
+        if (control.hasError('maxExceeded')) {
+          const errors = { ...control.errors };
+          delete errors['maxExceeded'];
+          control.setErrors(Object.keys(errors).length ? errors : null);
+        }
       }
-    }
-  });
-}
+    });
+  }
 
 
   // Form submission
@@ -563,12 +564,12 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
         this.updateLeaveCategoryData.noticeperiodAllowedType,
       noticePeriodAllowedValue:
         this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
-      noticePeriodFrequencyType:this.leavePolicyForm.value.noticePeriodFrequencyType,
+      noticePeriodFrequencyType: this.leavePolicyForm.value.noticePeriodFrequencyType,
       isProbationAllowed:
         this.leavePolicyForm.value.isProbationAllowed ??
         this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
-      probationFrequencyType:this.leavePolicyForm.value.probationFrequencyType,
+      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: this.updateLeaveCategoryData.status,
@@ -671,12 +672,12 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
         this.updateLeaveCategoryData.noticeperiodAllowedType,
       noticePeriodAllowedValue:
         this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
-      noticePeriodFrequencyType:this.leavePolicyForm.value.noticePeriodFrequencyType,
+      noticePeriodFrequencyType: this.leavePolicyForm.value.noticePeriodFrequencyType,
       isProbationAllowed:
         this.leavePolicyForm.value.isProbationAllowed ??
         this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
-      probationFrequencyType:this.leavePolicyForm.value.probationFrequencyType,
+      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: 'Published',

@@ -1,0 +1,61 @@
+.client-progress-bar-container {
+    position: relative;
+    width: 100%;
+    padding: 1rem 0rem;
+}
+
+.progress-name {
+    font-weight: 500;
+    font-size: 15.71px;
+    color: var(--primary-color);
+}
+
+.progress-number {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    color: #FFF;
+    background-color: var(--primary-color);
+    font-weight: 500;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-content {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    z-index: 1;
+}
+
+.step {
+    width: max-content;
+    background-color: #FFF;
+    padding: 0px 0.625rem;
+}
+
+.progress {
+    position: relative;
+    height: 4px;
+    width: auto;
+    max-width: 100%;
+    opacity: 0.5;
+    background-color: var(--primary-color);
+}
+
+.progress.active {
+    position: relative;
+    background-color: var(--primary-color);
+    z-index: 1;
+    top: 4px;
+}
+
+.inactive-step {
+
+    .progress-name,
+    .progress-number {
+        opacity: 0.5;
+    }
+}

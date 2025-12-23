@@ -1,30 +1,102 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
-import { NavigationEnd, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInformationComponent } from "../../module-information/module-information.component";
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { MODULE_INFOS } from '../../modules-info';
+import { HttpService } from '../../../services/http.service';
 
 @Component({
   selector: 'app-settings-header',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, ModuleInfoIconComponent, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './settings-header.component.html',
   styleUrl: './settings-header.component.scss'
 })
 
-export class SettingsHeaderComponent implements OnInit {
+export class SettingsHeaderComponent implements OnInit,OnDestroy {
   moduleName: string = '';
   componentName: string = '';
-
-  constructor(public router: Router, public rbac: RbacService) { }
+  navigationname: string = '';
+  moduleinfo: string = '';
+  subscription!: Subscription;
+  jobid: any;
+  jobSummary: any = {};
+  jobSequenceId!: string;
+  destroy$ = new Subject<void>();
+  routeToInfoMap!: { [key: string]: string };
+  constructor(public router: Router, public rbac: RbacService, private route: ActivatedRoute, private http: HttpService, private location: Location) { }
 
   ngOnInit(): void {
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
     this.ComponentnameDisplay();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.ComponentnameDisplay();
+        // Store source route in localStorage
+        const url = event.url;
+        if (url.includes('/load-entitlement/carry-forward')) {
+          localStorage.setItem('sourceRoute', '/settings/timeoff-configurations/load-entitlement/carry-forward');
+        } else if (url.includes('/load-entitlement/initial-load-entitlements')) {
+          localStorage.setItem('sourceRoute', '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements');
+        }
       }
     });
+
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        const jobid = params['id'];
+        if (jobid) {
+          this.jobid = jobid;
+          this.getdatacarryforword();
+        }
+      });
+
+
   }
+
+  updateModuleInfo() {
+    const urlWithoutQuery = this.router.url.split('?')[0];
+    this.ComponentnameDisplay();
+    this.routeToInfoMap = {
+      '/settings/timeoff-configurations/jobview': MODULE_INFOS.JOB_VIEW,
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+      '/settings/timeoff-configurations/load-entitlement/carry-forward': MODULE_INFOS.CARRY_FORWORD_LEAVES,
+      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements':MODULE_INFOS.Create_Initial_Leave_Entitlements,
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create':MODULE_INFOS.Initial_Leave_Entitlements,
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview':MODULE_INFOS.Initial_Leave_Entitlements
+
+    };
+    this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+
+  isShowsformoduelinfo() {
+    const showPaths = [
+      '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/leave-entitlements',
+      '/settings/timeoff-configurations/load-entitlement/carry-forward',
+      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements',
+      '/settings/timeoff-configurations/intial-leave-entitlements',
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-execution'
+
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
 
   ComponentnameDisplay() {
     const url = this.router.url;
@@ -78,7 +150,7 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/employee-fields-update-configurations/job')) {
       this.moduleName = 'Employee Fields Update Configurations';
       this.componentName = 'Job';
-    } 
+    }
     else if (url.startsWith('/settings/employee-fields-update-configurations/documents')) {
       this.moduleName = 'Employee Fields Update Configurations';
       this.componentName = 'Documents';
@@ -119,10 +191,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Load Entitlements';
     }
-   else if(url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')){
-    this.moduleName='Time Off';
-    this.componentName='Flexible WFH Allocation';
-   }
+    else if (url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Flexible WFH Allocation';
+    }
     // Assets Configuration
     else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
       this.moduleName = 'Assets Configuration';
@@ -187,7 +259,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Letter Configurations';
     }
-         else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
+    else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Frequency Configurations';
     }
@@ -208,7 +280,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Attendance Configuration';
       this.componentName = 'Published';
     }
-     else if (url.startsWith('/settings/project-management-config/project-role')) {
+    else if (url.startsWith('/settings/project-management-config/project-role')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Role';
     }
@@ -236,13 +308,124 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Timesheet Configuration';
       this.componentName = 'Published';
     }
-    else if(url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')){
-    this.moduleName='Time Off';
-    this.componentName='Flexible Work Hours Allocation';
-   }
+    else if (url.startsWith('/settings/timeoff-configurations/flexible-workhours-allocation')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Flexible Work Hours Allocation';
+    }
+
+    else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/initial-load-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Initial Leave Entitlements';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/load-entitlement/carry-forward')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Leave Carry Forward';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/jobview')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = this.jobSequenceId;
+    }
+
+    else if (url.startsWith('/settings/timeoff-configurations/leave-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Leave Carry Forward';
+    }
+
+    else if (url.startsWith('/settings/timeoff-configurations/intial-leave-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.navigationname = 'Bulk Entitlements'
+      this.componentName = 'Initial Leave Entitlements';
+    }
+    else if (url.startsWith('/settings/employee-rate-card/rate-card')) {
+      this.moduleName = 'Rate Card Configuration';
+      this.componentName = 'Rate Card';
+    }
   }
+
+  getdatacarryforword() {
+    const url = `LeaveEntitlementJobs/${this.jobid}/details`;
+    this.subscription = this.http.get(url).subscribe({
+      next: (res: any) => {
+        this.jobSummary = res?.data?.jobSummary;
+        this.jobSequenceId = this.jobSummary?.jobSequenceId;
+        console.log(this.jobSequenceId);
+        // Update module name after getting jobSequenceId
+        this.updateModuleInfo();
+      },
+      error: (err) => {
+        console.error('Error fetching projects:', err);
+      },
+    });
+  }
+  isShowsettingsRoute(): boolean {
+    const hidePaths = [
+      '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create',
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview',
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create',
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview',
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-map-categoery',
+      '/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'
+    ];
+
+    if (hidePaths.some(path => this.router.url.startsWith(path))) {
+      return false;
+    }
+
+    return this.router.url.startsWith('/settings');
+  }
+
+  isShowsettingsjobRoute() {
+    const showPaths = [
+      '/settings/timeoff-configurations/jobview',
+      '/settings/timeoff-configurations/leave-entitlements',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+
+  isShowsettingsjobRouteforintial() {
+    const showPaths = [
+      '/settings/timeoff-configurations/intial-leave-entitlements',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  isshowsettingsforcarryforword() {
+    const showPaths = [
+      '/settings/timeoff-configurations/load-entitlement/carry-forward',
+      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  navigateTointialloadentiments() {
+    this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
+    localStorage.removeItem('carryForwardJobId'),
+      localStorage.removeItem('intialloadEntitlement')
+  }
+
 
   navigateToSettings() {
     this.router.navigate(['/settings'])
+
   }
+
+
+  navigateToloadentiments() {
+    this.location.back();
+    localStorage.removeItem('carryForwardJobId');
+    localStorage.removeItem('loadEntitlement');
+  }
+
+  ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
 }
+
+}
+

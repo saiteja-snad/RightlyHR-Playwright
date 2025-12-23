@@ -62,7 +62,7 @@ export class CloneLeavecategoryComponent {
     this.jobLocationList();
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
+    for (let year = currentYear + 1; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
     }
   }

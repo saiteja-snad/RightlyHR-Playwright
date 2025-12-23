@@ -526,6 +526,8 @@ setAvaillableSearchCount(count: number) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
+
+
   postbyId(url: string) {
     return this.http.post(`${this.ApiUrl}${url}`, {}); // empty body for POST
   }

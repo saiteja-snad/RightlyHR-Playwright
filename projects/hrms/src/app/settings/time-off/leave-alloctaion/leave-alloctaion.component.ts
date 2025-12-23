@@ -60,7 +60,7 @@ export class LeaveAlloctaionComponent {
 
   enableShift = false;
   getShiftDetailsBySubLocationId(policy: ILeavePolicyData) {
-    
+
     let date = new Date();
     let params = {
       locationId: policy.locationId,
@@ -79,7 +79,7 @@ export class LeaveAlloctaionComponent {
 
   enableCategory = false;
   getLeaves(policy: ILeavePolicyData) {
-    
+
     let params = {
       locationId: policy.locationId,
       subLocationId: policy.subLocationId,
@@ -105,7 +105,7 @@ export class LeaveAlloctaionComponent {
       },
     });
   }
-  onYearChanges(){
+  onYearChanges() {
     this.Leavescat.subLocationId = -1;
     this.Leavescat.shiftId = -1;
     this.Leavescat.locationId = undefined;
@@ -120,15 +120,15 @@ export class LeaveAlloctaionComponent {
       this.Leavescat.shiftId &&
       this.Leavescat.categoryId &&
       this.grade.length > 0 &&
-      this.grade.some((gr:any) => 
-      this.accessLevels[gr.gradeId] !== null &&
-      this.accessLevels[gr.gradeId] !== undefined &&
-      this.accessLevels[gr.gradeId] !== null
-    )
+      this.grade.some((gr: any) =>
+        this.accessLevels[gr.gradeId] !== null &&
+        this.accessLevels[gr.gradeId] !== undefined &&
+        this.accessLevels[gr.gradeId] !== null
+      )
     );
-    
+
   }
-  
+
   onCategoryName(categoryId: number) {
     console.log(categoryId);
     this.selectedCategory = this.Leaves.find((c) => c.id == categoryId) as Iorgcategoryleaves;
@@ -136,10 +136,10 @@ export class LeaveAlloctaionComponent {
     this.getbycategoryid(parseInt(this.selectedCategory.id));
   }
 
-  policyDays: {[field: number]: { allowedDays: number; id: number | null; };} = {};
+  policyDays: { [field: number]: { allowedDays: number; id: number | null; }; } = {};
   getbycategoryid(categoryId: number) {
     this.accessLevels = {};
-    
+
     let requestData = {
       year: this.Leavescat.year,
       locationId: this.Leavescat.locationId,
@@ -161,19 +161,19 @@ export class LeaveAlloctaionComponent {
               // this.policyDays[element.entityReferenceId].id = element.id;
               //this.policyDays[element.entityReferenceId].allowedDays =
               //element.allowedDays;
-              
+
             } else {
-              this.accessLevels[element.allowedDays] = 0; 
+              this.accessLevels[element.allowedDays] = 0;
               // this.policyDays = {
               //   //  element.gradeId
               // }
               //this.policyDays[element.gradeId].lpId = null
             }
           });
-          
+
         } else {
           this.accessLevels = [];
-          
+
         }
       },
     });

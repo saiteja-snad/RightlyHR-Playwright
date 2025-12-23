@@ -411,43 +411,67 @@ onLocationChange(selectedLocationIds: number[] | null) {
   }
 }
 
- normalizeExperience(value: number): number {
-  if (value == null || isNaN(value)) return value;
+onExperienceInput(
+  event: Event,
+  index: number,
+  controlName: 'experienceFrom' | 'experienceTo'
+) {
+  const input = event.target as HTMLInputElement;
+  let value = input.value;
 
-  const years = Math.floor(value);
-  const decimalPart = value - years;
+  // Allow only numbers + one dot + 2 decimals
+  if (!/^\d*\.?\d{0,2}$/.test(value)) {
+    input.value = value.slice(0, -1);
+    return;
+  }
 
-  // convert decimal to months
-  let months = Math.round(decimalPart * 100);
-
-  // convert overflow months to years
-  const extraYears = Math.floor(months / 12);
-  const remainingMonths = months % 12;
-
-  const finalYears = years + extraYears;
-
-  // keep months as two-digit decimal
-  const normalized =
-    remainingMonths === 0
-      ? finalYears
-      : parseFloat(`${finalYears}.${remainingMonths < 10 ? '0' : ''}${remainingMonths}`);
-
-  return normalized;
+  const rateItem = this.rateItems.at(index) as FormGroup;
+  rateItem.get(controlName)?.setValue(value, { emitEvent: false });
 }
 
-  onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
-    const rateItem = this.rateItems.at(index) as FormGroup;
-    const control = rateItem.get(controlName);
+onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
+  const control = (this.rateItems.at(index) as FormGroup).get(controlName);
+  if (!control?.value) return;
 
-    if (!control) return;
+  const value = control.value.toString();
 
-    const value = parseFloat(control.value);
-    if (isNaN(value)) return;
-
-    const normalizedValue = this.normalizeExperience(value);
-
-    control.setValue(normalizedValue, { emitEvent: false });
+  // format check
+  if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+    control.setValue('', { emitEvent: false });
+    control.setErrors({ invalidFormat: true });
+    return;
   }
+
+  const [, monthStr] = value.split('.');
+  if (monthStr && Number(monthStr) > 12) {
+    //  CLEAR FIELD
+    control.setValue('', { emitEvent: false });
+
+    // SHOW ERROR
+    control.setErrors({ invalidMonth: true });
+    return;
+  }
+
+  // valid value → clear errors
+  control.setErrors(null);
+}
+
+
+validateExperience(value: string): { valid: boolean; error?: string } {
+  if (!value) return { valid: true };
+
+  if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+    return { valid: false, error: 'Invalid format' };
+  }
+
+  const [, monthStr] = value.split('.');
+  if (monthStr && Number(monthStr) > 12) {
+    return { valid: false, error: 'Months cannot exceed 12' };
+  }
+
+  return { valid: true };
+}
+
 nagvition(){
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);
 }

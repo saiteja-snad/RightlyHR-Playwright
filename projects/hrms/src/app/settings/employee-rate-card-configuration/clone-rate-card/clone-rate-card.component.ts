@@ -411,45 +411,59 @@ onLocationChange(selectedLocationIds: number[] | null) {
   }
 }
 
- normalizeExperience(value: number): number {
-  if (value == null || isNaN(value)) return value;
+normalizeExperience(value: string): string {
+  if (!value) return value;
 
-  const years = Math.floor(value);
-  const decimalPart = value - years;
+  const [yearStr, monthStr = '0'] = value.split('.');
+  const years = parseInt(yearStr, 10);
+  const months = parseInt(monthStr, 10);
 
-  // convert decimal to months
-  let months = Math.round(decimalPart * 100);
-
-  // convert overflow months to years
-  const extraYears = Math.floor(months / 12);
-  const remainingMonths = months % 12;
-
-  const finalYears = years + extraYears;
-
-  // keep months as two-digit decimal
-  const normalized =
-    remainingMonths === 0
-      ? finalYears
-      : parseFloat(`${finalYears}.${remainingMonths < 10 ? '0' : ''}${remainingMonths}`);
-
-  return normalized;
-}
-
-  onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
-    const rateItem = this.rateItems.at(index) as FormGroup;
-    const control = rateItem.get(controlName);
-
-    if (!control) return;
-
-    const value = parseFloat(control.value);
-    if (isNaN(value)) return;
-
-    const normalizedValue = this.normalizeExperience(value);
-
-    control.setValue(normalizedValue, { emitEvent: false });
+  // valid months (0–12)
+  if (months <= 12) {
+    return value;
   }
 
-  restrictExperienceInput(event: KeyboardEvent) {
+  // overflow months → years
+  const extraYears = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+  const finalYears = years + extraYears;
+
+  if (remainingMonths === 0) {
+    return finalYears.toString();
+  }
+
+  // ❗ DO NOT pad
+  return `${finalYears}.${remainingMonths}`;
+}
+
+onExperienceInput(
+  event: Event,
+  index: number,
+  controlName: 'experienceFrom' | 'experienceTo'
+) {
+  const input = event.target as HTMLInputElement;
+  let value = input.value;
+
+  // Allow only numbers + one dot + 2 decimals
+  if (!/^\d*\.?\d{0,2}$/.test(value)) {
+    input.value = value.slice(0, -1);
+    return;
+  }
+
+  const rateItem = this.rateItems.at(index) as FormGroup;
+  rateItem.get(controlName)?.setValue(value, { emitEvent: false });
+}
+
+
+onExperienceBlur(index: number, controlName: any) {
+  const control = (this.rateItems.at(index) as FormGroup).get(controlName);
+  if (!control?.value) return;
+
+  const normalized = this.normalizeExperience(control.value.toString());
+  control.setValue(normalized, { emitEvent: false });
+}
+
+restrictExperienceInput(event: KeyboardEvent) {
   const input = event.target as HTMLInputElement;
   const value = input.value;
 
@@ -473,6 +487,7 @@ onLocationChange(selectedLocationIds: number[] | null) {
     }
   }
 }
+
 nagvition(){
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);
 }

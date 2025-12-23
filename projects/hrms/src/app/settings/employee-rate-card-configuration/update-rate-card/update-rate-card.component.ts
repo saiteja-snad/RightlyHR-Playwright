@@ -418,66 +418,82 @@ onLocationChange(selectedLocationIds: number[] | null) {
 }
 // 
 
-  normalizeExperience(value: number): number {
-  if (value == null || isNaN(value)) return value;
+normalizeExperience(value: string): string {
+  if (!value) return value;
 
-  const years = Math.floor(value);
-  const decimalPart = value - years;
+  const [yearStr, monthStr = '0'] = value.split('.');
+  const years = parseInt(yearStr, 10);
+  const months = parseInt(monthStr, 10);
 
-  // convert decimal to months
-  let months = Math.round(decimalPart * 100);
+  // valid months (0–12)
+  if (months <= 12) {
+    return value;
+  }
 
-  // convert overflow months to years
+  // overflow months → years
   const extraYears = Math.floor(months / 12);
   const remainingMonths = months % 12;
-
   const finalYears = years + extraYears;
 
-  // keep months as two-digit decimal
-  const normalized =
-    remainingMonths === 0
-      ? finalYears
-      : parseFloat(`${finalYears}.${remainingMonths < 10 ? '0' : ''}${remainingMonths}`);
+  if (remainingMonths === 0) {
+    return finalYears.toString();
+  }
 
-  return normalized;
+  // ❗ DO NOT pad
+  return `${finalYears}.${remainingMonths}`;
 }
 
-  onExperienceBlur(index: number, controlName: 'experienceFrom' | 'experienceTo') {
-    const rateItem = this.rateItems.at(index) as FormGroup;
-    const control = rateItem.get(controlName);
+onExperienceInput(
+  event: Event,
+  index: number,
+  controlName: 'experienceFrom' | 'experienceTo'
+) {
+  const input = event.target as HTMLInputElement;
+  let value = input.value;
 
-    if (!control || control.value === null || control.value === '') return;
-
-    const value = parseFloat(control.value);
-    if (isNaN(value)) return;
-
-    const normalizedValue = this.normalizeExperience(value);
-    control.setValue(normalizedValue, { emitEvent: false });
+  // Allow only numbers + one dot + 2 decimals
+  if (!/^\d*\.?\d{0,2}$/.test(value)) {
+    input.value = value.slice(0, -1);
+    return;
   }
-  restrictExperienceInput(event: KeyboardEvent) {
-    const input = event.target as HTMLInputElement;
-    const value = input.value;
 
-    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-    if (allowedKeys.includes(event.key)) return;
+  const rateItem = this.rateItems.at(index) as FormGroup;
+  rateItem.get(controlName)?.setValue(value, { emitEvent: false });
+}
 
-    if (!/[\d.]/.test(event.key)) {
+
+onExperienceBlur(index: number, controlName: any) {
+  const control = (this.rateItems.at(index) as FormGroup).get(controlName);
+  if (!control?.value) return;
+
+  const normalized = this.normalizeExperience(control.value.toString());
+  control.setValue(normalized, { emitEvent: false });
+}
+
+restrictExperienceInput(event: KeyboardEvent) {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
+
+  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+  if (allowedKeys.includes(event.key)) return;
+
+  if (!/[\d.]/.test(event.key)) {
+    event.preventDefault();
+    return;
+  }
+
+  if (event.key === '.' && value.includes('.')) {
+    event.preventDefault();
+    return;
+  }
+
+  if (value.includes('.')) {
+    const [, decimal] = value.split('.');
+    if (decimal.length >= 2) {
       event.preventDefault();
-      return;
-    }
-
-    if (event.key === '.' && value.includes('.')) {
-      event.preventDefault();
-      return;
-    }
-
-    if (value.includes('.')) {
-      const [, decimal] = value.split('.');
-      if (decimal.length >= 2) {
-        event.preventDefault();
-      }
     }
   }
+}
 
 nagvition(){
     this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active']);

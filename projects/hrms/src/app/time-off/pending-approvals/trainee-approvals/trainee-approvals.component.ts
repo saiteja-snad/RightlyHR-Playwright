@@ -232,6 +232,8 @@ onCommentChange(value: string) {
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
         this.selectedLeaveData.trcomments = '';
+        this.signalService.traineeDetailsTriggerSignal.set(true);
+         this.signalService.probationDetailsTriggerSignal.set(true);
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,
@@ -269,6 +271,8 @@ onCommentChange(value: string) {
         this.isLoading = false;
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
+        this.signalService.traineeDetailsTriggerSignal.set(true);
+         this.signalService.probationDetailsTriggerSignal.set(true);
         this.selectedLeaveData = {};
       },
     });
@@ -291,6 +295,8 @@ onCommentChange(value: string) {
       complete: () => {
         this.getAllPendingApprovals();
         this.getApprovalStatusCounts();
+        this.signalService.traineeDetailsTriggerSignal.set(true);
+         this.signalService.probationDetailsTriggerSignal.set(true);
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,
@@ -354,6 +360,8 @@ onCommentChange(value: string) {
           ...status,
           separation: true,
         }));
+        this.signalService.traineeDetailsTriggerSignal.set(true);
+        this.signalService.probationDetailsTriggerSignal.set(true);
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message)

@@ -62,6 +62,10 @@ export class OnboardingApprovalTabsComponent {
         this.getAllPendingApprovalsCount();
         this.signalService.probationDetailsTriggerSignal.set(false);
       }
+      // if (this.signalService.traineeDetailsTriggerSignal()) {
+      //   this.getAllPendingApprovalsCount();
+      //   this.signalService.traineeDetailsTriggerSignal.set(false);
+      // }
     });
   }
 

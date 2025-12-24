@@ -6,32 +6,20 @@
     <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()" *ngIf="LeaveReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="
-          !LeaveReportForm.get('employee')?.value &&
-          !LeaveReportForm.get('manager')?.value &&
-          !LeaveReportForm.get('leaveCategory')?.value &&
-          !LeaveReportForm.get('team')?.value &&
-          !LeaveReportForm.get('year')?.value
-        " (click)="clearAllFilters()">
+        <!-- @if(isFilterApplied()) {
+        <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
           Clear All
         </button>
+        } -->
 
-        <!-- Employee -->
-        @if(rbac.allowedToAccess('Attendance All Employees List(Leave Carry Forward & Encashment).view')){
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
-              filterPlaceholder="Search employee">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-        }
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+        </button>
 
+        
         <!-- Team Manager -->
-        @if(rbac.allowedToAccess('Attendance Team Manager List(Leave Carry Forward & Encashment).view')){
+        <!-- @if(rbac.allowedToAccess('Attendance Team Manager List(Leave Carry Forward & Encashment).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
@@ -42,10 +30,10 @@
             </p-select>
           </div>
         </div>
-        }
+        } -->
 
         <!--My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Leave Carry Forward & Encashment).view') &&!rbac.allowedToAccess('Attendance All EmployeesList(Leave Carry Forward & Encashment).view')
+        <!-- @if(rbac.allowedToAccess('My Team Report(Leave Carry Forward & Encashment).view') &&!rbac.allowedToAccess('Attendance All EmployeesList(Leave Carry Forward & Encashment).view')
          && !rbac.allowedToAccess('Attendance Team Manager List(Leave Carry Forward & Encashment).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
@@ -57,9 +45,9 @@
             </p-select>
           </div>
         </div>
-        }
+        } -->
         <!-- Leave Category -->
-        <div class="d-flex align-items-center gap-2">
+        <!-- <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label" filterBy="label"
               formControlName="leaveCategory" placeholder="Select leave category" class="form-select custom-select"
@@ -68,22 +56,14 @@
               <ng-template let-employee #item>{{ employee.label }}</ng-template>
             </p-select>
           </div>
-        </div>
+        </div> -->
 
-          <!-- Year -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
-              placeholder="Select year" class="form-select custom-select">
-            </p-select>
-          </div>
-        </div>
-        }
+        
 
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -105,6 +85,7 @@
           </button>
           }
         </div>
+        }
       </div>
     </form>
   </div>
@@ -170,3 +151,106 @@
     }
   </div>
 </div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="LeaveReportForm">
+      <!-- Year -->
+      <div class="mb-3">
+        <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Year <span class="text-danger">*</span></label>
+        <div class="custom-p-select-content">
+          <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
+            placeholder="Select year" class="form-select custom-select" (onChange)="enableLocation()">
+          </p-select>
+        </div>
+        <div *ngIf="LeaveReportForm.get('year')?.touched && LeaveReportForm.get('year')?.invalid"
+          class="error-msg">
+          <div *ngIf="LeaveReportForm.get('year')?.errors?.['required']">Year is required</div>
+        </div>
+      </div>
+        <!-- Location -->
+        <div class="mb-3">
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Location</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
+              class="form-select custom-select" filterBy="jobLocationName" [showClear]="false" [resetFilterOnHide]="true"
+              formControlName="location" placeholder="Select location" filterPlaceholder="Search location"
+              (onChange)="onLocationChange($event.value)">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
+              <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Sub Location -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Sub Location</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
+              class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false" [resetFilterOnHide]="true"
+              formControlName="subLocation" placeholder="Select sub location"
+              (onChange)="getAllShifts($event.value)" filterPlaceholder="Search sub location">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
+              <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Shift -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Shift</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
+              [showClear]="false" formControlName="shift" placeholder="Select shift" [resetFilterOnHide]="true"
+              (onChange)="getCategoryDetails($event.value)" class="form-select custom-select" filterPlaceholder="Search shift">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
+              <ng-template let-location #item>{{ location.shiftName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div  class="mb-3">
+           <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Category</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name"
+              [showClear]="false" formControlName="categoryName" placeholder="Select category" [resetFilterOnHide]="true"
+              class="form-select custom-select" filterPlaceholder="Search category">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+              <ng-template let-category #item>{{ category.name }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        
+         <!-- Employee -->
+        @if(rbac.allowedToAccess('Attendance All Employees List(Leave Carry Forward & Encashment).view')){
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Employee</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee" [resetFilterOnHide]="true">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+          {{'Clear All' | translate}}</button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{'Close' | translate}}</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

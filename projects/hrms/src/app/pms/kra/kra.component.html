@@ -14,7 +14,7 @@
     <!-- @if (rbac.allowedToAccess('Create KRA.view')) { -->
     <div class="d-flex align-items-center gap-4">
       <a class="inactive-btn" (click)="toggleInactiveKra()">
-        {{ kraFilterApplied ? 'Active KRA' : 'Inactive KRA' }}
+        {{ kraFilterApplied ? "Active KRA's" : "Inactive KRA's" }}
       </a>
 
       @if(rbac.allowedToAccess('KRA.create')){
@@ -38,8 +38,9 @@
     <span class="input-group-text custom-input-group-search">
       <i class="bi bi-search"></i>
     </span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by KRA name..."
-      [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+    <input type="search" class="form-control custom-search-input"
+      placeholder="Search here by KRA title, KRA category, description" [(ngModel)]="searchText"
+      (ngModelChange)="onSearchTextChange()" />
   </div>
 
   <!-- Table -->
@@ -143,7 +144,7 @@
                 @else if (kra.status === 'On Hold') {
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
-                  <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Active' |
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
                     translate }}</a>
                 </li>
                 }
@@ -158,7 +159,7 @@
                 @else if (kra.status === 'Inactive') {
                 @if(rbac.allowedToAccess('KRA.update')){
                 <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
-                  <a class="dropdown-custom-btn text-success"><i class="bi bi-play-circle me-2"></i>{{ 'Active' |
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
                     translate }}</a>
                 </li>
                 }
@@ -244,34 +245,30 @@
             <label class="form-label custom-label mb-2">
               {{ 'KRA Title' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="text" class="form-control custom-input" formControlName="kraName"
-              placeholder="Enter KRA title">
+            <input type="text" class="form-control custom-input" formControlName="kraName" placeholder="Enter KRA title"
+              (input)="formValidation.validateInput(kraForm.get('kraName'))">
             <div class="error-msg" *ngIf="f['kraName'].touched && f['kraName'].invalid">
-              KRA Title is required (min 5 characters)
+              KRA Title is required
             </div>
           </div>
 
-<div class="col-md-6">
-  <label class="form-label custom-label mb-2">
-    {{ 'Upload Document' | translate }}
-  </label>
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Upload Document' | translate }}
+            </label>
 
-  <div class="flex-grow-1">
-    <input
-      type="file"
-      class="form-control custom-input"
-      accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
-      (change)="onFileChange($event)"
-    />
+            <div class="flex-grow-1">
+              <input type="file" class="form-control custom-input" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx"
+                (change)="onFileChange($event)" />
 
-    <!-- Show file name BELOW input -->
-    @if (isEditMode && existingAttachmentName) {
-      <small class="text-muted d-block mt-1">
-        {{ existingAttachmentName }}
-      </small>
-    }
-  </div>
-</div>
+              <!-- Show file name BELOW input -->
+              @if (isEditMode && existingAttachmentName) {
+              <small class="text-muted d-block mt-1">
+                {{ existingAttachmentName }}
+              </small>
+              }
+            </div>
+          </div>
 
 
           <!-- Description -->
@@ -280,12 +277,13 @@
               {{ 'Description' | translate }} <span class="text-danger">*</span>
             </label>
             <textarea class="form-control custom-input" rows="4" formControlName="description"
-              placeholder="Please Enter Description"></textarea>
+              placeholder="Please Enter Description"
+              (input)="formValidation.validateInput(kraForm.get('description'))"></textarea>
             <div class="textarea-count-text text-end">
-              {{ f['description'].value?.length || 0 }}/1000
+              {{ f['description'].value?.length || 0 }}/500
             </div>
             <div class="error-msg" *ngIf="f['description'].touched && f['description'].invalid">
-              Description is required (min 10 characters)
+              Description is required
             </div>
           </div>
         </div>
@@ -578,10 +576,7 @@
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">
-        Are you sure you want to change the status of
-        <strong>"{{ pendingKraName }}"</strong>
-        to
-        <strong>{{ pendingNewStatus }}</strong>?
+       {{ getStatusConfirmMessage() }}
       </p>
     </div>
 

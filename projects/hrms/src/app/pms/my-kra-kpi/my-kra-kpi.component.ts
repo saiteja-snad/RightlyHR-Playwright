@@ -241,6 +241,7 @@ calculateKraProgress(kpis: any[]): number {
         },
         error: (err: any) => {
           console.error('Submit for Approval failed', err);
+          this.conformationPopup.openErrorModal(err.error?.message);
         },
       });
     } catch (err) {

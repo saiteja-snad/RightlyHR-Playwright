@@ -91,6 +91,8 @@ export class KraKpiApprovalsComponent implements OnInit {
   currentMinRating!: number;
   currentMaxRating!: number;
 
+  selectedActionStatus: 'approve' | 'reject' | null = null;
+
   @ViewChild('approveModal') approveModal!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectModal!: TemplateRef<any>;
 
@@ -248,15 +250,34 @@ export class KraKpiApprovalsComponent implements OnInit {
     this.initActionForm(min, max); // Reset form
 
     // For Approve: percentage & rating REQUIRED, comments OPTIONAL
-  this.actionForm.get('percentage')?.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
-  this.actionForm.get('rating')?.setValidators([Validators.required, Validators.min(min), Validators.max(max)]);
-  this.actionForm.get('comments')?.clearValidators();
+    this.actionForm
+      .get('percentage')
+      ?.setValidators([
+        Validators.required,
+        Validators.min(0),
+        Validators.max(100),
+      ]);
+    this.actionForm
+      .get('rating')
+      ?.setValidators([
+        Validators.required,
+        Validators.min(min),
+        Validators.max(max),
+      ]);
+    this.actionForm.get('comments')?.clearValidators();
 
-  this.actionForm.get('percentage')?.updateValueAndValidity();
-  this.actionForm.get('rating')?.updateValueAndValidity();
-  this.actionForm.get('comments')?.updateValueAndValidity();
+    this.actionForm.get('percentage')?.updateValueAndValidity();
+    this.actionForm.get('rating')?.updateValueAndValidity();
+    this.actionForm.get('comments')?.updateValueAndValidity();
     this.selectedFile = null;
     this.selectedFileName = '';
+    this.selectedActionStatus = null;
+
+    this.actionForm.get('comments')?.valueChanges.subscribe((value: string) => {
+  if (!value || value.trim() === '') {
+    this.selectedActionStatus = null;
+  }
+});
 
     this.modalRef = this.modalService.open(modal, {
       centered: true,
@@ -272,15 +293,21 @@ export class KraKpiApprovalsComponent implements OnInit {
     this.initActionForm(min, max); // Reset form
 
     // For Reject: ONLY comments REQUIRED, percentage & rating NOT required
-  this.actionForm.get('percentage')?.clearValidators();
-  this.actionForm.get('rating')?.clearValidators();
-  this.actionForm.get('comments')?.setValidators([Validators.required]);
+    this.actionForm.get('percentage')?.clearValidators();
+    this.actionForm.get('rating')?.clearValidators();
+    this.actionForm.get('comments')?.setValidators([Validators.required]);
 
-  this.actionForm.get('percentage')?.updateValueAndValidity();
-  this.actionForm.get('rating')?.updateValueAndValidity();
-  this.actionForm.get('comments')?.updateValueAndValidity();
+    this.actionForm.get('percentage')?.updateValueAndValidity();
+    this.actionForm.get('rating')?.updateValueAndValidity();
+    this.actionForm.get('comments')?.updateValueAndValidity();
     this.selectedFile = null;
     this.selectedFileName = '';
+    this.selectedActionStatus = null;
+    this.actionForm.get('comments')?.valueChanges.subscribe((value: string) => {
+      if (!value || value.trim() === '') {
+        this.selectedActionStatus = null;
+      }
+    });
 
     this.modalRef = this.modalService.open(modal, {
       centered: true,
@@ -407,12 +434,11 @@ export class KraKpiApprovalsComponent implements OnInit {
     }
   }
 
-
-      getProgressClass(progress: number): string {
-      if (progress >= 80) return 'bg-success';
-      if (progress >= 50) return 'bg-warning';
-      return 'bg-danger';
-    }
+  getProgressClass(progress: number): string {
+    if (progress >= 80) return 'bg-success';
+    if (progress >= 50) return 'bg-warning';
+    return 'bg-danger';
+  }
 
   getKpiStatusClass(status: string) {
     switch (status) {
@@ -427,4 +453,22 @@ export class KraKpiApprovalsComponent implements OnInit {
     }
   }
 
+  onRejectChipSelect(): void {
+    this.selectedActionStatus = 'reject';
+
+    // Auto-fill comments if empty
+    const commentsControl = this.actionForm.get('comments');
+    if (!commentsControl?.value || commentsControl.value.trim() === '') {
+      commentsControl?.setValue('Rejected');
+    }
+  }
+
+  onApproveChipSelect(): void {
+    this.selectedActionStatus = 'approve';
+
+    const commentsControl = this.actionForm.get('comments');
+    if (!commentsControl?.value || commentsControl.value.trim() === '') {
+      commentsControl?.setValue('Approved');
+    }
+  }
 }

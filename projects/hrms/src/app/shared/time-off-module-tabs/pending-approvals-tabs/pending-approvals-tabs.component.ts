@@ -27,6 +27,8 @@ export class PendingApprovalsTabsComponent {
   approvalCounts: any[] = [];
   timeOffTotalCount: number = 0;
 
+  kraKpiTotalCount = 0;
+
   constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
@@ -42,10 +44,11 @@ export class PendingApprovalsTabsComponent {
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' }, moduleIds: [19] },
       { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' }, moduleIds: [30] },
       { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/time-off-icon/employee-info-approvals.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  },
-      { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' },moduleIds: [32]  }
+      { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' },  moduleIds: [], totalCount: 0  }
     ];
     this.getApprovalStatusCounts();
     this.filterTabsByRbac();
+    this.loadKraKpiApprovalCount();
   }
 
   getApprovalStatusCounts() {
@@ -126,6 +129,37 @@ export class PendingApprovalsTabsComponent {
   isMiddleColumn(index: number): boolean {
     return !this.isFirstColumn(index) && !this.isLastColumn(index);
   }
+
+  loadKraKpiApprovalCount(): void {
+  const params: any = {
+    pageNumber: 1,
+    pageSize: 1000, // large enough to get all employees
+    managerEmployeeId: this.empinfo?.employeeId,
+  };
+
+  this.http
+    .getDataIncludeParams('Kpi/getPendingApprovalsData', params)
+    .subscribe({
+      next: (res: any) => {
+        // ✅ Count employees
+        this.kraKpiTotalCount = res?.data?.length || 0;
+
+        // assign to tab
+        const kraTab = this.navTabs.find(
+          t => t.label === "KRA/KPI's"
+        );
+        if (kraTab) {
+          kraTab.totalCount = this.kraKpiTotalCount;
+        }
+
+        this.filterTabsByRbac();
+      },
+      error: () => {
+        this.kraKpiTotalCount = 0;
+      }
+    });
+}
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

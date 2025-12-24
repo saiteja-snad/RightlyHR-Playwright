@@ -25,7 +25,9 @@
             [(ngModel)]="kra.categoryName"
             #categoryName="ngModel"
             required
-            placeholder="Enter category name">
+            placeholder="Enter category name"
+            (input)="onCategoryInput(categoryName)"
+            >
           <div class="error-msg" *ngIf="categoryName.touched && categoryName.invalid">
             Category Name is required
           </div>
@@ -42,7 +44,9 @@
             [(ngModel)]="kra.categoryCode"
             #categoryCode="ngModel"
             required
-            placeholder="Enter category code">
+            placeholder="Enter category code"
+            (input)="onCategoryInput(categoryCode)"
+            >
           <div class="error-msg" *ngIf="categoryCode.touched && categoryCode.invalid">
             Category Code is required
           </div>
@@ -61,13 +65,15 @@
     #description="ngModel"
     required
     minlength="10"
-    maxlength="1000"
-    placeholder="Enter Description">
+    maxlength="500"
+    placeholder="Enter Description"
+    (input)="onCategoryInput(description)"
+    >
   </textarea>
 
   <!-- Character Count -->
   <div class="textarea-count-text text-end">
-    {{ kra.description?.length || 0 }}/1000
+    {{ kra.description?.length || 0 }}/500
   </div>
 
   <!-- Error Message -->

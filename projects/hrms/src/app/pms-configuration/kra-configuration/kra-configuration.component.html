@@ -33,7 +33,7 @@
           <th>Category Name</th>
           <th class="text-center">Category Code</th>
           <th class="text-center">Description</th>
-          <th class="text-center">Status</th>
+          <!-- <th class="text-center">Status</th> -->
           @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
           <th class="text-center">Action</th>
           }
@@ -51,12 +51,12 @@
                 </div>
                 <ng-template #noDescription>NA</ng-template>
               </td>
-              <td class="text-center">
+              <!-- <td class="text-center">
                 <span class="kra-status" [ngClass]="getStatusClass(item.status)">
                   {{ item.status || 'Inactive' }}
                 </span>
 
-              </td>
+              </td> -->
 
               @if(rbac.allowedToAccess('Kra Update(Status - Created).view') || rbac.allowedToAccess('Kra Delete(Status - Created).view')) {
               <td class="text-center">

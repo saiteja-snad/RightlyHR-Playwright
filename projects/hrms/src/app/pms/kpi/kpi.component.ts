@@ -1,3 +1,4 @@
+import { FormValidationsService } from './../../services/form-validations.service';
 import { OpenModalService } from './../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import {
@@ -62,6 +63,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   public rbac = inject(RbacService);
   private router = inject(Router);
   private conformationPopup = inject(OpenModalService);
+  public formValidation= inject(FormValidationsService);
 
   moduleinfo = '';
   searchText = '';
@@ -105,7 +107,7 @@ export class KpiComponent implements OnInit, OnDestroy {
 
 
   showOnlyInactive = false;
-  inactiveButtonLabel = 'Inactive KPI';
+  inactiveButtonLabel = "Inactive KPI's";
   @ViewChild('statusConfirmModal') statusConfirmModal!: any;
 
   pendingKpi: any = null;
@@ -116,7 +118,7 @@ export class KpiComponent implements OnInit, OnDestroy {
   kpiForm = this.fb.group({
     kpiName: ['', [Validators.required, Validators.minLength(5)]],
     uom: ['', Validators.required],
-    targetValue: [null as number | null, [Validators.required]],
+    // targetValue: [null as number | null, [Validators.required]],
     description: [
       '',
       [
@@ -143,17 +145,17 @@ export class KpiComponent implements OnInit, OnDestroy {
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.updateModuleInfo());
 
-this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
-  if (!uom) {
-    this.kpiForm.get('targetValue')?.reset();
-    this.kpiForm.get('targetValue')?.clearValidators();
-    this.kpiForm.get('targetValue')?.updateValueAndValidity();
-    return;
-  }
+// this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
+//   if (!uom) {
+//     this.kpiForm.get('targetValue')?.reset();
+//     this.kpiForm.get('targetValue')?.clearValidators();
+//     this.kpiForm.get('targetValue')?.updateValueAndValidity();
+//     return;
+//   }
 
-  this.kpiForm.get('targetValue')?.reset();
-  this.applyTargetValueValidation(uom);
-});
+//   this.kpiForm.get('targetValue')?.reset();
+//   this.applyTargetValueValidation(uom);
+// });
 
   }
 
@@ -178,8 +180,8 @@ this.kpiForm.get('uom')?.valueChanges.subscribe((uom: string | null) => {
 toggleInactiveFilter(): void {
   this.showOnlyInactive = !this.showOnlyInactive;
   this.inactiveButtonLabel = this.showOnlyInactive
-    ? 'Active KPI'
-    : 'Inactive KPI';
+    ? "Active KPI's"
+    : "Inactive KPI's";
 
   this.applyStatusFilter();
 }
@@ -282,7 +284,7 @@ toggleInactiveFilter(): void {
       kpiId?: number;
       kpiName: string;
       targetType: string;
-      targetValue: string;
+      // targetValue: string;
       description: string;
       status: string;
       createdBy: string;
@@ -290,7 +292,7 @@ toggleInactiveFilter(): void {
     } = {
       kpiName: formValue.kpiName!.trim(),
       targetType: formValue.uom!,
-      targetValue: String(formValue.targetValue!),
+      // targetValue: String(formValue.targetValue!),
       description: formValue.description!.trim(),
       status: 'Created',
       createdBy: employeeId,
@@ -342,11 +344,11 @@ toggleInactiveFilter(): void {
     this.kpiForm.patchValue({
       kpiName: kpi.kpiName || '',
       uom: kpi.targetType || '',
-      targetValue: kpi.targetValue != null ? Number(kpi.targetValue) : null,
+      // targetValue: kpi.targetValue != null ? Number(kpi.targetValue) : null,
       description: kpi.description || '',
     });
 
-    this.applyTargetValueValidation(kpi.targetType);
+    // this.applyTargetValueValidation(kpi.targetType);
 
     this.modalService.open(content, {
       centered: true,
@@ -372,69 +374,69 @@ toggleInactiveFilter(): void {
     }
   }
 
-  onMakeInactive(kpi: any) {
-    const formValue = this.kpiForm.getRawValue();
+  // onMakeInactive(kpi: any) {
+  //   const formValue = this.kpiForm.getRawValue();
 
-    {
-      const payload = [
-        {
-          kpiId: kpi.kpiId,
-          kpiName: kpi.kpiName,
-          status: 'Inactive',
-          updatedBy:
-            JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
-              ?.employeeId || 0,
-          createdBy:
-            JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
-              ?.employeeId || 0,
-        },
-      ];
+  //   {
+  //     const payload = [
+  //       {
+  //         kpiId: kpi.kpiId,
+  //         kpiName: kpi.kpiName,
+  //         status: 'Inactive',
+  //         updatedBy:
+  //           JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
+  //             ?.employeeId || 0,
+  //         createdBy:
+  //           JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
+  //             ?.employeeId || 0,
+  //       },
+  //     ];
 
-      this.http.postdata('Kpi/upsertkra', payload).subscribe({
-        next: () => {
-          this.loadKpiList();
-          this.conformationPopup.openSuccessModal(
-            'KPI status updated to Inactive'
-          );
-        },
-        error: (err) => {
-          this.conformationPopup.openErrorModal(
-            err.error?.message || 'Failed to update status'
-          );
-        },
-      });
-    }
-  }
+  //     this.http.postdata('Kpi/upsertkra', payload).subscribe({
+  //       next: () => {
+  //         this.loadKpiList();
+  //         this.conformationPopup.openSuccessModal(
+  //           'KPI status updated to Inactive'
+  //         );
+  //       },
+  //       error: (err) => {
+  //         this.conformationPopup.openErrorModal(
+  //           err.error?.message || 'Failed to update status'
+  //         );
+  //       },
+  //     });
+  //   }
+  // }
 
-  updateKpiStatus(kpi: any, status: 'Active' | 'Inactive' | 'On Hold') {
-    const employeeId =
-      JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId ||
-      0;
+  // updateKpiStatus(kpi: any, status: 'Active' | 'Inactive' | 'On Hold') {
+  //   const employeeId =
+  //     JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId ||
+  //     0;
 
-    const payload = [
-      {
-        kpiId: kpi.kpiId,
-        kpiName: kpi.kpiName,
-        status,
-        updatedBy: employeeId,
-        createdBy: employeeId,
-      },
-    ];
+  //   const payload = [
+  //     {
+  //       kpiId: kpi.kpiId,
+  //       kpiName: kpi.kpiName,
+  //       status,
+  //       updatedBy: employeeId,
+  //       createdBy: employeeId,
+  //     },
+  //   ];
 
-    this.http.postdata('Kpi/upsertkra', payload).subscribe({
-      next: () => {
-        this.loadKpiList();
-        this.conformationPopup.openSuccessModal(
-          `KPI status updated to ${status}`
-        );
-      },
-      error: (err) => {
-        this.conformationPopup.openErrorModal(
-          err.error?.message || 'Failed to update KPI status'
-        );
-      },
-    });
-  }
+  //   this.http.postdata('Kpi/upsertkra', payload).subscribe({
+  //     next: () => {
+  //       this.loadKpiList();
+  //       this.conformationPopup.openSuccessModal(
+  //         `KPI status updated to ${status}`
+  //       );
+  //     },
+  //     error: (err) => {
+  //       this.conformationPopup.openErrorModal(
+  //         err.error?.message || 'Failed to update KPI status'
+  //       );
+  //     },
+  //   });
+  // }
 
   canUpdate(status: string): boolean {
     return status === 'Created' || status === 'Active';
@@ -492,9 +494,22 @@ toggleInactiveFilter(): void {
         this.modalService.dismissAll();
         this.loadKpiList();
 
-        this.conformationPopup.openSuccessModal(
-          `KPI status updated to ${this.pendingNewStatus}`
-        );
+        let successMessage = '';
+      switch (this.pendingNewStatus) {
+  case 'Active':
+    successMessage = 'KRA marked as active successfully';
+    break;
+  case 'Inactive':
+    successMessage = 'KRA marked as inactive successfully';
+    break;
+  case 'On Hold':
+    successMessage = 'KRA is kept on hold';
+    break;
+  default:
+    successMessage = `KRA status changed successfully`;
+}
+
+      this.conformationPopup.openSuccessModal(successMessage);
 
         // cleanup
         this.pendingKpi = null;
@@ -512,30 +527,45 @@ toggleInactiveFilter(): void {
     });
   }
 
-  private applyTargetValueValidation(uom: string) {
-    const control = this.kpiForm.get('targetValue');
-    if (!control) return;
 
-    let validators = [Validators.required];
-
-    switch (uom) {
-      case '%':
-        validators.push(Validators.min(1), Validators.max(100));
-        break;
-
-      case '$':
-        validators.push(Validators.min(1));
-        break;
-
-      case 'Hrs':
-      case 'Days':
-        validators.push(Validators.min(1), Validators.max(999));
-        break;
-    }
-
-    control.setValidators(validators);
-    control.updateValueAndValidity();
+  getStatusConfirmMessage(): string {
+  switch (this.pendingNewStatus) {
+    case 'Active':
+      return 'Are you sure you want to activate this KRA?';
+    case 'Inactive':
+      return 'Are you sure you want to inactivate this KRA?';
+    case 'On Hold':
+      return 'Are you sure you want to hold this KRA?';
+    default:
+      return 'Are you sure you want to change the status of this KRA?';
   }
+}
+
+
+  // private applyTargetValueValidation(uom: string) {
+  //   const control = this.kpiForm.get('targetValue');
+  //   if (!control) return;
+
+  //   let validators = [Validators.required];
+
+  //   switch (uom) {
+  //     case '%':
+  //       validators.push(Validators.min(1), Validators.max(100));
+  //       break;
+
+  //     case '$':
+  //       validators.push(Validators.min(1));
+  //       break;
+
+  //     case 'Hrs':
+  //     case 'Days':
+  //       validators.push(Validators.min(1), Validators.max(999));
+  //       break;
+  //   }
+
+  //   control.setValidators(validators);
+  //   control.updateValueAndValidity();
+  // }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();

@@ -6,6 +6,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AuthService } from '../../../services/auth.service';
 import { KraCategory } from '../add-kra/kra.model';  // Correct path
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-add-kra',
@@ -32,7 +33,8 @@ export class AddKraComponent {
     private http: HttpService,
     private popup: OpenModalService,
     private auth: AuthService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+     public formValidation: FormValidationService
   ) {}
 
 
@@ -73,4 +75,18 @@ export class AddKraComponent {
     this.activeModal.dismiss();
     this.kra = { categoryName: '', categoryCode: '', description: '' };
   }
+
+  onCategoryInput(model: any): void {
+  // mark touched so error shows immediately
+  model.control.markAsTouched();
+
+  // trim leading spaces only
+  if (typeof model.control.value === 'string') {
+    const trimmed = model.control.value.replace(/^\s+/, '');
+    if (trimmed !== model.control.value) {
+      model.control.setValue(trimmed);
+    }
+  }
+}
+
 }

@@ -38,6 +38,8 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { DocumentViewIconComponent } from '../../icons/document-view-icon/document-view-icon.component';
+import { FormValidationsService } from '../../services/form-validations.service';
+
 
 @Component({
   selector: 'app-kra',
@@ -149,14 +151,15 @@ existingDocumentUrl: string = '';
     public rbac: RbacService,
     public readonly router: Router,
     private offcanvasService: NgbOffcanvas,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public formValidation: FormValidationsService
   ) {
     // Form initialized safely in constructor
     this.kraForm = this.fb.group(
       {
         categoryId: [null as number | null, Validators.required],
-        kraName: ['', [Validators.required, Validators.minLength(5)]],
-        description: ['', [Validators.required, Validators.minLength(10)]],
+        kraName: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
+        description: ['', [Validators.required, Validators.minLength(10), ]],
         attachment: [null as File | null],
       },
       {}
@@ -540,9 +543,23 @@ existingDocumentUrl: string = '';
       next: () => {
         this.modalService.dismissAll();
         this.loadKraList();
-        this.conformationPopup.openSuccessModal(
-          `KRA status updated to ${this.pendingNewStatus}`
-        );
+        let successMessage = '';
+      switch (this.pendingNewStatus) {
+  case 'Active':
+    successMessage = 'KRA marked as active successfully';
+    break;
+  case 'Inactive':
+    successMessage = 'KRA marked as inactive successfully';
+    break;
+  case 'On Hold':
+    successMessage = 'KRA is kept on hold';
+    break;
+  default:
+    successMessage = `KRA status changed successfully`;
+}
+
+
+      this.conformationPopup.openSuccessModal(successMessage);
         this.isSubmitting = false;
       },
       error: (err) => {
@@ -553,6 +570,20 @@ existingDocumentUrl: string = '';
       },
     });
   }
+
+  getStatusConfirmMessage(): string {
+  switch (this.pendingNewStatus) {
+    case 'Active':
+      return 'Are you sure you want to activate this KRA?';
+    case 'Inactive':
+      return 'Are you sure you want to inactivate this KRA?';
+    case 'On Hold':
+      return 'Are you sure you want to hold this KRA?';
+    default:
+      return 'Are you sure you want to change the status of this KRA?';
+  }
+}
+
 
   // private updateKraStatus(kraId: number, kraName: string, newStatus: string) {
   //   const user = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -580,11 +611,55 @@ existingDocumentUrl: string = '';
 
 onFileChange(event: any) {
   const file = event.target.files[0] as File;
-  if (file) {
-    this.kraForm.patchValue({ attachment: file });
-    // Show the newly selected file name (replaces existing name display)
-    this.existingAttachmentName = file.name;
+
+  if (!file) {
+    return;
   }
+
+  // Allowed file extensions
+  const allowedExtensions = [
+    '.pdf',
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.doc',
+    '.docx',
+    '.xls',
+    '.xlsx'
+  ];
+
+  // Allowed MIME types (more reliable)
+  const allowedMimeTypes = [
+    'application/pdf',
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'application/msword', // .doc
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'application/vnd.ms-excel', // .xls
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
+  ];
+
+  const fileExtension = '.' + file.name.toLowerCase().split('.').pop();
+  const isValidExtension = allowedExtensions.includes(fileExtension);
+  const isValidMime = allowedMimeTypes.includes(file.type);
+
+  if (!isValidExtension || !isValidMime) {
+    this.conformationPopup.openErrorModal(
+      'Invalid file type. Please upload only: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG, JPEG.'
+    );
+
+    // Clear the input
+    this.kraForm.patchValue({ attachment: null });
+    this.existingAttachmentName = '';
+    (event.target as HTMLInputElement).value = ''; // Reset file input
+
+    return;
+  }
+
+  // Valid file → proceed
+  this.kraForm.patchValue({ attachment: file });
+  this.existingAttachmentName = file.name;
 }
 
   getStatusClass(status: string) {
@@ -667,7 +742,9 @@ onFileChange(event: any) {
       lowerUrl.endsWith('.jpg') ||
       lowerUrl.endsWith('.jpeg') ||
       lowerUrl.endsWith('.png') ||
-      lowerUrl.endsWith('.pdf')
+      lowerUrl.endsWith('.pdf') ||
+      lowerUrl.endsWith('.xls') ||
+      lowerUrl.endsWith('.xlsx')
     );
   }
 
@@ -703,9 +780,12 @@ onViewAttachement(url: string) {
   else if (lowerUrl.endsWith('.pdf') || lowerUrl.endsWith('.xls') || lowerUrl.endsWith('.xlsx')) {
     this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
       next: (res: any) => {
-        const mimeType = lowerUrl.endsWith('.pdf')
-          ? 'application/pdf'
-          : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; // for .xlsx
+        let mimeType = 'application/pdf';
+        if (lowerUrl.endsWith('.xls')) {
+          mimeType = 'application/vnd.ms-excel';
+        } else if (lowerUrl.endsWith('.xlsx')) {
+          mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        }
 
         const blob = new Blob([res.body], { type: mimeType });
         const blobUrl = URL.createObjectURL(blob);

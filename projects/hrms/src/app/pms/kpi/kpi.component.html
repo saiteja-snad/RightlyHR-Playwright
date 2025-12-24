@@ -31,7 +31,7 @@
     <span class="input-group-text custom-input-group-search">
       <i class="bi bi-search"></i>
     </span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by KPI name, description..."
+    <input type="search" class="form-control custom-search-input" placeholder="Search here by KPI title, description"
       [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
   </div>
 
@@ -185,9 +185,9 @@
               {{ 'KPI Title' | translate }} <span class="text-danger">*</span>
             </label>
             <input type="text" class="form-control custom-input" formControlName="kpiName"
-              placeholder="Enter KPI title">
+              placeholder="Enter KPI title" (input)="formValidation.validateInput(kpiForm.get('kpiName'))">
             <div class="error-msg" *ngIf="f['kpiName'].touched && f['kpiName'].invalid">
-              KPI Title is required (min 5 characters)
+              KPI Title is required
             </div>
           </div>
 
@@ -205,11 +205,11 @@
             </div>
           </div>
 
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <label class="form-label custom-label mb-2">
               {{ 'Target Value' | translate }} <span class="text-danger">*</span>
             </label>
-            <input type="number" class="form-control custom-input" formControlName="targetValue">
+            <input type="number" class="form-control custom-input" formControlName="targetValue" placeholder="Enter Target Value" (input)="formValidation.validateInput(kpiForm.get('targetValue'))">
             <div class="error-msg" *ngIf="f['targetValue'].touched && f['targetValue'].errors">
               <span *ngIf="f['targetValue'].errors['required']">
                 Target Value is required
@@ -236,19 +236,19 @@
               </span>
             </div>
 
-          </div>
+          </div> -->
 
           <div class="col-12">
             <label class="form-label custom-label mb-2">
               {{ 'Description' | translate }} <span class="text-danger">*</span>
             </label>
             <textarea class="form-control custom-input" rows="4" formControlName="description"
-              placeholder="Please enter description"></textarea>
+              placeholder="Please enter description" (input)="formValidation.validateInput(kpiForm.get('description'))"></textarea>
             <div class="textarea-count-text text-end">
-              {{ f['description'].value?.length || 0 }}/1000
+              {{ f['description'].value?.length || 0 }}/500
             </div>
             <div class="error-msg" *ngIf="f['description'].touched && f['description'].invalid">
-              Description is required (min 10 characters)
+              Description is required
             </div>
           </div>
         </div>
@@ -278,10 +278,7 @@
     <div>
       <img src="icons/conformation.png" alt="confirmation icon" class="confirmation-delete-icon" />
       <p class="confirmation-text">
-        Are you sure you want to change the status of
-        <strong>"{{ pendingKpiName }}"</strong>
-        to
-        <strong>{{ pendingNewStatus }}</strong>?
+       {{ getStatusConfirmMessage() }}
       </p>
     </div>
 

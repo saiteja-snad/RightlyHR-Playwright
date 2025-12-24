@@ -69,6 +69,20 @@ export class UpdateKraComponent implements OnInit {
     });
   }
 
+    onCategoryInput(model: any): void {
+  // mark touched so error shows immediately
+  model.control.markAsTouched();
+
+  // trim leading spaces only
+  if (typeof model.control.value === 'string') {
+    const trimmed = model.control.value.replace(/^\s+/, '');
+    if (trimmed !== model.control.value) {
+      model.control.setValue(trimmed);
+    }
+  }
+}
+
+
   closeModal() {
     this.modalService.dismissAll();
     this.activeModal.dismiss();

@@ -32,7 +32,7 @@ export class PmsSettingsTabsComponent implements OnInit {
       label: 'KRA Configuration',
       link: '/pmsconfiguration/kra',
       icon: '/main-menu-icons/sssessor-configuration.png',
-      description: MODULE_INFOS.PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO,
+      description: MODULE_INFOS.PMS_CONFIGURATION_KRA_CONFIGURATION_MODULE_INFO,
       permission: { feature: 'Kra Configuration', action: 'view' }
     },
   ];

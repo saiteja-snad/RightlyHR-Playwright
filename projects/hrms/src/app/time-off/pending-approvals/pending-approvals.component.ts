@@ -125,6 +125,8 @@ export class PendingApprovalsComponent implements OnInit {
         MODULE_INFOS.PENDING_APPROVALS_ASSESSMENT_FORM_MODULE_INFO,
       '/pending-approvals/employeeinfo-request':
         MODULE_INFOS.PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO,
+      '/pending-approvals/kra-kpi':
+        MODULE_INFOS.PENDING_APPROVALS_KRA_KPI_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)
@@ -425,6 +427,8 @@ export class PendingApprovalsComponent implements OnInit {
   setHeaderTemplate(template: TemplateRef<any>) {
   this.headerRightTemplate = template;
 }
+
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

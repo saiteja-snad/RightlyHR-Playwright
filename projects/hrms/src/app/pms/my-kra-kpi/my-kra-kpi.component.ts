@@ -236,7 +236,7 @@ calculateKraProgress(kpis: any[]): number {
           this.modalService.dismissAll();
           this.getMyKraList();
           this.conformationPopup.openSuccessModal(
-            'Submit for Approval Successful'
+            'KPI submitted successfully'
           );
         },
         error: (err: any) => {

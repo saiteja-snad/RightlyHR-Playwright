@@ -81,6 +81,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   OffCanvasemployeeList: any;
   ChartDataLabels = ChartDataLabels;
   selectedDate!: Date;
+  timeEntryLoader = false;
+  consumedLeavesLoader = false;
 
   constructor(private http: HttpService, private router: Router, private offcanvasService: NgbOffcanvas) { }
 
@@ -262,6 +264,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   getCategoryempDetails(empId: any) {
+    this.consumedLeavesLoader = true;
     this.http.getData(`LeaveEntitlements/v2/employee/${empId}?year=${this.currentYear}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res.success) {
@@ -282,6 +285,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           };
         }
         this.buildTotalLeavesChart();
+        this.consumedLeavesLoader = false;
       }
     });
   }
@@ -527,7 +531,6 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.avaliabletlyloading = true;
     this.http.getData(`v2/Employeedata/TeamAvailability/Summary/${this.empinfo.employeeId}?date=${formattedDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        console.log(res);
         this.avaliabletlyloading = false;
         this.teamSummary = res.summary;
         this.OffCanvasemployeeList = res.employees;
@@ -576,6 +579,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   gettodayloggedtime() {
+    this.timeEntryLoader = true;
     this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&date=${this.currentDate}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
@@ -588,6 +592,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           const fullDaySeconds = 8 * 3600; // 8 hours
           this.todayDurationPercent = Math.min((workedSeconds / fullDaySeconds) * 100, 100);
           this.buildCircularChart();
+          this.timeEntryLoader = false;
         },
         error: err => console.log(err),
       });

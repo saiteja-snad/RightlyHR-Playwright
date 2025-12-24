@@ -10,19 +10,20 @@
         <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
 
         <div class="dashboard-grid my-3">
-            @if(!avaliabletlyloading){
+            
             <!-- Team Availability -->
-            <div class="content-card">
+            <div class="content-card overflow-visible">
+                @if(!avaliabletlyloading){
                 <div class="flex-between-content mb-2">
                     <div class="section-title">My Team Availability</div>
-                
+            
                     <div class="custom-date-range-picker">
-                        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" 
-                        [readonlyInput]="true" appendTo="body" (onSelect)="onDateChange($event)" />
+                        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
+                            [readonlyInput]="true" (onSelect)="onDateChange($event)" />
                     </div>
                     <!-- <div class="date-label">{{ currentTime | date:'MMM d, yyyy' }}</div> -->
                 </div>
-
+            
                 <div class="total-leave-balance-graph-content flex-between-content gap-3">
                     <!-- Donut Chart -->
                     <div class="chart-content">
@@ -32,7 +33,7 @@
                             <p class="total-count-text text-center">Total</p>
                         </div>
                     </div>
-
+            
                     <!-- Right-side labels -->
                     <div class="employee-type-grid w-100">
                         <div class="legend-item" *ngFor="let item of legendList">
@@ -47,33 +48,40 @@
                         </div>
                     </div>
                 </div>
+                }@else{
+                <p-skeleton height="11.3rem" borderRadius="12px" />
+                }
             </div>
 
             <!-- Today's Time Entry -->
             <div class="content-card day-entry-content">
+                @if(!timeEntryLoader){
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Today's Time Entry</div>
                 </div>
-
+            
                 <div class="circle-chart-container mb-3">
-                    <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions"
-                        styleClass="today-chart" />
+                    <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions" styleClass="today-chart" />
                     <!-- Center Text -->
                     <div class="chart-center-label">
                         <div class="time-value">{{ todayDurationLabel }}</div>
                         <div class="time-text">Work Time</div>
                     </div>
                 </div>
-
+            
                 <div class="flex-between-content justify-content-center">
                     <div class="previous-time-text">Previous Day Entry</div>
                     <div class="mx-1">:</div>
                     <div class="previous-duration">{{ previousDurationLabel }}</div>
                 </div>
+                }@else{
+                <p-skeleton height="11.3rem" borderRadius="12px" />
+                }
             </div>
 
             <!-- Consumed Leave Types -->
             <div class="content-card">
+                @if(!consumedLeavesLoader){
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Consumed Leave Types</div>
                     <div class="d-flex align-items-center total">Leaves Consumed :
@@ -81,7 +89,7 @@
                         <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
                     </div>
                 </div>
-
+            
                 <div class="leave-list-content d-flex flex-wrap gap-2">
                     <div *ngFor="let leave of leavesList">
                         <div class="d-flex justify-content-between align-items-center leave-card gap-4">
@@ -93,22 +101,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            }
-            @else {
-            <!-- Column 1 -->
-            <div class="content-card">
+                }@else{
                 <p-skeleton height="11.3rem" borderRadius="12px" />
+                }
             </div>
-            <!-- Column 2 -->
-            <div class="content-card">
-                <p-skeleton height="11.3rem" borderRadius="12px" />
-            </div>
-            <!-- Column 3 -->
-            <div class="content-card">
-                <p-skeleton height="11.3rem" borderRadius="12px" />
-            </div>
-            }
         </div>
 
         <!-- Team Members Section -->

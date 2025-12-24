@@ -595,66 +595,20 @@
     }
 }
 
+.overflow-visible {
+    overflow: visible !important;
+}
+
 // Date Range picker
 .custom-date-range-picker {
+    .p-datepicker-panel {
+        z-index: 1;
+        padding: 0.5rem;
+        top: 1rem;
+    }
+
     .p-datepicker-input {
-        min-width: 160px  !important;
-        font-size: 12px  !important;
-        padding: 6px !important;
-    }
-
-    .p-inputtext:enabled:focus {
-        border: 1px solid #cbd5e1 !important;
-    }
-
-    .p-datepicker-day-view {
-        font-size: var(--fontsize12) !important;
-
-        th, td {
-            text-align: center  !important;
-        }
-
-        .p-datepicker-weekday-cell {
-            padding: 0rem !important;
-        }
-    }
-
-    .p-datepicker-header {
-        padding: 0rem !important;
-    }
-
-    .p-button-icon-only.p-button-rounded {
-        height: 2rem !important;
-    }
-
-    .p-button-text {
-        color: var(--primary-color) !important;
-    }
-
-    .p-datepicker-select-month,
-    .p-datepicker-select-year {
-        color: var(--primary-color) !important;
-        font-size: var(--fontsize12) !important;
-    }
-
-    .p-datepicker-year-selected,
-    .p-datepicker-month-selected,
-    .p-datepicker-day-selected {
-        font-size: var(--fontsize12) !important;
-        background: var(--primary-color) !important;
-    }
-
-    .p-datepicker-day-selected-range {
-        background: rgba(11, 58, 131, 0.1) !important;
-        color: var(--primary-color) !important;
-    }
-
-    .p-datepicker-today>.p-datepicker-day-selected-range {
-        background: rgba(11, 58, 131, 0.1) !important;
-        color: var(--primary-color) !important;
-    }
-
-    .p-datepicker-today>.p-datepicker-day-selected {
-        background: var(--primary-color) !important;
+        min-width: 160px;
+        padding: 4px 8px;
     }
 }

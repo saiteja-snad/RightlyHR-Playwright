@@ -128,7 +128,7 @@
                     <th class="text-center">Review Cycle</th>
                     <th class="text-center">Total KPIs</th>
                     <th class="text-center">Weightage (%)</th>
-                    <th class="text-center">Status</th>
+                    <!-- <th class="text-center">Status</th> -->
                     <th class="text-center">Effective Date</th>
                     <th class="text-center">Target Date</th>
                     <th class="text-center">Progress (%)</th>
@@ -147,9 +147,9 @@
                       </a>
                     </td>
                     <td class="text-center">{{ kra.kra?.weightageValue || kra.weightageValue || '-' }}</td>
-                    <td class="text-center kpi-status" [ngClass]="getStatusClass(kra.kra?.status)">
+                    <!-- <td class="text-center kpi-status" [ngClass]="getStatusClass(kra.kra?.status)">
                       {{ kra.kra?.status || kra.status || '-' }}
-                    </td>
+                    </td> -->
                     <td class="text-center">{{ kra.kra?.effectiveDate | date:'mediumDate' }}</td>
                     <td class="text-center">{{ kra.kpis?.[0]?.kraTargetDate | date:'mediumDate' }}</td>
                     <td class="text-center">

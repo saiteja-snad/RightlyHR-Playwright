@@ -2693,7 +2693,10 @@
                             || per.fields === 'Inactive Empolyee Report' || per.fields === 'Inactive Empolyee Report - Generate' || per.fields === 'Inactive Empolyee Report - Export'
                             || per.fields === 'Yearly Summary Report' || per.fields === 'Yearly Summary Report - Generate' || per.fields === 'Yearly Summary Report - Export'
                             || per.fields === 'Permission Report' || per.fields === 'Permission Report - Generate' || per.fields === 'Permission Report - Export'
-                            || per.fields === 'Regularization Report' || per.fields === 'Regularization Report - Generate' || per.fields === 'Regularization Report - Export' || per.fields === 'Remote Login Report'|| per.fields === 'Remote Login Report - Generate' || per.fields === 'Remote Login Report - Export' || per.fields === 'Extra Log Hours Report'|| per.fields === 'Extra Log Hours Report - Generate' || per.fields === 'Extra Log Hours Report - Export'  ">
+                            || per.fields === 'Regularization Report' || per.fields === 'Regularization Report - Generate' || per.fields === 'Regularization Report - Export' 
+                            || per.fields === 'Remote Login Report'|| per.fields === 'Remote Login Report - Generate' || per.fields === 'Remote Login Report - Export' 
+                             || per.fields === 'Leave Carry Forward & Encashment Report'|| per.fields === 'Leave Carry Forward & Encashment Report - Generate' || per.fields === 'Leave Carry Forward & Encashment Report - Export'
+                             || per.fields === 'Extra Log Hours Report'|| per.fields === 'Extra Log Hours Report - Generate' || per.fields === 'Extra Log Hours Report - Export'  ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2789,7 +2792,8 @@
                             per.fields === 'My Team Report(RemoteLogin)' || per.fields === 'Attendance All Employees List(Permission)' ||
                             per.fields === 'Attendance Team Manager List(Permission)' || per.fields === 'My Team Report(Permission)' ||
                             per.fields === 'Attendance All Employees List(Regularization)' || per.fields === 'Attendance Team Manager List(Regularization)' ||
-                            per.fields === 'My Team Report(Regularization)'">
+                            per.fields === 'My Team Report(Regularization)' || per.fields === 'Attendance All Employees List(Leave Carry Forward & Encashment)' ||
+                            per.fields === 'Attendance Team Manager List(Leave Carry Forward & Encashment)' || per.fields === 'My Team Report(Leave Carry Forward & Encashment)'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

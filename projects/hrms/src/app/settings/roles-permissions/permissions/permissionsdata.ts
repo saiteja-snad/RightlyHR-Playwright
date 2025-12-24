@@ -546,6 +546,10 @@ export const permissionsData = [
   { fields: 'Attendance All Employees List(Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(Regularization)', View: false, Update: false, Create: false, Delete: false },
+  
+  { fields: 'Attendance All Employees List(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Team Manager List(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team Report(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
 
   // Attendance Reports Section
   { fields: 'Leave Report', View: false, Update: false, Create: false, Delete: false },
@@ -572,6 +576,9 @@ export const permissionsData = [
   { fields: 'Regularization Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Carry Forward & Encashment Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Carry Forward & Encashment Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Carry Forward & Encashment Report - Export', View: false, Update: false, Create: false, Delete: false },
 
   // Timesheet Reports Section
   { fields: 'My Timesheet Report', View: false, Update: false, Create: false, Delete: false },

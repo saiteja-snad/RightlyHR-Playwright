@@ -25,6 +25,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-document-history-intern-offer-letter',
@@ -37,8 +38,9 @@ import { DatePicker } from 'primeng/datepicker';
     OfferletterdashboardpipePipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    DatePicker
-  ],
+    DatePicker,
+    ConfirmationIconComponent
+],
   templateUrl: './document-history-intern-offer-letter.component.html',
   styleUrl: './document-history-intern-offer-letter.component.scss',
 })

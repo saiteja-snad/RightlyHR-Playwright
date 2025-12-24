@@ -15,7 +15,12 @@
             <div class="content-card">
                 <div class="flex-between-content mb-2">
                     <div class="section-title">My Team Availability</div>
-                    <div class="date-lable">{{ currentTime | date:'MMM d, yyyy' }}</div>
+                
+                    <div class="custom-date-range-picker">
+                        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay" 
+                        [readonlyInput]="true" appendTo="body" (onSelect)="onDateChange($event)" />
+                    </div>
+                    <!-- <div class="date-label">{{ currentTime | date:'MMM d, yyyy' }}</div> -->
                 </div>
 
                 <div class="total-leave-balance-graph-content flex-between-content gap-3">
@@ -63,7 +68,7 @@
                 <div class="flex-between-content justify-content-center">
                     <div class="previous-time-text">Previous Day Entry</div>
                     <div class="mx-1">:</div>
-                    <div class="previous-duration ms-1">{{ previousDurationLabel }}</div>
+                    <div class="previous-duration">{{ previousDurationLabel }}</div>
                 </div>
             </div>
 
@@ -71,15 +76,10 @@
             <div class="content-card">
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Consumed Leave Types</div>
-                    <div class="total">Leaves Consumed :
-                        <span class="count">{{ totalLeaves.used }}</span>
-                        <span class="total-allowed">/{{ totalLeaves.allowed }}</span>
+                    <div class="d-flex align-items-center total">Leaves Consumed :
+                        <div class="count">{{ totalLeaves.used }}</div>
+                        <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
                     </div>
-                    <!-- <div class="circle-leaves-graph">
-                        <p-chart type="doughnut" [data]="totalLeavesChartData" [options]="totalLeavesChartOptions"
-                            styleClass="today-chart" />
-                        <div class="circle-value"></div>
-                    </div> -->
                 </div>
 
                 <div class="leave-list-content d-flex flex-wrap gap-2">
@@ -160,7 +160,7 @@
                 <div class="total">Total: <span class="count">{{ genderTotal }}</span></div>
             </div>
             <div class="gender-graph">
-                <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" />
+                <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" [plugins]="[ChartDataLabels]" />
             </div>
         </div>
         }
@@ -310,12 +310,12 @@
         <div class="custom-offcanvas-body p-3">
             <div *ngFor="let emp of OffCanvasemployeeList[offCanvasData.key]" class="profile-content mb-2">
                 <div>
-                    <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
+                    <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
                 </div>
         
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
-                    <!-- <div class="designation">{{ emp.jobRole || '' }} - {{ emp.departmentName || '' }}</div> -->
+                    <div class="designation">{{ emp.designation }}</div>
                 </div>
             </div>
         

@@ -50,12 +50,6 @@
         color: var(--primary-color);
     }
 
-    .date-lable {
-        color: #A19F9F;
-        font-size: var(--fontsize10);
-        font-weight: 400;
-    }
-
     .view-all {
         font-weight: 600;
         font-size: 10px;
@@ -64,13 +58,18 @@
 
     .total {
         font-weight: 500;
-        font-size: var(--fontsize14);
+        font-size: var(--fontsize13);
         color: #656565;
 
         .count {
             font-weight: 600;
             color: var(--primary-color) !important;
             position: relative;
+        }
+
+        .total-allowed {
+            font-weight: 400;
+            color: #747474;
         }
     }
 
@@ -87,7 +86,7 @@
 
         .suffix-text {
             font-weight: 400;
-            font-size: 11px;
+            font-size: var(--fontsize12);
             color: #909090;
             bottom: 0em !important;
         }
@@ -132,17 +131,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-}
-
-.leaves-count {
-    font-weight: 400;
-    font-size: var(--fontsize10);
-}
-
-.total-allowed {
-    font-weight: 400;
-    font-size: 10px;
-    color: #747474;
 }
 
 .leaves-count {
@@ -301,7 +289,7 @@
 
 .event-list-content {
     position: relative;
-    height: 28dvh;
+    height: 30dvh;
     padding: 0rem 0.5rem;
     overflow-y: auto;
 }
@@ -309,7 +297,7 @@
 .no-events-content {
     position: relative;
     width: 100%;
-    height: 28dvh;
+    height: 30dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -594,7 +582,7 @@
     box-shadow: 0px 0px 5px 0px #0B3A831A;
 
     .name {
-        font-size: var(--fontsize14);
+        font-size: var(--fontsize12);
         font-weight: 600;
         text-transform: capitalize;
         color: var(--primary-color);
@@ -602,7 +590,71 @@
 
     .designation {
         color: #6b7280;
-        font-size: var(--fontsize12);
+        font-size: var(--fontsize10);
         width: 175px;
+    }
+}
+
+// Date Range picker
+.custom-date-range-picker {
+    .p-datepicker-input {
+        min-width: 160px  !important;
+        font-size: 12px  !important;
+        padding: 6px !important;
+    }
+
+    .p-inputtext:enabled:focus {
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    .p-datepicker-day-view {
+        font-size: var(--fontsize12) !important;
+
+        th, td {
+            text-align: center  !important;
+        }
+
+        .p-datepicker-weekday-cell {
+            padding: 0rem !important;
+        }
+    }
+
+    .p-datepicker-header {
+        padding: 0rem !important;
+    }
+
+    .p-button-icon-only.p-button-rounded {
+        height: 2rem !important;
+    }
+
+    .p-button-text {
+        color: var(--primary-color) !important;
+    }
+
+    .p-datepicker-select-month,
+    .p-datepicker-select-year {
+        color: var(--primary-color) !important;
+        font-size: var(--fontsize12) !important;
+    }
+
+    .p-datepicker-year-selected,
+    .p-datepicker-month-selected,
+    .p-datepicker-day-selected {
+        font-size: var(--fontsize12) !important;
+        background: var(--primary-color) !important;
+    }
+
+    .p-datepicker-day-selected-range {
+        background: rgba(11, 58, 131, 0.1) !important;
+        color: var(--primary-color) !important;
+    }
+
+    .p-datepicker-today>.p-datepicker-day-selected-range {
+        background: rgba(11, 58, 131, 0.1) !important;
+        color: var(--primary-color) !important;
+    }
+
+    .p-datepicker-today>.p-datepicker-day-selected {
+        background: var(--primary-color) !important;
     }
 }

@@ -17,16 +17,20 @@ import { TabsModule } from 'primeng/tabs';
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { DatePicker } from 'primeng/datepicker';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, ProfileIconComponent, NoDataFoundComponent],
+  imports: [CommonModule, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, 
+    ProfileIconComponent, NoDataFoundComponent, DatePicker, FormsModule],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class EmployeeDashboardComponent implements OnInit, OnDestroy {
-  greetingMessage = ''
+  greetingMessage = '';
   employeedata: any;
   currentTime: Date = new Date();
   loading = false;
@@ -61,8 +65,9 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
     { key: 'wfh', label: 'WFH', color: '#FF1493' },
-    { key: 'leave', label: 'Leave', color: '#8A2BE2' },
     { key: 'absent', label: 'Absent', color: '#FF0000' },
+    { key: 'leave', label: 'Leave', color: '#8A2BE2' },
+    { key: 'remote', label: 'Remote', color: '#EA362C' },
   ];
   genderTotal: number = 0;
   femaleCount: number = 0;
@@ -74,6 +79,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   todayDurationPercent: number = 0;
   offCanvasData: any;
   OffCanvasemployeeList: any;
+  ChartDataLabels = ChartDataLabels;
+  selectedDate!: Date;
 
   constructor(private http: HttpService, private router: Router, private offcanvasService: NgbOffcanvas) { }
 
@@ -99,7 +106,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.gettodayloggedtime();
     this.getbrithday();
     this.loadEvents();
-    this.getteamavliabletly();
+    this.selectedDate = new Date(); // current date by default
+    this.getteamavliabletly(this.selectedDate);
     this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
   }
@@ -178,33 +186,28 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         const today = new Date();
         const next30 = new Date();
         next30.setDate(today.getDate() + 30);
-
         this.anniversaries = data.filter((item: any) => {
           const doj = new Date(item.dateOfJoining);
-
           const anniversaryThisYear = new Date(
             today.getFullYear(),
             doj.getMonth(),
             doj.getDate()
           );
-
           const anniversaryNextYear = new Date(
             today.getFullYear() + 1,
             doj.getMonth(),
             doj.getDate()
           );
-
           return (
             (anniversaryThisYear >= today && anniversaryThisYear <= next30) ||
             (anniversaryNextYear >= today && anniversaryNextYear <= next30)
           );
-        })
-          .sort((a: any, b: any) => {
-            return (
-              this.getDobWithCurrentYear(a.dateOfJoining).getTime() -
-              this.getDobWithCurrentYear(b.dateOfJoining).getTime()
-            );
-          });
+        }).sort((a: any, b: any) => {
+          return (
+            this.getDobWithCurrentYear(a.dateOfJoining).getTime() -
+            this.getDobWithCurrentYear(b.dateOfJoining).getTime()
+          );
+        });
       },
       error: err => console.log(err),
     });
@@ -446,7 +449,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           labels: labels,
           datasets: [
             {
-              label: 'Gender Count',
+              label: 'Count',
               data: counts,
               backgroundColor: colors,
               barThickness: 10,
@@ -456,8 +459,6 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
                 topLeft: 0,
                 bottomLeft: 0
               },
-              borderSkipped: 'left'
-
             }
           ]
         };
@@ -466,40 +467,37 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           responsive: true,
           maintainAspectRatio: false,
           indexAxis: 'y',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                title: (tooltipItems: any) => labels[tooltipItems[0].dataIndex],
-                label: (tooltipItem: any) => `${tooltipItem.dataset.label}: ${tooltipItem.raw}`
-              }
+          layout: {
+            padding: {
+              right: 30   // gives space for the number
             }
           },
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              anchor: 'end',
+              align: 'right',
+              color: '#333',
+              font: {
+                weight: 'bold',
+                size: 12
+              },
+              formatter: (value: number) => value
+            }
+          },
+
           scales: {
             x: {
-              title: {
-                display: true,
-                color: '#505050',
-                font: { size: 10, weight: 400 }
-              },
+              beginAtZero: true,
               grid: { display: false },
               ticks: {
-                color: '#505050',
-                font: { size: 10 },
                 stepSize: 1,
-                callback: (val: any) => Number.isInteger(Number(val)) ? val : ''
+                callback: (val: any) =>
+                  Number.isInteger(Number(val)) ? val : ''
               }
             },
             y: {
-              title: {
-                display: false,
-
-              },
-              grid: { display: false },
-              ticks: {
-                color: '#505050',
-                font: { size: 10 }
-              }
+              grid: { display: false }
             }
           }
         };
@@ -512,15 +510,24 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  onDateChange(date: Date) {
+    this.getteamavliabletly(date);
+  }
+
+  formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
   teamSummary: any = {};
   teamTotal: number = 0;
   teamChartData: any = {};
   teamChartOptions: any = {};
-  getteamavliabletly() {
+  getteamavliabletly(date: Date) {
+    const formattedDate = this.formatDate(date);
     this.avaliabletlyloading = true;
-    this.http.getData(`v2/Employeedata/TeamAvailability/Summary/${this.empinfo.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData(`v2/Employeedata/TeamAvailability/Summary/${this.empinfo.employeeId}?date=${formattedDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        console.log(res)
+        console.log(res);
         this.avaliabletlyloading = false;
         this.teamSummary = res.summary;
         this.OffCanvasemployeeList = res.employees;

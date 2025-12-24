@@ -3,7 +3,7 @@
     <!-- Header -->
     <app-reports-header/>
 
-    <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()" *ngIf="LeaveReportForm">
+    <!-- <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()" *ngIf="LeaveReportForm"> -->
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
         <!-- @if(isFilterApplied()) {
@@ -62,16 +62,7 @@
 
         <!-- Buttons -->
         <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled">
-            @if(spinnerLoader1){
-            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            <span>{{'Loading...'}}</span>
-            }@else {
-            <span>{{'Generate'}}</span>
-            }
-          </button>
-          }
+         
 
           @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view') && rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
@@ -87,7 +78,7 @@
         </div>
         }
       </div>
-    </form>
+    <!-- </form> -->
   </div>
 
   <div class="custom-table-content">
@@ -161,7 +152,7 @@
     </div>
 
     <div class="offcanvas-filter-content">
-      <form [formGroup]="LeaveReportForm">
+      <form [formGroup]="LeaveReportForm"  (ngSubmit)="generateleaveReport()" >
       <!-- Year -->
       <div class="mb-3">
         <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Year <span class="text-danger">*</span></label>
@@ -247,8 +238,18 @@
       <div class="d-flex offcanvas-footer-content gap-3">
         <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
           {{'Clear All' | translate}}</button>
-        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
-          {{'Close' | translate}}</button>
+        <!-- <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{'Close' | translate}}</button> -->
+           @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-primary w-100" [disabled]="isLeaveGenerateDisabled">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
       </div>
       </form>
     </div>

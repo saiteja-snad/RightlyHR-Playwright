@@ -109,7 +109,7 @@
             </ng-template>
 
             <!-- ================= BODY ================= -->
-            <ng-template pTemplate="body" let-emp>
+            <ng-template pTemplate="body" let-emp  appendTo="body">
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="emp"></p-tableCheckbox>
@@ -158,9 +158,7 @@
             <!-- ================= EMPTY MESSAGE ================= -->
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td [attr.colspan]="7 + leaveHeaders.length">
                         <app-no-data-found></app-no-data-found>
-                    </td>
                 </tr>
             </ng-template>
 

@@ -223,7 +223,7 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
       },
       error: (err) => {
         console.error(err);
-        this.conformationPopup.openErrorModal("Carry Forward Entilement Failed");
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }
@@ -238,7 +238,9 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
       },
       error: (err) => {
         console.error(err);
-        this.conformationPopup.openErrorModal(err.error.message);
+        this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(err.error.message);
+        
       }
     });
   }
@@ -258,7 +260,7 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
   back() {
     this.route.navigate(['/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create'])
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.complete();

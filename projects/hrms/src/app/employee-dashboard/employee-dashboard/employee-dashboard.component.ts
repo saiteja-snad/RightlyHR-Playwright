@@ -25,7 +25,7 @@ import { ModuleInfoIconComponent } from "../../icons/module-info-icon/module-inf
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule,
-    ProfileIconComponent, NoDataFoundComponent,NgbPopover, DatePicker, FormsModule, Calendar, ModuleInfoIconComponent],
+    ProfileIconComponent, NoDataFoundComponent, NgbPopover, DatePicker, FormsModule, Calendar, ModuleInfoIconComponent],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -64,9 +64,18 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   totalHours: any
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
-  
+
   teamavailabilityinfo =
-    'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status';
+    'Displays your team’s current availability for the selected date, including In Office, WFH, On Leave, Half Day, Remote, and Absent statuses.';
+  myteammemberinfo =
+    'Displays an overview of all team members in the organization, helping employees stay informed about their colleagues.';
+  genderdiversityinfo =
+    'Displays the gender distribution of employees, giving a quick and clear view of workforce diversity.';
+  Weeklyworklogsinfo =
+    'Shows a weekly summary of the hours that are logged, making it easy to track their work and productivity.';
+  TodaysTimeEntryinfo =
+    'Provides an overview of today’s time entry, showing logged hours, active work time, and the previous day’s duration.';
+  leavesConsumedinfo = 'Provides an overview of consumed leave balances categorized by leave type.';
   legendList = [
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },

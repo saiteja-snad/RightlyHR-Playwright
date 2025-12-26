@@ -71,7 +71,17 @@
             <div class="content-card day-entry-content">
                 @if(!timeEntryLoader){
                 <div class="flex-between-content mb-3">
-                    <div class="section-title">Today's Time Entry</div>
+
+                    <div class="summary-header d-inline-flex gap-2">
+                        <div class="section-title">Today's Time Entry</div>
+                        <div>
+                            <app-module-info-icon placement="bottom" [ngbPopover]="timeEntry" class="module-icon" />
+                            <ng-template #timeEntry>
+                                <div class="module-info-text">{{TodaysTimeEntryinfo}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="circle-chart-container mb-3">
@@ -98,7 +108,18 @@
             <div class="content-card">
                 @if(!consumedLeavesLoader){
                 <div class="flex-between-content mb-3">
-                    <div class="section-title">Consumed Leave Types</div>
+                    <div class="summary-header d-inline-flex gap-2">
+                        <div class="section-title">Consumed Leave Types</div>
+                        <div>
+                            <app-module-info-icon placement="bottom" [ngbPopover]="leavesConsumed"
+                                class="module-icon" />
+                            <ng-template #leavesConsumed>
+                                <div class="module-info-text">{{leavesConsumedinfo}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+
+
                     <div class="d-flex align-items-center total">Leaves Consumed :
                         <div class="count">{{ totalLeaves.used }}</div>
                         <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
@@ -115,6 +136,11 @@
                             </div>
                         </div>
                     </div>
+                    <div *ngIf="leavesList.length === 0">
+                      <div class="graph-no-data-content">
+                          <app-no-data-found />
+                      </div>
+                    </div>
                 </div>
                 }@else{
                 <p-skeleton height="11.3rem" borderRadius="12px" />
@@ -125,8 +151,18 @@
         <!-- Team Members Section -->
         <div class="content-card mb-3">
             <div class="flex-between-content mb-3">
-                <div class="section-title">My Team Members ({{teamMembers.length}})</div>
-                <!-- <a class="view-all" (click)="nagvition()"><u>View All</u></a> -->
+                <div class="summary-header d-inline-flex gap-2">
+                    <div class="section-title">My Team Members ({{teamMembers.length}})</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="myTeamMemberscontent"
+                            class="module-icon" />
+                        <ng-template #myTeamMemberscontent>
+                            <div class="module-info-text">{{myteammemberinfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+
+
             </div>
 
             <div class="member-list-container">
@@ -167,7 +203,16 @@
         @if(!genderCountLoader){
         <div class="content-card mb-3">
             <div class="flex-between-content mb-2">
-                <div class="section-title">Gender Diversity</div>
+                <div class="summary-header d-inline-flex gap-2">
+                    <div class="section-title">Gender Diversity</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="genderdata" class="module-icon" />
+                        <ng-template #genderdata>
+                            <div class="module-info-text">{{genderdiversityinfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+
                 <div class="total">Total: <span class="count">{{ genderTotal }}</span></div>
             </div>
             <div class="gender-graph">
@@ -186,7 +231,17 @@
         @if(!weaklyloghrsloader){
         <div class="content-card overflow-visible">
             <div class="flex-between-content mb-2">
-                <div class="section-title">Weekly Work Logs</div>
+                <div class="summary-header d-inline-flex gap-2">
+                    <div class="section-title">Weekly Work Logs</div>
+                    <div>
+                        <app-module-info-icon placement="bottom" [ngbPopover]="WeeklyWorkLogscontent"
+                            class="module-icon" />
+                        <ng-template #WeeklyWorkLogscontent>
+                            <div class="module-info-text">{{Weeklyworklogsinfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+
                 <div class="d-flex align-items-center gap-2">
                     <div class="custom-date-range-picker">
                         <p-calendar [(ngModel)]="selectedWeek" selectionMode="range" [showIcon]="true"

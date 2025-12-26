@@ -104,13 +104,14 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
 
           const category = lc?.orgLeaveCategories;
           const code = category?.categoryCode;
-
+          const categoryId = lc?.categoryId;
           // dynamic column values
-          leaveValues[code] = lc?.allowedDays;
-          leaveValues[code] = {
+          // leaveValues[code] = lc?.allowedDays;
+          leaveValues[categoryId] = {
             allowedDays: lc?.allowedDays,
             isAlreadyEntitled: lc?.isAlreadyEntitled,
-            color: lc?.color
+            color: lc?.color,
+            categoryCode: code
           };
           // payload entries
           leaveEntries.push({
@@ -126,8 +127,9 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
           totalLeaveEntitlement += lc?.allowedDays || 0;
 
           // dynamic headers
-          if (!headerMap.has(code)) {
-            headerMap.set(code, {
+          if (!headerMap.has(categoryId)) {
+            headerMap.set(categoryId, {
+              categoryId,
               code,
               name: category?.name,
               color: category?.categoryColor
@@ -239,8 +241,8 @@ export class IntialLoadEntitlementPreviewComponent implements OnInit, OnDestroy 
       error: (err) => {
         console.error(err);
         this.modalService.dismissAll();
-          this.conformationPopup.openErrorModal(err.error.message);
-        
+        this.conformationPopup.openErrorModal(err.error.message);
+
       }
     });
   }

@@ -64,6 +64,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   totalHours: any
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
+  
   teamavailabilityinfo =
     'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status';
   legendList = [

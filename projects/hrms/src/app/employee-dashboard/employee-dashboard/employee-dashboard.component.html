@@ -15,7 +15,17 @@
             <div class="content-card overflow-visible">
                 @if(!avaliabletlyloading){
                 <div class="flex-between-content mb-2">
-                    <div class="section-title">My Team Availability</div>
+
+                    <div class=" summary-header d-inline-flex gap-2">
+                        <div class="section-title">My Team Availability</div>
+                        <div>
+                            <app-module-info-icon placement="bottom" [ngbPopover]="resourceSummaryContent"
+                                class="module-icon" />
+                            <ng-template #resourceSummaryContent>
+                                <div class="module-info-text">{{teamavailabilityinfo}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
 
                     <div class="custom-date-range-picker">
                         <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true"
@@ -40,13 +50,13 @@
                             <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="mb-2 ps-2">
                                 <div class="employee-type-text">
                                     <p class="m-0">{{ item.label }}</p>
-                                        @if(teamSummary[item.key]  != '0'){
+                                    @if(teamSummary[item.key] != '0'){
                                     <p class="count-text cursor m-0" (click)="openOffcanvas(resourceList,item)">
-                                        <u>{{teamSummary[item.key]}}</u>                                    
+                                        <u>{{teamSummary[item.key]}}</u>
                                     </p>
-                                       }@else{
-                                        <p class="count-text m-0">{{teamSummary[item.key] || 0 }}</p>
-                                       }
+                                    }@else{
+                                    <p class="count-text m-0">{{teamSummary[item.key] || 0 }}</p>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -319,7 +329,7 @@
         </div>
 
         <div class="custom-offcanvas-body p-3">
-               <!-- Search -->
+            <!-- Search -->
             <div class="input-group custom-search mb-3">
                 <span class="input-group-text custom-input-group-search" id="basic-addon1">
                     <i class="bi bi-search"></i>

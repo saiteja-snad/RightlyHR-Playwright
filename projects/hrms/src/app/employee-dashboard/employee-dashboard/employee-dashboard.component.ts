@@ -15,16 +15,17 @@ import { ChartModule } from 'primeng/chart';
 import moment from 'moment';
 import { TabsModule } from 'primeng/tabs';
 import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { DatePicker } from 'primeng/datepicker';
 import { FormsModule } from '@angular/forms';
 import { Calendar } from 'primeng/calendar';
+import { ModuleInfoIconComponent } from "../../icons/module-info-icon/module-info-icon.component";
 @Component({
   selector: 'app-employee-dashboard',
-  imports: [CommonModule, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, 
-    ProfileIconComponent, NoDataFoundComponent, DatePicker, FormsModule, Calendar],
+  imports: [CommonModule, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule,
+    ProfileIconComponent, NoDataFoundComponent,NgbPopover, DatePicker, FormsModule, Calendar, ModuleInfoIconComponent],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -63,6 +64,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   totalHours: any
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
+  teamavailabilityinfo =
+    'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status';
   legendList = [
     { key: 'inOffice', label: 'In Office', color: '#1E90FF' },
     { key: 'halfDay', label: 'Half Day', color: '#FFD700' },
@@ -543,8 +546,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         this.teamSummary = res.summary;
         this.OffCanvasemployeeList = res.employees;
         // Total = all except absent
-        this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0) 
-        + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0);
+        this.teamTotal = (this.teamSummary.inOffice || 0) + (this.teamSummary.halfDay || 0) + (this.teamSummary.wfh || 0)
+          + (this.teamSummary.leave || 0) + (this.teamSummary.absent || 0);
         this.buildTeamChart();
       },
       error: (err: any) => {
@@ -608,16 +611,16 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
   getpreviousloggedtime() {
     this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&date=${this.previousDate}`)
-    .pipe(takeUntil(this.destroy$)).subscribe({
+      .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          const today = res?.data?.attendanceData?.find((x: any) => x.date === 
-          this.currentYear + '-' + this.currentMonth + '-' + this.currentDate) ?? 
-          res?.data?.attendanceData?.[0];
+          const today = res?.data?.attendanceData?.find((x: any) => x.date ===
+            this.currentYear + '-' + this.currentMonth + '-' + this.currentDate) ??
+            res?.data?.attendanceData?.[0];
           const totalDuration = today?.duration?.totalDuration ?? "00:00:00";
           this.previousDurationLabel = totalDuration;
         },
         error: err => console.log(err),
-    });
+      });
   }
 
   timeToSeconds(time: string | null | undefined): number {
@@ -761,26 +764,26 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   openOffcanvas(content: any, data: any) {
-      this.searchEmployeeText = '';
+    this.searchEmployeeText = '';
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
     this.offCanvasData = data;
   }
-getFilteredEmployees() {
-  const key = this.offCanvasData?.key;
-  const list = this.OffCanvasemployeeList?.[key] || [];
+  getFilteredEmployees() {
+    const key = this.offCanvasData?.key;
+    const list = this.OffCanvasemployeeList?.[key] || [];
 
-  if (!this.searchEmployeeText) {
-    return list;
+    if (!this.searchEmployeeText) {
+      return list;
+    }
+
+    return list.filter((emp: any) =>
+      emp.employeeName
+        ?.toLowerCase()
+        .includes(this.searchEmployeeText.toLowerCase())
+    );
   }
 
-  return list.filter((emp: any) =>
-    emp.employeeName
-      ?.toLowerCase()
-      .includes(this.searchEmployeeText.toLowerCase())
-  );
-}
-
-  close(){
+  close() {
     this.offcanvasService.dismiss();
   }
 

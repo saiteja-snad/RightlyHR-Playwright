@@ -4,37 +4,69 @@
       <p class="popup-heading mb-0">Update KRA Category</p>
     </div>
     <div>
-      <a (click)="openconfirmationModelforcancle(cancel, updateForm)">
+      <a (click)="openconfirmationModelforcancle(cancel)">
         <img src="icons/close.png" alt="Close" class="close-icon">
       </a>
     </div>
   </div>
 
   <div class="custom-main-popup-content">
-    <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && onUpdate()">
+    <form [formGroup]="kraForm" (ngSubmit)="onUpdate()">
       <div class="row">
         <div class="col-md-6 mb-4">
           <label class="form-label custom-label">Category Name <span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" name="categoryName" [(ngModel)]="kra.categoryName" required>
-          <div class="error-msg" *ngIf="updateForm.submitted && !kra.categoryName">Required</div>
+          <input 
+            type="text" 
+            class="form-control custom-input" 
+            formControlName="categoryName"
+            placeholder="Enter category name"
+            (input)="onCategoryInput('categoryName')">
+          <div class="error-msg" *ngIf="kraForm.get('categoryName')?.touched && kraForm.get('categoryName')?.invalid">
+            Category Name is required
+          </div>
         </div>
 
         <div class="col-md-6 mb-4">
           <label class="form-label custom-label">Category Code <span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" name="categoryCode" [(ngModel)]="kra.categoryCode" required>
-          <div class="error-msg" *ngIf="updateForm.submitted && !kra.categoryCode">Required</div>
+          <input 
+            type="text" 
+            class="form-control custom-input" 
+            formControlName="categoryCode"
+            placeholder="Enter category code"
+            (input)="onCategoryInput('categoryCode')">
+          <div class="error-msg" *ngIf="kraForm.get('categoryCode')?.touched && kraForm.get('categoryCode')?.invalid">
+            Category Code is required
+          </div>
         </div>
 
         <div class="col-12 mb-4">
-          <label class="form-label custom-label">Description</label>
-          <textarea class="form-control custom-input" rows="4" name="description" [(ngModel)]="kra.description"></textarea>
+          <label class="form-label custom-label">Description <span class="text-danger">*</span></label>
+          <textarea 
+            class="form-control custom-input" 
+            rows="4" 
+            formControlName="description"
+            minlength="10"
+            maxlength="500"
+            placeholder="Enter Description"
+            (input)="onCategoryInput('description')">
+          </textarea>
+          
+          <!-- Character Count -->
+          <div class="textarea-count-text text-end">
+            {{ getCharacterCount() }}/500
+          </div>
+          
+          <div class="error-msg" *ngIf="kraForm.get('description')?.touched && kraForm.get('description')?.invalid">
+            <span *ngIf="kraForm.get('description')?.errors?.['required']">Description is required</span>
+            <span *ngIf="kraForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters</span>
+          </div>
         </div>
       </div>
 
       <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel, updateForm)">Cancel</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid || isLoading">
-          @if(!isLoading) { Update } @else { Updating... }
+        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel)">Cancel</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="kraForm.invalid || isLoading">
+          @if(!isLoading) { Update } @else { <span class="spinner-border spinner-border-sm me-2"></span> Updating... }
         </button>
       </div>
     </form>

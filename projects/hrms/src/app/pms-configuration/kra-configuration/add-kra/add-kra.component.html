@@ -5,14 +5,14 @@
       <p class="popup-heading mb-0">Create KRA Category</p>
     </div>
     <div>
-      <a (click)="openconfirmationModelforcancle(cancel, kraForm)">
+      <a (click)="openconfirmationModelforcancle(cancel)">
         <img src="icons/close.png" alt="Close Icon" class="close-icon">
       </a>
     </div>
   </div>
 
   <div class="custom-main-popup-content">
-    <form #kraForm="ngForm" (ngSubmit)="kraForm.valid && onSubmit()" autocomplete="off">
+    <form [formGroup]="kraForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="row">
         <div class="col-md-6 mb-4">
           <label class="form-label custom-label">
@@ -21,15 +21,11 @@
           <input
             type="text"
             class="form-control custom-input"
-            name="categoryName"
-            [(ngModel)]="kra.categoryName"
-            #categoryName="ngModel"
-            required
+            formControlName="categoryName"
             placeholder="Enter category name"
-            (input)="onCategoryInput(categoryName)"
-            (blur)="categoryName.control.markAsTouched()"
+            (input)="onCategoryInput('categoryName')"
             >
-          <div class="error-msg" *ngIf="categoryName.touched && categoryName.invalid">
+          <div class="error-msg" *ngIf="kraForm.get('categoryName')?.touched && kraForm.get('categoryName')?.invalid">
             Category Name is required
           </div>
         </div>
@@ -41,54 +37,46 @@
           <input
             type="text"
             class="form-control custom-input"
-            name="categoryCode"
-            [(ngModel)]="kra.categoryCode"
-            #categoryCode="ngModel"
-            required
+            formControlName="categoryCode"
             placeholder="Enter category code"
-            (input)="onCategoryInput(categoryCode)"
-            (blur)="categoryCode.control.markAsTouched()"
+            (input)="onCategoryInput('categoryCode')"
             >
-          <div class="error-msg" *ngIf="categoryCode.touched && categoryCode.invalid">
+          <div class="error-msg" *ngIf="kraForm.get('categoryCode')?.touched && kraForm.get('categoryCode')?.invalid">
             Category Code is required
           </div>
         </div>
 
-<div class="col-12 mb-4">
-  <label class="form-label custom-label mb-2">
-    Description <span class="text-danger">*</span>
-  </label>
+        <div class="col-12 mb-4">
+          <label class="form-label custom-label mb-2">
+            Description <span class="text-danger">*</span>
+          </label>
 
-  <textarea
-    class="form-control custom-input"
-    rows="4"
-    name="description"
-    [(ngModel)]="kra.description"
-    #description="ngModel"
-    required
-    minlength="10"
-    maxlength="500"
-    placeholder="Enter Description"
-    (input)="onCategoryInput(description)"
-    (blur)="description.control.markAsTouched()"
-    >
-  </textarea>
+          <textarea
+            class="form-control custom-input"
+            rows="4"
+            formControlName="description"
+            minlength="10"
+            maxlength="500"
+            placeholder="Enter Description"
+            (input)="onCategoryInput('description')"
+            >
+          </textarea>
 
-  <!-- Character Count -->
-  <div class="textarea-count-text text-end">
-    {{ kra.description?.length || 0 }}/500
-  </div>
+          <!-- Character Count -->
+          <div class="textarea-count-text text-end">
+            {{ getCharacterCount() }}/500
+          </div>
 
-  <!-- Error Message -->
-  <div class="error-msg" *ngIf="description.touched && description.invalid">
-    Description is required (minimum 10 characters)
-  </div>
-</div>
-
+          <!-- Error Message -->
+          <div class="error-msg" *ngIf="kraForm.get('description')?.touched && kraForm.get('description')?.invalid">
+            <span *ngIf="kraForm.get('description')?.errors?.['required']">Description is required</span>
+            <span *ngIf="kraForm.get('description')?.errors?.['minlength']">Description must be at least 10 characters</span>
+          </div>
+        </div>
       </div>
 
       <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel, kraForm)">
+        <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel)">
           Cancel
         </button>
         <button

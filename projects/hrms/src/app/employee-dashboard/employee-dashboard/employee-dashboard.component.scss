@@ -612,3 +612,8 @@
         padding: 4px 8px;
     }
 }
+
+.p-datepicker-day-selected-range {
+  background: rgba(11, 58, 131, 0.15) !important;
+  color: var(--primary-color) !important;
+}

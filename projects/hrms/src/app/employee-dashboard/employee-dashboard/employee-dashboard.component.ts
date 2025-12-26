@@ -20,10 +20,11 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { DatePicker } from 'primeng/datepicker';
 import { FormsModule } from '@angular/forms';
+import { Calendar } from 'primeng/calendar';
 @Component({
   selector: 'app-employee-dashboard',
   imports: [CommonModule, ChartModule, TabsModule, AccordionModule, Carousel, Skeleton, TranslateModule, 
-    ProfileIconComponent, NoDataFoundComponent, DatePicker, FormsModule],
+    ProfileIconComponent, NoDataFoundComponent, DatePicker, FormsModule, Calendar],
   templateUrl: './employee-dashboard.component.html',
   styleUrl: './employee-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -83,6 +84,9 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   selectedDate!: Date;
   timeEntryLoader = false;
   consumedLeavesLoader = false;
+  selectedWeek: Date[] | null = null;
+  today = new Date();
+  disabledDates: Date[] = [];
 
   constructor(private http: HttpService, private router: Router, private offcanvasService: NgbOffcanvas) { }
 
@@ -99,8 +103,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.previousDate = previousDate.getDate();
     this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
-    this.startOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
-    this.endOfWeek = moment().endOf('isoWeek').format('YYYY-MM-DDTHH:mm:ss');
+    this.setCurrentWeek();
     this.getAllTeammembersList();
     this.getworkanniversary();
     this.getGenderCountChart();
@@ -112,6 +115,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.getteamavliabletly(this.selectedDate);
     this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
+    this.buildDisabledFutureWeekDates();
   }
 
   setIconBasedOnTime() {
@@ -649,6 +653,39 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     };
   }
 
+  setCurrentWeek() {
+    const start = moment().startOf('isoWeek');
+    const end = moment().endOf('isoWeek');
+    this.startOfWeek = start.format('YYYY-MM-DDTHH:mm:ss');
+    this.endOfWeek = end.format('YYYY-MM-DDTHH:mm:ss');
+    this.selectedWeek = [start.toDate(), end.toDate()];
+  }
+
+  onWeekSelect(date: Date) {
+    const start = moment(date).startOf('isoWeek');
+    const end = moment(date).endOf('isoWeek');
+    // Block future weeks
+    if (start.isAfter(moment().startOf('isoWeek'))) {
+      return;
+    }
+    this.startOfWeek = start.format('YYYY-MM-DDTHH:mm:ss');
+    this.endOfWeek = end.format('YYYY-MM-DDTHH:mm:ss');
+    this.selectedWeek = [start.toDate(), end.toDate()];
+    this.getWeeklyWorkLogHours();
+  }
+
+  getStartOfWeek(date: Date): Date {
+    const d = new Date(date);
+    const day = d.getDay(); // 0 = Sunday
+    const diff = d.getDate() - day;
+    return new Date(d.setDate(diff));
+  }
+
+  getEndOfWeek(date: Date): Date {
+    const start = this.getStartOfWeek(date);
+    return new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+  }
+
   getWeeklyWorkLogHours() {
     this.weaklyloghrsloader = true;
     this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.startOfWeek}&todate=${this.endOfWeek}`)
@@ -727,6 +764,20 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   close(){
     this.offcanvasService.dismiss();
   }
+
+  buildDisabledFutureWeekDates() {
+    const today = moment();
+    const endOfCurrentWeek = moment().endOf('isoWeek');
+    const maxDisableDate = moment().add(1, 'year'); // reasonable future limit
+    const disabled: Date[] = [];
+    let cursor = endOfCurrentWeek.clone().add(1, 'day');
+    while (cursor.isSameOrBefore(maxDisableDate)) {
+      disabled.push(cursor.toDate());
+      cursor.add(1, 'day');
+    }
+    this.disabledDates = disabled;
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -453,22 +453,19 @@ export class KraKpiApprovalsComponent implements OnInit {
     }
   }
 
-  onRejectChipSelect(): void {
-    this.selectedActionStatus = 'reject';
+onRejectChipSelect(): void {
+  this.selectedActionStatus = 'reject';
 
-    // Auto-fill comments if empty
-    const commentsControl = this.actionForm.get('comments');
-    if (!commentsControl?.value || commentsControl.value.trim() === '') {
-      commentsControl?.setValue('Rejected');
-    }
-  }
+  this.actionForm.get('comments')?.setValue('Rejected');
+  this.actionForm.get('comments')?.markAsTouched();
+}
 
-  onApproveChipSelect(): void {
-    this.selectedActionStatus = 'approve';
 
-    const commentsControl = this.actionForm.get('comments');
-    if (!commentsControl?.value || commentsControl.value.trim() === '') {
-      commentsControl?.setValue('Approved');
-    }
-  }
+onApproveChipSelect(): void {
+  this.selectedActionStatus = 'approve';
+
+  this.actionForm.get('comments')?.setValue('Approved');
+  this.actionForm.get('comments')?.markAsTouched();
+}
+
 }

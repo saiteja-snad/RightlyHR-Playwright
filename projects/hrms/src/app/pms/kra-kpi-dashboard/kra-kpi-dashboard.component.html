@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="d-flex align-items-center gap-3 mt-2">
+    <div class="d-flex align-items-center gap-3">
       @if(rbac.allowedToAccess('All Employees (KRA).view') && rbac.allowedToAccess('My Team (KRA).view')) {
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
@@ -53,12 +53,7 @@
         </div>
       </div>
     </div>
-
   </div>
-
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
 
   <div class="main-content d-flex w-100 gap-3">
     <div class="component-left-tabs-container">
@@ -66,8 +61,8 @@
     </div>
 
     <div class="w-100 right-content">
-
-      @if(chartLoader){
+      <!--Summary cards-->
+      @if(chartLoader && summaryCards.length > 0){
       <div class="cards-grid-container mb-3">
         <div *ngFor="let card of summaryCards" class="summary-card">
           <div>
@@ -92,89 +87,96 @@
       <p-skeleton height="11rem" />
       }
 
+      <!--Charts content-->
       <div class="row">
         <!-- Performance Distribution Chart -->
-        <div class="col-xl-8 col-lg-7 mb-3">
-          @if (!performanceLoader) {
-          <div class="time-sheet-graph-card">
-
-            <!-- Header -->
-            <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
-              <div class="graph-card">
-                <div class="graph-header d-flex gap-2 mb-2">
-                  <div>Performance Distribution</div>
-                  <div>
-                    <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
-
-                    <ng-template #performanceInfo>
-                      <div class="module-info-text">
-                        Shows employee distribution by performance category.
-                      </div>
-                    </ng-template>
+        <div class="col-xl-7 col-lg-6 mb-3">
+          <div class="graph-card" style="height: 300px; display: flex; flex-direction: column;">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">Performance Distribution</div>
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
+                <ng-template #performanceInfo>
+                  <div class="module-info-text">
+                    Shows employee distribution by performance category.
                   </div>
-                </div>
-
-                <!-- Chart -->
-                <div class="bar-chart graph-no-data-content">
-                  <ng-container *ngIf="hasPerformanceData; else noData">
-                    <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions">
-                    </p-chart>
-                  </ng-container>
-
-                  <ng-template #noData>
-                    <app-no-data-found />
-                  </ng-template>
-                </div>
-
-                <!-- Legends -->
-                <!-- <div class="d-flex align-items-center gap-2">
-                <div class="d-flex align-items-center gap-1" *ngFor="let item of performanceLegends">
-                  <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }">
-                  </span>
-                  <span class="legend-label">{{ item.label }}</span>
-                </div>
-              </div> -->
+                </ng-template>
               </div>
             </div>
-
+            <!--Graph-->
+            @if(!performanceLoader){
+            <ng-container *ngIf="hasPerformanceData; else noData">
+              <div class="bar-chart" style="flex: 1; height: 100%;">
+                <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions" style="height: 100%;">
+                </p-chart>
+              </div>
+            </ng-container>
+            }@else {
+            <div class="chart-card-skeleton">
+              <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
+            <ng-template #noData>
+              <div class="graph-no-data-content"><app-no-data-found /></div>
+            </ng-template>
           </div>
-          } @else {
-          <div class="chart-card-skeleton">
-            <p-skeleton width="100%" height="100%" borderRadius="12px" />
-          </div>
-          }
         </div>
-
 
         <!-- Completion Status chart -->
-        <div class="col-xl-4 col-lg-5 mb-3">
-          <div class="graph-card">
-            <p class="graph-header">Completion Status</p>
-
-            <div class="chart-content">
-              <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions"
-                class="doughnut-chart">
-              </p-chart>
+        <!-- Completion Status chart -->
+        <div class="col-xl-5 col-lg-6 mb-3">
+          <div class="graph-card h-100 d-flex flex-column" style="height: 300px;">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">Completion Status</div>
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="completionStatusInfo" class="module-icon" />
+                <ng-template #completionStatusInfo>Shows the completion status distribution of KRA/KPI
+                  assignments.</ng-template>
+              </div>
             </div>
-
-            <!-- <ul class="list-style-none ps-0 pt-3">
-      <li *ngFor="let status of dummyStatusCounts; trackBy: trackByIndex">
-        <div class="d-flex justify-content-between summart-text">
-          <div class="summary-name" [ngStyle]="{ color: status.colour }">
-            {{ status.status }}
+            <!--Graph-->
+            @if(attendanceSummaryData){
+            <ng-container *ngIf="attendanceSummaryData; else noData">
+              <div class="skill-chart-container h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="skill-chart-horizontal flex-grow-1 d-flex align-items-center justify-content-center">
+                  <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions"
+                    style="width: 200px; height: 200px;">
+                  </p-chart>
+                </div>
+                <div class="d-flex gap-3 flex-wrap pt-3 w-100 justify-content-center">
+                  <!-- <div *ngFor="let item of dummyStatusCounts" class="legend-item">
+                    <span class="legend-dot me-1" [ngStyle]="{ backgroundColor: item.colour }"></span>
+                    <span class="legend-label">{{ item.status }}:</span>
+                    <span class="legend-value">{{ item.value | number:'2.0' }}</span>
+                  </div> -->
+                </div>
+              </div>
+            </ng-container>
+            }@else {
+            <div class="chart-card-skeleton h-100">
+              <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
+            <ng-template #noData>
+              <div class="graph-no-data-content h-100 d-flex align-items-center justify-content-center">
+                <app-no-data-found /></div>
+            </ng-template>
           </div>
-          <div>{{ status.value }}</div>
-        </div>
-      </li>
-    </ul> -->
-
-          </div>
         </div>
 
 
-        <!-- Table -->
+        <!-- KRA/KPI Overview Table -->
         <div class="col-xl-12 col-lg-12 mb-3">
           <div class="graph-card">
+            <!-- <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">KRA/KPI Overview</div>
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="tableOverviewInfo" class="module-icon" />
+                <ng-template #tableOverviewInfo>Displays detailed KRA/KPI information for team members including scores
+                  and progress.</ng-template>
+              </div>
+            </div> -->
+
             <!-- Search -->
             <div class="input-group custom-search mb-3">
               <span class="input-group-text custom-input-group-search">
@@ -184,50 +186,53 @@
                 [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
             </div>
 
-            <!-- Table -->
+            <!--table content-->
             @if (!dataload) {
             <div class="custom-table-content w-100">
               <table class="w-100">
                 <thead>
                   <tr>
-                    <th>KRA Category</th>
-                    <th class="text-center">KRA Title</th>
-                    <th class="text-center">Description</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Action</th>
+                    <th>Employee Name</th>
+                    <th class="text-center">Department</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">KRA's</th>
+                    <th class="text-center">Overall Score</th>
                   </tr>
                 </thead>
-
                 <tbody>
-                  @if (filteredDetails.length > 0) {
-                  @for (kra of filteredDetails; track kra.kraId) {
+                  @if (teamKpiData.length > 0) {
+                  @for (item of teamKpiData; track item.employeedata.employeeId) {
                   <tr>
-                    <td>{{ kra.kraCategoryName }}</td>
-                    <td class="text-center">{{ kra.kraName }}</td>
-
+                    <td class="employee-bold">
+                      {{ item.employeedata.firstName }}
+                      {{ item.employeedata.middleName }}
+                      {{ item.employeedata.lastName }}
+                    </td>
                     <td class="text-center">
-                      @if (kra.description) {
-                      <app-info-icon class="cursor" ngbPopover="{{ kra.description }}" container="body">
-                      </app-info-icon>
+                      {{ item.departmentName || 'N/A' }}
+                    </td>
+                    <td class="text-center">
+                      @if (item.kras.length > 0 && item.kras[0].kpis.length > 0) {
+                      {{ item.kras[0].kpis[0].reviewCycleData?.reviewCycleName || 'N/A' }}
                       } @else {
-                      NA
+                      N/A
                       }
                     </td>
-
                     <td class="text-center">
-                      <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
-                        {{ kra.status }}
-                      </span>
+                      {{item.krasCount || 0 }}
                     </td>
-
                     <td class="text-center">
-                      <i class="bi bi-three-dots-vertical cursor-pointer"></i>
+                      @if (item.kras.length > 0) {
+                      {{ item.kras[0].kra.targetDate | date:'mediumDate' }}
+                      } @else {
+                      N/A
+                      }
                     </td>
                   </tr>
                   }
                   } @else {
                   <tr>
-                    <td colspan="6" class="text-center py-4">
+                    <td colspan="5" class="text-center py-4">
                       <app-no-data-found />
                     </td>
                   </tr>
@@ -235,12 +240,19 @@
                 </tbody>
               </table>
             </div>
+            } @else {
+            <div class="chart-card-skeleton">
+              <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
             }
-
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
+
+<!--Module Information-->
+<ng-template #popContent>
+  <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

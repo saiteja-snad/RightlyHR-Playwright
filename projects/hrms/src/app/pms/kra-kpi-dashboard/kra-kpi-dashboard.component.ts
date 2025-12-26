@@ -97,74 +97,7 @@ performanceData = {
 
 dataload = false;
 
-dummyDetails = [
-  {
-    kraId: 1,
-    kraCategoryName: 'Productivity',
-    kraName: 'Code Quality',
-    description: 'Maintain clean and optimized code',
-    documentUrl: '',
-    status: 'Active',
-  },
-  {
-    kraId: 2,
-    kraCategoryName: 'Delivery',
-    kraName: 'On-time Delivery',
-    description: 'Deliver tasks within deadline',
-    documentUrl: '',
-    status: 'Created',
-  },
-  {
-    kraId: 3,
-    kraCategoryName: 'Communication',
-    kraName: 'Team Collaboration',
-    description: '',
-    documentUrl: '',
-    status: 'On Hold',
-  },
-  {
-    kraId: 4,
-    kraCategoryName: 'Quality',
-    kraName: 'Bug Reduction',
-    description: 'Reduce production issues',
-    documentUrl: '',
-    status: 'Inactive',
-  },
-    {
-    kraId: 5,
-    kraCategoryName: 'Communication',
-    kraName: 'Team Collaboration',
-    description: '',
-    documentUrl: '',
-    status: 'On Hold',
-  },
-  {
-    kraId: 6,
-    kraCategoryName: 'Quality',
-    kraName: 'Bug Reduction',
-    description: 'Reduce production issues',
-    documentUrl: '',
-    status: 'Inactive',
-  },
-    {
-    kraId: 7,
-    kraCategoryName: 'Communication',
-    kraName: 'Team Collaboration',
-    description: '',
-    documentUrl: '',
-    status: 'On Hold',
-  },
-  {
-    kraId: 8,
-    kraCategoryName: 'Quality',
-    kraName: 'Bug Reduction',
-    description: 'Reduce production issues',
-    documentUrl: '',
-    status: 'Inactive',
-  },
-];
 
-filteredDetails = [...this.dummyDetails];
 
 
 performanceChartData: any;
@@ -179,6 +112,8 @@ performanceLegends = [
 performanceLoader = false;
 hasPerformanceData = true;
 
+teamKpiSubscription!: Subscription;
+summaryCardSubscription!: Subscription;
 
 
   constructor(
@@ -186,7 +121,9 @@ hasPerformanceData = true;
     private http: HttpService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+    this.initAttendanceSummaryChart();
+  }
 
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -203,7 +140,43 @@ hasPerformanceData = true;
     this.getEmployeeSkillCount()
     this.initAttendanceSummaryChart();
     this.initPerformanceChart();
+    this.loadTeamKpiData();
   }
+
+  loadTeamKpiData(employeeId?: number) {
+  this.dataload = true;
+
+  const params: any = {
+    pageNumber: this.page,
+    pageSize: 1000,
+    ...(this.searchText && { search: this.searchText })
+  };
+
+  if (employeeId) {
+    params.employeeId = employeeId;
+  }
+
+if (this.teamKpiSubscription) {
+  this.teamKpiSubscription.unsubscribe();
+}
+
+  this.teamKpiSubscription = this.http
+    .getDataIncludeParams('Kpi/getTeamMembersAssignKpiKra', params)
+    .subscribe({
+      next: (response: any) => {
+        this.teamKpiData = response?.data || [];
+        this.collectionSize = response?.pagination?.totalRecords || 0;
+        this.dataload = false;
+      },
+      error: (err) => {
+        console.error('Error loading dashboard KRA/KPI data', err);
+        this.teamKpiData = [];
+        this.collectionSize = 0;
+        this.dataload = false;
+      }
+    });
+}
+
 
   updateModuleInfo() {
     const url = this.router.url;
@@ -274,27 +247,45 @@ hasPerformanceData = true;
     });
   }
 
-  onEmployeeChange(employeeId: any) {
-    this.selectedEmployeeId = employeeId || null;
+onEmployeeChange(employeeId: any) {
+  this.selectedEmployeeId = employeeId || null;
 
-    this.page = 1;
-    this.first = 0;
-    this.searchText = '';
+  this.page = 1;
+  this.first = 0;
+  this.searchText = '';
 
-    // If cleared → load ALL employees
-    // if (!this.selectedEmployeeId) {
-    //   this.loadTeamKpiData();
-    // } else {
-    //   this.loadTeamKpiData(this.selectedEmployeeId);
-    // }
-  }
+  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+}
+
+onSearchTextChange() {
+  this.page = 1;
+  this.first = 0;
+  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+}
+
+onPageChange(event: any) {
+  this.page = event.page + 1;
+  this.rows = event.rows;
+  this.first = event.first;
+  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+}
+
+onPageSizeChange(newSize: number) {
+  this.rows = newSize;
+  this.page = 1;
+  this.first = 0;
+  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+}
+
+
 
     getEmployeeSkillCount(): void {
-    this.subscription = this.http.getData('EmployeeSkills/getEmployeeDirectorySummaryCount').subscribe({
+       this.chartLoader = false;
+    this.summaryCardSubscription  = this.http.getData('EmployeeSkills/getEmployeeDirectorySummaryCount').subscribe({
       next: (res: any) => {
         this.chartLoader = true;
         if (res?.data) {
-          const summary = res.data;
+          const summary = res?.data || {};
           this.summaryCards = [
             {
               key: 'totalEmployees',
@@ -329,7 +320,7 @@ hasPerformanceData = true;
       },
       error: (err) => {
         this.isloading = false;
-        this.chartLoader = false;
+        this.chartLoader = true;
         console.error('Error fetching employee directory summary count:', err);
       }
     });
@@ -358,13 +349,6 @@ trackByIndex(index: number): number {
   return index;
 }
 
-onSearchTextChange(): void {
-  const search = this.searchText.toLowerCase().trim();
-
-  this.filteredDetails = this.dummyDetails.filter(kra =>
-    kra.kraName.toLowerCase().includes(search)
-  );
-}
 
 getStatusClass(status: string): string {
   switch (status) {
@@ -385,7 +369,7 @@ initPerformanceChart(): void {
   this.performanceLoader = true;
 
   // Dummy categories (x-axis)
-  const labels = ['Team A', 'Team B', 'Team C', 'Team D'];
+  const labels = ['Marketing', 'SDA', 'BA', 'Oracle'];
 
   const outstanding = [8, 6, 7, 5];
   const meets = [10, 12, 9, 11];
@@ -453,7 +437,10 @@ initPerformanceChart(): void {
   this.performanceLoader = false;
 }
 
-
+ngOnDestroy() {
+  this.teamKpiSubscription?.unsubscribe();
+  this.summaryCardSubscription?.unsubscribe();
+}
 
 
 }

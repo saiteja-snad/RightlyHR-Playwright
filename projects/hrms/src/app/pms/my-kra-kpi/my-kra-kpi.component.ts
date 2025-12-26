@@ -110,6 +110,7 @@ export class MyKraKpiComponent implements OnInit {
                   effectiveDate: k.kra.effectiveDate,
                   targetDate: k.kra.targetDate,
                   weightageValue: k.kra.weightageValue,
+                  overallStatus: k.kra.overallStatus,
                   status: k.kra.status,
                   kpisCount: k.kpisCount,
                   kpis: k.kpis || [],
@@ -339,8 +340,8 @@ calculateKraProgress(kpis: any[]): number {
 
   getStatusClass(status: string) {
     switch (status) {
-      case 'Created':
-        return 'status-created';
+      case 'Inprogress':
+        return 'status-waiting';
       case 'Active':
         return 'status-active';
       case 'On Hold':
@@ -391,6 +392,7 @@ calculateKraProgress(kpis: any[]): number {
         kpiId: kpi.kpiId,
         kpiName: kpi.kpiName,
         weightageValue: kpi.weightageValue,
+        unitOfMeasurement: kpi.targetType || 'N/A',
         targetValue: kpi.targetValue,
         targetType: kpi.targetType,
         targetDate: kpi.targetDate

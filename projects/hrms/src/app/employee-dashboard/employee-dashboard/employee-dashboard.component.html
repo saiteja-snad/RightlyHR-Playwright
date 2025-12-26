@@ -40,9 +40,13 @@
                             <div [ngStyle]="{ 'border-left': '4px solid ' + item.color }" class="mb-2 ps-2">
                                 <div class="employee-type-text">
                                     <p class="m-0">{{ item.label }}</p>
+                                        @if(teamSummary[item.key]  != '0'){
                                     <p class="count-text cursor m-0" (click)="openOffcanvas(resourceList,item)">
-                                        <u>{{teamSummary[item.key] || 0 }}</u>
+                                        <u>{{teamSummary[item.key]}}</u>                                    
                                     </p>
+                                       }@else{
+                                        <p class="count-text m-0">{{teamSummary[item.key] || 0 }}</p>
+                                       }
                                 </div>
                             </div>
                         </div>

@@ -75,15 +75,9 @@
           <td class="text-center">
             @if (kra.documentUrl) {
             <div class="d-flex justify-content-center gap-2">
-              <!-- Download -->
-              <!-- <a class="download-text cursor-pointer"
-         (click)="onSelectDownload(kra.documentUrl)">
-        <i class="bi bi-download"></i>
-      </a> -->
-
               <!-- View -->
               <a class="download-text cursor-pointer" *ngIf="isViewableFile(kra.documentUrl)"
-                (click)="onViewAttachement(kra.documentUrl)">
+                (click)="onAttachmentClick(kra.documentUrl, $event)">
                 <app-document-view-icon />
               </a>
             </div>

@@ -47,20 +47,31 @@ export class PendingApprovalsTabsComponent {
       { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' },  moduleIds: [], totalCount: 0  }
     ];
     this.getApprovalStatusCounts();
-    this.filterTabsByRbac();
     this.loadKraKpiApprovalCount();
   }
 
-  getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
-      console.table(res);
-      this.approvalCounts = res;
-      this.updateTabCounts();   //Map counts to tabs
-    });
-  }
+getApprovalStatusCounts() {
+  this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    this.approvalCounts = res;
+    this.updateTabCounts();
+    this.refreshFilteredTabs();
+  });
+}
 
-  updateTabCounts() {
-    this.navTabs.forEach(tab => {
+refreshFilteredTabs(): void {
+  this.filteredTabs = this.navTabs
+    .filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    })
+    .map(tab => ({ ...tab }));
+}
+
+updateTabCounts() {
+  this.navTabs.forEach(tab => {
+    if (tab.moduleIds && tab.moduleIds.length > 0) {
       let total = 0;
       tab.moduleIds.forEach((id: any) => {
         const result = this.approvalCounts.find(x => x.moduleId === id);
@@ -68,11 +79,10 @@ export class PendingApprovalsTabsComponent {
           total += result.totalCount;
         }
       });
-      tab.totalCount = total;   //  store final count
-    });
-    // filter again because now count is available
-    this.filterTabsByRbac();
-  }
+      tab.totalCount = total;
+    }
+  });
+}
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
@@ -130,34 +140,32 @@ export class PendingApprovalsTabsComponent {
     return !this.isFirstColumn(index) && !this.isLastColumn(index);
   }
 
-  loadKraKpiApprovalCount(): void {
+loadKraKpiApprovalCount(): void {
   const params: any = {
     pageNumber: 1,
-    pageSize: 1000, // large enough to get all employees
+    pageSize: 1000,
     managerEmployeeId: this.empinfo?.employeeId,
   };
 
-  this.http
-    .getDataIncludeParams('Kpi/getPendingApprovalsData', params)
-    .subscribe({
-      next: (res: any) => {
-        // ✅ Count employees
-        this.kraKpiTotalCount = res?.data?.length || 0;
+  this.http.getDataIncludeParams('Kpi/getPendingApprovalsData', params).subscribe({
+    next: (res: any) => {
+      this.kraKpiTotalCount = res?.data?.length || 0;
+      console.log("KRA Total Count: ", this.kraKpiTotalCount);
 
-        // assign to tab
-        const kraTab = this.navTabs.find(
-          t => t.label === "KRA/KPI's"
-        );
-        if (kraTab) {
-          kraTab.totalCount = this.kraKpiTotalCount;
-        }
-
-        this.filterTabsByRbac();
-      },
-      error: () => {
-        this.kraKpiTotalCount = 0;
+      const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
+      if (kraTab) {
+        kraTab.totalCount = this.kraKpiTotalCount;
       }
-    });
+
+      this.refreshFilteredTabs(); // <-- Critical: refresh UI after KRA update
+    },
+    error: () => {
+      this.kraKpiTotalCount = 0;
+      const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
+      if (kraTab) kraTab.totalCount = 0;
+      this.refreshFilteredTabs();
+    }
+  });
 }
 
 

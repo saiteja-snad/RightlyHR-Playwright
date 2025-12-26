@@ -78,7 +78,7 @@ export class AddKraComponent {
 
   onCategoryInput(model: any): void {
   // mark touched so error shows immediately
-  model.control.markAsTouched();
+  // model.control.markAsTouched();
 
   // trim leading spaces only
   if (typeof model.control.value === 'string') {

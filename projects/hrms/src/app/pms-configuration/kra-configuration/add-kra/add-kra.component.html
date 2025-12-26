@@ -27,6 +27,7 @@
             required
             placeholder="Enter category name"
             (input)="onCategoryInput(categoryName)"
+            (blur)="categoryName.control.markAsTouched()"
             >
           <div class="error-msg" *ngIf="categoryName.touched && categoryName.invalid">
             Category Name is required
@@ -46,6 +47,7 @@
             required
             placeholder="Enter category code"
             (input)="onCategoryInput(categoryCode)"
+            (blur)="categoryCode.control.markAsTouched()"
             >
           <div class="error-msg" *ngIf="categoryCode.touched && categoryCode.invalid">
             Category Code is required
@@ -68,6 +70,7 @@
     maxlength="500"
     placeholder="Enter Description"
     (input)="onCategoryInput(description)"
+    (blur)="description.control.markAsTouched()"
     >
   </textarea>
 

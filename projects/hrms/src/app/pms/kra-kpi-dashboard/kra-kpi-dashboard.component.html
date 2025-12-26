@@ -100,39 +100,41 @@
 
             <!-- Header -->
             <div class="d-flex flex-wrap justify-content-between align-items-center pb-3">
-              <div class="summary-header d-flex gap-2 mb-2">
-                <div>Performance Distribution</div>
-                <div>
-                  <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
+              <div class="graph-card">
+                <div class="graph-header d-flex gap-2 mb-2">
+                  <div>Performance Distribution</div>
+                  <div>
+                    <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
 
-                  <ng-template #performanceInfo>
-                    <div class="module-info-text">
-                      Shows employee distribution by performance category.
-                    </div>
+                    <ng-template #performanceInfo>
+                      <div class="module-info-text">
+                        Shows employee distribution by performance category.
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="bar-chart graph-no-data-content">
+                  <ng-container *ngIf="hasPerformanceData; else noData">
+                    <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions">
+                    </p-chart>
+                  </ng-container>
+
+                  <ng-template #noData>
+                    <app-no-data-found />
                   </ng-template>
                 </div>
-              </div>
 
-              <!-- Legends -->
-              <!-- <div class="d-flex align-items-center gap-2">
+                <!-- Legends -->
+                <!-- <div class="d-flex align-items-center gap-2">
                 <div class="d-flex align-items-center gap-1" *ngFor="let item of performanceLegends">
                   <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }">
                   </span>
                   <span class="legend-label">{{ item.label }}</span>
                 </div>
               </div> -->
-            </div>
-
-            <!-- Chart -->
-            <div class="bar-chart graph-no-data-content">
-              <ng-container *ngIf="hasPerformanceData; else noData">
-                <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions">
-                </p-chart>
-              </ng-container>
-
-              <ng-template #noData>
-                <app-no-data-found />
-              </ng-template>
+              </div>
             </div>
 
           </div>

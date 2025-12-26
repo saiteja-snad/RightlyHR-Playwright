@@ -497,16 +497,16 @@ toggleInactiveFilter(): void {
         let successMessage = '';
       switch (this.pendingNewStatus) {
   case 'Active':
-    successMessage = 'KRA marked as active successfully';
+    successMessage = 'KPI marked as active successfully';
     break;
   case 'Inactive':
-    successMessage = 'KRA marked as inactive successfully';
+    successMessage = 'KPI marked as inactive successfully';
     break;
   case 'On Hold':
-    successMessage = 'KRA is kept on hold';
+    successMessage = 'KPI is kept on hold';
     break;
   default:
-    successMessage = `KRA status changed successfully`;
+    successMessage = `KPI status changed successfully`;
 }
 
       this.conformationPopup.openSuccessModal(successMessage);

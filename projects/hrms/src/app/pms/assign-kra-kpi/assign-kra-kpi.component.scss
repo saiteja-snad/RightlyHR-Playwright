@@ -133,3 +133,11 @@
     background: var(--primary-color) !important;
   }
 }
+
+.employee-accordion-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 200px 1fr;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}

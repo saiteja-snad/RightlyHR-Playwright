@@ -56,8 +56,8 @@ export class MyKraKpiComponent implements OnInit {
   myKpiList: any[] = [];
   selectedKra: any;
 
-  totalAssignedWeightage = 0;
-  isWeightageExceeded = false;
+  // totalAssignedWeightage = 0;
+  // isWeightageExceeded = false;
 
   isAllSelected = false;
   selectedKpis: any[] = [];
@@ -140,38 +140,29 @@ calculateKraProgress(kpis: any[]): number {
     return 0;
   }
 
-  // ✅ Include only allowed statuses
-  const validKpis = kpis.filter(
-    (kp: any) =>
-      kp.assignedStatus === 'Waiting for Approval' ||
-      kp.assignedStatus === 'Approved'
-  );
+  const totalKpis = kpis.length;
 
-  if (validKpis.length === 0) {
-    return 0; // no eligible KPIs → no progress
-  }
+  let committedSum = 0;
 
-  const total = validKpis.reduce((sum: number, kp: any) => {
-    let weightage: number;
+  kpis.forEach((kp: any) => {
+    let weightage = 0;
 
     if (kp.assignedStatus === 'Approved') {
-      // For Approved: use final approver value
-      weightage = Number(kp.assignedApproverWeightage || 0);
+      // Use approver's final value if available
+      weightage = Number(kp.assignedApproverWeightage ?? kp.assignedWeightage ?? 0);
     } else if (kp.assignedStatus === 'Waiting for Approval') {
-      // For Waiting: use employee's submitted value
-      weightage = Number(kp.assignedWeightage || 0);
-    } else {
-      // Fallback (should not happen)
-      weightage = 0;
+      // Use employee's submitted value
+      weightage = Number(kp.assignedWeightage ?? 0);
     }
+    // Draft, Rejected, etc. → contribute 0
 
-    return sum + weightage;
-  }, 0);
+    committedSum += weightage;
+  });
 
-  const average = total / validKpis.length;
-  const rounded = Math.round(average);
+  if (totalKpis === 0) return 0;
 
-  return Math.min(100, Math.max(0, rounded));
+  const averageProgress = committedSum / totalKpis;
+  return Math.round(Math.min(100, Math.max(0, averageProgress)));
 }
 
   openKraKpiModal(kra: any, content: any) {
@@ -214,7 +205,7 @@ calculateKraProgress(kpis: any[]): number {
         payloadArray.push({
           id: kpi.assigneeId || 0,
           employeeId: employeeId,
-          reviewCycleId: 0, // set if needed
+          reviewCycleId: kpi.reviewCycleId,
           kraId: this.selectedKra.kraId,
           kpiId: kpi.kpiId || 0,
           assignedTarget: kpi.targetValue?.toString() || '',
@@ -236,7 +227,7 @@ calculateKraProgress(kpis: any[]): number {
           this.modalService.dismissAll();
           this.getMyKraList();
           this.conformationPopup.openSuccessModal(
-            'KPI submitted successfully'
+            "KRA/KPI's submitted successfully"
           );
         },
         error: (err: any) => {
@@ -279,7 +270,7 @@ calculateKraProgress(kpis: any[]): number {
         payloadArray.push({
           id: kpi.assigneeId || 0,
           employeeId: employeeId,
-          reviewCycleId: 0,
+          reviewCycleId: kpi.reviewCycleId,
           kraId: this.selectedKra.kraId,
           kpiId: kpi.kpiId || 0,
           assignedTarget: kpi.targetValue?.toString() || '',
@@ -341,8 +332,8 @@ calculateKraProgress(kpis: any[]): number {
   }
 
   getProgressClass(value: number): string {
-    if (value >= 80) return 'bg-success';
-    if (value >= 50) return 'bg-warning';
+    if (value >= 70) return 'bg-success';
+    if (value >= 30) return 'bg-warning';
     return 'bg-danger';
   }
 
@@ -415,6 +406,8 @@ calculateKraProgress(kpis: any[]): number {
         assigneeId: kpi.assigneeId,
         assignedStatus: kpi.assignedStatus || 'Draft',
 
+        reviewCycleId: kpi.reviewCycleData?.id || 0,
+
         // Optional: preserve original fields if needed later
         assignedApproverWeightage: kpi.assignedApproverWeightage,
         assignedApproverRating: kpi.assignedApproverRating,
@@ -427,7 +420,7 @@ calculateKraProgress(kpis: any[]): number {
 
   // Trigger validation after load
   setTimeout(() => {
-    this.updateWeightageValidation();
+    // this.updateWeightageValidation();
   }, 0);
 }
 
@@ -477,7 +470,7 @@ onRowSelectionChange(): void {
     this.myKpiList.length > 0 &&
     this.myKpiList.every((kpi) => kpi.selected || this.isWaitingForApproval(kpi));
 
-  this.updateWeightageValidation(); // ← Must be called here
+  // this.updateWeightageValidation(); // ← Must be called here
 }
 
   toggleSelectAll(event: any): void {
@@ -529,30 +522,30 @@ onRowSelectionChange(): void {
     );
   }
 
-updateWeightageValidation(): void {
-  let totalProgress = 0;
+// updateWeightageValidation(): void {
+//   let totalProgress = 0;
 
-  this.myKpiList.forEach((kpi) => {
-    let weightageToAdd = 0;
+//   this.myKpiList.forEach((kpi) => {
+//     let weightageToAdd = 0;
 
-    const isLocked = this.isWaitingForApproval(kpi); // Approved or Waiting
+//     const isLocked = this.isWaitingForApproval(kpi); // Approved or Waiting
 
-    if (isLocked) {
-      // For locked KPIs: always count their current committed value
-      weightageToAdd = Number(kpi.assignedWeightage || 0);
-    } else {
-      // For editable KPIs: only count if selected
-      if (kpi.selected) {
-        weightageToAdd = Number(kpi.assignedWeightage || 0);
-      }
-    }
+//     if (isLocked) {
+//       // For locked KPIs: always count their current committed value
+//       weightageToAdd = Number(kpi.assignedWeightage || 0);
+//     } else {
+//       // For editable KPIs: only count if selected
+//       if (kpi.selected) {
+//         weightageToAdd = Number(kpi.assignedWeightage || 0);
+//       }
+//     }
 
-    totalProgress += weightageToAdd;
-  });
+//     totalProgress += weightageToAdd;
+//   });
 
-  this.totalAssignedWeightage = Math.round(totalProgress);
-  this.isWeightageExceeded = totalProgress > 100;
-}
+//   this.totalAssignedWeightage = Math.round(totalProgress);
+//   this.isWeightageExceeded = totalProgress > 100;
+// }
 onAssignedWeightageChange(): void {
   // Clamp value to 0-100 per field
   this.myKpiList.forEach(kpi => {
@@ -562,7 +555,7 @@ onAssignedWeightageChange(): void {
     }
   });
 
-  this.updateWeightageValidation();
+  // this.updateWeightageValidation();
 }
 
 onWeightageInput(event: any, index: number): void {
@@ -584,7 +577,7 @@ onWeightageInput(event: any, index: number): void {
   this.myKpiList[index].assignedWeightage = num;
 
   // Trigger total validation
-  this.updateWeightageValidation();
+  // this.updateWeightageValidation();
 }
 
 clampWeightage(index: number): void {
@@ -600,7 +593,7 @@ clampWeightage(index: number): void {
     kpi.assignedWeightage = 100;
   }
 
-  this.updateWeightageValidation();
+  // this.updateWeightageValidation();
 }
 }
 

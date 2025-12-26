@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
@@ -69,7 +69,8 @@ export class PendingApprovalsComponent implements OnInit {
     public router: Router,
     private fb: FormBuilder,
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -424,8 +425,9 @@ export class PendingApprovalsComponent implements OnInit {
     // this.loadPendingKraKpi(this.selectedEmployeeId);
   }
 
-  setHeaderTemplate(template: TemplateRef<any>) {
+setHeaderTemplate(template: TemplateRef<any>) {
   this.headerRightTemplate = template;
+  this.cdr.detectChanges();
 }
 
 

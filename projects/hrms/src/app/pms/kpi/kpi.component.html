@@ -44,7 +44,7 @@
           <th>{{ 'KPI Title' | translate }}</th>
           <th class="text-center">{{ 'Description' | translate }}</th>
           <th class="text-center">{{ 'Unit of Measurement' | translate }}</th>
-          <th class="text-center">{{ 'Target' | translate }}</th>
+          <!-- <th class="text-center">{{ 'Target' | translate }}</th> -->
           <th class="text-center">{{ 'Status' | translate }}</th>
           @if (hasAnyActionPermission()) {
           <th class="text-center">{{ 'Action' | translate }}</th>
@@ -64,7 +64,7 @@
             <ng-template #noDescription>NA</ng-template>
           </td>
           <td class="text-center">{{ kpi.targetType || '-' }}</td>
-          <td class="text-center">{{ kpi.targetValue || '-' }}</td>
+          <!-- <td class="text-center">{{ kpi.targetValue || '-' }}</td> -->
           <td class="text-center">
             <span class="kpi-status" [ngClass]="getStatusClass(kpi.status)">
               {{ kpi.status || '-' }}

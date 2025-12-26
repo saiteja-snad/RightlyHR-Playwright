@@ -66,10 +66,11 @@ export class AssignKraKpiComponent implements OnInit {
   @ViewChild('dt') table!: Table;
   @ViewChild('assignKraKpiModal') assignKraKpiModal!: TemplateRef<any>;
   @ViewChild('deleteKpiConfirmation') deleteKpiConfirmation!: TemplateRef<any>;
-  @ViewChild('assignToEmployeeConfirmation') assignToEmployeeConfirmation!: TemplateRef<any>;
+  @ViewChild('assignToEmployeeConfirmation')
+  assignToEmployeeConfirmation!: TemplateRef<any>;
 
-kpiToDeleteIndex: number | null = null;     // Index of the row to delete
-kpiToDeleteName: string = '';
+  kpiToDeleteIndex: number | null = null; // Index of the row to delete
+  kpiToDeleteName: string = '';
   private fb = inject(FormBuilder);
   private http = inject(HttpService);
   private modalService = inject(NgbModal);
@@ -101,7 +102,7 @@ kpiToDeleteName: string = '';
   // Static dropdown options
   reviewCycleOptions: { label: string; value: string }[] = [];
   ratingScaleOptions: { label: string; value: string }[] = [];
-  reviewCycleFilterOptions : { label: string; value: string }[] = [];
+  reviewCycleFilterOptions: { label: string; value: string }[] = [];
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -145,8 +146,8 @@ kpiToDeleteName: string = '';
   voidKpis: any[] = []; // Track KPIs marked for deletion (void)
   originalKpis: any[] = []; // Backup of original KPIs (optional, for safety)
   confirmAssignKraName: string = '';
-confirmAssignEmployeeCount: number = 0;
-private pendingAssignPayload: any = null; // To store payload until user confirms
+  confirmAssignEmployeeCount: number = 0;
+  private pendingAssignPayload: any = null; // To store payload until user confirms
   selectedKraAssignment: any;
   assignForm = this.fb.group(
     {
@@ -410,8 +411,7 @@ private pendingAssignPayload: any = null; // To store payload until user confirm
     });
   }
 
-
-    loadFilterReviewCycles(): void {
+  loadFilterReviewCycles(): void {
     this.http.getData('reviewCycleHeader/getallnames').subscribe({
       next: (res: any) => {
         // Response is direct array → no .data wrapper
@@ -521,8 +521,8 @@ private pendingAssignPayload: any = null; // To store payload until user confirm
     }
 
     if (filters.reviewCycle && filters.reviewCycle.length > 0) {
-    params.reviewCycleId = filters.reviewCycle.join(',');
-  }
+      params.reviewCycleId = filters.reviewCycle.join(',');
+    }
     this.loadAssignedKraKpiListWithFilters(params);
   }
 
@@ -565,7 +565,12 @@ private pendingAssignPayload: any = null; // To store payload until user confirm
               let employeeTotal = 0;
               // Add each KRA as an assignment row
               curr.kras.forEach((kraItem: any) => {
-                const weightage = Number(kraItem.kra?.weightageValue || 0);
+                const assignedWeightageFromKpi =
+                  kraItem.kpis && kraItem.kpis.length > 0
+                    ? Number(kraItem.kpis[0].assignedKraWeightage || 0)
+                    : 0;
+
+                const weightage = assignedWeightageFromKpi;
 
                 employeeTotal += weightage;
 
@@ -602,34 +607,33 @@ private pendingAssignPayload: any = null; // To store payload until user confirm
     });
   }
 
-
   // Get EmpAssignedStatus from the first KPI of the first assignment (safe fallback)
-getEmpAssignedStatus(emp: any): string {
-  if (emp.assignments && emp.assignments.length > 0) {
-    const firstAssignment = emp.assignments[0];
-    if (firstAssignment.kpis && firstAssignment.kpis.length > 0) {
-      return firstAssignment.kpis[0].empAssignedStatus || '-';
+  getEmpAssignedStatus(emp: any): string {
+    if (emp.assignments && emp.assignments.length > 0) {
+      const firstAssignment = emp.assignments[0];
+      if (firstAssignment.kpis && firstAssignment.kpis.length > 0) {
+        return firstAssignment.kpis[0].empAssignedStatus || '-';
+      }
     }
+    return '-'; // fallback if no data
   }
-  return '-'; // fallback if no data
-}
 
-// Optional: Add color coding for status (like your existing getStatusClass)
-// getEmpAssignedStatusClass(emp: any): string {
-//   const status = this.getEmpAssignedStatus(emp);
-//   switch (status) {
-//     case 'Created':
-//       return 'text-info';
-//     case 'Active':
-//       return 'text-success';
-//     case 'On Hold':
-//       return 'text-warning';
-//     case 'Completed':
-//       return 'text-primary';
-//     default:
-//       return 'text-muted';
-//   }
-// }
+  // Optional: Add color coding for status (like your existing getStatusClass)
+  // getEmpAssignedStatusClass(emp: any): string {
+  //   const status = this.getEmpAssignedStatus(emp);
+  //   switch (status) {
+  //     case 'Created':
+  //       return 'text-info';
+  //     case 'Active':
+  //       return 'text-success';
+  //     case 'On Hold':
+  //       return 'text-warning';
+  //     case 'Completed':
+  //       return 'text-primary';
+  //     default:
+  //       return 'text-muted';
+  //   }
+  // }
 
   private getCurrentFilters(): any {
     const filters = this.filterForm.getRawValue();
@@ -647,8 +651,8 @@ getEmpAssignedStatus(emp: any): string {
     if (filters.subLocation) params.subLocationId = filters.subLocation;
 
     if (filters.reviewCycle && filters.reviewCycle.length > 0) {
-    params.reviewCycleIds = filters.reviewCycle.join(',');
-  }
+      params.reviewCycleIds = filters.reviewCycle.join(',');
+    }
     return params;
   }
 
@@ -708,7 +712,7 @@ getEmpAssignedStatus(emp: any): string {
       ],
       targetValue: [null],
       targetDate: ['', [Validators.required, this.noPastDateValidator]],
-      description: ['', [Validators.required]],
+      description: [''],
     });
 
     // Existing KPI selection logic (unchanged)
@@ -761,31 +765,51 @@ getEmpAssignedStatus(emp: any): string {
     // === NEW: Cross-validation between KRA targetDate and KPI targetDate ===
 
     const validateKpiAgainstKra = () => {
+      const kraEffectiveDate = this.assignForm.get('effectiveDate')?.value;
       const kraTargetDate = this.assignForm.get('targetDate')?.value;
       const kpiTargetDate = row.get('targetDate')?.value;
 
-      if (!kraTargetDate || !kpiTargetDate) {
-        // Clear custom error if either is empty (required will handle)
-        row.get('targetDate')?.setErrors(null); // or preserve other errors if needed
+      // If any date is missing, let required/noPastDate handle it
+      if (!kraEffectiveDate || !kraTargetDate || !kpiTargetDate) {
+        // Clear only custom range errors
+        const currentErrors = row.get('targetDate')?.errors || {};
+        delete currentErrors['kpiTargetBeforeKraEffective'];
+        delete currentErrors['kpiTargetExceedsKra'];
+        row
+          .get('targetDate')
+          ?.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
         return;
       }
 
-      const kraDate = new Date(kraTargetDate);
+      const effective = new Date(kraEffectiveDate);
+      const target = new Date(kraTargetDate);
       const kpiDate = new Date(kpiTargetDate);
 
-      if (kpiDate > kraDate) {
-        row.get('targetDate')?.setErrors({ kpiTargetExceedsKra: true });
+      let hasError = false;
+      const errors: any = {};
+
+      if (kpiDate < effective) {
+        errors.kpiTargetBeforeKraEffective = true;
+        hasError = true;
+      }
+
+      if (kpiDate > target) {
+        errors.kpiTargetExceedsKra = true;
+        hasError = true;
+      }
+
+      if (hasError) {
+        row
+          .get('targetDate')
+          ?.setErrors({ ...row.get('targetDate')?.errors, ...errors });
       } else {
-        // Clear only the custom error
+        // Clear only our custom errors
         const currentErrors = row.get('targetDate')?.errors || {};
-        if (currentErrors['kpiTargetExceedsKra']) {
-          delete currentErrors['kpiTargetExceedsKra'];
-          row
-            .get('targetDate')
-            ?.setErrors(
-              Object.keys(currentErrors).length ? currentErrors : null
-            );
-        }
+        delete currentErrors['kpiTargetBeforeKraEffective'];
+        delete currentErrors['kpiTargetExceedsKra'];
+        row
+          .get('targetDate')
+          ?.setErrors(Object.keys(currentErrors).length ? currentErrors : null);
       }
     };
 
@@ -972,7 +996,7 @@ getEmpAssignedStatus(emp: any): string {
       employeeIds: selectedEmployeeIds,
       effectiveDate: formValue.effectiveDate,
       targetDate: formValue.targetDate,
-      weightageValue: String(selectedKra.weightageValue || 100),
+      weightageValue: String(formValue.weightage || 0),
       reviewCycleId: Number(formValue.reviewCycle),
       ratingScaleId: Number(formValue.ratingScale),
       status: 'Created',
@@ -1060,7 +1084,10 @@ getEmpAssignedStatus(emp: any): string {
     // Patch form with existing KRA data
     this.assignForm.patchValue({
       kraId: kraAssignment.kra.kraId,
-      weightage: kraAssignment.kra.weightageValue,
+      weightage:
+        kraAssignment.kpis && kraAssignment.kpis.length > 0
+          ? kraAssignment.kpis[0].assignedKraWeightage || 0
+          : kraAssignment.kra?.weightageValue || 0,
       effectiveDate: kraAssignment.kra.effectiveDate?.split('T')[0] || '',
       targetDate: firstKpi.kraTargetDate?.split('T')[0] || '',
       reviewCycle: firstKpi.reviewCycleData?.id,
@@ -1206,32 +1233,41 @@ getEmpAssignedStatus(emp: any): string {
       });
     }
 
-if (formValue.reviewCycle?.length) {
-  formValue.reviewCycle.forEach((selectedItem: any) => {
-    let cycleName: string;
+    if (formValue.reviewCycle?.length) {
+      formValue.reviewCycle.forEach((selectedItem: any) => {
+        let cycleName: string;
 
-    // Case 1: Full object selected (normal case)
-    if (selectedItem && typeof selectedItem === 'object' && selectedItem.label) {
-      cycleName = selectedItem.label;
-    }
-    // Case 2: Only ID selected (number/string) — common in PrimeNG
-    else if (selectedItem != null) {
-      const id = typeof selectedItem === 'object' ? selectedItem.value : selectedItem;
-      const found = this.reviewCycleFilterOptions.find(opt => opt.value === id);
-      cycleName = found ? found.label : `Review Cycle ID: ${id}`;
-    }
-    // Final fallback (should never hit)
-    else {
-      cycleName = 'Unknown Review Cycle';
-    }
+        // Case 1: Full object selected (normal case)
+        if (
+          selectedItem &&
+          typeof selectedItem === 'object' &&
+          selectedItem.label
+        ) {
+          cycleName = selectedItem.label;
+        }
+        // Case 2: Only ID selected (number/string) — common in PrimeNG
+        else if (selectedItem != null) {
+          const id =
+            typeof selectedItem === 'object'
+              ? selectedItem.value
+              : selectedItem;
+          const found = this.reviewCycleFilterOptions.find(
+            (opt) => opt.value === id
+          );
+          cycleName = found ? found.label : `Review Cycle ID: ${id}`;
+        }
+        // Final fallback (should never hit)
+        else {
+          cycleName = 'Unknown Review Cycle';
+        }
 
-    filters.push({
-      type: 'reviewCycle',
-      label: cycleName,
-      value: selectedItem,  // keep original for removal logic
-    });
-  });
-}
+        filters.push({
+          type: 'reviewCycle',
+          label: cycleName,
+          value: selectedItem, // keep original for removal logic
+        });
+      });
+    }
     return filters;
   }
 
@@ -1264,12 +1300,12 @@ if (formValue.reviewCycle?.length) {
       this.filterForm.patchValue({ subLocation: updated });
       this.onSubLocationChange(updated);
     } else if (filter.type === 'reviewCycle') {
-    const updated = (current.reviewCycle ?? []).filter(
-      (c: any) => c.value !== filter.value.value  // value is the ID
-    );
-    this.filterForm.patchValue({ reviewCycle: updated });
-    this.applyFilters();
-  }
+      const updated = (current.reviewCycle ?? []).filter(
+        (c: any) => c.value !== filter.value.value // value is the ID
+      );
+      this.filterForm.patchValue({ reviewCycle: updated });
+      this.applyFilters();
+    }
     // Refresh table
     this.page = 1;
     this.first = 0;
@@ -1328,7 +1364,7 @@ if (formValue.reviewCycle?.length) {
         this.assignKpiList.push({
           ...kpi,
           kpiName: kpi.kpiName,
-          weightageValue: kpi.weightageValue,
+          weightageValue: kpi.assignedKpiWeightage,
           targetValue: kpi.targetValue,
           targetType: kpi.targetType,
           targetDate: kpi.targetDate,
@@ -1386,62 +1422,38 @@ if (formValue.reviewCycle?.length) {
       return 0;
     }
 
-    const validKpis = kra.kpis.filter(
-      (kpi: any) =>
-        kpi.assignedStatus === 'Waiting for Approval' ||
-        kpi.assignedStatus === 'Approved'
-    );
+    const totalKpisCount = kra.kpis.length; // Denominator: ALL KPIs in the KRA
 
-    if (validKpis.length === 0) {
+    let committedTotal = 0;
+
+    kra.kpis.forEach((kpi: any) => {
+      let weightage: number = 0;
+
+      if (kpi.assignedStatus === 'Approved') {
+        weightage = Number(
+          kpi.assignedApproverWeightage || kpi.assignedWeightage || 0
+        );
+      } else if (kpi.assignedStatus === 'Waiting for Approval') {
+        weightage = Number(kpi.assignedWeightage || 0);
+      }
+      // Draft, Rejected, etc. → contribute 0 (intentionally)
+
+      committedTotal += weightage;
+    });
+
+    if (totalKpisCount === 0) {
       return 0;
     }
 
-    let total = 0;
-
-    validKpis.forEach((kpi: any, index: number) => {
-      let weightage: number;
-      let source: string;
-
-      if (kpi.assignedStatus === 'Approved') {
-        // For Approved: always use the approver's final weightage
-        weightage = Number(kpi.assignedApproverWeightage || 0);
-        source = 'assignedApproverWeightage (Approved)';
-      } else if (kpi.assignedStatus === 'Waiting for Approval') {
-        // For Waiting: use employee's submitted value
-        weightage = Number(kpi.assignedWeightage || 0);
-        source = 'assignedWeightage (Waiting for Approval)';
-      } else {
-        // Fallback (should not happen due to filter)
-        weightage = 0;
-        source = 'fallback (0)';
-      }
-
-      console.log(
-        `KPI ${index + 1} (ID: ${kpi.kpiId}, Name: ${kpi.kpiName || 'N/A'}): ` +
-          `Status = ${kpi.assignedStatus}, ` +
-          `Picking weightage = ${weightage} from ${source} ` +
-          `(assignedWeightage = '${kpi.assignedWeightage}', approverWeightage = '${kpi.assignedApproverWeightage}')`
-      );
-
-      total += weightage;
-    });
-
-    const average = total / validKpis.length;
-    const rounded = Math.round(average);
-
-    console.log(
-      `KRA Progress Summary: Total Weightage = ${total}, ` +
-        `Valid KPIs Count = ${validKpis.length}, ` +
-        `Average = ${average.toFixed(2)}, ` +
-        `Final Progress = ${rounded}%`
-    );
+    const averageProgress = committedTotal / totalKpisCount;
+    const rounded = Math.round(averageProgress);
 
     return Math.min(100, Math.max(0, rounded));
   }
 
   getProgressClass(value: number): string {
-    if (value >= 80) return 'bg-success';
-    if (value >= 50) return 'bg-warning';
+    if (value >= 70) return 'bg-success';
+    if (value >= 30) return 'bg-warning';
     return 'bg-danger';
   }
 
@@ -1535,202 +1547,254 @@ if (formValue.reviewCycle?.length) {
   }
 
   openDeleteKpiConfirmation(content: TemplateRef<any>, index: number): void {
-  const row = this.kpiRows.at(index) as FormGroup;
-  const kpiId = row.get('kpiId')?.value;
+    const row = this.kpiRows.at(index) as FormGroup;
+    const kpiId = row.get('kpiId')?.value;
 
-  this.kpiToDeleteIndex = index;
-  this.kpiToDeleteName = this.getKpiNameById(kpiId) || 'this KPI';
+    this.kpiToDeleteIndex = index;
+    this.kpiToDeleteName = this.getKpiNameById(kpiId) || 'this KPI';
 
-  this.modalService.open(content, { centered: true, backdrop: 'static' });
-}
-
-confirmKpiDelete(): void {
-  if (this.kpiToDeleteIndex === null) {
-    console.error('No KPI index to delete');
-    return;
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  const index = this.kpiToDeleteIndex;
-  const row = this.kpiRows.at(index) as FormGroup;
-  const rowValue = row.getRawValue();
-
-  // Only track void KPIs in edit mode
-  if (this.isEditMode && rowValue.kpiId && Number(rowValue.kpiId) > 0) {
-    const kpiName = this.getKpiNameById(rowValue.kpiId);
-    const uomValue = row.get('uom')?.value || '';
-
-    this.voidKpis.push({
-      assigneeId: rowValue.assigneeId,
-      kpiId: rowValue.kpiId,
-      kraId: this.assignForm.get('kraId')?.value,
-      kpiName: kpiName,
-      weightageValue: String(rowValue.weightage || 0),
-      targetValue: String(rowValue.targetValue || ''),
-      targetDate: rowValue.targetDate || null,
-      targetType: uomValue,
-      description: rowValue.description?.trim() || '',
-      status: 'void',
-      reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
-      ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
-    });
-
-    this.popup.openSuccessModal('KPI removed successfully');
-  }
-
-  // Remove the row from the form array
-  this.kpiRows.removeAt(index);
-
-  // Reset
-  this.kpiToDeleteIndex = null;
-  this.kpiToDeleteName = '';
-}
-
-// Check if any employee is selected via checkbox
-hasSelectedEmployees(): boolean {
-  return this.groupedKraList.some(emp => emp.selected === true);
-}
-
-// Get list of selected employee IDs
-getSelectedEmployeeIds(): string {
-  const selected = this.groupedKraList
-    .filter(emp => emp.selected === true)
-    .map(emp => emp.employeeId);
-  return selected.join(',');
-}
-
-// Updated: Single API call with array of employee assignments
-assignExistingToSelectedEmployees(): void {
-  // No early return on !hasSelectedEmployees — button is always enabled
-  const selectedEmployees = this.groupedKraList.filter(emp => emp.selected);
-
-  if (selectedEmployees.length === 0) {
-    this.popup.openErrorModal('Please select at least one employee to assign the KRA/KPIs.');
-    return;
-  }
-
-  // === Check if ALL selected employees have totalKraWeightage === 100 ===
-  const employeesBelow100 = selectedEmployees.filter(emp => emp.totalKraWeightage < 100);
-  const employeesAbove100 = selectedEmployees.filter(emp => emp.totalKraWeightage > 100);
-
-  if (employeesBelow100.length > 0 || employeesAbove100.length > 0) {
-    let message = 'Total KRA weightage must be 100% for all selected employee.';
-
-    this.popup.openErrorModal(message);
-    return;
-  }
-  // === End of validation ===
-
-  const kraIds = new Set<number>();
-  let sampleKraAssignment: any = null;
-
-  for (const emp of selectedEmployees) {
-    if (emp.assignments.length === 0) {
-      this.popup.openErrorModal(`Employee ${emp.fullName} has no KRA assigned yet.`);
+  confirmKpiDelete(): void {
+    if (this.kpiToDeleteIndex === null) {
+      console.error('No KPI index to delete');
       return;
     }
-    const firstAssignment = emp.assignments[0];
-    const kraId = firstAssignment.kra?.kraId || firstAssignment.kraId;
-    if (kraId) kraIds.add(Number(kraId));
 
-    if (!sampleKraAssignment) {
-      sampleKraAssignment = firstAssignment;
+    const index = this.kpiToDeleteIndex;
+    const row = this.kpiRows.at(index) as FormGroup;
+    const rowValue = row.getRawValue();
+
+    // Only track void KPIs in edit mode
+    if (this.isEditMode && rowValue.kpiId && Number(rowValue.kpiId) > 0) {
+      const kpiName = this.getKpiNameById(rowValue.kpiId);
+      const uomValue = row.get('uom')?.value || '';
+
+      this.voidKpis.push({
+        assigneeId: rowValue.assigneeId,
+        kpiId: rowValue.kpiId,
+        kraId: this.assignForm.get('kraId')?.value,
+        kpiName: kpiName,
+        weightageValue: String(rowValue.weightage || 0),
+        targetValue: String(rowValue.targetValue || ''),
+        targetDate: rowValue.targetDate || null,
+        targetType: uomValue,
+        description: rowValue.description?.trim() || '',
+        status: 'void',
+        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
+        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
+      });
+
+      this.popup.openSuccessModal('KPI removed successfully');
     }
+
+    // Remove the row from the form array
+    this.kpiRows.removeAt(index);
+
+    // Reset
+    this.kpiToDeleteIndex = null;
+    this.kpiToDeleteName = '';
   }
 
-  if (kraIds.size > 1) {
-    this.popup.openErrorModal('Selected employees have different KRAs. Please select employees with the same KRA.');
-    return;
+  // Check if any employee is selected via checkbox
+  hasSelectedEmployees(): boolean {
+    return this.groupedKraList.some((emp) => emp.selected === true);
   }
 
-  if (!sampleKraAssignment) {
-    this.popup.openErrorModal('No valid KRA found to assign.');
-    return;
+  // Get list of selected employee IDs
+  getSelectedEmployeeIds(): string {
+    const selected = this.groupedKraList
+      .filter((emp) => emp.selected === true)
+      .map((emp) => emp.employeeId);
+    return selected.join(',');
   }
 
-  // Set confirmation modal data
-  this.confirmAssignKraName = sampleKraAssignment.kra?.kraName || 'Unknown KRA';
-  this.confirmAssignEmployeeCount = selectedEmployees.length;
+  // Updated: Single API call with array of employee assignments
 
-  // Build payload: direct array of assignment objects (no "assignments" wrapper)
-  const loggedInEmployeeId = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0;
+  assignExistingToSelectedEmployees(): void {
+    const selectedEmployees = this.groupedKraList.filter((emp) => emp.selected);
 
-  const templateKra = sampleKraAssignment.kra;
-  const templateKpis = sampleKraAssignment.kpis || [];
-
-  const payloadArray = selectedEmployees.map(emp => {
-    const kpisForEmployee = templateKpis.map((kpi: any) => ({
-      assigneeId: kpi.assigneeId || null,
-      kpiId: Number(kpi.kpiId || 0),
-      kpiName: kpi.kpiName,
-      weightageValue: String(kpi.weightageValue || 0),
-      targetValue: String(kpi.targetValue || ''),
-      targetDate: kpi.targetDate ? kpi.targetDate.split('T')[0] : null,
-      targetType: kpi.targetType || '',
-      description: kpi.description?.trim() || '',
-      reviewCycleId: Number(kpi.reviewCycleData?.id || 0),
-      ratingScaleId: Number(kpi.optionsRating?.id || 0),
-      status: 'Active',
-      empAssignedStatus: "Assigned",
-      createdBy: loggedInEmployeeId,
-      updatedBy: loggedInEmployeeId,
-      employeeIds: String(emp.employeeId),
-    }));
-
-    return {
-      employeeIds: String(emp.employeeId),
-      employeeName: emp.fullName,
-      kraId: Number(templateKra?.kraId || 0),
-      kraName: templateKra?.kraName,
-      kraCategoryId: Number(templateKra?.kraCategoryId || 0),
-      kraCategoryName: templateKra?.kraCategoryName || '',
-      effectiveDate: templateKra?.effectiveDate?.split('T')[0] || '',
-      targetDate: templateKpis[0]?.kraTargetDate?.split('T')[0] || '',
-      weightageValue: String(templateKra?.weightageValue || 100),
-      reviewCycleId: Number(templateKpis[0]?.reviewCycleData?.id || 0),
-      ratingScaleId: Number(templateKpis[0]?.optionsRating?.id || 0),
-      status: 'Active',
-      empAssignedStatus: 'Assigned',  // if backend expects this field
-      createdBy: loggedInEmployeeId,
-      updatedBy: loggedInEmployeeId,
-      kpis: kpisForEmployee
-    };
-  });
-
-  // Store as direct array (no wrapper object)
-  this.pendingAssignPayload = payloadArray;
-
-  // Open confirmation modal
-  this.modalService.open(this.assignToEmployeeConfirmation, {
-    centered: true,
-    backdrop: 'static'
-  });
-}
-
-// Updated: Send direct array (no { assignments: ... } wrapper)
-confirmAssignToEmployees(): void {
-  if (!this.pendingAssignPayload || this.pendingAssignPayload.length === 0) {
-    return;
-  }
-
-  this.isSubmitting = true;
-
-  this.http.postdata('Kpi/updatekrakpiv2', this.pendingAssignPayload).subscribe({
-    next: () => {
-      this.popup.openSuccessModal(
-        `KRA/KPIs assigned successfully to ${this.confirmAssignEmployeeCount} employee(s)`
+    if (selectedEmployees.length === 0) {
+      this.popup.openErrorModal(
+        'Please select at least one employee to assign the KRA/KPIs.'
       );
-      this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
-      this.groupedKraList.forEach(emp => emp.selected = false);
-      this.pendingAssignPayload = null;
-    },
-    error: (err: any) => {
-      console.error('Bulk assignment failed:', err);
-      this.popup.openErrorModal(err.error?.message || 'Failed to assign KRA/KPIs');
-      this.pendingAssignPayload = null;
-    },
-    complete: () => {
-      this.isSubmitting = false;
+      return;
     }
-  });
-}
+
+    // === Validate totalKraWeightage === 100 for all selected employees ===
+    const invalidWeightageEmployees = selectedEmployees.filter(
+      (emp) => emp.totalKraWeightage !== 100
+    );
+
+    if (invalidWeightageEmployees.length > 0) {
+      this.popup.openErrorModal(
+        'Total KRA weightage must be exactly 100% for all selected employees.'
+      );
+      return;
+    }
+
+    // === Collect ALL unique KRA assignments across selected employees ===
+    const kraAssignmentMap = new Map<number, any>(); // kraId → assignment template
+
+    let totalKpiCount = 0;
+    let sampleKraNames: string[] = [];
+
+    for (const emp of selectedEmployees) {
+      if (emp.assignments.length === 0) {
+        this.popup.openErrorModal(
+          `Employee ${emp.fullName} has no KRA assigned yet.`
+        );
+        return;
+      }
+
+      emp.assignments.forEach((assignment: any) => {
+        const kraId = assignment.kra?.kraId || assignment.kraId;
+        if (!kraId) return;
+
+        if (!kraAssignmentMap.has(kraId)) {
+          kraAssignmentMap.set(kraId, assignment);
+          sampleKraNames.push(assignment.kra?.kraName || 'Unknown KRA');
+        }
+        totalKpiCount += assignment.kpis?.length || 0;
+      });
+    }
+
+    if (kraAssignmentMap.size === 0) {
+      this.popup.openErrorModal('No valid KRA found to assign.');
+      return;
+    }
+
+    // Optional: Warn if different KRAs are mixed (usually not allowed in bulk assign)
+    // You can remove this if you want to allow assigning multiple different KRAs
+    // if (kraAssignmentMap.size > 1) {
+    //   this.popup.openErrorModal('Selected employees have different sets of KRAs. Please select employees with identical KRA assignments.');
+    //   return;
+    // }
+
+    // Set confirmation text
+    this.confirmAssignKraName = sampleKraNames.join(', ');
+    this.confirmAssignEmployeeCount = selectedEmployees.length;
+
+    const loggedInEmployeeId =
+      JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId ||
+      0;
+
+    // Build payload: one object per target employee, containing ALL KRAs
+    const payloadArray: any[] = [];
+
+    selectedEmployees.forEach((targetEmp) => {
+      const kpisForThisEmployee: any[] = [];
+
+      // For this target employee, include ALL KRAs from the template map
+      kraAssignmentMap.forEach((templateAssignment) => {
+        const templateKra = templateAssignment.kra;
+        const templateKpis = templateAssignment.kpis || [];
+
+        templateKpis.forEach((kpi: any) => {
+          kpisForThisEmployee.push({
+            assigneeId: kpi.assigneeId || null,
+            kpiId: Number(kpi.kpiId || 0),
+            kpiName: kpi.kpiName,
+            weightageValue: String(
+              kpi.assignedKpiWeightage || kpi.weightageValue || 0
+            ),
+            targetValue: String(kpi.targetValue || ''),
+            targetDate: kpi.targetDate ? kpi.targetDate.split('T')[0] : null,
+            targetType: kpi.targetType || '',
+            description: kpi.description?.trim() || '',
+            reviewCycleId: Number(kpi.reviewCycleData?.id || 0),
+            ratingScaleId: Number(kpi.optionsRating?.id || 0),
+            status: 'Active',
+            empAssignedStatus: 'Assigned',
+            createdBy: loggedInEmployeeId,
+            updatedBy: loggedInEmployeeId,
+            employeeIds: String(targetEmp.employeeId),
+          });
+        });
+
+        // Push one entry per KRA (even if no KPIs — optional)
+        payloadArray.push({
+          employeeIds: String(targetEmp.employeeId),
+          employeeName: targetEmp.fullName,
+          kraId: Number(templateKra?.kraId || 0),
+          kraName: templateKra?.kraName || '',
+          kraCategoryId: Number(templateKra?.kraCategoryId || 0),
+          kraCategoryName: templateKra?.kraCategoryName || '',
+          effectiveDate: templateKra?.effectiveDate?.split('T')[0] || '',
+          targetDate:
+            templateKpis[0]?.kraTargetDate?.split('T')[0] ||
+            templateKra?.targetDate?.split('T')[0] ||
+            '',
+          weightageValue: String(templateAssignment.individualWeightage || 0),
+          reviewCycleId: Number(templateKpis[0]?.reviewCycleData?.id || 0),
+          ratingScaleId: Number(templateKpis[0]?.optionsRating?.id || 0),
+          status: 'Active',
+          empAssignedStatus: 'Assigned',
+          createdBy: loggedInEmployeeId,
+          updatedBy: loggedInEmployeeId,
+          kpis: templateKpis.map((kpi: any) => ({
+            assigneeId: kpi.assigneeId || null,
+            kpiId: Number(kpi.kpiId || 0),
+            kpiName: kpi.kpiName,
+            weightageValue: String(
+              kpi.assignedKpiWeightage || kpi.weightageValue || 0
+            ),
+            targetValue: String(kpi.targetValue || ''),
+            targetDate: kpi.targetDate ? kpi.targetDate.split('T')[0] : null,
+            targetType: kpi.targetType || '',
+            description: kpi.description?.trim() || '',
+            reviewCycleId: Number(kpi.reviewCycleData?.id || 0),
+            ratingScaleId: Number(kpi.optionsRating?.id || 0),
+            status: 'Active',
+            empAssignedStatus: 'Assigned',
+            createdBy: loggedInEmployeeId,
+            updatedBy: loggedInEmployeeId,
+            employeeIds: String(targetEmp.employeeId),
+          })),
+        });
+      });
+    });
+
+    this.pendingAssignPayload = payloadArray;
+
+    // Open confirmation modal
+    this.modalService.open(this.assignToEmployeeConfirmation, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  // Updated: Send direct array (no { assignments: ... } wrapper)
+  confirmAssignToEmployees(): void {
+    if (!this.pendingAssignPayload || this.pendingAssignPayload.length === 0) {
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    this.http
+      .postdata('Kpi/updatekrakpiv2', this.pendingAssignPayload)
+      .subscribe({
+        next: () => {
+          this.popup.openSuccessModal(
+            `KRA/KPIs assigned successfully to ${this.confirmAssignEmployeeCount} employee(s)`
+          );
+          this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
+          this.groupedKraList.forEach((emp) => (emp.selected = false));
+          this.pendingAssignPayload = null;
+        },
+        error: (err: any) => {
+          console.error('Bulk assignment failed:', err);
+          this.popup.openErrorModal(
+            err.error?.message || 'Failed to assign KRA/KPIs'
+          );
+          this.isSubmitting = false;
+          this.pendingAssignPayload = null;
+        },
+        complete: () => {
+          this.isSubmitting = false;
+        },
+      });
+  }
 }

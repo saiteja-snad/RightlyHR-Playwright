@@ -744,9 +744,32 @@ onFileChange(event: any) {
       lowerUrl.endsWith('.png') ||
       lowerUrl.endsWith('.pdf') ||
       lowerUrl.endsWith('.xls') ||
-      lowerUrl.endsWith('.xlsx')
+      lowerUrl.endsWith('.xlsx') ||
+      lowerUrl.endsWith('.doc') ||
+      lowerUrl.endsWith('.docx')
     );
   }
+
+  onAttachmentClick(url: string, event: Event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const lowerUrl = url.toLowerCase();
+
+  // Only preview images and PDFs
+  const isPreviewable =
+    lowerUrl.endsWith('.jpg') ||
+    lowerUrl.endsWith('.jpeg') ||
+    lowerUrl.endsWith('.png') ||
+    lowerUrl.endsWith('.pdf');
+
+  if (isPreviewable) {
+    this.onViewAttachement(url); // Existing preview logic
+  } else {
+    // Direct download for DOC, DOCX, XLS, XLSX
+    this.onSelectDownload(url);
+  }
+}
 
   onSelectDownload(url: string) {
     this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({

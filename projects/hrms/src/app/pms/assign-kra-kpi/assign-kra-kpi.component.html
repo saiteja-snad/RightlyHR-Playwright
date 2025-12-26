@@ -90,24 +90,24 @@
         <p-accordion-panel *ngFor="let emp of groupedKraList; let i = index" [value]="i">
           <!-- ACCORDION HEADER -->
           <p-accordion-header>
-            <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="employee-accordion-header-grid">
 
               <!-- LEFT: Checkbox + Employee Name -->
-              <div class="d-flex align-items-center gap-3 flex-shrink-0">
+              <div class="d-flex align-items-center gap-3">
                 <p-checkbox [(ngModel)]="emp.selected" [binary]="true"></p-checkbox>
-                <div class="text-truncate fw-semibold">
+                <div class="text-truncate fw-semibold employee-name">
                   {{ emp.fullName }} - ({{ emp.fusionId }})
                 </div>
               </div>
 
-              <!-- MIDDLE: Total KRA Weightage (centered) -->
-              <div class="text-center flex-shrink-0 px-4">
+              <!-- MIDDLE: Total KRA Weightage (perfectly aligned) -->
+              <div class="text-center">
                 <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
                 <strong>{{ emp.totalKraWeightage }}%</strong>
               </div>
 
-              <!-- RIGHT: Assigned Status (aligned to end) -->
-              <div class="text-end flex-shrink-0">
+              <!-- RIGHT: Assigned Status -->
+              <div class="text-end">
                 <small class="text-muted me-1" style="font-size: 13px;">Assigned Status:</small>
                 <strong class="me-2">
                   {{ getEmpAssignedStatus(emp) }}
@@ -146,7 +146,7 @@
                         {{ kra.kpisCount }}
                       </a>
                     </td>
-                    <td class="text-center">{{ kra.kra?.weightageValue || kra.weightageValue || '-' }}</td>
+                    <td class="text-center">{{ kra?.kpis?.[0]?.assignedKraWeightage || '-' }}</td>
                     <!-- <td class="text-center kpi-status" [ngClass]="getStatusClass(kra.kra?.status)">
                       {{ kra.kra?.status || kra.status || '-' }}
                     </td> -->
@@ -394,13 +394,36 @@
                 <td>
                   <input type="date" class="form-control custom-input" formControlName="targetDate"
                     onkeydown="return false">
+
                   <div class="error-msg small mt-1"
                     *ngIf="row.get('targetDate')?.touched && row.get('targetDate')?.invalid">
-                    <span *ngIf="row.get('targetDate')?.hasError('required')">Required</span>
-                    <span *ngIf="row.get('targetDate')?.hasError('pastDate')">Target Date cannot be past date</span>
-                    <span *ngIf="row.get('targetDate')?.hasError('kpiTargetExceedsKra')">
+
+                    <!-- Priority 1: Required -->
+                    <span *ngIf="row.get('targetDate')?.hasError('required')">
+                      Required
+                    </span>
+
+                    <!-- Priority 2: Past date (even if it's before effective) -->
+                    <span
+                      *ngIf="!row.get('targetDate')?.hasError('required') && row.get('targetDate')?.hasError('pastDate')">
+                      Target Date cannot be a past date
+                    </span>
+
+                    <!-- Priority 3: Before KRA Effective (only if not past & not required) -->
+                    <span *ngIf="!row.get('targetDate')?.hasError('required')
+                && !row.get('targetDate')?.hasError('pastDate')
+                && row.get('targetDate')?.hasError('kpiTargetBeforeKraEffective')">
+                      KPI Target Date cannot be before KRA Effective Date
+                    </span>
+
+                    <!-- Priority 4: Exceeds KRA Target -->
+                    <span *ngIf="!row.get('targetDate')?.hasError('required')
+                && !row.get('targetDate')?.hasError('pastDate')
+                && !row.get('targetDate')?.hasError('kpiTargetBeforeKraEffective')
+                && row.get('targetDate')?.hasError('kpiTargetExceedsKra')">
                       KPI Target Date cannot exceed KRA Target Date
                     </span>
+
                   </div>
                 </td>
                 <!-- Description -->
@@ -558,7 +581,7 @@
           <div class="d-flex justify-content-between gap-3 mb-3">
             <div class="text-center">
               <p class="project-role mb-1">Weightage</p>
-              <p class="project-dates m-0">{{ kpi.weightageValue }}%</p>
+              <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
             </div>
             <div class="text-center">
               <p class="project-role mb-1">Target Value</p>

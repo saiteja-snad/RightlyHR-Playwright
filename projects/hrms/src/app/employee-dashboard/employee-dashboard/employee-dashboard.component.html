@@ -2,28 +2,28 @@
     <div class="dashboard-left-content">
         <div class="welcome-text d-flex align-items-center gap-1">
             <div>{{ greetingMessage }},</div>
-            <div class="name">{{ this.employeedata.firstName }} {{ this.employeedata.middleName }} 
-            {{ this.employeedata.lastName }}!</div>
+            <div class="name">{{ this.employeedata.firstName }} {{ this.employeedata.middleName }}
+                {{ this.employeedata.lastName }}!</div>
         </div>
         <!--Time-->
         <!-- <div class="time text-nowrap mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div> -->
         <div class="current-date">{{ currentTime | date: 'MMMM d, y' }}</div>
 
         <div class="dashboard-grid my-3">
-            
+
             <!-- Team Availability -->
             <div class="content-card overflow-visible">
                 @if(!avaliabletlyloading){
                 <div class="flex-between-content mb-2">
                     <div class="section-title">My Team Availability</div>
-            
+
                     <div class="custom-date-range-picker">
-                        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" inputId="icondisplay"
-                            [readonlyInput]="true" (onSelect)="onDateChange($event)" />
+                        <p-datepicker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true"
+                            inputId="icondisplay" [readonlyInput]="true" (onSelect)="onDateChange($event)" />
                     </div>
                     <!-- <div class="date-label">{{ currentTime | date:'MMM d, yyyy' }}</div> -->
                 </div>
-            
+
                 <div class="total-leave-balance-graph-content flex-between-content gap-3">
                     <!-- Donut Chart -->
                     <div class="chart-content">
@@ -33,7 +33,7 @@
                             <p class="total-count-text text-center">Total</p>
                         </div>
                     </div>
-            
+
                     <!-- Right-side labels -->
                     <div class="employee-type-grid w-100">
                         <div class="legend-item" *ngFor="let item of legendList">
@@ -59,16 +59,17 @@
                 <div class="flex-between-content mb-3">
                     <div class="section-title">Today's Time Entry</div>
                 </div>
-            
+
                 <div class="circle-chart-container mb-3">
-                    <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions" styleClass="today-chart" />
+                    <p-chart type="doughnut" [data]="todayChartData" [options]="todayChartOptions"
+                        styleClass="today-chart" />
                     <!-- Center Text -->
                     <div class="chart-center-label">
                         <div class="time-value">{{ todayDurationLabel }}</div>
                         <div class="time-text">Work Time</div>
                     </div>
                 </div>
-            
+
                 <div class="flex-between-content justify-content-center">
                     <div class="previous-time-text">Previous Day Entry</div>
                     <div class="mx-1">:</div>
@@ -89,7 +90,7 @@
                         <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
                     </div>
                 </div>
-            
+
                 <div class="leave-list-content d-flex flex-wrap gap-2">
                     <div *ngFor="let leave of leavesList">
                         <div class="d-flex justify-content-between align-items-center leave-card gap-4">
@@ -156,7 +157,8 @@
                 <div class="total">Total: <span class="count">{{ genderTotal }}</span></div>
             </div>
             <div class="gender-graph">
-                <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions" [plugins]="[ChartDataLabels]" />
+                <p-chart type="bar" [data]="genderChartData" [options]="genderChartOptions"
+                    [plugins]="[ChartDataLabels]" />
             </div>
         </div>
         }
@@ -173,10 +175,11 @@
                 <div class="section-title">Weekly Work Logs</div>
                 <div class="d-flex align-items-center gap-2">
                     <div class="custom-date-range-picker">
-                        <p-calendar [(ngModel)]="selectedWeek" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-                            [disabledDates]="disabledDates" (onSelect)="onWeekSelect($event)" />
+                        <p-calendar [(ngModel)]="selectedWeek" selectionMode="range" [showIcon]="true"
+                            [readonlyInput]="true" [disabledDates]="disabledDates" (onSelect)="onWeekSelect($event)" />
                     </div>
-                    <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View Attendance</button>
+                    <button class="custom-btn btn-primary view-attendance-btn" (click)="myattendance()">View
+                        Attendance</button>
                 </div>
             </div>
             <div class="total-hrs">{{totalHours}} <sub class="suffix-text pb-3">Work done this week</sub></div>
@@ -231,10 +234,11 @@
                 <div *ngFor="let item of employeesBirthdays" class="mb-2">
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-birthday"></div>
-                        <div class="content-text content-name">{{ item.firstName }} {{item.middleName}} 
+                        <div class="content-text content-name">{{ item.firstName }} {{item.middleName}}
                             {{item.lastName}}'s Brithday</div>
                     </div>
-                    <div class="content-text content-date ms-3">{{ getDobWithCurrentYear(item.dob) | date:'MMM d, y' }}</div>
+                    <div class="content-text content-date ms-3">{{ getDobWithCurrentYear(item.dob) | date:'MMM d, y' }}
+                    </div>
                 </div>
 
                 <div class="no-events-content" *ngIf="employeesBirthdays.length === 0">
@@ -272,9 +276,11 @@
                                     </div>
                                     <div *ngSwitchCase="'Marriage Anniversary'">
                                         <p class="event-name mb-2">{{ item.name }}</p>
-                                        <p class="m-0">{{'Celebrating their Marriage Anniversary today...'| translate}}</p>
+                                        <p class="m-0">{{'Celebrating their Marriage Anniversary today...'| translate}}
+                                        </p>
                                     </div>
-                                    <div *ngSwitchDefault class="d-flex justify-content-center align-items-center event-name">
+                                    <div *ngSwitchDefault
+                                        class="d-flex justify-content-center align-items-center event-name">
                                         {{ item.quotationname }}</div>
                                 </ng-container>
                             </div>
@@ -309,19 +315,27 @@
         </div>
 
         <div class="custom-offcanvas-body p-3">
-            <div *ngFor="let emp of OffCanvasemployeeList[offCanvasData.key]" class="profile-content mb-2">
+               <!-- Search -->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search"
+                    [(ngModel)]="searchEmployeeText" />
+            </div>
+
+            <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
                 <div>
                     <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
                 </div>
-        
+
                 <div class="profile-info w-100">
                     <div class="name">{{ emp.employeeName }}</div>
                     <div class="designation">{{ emp.designation }}</div>
                 </div>
             </div>
-        
-            <div *ngIf="OffCanvasemployeeList[offCanvasData.key].length === 0"
-                class="text-center text-muted py-3">
+
+            <div *ngIf="getFilteredEmployees().length === 0" class="text-center text-muted py-3">
                 <app-no-data-found />
             </div>
         </div>

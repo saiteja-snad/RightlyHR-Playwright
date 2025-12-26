@@ -47,6 +47,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   currentMonth!: number;
   nextMonth!: number;
   currentYear!: number;
+  searchEmployeeText: string = '';
   leavesList: any[] = [];
   totalLeaves: any = {};
   eventsLoader = false;
@@ -757,9 +758,24 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   openOffcanvas(content: any, data: any) {
+      this.searchEmployeeText = '';
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
     this.offCanvasData = data;
   }
+getFilteredEmployees() {
+  const key = this.offCanvasData?.key;
+  const list = this.OffCanvasemployeeList?.[key] || [];
+
+  if (!this.searchEmployeeText) {
+    return list;
+  }
+
+  return list.filter((emp: any) =>
+    emp.employeeName
+      ?.toLowerCase()
+      .includes(this.searchEmployeeText.toLowerCase())
+  );
+}
 
   close(){
     this.offcanvasService.dismiss();

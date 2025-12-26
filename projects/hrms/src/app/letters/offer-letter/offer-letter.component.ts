@@ -1031,7 +1031,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       gradeId: data.gradeId,
       reportsTo: parseInt(data.reportsTo),
       shiftId: data.shiftId,
-      jobTypeId: null,
+      jobTypeId: data.jobTypeId,
     };
     
     // console.log(jobdata);

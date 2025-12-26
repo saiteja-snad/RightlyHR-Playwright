@@ -120,13 +120,15 @@
                     </div>
 
 
-                    <div class="d-flex align-items-center total">Leaves Consumed :
+                    <div class="d-flex align-items-center total">Leaves Consumed
+                        <span class="me-1">:</span>
                         <div class="count">{{ totalLeaves.used }}</div>
                         <div class="total-allowed">/{{ totalLeaves.allowed }}</div>
                     </div>
                 </div>
 
-                <div class="leave-list-content d-flex flex-wrap gap-2">
+                <div [ngClass]="{'graph-no-data-content': leavesList.length === 0}"
+                    class="leave-list-content d-flex flex-wrap gap-2">
                     <div *ngFor="let leave of leavesList">
                         <div class="d-flex justify-content-between align-items-center leave-card gap-4">
                             <div [style.color]="leave.color" class="leave-name">{{ leave.name }}</div>
@@ -137,11 +139,13 @@
                         </div>
                     </div>
                     <div *ngIf="leavesList.length === 0">
-                      <div class="graph-no-data-content">
-                          <app-no-data-found />
-                      </div>
+                        <app-no-data-found />
                     </div>
+
+
+
                 </div>
+
                 }@else{
                 <p-skeleton height="11.3rem" borderRadius="12px" />
                 }
@@ -270,6 +274,7 @@
     <div class="dashboard-right-content">
         <!-- Upcoming Work Anniversary's Panel -->
         <div class="content-card work-anniversary-content position-relative mb-3">
+            @if(!anniversariesloader){
             <div class="section-title mb-3">Upcoming Work Anniversaries</div>
             <div class="party-image-content" *ngIf="anniversaries.length !== 0">
                 <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
@@ -291,10 +296,17 @@
                     <div class="no-data-text">No Upcoming Work Anniversaries</div>
                 </div>
             </div>
+            }
+            @else {
+            <div>
+                <p-skeleton height="17rem" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <!-- Upcoming Birthday's Panel -->
         <div class="content-card birthday-content position-relative mb-3">
+            @if(!brithdayloader){
             <div class="section-title mb-3">Upcoming Birthdays</div>
             <div class="party-image-content" *ngIf="employeesBirthdays.length !== 0">
                 <img src="icons\brithday.png" alt="Brithday Icon" class="party-image">
@@ -315,6 +327,12 @@
                     <div class="no-data-text">No Upcoming Birthdays</div>
                 </div>
             </div>
+            }
+            @else {
+            <div>
+                <p-skeleton height="17rem" borderRadius="12px" />
+            </div>
+            }
         </div>
 
         <!-- Daily events Panel -->

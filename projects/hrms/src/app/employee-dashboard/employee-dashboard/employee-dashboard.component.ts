@@ -62,6 +62,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   startOfWeek: any;
   endOfWeek: any;
   totalHours: any
+  brithdayloader = false;
+  anniversariesloader = false;
   teamMembers: any[] = [];
   employeesBirthdays: any[] = [];
 
@@ -187,6 +189,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   getworkanniversary() {
+    this.anniversariesloader = true;
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = this.currentMonth; // 0-based
@@ -228,12 +231,17 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             this.getDobWithCurrentYear(b.dateOfJoining).getTime()
           );
         });
+        this.anniversariesloader = false;
       },
-      error: err => console.log(err),
+      error: err => {
+        console.log(err)
+        this.anniversariesloader = false;
+      },
     });
   }
 
   getbrithday() {
+    this.brithdayloader = true;
     this.http.getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth},${this.nextMonth}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         const today = new Date();
@@ -263,8 +271,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
           return this.getDobWithCurrentYear(a.dob).getTime() -
             this.getDobWithCurrentYear(b.dob).getTime();
         });
+        this.brithdayloader = false;
       },
-      error: (err: any) => console.log(err),
+      error: (err: any) => {
+        this.brithdayloader = false;
+        console.log(err);
+      },
     });
   }
 

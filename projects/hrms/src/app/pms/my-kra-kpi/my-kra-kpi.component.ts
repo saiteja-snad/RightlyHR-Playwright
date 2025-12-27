@@ -110,7 +110,7 @@ export class MyKraKpiComponent implements OnInit {
                   effectiveDate: k.kra.effectiveDate,
                   targetDate: k.kra.targetDate,
                   weightageValue: k.kra.weightageValue,
-                  overallStatus: k.kra.overallStatus,
+                  overallStatus: k.overallStatus,
                   status: k.kra.status,
                   kpisCount: k.kpisCount,
                   kpis: k.kpis || [],

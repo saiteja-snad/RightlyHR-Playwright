@@ -49,7 +49,8 @@
         <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
         <div class="custom-p-select-content">
           <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
-            placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true" />
+            placeholder="Select Review Cycle" class="form-select custom-select" (onChange)="onReviewCycleChange($event.value)"
+        (onClear)="onReviewCycleChange(null)" [filter]="true" />
         </div>
       </div>
     </div>
@@ -201,32 +202,22 @@
                 </thead>
                 <tbody>
                   @if (teamKpiData.length > 0) {
-                  @for (item of teamKpiData; track item.employeedata.employeeId) {
+                  @for (item of teamKpiData; track item.employeeId) {
                   <tr>
                     <td class="employee-bold">
-                      {{ item.employeedata.firstName }}
-                      {{ item.employeedata.middleName }}
-                      {{ item.employeedata.lastName }}
+                      {{ item.employeeName }}
                     </td>
                     <td class="text-center">
-                      {{ item.departmentName || 'N/A' }}
+                      {{ item.department || 'N/A' }}
                     </td>
                     <td class="text-center">
-                      @if (item.kras.length > 0 && item.kras[0].kpis.length > 0) {
-                      {{ item.kras[0].kpis[0].reviewCycleData?.reviewCycleName || 'N/A' }}
-                      } @else {
-                      N/A
-                      }
+                      {{ item.role || 'N/A' }}
                     </td>
                     <td class="text-center">
-                      {{item.krasCount || 0 }}
+                      {{ item.kraCount || 0 }}
                     </td>
                     <td class="text-center">
-                      @if (item.kras.length > 0) {
-                      {{ item.kras[0].kra.targetDate | date:'mediumDate' }}
-                      } @else {
-                      N/A
-                      }
+                      {{ item.overallScore || 0 }}
                     </td>
                   </tr>
                   }

@@ -108,7 +108,7 @@
                   <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
                   <strong>{{ emp.totalKraWeightage }}%</strong>
                 </div>
-                
+
                 <!-- Review Cycle -->
                 <div class="text-center" style="width: 300px;">
                   <small class="text-muted me-1" style="font-size: 13px;">Review Cycle:</small>
@@ -118,7 +118,7 @@
                 <!-- Assigned Rating -->
                 <div class="text-center" style="width: 300px;">
                   <small class="text-muted me-1" style="font-size: 13px;">Assigned Rating:</small>
-                  <strong>{{ emp.assignments?.[0]?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}</strong>
+                  <strong>{{ '-' }}</strong>
                 </div>
 
                 <!-- Assigned Status -->
@@ -166,7 +166,7 @@
                     <!-- <td class="text-center kpi-status" [ngClass]="getStatusClass(kra.kra?.status)">
                       {{ kra.kra?.status || kra.status || '-' }}
                     </td> -->
-                    <td class="text-center">{{ kra.kra?.effectiveDate | date:'mediumDate' }}</td>
+                    <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
                     <td class="text-center">{{ kra.kpis?.[0]?.kraTargetDate | date:'mediumDate' }}</td>
                     <td class="text-center">
                       <div class="progress" style="height: 8px;">

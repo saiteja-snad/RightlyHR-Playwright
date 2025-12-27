@@ -342,9 +342,9 @@ calculateKraProgress(kpis: any[]): number {
     switch (status) {
       case 'Inprogress':
         return 'status-waiting';
-      case 'Active':
+      case 'Completed':
         return 'status-active';
-      case 'On Hold':
+      case 'Overdue':
         return 'status-onhold';
       default:
         return '';

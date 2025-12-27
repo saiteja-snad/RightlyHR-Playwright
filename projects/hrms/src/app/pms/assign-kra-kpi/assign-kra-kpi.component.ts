@@ -532,50 +532,75 @@ export class AssignKraKpiComponent implements OnInit {
     this.http.getDataIncludeParams('Kpi/getAllAssignKpiKra', params).subscribe({
       next: (res: any) => {
         if (res.success && Array.isArray(res.data)) {
-          const processedData = res.data.map((x: any) => ({
-            ...x,
-            employeeId: x.employeedata.employeeId,
-            employeedata: {
-              ...x.employeedata,
-              fullName: [
-                x.employeedata.firstName,
-                x.employeedata.middleName,
-                x.employeedata.lastName,
-              ]
-                .filter(Boolean)
-                .join(' ')
-                .trim(),
-            },
-          }));
-          this.kraList = processedData;
+          const processedData: any[] = [];
           
-          // Create individual accordion items for each KRA assignment
-          this.groupedKraList = processedData.map((curr: any) => {
-            const assignedWeightageFromKpi =
-              curr.kpis && curr.kpis.length > 0
-                ? Number(curr.kpis[0].assignedKraWeightage || 0)
-                : 0;
+          res.data.forEach((item: any) => {
+            const employeeData = item.employeedata || {};
+            const reviewCycle = item.reviewCycle || null;
+            const kras = item.kras || [];
+            
+            // Create one entry per API record, grouping all KRAs together
+            const allKpisForThisRecord: any[] = [];
+            let totalKpisCount = 0;
+            let totalWeightage = 0;
+            
+            if (kras.length > 0) {
+              kras.forEach((kraItem: any) => {
+                const kpisData = kraItem.kpis || [];
+                allKpisForThisRecord.push(...kpisData);
+                totalKpisCount += kraItem.kpisCount || 0;
+                
+                // Calculate total weightage from first KPI of each KRA
+                if (kpisData.length > 0) {
+                  totalWeightage += Number(kpisData[0].assignedKraWeightage || 0);
+                }
+              });
+            }
+            
+            processedData.push({
+              employeeId: employeeData.employeeId,
+              employeedata: {
+                ...employeeData,
+                fullName: [
+                  employeeData.firstName,
+                  employeeData.middleName,
+                  employeeData.lastName,
+                ]
+                  .filter(Boolean)
+                  .join(' ')
+                  .trim(),
+              },
+              reviewCycle: reviewCycle,
+              kras: kras,
+              allKpis: allKpisForThisRecord,
+              totalKpisCount: totalKpisCount,
+              totalWeightage: totalWeightage
+            });
+          });
 
+          this.kraList = processedData;
+
+          // Create accordion items - one per API record
+          this.groupedKraList = processedData.map((curr: any) => {
             return {
               employeeId: curr.employeeId,
               fullName: curr.employeedata.fullName,
               fusionId: curr.employeedata.fusionEmpId,
-              kraId: curr.kra.kraId,
-              kraName: curr.kra.kraName,
+              reviewCycleName: curr.reviewCycle?.reviewCycleName || '-',
               selected: false,
-              totalKraWeightage: assignedWeightageFromKpi,
-              assignments: [{
-                ...curr.kra,
+              totalKraWeightage: curr.totalWeightage,
+              assignments: curr.kras.map((kraItem: any) => ({
+                ...kraItem.kra,
                 employeeId: curr.employeeId,
                 fullName: curr.employeedata.fullName,
-                kpis: curr.kpis || [],
-                kpisCount: curr.kpisCount || 0,
-                individualWeightage: assignedWeightageFromKpi,
-              }]
+                kpis: kraItem.kpis || [],
+                kpisCount: kraItem.kpisCount || 0,
+                individualWeightage: kraItem.kpis?.length > 0 ? Number(kraItem.kpis[0].assignedKraWeightage || 0) : 0,
+              }))
             };
           });
-          
-          this.collectionSize = res.pagination?.totalRecords || 0;
+
+          this.collectionSize = res.pagination?.totalRecords || res.data.length || 0;
         } else {
           this.kraList = [];
           this.groupedKraList = [];
@@ -1043,14 +1068,6 @@ export class AssignKraKpiComponent implements OnInit {
   }
 
   onUpdate(kraAssignment: any): void {
-    // const status = kraAssignment?.kra?.status || kraAssignment?.status;
-
-    // if (status === 'On Hold') {
-    //   this.popup.openErrorModal(
-    //     'KRA/KPI is kept on hold and cannot perform actions. Please reach out to HR.'
-    //   );
-    //   return;
-    // }
     this.isEditMode = true;
     this.assignForm.get('kraId')?.disable();
     this.assignForm.get('weightage')?.disable();
@@ -1059,50 +1076,45 @@ export class AssignKraKpiComponent implements OnInit {
     this.assignForm.get('reviewCycle')?.disable();
     this.assignForm.get('ratingScale')?.disable();
     this.selectedKraAssignment = kraAssignment;
-    this.voidKpis = []; // Reset deleted list
-    this.originalKpis = JSON.parse(JSON.stringify(kraAssignment.kpis || [])); // Backup
-    const firstKpi = kraAssignment.kpis?.[0];
-    if (!firstKpi || !kraAssignment.kra) {
+    this.voidKpis = [];
+    this.originalKpis = JSON.parse(JSON.stringify(kraAssignment.kpis || []));
+    
+    // Check if we have KPIs to work with
+    if (!kraAssignment.kpis || kraAssignment.kpis.length === 0) {
       this.popup.openErrorModal('No KRA/KPI data found for update');
       return;
     }
+    
+    const firstKpi = kraAssignment.kpis[0];
+    
     // Patch form with existing KRA data
     this.assignForm.patchValue({
-      kraId: kraAssignment.kra.kraId,
-      weightage:
-        kraAssignment.kpis && kraAssignment.kpis.length > 0
-          ? kraAssignment.kpis[0].assignedKraWeightage || 0
-          : kraAssignment.kra?.weightageValue || 0,
-      effectiveDate: kraAssignment.kra.effectiveDate?.split('T')[0] || '',
-      targetDate: firstKpi.kraTargetDate?.split('T')[0] || '',
+      kraId: kraAssignment.kraId,
+      weightage: kraAssignment.individualWeightage || kraAssignment.weightageValue || 0,
+      effectiveDate: kraAssignment.effectiveDate?.split('T')[0] || '',
+      targetDate: firstKpi.kraTargetDate?.split('T')[0] || kraAssignment.targetDate?.split('T')[0] || '',
       reviewCycle: firstKpi.reviewCycleData?.id,
       ratingScale: firstKpi.optionsRating?.id,
     });
+    
     this.kpiRows.clear();
-    kraAssignment.kpis?.forEach((kpi: any) => {
-      const targetDateValue = kpi.targetDate
-        ? kpi.targetDate.split('T')[0]
-        : '';
+    kraAssignment.kpis.forEach((kpi: any) => {
+      const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
       const rowGroup = this.fb.group({
         assigneeId: [kpi.assigneeId || null],
         kpiId: [{ value: kpi.kpiId || null, disabled: true }],
         uom: [{ value: kpi.targetType || '', disabled: true }],
-        weightage: [Number(kpi.weightageValue) || 0],
+        weightage: [Number(kpi.assignedKpiWeightage || kpi.weightageValue) || 0],
         targetValue: [kpi.targetValue || ''],
-        targetDate: [
-          targetDateValue,
-          [Validators.required, this.noPastDateValidator],
-        ],
+        targetDate: [targetDateValue, [Validators.required, this.noPastDateValidator]],
         description: [kpi.description || ''],
         status: [kpi.status || 'Created'],
       });
-      // APPLY RANGE VALIDATION BASED ON UOM
-      this.applyTargetValueValidation(
-        rowGroup.get('targetValue'),
-        kpi.targetType
-      );
+      
+      this.applyTargetValueValidation(rowGroup.get('targetValue'), kpi.targetType);
       this.kpiRows.push(rowGroup);
     });
+    
     this.modalService.open(this.assignKraKpiModal, {
       backdrop: 'static',
       size: 'xl',
@@ -1285,9 +1297,12 @@ export class AssignKraKpiComponent implements OnInit {
       this.filterForm.patchValue({ subLocation: updated });
       this.onSubLocationChange(updated);
     } else if (filter.type === 'reviewCycle') {
-      const updated = (current.reviewCycle ?? []).filter(
-        (c: any) => c.value !== filter.value.value // value is the ID
-      );
+      const updated = (current.reviewCycle ?? []).filter((c: any) => {
+        // Handle different possible structures
+        const currentValue = typeof c === 'object' ? c.value || c.id : c;
+        const filterValue = typeof filter.value === 'object' ? filter.value.value || filter.value.id : filter.value;
+        return currentValue !== filterValue;
+      });
       this.filterForm.patchValue({ reviewCycle: updated });
       this.applyFilters();
     }

@@ -92,7 +92,7 @@
       <div class="row">
         <!-- Performance Distribution Chart -->
         <div class="col-xl-7 col-lg-6 mb-3">
-          <div class="graph-card" style="height: 300px; display: flex; flex-direction: column;">
+          <div class="graph-card" style="height: 250px; display: flex; flex-direction: column;">
             <div class="d-flex align-items-center gap-2 mb-3">
               <div class="graph-header">Performance Distribution</div>
               <div class="module-info-content">
@@ -118,7 +118,7 @@
             </div>
             }
             <ng-template #noData>
-              <div class="graph-no-data-content"><app-no-data-found /></div>
+              <div class="graph-no-data-content" style="flex: 1; display: flex; align-items: center; justify-content: center;"><app-no-data-found /></div>
             </ng-template>
           </div>
         </div>
@@ -126,7 +126,7 @@
         <!-- Completion Status chart -->
         <!-- Completion Status chart -->
         <div class="col-xl-5 col-lg-6 mb-3">
-          <div class="graph-card h-100 d-flex flex-column" style="height: 300px;">
+          <div class="graph-card h-100 d-flex flex-column" style="height: 250px;">
             <div class="d-flex align-items-center gap-2 mb-3">
               <div class="graph-header">Completion Status</div>
               <div class="module-info-content">
@@ -204,7 +204,7 @@
                   @if (teamKpiData.length > 0) {
                   @for (item of teamKpiData; track item.employeeId) {
                   <tr>
-                    <td class="employee-bold">
+                    <td>
                       {{ item.employeeName }}
                     </td>
                     <td class="text-center">
@@ -213,7 +213,7 @@
                     <td class="text-center">
                       {{ item.role || 'N/A' }}
                     </td>
-                    <td class="text-center">
+                    <td class="text-center employee-bold">
                       {{ item.kraCount || 0 }}
                     </td>
                     <td class="text-center">
@@ -223,7 +223,7 @@
                   }
                   } @else {
                   <tr>
-                    <td colspan="5" class="text-center py-4">
+                    <td colspan="5" class="text-center py-4" style="height: 200px; vertical-align: middle;">
                       <app-no-data-found />
                     </td>
                   </tr>

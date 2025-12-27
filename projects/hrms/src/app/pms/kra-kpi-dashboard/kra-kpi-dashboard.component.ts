@@ -224,7 +224,8 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
                 label: 'Average Score',
                 backgroundColor: '#0F358A',
                 data: scores,
-                borderRadius: 4, // Optional: nicer look
+                borderRadius: 4,
+                barThickness: 15,
               },
             ],
           };

@@ -90,28 +90,44 @@
         <p-accordion-panel *ngFor="let emp of groupedKraList; let i = index" [value]="i">
           <!-- ACCORDION HEADER -->
           <p-accordion-header>
-            <div class="employee-accordion-header-grid">
+            <div class="d-flex justify-content-between align-items-center w-100">
 
               <!-- LEFT: Checkbox + Employee Name -->
               <div class="d-flex align-items-center gap-3">
                 <p-checkbox [(ngModel)]="emp.selected" [binary]="true"></p-checkbox>
                 <div class="text-truncate fw-semibold employee-name">
-                  {{ emp.fullName }} - ({{ emp.fusionId }})
+                  {{ emp.fullName }} ({{ emp.fusionId }})
                 </div>
               </div>
 
-              <!-- MIDDLE: Total KRA Weightage (perfectly aligned) -->
-              <div class="text-center">
-                <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
-                <strong>{{ emp.totalKraWeightage }}%</strong>
-              </div>
+              <!-- RIGHT: Review Cycle, Total KRA Weightage, Assigned Status -->
+              <div class="d-flex align-items-center">
 
-              <!-- RIGHT: Assigned Status -->
-              <div class="text-end">
-                <small class="text-muted me-1" style="font-size: 13px;">Assigned Status:</small>
-                <strong class="me-2">
-                  {{ getEmpAssignedStatus(emp) }}
-                </strong>
+                                <!-- Total KRA Weightage -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
+                  <strong>{{ emp.totalKraWeightage }}%</strong>
+                </div>
+                
+                <!-- Review Cycle -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Review Cycle:</small>
+                  <strong>{{ emp.assignments?.[0]?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}</strong>
+                </div>
+
+                <!-- Assigned Rating -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Assigned Rating:</small>
+                  <strong>{{ emp.assignments?.[0]?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}</strong>
+                </div>
+
+                <!-- Assigned Status -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Assigned Status:</small>
+                  <strong>
+                    {{ getEmpAssignedStatus(emp) }}
+                  </strong>
+                </div>
               </div>
 
             </div>

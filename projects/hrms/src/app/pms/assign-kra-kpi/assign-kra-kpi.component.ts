@@ -546,50 +546,35 @@ export class AssignKraKpiComponent implements OnInit {
                 .join(' ')
                 .trim(),
             },
-            // NEW: Transform kras array to assignments format
-            assignments: x.kras || [], // Each KRA becomes one row
           }));
           this.kraList = processedData;
-          const groupedMap = processedData.reduce(
-            (acc: Map<number, any>, curr: any) => {
-              if (!acc.has(curr.employeeId)) {
-                acc.set(curr.employeeId, {
-                  employeeId: curr.employeeId,
-                  fullName: curr.employeedata.fullName,
-                  fusionId: curr.employeedata.fusionEmpId,
-                  assignments: [],
-                  selected: false, // Add selected property
-                  totalKraWeightage: 0,
-                });
-              }
-              let employeeTotal = 0;
-              // Add each KRA as an assignment row
-              curr.kras.forEach((kraItem: any) => {
-                const assignedWeightageFromKpi =
-                  kraItem.kpis && kraItem.kpis.length > 0
-                    ? Number(kraItem.kpis[0].assignedKraWeightage || 0)
-                    : 0;
+          
+          // Create individual accordion items for each KRA assignment
+          this.groupedKraList = processedData.map((curr: any) => {
+            const assignedWeightageFromKpi =
+              curr.kpis && curr.kpis.length > 0
+                ? Number(curr.kpis[0].assignedKraWeightage || 0)
+                : 0;
 
-                const weightage = assignedWeightageFromKpi;
-
-                employeeTotal += weightage;
-
-                acc.get(curr.employeeId)!.assignments.push({
-                  ...kraItem,
-                  employeeId: curr.employeeId,
-                  fullName: curr.employeedata.fullName,
-                  kpisCount: kraItem.kpisCount || 0,
-                  individualWeightage: weightage,
-                });
-              });
-
-              // Set the total for this employee
-              acc.get(curr.employeeId)!.totalKraWeightage = employeeTotal;
-              return acc;
-            },
-            new Map<number, any>()
-          );
-          this.groupedKraList = Array.from(groupedMap.values());
+            return {
+              employeeId: curr.employeeId,
+              fullName: curr.employeedata.fullName,
+              fusionId: curr.employeedata.fusionEmpId,
+              kraId: curr.kra.kraId,
+              kraName: curr.kra.kraName,
+              selected: false,
+              totalKraWeightage: assignedWeightageFromKpi,
+              assignments: [{
+                ...curr.kra,
+                employeeId: curr.employeeId,
+                fullName: curr.employeedata.fullName,
+                kpis: curr.kpis || [],
+                kpisCount: curr.kpisCount || 0,
+                individualWeightage: assignedWeightageFromKpi,
+              }]
+            };
+          });
+          
           this.collectionSize = res.pagination?.totalRecords || 0;
         } else {
           this.kraList = [];

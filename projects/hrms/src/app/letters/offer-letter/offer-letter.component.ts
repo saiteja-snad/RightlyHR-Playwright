@@ -856,6 +856,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
       this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
       this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+      this.prospectiveEmpData.workEmail=this.prospectiveEmpData.workEmail;
+      this.prospectiveEmpData.maritalStatus=this.prospectiveEmpData.maritalStatus
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -970,9 +972,52 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   }
 
   //function to updated details to respective tables
-  jobdetailsupdate!: any;
+  jobdetailsupdate!:any;
   UpdateFieldsToRespectiveTables() {
+    if(this.employeeaddress.empstatus != 'Prospective' && this.buttonValue!='Regenerate Offer Letter'){
+    this.postjobdetails(this.currentDate);
+    }
+    else{
+    this.updatejobdetails();
+    }
+  }
+    //funtion to post the jobdetails
+  postjobdetails(currentDate:any){
     let data = this.prospectiveEmpData;
+    const jobdata = {
+      employeeId: data.empId,
+      effectiveDate: currentDate,
+      locationId: data.locationId,
+      sublocationId: data.sublocationId,
+      jobRole: data.jobRole,
+      status: 'Active',
+      subdeptId: data.subdepartmentId,
+      createddate: data.jobCreatedate,
+      gradeId: data.gradeId,
+      reportsTo: parseInt(data.reportsTo),
+      shiftId: data.shiftId,
+      jobTypeId: null,
+    };
+    // console.log(jobdata);
+    this.subscription = this.http
+      .postdata('JobDetails', jobdata)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          // alert("JobDetails data successfully added")
+        },
+        error: (Reason) => console.log(Reason),
+      });
+      if(this.buttonValue=='Regenerate Offer Letter'){
+        this.regenerateUpdate();
+      }
+      else{
+        this.generatepostingtorepectivefields(this.currentDate)
+      }
+    }
+  updatejobdetails() {
+  let data = this.prospectiveEmpData;
+    console.log(this.result);
     const jobdata = {
       id: data.jobId,
       employeeId: data.empId,
@@ -986,28 +1031,35 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       gradeId: data.gradeId,
       reportsTo: parseInt(data.reportsTo),
       shiftId: data.shiftId,
-      jobTypeId: this.jobtypeId,
+      jobTypeId: data.jobTypeId,
     };
-    this.subscription = this.http.postdata('JobDetails/UPDATER', jobdata).subscribe({
-      next: (data: any) => {
-      },
-      error: (Reason) => console.log(Reason),
-      complete: () => {
-        if (this.buttonValue == 'Regenerate Offer Letter') {
-          this.regenerateUpdate();
-        } else {
-          this.generatepostingtorepectivefields();
-        }
-      },
-    });
+    
+    // console.log(jobdata);
+    this.subscription = this.http
+      .postdata('JobDetails/UPDATER', jobdata)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          // alert("JobDetails data successfully added")
+        },
+        error: (Reason) => console.log(Reason),
+      });
+
+ 
+      if(this.buttonValue=='Regenerate Offer Letter'){
+        this.regenerateUpdate();
+      }
+      else{
+        this.generatepostingtorepectivefields(data.dateOfJoining)
+      }
   }
 
   //function to posting to respective fields data of job,compensation,employment
-  generatepostingtorepectivefields() {
+  generatepostingtorepectivefields(currentDate:any) {
     let data = this.prospectiveEmpData;
     const Compensationdata = {
       employeeId: data.empId,
-      compeffectivedate: data.dateOfJoining,
+      compeffectivedate: currentDate,
       overtimeeligibility: null,
       reason: null,
       comments: null,
@@ -1021,8 +1073,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     };
     const employmentdata = {
       empid: data.empId,
-      jobType: 'Contract',
-      empEffectiveDate: data.dateOfJoining,
+      jobType: null,
+      empEffectiveDate: currentDate,
       empComments: null,
       gradeId: null,
       isdeleted: 'Active',
@@ -1058,7 +1110,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     const employmentdataupdate = {
       id: data.employemnttypeId,
       empid: data.empId,
-      jobType: 'Contract',
+      jobType: null,
       empEffectiveDate: data.dateOfJoining,
       empComments: null,
       gradeId: null,

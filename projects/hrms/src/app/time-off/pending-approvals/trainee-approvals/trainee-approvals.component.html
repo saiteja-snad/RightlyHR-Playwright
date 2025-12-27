@@ -28,7 +28,7 @@
                 @if(((Trainees | async) ?? []).length > 0) {
                 <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
                     <td>
-                        <span *ngIf="trn.entity?.fusionEmpId;else employeeid">{{trn.entity?.fusionEmpId}}</span>
+                        <span *ngIf="trn.entity?.employeeId;else employeeid">{{trn.entity?.employeeId}}</span>
                         <ng-template #employeeid>-</ng-template>
                     </td>
                     <td>
@@ -87,14 +87,14 @@
                                 @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
                                 <li>
                                     <a class="dropdown-item" (click)="handleProcess(trn)">
-                                        Process</a>
+                                        <i class="bi bi-check-circle me-2"></i> Process</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Trainee Details.delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
                                 <li>
-                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)">Reject</a>
+                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"><i class="bi bi-x-circle me-2"></i> Reject</a>
                                 </li>
                                 }
                                 }
@@ -272,9 +272,9 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of comments">
             <div class="card p-3">
-                <div *ngFor="let comment of comments">
+                <div >
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }}</p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>

@@ -676,6 +676,8 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       pf: this.onboardingForm.get('pf')?.value?.value ?? this.empdata.pf,
       esic: this.onboardingForm.get('esic')?.value?.value ?? this.empdata.esic,
       pt: this.onboardingForm.get('pt')?.value?.value ?? this.empdata.pt,
+      workEmail:this.empdata.workEmail,
+      maritalStatus:this.empdata.maritalStatus,
      totalYearsOfExperience:
         parseInt(this.onboardingForm.get('totalExperience')?.value) ??
         parseInt(this.empdata.totalYearsOfExperience),

@@ -533,30 +533,30 @@ export class AssignKraKpiComponent implements OnInit {
       next: (res: any) => {
         if (res.success && Array.isArray(res.data)) {
           const processedData: any[] = [];
-          
+
           res.data.forEach((item: any) => {
             const employeeData = item.employeedata || {};
             const reviewCycle = item.reviewCycle || null;
             const kras = item.kras || [];
-            
+
             // Create one entry per API record, grouping all KRAs together
             const allKpisForThisRecord: any[] = [];
             let totalKpisCount = 0;
             let totalWeightage = 0;
-            
+
             if (kras.length > 0) {
               kras.forEach((kraItem: any) => {
                 const kpisData = kraItem.kpis || [];
                 allKpisForThisRecord.push(...kpisData);
                 totalKpisCount += kraItem.kpisCount || 0;
-                
+
                 // Calculate total weightage from first KPI of each KRA
                 if (kpisData.length > 0) {
                   totalWeightage += Number(kpisData[0].assignedKraWeightage || 0);
                 }
               });
             }
-            
+
             processedData.push({
               employeeId: employeeData.employeeId,
               employeedata: {
@@ -626,6 +626,35 @@ export class AssignKraKpiComponent implements OnInit {
       }
     }
     return '-'; // fallback if no data
+  }
+
+  // Get average assigned approver rating across all KRAs for an employee
+  getAverageAssignedRating(emp: any): string {
+    if (!emp.assignments || emp.assignments.length === 0) {
+      return '-';
+    }
+
+    let totalRating = 0;
+    let ratingCount = 0;
+
+    emp.assignments.forEach((assignment: any) => {
+      if (assignment.kpis && assignment.kpis.length > 0) {
+        assignment.kpis.forEach((kpi: any) => {
+          const rating = Number(kpi.assignedApproverRating);
+          if (!isNaN(rating) && rating > 0) {
+            totalRating += rating;
+            ratingCount++;
+          }
+        });
+      }
+    });
+
+    if (ratingCount === 0) {
+      return '-';
+    }
+
+    const average = totalRating / ratingCount;
+    return average.toFixed(1);
   }
 
   // Optional: Add color coding for status (like your existing getStatusClass)
@@ -868,7 +897,7 @@ export class AssignKraKpiComponent implements OnInit {
       this.voidKpis.push({
         assigneeId: rowValue.assigneeId,
         kpiId: rowValue.kpiId,
-        kraId: this.assignForm.get('kraId')?.value,
+        kraId: Number(this.assignForm.get('kraId')?.value) || 0,
         kpiName: kpiName,
         weightageValue: String(rowValue.weightage || 0),
         targetValue: String(rowValue.targetValue || ''),
@@ -877,8 +906,8 @@ export class AssignKraKpiComponent implements OnInit {
         description: rowValue.description?.trim() || '',
         status: 'void',
         // Optional: include these if backend needs them
-        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
-        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
+        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value) || 0,
+        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value) || 0,
       });
       this.popup.openSuccessModal('KPI removed successfully');
     }
@@ -954,7 +983,7 @@ export class AssignKraKpiComponent implements OnInit {
     const kpis = this.kpiRows.getRawValue().map((row: any) => {
       const kpiPayload: any = {
         kpiId: row.kpiId || 0,
-        kraId: formValue.kraId,
+        kraId: formValue.kraId || 0,
         kpiName: this.getKpiNameById(row.kpiId),
         weightageValue: String(row.weightage || 0),
         targetValue: String(row.targetValue || ''),
@@ -964,6 +993,7 @@ export class AssignKraKpiComponent implements OnInit {
         reviewCycleId: Number(formValue.reviewCycle),
         ratingScaleId: Number(formValue.ratingScale),
         status: row.status || 'Active',
+        empAssignedStatus: 'Assigned',
         createdBy: loggedInEmployeeId,
         updatedBy: loggedInEmployeeId,
         employeeIds: selectedEmployeeIds,
@@ -981,16 +1011,17 @@ export class AssignKraKpiComponent implements OnInit {
       const voidPayload = this.voidKpis.map((voidKpi: any) => ({
         assigneeId: voidKpi.assigneeId,
         kpiId: voidKpi.kpiId,
-        kraId: voidKpi.kraId,
+        kraId: Number(formValue.kraId) || 0,
         kpiName: voidKpi.kpiName,
         weightageValue: voidKpi.weightageValue,
         targetValue: voidKpi.targetValue,
         targetDate: voidKpi.targetDate,
         targetType: voidKpi.targetType,
         description: voidKpi.description,
-        reviewCycleId: Number(formValue.reviewCycle),
-        ratingScaleId: Number(formValue.ratingScale),
+        reviewCycleId: Number(formValue.reviewCycle) || 0,
+        ratingScaleId: Number(formValue.ratingScale) || 0,
         status: 'void',
+        empAssignedStatus: 'Assigned',
         createdBy: loggedInEmployeeId,
         updatedBy: loggedInEmployeeId,
         employeeIds: selectedEmployeeIds,
@@ -999,18 +1030,19 @@ export class AssignKraKpiComponent implements OnInit {
     }
     // 5. Final payload
     const payload = {
-      kraId: formValue.kraId,
-      kraName: selectedKra.kraName,
-      kraCategoryId: selectedKra.kraCategoryId || selectedKra.categoryId || 0,
-      kraCategoryName: selectedKra.kraCategoryName || '',
       employeeIds: selectedEmployeeIds,
-      effectiveDate: formValue.effectiveDate,
-      targetDate: formValue.targetDate,
+      employeeName: this.isEditMode ? this.selectedKraAssignment?.fullName || '' : '',
+      kraId: Number(formValue.kraId) || 0,
+      kraName: selectedKra?.kraName || '',
+      kraCategoryId: Number(selectedKra?.kraCategoryId || selectedKra?.categoryId) || 0,
+      kraCategoryName: selectedKra?.kraCategoryName || '',
+      effectiveDate: formValue.effectiveDate || '',
+      targetDate: formValue.targetDate || '',
       weightageValue: String(formValue.weightage || 0),
-      reviewCycleId: Number(formValue.reviewCycle),
-      ratingScaleId: Number(formValue.ratingScale),
-      status: 'Created',
-      EmpAssignedStatus: 'Created',
+      reviewCycleId: Number(formValue.reviewCycle) || 0,
+      ratingScaleId: Number(formValue.ratingScale) || 0,
+      status: 'Active',
+      empAssignedStatus: 'Assigned',
       createdBy: loggedInEmployeeId,
       updatedBy: loggedInEmployeeId,
       kpis: kpis,
@@ -1078,15 +1110,15 @@ export class AssignKraKpiComponent implements OnInit {
     this.selectedKraAssignment = kraAssignment;
     this.voidKpis = [];
     this.originalKpis = JSON.parse(JSON.stringify(kraAssignment.kpis || []));
-    
+
     // Check if we have KPIs to work with
     if (!kraAssignment.kpis || kraAssignment.kpis.length === 0) {
       this.popup.openErrorModal('No KRA/KPI data found for update');
       return;
     }
-    
+
     const firstKpi = kraAssignment.kpis[0];
-    
+
     // Patch form with existing KRA data
     this.assignForm.patchValue({
       kraId: kraAssignment.kraId,
@@ -1096,7 +1128,7 @@ export class AssignKraKpiComponent implements OnInit {
       reviewCycle: firstKpi.reviewCycleData?.id,
       ratingScale: firstKpi.optionsRating?.id,
     });
-    
+
     this.kpiRows.clear();
     kraAssignment.kpis.forEach((kpi: any) => {
       const targetDateValue = kpi.targetDate ? kpi.targetDate.split('T')[0] : '';
@@ -1110,11 +1142,11 @@ export class AssignKraKpiComponent implements OnInit {
         description: [kpi.description || ''],
         status: [kpi.status || 'Created'],
       });
-      
+
       this.applyTargetValueValidation(rowGroup.get('targetValue'), kpi.targetType);
       this.kpiRows.push(rowGroup);
     });
-    
+
     this.modalService.open(this.assignKraKpiModal, {
       backdrop: 'static',
       size: 'xl',
@@ -1582,8 +1614,8 @@ export class AssignKraKpiComponent implements OnInit {
         targetType: uomValue,
         description: rowValue.description?.trim() || '',
         status: 'void',
-        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value),
-        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value),
+        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value) || 0,
+        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value) || 0,
       });
 
       this.popup.openSuccessModal('KPI removed successfully');
@@ -1612,158 +1644,116 @@ export class AssignKraKpiComponent implements OnInit {
 
   // Updated: Single API call with array of employee assignments
 
-  assignExistingToSelectedEmployees(): void {
-    const selectedEmployees = this.groupedKraList.filter((emp) => emp.selected);
+assignExistingToSelectedEmployees(): void {
+  const selectedEmployees = this.groupedKraList.filter((emp) => emp.selected);
 
-    if (selectedEmployees.length === 0) {
-      this.popup.openErrorModal(
-        'Please select at least one employee to assign the KRA/KPIs.'
-      );
+  if (selectedEmployees.length === 0) {
+    this.popup.openErrorModal('Please select at least one employee to assign the KRA/KPIs.');
+    return;
+  }
+
+  // Validate weightage = 100%
+  const invalidWeightageEmployees = selectedEmployees.filter(
+    (emp) => emp.totalKraWeightage !== 100
+  );
+
+  if (invalidWeightageEmployees.length > 0) {
+    this.popup.openErrorModal('Total KRA weightage must be exactly 100% for all selected employees.');
+    return;
+  }
+
+  // Collect unique source assignments (to copy from)
+  const sourceAssignments = new Map<number, any>(); // key: kraId → assignment object
+
+  let sampleKraNames: string[] = [];
+  let totalKpiCount = 0;
+
+  selectedEmployees.forEach((emp) => {
+    if (emp.assignments.length === 0) {
+      this.popup.openErrorModal(`Employee ${emp.fullName} has no KRA assigned.`);
       return;
     }
 
-    // === Validate totalKraWeightage === 100 for all selected employees ===
-    const invalidWeightageEmployees = selectedEmployees.filter(
-      (emp) => emp.totalKraWeightage !== 100
-    );
+    emp.assignments.forEach((assignment: any) => {
+      const kraObj = assignment.kra || assignment; // fallback
+      const kraId = Number(kraObj.kraId || kraObj.id || 0);
 
-    if (invalidWeightageEmployees.length > 0) {
-      this.popup.openErrorModal(
-        'Total KRA weightage must be exactly 100% for all selected employees.'
-      );
-      return;
-    }
+      if (kraId === 0) return;
 
-    // === Collect ALL unique KRA assignments across selected employees ===
-    const kraAssignmentMap = new Map<number, any>(); // kraId → assignment template
-
-    let totalKpiCount = 0;
-    let sampleKraNames: string[] = [];
-
-    for (const emp of selectedEmployees) {
-      if (emp.assignments.length === 0) {
-        this.popup.openErrorModal(
-          `Employee ${emp.fullName} has no KRA assigned yet.`
-        );
-        return;
+      if (!sourceAssignments.has(kraId)) {
+        sourceAssignments.set(kraId, assignment);
+        sampleKraNames.push(kraObj.kraName || 'Unknown KRA');
       }
 
-      emp.assignments.forEach((assignment: any) => {
-        const kraId = assignment.kra?.kraId || assignment.kraId;
-        if (!kraId) return;
-
-        if (!kraAssignmentMap.has(kraId)) {
-          kraAssignmentMap.set(kraId, assignment);
-          sampleKraNames.push(assignment.kra?.kraName || 'Unknown KRA');
-        }
-        totalKpiCount += assignment.kpis?.length || 0;
-      });
-    }
-
-    if (kraAssignmentMap.size === 0) {
-      this.popup.openErrorModal('No valid KRA found to assign.');
-      return;
-    }
-
-    // Optional: Warn if different KRAs are mixed (usually not allowed in bulk assign)
-    // You can remove this if you want to allow assigning multiple different KRAs
-    // if (kraAssignmentMap.size > 1) {
-    //   this.popup.openErrorModal('Selected employees have different sets of KRAs. Please select employees with identical KRA assignments.');
-    //   return;
-    // }
-
-    // Set confirmation text
-    this.confirmAssignKraName = sampleKraNames.join(', ');
-    this.confirmAssignEmployeeCount = selectedEmployees.length;
-
-    const loggedInEmployeeId =
-      JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId ||
-      0;
-
-    // Build payload: one object per target employee, containing ALL KRAs
-    const payloadArray: any[] = [];
-
-    selectedEmployees.forEach((targetEmp) => {
-      const kpisForThisEmployee: any[] = [];
-
-      // For this target employee, include ALL KRAs from the template map
-      kraAssignmentMap.forEach((templateAssignment) => {
-        const templateKra = templateAssignment.kra;
-        const templateKpis = templateAssignment.kpis || [];
-
-        templateKpis.forEach((kpi: any) => {
-          kpisForThisEmployee.push({
-            assigneeId: kpi.assigneeId || null,
-            kpiId: Number(kpi.kpiId || 0),
-            kpiName: kpi.kpiName,
-            weightageValue: String(
-              kpi.assignedKpiWeightage || kpi.weightageValue || 0
-            ),
-            targetValue: String(kpi.targetValue || ''),
-            targetDate: kpi.targetDate ? kpi.targetDate.split('T')[0] : null,
-            targetType: kpi.targetType || '',
-            description: kpi.description?.trim() || '',
-            reviewCycleId: Number(kpi.reviewCycleData?.id || 0),
-            ratingScaleId: Number(kpi.optionsRating?.id || 0),
-            status: 'Active',
-            empAssignedStatus: 'Assigned',
-            createdBy: loggedInEmployeeId,
-            updatedBy: loggedInEmployeeId,
-            employeeIds: String(targetEmp.employeeId),
-          });
-        });
-
-        // Push one entry per KRA (even if no KPIs — optional)
-        payloadArray.push({
-          employeeIds: String(targetEmp.employeeId),
-          employeeName: targetEmp.fullName,
-          kraId: Number(templateKra?.kraId || 0),
-          kraName: templateKra?.kraName || '',
-          kraCategoryId: Number(templateKra?.kraCategoryId || 0),
-          kraCategoryName: templateKra?.kraCategoryName || '',
-          effectiveDate: templateKra?.effectiveDate?.split('T')[0] || '',
-          targetDate:
-            templateKpis[0]?.kraTargetDate?.split('T')[0] ||
-            templateKra?.targetDate?.split('T')[0] ||
-            '',
-          weightageValue: String(templateAssignment.individualWeightage || 0),
-          reviewCycleId: Number(templateKpis[0]?.reviewCycleData?.id || 0),
-          ratingScaleId: Number(templateKpis[0]?.optionsRating?.id || 0),
-          status: 'Active',
-          empAssignedStatus: 'Assigned',
-          createdBy: loggedInEmployeeId,
-          updatedBy: loggedInEmployeeId,
-          kpis: templateKpis.map((kpi: any) => ({
-            assigneeId: kpi.assigneeId || null,
-            kpiId: Number(kpi.kpiId || 0),
-            kpiName: kpi.kpiName,
-            weightageValue: String(
-              kpi.assignedKpiWeightage || kpi.weightageValue || 0
-            ),
-            targetValue: String(kpi.targetValue || ''),
-            targetDate: kpi.targetDate ? kpi.targetDate.split('T')[0] : null,
-            targetType: kpi.targetType || '',
-            description: kpi.description?.trim() || '',
-            reviewCycleId: Number(kpi.reviewCycleData?.id || 0),
-            ratingScaleId: Number(kpi.optionsRating?.id || 0),
-            status: 'Active',
-            empAssignedStatus: 'Assigned',
-            createdBy: loggedInEmployeeId,
-            updatedBy: loggedInEmployeeId,
-            employeeIds: String(targetEmp.employeeId),
-          })),
-        });
-      });
+      totalKpiCount += assignment.kpis?.length || 0;
     });
+  });
 
-    this.pendingAssignPayload = payloadArray;
-
-    // Open confirmation modal
-    this.modalService.open(this.assignToEmployeeConfirmation, {
-      centered: true,
-      backdrop: 'static',
-    });
+  if (sourceAssignments.size === 0) {
+    this.popup.openErrorModal('No valid KRA found to assign.');
+    return;
   }
+
+  const loggedInEmployeeId = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')?.employeeId || 0;
+
+  const payloadArray: any[] = [];
+
+  // For each TARGET employee (the ones receiving the assignment)
+  selectedEmployees.forEach((targetEmp) => {
+    // For each SOURCE KRA assignment, create a copy for this target employee
+    sourceAssignments.forEach((sourceAssignment) => {
+      const sourceKra = sourceAssignment.kra || sourceAssignment;
+      const sourceKpis = sourceAssignment.kpis || [];
+
+      const kpisPayload = sourceKpis.map((kpi: any) => ({
+        assigneeId: kpi.assigneeId || null, 
+        kpiId: Number(kpi.kpiId || 0),
+        kpiName: kpi.kpiName || '',
+        weightageValue: String(kpi.assignedKpiWeightage || kpi.weightageValue || 0),
+        targetValue: String(kpi.targetValue || ''),
+        targetDate: kpi.targetDate ? kpi.targetDate.split('T')[0] : null,
+        targetType: kpi.targetType || '',
+        description: kpi.description?.trim() || '',
+        reviewCycleId: Number(kpi.reviewCycleData?.id || 0),
+        ratingScaleId: Number(kpi.optionsRating?.id || 0),
+        status: 'Active',
+        empAssignedStatus: 'Assigned',
+        createdBy: loggedInEmployeeId,
+        updatedBy: loggedInEmployeeId,
+        employeeIds: String(targetEmp.employeeId),
+      }));
+
+      payloadArray.push({
+        employeeIds: String(targetEmp.employeeId),
+        employeeName: targetEmp.fullName,
+        kraId: Number(sourceKra.kraId || 0),
+        kraName: sourceKra.kraName || '',
+        kraCategoryId: Number(sourceKra.kraCategoryId || 0),
+        kraCategoryName: sourceKra.kraCategoryName || '',
+        effectiveDate: sourceKra.effectiveDate ? sourceKra.effectiveDate.split('T')[0] : '',
+        targetDate: sourceKra.targetDate ? sourceKra.targetDate.split('T')[0] : '',
+        weightageValue: String(sourceAssignment.individualWeightage || 0),
+        reviewCycleId: Number(sourceKpis[0]?.reviewCycleData?.id || 0),
+        ratingScaleId: Number(sourceKpis[0]?.optionsRating?.id || 0),
+        status: 'Active',
+        empAssignedStatus: 'Assigned',
+        createdBy: loggedInEmployeeId,
+        updatedBy: loggedInEmployeeId,
+        kpis: kpisPayload,
+      });
+    });
+  });
+
+  this.pendingAssignPayload = payloadArray;
+
+  this.confirmAssignKraName = sampleKraNames.slice(0, 3).join(', ') + (sampleKraNames.length > 3 ? '...' : '');
+  this.confirmAssignEmployeeCount = selectedEmployees.length;
+
+  this.modalService.open(this.assignToEmployeeConfirmation, {
+    centered: true,
+    backdrop: 'static',
+  });
+}
 
   // Updated: Send direct array (no { assignments: ... } wrapper)
   confirmAssignToEmployees(): void {

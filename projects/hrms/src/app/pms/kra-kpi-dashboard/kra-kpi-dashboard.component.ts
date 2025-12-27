@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { KraKpiManagementLayoutComponent } from '../kra-kpi-management-layout/kra-kpi-management-layout.component';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { PaginatorModule } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
 
 interface DashboardResponse {
@@ -63,6 +64,7 @@ interface DashboardResponse {
     SkeletonModule,
     ChartModule,
     NoDataFoundComponent,
+    PaginatorModule,
   ],
   templateUrl: './kra-kpi-dashboard.component.html',
   styleUrl: './kra-kpi-dashboard.component.scss',
@@ -86,6 +88,14 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
   searchText = '';
   reviewCycleOptions: { label: string; value: string }[] = [];
 
+  // Pagination options
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 },
+  ];
+
   // Charts
   attendanceSummaryData: any;
   attendanceSummaryOptions: any;
@@ -100,13 +110,22 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
   hasCompletionData = false;
   selectedReviewCycleId: string | null = null;
 
+  // Popup data
+  selectedEmployeeKras: any[] = [];
+  selectedEmployeeName: string = '';
+  kraPopupLoading = false;
+
+  completionStatus = { above80: 0, between50And80: 0, below50: 0 };
+  averageScoreDisplay = '0%';
+
   private dashboardSubscription?: Subscription;
 
   constructor(
     public rbac: RbacService,
     private http: HttpService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {
     this.initChartOptions();
   }
@@ -170,20 +189,20 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
             {
               title: 'Active KRAs',
               value: s.activeKras ?? 0,
-              icons: './icons/Available Employees Count.png',
+              icons: './icons/Active KRAs.png',
               popover: 'Number of active KRA assignments.',
             },
             {
               title: 'Avg Score',
               value: s.averageScore ?? 0,
-              icons: './icons/Not Updated.png',
+              icons: './icons/Available Employees Count.png',
               popover: 'Average performance score across employees.',
             },
             {
               title: 'Over Due',
               value: s.offTrack ?? 0,
               icons: './icons/Not Updated.png',
-              popover: 'Employees/KRAs currently off track or overdue.',
+              popover: 'Employees/KRAs currently overdue.',
             },
           ];
 
@@ -196,11 +215,23 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
             datasets: [
               {
                 data: [cs.above80, cs.between50And80, cs.below50],
-                backgroundColor: ['#2E7D32', '#F9A825', '#C62828'], // Green, Amber, Red
+                backgroundColor: ['#28a745', '#FF9500 ', '#dc3545'], // Green, Amber, Red
                 borderWidth: 0,
               },
             ],
           };
+
+          this.completionStatus = {
+            above80: cs.above80 ?? 0,
+            between50And80: cs.between50And80 ?? 0,
+            below50: cs.below50 ?? 0,
+          };
+
+          const avgScore = data.summary.averageScore ?? 0;
+          // Assuming API returns value between 0-100 (or 0-1 → convert)
+          const avgPercent =
+            avgScore > 1 ? Math.round(avgScore) : Math.round(avgScore * 100);
+          this.averageScoreDisplay = `${avgPercent}%`;
 
           // Performance Distribution (Bar Chart by Department)
           const rawPerfData = data.performanceDistribution || [];
@@ -221,11 +252,11 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
             labels,
             datasets: [
               {
-                label: 'Average Score',
+                // label: 'Average Score',
                 backgroundColor: '#0F358A',
                 data: scores,
                 borderRadius: 4,
-                barThickness: 15,
+                barThickness: 25,
               },
             ],
           };
@@ -266,7 +297,7 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (context: any) => `Avg Score: ${context.raw}`,
+            label: (context: any) => `Avg Score: ${context.raw}%`,
           },
         },
       },
@@ -277,12 +308,19 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
         },
         y: {
           beginAtZero: true,
+          max: 100,
           title: {
             display: true,
-            text: 'Average Score',
+            // text: 'Average Score (%)',
             color: '#505050',
           },
-          ticks: { color: '#72777B' },
+          ticks: {
+            color: '#72777B',
+            callback: function(value: any) {
+              return value + '%';
+            },
+            stepSize: 25
+          },
         },
       },
     };
@@ -382,6 +420,80 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
     this.first = event.first;
     this.loadDashboardData(this.selectedEmployeeId || undefined);
+  }
+
+  onPageSizeChange(newSize: number) {
+    this.rows = newSize;
+    this.page = 1;
+    this.first = 0;
+    this.loadDashboardData(this.selectedEmployeeId || undefined);
+  }
+
+  openKraPopup(employeeId: number, employeeName: string, content: any) {
+    this.selectedEmployeeName = employeeName;
+    this.loadEmployeeKras(employeeId);
+    this.modalService.open(content, {
+      centered: true,
+      size: 'xl',
+      backdrop: 'static',
+    });
+  }
+
+  loadEmployeeKras(employeeId: number) {
+    this.kraPopupLoading = true;
+    this.selectedEmployeeKras = [];
+
+    const params = {
+      employeeId,
+      pageNumber: 1,
+      pageSize: 100, // Load all KRAs for the employee
+    };
+
+    this.http
+      .getDataIncludeParams('Kpi/getEmployeeAssignKpiKra', params)
+      .subscribe({
+        next: (res: any) => {
+          if (res.success && Array.isArray(res.data)) {
+            this.selectedEmployeeKras = res.data.flatMap((emp: any) =>
+              (emp.kras || []).map((k: any) => ({
+                kraId: k.kra.kraId,
+                kraName: k.kra.kraName,
+                effectiveDate: k.kra.effectiveDate,
+                targetDate: k.kra.targetDate,
+                weightageValue: k.kra.weightageValue,
+                status: k.kra.status,
+                kpisCount: k.kpisCount,
+                kpis: k.kpis || [],
+              }))
+            );
+          }
+          this.kraPopupLoading = false;
+        },
+        error: () => {
+          this.selectedEmployeeKras = [];
+          this.kraPopupLoading = false;
+        },
+      });
+  }
+
+  getProgressClass(value: number): string {
+    if (value >= 70) return 'bg-success';
+    if (value >= 30) return 'bg-warning';
+    return 'bg-danger';
+  }
+
+    getStatusClass(status: string) {
+    switch (status) {
+      case 'Approved':
+      case 'Active':
+        return 'status-approved';
+      case 'Rejected':
+        return 'status-rejected';
+      case 'Waiting for Approval':
+        return 'status-waiting-for-approval';
+      default:
+        return '';
+    }
   }
 
   ngOnDestroy() {

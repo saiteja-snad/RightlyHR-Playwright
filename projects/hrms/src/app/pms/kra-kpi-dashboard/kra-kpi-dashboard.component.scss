@@ -132,3 +132,153 @@
     color: var(--primary-color);
     text-decoration: underline;
 }
+
+.clickable {
+    cursor: pointer;
+    color: var(--primary-color);
+    text-decoration: underline;
+
+    &:hover {
+        color: var(--primary-hover-color, #0056b3);
+        text-decoration: underline;
+    }
+}
+
+.popup-table-wrapper {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.popup-kpi-table {
+    height: auto !important;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid var(--table-main-content-border-color);
+    border-radius: 0.5rem;
+}
+
+.popup-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+}
+
+.status-text {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+
+    .progress {
+        width: 100%;
+        background-color: #e9ecef;
+        border-radius: 0.25rem;
+
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    }
+
+    small {
+        font-size: 0.75rem;
+        color: var(--primary-color);
+    }
+}
+
+.completion-status-chart {
+  min-height: 220px; // Gives breathing room
+}
+
+.center-text-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none; // Allows clicks through to chart if needed
+}
+
+.avg-percentage {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0F358A; // Deep blue like in screenshot
+  line-height: 1;
+}
+
+.avg-label {
+  font-size: 14px;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.legend {
+  min-width: 140px;
+}
+
+.color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend .label {
+  font-size: 14px;
+  color: #555;
+  width: 60px;
+}
+
+.legend .count {
+  font-size: 20px;
+  color: #0F358A;
+  min-width: 40px;
+  text-align: right;
+}
+
+.performance-bar-chart {
+  min-height: 280px !important; /* Ensures minimum height even with few bars */
+  height: 100% !important;
+
+  // Important: Force the canvas to fill the container
+  canvas {
+    max-height: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* Blue for Created */
+.status-waiting-for-approval {
+  color: #FF9500 ;
+}
+
+/* Green for Active */
+.status-approved {
+  color: #28a745;
+}
+
+/* Red for On Hold */
+.status-rejected {
+  color: #dc3545;
+}

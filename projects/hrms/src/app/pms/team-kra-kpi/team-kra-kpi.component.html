@@ -129,11 +129,11 @@
                           <th>{{ 'KRA Name' | translate }}</th>
                           <th class="text-center">{{ 'Review Cycle' | translate }}</th>
                           <th class="text-center">{{ 'KPIs Count' | translate }}</th>
-                          <th class="text-center">{{ 'Effective Date' | translate }}</th>
+                          <th class="text-center">{{ 'Target Date' | translate }}</th>
                           <th class="text-center">{{ 'KRA Weightage' | translate }}</th>
                           <th class="text-center">{{ 'KRA Rating' | translate }}</th>
                           <th class="text-center">{{ 'Progress (%)' | translate }}</th>
-                          <!-- <th class="text-center">{{ 'Status' | translate }}</th> -->
+                          <th class="text-center">{{ 'Status' | translate }}</th>
                         </tr>
                       </ng-template>
                       <ng-template pTemplate="body" let-kra>
@@ -147,7 +147,7 @@
                               {{ kra.kpisCount }}
                             </span>
                           </td>
-                          <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
+                          <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
                           <td class="text-center">{{ kra.kraWeightage }}%</td>
                           <td class="text-center">
                             <strong>{{ getKraRating(kra) }}</strong>
@@ -160,11 +160,11 @@
                             </div>
                             <small class="fw-semibold">{{ kra.progress }}%</small>
                           </td>
-                          <!-- <td class="text-center">
-                                    <span class="kra-status" [ngClass]="getKraStatusClass(kra.overallStatus)">
+                          <td class="text-center">
+                                    <span class="kra-status fw-bold" [ngClass]="getKraStatusClass(kra.overallStatus)">
                                       {{ kra.overallStatus || '-' }}
                                     </span>
-                                  </td> -->
+                                  </td>
                         </tr>
                       </ng-template>
                     </p-table>

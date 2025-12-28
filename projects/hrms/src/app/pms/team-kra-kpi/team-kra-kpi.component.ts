@@ -1,3 +1,4 @@
+import { Overall } from './../../Interfaces/timesheetsummary';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { KraKpiManagementLayoutComponent } from '../kra-kpi-management-layout/kra-kpi-management-layout.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -251,10 +252,12 @@ private groupEmployeeData(): void {
               reviewCycleName: reviewCycleItem.reviewCycle?.reviewCycleName || 'N/A',
               kpisCount: kraItem.kpisCount || 0,
               effectiveDate: kraItem.kra?.effectiveDate,
+              targetDate: kraItem.kra?.targetDate,
+              kraStatus: kraItem.kra?.kpis?.overallStatus,
               kraWeightage: kraItem.kpis?.length > 0 ? kraItem.kpis[0].assignedKraWeightage : kraItem.kra?.weightageValue,
               kpis: kraItem.kpis || [],
               progress: this.calculateKraProgress(kraItem.kpis || []),
-              overallStatus: kraItem.overallStatus,
+              overallStatus: kraItem.kpis?.length > 0 ? kraItem.kpis[0].overallStatus : kraItem.kra?.overallStatus,
               kraRating: this.calculateKraRating({
                 kpis: kraItem.kpis || [],
                 individualWeightage: kraItem.kpis?.length > 0 ? kraItem.kpis[0].assignedKraWeightage : kraItem.kra?.weightageValue

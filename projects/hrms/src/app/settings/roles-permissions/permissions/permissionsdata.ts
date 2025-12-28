@@ -249,7 +249,7 @@ export const permissionsData = [
 
   //New Side Nav Section
   { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Dashboard', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
@@ -269,7 +269,7 @@ export const permissionsData = [
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contacts Directory', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Themes', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Skill Set Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
@@ -305,6 +305,8 @@ export const permissionsData = [
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Time Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
 
   //Work From Home Sub Tabs Section
   { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
@@ -400,6 +402,7 @@ export const permissionsData = [
   { fields: 'Desk Requests Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet approval Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'KRA KPI approval Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contractor Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contract-Conversion Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'EmployeeInfo Tab', View: false, Update: false, Create: false, Delete: false },
@@ -890,6 +893,14 @@ export const permissionsData = [
   { fields: 'Review Cycle Employee List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Performance Review', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Performance Review', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'KRA', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Assign KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Dashboard KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team KRA KPI', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (KRA)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (KRA)', View: false, Update: false, Create: false, Delete: false },
 
   //Review Cycle List Actions
   { fields: 'Create Review Cycle', View: false, Update: false, Create: false, Delete: false },
@@ -953,6 +964,7 @@ export const permissionsData = [
   //PMS Configuration Module
   { fields: 'Increment Percentage', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Configuration', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Configuration', View: false, Update: false, Create: false, Delete: false },
 
   //Increment Percentage Actions
   { fields: 'Increment Create', View: false, Update: false, Create: false, Delete: false },
@@ -967,6 +979,13 @@ export const permissionsData = [
   { fields: 'Assessor Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
+
+  //Kra Configuration Actions
+  { fields: 'Kra Create', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Kra Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
   //Holidays Tabs Sections
   { fields: 'Public Holidays Tab', View: false, Update: false, Create: false, Delete: false },
@@ -1095,4 +1114,3 @@ export const permissionsData = [
   { fields: 'Employee Job Approval History', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Documents Approval History', View: false, Update: false, Create: false, Delete: false },
 ];
-

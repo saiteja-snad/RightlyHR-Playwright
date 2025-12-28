@@ -1703,7 +1703,7 @@ input[type="file"] {
 
     .popup-header-border {
         border-bottom: 1.5px solid transparent;
-        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%, 
+        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
         var(--grid-border-color) 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
@@ -2882,5 +2882,4 @@ input[type=number]::-webkit-outer-spin-button {
     .more-chip {
         cursor: pointer !important;
     }
-
 }

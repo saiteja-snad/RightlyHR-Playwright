@@ -1,0 +1,373 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">PMS<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{"My KRA's / KPI's" | translate}}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select"
+            (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true" showClear="true" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="component-left-tabs-container">
+      <app-kra-kpi-management-layout />
+    </div>
+
+    <div class="w-100 right-content">
+
+      <!-- Search Bar -->
+      <div class="input-group custom-search mb-4">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="search"
+          class="form-control custom-search-input"
+          placeholder="Search by KRA name..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchTextChange()" />
+      </div>
+
+      <!-- REVIEW CYCLE ACCORDIONS -->
+      @if (!dataload) {
+      <div class="custom-accordians">
+        <div class="custom-accordian-data-content">
+          @if (kraList.length > 0) {
+          <p-accordion>
+            @for (reviewCycle of kraList; track reviewCycle.reviewCycleId) {
+            <p-accordion-panel [value]="reviewCycle.reviewCycleId">
+              <!-- ACCORDION HEADER -->
+              <p-accordion-header>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                  <!-- LEFT: Review Cycle Name -->
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="text-truncate fw-semibold employee-name">
+                      <small class="text-muted me-1" style="font-size: 13px;">Review Cycle: </small>
+                     <strong class="fw-bold"> {{ reviewCycle.reviewCycleName }}</strong>
+                    </div>
+                  </div>
+                  <!-- RIGHT: Total KRA Weightage and Rating -->
+                  <div class="d-flex align-items-center gap-4">
+                    <div class="text-center" style="width: 300px;">
+                      <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage: </small>
+                      <strong class="fw-bold">{{ reviewCycle.totalKraWeightage }}%</strong>
+                    </div>
+                    <div class="text-center" style="width: 300px;">
+                      <small class="text-muted me-1" style="font-size: 13px;">Overall Rating: </small>
+                      <strong class="fw-bold">{{ calculateOverallRating(reviewCycle.kras) || '-' }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </p-accordion-header>
+              <!-- ACCORDION CONTENT -->
+              <p-accordion-content>
+                <div class="custom-p-multi-select-table custom-accordian-table">
+                  @if (reviewCycle.kras.length > 0) {
+                  <p-table [value]="reviewCycle.kras">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>{{ 'KRA Name' | translate }}</th>
+                        <th class="text-center">{{ 'KPIs Count' | translate }}</th>
+                        <th class="text-center">{{ 'Effective Date' | translate }}</th>
+                        <th class="text-center">{{ 'Target Date' | translate }}</th>
+                        <th class="text-center">{{ 'Weightage' | translate }}</th>
+                        <th class="text-center">{{ 'Progress (%)' | translate }}</th>
+                        <th class="text-center">{{ 'Status' | translate }}</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-kra>
+                      <tr>
+                        <td (click)="openKraKpiModal(kra, kraKpiModal)"><span class="kras-bold cursor">{{ kra.kraName }}</span></td>
+                        <td class="text-center" [class.text-muted]="kra.kpisCount === 0"
+                          [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
+                          (click)="openMyKpiCanvas(myKpiCanvas, kra)">
+                          <span class="cursor kras-bold">{{ kra.kpisCount }}</span>
+                        </td>
+                        <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
+                        <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
+                        <td class="text-center">{{ kra.weightageValue }}</td>
+                        <td class="text-center">
+                          <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" [style.width.%]="kra.progress"
+                              [attr.aria-valuenow]="kra.progress" aria-valuemin="0" aria-valuemax="100"
+                              [ngClass]="getProgressClass(kra.progress)"></div>
+                          </div>
+                          <small class="fw-semibold">{{ kra.progress }}%</small>
+                        </td>
+                        <td class="text-center">
+                          <span class="kra-status" [ngClass]="getStatusClass(kra.overallStatus)">
+                            {{ kra.overallStatus || '-' }}
+                          </span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  } @else {
+                  <div class="p-4 text-center text-muted">
+                    <app-no-data-found />
+                  </div>
+                  }
+                </div>
+              </p-accordion-content>
+            </p-accordion-panel>
+            }
+          </p-accordion>
+          } @else {
+          <app-no-data-found />
+          }
+        </div>
+      </div>
+
+      <!-- PAGINATION -->
+      <!-- @if (kraList.length > 0) {
+      <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+
+          <div class="d-flex align-items-center gap-3 p-2">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+              (ngModelChange)="onPageSizeChange($event)">
+              @for (option of options; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+
+            <span class="pagination-label text-nowrap">
+              Showing {{ first + 1 }} -
+              {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }}
+              of {{ collectionSize }}
+            </span>
+          </div>
+
+          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)">
+          </p-paginator>
+
+        </div>
+      </div>
+      } -->
+      } @else {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }
+
+    </div>
+
+  </div>
+</div>
+
+
+<ng-template #myKpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">
+        KPIs ({{ myKpiList.length }})
+      </p>
+      <a (click)="closeMyKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+
+        <!-- <div *ngIf="myKpiList.length === 0" class="text-center py-5 text-muted">
+      <app-no-data-found></app-no-data-found>
+    </div> -->
+
+        <div *ngFor="let kpi of myKpiList" class="project-card mb-3">
+          <p class="project-name">{{ kpi.kpiName }}</p>
+
+          <!-- THREE COLUMN SECTION -->
+          <div class="d-flex justify-content-between gap-3 mb-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
+            </div>
+
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates m-0">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates m-0">
+                {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+              </p>
+            </div>
+          </div>
+
+          <!-- RATING -->
+          <div class="d-flex align-items-center justify-content-end mb-2">
+            <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">
+              Rating :
+            </p>
+            <p class="project-dates m-1">
+              {{ kpi.assignedApproverRating || '-' }}
+            </p>
+          </div>
+
+          <!-- STATUS + INFO -->
+          <div class="d-flex align-items-center justify-content-end gap-2">
+            <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">
+              {{ kpi.assignedStatus || '-' }}
+            </div>
+            <div>
+              <app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" />
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ng-template>
+
+<ng-template #kraKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <!-- Header -->
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">{{ selectedKra?.kraName }}</p>
+    </div>
+    <div class="custom-main-popup-content">
+      <!-- KPI Table -->
+      <div class="custom-table-content custom-popup-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th class="text-center p-checkbox-box p-checkbox-checked">
+                <input class="form-check-input" type="checkbox" [checked]="isAllSelected"
+                  (change)="toggleSelectAll($event)" />
+              </th>
+
+              <th>{{ 'KPI Name' | translate }}</th>
+              <th>{{ 'Weightage' | translate }}</th>
+              <th>{{ 'Unit of Measurement' | translate }}</th>
+              <th>{{ 'Target Value' | translate }}</th>
+              <th>{{ 'Target Date' | translate }}</th>
+              <th>{{ 'Description' | translate }}</th>
+              <th>{{ 'Progress' | translate }}</th>
+              <th>{{ 'Attachment' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let kpi of myKpiList; let i = index">
+              <td class="text-center">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="myKpiList[i].selected"
+                  (ngModelChange)="onRowSelectionChange()" [class.opacity-50]="isWaitingForApproval(kpi)"
+                  [disabled]="isWaitingForApproval(myKpiList[i])" />
+              </td>
+
+              <!-- KPI Name -->
+              <td>
+                <input type="text" class="form-control custom-input" [(ngModel)]="myKpiList[i].kpiName" disabled />
+              </td>
+
+              <!-- Weightage -->
+              <td>
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].weightageValue"
+                  disabled />
+              </td>
+
+              <td>
+                <input type="text" class="form-control custom-input" [(ngModel)]="myKpiList[i].unitOfMeasurement"
+                  disabled />
+              </td>
+
+              <!-- Target Value -->
+              <td>
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].targetValue"
+                  disabled />
+              </td>
+
+              <!-- Target Date -->
+              <td>
+                <input type="date" class="form-control custom-input" [(ngModel)]="myKpiList[i].targetDate" disabled />
+              </td>
+
+              <!-- Description -->
+              <!-- <td>
+              <textarea class="form-control custom-input" rows="2" [(ngModel)]="myKpiList[i].description"
+                disabled></textarea>
+            </td> -->
+
+              <td class="text-center">
+                <div *ngIf="myKpiList[i].description; else noDescription">
+                  <app-info-icon class="cursor" ngbPopover="{{ myKpiList[i].description }}" container="body">
+                  </app-info-icon>
+                </div>
+                <ng-template #noDescription>NA</ng-template>
+              </td>
+              <!-- Assigned Weightage -->
+              <td>
+                <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].assignedWeightage"
+                  placeholder="0-100" pattern="[0-9]*" step="1" (input)="onWeightageInput($event, i)"
+                  (blur)="clampWeightage(i)" [disabled]="isWaitingForApproval(myKpiList[i])"
+                  (ngModelChange)="onAssignedWeightageChange()" />
+              </td>
+
+              <!-- Attachment -->
+              <td>
+                <input type="file" class="form-control custom-input" (change)="onFileChange($event, i)" />
+                <!-- <div *ngIf="myKpiList[i].attachmentName" class="mt-1">{{ myKpiList[i].attachmentName }}</div> -->
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+        <!-- <div class="mt-2 text-end fw-bold"
+     [class.text-danger]="isWeightageExceeded"
+     [class.text-success]="totalAssignedWeightage === 100"
+     [class.text-warning]="totalAssignedWeightage > 80 && totalAssignedWeightage <= 100">
+  Total Assigned Progress: {{ totalAssignedWeightage }}%
+  <span class="text-info ms-2" *ngIf="!isWeightageExceeded && totalAssignedWeightage < 100">
+    ({{ 100 - totalAssignedWeightage }}% remaining)
+  </span>
+</div> -->
+        <!-- <div *ngIf="isWeightageExceeded" class="text-danger mt-2">
+  Note: Total progress should not exceed 100.
+</div> -->
+      </div>
+
+      <!-- Footer -->
+      <div class="custom-modal-footer d-flex justify-content-end gap-3 m-3">
+        <a type="button" class="save-btn mt-2" [class.disabled]="selectedKpis.length === 0" (click)="saveKpis()">
+          {{ 'Save' | translate }}
+        </a>
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+          {{ 'Cancel' | translate }}
+        </button>
+        <button type="button" class="custom-btn btn-primary" [disabled]="selectedKpis.length === 0"
+          (click)="submitForApproval()">
+          {{ 'Submit for Approval' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

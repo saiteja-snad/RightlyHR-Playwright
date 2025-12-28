@@ -1,0 +1,680 @@
+<!-- assign-kra-kpi.component.html -->
+<div class="custom-main-component-container">
+  <!-- Header with Assign Button + Filters -->
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name cursor">
+        PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{ 'Assign KRA / KPI' | translate }}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <!-- Wrap all filter dropdowns in a form -->
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mt-3">
+      <!-- <div>
+        <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          Clear All
+        </button>
+      </div> -->
+
+      <div>
+        @if (rbac.allowedToAccess('Assign KRA KPI.create')) {
+        <button class="custom-btn btn-primary" (click)="assignExistingToSelectedEmployees()" [disabled]="isSubmitting">
+          {{ 'Assign to Employee' | translate }}
+          @if (isSubmitting) {
+          <span class="spinner-border spinner-border-sm ms-2"></span>
+          }
+        </button>
+        } @else {
+        <button class="custom-btn btn-primary" disabled>
+          {{ 'Assign to Employee' | translate }}
+        </button>
+        }
+      </div>
+
+      <div>
+        <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+          <i class="bi bi-funnel me-2"></i>Filters
+          <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+        </button>
+      </div>
+
+      <div>
+        @if(rbac.allowedToAccess('Assign KRA KPI.create')){
+        <button class="custom-btn btn-primary" (click)="openAssignModal(assignKraKpiModal)"
+          [disabled]="!canOpenAssignModal">
+          {{ 'Assign KRA' | translate }}
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="fliter-chip-content mb-3" *ngIf="isFilterApplied()">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+        (onRemove)="removeFilter(filter)" />
+      <!-- More chip -->
+      <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"
+        [label]="'+' + (getSelectedFilters().length - 3) + ' More'" (click)="toggleFilters(filterContent)" />
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">{{ 'Clear All' | translate }}</button>
+    </div>
+  </div>
+
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  @if (selectedItems.length > 0 && multiSelect) {
+  <div class="component-header-content mt-3">
+    <div class="component-sub-header">Selected Records: {{ selectedItems.length }}</div>
+  </div>
+  }
+
+  <!-- Search Box -->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
+    <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
+      placeholder="Search by employee name" (ngModelChange)="onSearchTextChange()" autocomplete="off">
+  </div>
+
+  <!-- Table -->
+  @if (!dataload) {
+  <div class="custom-accordians">
+    <div class="custom-accordian-data-content">
+      @if (groupedKraList.length > 0) {
+      <p-accordion>
+        <p-accordion-panel *ngFor="let emp of groupedKraList; let i = index" [value]="i">
+          <!-- ACCORDION HEADER -->
+          <p-accordion-header>
+            <div class="d-flex justify-content-between align-items-center w-100">
+
+              <!-- LEFT: Checkbox + Employee Name -->
+              <div class="d-flex align-items-center gap-3">
+                <p-checkbox [(ngModel)]="emp.selected" [binary]="true"></p-checkbox>
+                <div class="text-truncate fw-semibold employee-name">
+                  {{ emp.fullName }} ({{ emp.fusionId }})
+                </div>
+              </div>
+
+              <!-- RIGHT: Review Cycle, Total KRA Weightage, Assigned Status -->
+              <div class="d-flex align-items-center">
+
+                                <!-- Total KRA Weightage -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
+                  <strong>{{ emp.totalKraWeightage }}%</strong>
+                </div>
+
+                <!-- Review Cycle -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Review Cycle:</small>
+                  <strong>{{ emp.assignments?.[0]?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}</strong>
+                </div>
+
+                <!-- Assigned Rating -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Rating:</small>
+                  <strong>{{ getAverageAssignedRating(emp) }}</strong>
+                </div>
+
+                <!-- Assigned Status -->
+                <div class="text-center" style="width: 300px;">
+                  <small class="text-muted me-1" style="font-size: 13px;">Status:</small>
+                  <strong>
+                    {{ getEmpAssignedStatus(emp) }}
+                  </strong>
+                </div>
+              </div>
+
+            </div>
+          </p-accordion-header>
+
+          <!-- ACCORDION CONTENT -->
+          <p-accordion-content>
+            <div class="custom-p-multi-select-table custom-accordian-table">
+              @if (emp.assignments && emp.assignments.length > 0) {
+              <p-table [value]="emp.assignments">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>KRA</th>
+                    <th class="text-center">Review Cycle</th>
+                    <th class="text-center">Total KPIs</th>
+                    <th class="text-center">Weightage (%)</th>
+                    <th class="text-center">Effective Date</th>
+                    <th class="text-center">Target Date</th>
+                    <th class="text-center">Progress (%)</th>
+                    <th class="text-center">KRA Rating</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-kra>
+                  <tr>
+                    <td>{{ kra.kpis?.[0]?.kraName || kra.kra?.kraName || '-' }}</td>
+                    <td class="text-center">{{ kra?.kpis?.[0]?.reviewCycleData?.reviewCycleName || '-' }}</td>
+                    <td class="text-center">
+                      <a class="kpis-count" [class.cursor]="kra.kpisCount > 0" [class.text-muted]="kra.kpisCount === 0"
+                        [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
+                        (click)="kra.kpisCount > 0 && openAssignedKpiCanvas(assignKpiCanvas, kra, kra.employeeId, kra.fullName)">
+                        {{ kra.kpisCount }}
+                      </a>
+                    </td>
+                    <td class="text-center">{{ kra?.kpis?.[0]?.assignedKraWeightage || '-' }}</td>
+                    <!-- <td class="text-center kpi-status" [ngClass]="getStatusClass(kra.kra?.status)">
+                      {{ kra.kra?.status || kra.status || '-' }}
+                    </td> -->
+                    <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
+                    <td class="text-center">{{ kra.kpis?.[0]?.kraTargetDate | date:'mediumDate' }}</td>
+                    <td class="text-center">
+                      <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" role="progressbar" [style.width.%]="getKraProgress(kra)"
+                          [attr.aria-valuenow]="getKraProgress(kra)" aria-valuemin="0" aria-valuemax="100"
+                          [ngClass]="getProgressClass(getKraProgress(kra))"></div>
+                      </div>
+                      <small class="fw-semibold">{{ getKraProgress(kra) }}%</small>
+                    </td>
+                    <td class="text-center">
+                      <strong>{{ getKraRating(kra) }}</strong>
+                    </td>
+                    <td class="text-center">
+                      <div class="dropdown">
+                        <span data-bs-toggle="dropdown" class="cursor-pointer">
+                          <i class="bi bi-three-dots-vertical text-muted"></i>
+                        </span>
+                        <ul class="dropdown-menu custom-dropdown-menu">
+                          @if(rbac.allowedToAccess('Assign KRA KPI.update')){
+                          <li class="dropdown-item" (click)="onUpdate(kra)">
+                            <a class="dropdown-custom-btn">
+                              <i class="bi bi-pencil me-2"></i>Update
+                            </a>
+                          </li>
+                          }
+                          <!-- <li class="dropdown-item" (click)="onHold(kra)">
+                            <a class="dropdown-custom-btn text-warning">
+                              <i class="bi bi-pause-circle me-2"></i>On Hold
+                            </a>
+                          </li> -->
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+              } @else {
+              <div class="p-4 text-center text-muted">
+                <app-no-data-found />
+              </div>
+              }
+            </div>
+          </p-accordion-content>
+        </p-accordion-panel>
+      </p-accordion>
+
+      <!-- PAGINATION STARTS HERE -->
+      <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+          <div class="d-flex align-items-center gap-3 p-2">
+            <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+              (ngModelChange)="onPageSizeChange($event)">
+              @for (option of options; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <span class="pagination-label text-nowrap">
+              Showing {{ first + 1 }} -
+              {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }}
+              of {{ collectionSize }}
+            </span>
+          </div>
+          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)">
+          </p-paginator>
+        </div>
+      </div>
+      <!-- PAGINATION ENDS HERE -->
+      } @else {
+      <app-no-data-found />
+      }
+    </div>
+  </div>
+  } @else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }
+</div>
+
+<!-- ASSIGN KRA/KPI MODAL - UNCHANGED -->
+<ng-template #assignKraKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">
+        {{ isEditMode ? 'Update KRA & KPIs' : 'Assign KRA & KPIs' }}
+      </p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="assignForm" (ngSubmit)="onSubmitAssign()">
+        <!-- Top Section: KRA, Weightage, Review Cycle, Rating Scale -->
+        <div class="row g-3 mb-4">
+          <!-- KRA Selection -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'KRA' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="kraListForDropdown" optionLabel="kraName" optionValue="kraId"
+                class="form-select custom-select" placeholder="Select KRA" [filter]="true" resetFilterOnHide="true"
+                [showClear]="true" formControlName="kraId" (onChange)="onKraSelected()" />
+            </div>
+            <div class="error-msg" *ngIf="assignForm.get('kraId')?.touched && assignForm.get('kraId')?.invalid">
+              Please select a KRA
+            </div>
+          </div>
+
+          <!-- Weightage (Read-only) -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Weightage (%)' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
+              placeholder="Enter weightage">
+            <div class="error-msg" *ngIf="assignForm.get('weightage')?.touched && assignForm.get('weightage')?.invalid">
+              <span *ngIf="assignForm.get('weightage')?.hasError('required')">Weightage is required</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('min')">Weightage must be at least 1</span>
+              <span *ngIf="assignForm.get('weightage')?.hasError('max')">Weightage cannot exceed 100%</span>
+            </div>
+          </div>
+
+          <!-- Effective Date -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Effective Date' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+              onkeydown="return false">
+            <div class="error-msg"
+              *ngIf="assignForm.get('effectiveDate')?.touched && assignForm.get('effectiveDate')?.invalid">
+              <span *ngIf="assignForm.get('effectiveDate')?.hasError('required')">
+                Effective Date is required</span>
+              <span *ngIf="assignForm.get('effectiveDate')?.hasError('pastDate')">
+                Effective Date cannot be in the past</span>
+            </div>
+          </div>
+
+          <!-- Target Date -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Target Date' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="date" class="form-control custom-input" formControlName="targetDate" onkeydown="return false">
+            <div class="error-msg"
+              *ngIf="assignForm.get('targetDate')?.touched && assignForm.get('targetDate')?.invalid">
+              <span *ngIf="assignForm.get('targetDate')?.hasError('required')">Target Date is required</span>
+              <span *ngIf="assignForm.get('targetDate')?.hasError('pastDate')">Target Date cannot be in the past</span>
+            </div>
+
+            <div class="error-msg" *ngIf="assignForm.touched && assignForm.hasError('effectiveGreaterThanTarget')">
+              Effective Date must be earlier than Target Date
+            </div>
+          </div>
+
+          <!-- Review Cycle Dropdown -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Review Cycle' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
+                formControlName="reviewCycle" />
+            </div>
+            <div class="error-msg"
+              *ngIf="assignForm.get('reviewCycle')?.touched && assignForm.get('reviewCycle')?.invalid">
+              Please select a review cycle
+            </div>
+          </div>
+
+          <!-- Rating Scale Dropdown -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Rating Scale' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="ratingScaleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select Rating Scale" class="form-select custom-select" [filter]="true"
+                formControlName="ratingScale" />
+            </div>
+            <div class="error-msg"
+              *ngIf="assignForm.get('ratingScale')?.touched && assignForm.get('ratingScale')?.invalid">
+              Please select a rating scale
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic KPI Rows Table -->
+        <div class="custom-table-content custom-popup-table">
+          <table class="w-100">
+            <thead>
+              <tr>
+                <th class="text-center">{{ 'KPI Name' | translate }}</th>
+                <th class="text-center">{{ 'Weightage' | translate }}</th>
+                <th class="text-center">{{ 'Unit of Measurement' | translate }}</th>
+                <th class="text-center">{{ 'Target Value' | translate }}</th>
+                <th class="text-center">{{ 'Target Date' | translate }}</th>
+                <th class="text-center">{{ 'Description' | translate }}</th>
+                <th class="text-center">{{ 'Actions' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="kpiRows">
+              @for (row of kpiRows.controls; track trackByKpiId($index, row); let i = $index) {
+              <tr [formGroupName]="i">
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="allKpiOptions" optionLabel="kpiName" optionValue="kpiId" [filter]="true"
+                      [showClear]="true" placeholder="Select or search KPI" class="form-select custom-select"
+                      formControlName="kpiId" />
+                  </div>
+                  <div class="error-msg small mt-1"
+                    *ngIf="row.get('kpiId')?.touched && row.get('kpiId')?.hasError('duplicateKpi')">
+                    This KPI is already added. Please select another KPI.
+                  </div>
+                </td>
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="weightage" min="1" max="100"
+                    placeholder="e.g. 20">
+                </td>
+                <!-- Unit of Measurement -->
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="uomOptions" optionLabel="label" optionValue="value" placeholder="Select UOM"
+                      [filter]="true" formControlName="uom" [disabled]="true" />
+                  </div>
+                </td>
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="targetValue"
+                    placeholder="Enter Target Value">
+                  <div class="error-msg small mt-1"
+                    *ngIf="row.get('targetValue')?.touched && row.get('targetValue')?.invalid">
+                    <span *ngIf="row.get('targetValue')?.hasError('required')">Target value is required</span>
+                    <span *ngIf="row.get('targetValue')?.hasError('min')">Value must be at least 1</span>
+                    <span *ngIf="row.get('targetValue')?.hasError('max')">
+                      <ng-container [ngSwitch]="row.get('uom')?.value">
+                        <span *ngSwitchCase="'%'">Percentage must be between 1 and 100</span>
+                        <span *ngSwitchCase="'Hrs'">Hours must be between 1 and 999</span>
+                        <span *ngSwitchCase="'Days'">Days must be between 1 and 999</span>
+                      </ng-container>
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
+
+                  <div class="error-msg small mt-1"
+                    *ngIf="row.get('targetDate')?.touched && row.get('targetDate')?.invalid">
+
+                    <!-- Priority 1: Required -->
+                    <span *ngIf="row.get('targetDate')?.hasError('required')">
+                      Required
+                    </span>
+
+                    <!-- Priority 2: Past date (even if it's before effective) -->
+                    <span
+                      *ngIf="!row.get('targetDate')?.hasError('required') && row.get('targetDate')?.hasError('pastDate')">
+                      Target Date cannot be a past date
+                    </span>
+
+                    <!-- Priority 3: Before KRA Effective (only if not past & not required) -->
+                    <span *ngIf="!row.get('targetDate')?.hasError('required')
+                && !row.get('targetDate')?.hasError('pastDate')
+                && row.get('targetDate')?.hasError('kpiTargetBeforeKraEffective')">
+                      KPI Target Date cannot be before KRA Effective Date
+                    </span>
+
+                    <!-- Priority 4: Exceeds KRA Target -->
+                    <span *ngIf="!row.get('targetDate')?.hasError('required')
+                && !row.get('targetDate')?.hasError('pastDate')
+                && !row.get('targetDate')?.hasError('kpiTargetBeforeKraEffective')
+                && row.get('targetDate')?.hasError('kpiTargetExceedsKra')">
+                      KPI Target Date cannot exceed KRA Target Date
+                    </span>
+
+                  </div>
+                </td>
+                <!-- Description -->
+                <td>
+                  <textarea class="form-control custom-input" rows="2" formControlName="description"
+                    placeholder="Enter description"></textarea>
+                </td>
+                <td class="text-center align-middle">
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+                    @if (i === kpiRows.length - 1) {
+                    <button type="button" class="p-0 border-0 bg-transparent" [disabled]="!canAddRow()"
+                      [style.pointer-events]="canAddRow() ? 'auto' : 'none'" [style.opacity]="canAddRow() ? '1' : '0.4'"
+                      (click)="addKpiRow()">
+                      <i class="bi bi-plus-circle-fill custom-action-btn-icon" style="font-size: 18px;"></i>
+                    </button>
+                    }
+                    @if (kpiRows.length > 1) {
+                    <button type="button" class="p-0 border-0 bg-transparent"
+                      (click)="isEditMode ? openDeleteKpiConfirmation(deleteKpiConfirmation, i) : removeKpiRow(i)">
+                      <i class="bi bi-trash3 text-danger custom-action-btn-icon" style="font-size: 18px;"></i>
+                    </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          <!-- KPI Weightage Feedback Messages -->
+          <div class="m-3">
+            <div class="text-danger small fw-medium" *ngIf="totalNewKpiWeightage !== 100">
+              <span>Note: The total KPI weightage must be exactly 100% to assign.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{ 'Cancel' | translate
+            }}</button>
+          <button type="submit" class="custom-btn btn-primary"
+            [disabled]="assignForm.invalid || isSubmitting || kpiRows.length === 0 || !canSubmitKpiWeightage() || hasDuplicateKpis() || totalNewKpiWeightage !== 100">
+            @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2"></span>{{ isEditMode ? 'Updating...' : 'Assigning...'}}
+            } @else {
+            {{ isEditMode ? 'Update' : 'Assign' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Filters Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container" [formGroup]="filterForm">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{ 'Filters' | translate }}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content p-4">
+      <!-- Job Role -->
+      <!-- <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Job Role' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="JobroleDesignation" optionLabel="designationName" formControlName="jobRole"
+            [filter]="true" placeholder="Select Job Role" class="form-select custom-select" (onChange)="applyFilters()"
+            (onClear)="applyFilters()">
+          </p-multiSelect>
+        </div>
+      </div> -->
+
+      <!-- Location -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Location' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="location"
+            placeholder="Select Location" class="form-select custom-select"
+            (onChange)="getSubLocationByid($event.value)" (onClear)="getSubLocationByid([])" />
+        </div>
+      </div>
+
+      <!-- Sub Location -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Sub Location' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="subLocationsDropdown" optionLabel="jobSubLocationName" formControlName="subLocation"
+            placeholder="Select Sub Location" class="form-select custom-select"
+            (onChange)="onSubLocationChange($event.value)" (onClear)="onSubLocationChange([])" />
+        </div>
+      </div>
+
+      <!-- Department -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Department' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="departmentDetails" optionLabel="departmentName" formControlName="department"
+            placeholder="Select Department" [filter]="true" class="form-select custom-select"
+            (onChange)="onDepartmentChange($event.value)" (onClear)="onDepartmentChange([])" />
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Team' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="teamDropdownValues" optionLabel="subdepartmentName" formControlName="team"
+            placeholder="Select Team" class="form-select custom-select" (onChange)="onTeamChange($event.value)"
+            (onClear)="onTeamChange([])" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="reviewCycleFilterOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
+            formControlName="reviewCycle" (onChange)="applyFilters()" (onClear)="applyFilters()" />
+        </div>
+      </div>
+
+      <div class="d-flex offcanvas-footer-content gap-3">
+        <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+          {{ 'Clear All' | translate }}
+        </button>
+        <button type="button" class="custom-btn btn-primary w-100" (click)="closeCanvas()">
+          {{ 'Close' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #assignKpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">KPI's ({{ assignKpiList.length }})</p>
+      <a (click)="closeAssignedKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+        <div *ngIf="assignKpiList.length === 0" class="text-center py-5 text-muted">
+          <app-no-data-found />
+        </div>
+
+        <div *ngFor="let kpi of assignKpiList" class="project-card mb-3">
+          <p class="project-name">{{ kpi.kpiName }}</p>
+          <div class="d-flex justify-content-between gap-3 mb-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates m-0">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates m-0">{{ kpi.targetDate | date:'MMM dd, yyyy' }}</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-end mb-2">
+            <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">Rating : </p>
+            <p class="project-dates m-1">{{ kpi.assignedApproverRating || '-' }}</p>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-end gap-2">
+            <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">{{ kpi.assignedStatus || '-' }}
+            </div>
+            <div><app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Delete KPI Confirmation Modal -->
+<ng-template #deleteKpiConfirmation let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/delete-icon.png" alt="delete icon" class="confirmation-delete-icon">
+      <p class="confirmation-text mb-4">
+        Are you sure you want to remove this KPI?
+      </p>
+      <!-- Optional: show the KPI name dynamically -->
+      <!-- <p class="confirmation-text mb-4 text-center fw-medium" *ngIf="kpiToDeleteName">
+        {{ kpiToDeleteName }}
+      </p> -->
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss('cancel')">
+        No
+      </button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmKpiDelete(); modal.close('delete')">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Assign to Employee Confirmation Modal -->
+<ng-template #assignToEmployeeConfirmation let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text mb-3 fw-medium">
+        Assign KRA with its KPIs to selected employees?
+      </p>
+      <!-- <p class="confirmation-text mb-4 text-center">
+        <strong>"{{ confirmAssignKraName }}"</strong><br>
+        to <strong>{{ confirmAssignEmployeeCount }} employee(s)</strong>
+      </p> -->
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss('no')">
+        No
+      </button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmAssignToEmployees(); modal.close('yes')">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>

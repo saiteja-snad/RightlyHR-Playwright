@@ -1,0 +1,294 @@
+<div class="custom-main-component-container">
+  <!-- Header -->
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name cursor">
+        PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{ 'KPI' | translate }}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-4">
+      <a class="inactive-btn" (click)="toggleInactiveFilter()">{{ inactiveButtonLabel | translate }}</a>
+      @if(this.rbac.allowedToAccess('KPI.create')){
+      <button class="custom-btn btn-primary" (click)="openModal(createKpiModal)">
+        {{ 'Create KPI' | translate }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Module Info Popover -->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  <!-- Search Bar -->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search">
+      <i class="bi bi-search"></i>
+    </span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search here by KPI title, description"
+      [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+  </div>
+
+  <!-- Table -->
+  @if (!dataload) {
+  <div class="custom-table-content w-100">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{ 'KPI Title' | translate }}</th>
+          <th class="text-center">{{ 'Description' | translate }}</th>
+          <th class="text-center">{{ 'Unit of Measurement' | translate }}</th>
+          <!-- <th class="text-center">{{ 'Target' | translate }}</th> -->
+          <th class="text-center">{{ 'Status' | translate }}</th>
+          @if (hasAnyActionPermission()) {
+          <th class="text-center">{{ 'Action' | translate }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (filteredDetails.length > 0) {
+        @for (kpi of filteredDetails; track kpi.kpiId) {
+        <tr>
+          <td class="fw-medium">{{ kpi.kpiName }}</td>
+          <td class="text-center">
+            <div *ngIf="kpi.description; else noDescription">
+              <app-info-icon class="cursor" ngbPopover="{{ kpi.description }}" container="body">
+              </app-info-icon>
+            </div>
+            <ng-template #noDescription>NA</ng-template>
+          </td>
+          <td class="text-center">{{ kpi.targetType || '-' }}</td>
+          <!-- <td class="text-center">{{ kpi.targetValue || '-' }}</td> -->
+          <td class="text-center">
+            <span class="kpi-status" [ngClass]="getStatusClass(kpi.status)">
+              {{ kpi.status || '-' }}
+            </span>
+          </td>
+          @if (hasAnyActionPermission()) {
+          <td class="text-center">
+            <div class="dropdown">
+              <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                <i class="bi bi-three-dots-vertical text-muted"></i>
+              </span>
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <!-- UPDATE -->
+                @if(rbac.allowedToAccess('KPI.update')){
+                @if (canUpdate(kpi.status)) {
+                <li class="dropdown-item" (click)="onUpdate(kpi, createKpiModal)">
+                  <a class="dropdown-custom-btn">
+                    <i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}
+                  </a>
+                </li>
+                }
+                }
+
+                <!-- ACTIVATE -->
+                @if(rbac.allowedToAccess('KPI.update')){
+                @if (canActivate(kpi.status)) {
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Active')">
+                  <a class="dropdown-custom-btn text-success">
+                    <i class="bi bi-check-circle me-2"></i>{{ 'Active' | translate }}
+                  </a>
+                </li>
+                }
+                }
+
+                <!-- INACTIVE -->
+                @if(rbac.allowedToAccess('KPI.delete')){
+                @if (canInactivate(kpi.status)) {
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'Inactive')">
+                  <a class="dropdown-custom-btn text-warning">
+                    <i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' | translate }}
+                  </a>
+                </li>
+                }
+                }
+
+                <!-- HOLD -->
+                @if(rbac.allowedToAccess('KPI.update')){
+                @if (canHold(kpi.status)) {
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kpi, 'On Hold')">
+                  <a class="dropdown-custom-btn text-secondary">
+                    <i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate }}
+                  </a>
+                </li>
+                }
+                }
+
+              </ul>
+
+            </div>
+          </td>
+          }
+        </tr>
+        }
+        } @else {
+        <tr>
+          <td colspan="6" class="text-center py-4">
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (filteredDetails.length > 0) {
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          @for (option of options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{
+          collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
+  } @else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }
+</div>
+
+<!-- CREATE / UPDATE KPI MODAL (unchanged) -->
+<ng-template #createKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">
+        {{ isEditMode ? ('Update KPI' | translate) : ('Create New KPI' | translate) }}
+      </p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="kpiForm" (ngSubmit)="onSubmitKpi()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'KPI Title' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control custom-input" formControlName="kpiName"
+              placeholder="Enter KPI title" (input)="formValidation.validateInput(kpiForm.get('kpiName'))">
+            <div class="error-msg" *ngIf="f['kpiName'].touched && f['kpiName'].invalid">
+              KPI Title is required
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Unit of Measurement' | translate }} <span class="text-danger">*</span>
+            </label>
+            <div class="custom-p-select-content">
+              <p-select [options]="uomOptions" optionLabel="label" optionValue="value" class="form-select custom-select"
+                placeholder="Select UOM" formControlName="uom">
+              </p-select>
+            </div>
+            <div class="error-msg" *ngIf="f['uom'].touched && f['uom'].invalid">
+              Please select Unit of Measurement
+            </div>
+          </div>
+
+          <!-- <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Target Value' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="number" class="form-control custom-input" formControlName="targetValue" placeholder="Enter Target Value" (input)="formValidation.validateInput(kpiForm.get('targetValue'))">
+            <div class="error-msg" *ngIf="f['targetValue'].touched && f['targetValue'].errors">
+              <span *ngIf="f['targetValue'].errors['required']">
+                Target Value is required
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['min'] && f['uom'].value === '%'">
+                Percentage must be between 1 and 100
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['max'] && f['uom'].value === '%'">
+                Percentage must be between 1 and 100
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['min'] && f['uom'].value === '$'">
+                Currency must be greater than 0
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['min'] && (f['uom'].value === 'Hrs' || f['uom'].value === 'Days')">
+                Value must be between 1 and 999
+              </span>
+
+              <span *ngIf="f['targetValue'].errors['max'] && (f['uom'].value === 'Hrs' || f['uom'].value === 'Days')">
+                Value must be between 1 and 999
+              </span>
+            </div>
+
+          </div> -->
+
+          <div class="col-12">
+            <label class="form-label custom-label mb-2">
+              {{ 'Description' | translate }} <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control custom-input" rows="4" formControlName="description"
+              placeholder="Please enter description" (input)="formValidation.validateInput(kpiForm.get('description'))"></textarea>
+            <div class="textarea-count-text text-end">
+              {{ f['description'].value?.length || 0 }}/500
+            </div>
+            <div class="error-msg" *ngIf="f['description'].touched && f['description'].invalid">
+              Description is required
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="kpiForm.invalid || isSubmitting">
+            @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            {{ isEditMode ? 'Updating...' : 'Creating...' }}
+            } @else {
+            {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- STATUS CHANGE CONFIRMATION MODAL -->
+<ng-template #statusConfirmModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="confirmation icon" class="confirmation-delete-icon" />
+      <p class="confirmation-text">
+       {{ getStatusConfirmMessage() }}
+      </p>
+    </div>
+
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+        No
+      </button>
+      <button type="button" class="custom-btn btn-primary" (click)="confirmStatusChange()" [disabled]="isSubmitting">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>

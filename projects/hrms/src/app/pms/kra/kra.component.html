@@ -1,0 +1,605 @@
+<div class="custom-main-component-container">
+  <!-- Header -->
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name cursor">
+        PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{ 'KRA' | translate }}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <!-- @if (rbac.allowedToAccess('Create KRA.view')) { -->
+    <div class="d-flex align-items-center gap-4">
+      <a class="inactive-btn" (click)="toggleInactiveKra()">
+        {{ kraFilterApplied ? "Active KRA's" : "Inactive KRA's" }}
+      </a>
+
+      @if(rbac.allowedToAccess('KRA.create')){
+      <button class="custom-btn btn-primary" (click)="openCreateModal()">
+        {{ 'Create KRA' | translate }}
+      </button>
+      }
+
+    </div>
+
+    <!-- } -->
+  </div>
+
+  <!-- Module Info Popover -->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  <!-- Search Bar -->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search">
+      <i class="bi bi-search"></i>
+    </span>
+    <input type="search" class="form-control custom-search-input"
+      placeholder="Search here by KRA title, KRA category, description" [(ngModel)]="searchText"
+      (ngModelChange)="onSearchTextChange()" />
+  </div>
+
+  <!-- Table -->
+  @if (!dataload) {
+  <div class="custom-table-content w-100">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{ 'KRA Category' | translate }}</th>
+          <th class="text-center">{{ 'KRA Title' | translate }}</th>
+          <th class="text-center">{{ 'Description' | translate }}</th>
+          <th class="text-center">{{ 'Attachment' | translate }}</th>
+          <th class="text-center">{{ 'Status' | translate }}</th>
+          @if (hasAnyActionPermission()) {
+          <th class="text-center">{{ 'Action' | translate }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (filteredDetails.length > 0) {
+        @for (kra of filteredDetails; track kra.kraId) {
+        <tr>
+          <td>{{ kra.kraCategoryName }}</td>
+          <td class="text-center">{{ kra.kraName }}</td>
+          <td class="text-center">
+            <div *ngIf="kra.description; else noDescription">
+              <app-info-icon class="cursor" ngbPopover="{{ kra.description }}" container="body">
+              </app-info-icon>
+            </div>
+            <ng-template #noDescription>NA</ng-template>
+          </td>
+          <td class="text-center">
+            @if (kra.documentUrl) {
+            <div class="d-flex justify-content-center gap-2">
+              <!-- View -->
+              <a class="download-text cursor-pointer" *ngIf="isViewableFile(kra.documentUrl)"
+                (click)="onAttachmentClick(kra.documentUrl, $event)">
+                <app-document-view-icon />
+              </a>
+            </div>
+            } @else {
+            NA
+            }
+          </td>
+
+          <td class="text-center">
+            <span class="kra-status" [ngClass]="getStatusClass(kra.status)">
+              {{ kra.status }}
+            </span>
+          </td>
+          <!-- Inside the table row, replace the entire <td> for Action with this: -->
+          @if (hasAnyActionPermission()) {
+          <td class="text-center">
+            <div class="dropdown">
+              <span type="button" data-bs-toggle="dropdown" class="cursor-pointer">
+                <i class="bi bi-three-dots-vertical"></i>
+              </span>
+              <ul class="dropdown-menu custom-dropdown-menu">
+
+                <!-- Created Status -->
+                @if (kra.status === 'Created') {
+                @if(rbac.allowedToAccess('KRA.update')){
+                <li class="dropdown-item" (click)="onUpdate(kra)">
+                  <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
+                </li>
+                }
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
+                    translate }}</a>
+                </li>
+                }
+
+                <!-- Active Status -->
+                @else if (kra.status === 'Active') {
+                @if(rbac.allowedToAccess('KRA.update')){
+                <li class="dropdown-item" (click)="onUpdate(kra)">
+                  <a class="dropdown-custom-btn"><i class="bi bi-pencil me-2"></i>{{ 'Update' | translate }}</a>
+                </li>
+                }
+                @if(rbac.allowedToAccess('KRA.update')){
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'On Hold')">
+                  <a class="dropdown-custom-btn text-info"><i class="bi bi-pause-circle me-2"></i>{{ 'Hold' | translate
+                    }}</a>
+                </li>
+                }
+                @if(rbac.allowedToAccess('KRA.delete')){
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Inactive')">
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
+                    translate }}</a>
+                </li>
+                }
+                }
+
+                <!-- On Hold Status -->
+                @else if (kra.status === 'On Hold') {
+                @if(rbac.allowedToAccess('KRA.update')){
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
+                    translate }}</a>
+                </li>
+                }
+                @if(rbac.allowedToAccess('KRA.delete')){
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Inactive')">
+                  <a class="dropdown-custom-btn text-warning"><i class="bi bi-slash-circle me-2"></i>{{ 'Inactive' |
+                    translate }}</a>
+                </li>
+                }
+                }
+
+                @else if (kra.status === 'Inactive') {
+                @if(rbac.allowedToAccess('KRA.update')){
+                <li class="dropdown-item" (click)="openStatusConfirmModal(kra, 'Active')">
+                  <a class="dropdown-custom-btn text-success"><i class="bi bi-check-circle me-2"></i>{{ 'Active' |
+                    translate }}</a>
+                </li>
+                }
+                }
+
+              </ul>
+            </div>
+          </td>
+          }
+        </tr>
+        }
+        } @else {
+        <tr>
+          <td colspan="7" class="text-center py-4">
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (filteredDetails.length > 0) {
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          @for (option of options; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of {{
+          collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
+  } @else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }
+</div>
+
+<!-- CREATE KRA MODAL -->
+<ng-template #createKraModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">{{ isEditMode ? ('Update KRA' | translate) : ('Create New KRA' | translate) }}</p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="kraForm" (ngSubmit)="onSubmitKra()">
+        <div class="row g-3">
+
+          <!-- KRA Category -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'KRA Category' | translate }} <span class="text-danger">*</span>
+            </label>
+
+            <div class="custom-p-select-content">
+              <p-select [options]="kraCategories" optionLabel="name" optionValue="id" class="form-select custom-select"
+                placeholder="Select Category" [filter]="true" resetFilterOnHide="true" [showClear]="true"
+                formControlName="categoryId">
+              </p-select>
+            </div>
+
+            <div class="error-msg" *ngIf="f['categoryId'].touched && f['categoryId'].invalid">
+              Please select a KRA category
+            </div>
+          </div>
+
+
+          <!-- KRA Title -->
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'KRA Title' | translate }} <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control custom-input" formControlName="kraName" placeholder="Enter KRA title"
+              (input)="formValidation.validateInput(kraForm.get('kraName'))">
+            <div class="error-msg" *ngIf="f['kraName'].touched && f['kraName'].invalid">
+              KRA Title is required
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label mb-2">
+              {{ 'Upload Document' | translate }}
+            </label>
+
+            <div class="flex-grow-1">
+              <input type="file" class="form-control custom-input" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx"
+                (change)="onFileChange($event)" />
+
+              <!-- Show file name BELOW input -->
+              @if (isEditMode && existingAttachmentName) {
+              <small class="text-muted d-block mt-1">
+                {{ existingAttachmentName }}
+              </small>
+              }
+            </div>
+          </div>
+
+
+          <!-- Description -->
+          <div class="col-12">
+            <label class="form-label custom-label mb-2">
+              {{ 'Description' | translate }} <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control custom-input" rows="4" formControlName="description"
+              placeholder="Please Enter Description"
+              (input)="formValidation.validateInput(kraForm.get('description'))"></textarea>
+            <div class="textarea-count-text text-end">
+              {{ f['description'].value?.length || 0 }}/500
+            </div>
+            <div class="error-msg" *ngIf="f['description'].touched && f['description'].invalid">
+              Description is required
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="kraForm.invalid || isSubmitting">
+            @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2"></span> {{ isEditMode ? 'Updating...' : 'Creating...' }}
+            } @else {
+            {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- ASSIGN KPI MODAL -->
+<ng-template #assignKpiModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+
+    <!-- Header -->
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">Assign KPI</p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="assignKpiForm">
+
+        <!-- AUTO POPULATED KRA DETAILS -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label custom-label">KRA Title</label>
+            <input type="text" class="form-control custom-input" formControlName="kraName">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label">Weightage (%)</label>
+            <input type="text" class="form-control custom-input" formControlName="weightageValue">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label">Effective Date</label>
+            <input type="text" class="form-control custom-input" formControlName="effectiveDate">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label custom-label">Target Date</label>
+            <input type="text" class="form-control custom-input" formControlName="targetDate">
+          </div>
+        </div>
+
+        <!-- KPI TABLE -->
+        <div class="custom-table custom-popup-table mb-4 mt-4">
+          <table class="w-100">
+            <thead class="table-light">
+              <tr>
+                <th>KPI Name</th>
+                <th>Weightage (%)</th>
+                <th>Unit of Measurement</th>
+                <th>Target Value</th>
+                <th>Target Date</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody formArrayName="kpiRows">
+              <tr *ngFor="let row of kpiRows.controls; let i = index" [formGroupName]="i">
+
+                <td>
+                  <input type="text" class="form-control custom-input" formControlName="kpiName"
+                    placeholder="Enter KPI Name">
+                </td>
+
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="weightage" placeholder="0-100"
+                    min="1" max="100">
+                </td>
+
+                <td>
+                  <input type="text" class="form-control custom-input" formControlName="unit"
+                    placeholder="e.g. % , Nos , Rating">
+                </td>
+
+                <td>
+                  <input type="number" class="form-control custom-input" formControlName="targetValue"
+                    placeholder="Enter Value">
+                </td>
+
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
+                </td>
+
+                <td class="text-center">
+                  <button type="button" class="btn btn-sm btn-outline-danger me-2" *ngIf="kpiRows.length > 1"
+                    (click)="removeKpiRow(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+
+                  <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="i === kpiRows.length - 1"
+                    (click)="addKpiRow()">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            Cancel
+          </button>
+
+          <button type="button" class="custom-btn btn-primary">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- ASSIGN BY ROLE MODAL -->
+<ng-template #assignByRoleModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+
+    <!-- Header -->
+    <div
+      class="d-flex justify-content-between align-items-center custom-poup-header-content popup-header-border px-4 py-3">
+      <p class="popup-heading mb-0">Assign By Role ({{ selectedKraTitle }})</p>
+
+      <p class="kpi-count-pill mb-0 fw-bold" style="cursor: pointer; text-decoration: underline;"
+        (click)="openKpiCanvas(kpiCanvas, modal, selectedKraId)">
+        KPI's : {{ selectedKpiCount }}
+      </p>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="assignByRoleForm">
+
+        <!-- TABLE -->
+        <div class="custom-table custom-popup-table mb-4 mt-4">
+          <table class="w-100">
+            <thead class="table-light">
+              <tr>
+                <th>Job Role</th>
+                <th>Employees</th>
+                <th>Effective Date</th>
+                <th>Target Date</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody formArrayName="roleRows">
+
+              <tr *ngFor="let row of roleRows.controls; let i = index" [formGroupName]="i">
+
+                <!-- Job Role -->
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="jobRoleOptions" optionLabel="label" formControlName="jobRole"
+                      placeholder="Select Job Role" [filter]="true" class="w-100">
+                    </p-select>
+                  </div>
+                </td>
+
+                <!-- Employees -->
+                <td>
+                  <div class="custom-p-select-content">
+                    <p-select [options]="employeeOptions" optionLabel="label" formControlName="employee"
+                      placeholder="Select Employee" [filter]="true" class="w-100">
+                    </p-select>
+                  </div>
+                </td>
+
+                <!-- Effective Date -->
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+                    onkeydown="return false">
+                </td>
+
+                <!-- Target Date -->
+                <td>
+                  <input type="date" class="form-control custom-input" formControlName="targetDate"
+                    onkeydown="return false">
+                </td>
+
+                <!-- Actions -->
+                <td class="text-center">
+
+                  <button type="button" class="btn btn-sm btn-outline-danger me-2" *ngIf="roleRows.length > 1"
+                    (click)="removeRoleRow(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+
+                  <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="i === roleRows.length - 1"
+                    (click)="addRoleRow()">
+                    <i class="bi bi-plus-circle"></i>
+                  </button>
+
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="custom-modal-footer mt-4">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+            Cancel
+          </button>
+
+          <button type="button" class="custom-btn btn-primary">
+            Assign
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- KPI LIST RIGHT SIDEBAR -->
+<ng-template #kpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">KPI's ({{ kpiList.length }})</p>
+      <a (click)="closeKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+        @if (kpiList.length === 0) {
+        <div class="text-center py-5 text-muted">
+          <app-no-data-found />
+        </div>
+        } @else {
+        @for (kpi of kpiList; track kpi.kpiId) {
+        <div class="project-card mb-3">
+          <!-- KPI Name -->
+          <p class="project-name">{{ kpi.kpiName }}</p>
+
+          <!-- Row: Weightage | Target Value | Target Date -->
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates fw-bold">{{ kpi.weightageValue }}%</p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates fw-bold">
+                {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        }
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- STATUS CHANGE CONFIRMATION MODAL -->
+<ng-template #statusConfirmModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">
+       {{ getStatusConfirmMessage() }}
+      </p>
+    </div>
+
+    <div class="custom-modal-footer">
+      <button type="button" (click)="modal.dismiss()" class="custom-btn btn-secondary">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <p class="popup-heading mb-0">Attachment</p>
+      <a (click)="modal.dismiss()">
+        <img src="icons/close.png" class="close-icon" />
+      </a>
+    </div>
+
+    <div class="custom-main-popup-content text-center">
+      <img *ngIf="ExpenseImageUrl" [src]="ExpenseImageUrl" class="img-fluid" />
+
+      <iframe *ngIf="ExpenseViewURL" [src]="ExpenseViewURL" width="100%" height="500px" frameborder="0">
+      </iframe>
+    </div>
+  </div>
+</ng-template>

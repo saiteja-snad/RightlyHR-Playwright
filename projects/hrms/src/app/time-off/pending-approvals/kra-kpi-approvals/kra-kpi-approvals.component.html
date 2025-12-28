@@ -1,0 +1,370 @@
+<div class="custom-main-component-container">
+
+  <!-- HEADER: Employee Selection -->
+  <ng-template #kraKpiHeader>
+    @if (
+    rbac.allowedToAccess('All Employees (KRA KPI).view') &&
+    rbac.allowedToAccess('My Team (KRA KPI).view')
+    ) {
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+      <div class="custom-p-select-content">
+        <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
+          placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+          class="form-select custom-select">
+        </p-select>
+      </div>
+    </div>
+    }
+
+    @else if (rbac.allowedToAccess('All Employees (KRA KPI).view')){
+      <div class="d-flex align-items-center gap-2 mb-3">
+      <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+      <div class="custom-p-select-content">
+        <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
+          placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+          class="form-select custom-select">
+        </p-select>
+      </div>
+    </div>
+    }
+
+    @else if (rbac.allowedToAccess('My Team (KRA KPI).view')) {
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <label class="form-label custom-label text-nowrap filter-labels m-0">My Team</label>
+      <div class="custom-p-select-content">
+        <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
+          [filter]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+          class="form-select custom-select">
+        </p-select>
+      </div>
+    </div>
+    }
+  </ng-template>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="w-100">
+
+      <!-- Search Bar -->
+      <!-- <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search KRA / KPI..."
+          [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+      </div> -->
+
+      <!-- LOADER -->
+      @if (loading) {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }
+
+      <!-- NO DATA -->
+      @else if (teamKpiData.length === 0 || !teamKpiData[0]) {
+      <div class="no-data-wrapper">
+        <app-no-data-found />
+      </div>
+      }
+
+      <!-- ACCORDION -->
+      @else {
+      <div class="custom-accordians">
+        <div class="custom-accordian-data-content">
+
+          <p-accordion [multiple]="true">
+
+            @for (emp of teamKpiData; track emp.employeeId; let i = $index) {
+            <p-accordion-panel [value]="i">
+
+              <!-- EMPLOYEE HEADER -->
+              <p-accordion-header>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                  <div class="d-flex align-items-center gap-3 fw-semibold">
+                    {{ emp.employeeName }}
+                  </div>
+                </div>
+              </p-accordion-header>
+
+              <!-- EMPLOYEE CONTENT -->
+              <p-accordion-content>
+                <div class="custom-p-multi-select-table custom-accordian-table">
+                  @if (emp.rows && emp.rows.length > 0) {
+                  <p-table [value]="emp.rows">
+
+                    <!-- TABLE HEADER -->
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>Review Cycle</th>
+                        <th>KRA Name</th>
+                        <th>KPI Name</th>
+                        <!-- <th class="text-center">Target</th>
+                        <th class="text-center">Weightage</th> -->
+                        <th class="text-center">Progress</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
+                      </tr>
+                    </ng-template>
+
+                    <!-- TABLE BODY -->
+                    <ng-template pTemplate="body" let-row>
+                      <tr>
+                        <td>
+                          {{ row.reviewCycleData?.reviewCycleName || 'NA' }}
+                        </td>
+                        <td>{{ row.kraName }}</td>
+                        <td>{{ row.kpiName }}</td>
+                        <!-- <td class="text-center">
+                          {{ row.targetValue || '-' }}
+                        </td>
+                        <td class="text-center">
+                          {{ row.weightageValue || '-' }}
+                        </td> -->
+                        <td class="text-center">
+                          <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" [style.width.%]="row.assignedWeightage || 0"
+                              [attr.aria-valuenow]="row.assignedWeightage || 0" aria-valuemin="0" aria-valuemax="100"
+                              [ngClass]="getProgressClass(row.assignedWeightage || 0)">
+                            </div>
+                          </div>
+                          <small class="fw-semibold">
+                            {{ row.assignedWeightage || 0 }}%
+                          </small>
+                        </td>
+                        <td class="text-center" [ngClass]="getKpiStatusClass( row.assignedStatus)">
+                          <span class="kpi-status" [ngClass]="getKpiStatusClass( row.assignedStatus)">
+                             {{ row.assignedStatus || '-' }}
+                          </span>
+                        </td>
+                        <td class="text-center">
+                          <a (click)="openApproveModal(row, approveModal, emp.employeeId)" class="me-3 cursor-pointer">
+                            <img src="/icons/check-approve-icon.png" class="popup-icon" alt="Approve">
+                          </a>
+                          <a (click)="openRejectModal(row, rejectModal, emp.employeeId)" class="cursor-pointer">
+                            <img src="/icons/cancel-circle.png" class="popup-icon" alt="Reject">
+                          </a>
+                        </td>
+                      </tr>
+                    </ng-template>
+
+                  </p-table>
+                  } @else {
+                  <div class="p-4 text-center text-muted">
+                    No KPI data available
+                  </div>
+                  }
+                </div>
+              </p-accordion-content>
+
+            </p-accordion-panel>
+            }
+
+          </p-accordion>
+
+          <!-- PAGINATION -->
+          <!-- @if (collectionSize > 0) {
+          <div class="pagination-content mt-3">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+              <div class="d-flex align-items-center gap-3 p-2">
+                <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                  (ngModelChange)="onPageSizeChange($event)">
+                  @for (option of options; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+                <span class="pagination-label text-nowrap">
+                  Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of
+                  {{ collectionSize }}
+                </span>
+              </div>
+              <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+            </div>
+          </div>
+          } -->
+
+        </div>
+      </div>
+      }
+
+    </div>
+  </div>
+</div>
+
+
+<ng-template #approveModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div class="text-center mb-2">
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text mt-2">
+        Are you sure you want to approve this KRA/KPI?
+      </p>
+    </div>
+
+    <form [formGroup]="actionForm" (ngSubmit)="submitAction('Approved')">
+      <div class="custom-main-popup-content">
+
+        <!-- Percentage -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            Percentage <span class="text-danger">*</span>
+          </label>
+
+          <input type="number" class="form-control custom-input" formControlName="percentage"
+            placeholder="Enter percentage" min="0" max="100" />
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['required']">
+            Percentage is required
+          </div>
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['min']">
+            Percentage cannot be less than 0
+          </div>
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('percentage')?.touched && actionForm.get('percentage')?.errors?.['max']">
+            Percentage cannot be more than 100
+          </div>
+        </div>
+
+
+        <!-- Rating -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            Rating <span class="text-danger">*</span>
+          </label>
+          <input type="number" class="form-control custom-input" formControlName="rating" placeholder="Enter rating"
+            [attr.min]="currentMinRating" [attr.max]="currentMaxRating" />
+          <div class="error-msg"
+            *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['required']">
+            Rating is required
+          </div>
+
+          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['min']">
+            Minimum rating is {{ currentMinRating }}
+          </div>
+
+          <div class="error-msg" *ngIf="actionForm.get('rating')?.touched && actionForm.get('rating')?.errors?.['max']">
+            Maximum rating is {{ currentMaxRating }}
+          </div>
+
+        </div>
+
+        <!-- Approver Comments -->
+        <div>
+          <label class="form-label custom-label mb-2">Approver Comments</label>
+          <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="250"
+            placeholder="Enter comments (optional)"></textarea>
+          <div class="textarea-count-text">
+            {{ actionForm.get('comments')?.value?.length || 0 }} / 250
+          </div>
+        </div>
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+          <button type="button" class="custom-btn btn-secondary chip-btn" [class.active]="selectedActionStatus === 'approve'"
+            (click)="onApproveChipSelect()">
+            Approved
+          </button>
+        </div>
+
+
+        <!-- Attachment -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Attachment</label>
+          <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
+            accept=".pdf,.jpg,.jpeg,.png">
+          <!-- @if (selectedFileName) {
+          <small class="text-success d-block mt-1">{{ selectedFileName }}</small>
+          } -->
+        </div>
+
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="isSubmitting">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
+          @if (!isSubmitting) {
+          Approve
+          } @else {
+          <div class="button-loader-content">
+            <div class="spinner-border button-spinner text-light" role="status"></div>
+            <span>Submitting...</span>
+          </div>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #rejectModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div class="text-center mb-2">
+      <img src="/icons/reject.png" alt="reject-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text mt-2">
+        Are you sure you want to reject this KRA/KPI?
+      </p>
+    </div>
+
+    <form [formGroup]="actionForm" (ngSubmit)="submitAction('Rejected')">
+      <div class="custom-main-popup-content">
+
+        <!-- Approver Rejecting Comments - REQUIRED for Reject -->
+        <div>
+          <label class="form-label custom-label mb-2">
+            Rejection Comments <span class="text-danger">*</span>
+          </label>
+          <textarea class="form-control custom-input" formControlName="comments" rows="3" maxlength="250"
+            placeholder="Please provide reason for rejection">
+          </textarea>
+          <div class="textarea-count-text">
+            {{ actionForm.get('comments')?.value?.length || 0 }} / 250
+          </div>
+
+          <div class="error-msg"
+            *ngIf="actionForm.get('comments')?.touched && actionForm.get('comments')?.errors?.['required']">
+            Rejecting comments are required
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+          <button type="button" class="custom-btn btn-secondary chip-btn"
+            [class.active]="selectedActionStatus === 'reject'" (click)="onRejectChipSelect()">
+            Rejected
+          </button>
+        </div>
+
+
+        <!-- Attachment (Optional) -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Attachment</label>
+          <input type="file" class="form-control custom-input" (change)="onFileSelect($event)"
+            accept=".pdf,.jpg,.jpeg,.png">
+          <!-- <small *ngIf="selectedFileName" class="text-success d-block mt-1">{{ selectedFileName }}</small> -->
+        </div>
+
+      </div>
+
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="isSubmitting">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="actionForm.invalid || isSubmitting">
+          @if (!isSubmitting) {
+          Reject
+          } @else {
+          <div class="button-loader-content">
+            <div class="spinner-border button-spinner text-light" role="status"></div>
+            <span>Submitting...</span>
+          </div>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>

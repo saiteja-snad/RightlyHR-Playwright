@@ -85,7 +85,9 @@ import {
   OFFBOARDING_APPROVALS_TABS,
   ONBOARDING_APPROVALS_TABS,
   Employee_TEAM_NUMBERS,
-  MyINFO_TEAM_NUMBERS
+  MyINFO_TEAM_NUMBERS,
+  MY_KRA_KPI_TABS,
+  PERFORMANCE_REVIEW_TABS
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -576,6 +578,12 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        break;
+
+      case '/pms/review-cycle':
+        if (this.rbac.allowedToAccess('Review Cycle List.view')) {
+          return (route = '/pms/review-cycle');
         }
         break;
 
@@ -1101,7 +1109,6 @@ export class AccessNavigationService {
       //timesheet locking
       case '/settings/timesheet-locking-configuration':
         if (this.rbac.allowedToAccess('Timesheet Configuration Module.view')) {
-
           for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1521,6 +1528,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/pending-approvals/kra-kpi':
+        if (this.rbac.allowedToAccess('KRA KPI approval Tab.view')) {
+          return (route = '/pending-approvals/kra-kpi');
+        }
+        break;
+
       case '/pending-approvals/time-off':
         if (this.rbac.allowedToAccess('Time Off main Tab.view')) {
           for (const item of TIMEOFF_APPROVALS_TABS) {
@@ -1845,8 +1858,6 @@ export class AccessNavigationService {
         }
         break;
 
-
-
       case '/personalinfo/documents':
         if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') ||
           this.rbac.allowedToAccess('My Info Documents Tab.view')) {
@@ -1879,35 +1890,105 @@ export class AccessNavigationService {
         }
         break;
 
-
-
-
       case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {
-            console.log('Checking permission for route:', item.route);
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
         }
-
         break;
-
 
       case '/myinfo/job/team':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
           for (const item of MyINFO_TEAM_NUMBERS) {
-            console.log('Checking permission for route:', item.route);
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
         }
-
         break;
 
+      case '/pms/review-cycle':
+        if (this.rbac.allowedToAccess('Review Cycle List.view')) {
+          return (route = '/pms/review-cycle');
+        }
+        break;
 
+      case '/pms/performace-review':
+        if (this.rbac.allowedToAccess('My Performance Review.view')) {
+          for (const item of PERFORMANCE_REVIEW_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/pms/performace-review/myPerformance':
+        if (this.rbac.allowedToAccess('My Performance Review.view')) {
+          return (route = '/pms/performace-review/myPerformance');
+        }
+        break;
+
+      case '/pms/performace-review/team-performance':
+        if (this.rbac.allowedToAccess('My Team Performance Review.view')) {
+          return (route = '/pms/performace-review/team-performance');
+        }
+        break;
+
+      case '/pms/kpi':
+        if (this.rbac.allowedToAccess('KPI.view')) {
+          return (route = '/pms/kpi');
+        }
+        break;
+
+      case '/pms/kra':
+        if (this.rbac.allowedToAccess('KRA.view')) {
+          return (route = '/pms/kra');
+        }
+        break;
+
+      case '/pms/assign-kra-kpi':
+        if (this.rbac.allowedToAccess('Assign KRA KPI.view')) {
+          return (route = '/pms/assign-kra-kpi');
+        }
+        break;
+
+      case '/pms/kpi-kra':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          for (const item of MY_KRA_KPI_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/pms/kpi-kra/dashboard':
+        if (this.rbac.allowedToAccess('Dashboard KRA KPI.view')) {
+          return (route = '/pms/kpi-kra/dashboard');
+        }
+        break;
+
+      case '/pms/kpi-kra/my-kpi-kra':
+        if (this.rbac.allowedToAccess('My KRA KPI.view')) {
+          return (route = '/pms/kpi-kra/my-kpi-kra');
+        }
+        break;
+
+      case '/pms/kpi-kra/team':
+        if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
+          return (route = '/pms/kpi-kra/team');
+        }
+        break;
+
+      case '/pms/my-kpi-kra/employee-kra-kpi-view':
+        if (this.rbac.allowedToAccess('Team KRA KPI.view')) {
+          return (route = '/pms/my-kpi-kra/employee-kra-kpi-view');
+        }
+        break;
     }
     return route;
   }

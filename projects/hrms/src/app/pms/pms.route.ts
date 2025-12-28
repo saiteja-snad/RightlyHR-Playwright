@@ -12,27 +12,53 @@ import { UpdateComponent } from "./review-cycle-list/update/update.component";
 import { CreateComponent } from "./review-cycle-list/create/create.component";
 import { ViewComponent } from "./review-cycle-list/view/view.component";
 import { PermissionsGuard } from "../guards/permissions.guard";
+import { KraComponent } from "./kra/kra.component";
+import { KpiComponent } from "./kpi/kpi.component";
+import { AssignKraKpiComponent } from "./assign-kra-kpi/assign-kra-kpi.component";
+import { MyKraKpiComponent } from "./my-kra-kpi/my-kra-kpi.component";
+import { KraKpiDashboardComponent } from "./kra-kpi-dashboard/kra-kpi-dashboard.component";
+import { TeamKraKpiComponent } from "./team-kra-kpi/team-kra-kpi.component";
+import { EmployeeKraKpiViewComponent } from "./employee-kra-kpi-view/employee-kra-kpi-view.component";
 
 export default [
     { path: '', redirectTo: '/pms/review-cycle', pathMatch: 'full' },
-    { path: 'review-cycle', component: ReviewCycleListComponent, canActivate: [PermissionsGuard], data: { permission: 'Review Cycle List.view' }  },
-    { path: 'review-cycle/create', component: CreateComponent, canActivate: [PermissionsGuard], data: { permission: 'Create Review Cycle.view' }  }, 
-    { path: 'review-cycle/update', component: UpdateComponent, canActivate: [PermissionsGuard], data: { permission: 'Update.view' }  }, 
-    { path: 'review-cycle/view', component: ViewComponent, canActivate: [PermissionsGuard], data: { permission: 'View.view' }  }, 
+    { path: 'review-cycle', component: ReviewCycleListComponent, canActivate: [PermissionsGuard], data: { permission: 'Review Cycle List.view' } },
+    { path: 'review-cycle/create', component: CreateComponent, canActivate: [PermissionsGuard], data: { permission: 'Create Review Cycle.view' } },
+    { path: 'review-cycle/update', component: UpdateComponent, canActivate: [PermissionsGuard], data: { permission: 'Update.view' } },
+    { path: 'review-cycle/view', component: ViewComponent, canActivate: [PermissionsGuard], data: { permission: 'View.view' } },
     { path: 'apprisal', component: ApprisalListComponent, canActivate: [PermissionsGuard], data: { permission: 'Review Cycle Employee List.view' } },
-    { path: 'assessment-form', component: AssessmentFormComponent},
-    { path: 'myPerformance', component: MyPerformanceReviewComponent,
+    { path: 'assessment-form', component: AssessmentFormComponent },
+    {
+        path: 'performace-review',
         children: [
-              { path: '', redirectTo: 'pending-review', pathMatch: 'full' },
-              { path: 'pending-review', component: PendingReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Pending Reviews.view' }  },
-              { path: 'completed-review', component: CompleteReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Completed Reviews.view' }  },
+            {
+                path: 'myPerformance', component: MyPerformanceReviewComponent,
+                children: [
+                    { path: '', redirectTo: 'pending-review', pathMatch: 'full' },
+                    { path: 'pending-review', component: PendingReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Pending Reviews.view' } },
+                    { path: 'completed-review', component: CompleteReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Completed Reviews.view' } },
+                ]
+            },
+            {
+                path: 'team-performance', component: TeamPerformanceReviewComponent,
+                children: [
+                    { path: '', redirectTo: 'pending-review', pathMatch: 'full' },
+                    { path: 'pending-review', component: TeamPendingReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Team Pending Reviews.view' } },
+                    { path: 'completed-review', component: TeamCompleteReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Team Completed Reviews.view' } },
+                ]
+            },
         ]
     },
-    { path: 'team-performance', component: TeamPerformanceReviewComponent,
+    { path: 'kra', component: KraComponent, canActivate: [PermissionsGuard], data: { permission: 'KRA.view' } },
+    { path: 'kpi', component: KpiComponent, canActivate: [PermissionsGuard], data: { permission: 'KPI.view' } },
+    { path: 'assign-kra-kpi', component: AssignKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'Assign KRA KPI.view' } },
+    {
+        path: 'kpi-kra',
         children: [
-            { path: '', redirectTo: 'pending-review', pathMatch: 'full' },
-            { path: 'pending-review', component: TeamPendingReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Team Pending Reviews.view' }  },
-            { path: 'completed-review', component: TeamCompleteReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Team Completed Reviews.view' }  },
-      ]
+            { path: 'my-kpi-kra', component: MyKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'My KRA KPI.view' } },
+            { path: 'dashboard', component: KraKpiDashboardComponent, canActivate: [PermissionsGuard], data: { permission: 'Dashboard KRA KPI.view' } },
+            { path: 'team', component: TeamKraKpiComponent, canActivate: [PermissionsGuard], data: { permission: 'Team KRA KPI.view' } },
+            // { path: 'employee-kra-kpi-view/:employeeId', component: EmployeeKraKpiViewComponent, canActivate: [PermissionsGuard], data: { permission: 'Team KRA KPI.view' } },
+        ]
     },
 ] as Route[];

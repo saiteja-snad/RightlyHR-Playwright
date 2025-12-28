@@ -775,7 +775,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Contractors main Tab',
     'Offboarding main Tab',
     'Onboarding main Tab',
-    'Time Sheet approval Tab'
+    'Time Sheet approval Tab',
+    'KRA KPI approval Tab'
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
@@ -1202,6 +1203,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Review Cycle Employee List',
     'My Performance Review',
     'My Team Performance Review',
+    'KRA',
+    'KPI',
+    'Assign KRA KPI',
+    'My KRA KPI',
+    'Dashboard KRA KPI'
   ];
   reviewCycleListActionsFields = [
     'Create Review Cycle',
@@ -1254,7 +1260,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Team Promotion Letter Download',
     'Team Appraisal Letter Download',
   ];
-  pmsConfigurationFields = ['Increment Percentage', 'Assessor Configuration'];
+  pmsConfigurationFields = ['Increment Percentage', 'Assessor Configuration', 'Kra Configuration'];
   incrementActionsFields = [
     'Increment Create',
     'Increment Update(Status - Created)',
@@ -1268,6 +1274,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Assessor Delete(Status - Created)',
     'Assessor Update(Status - Initialted)',
     'Assessor Update(Status - Review On Hold)',
+  ];
+    kraFields = [
+    'Kra Create',
+    'Kra Update(Status - Created)',
+    'Kra Delete(Status - Created)',
+    'Kra Update(Status - Initialted)',
+    'Kra Update(Status - Review On Hold)',
   ];
   employeeInfoPersonalSubTabsFields = [
     'Employee Info Basic Information',

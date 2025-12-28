@@ -8,7 +8,8 @@
                 <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Dashboard
             </li>
             }
-                 @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
+            <!--Employee Dashboard-->
+            @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/employee-dashboard');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/employee-dashboard')">
                 <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon"> Dashboard
@@ -21,7 +22,6 @@
                 <img src="/main-menu-icons/my-Info-icon.png" alt="Icon" class="main-menu-icon">My Info
             </li>
             }
-
             <!--Employee Management-->
             @if(this.rbac.allowedToAccess('Employees.view')){
             <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
@@ -29,7 +29,6 @@
                 <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
             </li>
             }
-
             <!--Time Off-->
             @if(this.rbac.allowedToAccess('Time-Off.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
@@ -43,7 +42,6 @@
                 </div>
             </li>
             }
-
             <!--Attendance-->
             @if(this.rbac.allowedToAccess('Attendance.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/attendance');resetDropdown()"
@@ -51,7 +49,6 @@
                 <img src="main-menu-icons/finger-print.png" alt="Icon" class="main-menu-icon">Attendance
             </li>
             }
-
             <!--Reports-->
             @if(this.rbac.allowedToAccess('Reports.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/reports');resetDropdown()"
@@ -59,13 +56,13 @@
                 <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
             </li>
             }
-
             <!--Project Management-->
             @if(this.rbac.allowedToAccess('Project Management.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveprojectManagement()">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/project-management-icon.png" alt="Icon" class="main-menu-icon">Project Management
+                        <img src="main-menu-icons/project-management-icon.png" alt="Icon" class="main-menu-icon">
+                        Project Management
                     </div>
                     <ul class="dropdown-menu">
                         <app-project-management-main-tabs />
@@ -73,13 +70,14 @@
                 </div>
             </li>
             }
-
+            <!--Skill Set Management-->
             @if(this.rbac.allowedToAccess('Skill Set Management.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/skill-management');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/skill-management')">
                 <img src="main-menu-icons/skill-management.png" alt="Icon" class="main-menu-icon">Skill Set
             </li>
             }
+
 
 
             <!-- @if(this.rbac.allowedToAccess('On Behalf Of.view')){
@@ -94,7 +92,7 @@
                 </div>
             </li>
             } -->
-            
+
              @if(this.rbac.allowedToAccess('On Behalf Of.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
@@ -107,12 +105,13 @@
                 </div>
             </li>
             }
-
+            <!--pending Approvals-->
             @if(this.rbac.allowedToAccess('Pending Approvals Module.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/pending-approvals')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/pending-approvals.png" alt="Icon" class="main-menu-icon">Pending Approvals
+                        <img src="main-menu-icons/pending-approvals.png" alt="Icon" class="main-menu-icon">Pending
+                        Approvals
                     </div>
                     <ul class="dropdown-menu">
                         <app-pending-approvals-tabs />
@@ -120,7 +119,19 @@
                 </div>
             </li>
             }
-
+            <!--pending Approvals-->
+            @if(this.rbac.allowedToAccess('PMS.view')){
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/pms')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/main-menu-icons/pms.png" alt="Icon" class="main-menu-icon">PMS
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-pms-main-tabs />
+                    </ul>
+                </div>
+            </li>
+            }
             <!--Selected Item form the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"
@@ -128,14 +139,12 @@
                 <img [src]="selectedDropdownModule.activeIcon" alt="Icon" class="main-menu-icon">
                 {{ selectedDropdownModule.label }}
             </li>
-
             <!--Drop Menu Items-->
             <li class="nav-item text-wrap align-items-center">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false" class="custom-main-menu-toggle">
                         <img src="main-menu-icons/white-dots.png" alt="Icons" class="more-menu-icon">
                     </a>
-
                     <ul class="dropdown-menu">
                         <div class="grid-container">
                             <div class="grid-item" *ngFor="let module of filteredModules; let i = index"

@@ -78,6 +78,19 @@ export const MODULE_INFOS = {
     PMS_CONFIGURATION_MODULE_INFO: "Set up your appraisal cycles with the assessor roles and map rating scales to salary hikes. Configure assessors and increments to ensure transparent performance reviews and structured increment planning — all in one place.",
     PMS_CONFIGURATION_INCREMENT_PERCENTAGE_MODULE_INFO: "This screen enables configuration of increment percentages based on employee ratings within a selected review cycle. Admins can define rating scales, set percentage slabs for specific salary ranges, and associate them with departments, teams, and locations.",
     PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO: "This section allows administrators to configure assessors for a selected review cycle by mapping them to departments, teams, and locations. Each assessor can be assigned a deadline date, rating responsibility, and the ability to add comments for evaluations.",
+    PMS_CONFIGURATION_KRA_CONFIGURATION_MODULE_INFO: "This section allows administrators to define and manage KRA Categories by grouping related Key Result Areas under a common category. These categories help streamline KRA configuration, assignment, and performance evaluation across the organization.",
+
+
+    // KRA KPI Configuration Module Info
+    PMS_KRA_LIST_MODULE_INFO: "The KRA section allows HR/Admin to define role-specific responsibility areas for employees. It outlines the expected outcomes and focus areas to ensure clarity and accountability in performance expectations.",
+    PMS_KPI_LIST_MODULE_INFO: "The KPI section allows HR/Admin to configure measurable performance indicators linked to KRAs. It helps track employee performance using defined metrics for objective evaluation and analysis.",
+    PMS_KRA_KPI_ASSIGN_MODULE_INFO: "The Assign KRA/KPI section allows managers or HR/Admin to assign relevant KRAs and KPIs to employees or roles. It ensures alignment of individual performance goals with organizational objectives and enables effective performance tracking.",
+    PMS_MY_KRA_KPI_LIST_MODULE_INFO: "The My KRA/KPI module allows employees to view the KRAs and KPIs assigned to them by their manager. It provides clear visibility into performance goals, targets, and expectations for effective self-tracking and alignment.",
+    PMS_TEAM_KRA_KPI_LIST_MODULE_INFO: "The Team KRI/KPI module enables managers and authorized users to view and monitor KRIs and KPIs assigned to their team members. It provides a consolidated view to track performance, assess risks, and ensure alignment with organizational goals.",
+
+
+
+
 
     //Desk Allocation Module Info
     DESK_ALLOCATION_MODULE_INFO: "The Desk Allocation page enables efficient workspace management by displaying desk statuses and allowing actions like reallocation, inactivation, maintenance scheduling, and viewing details. Users can filter by location, desk ID, type, shift, employee, and approver for precise control.",
@@ -164,6 +177,8 @@ export const MODULE_INFOS = {
     PENDING_APPROVALS_TIMESHEET_MODULE_INFO: "The Timesheets Approvals page shows pending submissions of employee working hours, project logs, and task entries. Approvers can validate recorded time, ensure correct billing or non-billing classification, and confirm adherence to time-tracking policies before approving entries.",
     PENDING_APPROVALS_ASSESSMENT_FORM_MODULE_INFO: "This module handles probation assessment submissions and provides approvers with tools to evaluate performance, approve outcomes, reject requests, or extend probation. It promotes structured reviews, accountability, and efficiency in managing employee probation periods.",
     PENDING_APPROVALS_EMPLOYEEINFO_MODULE_INFO: "The Employee Info section in Pending Approvals displays all requests submitted by employees to update their personal or job-related information. Managers can review each request, verify the details, and take appropriate action by approving or rejecting the update. Once approved, the system automatically updates the employee’s information, ensuring accurate and controlled data maintenance.",
+    PENDING_APPROVALS_KRA_KPI_MODULE_INFO: "The Pending Approvals – KRA/KPI module allows the designated approval authority to review, approve, or reject KRA and KPI submissions raised by employees. It ensures timely validation, accountability, and accurate tracking of performance and goal-related data.",
+
     //on behalf of module info
     ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
     ON_BEHALF_OF_REMOTELOGIN_MODULE_INFO : "The Remote Login module enables HR or managers to apply and manage Remote login requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",

@@ -1,0 +1,289 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">PMS
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{"Team KRA's / KPI's" | translate}}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+
+
+
+    <div class="d-flex align-items-center gap-3">
+      <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+        {{ 'Clear All' | translate }}
+      </button>
+
+      <!-- Employee Selection Dropdown -->
+      @if (
+      rbac.allowedToAccess('All Employees (KRA).view') &&
+      rbac.allowedToAccess('My Team (KRA).view')
+      ) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
+            placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+
+      @else if (rbac.allowedToAccess('All Employees (KRA).view')){
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
+            placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+
+      @else if (rbac.allowedToAccess('My Team (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">My Team</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
+            [filter]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select" [(ngModel)]="selectedReviewCycleId"
+            (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true"
+            showClear="true" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+  <!-- Main Content -->
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="component-left-tabs-container">
+      <app-kra-kpi-management-layout />
+    </div>
+
+    <!-- Right Side Content -->
+    <div class="w-100 right-content">
+      <!-- Search Bar -->
+      <div class="input-group custom-search mb-4">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name..."
+          [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+      </div>
+
+      @if (!loading) {
+      <!-- Accordion + Pagination Container -->
+      <div class="accordion-with-pagination">
+        <!-- Accordions -->
+        <div class="custom-accordians mb-0">
+          <div class="custom-accordian-data-content">
+            @if (groupedEmployeeData.length > 0) {
+            <p-accordion>
+              @for (employee of groupedEmployeeData; track employee.employeeId) {
+              <p-accordion-panel [value]="employee.employeeId">
+                <!-- ACCORDION HEADER -->
+                <p-accordion-header>
+                  <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="text-truncate fw-semibold employee-name">
+                        {{ employee.employeeName }} - ({{ employee.fusionId }})
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <!-- <div class="text-center" style="width: 200px;">
+                              <small class="text-muted me-1" style="font-size: 13px;">Total KRAs:</small>
+                              <strong>{{ getTotalKrasCount(employee.allKras) }}</strong>
+                            </div> -->
+                    </div>
+                  </div>
+                </p-accordion-header>
+
+                <!-- ACCORDION CONTENT -->
+                <p-accordion-content>
+                  <div class="custom-p-multi-select-table custom-accordian-table">
+                    @if (employee.allKras.length > 0) {
+                    <p-table [value]="employee.allKras">
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th>{{ 'KRA Name' | translate }}</th>
+                          <th class="text-center">{{ 'Review Cycle' | translate }}</th>
+                          <th class="text-center">{{ 'KPIs Count' | translate }}</th>
+                          <th class="text-center">{{ 'Target Date' | translate }}</th>
+                          <th class="text-center">{{ 'KRA Weightage' | translate }}</th>
+                          <th class="text-center">{{ 'KRA Rating' | translate }}</th>
+                          <th class="text-center">{{ 'Progress (%)' | translate }}</th>
+                          <th class="text-center">{{ 'Status' | translate }}</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-kra>
+                        <tr>
+                          <td>{{ kra.kraName }}</td>
+                          <td class="text-center">{{ kra.reviewCycleName }}</td>
+                          <td class="text-center">
+                            <span class="kras-bold cursor" [class.text-muted]="kra.kpisCount === 0"
+                              [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
+                              (click)="kra.kpisCount > 0 && openKpiCanvas(kpiCanvas, kra)">
+                              {{ kra.kpisCount }}
+                            </span>
+                          </td>
+                          <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
+                          <td class="text-center">{{ kra.kraWeightage }}%</td>
+                          <td class="text-center">
+                            <strong>{{ getKraRating(kra) }}</strong>
+                          </td>
+                          <td class="text-center">
+                            <div class="progress" style="height: 8px;">
+                              <div class="progress-bar" role="progressbar" [style.width.%]="kra.progress"
+                                [attr.aria-valuenow]="kra.progress" aria-valuemin="0" aria-valuemax="100"
+                                [ngClass]="getProgressClass(kra.progress)"></div>
+                            </div>
+                            <small class="fw-semibold">{{ kra.progress }}%</small>
+                          </td>
+                          <td class="text-center">
+                                    <span class="kra-status fw-bold" [ngClass]="getKraStatusClass(kra.overallStatus)">
+                                      {{ kra.overallStatus || '-' }}
+                                    </span>
+                                  </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                    } @else {
+                    <div class="p-4 text-center text-muted">
+                      <app-no-data-found />
+                    </div>
+                    }
+                  </div>
+                </p-accordion-content>
+              </p-accordion-panel>
+              }
+            </p-accordion>
+            } @else {
+            <app-no-data-found />
+            }
+          </div>
+        </div>
+
+        <!-- Pagination - Directly after accordion, no gap -->
+        @if (groupedEmployeeData.length > 0) {
+        <div class="pagination-content mt-3">
+          <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+              <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                @for (option of options; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+              <span class="pagination-label text-nowrap">
+                Showing {{ first + 1 }} -
+                {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }}
+                of {{ collectionSize }}
+              </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+              (onPageChange)="onPageChange($event)">
+            </p-paginator>
+          </div>
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<ng-template #kpiCanvas let-offcanvas>
+  <div class="custom-filter-container">
+
+    <!-- HEADER -->
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">
+        KPIs ({{ kpiList.length }})
+      </p>
+      <a (click)="closeKpiCanvas()" class="cursor-pointer">
+        <img src="icons/close.png" alt="Close" class="close-icon">
+      </a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="offcanvas-filter-content p-3">
+      <div class="projects-container">
+
+        <div *ngFor="let kpi of kpiList" class="project-card mb-3">
+          <p class="project-name">{{ kpi.kpiName }}</p>
+
+          <!-- THREE COLUMN SECTION -->
+          <div class="d-flex justify-content-between gap-3 mb-3">
+            <div class="text-center">
+              <p class="project-role mb-1">Weightage</p>
+              <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
+            </div>
+
+            <div class="text-center">
+              <p class="project-role mb-1">Target Value</p>
+              <p class="project-dates m-0">
+                {{ kpi.targetValue }}
+                <span class="text-muted small">{{ kpi.targetType }}</span>
+              </p>
+            </div>
+
+            <div class="text-center">
+              <p class="project-role mb-1">Target Date</p>
+              <p class="project-dates m-0">
+                {{ kpi.targetDate | date:'MMM dd, yyyy' }}
+              </p>
+            </div>
+          </div>
+
+          <!-- RATING -->
+          <div class="d-flex align-items-center justify-content-end mb-2">
+            <p class="project-role m-1 fw-bold" style="color: var(--primary-color);">
+              Rating :
+            </p>
+            <p class="project-dates m-1">
+              {{ kpi.assignedApproverRating || '-' }}
+            </p>
+          </div>
+
+          <!-- STATUS + INFO -->
+          <div class="d-flex align-items-center justify-content-end gap-2">
+            <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">
+              {{ kpi.assignedStatus || '-' }}
+            </div>
+            <div>
+              <app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" />
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ng-template>

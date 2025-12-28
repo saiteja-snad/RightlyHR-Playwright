@@ -1,95 +1,104 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        @if (router.url !== '/pending-approvals/assessmentform') {
-        <div class="heading-content">
-            <div class="commpoment-name">Pending Approvals<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">
-                @if (isTimeOffRoute()) {Time Off}
-                @else if (isOnboardingRoute()) {Onboarding}
-                @else if (isContractRoute()) {Contractors}
-                @else if (isOffboardingRoute()) {Offboarding}
-                @else if (isDeskRoute()) {Desks}
-                @else if (isExpensesRoute()) {Expenses}
-                @else if (router.url === '/pending-approvals/time-sheets') {Timesheets}
-                @else if (isEmployeeInfoRoute()) {Employee Info}
-            </div>
-            <div>
-                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
-            </div>
-            <ng-template #popContent>
-                <app-module-information [moduleInfo]="moduleinfo" />
-            </ng-template>
-        </div>
+  <div class="component-header-content">
+    @if (router.url !== '/pending-approvals/assessmentform') {
+    <div class="heading-content">
+      <div class="commpoment-name">Pending Approvals<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">
+        @if (isTimeOffRoute()) {Time Off}
+        @else if (isOnboardingRoute()) {Onboarding}
+        @else if (isContractRoute()) {Contractors}
+        @else if (isOffboardingRoute()) {Offboarding}
+        @else if (isDeskRoute()) {Desks}
+        @else if (isExpensesRoute()) {Expenses}
+        @else if (router.url === '/pending-approvals/time-sheets') {Timesheets}
+        @else if (isEmployeeInfoRoute()) {Employee Info}
+        @else if (isKraKpiRoute()) {KRA/KPI's}
+      </div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+      <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+      </ng-template>
+    </div>
+    }
+    @else {
+    <div class="heading-content">
+      <div class="commpoment-name cursor" (click)="navigate()"><u>Probation</u>
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">Assessment Form</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+      <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+      </ng-template>
+    </div>
+    }
+    @if (router.url == '/pending-approvals/time-sheets') {
+    <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+      <div class="d-flex gap-3 align-items-center">
+        @if(isFilterApplied()) {
+        <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
         }
-        @else {
-        <div class="heading-content">
-            <div class="commpoment-name cursor" (click)="navigate()"><u>Probation</u>
-                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-            </div>
-            <div class="component-header">Assessment Form</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-            </div>
-            <ng-template #popContent>
-                <app-module-information [moduleInfo]="moduleinfo" />
-            </ng-template>
-        </div>
-        }
-        @if (router.url == '/pending-approvals/time-sheets') {
-        <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
-            <div class="d-flex gap-3 align-items-center">
-                @if(isFilterApplied()) {
-                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
-                }
 
-                <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-                        [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
-                </div>
-                
-                <div class="custom-p-multiSelect-content">
-                    <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId" [filter]="true"
-                        [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
-                        defaultLabel="Please select project/phase" class="form-select custom-select"
-                        (onChange)="onProjectChange($event)" />
-                </div>
+        <div class="custom-date-range-picker">
+          <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+            [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+        </div>
 
-                <!-- Resource MultiSelect Dropdown -->
-                <div class="custom-p-multiSelect-content">
-                    <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
-                        defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId"
-                        class="form-select custom-select " (onChange)="onresourceChange($event)" />
-                </div>
-                
-                <div>
-                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' | translate}}</button>
-                </div>
-            </div>
-        </form>
-        }
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projectsData" optionLabel="displayName" optionValue="phaseId" [filter]="true"
+            [resetFilterOnHide]="true" filterBy="displayName" formControlName="phaseId"
+            defaultLabel="Please select project/phase" class="form-select custom-select"
+            (onChange)="onProjectChange($event)" />
+        </div>
+
+        <!-- Resource MultiSelect Dropdown -->
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="resourcesList" optionLabel="fullName" optionValue="id" [filter]="true"
+            defaultLabel="Please select resource" [resetFilterOnHide]="true" formControlName="resourceId"
+            class="form-select custom-select " (onChange)="onresourceChange($event)" />
+        </div>
+
+        <div>
+          <button class="custom-btn btn-primary" type="submit" [disabled]="!isAnyFieldSelected()">{{'Apply' |
+            translate}}</button>
+        </div>
+      </div>
+    </form>
+    }
+
+    <!-- dropdown for kpi kra -->
+    <div class="ms-auto">
+      <ng-container *ngTemplateOutlet="headerRightTemplate"></ng-container>
     </div>
 
-    <div class="d-flex gap-3 w-100">
-        @if (isTimeOffRoute() || isContractRoute() || isOffboardingRoute() || isOnboardingRoute()) {
-        <div class="component-left-tabs-container">
-            @if(isTimeOffRoute()){
-            <app-timeoff-approval-tabs />
-            }
-            @else if (isContractRoute()) {
-            <app-contractor-approval-tabs />
-            }
-            @else if(isOffboardingRoute()) {
-            <app-separation-approval-tabs />
-            }
-            @else if(isOnboardingRoute()) {
-            <app-onboarding-approval-tabs />
-            }
-        </div>
-        }
+  </div>
 
-        <div class="component-right-content" [ngClass]="{'custom-width-content': isTimeOffRoute() 
+  <div class="d-flex gap-3 w-100">
+    @if (isTimeOffRoute() || isContractRoute() || isOffboardingRoute() || isOnboardingRoute()) {
+    <div class="component-left-tabs-container">
+      @if(isTimeOffRoute()){
+      <app-timeoff-approval-tabs />
+      }
+      @else if (isContractRoute()) {
+      <app-contractor-approval-tabs />
+      }
+      @else if(isOffboardingRoute()) {
+      <app-separation-approval-tabs />
+      }
+      @else if(isOnboardingRoute()) {
+      <app-onboarding-approval-tabs />
+      }
+    </div>
+    }
+
+    <div class="component-right-content" [ngClass]="{'custom-width-content': isTimeOffRoute()
         || isContractRoute() || isOffboardingRoute() || isOnboardingRoute()}">
-            <router-outlet />
-        </div>
+      <router-outlet />
     </div>
+  </div>
 </div>

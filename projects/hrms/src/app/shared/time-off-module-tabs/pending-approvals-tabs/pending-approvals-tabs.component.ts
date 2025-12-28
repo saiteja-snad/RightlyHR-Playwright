@@ -27,6 +27,8 @@ export class PendingApprovalsTabsComponent {
   approvalCounts: any[] = [];
   timeOffTotalCount: number = 0;
 
+  kraKpiTotalCount = 0;
+
   constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
@@ -50,22 +52,35 @@ export class PendingApprovalsTabsComponent {
       { label: 'Desks', link: '/pending-approvals/desk-approval', icon: '/main-menu-icons/desk-icon.png', permission: { feature: 'Desk Requests Tab', action: 'view' }, moduleIds: [23] },
       { label: 'Expenses', link: '/pending-approvals/claimsandexpenses-request', icon: '/main-menu-icons/expenses-icon.png', permission: { feature: 'Claims and Expenses Tab', action: 'view' }, moduleIds: [19] },
       { label: 'Timesheets', link: '/pending-approvals/time-sheets', icon: '/time-off-icon/calender-activity.png', permission: { feature: 'Time Sheet approval Tab', action: 'view' }, moduleIds: [30] },
-      { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/time-off-icon/employee-info-approvals.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  }
+      { label: 'Employee Info', link: '/pending-approvals/employeeinfo-request', icon: '/time-off-icon/employee-info-approvals.png', permission: { feature: 'EmployeeInfo Tab', action: 'view' },moduleIds: [32]  },
+      { label: "KRA/KPI's", link: '/pending-approvals/kra-kpi', icon: '/main-menu-icons/kra-kpi.png', permission: { feature: 'KRA KPI approval Tab', action: 'view' },  moduleIds: [], totalCount: 0  }
     ];
     this.getApprovalStatusCounts();
-     this.filterTabsByRbac();
-
-}
-  
-  getApprovalStatusCounts() {
-    this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
-      this.approvalCounts = res;
-      this.updateTabCounts();   //Map counts to tabs
-    });
+    this.loadKraKpiApprovalCount();
   }
 
-  updateTabCounts() {
-    this.navTabs.forEach(tab => {
+getApprovalStatusCounts() {
+  this.http.get(`PendingApproval/getApprovalStatusCounts?EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+    this.approvalCounts = res;
+    this.updateTabCounts();
+    this.refreshFilteredTabs();
+  });
+}
+
+refreshFilteredTabs(): void {
+  this.filteredTabs = this.navTabs
+    .filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    })
+    .map(tab => ({ ...tab }));
+}
+
+updateTabCounts() {
+  this.navTabs.forEach(tab => {
+    if (tab.moduleIds && tab.moduleIds.length > 0) {
       let total = 0;
       tab.moduleIds.forEach((id: any) => {
         const result = this.approvalCounts.find(x => x.moduleId === id);
@@ -73,13 +88,12 @@ export class PendingApprovalsTabsComponent {
           total += result.totalCount;
         }
       });
-      tab.totalCount = total;   //  store final count
-    });
-    // filter again because now count is available
-    this.filterTabsByRbac();
-  }
+      tab.totalCount = total;
+    }
+  });
+}
 
-  
+
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
@@ -136,6 +150,35 @@ export class PendingApprovalsTabsComponent {
   isMiddleColumn(index: number): boolean {
     return !this.isFirstColumn(index) && !this.isLastColumn(index);
   }
+
+loadKraKpiApprovalCount(): void {
+  const params: any = {
+    pageNumber: 1,
+    pageSize: 1000,
+    managerEmployeeId: this.empinfo?.employeeId,
+  };
+
+  this.http.getDataIncludeParams('Kpi/getPendingApprovalsData', params).subscribe({
+    next: (res: any) => {
+      this.kraKpiTotalCount = res?.data?.length || 0;
+      console.log("KRA Total Count: ", this.kraKpiTotalCount);
+
+      const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
+      if (kraTab) {
+        kraTab.totalCount = this.kraKpiTotalCount;
+      }
+
+      this.refreshFilteredTabs(); // <-- Critical: refresh UI after KRA update
+    },
+    error: () => {
+      this.kraKpiTotalCount = 0;
+      const kraTab = this.navTabs.find(t => t.label === "KRA/KPI's");
+      if (kraTab) kraTab.totalCount = 0;
+      this.refreshFilteredTabs();
+    }
+  });
+}
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

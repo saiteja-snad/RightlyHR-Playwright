@@ -1,0 +1,19 @@
+.kra-status {
+  font-weight: 700; /* Bold */
+  font-size: 14px;
+}
+
+/* Blue for Created */
+.status-created {
+  color: #0B3A83;
+}
+
+/* Green for Active */
+.status-active {
+  color: #28a745;
+}
+
+/* Red for On Hold */
+.status-onhold {
+  color: #dc3545;
+}

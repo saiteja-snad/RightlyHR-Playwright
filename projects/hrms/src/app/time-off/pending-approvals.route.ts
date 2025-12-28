@@ -46,6 +46,7 @@ import { ExtraHoursForYourRoleComponent } from './pending-approvals/extra-hours-
 import { EmployeeinfoRequestComponent } from './pending-approvals/employee-info/employeeinfo-request/employeeinfo-request.component';
 import { EmployeeinfoForYouRequestComponent } from './pending-approvals/employee-info/employeeinfo-for-you-request/employeeinfo-for-you-request.component';
 import { EmployeeinfoForYourRoleRequestComponent } from './pending-approvals/employee-info/employeeinfo-for-your-role-request/employeeinfo-for-your-role-request.component';
+import { KraKpiApprovalsComponent } from './pending-approvals/kra-kpi-approvals/kra-kpi-approvals.component';
 
 export default [
     // Leaves
@@ -180,6 +181,7 @@ export default [
         ]
     },
     { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
+    { path: 'kra-kpi', component: KraKpiApprovalsComponent, data: { permission: 'KRA KPI approval Tab.view' } },
     {
         path: 'employeeinfo-request',
         component: EmployeeinfoRequestComponent,
@@ -194,8 +196,8 @@ export default [
             component: EmployeeinfoForYourRoleRequestComponent,
             data: { permission: 'For Role (Employee Info).view' },
           },
- 
+
           // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
-      },  
+      },
 ] as Route[];

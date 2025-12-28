@@ -1,0 +1,396 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="commpoment-name">PMS
+        <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
+      <div class="component-header">{{"Dashboard" | translate}}</div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+
+        <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          {{ 'Clear All' | translate }}
+        </button>
+
+      @if(rbac.allowedToAccess('All Employees (KRA).view') && rbac.allowedToAccess('My Team (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+            [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+      @else if(rbac.allowedToAccess('All Employees (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+            [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+      @else if(rbac.allowedToAccess('My Team (KRA).view')) {
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
+            placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" [autoDisplayFirst]="false"
+            [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+      }
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select"
+            [(ngModel)]="selectedReviewCycleId" (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content d-flex w-100 gap-3">
+    <div class="component-left-tabs-container">
+      <app-kra-kpi-management-layout />
+    </div>
+
+    <div class="w-100 right-content">
+      <!--Summary cards-->
+      @if(chartLoader && summaryCards.length > 0){
+      <div class="cards-grid-container mb-3">
+        <div *ngFor="let card of summaryCards" class="summary-card">
+          <div>
+            <img [src]="card.icons" alt="{{ card.title }}" class="icon" />
+          </div>
+          <div>
+            <div class="summary-title mb-1 d-flex align-items-center gap-1">
+              <div>{{ card.title }}</div>
+              <!-- INFO ICON -->
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="card.popover" class="module-icon" />
+                <ng-template #popoverTemplate let-text="text">{{text}}</ng-template>
+              </div>
+            </div>
+            <div class="summary-value">
+              {{card.value}}
+            </div>
+          </div>
+        </div>
+      </div>
+      }@else {
+      <p-skeleton height="11rem" />
+      }
+
+      <!--Charts content-->
+      <div class="row">
+        <!-- Performance Distribution Chart -->
+        <div class="col-xl-7 col-lg-6 mb-3">
+          <div class="graph-card h-100 d-flex flex-column" style="height: 380px;">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">Performance Distribution</div>
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
+                <ng-template #performanceInfo>
+                  <div class="module-info-text">
+                    Shows average performance score by department.
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Loader -->
+            @if(performanceLoader) {
+            <div class="chart-card-skeleton h-100">
+              <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
+
+            <!-- Chart or No Data -->
+            @else {
+              <div class="performance-bar-chart flex-grow-1 position-relative">
+                 <ng-container *ngIf="hasPerformanceData; else noData">
+                <!-- Key: flex-grow-1 + position-relative -->
+                <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions" style="height: 250px;">
+                </p-chart>
+                </ng-container>
+              </div>
+
+            <ng-template #noData>
+              <div class="graph-no-data-content h-100 d-flex align-items-center justify-content-center">
+                <app-no-data-found />
+              </div>
+            </ng-template>
+            }
+          </div>
+        </div>
+
+
+        <!-- Completion Status chart -->
+        <div class="col-xl-5 col-lg-6 mb-3">
+          <div class="graph-card h-100 d-flex flex-column" style="height: 250px;">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">Completion Status</div>
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="completionStatusInfo" class="module-icon" />
+                <ng-template #completionStatusInfo>Shows the completion status distribution of KRA/KPI
+                  assignments.</ng-template>
+              </div>
+            </div>
+            <!--Graph-->
+            @if(attendanceSummaryData){
+            <ng-container *ngIf="attendanceSummaryData; else noData">
+              <div class="skill-chart-container h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="skill-chart-horizontal flex-grow-1 d-flex align-items-center justify-content-center">
+                  <div class="completion-status-chart d-flex align-items-center justify-content-center h-100 px-4">
+                    <!-- Left: Doughnut Chart with Center Text Overlay -->
+                    <div class="position-relative" style="width: 200px; height: 200px;">
+                      <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions"
+                        style="width: 200px; height: 200px;">
+                      </p-chart>
+
+                      <!-- Center Text Overlay -->
+                      <div class="center-text-overlay">
+                        <div class="avg-percentage">{{ averageScoreDisplay }}</div>
+                        <div class="avg-label">Avg. Score</div>
+                      </div>
+                    </div>
+
+                    <!-- Right: Custom Legend -->
+                    <div class="legend ms-5 d-flex flex-column justify-content-center gap-4">
+                      <div class="legend-item d-flex align-items-center gap-3">
+                        <div class="color-dot bg-success"></div>
+                        <span class="label">> 80%</span>
+                        <span class="count fw-bold">{{ completionStatus.above80 }}</span>
+                      </div>
+                      <div class="legend-item d-flex align-items-center gap-3">
+                        <div class="color-dot bg-warning"></div>
+                        <span class="label">50-80%</span>
+                        <span class="count fw-bold">{{ completionStatus.between50And80 }}</span>
+                      </div>
+                      <div class="legend-item d-flex align-items-center gap-3">
+                        <div class="color-dot bg-danger"></div>
+                        <span class="label">
+                          < 50%</span>
+                            <span class="count fw-bold">{{ completionStatus.below50 }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            }@else {
+            <div class="chart-card-skeleton h-100">
+              <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
+            <ng-template #noData>
+              <div class="graph-no-data-content h-100 d-flex align-items-center justify-content-center">
+                <app-no-data-found />
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+
+        <!-- KRA/KPI Overview Table -->
+        <div class="col-xl-12 col-lg-12 mb-3">
+          <div class="graph-card">
+            <!-- <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="graph-header">KRA/KPI Overview</div>
+              <div class="module-info-content">
+                <app-module-info-icon placement="bottom" [ngbPopover]="tableOverviewInfo" class="module-icon" />
+                <ng-template #tableOverviewInfo>Displays detailed KRA/KPI information for team members including scores
+                  and progress.</ng-template>
+              </div>
+            </div> -->
+
+            <!-- Search -->
+            <div class="input-group custom-search mb-3">
+              <span class="input-group-text custom-input-group-search">
+                <i class="bi bi-search"></i>
+              </span>
+              <input type="search" class="form-control custom-search-input" placeholder="Search by KRA name..."
+                [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
+            </div>
+
+            <!--table content-->
+            @if (!dataload) {
+            <div class="custom-table-content w-100">
+              <table class="w-100">
+                <thead>
+                  <tr>
+                    <th>Employee Name</th>
+                    <th class="text-center">Department</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">KRA's</th>
+                    <th class="text-center">Overall Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (teamKpiData.length > 0) {
+                  @for (item of teamKpiData; track item.employeeId) {
+                  <tr>
+                    <td>
+                      {{ item.employeeName }}
+                    </td>
+                    <td class="text-center">
+                      {{ item.department || 'N/A' }}
+                    </td>
+                    <td class="text-center">
+                      {{ item.role || 'N/A' }}
+                    </td>
+                    <td class="text-center employee-bold">
+                      <span *ngIf="item.kraCount > 0" class="clickable"
+                        (click)="openKraPopup(item.employeeId, item.employeeName, kraPopupModal)">
+                        {{ item.kraCount }}
+                      </span>
+                      <span *ngIf="item.kraCount === 0" class="text-muted">
+                        {{ item.kraCount }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <div class="progress-wrapper">
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar" role="progressbar" [style.width.%]="item.overallScore || 0"
+                            [ngClass]="getProgressClass(item.overallScore || 0)" aria-valuemin="0" aria-valuemax="100">
+                          </div>
+                        </div>
+                        <small class="fw-semibold">
+                          {{ item.overallScore || 0 }}%
+                        </small>
+                      </div>
+                    </td>
+                  </tr>
+                  }
+                  } @else {
+                  <tr>
+                    <td colspan="5" class="text-center py-4" style="height: 200px; vertical-align: middle;">
+                      <app-no-data-found />
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (teamKpiData.length > 0) {
+            <div class="pagination-content">
+              <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <div class="d-flex align-items-center gap-3 p-2">
+                  <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    @for (option of options; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                  <span class="pagination-label text-nowrap">
+                    Showing {{ first + 1 }} - {{ (first + rows) > collectionSize ? collectionSize : (first + rows) }} of
+                    {{ collectionSize }}
+                  </span>
+                </div>
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                  (onPageChange)="onPageChange($event)"></p-paginator>
+              </div>
+            </div>
+            }
+            } @else {
+            <div class="chart-card-skeleton">
+              <p-skeleton width="100%" height="100%" borderRadius="12px" />
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Module Information-->
+<ng-template #popContent>
+  <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>
+
+<!-- KRA Popup Modal -->
+<ng-template #kraPopupModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{ selectedEmployeeName }} - KRA/KPI Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon" /></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      @if (!kraPopupLoading) {
+      <div class="popup-table-wrapper">
+        @if (selectedEmployeeKras.length > 0) {
+        @for (kra of selectedEmployeeKras; track kra.kraId) {
+        <div class="mb-4">
+          <h6 class="fw-bold mb-3">{{ kra.kraName }}</h6>
+          <div class="custom-table-content popup-kpi-table">
+            <table class="w-100">
+              <thead>
+                <tr>
+                  <th>KPI Name</th>
+                  <th class="text-center">Weightage (%)</th>
+                  <th class="text-center">Target Value</th>
+                  <th class="text-center">Target Type</th>
+                  <th class="text-center">Target Date</th>
+                  <th class="text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (kra.kpis.length > 0) {
+                @for (kpi of kra.kpis; track kpi.kpiId) {
+                <tr>
+                  <td>{{ kpi.kpiName || '-' }}</td>
+                  <td class="text-center">{{ kpi.assignedKpiWeightage || kpi.weightageValue || '-' }}</td>
+                  <td class="text-center">{{ kpi.targetValue || '-' }}</td>
+                  <td class="text-center">{{ kpi.targetType || '-' }}</td>
+                  <td class="text-center">{{ kpi.targetDate | date:'MMM d, y' }}</td>
+                  <td class="text-center" [ngClass]="getStatusClass(kpi.assignedStatus)">
+                    <span class="status-text">{{ kpi.assignedStatus || kpi.assignedStatus || '-' }}</span>
+                  </td>
+                </tr>
+                }
+                } @else {
+                <tr>
+                  <td colspan="6" class="text-center py-3 text-muted">No KPIs assigned for this KRA</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+        } @else {
+        <div class="text-center py-4">
+          <app-no-data-found />
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="text-center py-4">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</ng-template>

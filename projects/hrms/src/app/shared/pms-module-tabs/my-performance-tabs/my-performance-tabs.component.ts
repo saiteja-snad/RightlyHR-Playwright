@@ -5,20 +5,20 @@ import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-my-performance-tabs',
-  imports: [RouterModule,CommonModule,TabsModule],
+  imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './my-performance-tabs.component.html',
   styleUrl: './my-performance-tabs.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class MyPerformanceTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'Pending Reviews', link: '/pms/myPerformance/pending-review', permission: { feature: 'Pending Reviews', action: 'view' } },
-    { label: 'Completed Reviews', link: '/pms/myPerformance/completed-review', permission: { feature: 'Completed Reviews', action: 'view' } },
-   ];
-   
-  constructor(private rbac: RbacService) {}
+    { label: 'Pending Reviews', link: '/pms/performace-review/myPerformance/pending-review', permission: { feature: 'Pending Reviews', action: 'view' } },
+    { label: 'Completed Reviews', link: '/pms/performace-review/myPerformance/completed-review', permission: { feature: 'Completed Reviews', action: 'view' } },
+  ];
+
+  constructor(private rbac: RbacService) { }
 
   ngOnInit(): void {
     this.filterTabsByRbac();

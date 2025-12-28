@@ -218,6 +218,10 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       this.moduleName = 'PMS Configurations';
       this.componentName = 'Assessor Configuration';
     }
+     else if (url.startsWith('/pmsconfiguration/kra')) {
+      this.moduleName = 'PMS Configurations';
+      this.componentName = 'KRA Configuration';
+    }
 
     //Dynamic Forms
     else if (url.startsWith('/settings/dynamic-forms/active-forms')) {

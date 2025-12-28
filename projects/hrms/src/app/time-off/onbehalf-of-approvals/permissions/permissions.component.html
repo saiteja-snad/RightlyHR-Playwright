@@ -28,7 +28,8 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" (ngModelChange)="onSearchChange()">
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off"
+            (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -128,7 +129,7 @@
         </p-table>
         }@else{
 
-            <app-data-loader-content />
+        <app-data-loader-content />
 
         }
 
@@ -200,6 +201,12 @@
                     <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters
                     </div>
                 </div>
+            </div>
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <button type="button" class="custom-btn btn-secondary chip-btn"
+                    [class.active]="selectedLeaveStatus === 'reject'" (click)="onStatusRejectSelect('reject')">
+                    Rejected
+                </button>
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"

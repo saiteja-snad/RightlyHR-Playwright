@@ -11,8 +11,10 @@
       <thead>
         <th>Asset Category</th>
         <th>Asset Sub Category</th>
+        <th>Asset Modal</th>
         <th>Serial Number</th>
         <th>Asset Status</th>
+         <th>Purchase Date</th>
         <th>Location </th>
         <th>Sub Location </th>
         @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
@@ -24,10 +26,12 @@
       <tbody>
         <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
           <tr *ngFor="let asset of assetslist | async">
-            <td>{{ asset.assetCategory }}</td>
+            <td>{{ asset.assetCategory }}</td>         
             <td>{{ asset.assetSubCategory }}</td>
-            <td>{{ asset.serialNumber }}</td>
+             <td>{{ asset.assetModel }}</td>
+            <td>{{ asset.serialNumber }}</td>        
             <td>{{ asset.status }}</td>
+            <td>{{ asset.purchaseDate | date }}</td>
             <td>{{ asset.locationName }}</td>
             <td>{{ asset?.sublocationName || 'N/A' }}</td>
             @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
@@ -85,6 +89,14 @@
                     <a class="dropdown-item"
                       (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
                       Update
+                    </a>
+                  </li>
+                  }
+                   @if(rbac.allowedToAccess('Available Block Asset.view')) {
+                  <li>
+                    <a class="dropdown-item"
+                      (click)="openModal(blockAssetForm); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
+                      Block
                     </a>
                   </li>
                   }
@@ -513,7 +525,74 @@
     </div>
   </div>
 </ng-template>
+<!-- block ASSETES -->
+<ng-template #blockAssetForm let-model>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="text-center">
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
+    </div>
+    <div class="text-center">
+      <h5 class="confirmation-text mb-2"> Are you sure you want to Block this Asset ?</h5>
+    </div>
+    <div class="custom-main-popup-content  p-4">
+      <form autocomplete="off" [formGroup]="blockform" (ngSubmit)="postblock(blockform, storeassetid)">
+          <div class="col-md-12  mb-2">
+            <label class="form-label custom-label mb-2">
+              Additional Comments <span
+                class="error-msg">*</span>
+            </label>
+            <div class="textarea-container">
+              <textarea class="form-control custom-input" formControlName="reason"
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
+              <!-- Error messages -->
+              <div>
+                <div class="error-msg"
+                  *ngIf="blockform.get('reason')?.invalid && blockform.get('reason')?.touched">
+                  <div *ngIf="blockform.get('reason')?.errors?.['required']">
+                    Additional Comments is required.
+                  </div>
+                  <div *ngIf="blockform.get('reason')?.errors?.['maxlength']">
+                    Additional Comments not exceed 250 characters.
+                  </div>
+                </div>
+              </div>
+              <!-- Character count -->
+              <div class="character-count mt-2 text-end">
+                {{ blockform.get("reason")?.value?.length || 0 }}/250
+              </div>
+            </div>
+          </div>
 
+        <div class="d-flex justify-content-end gap-3">
+          <button type="button" class="custom-btn btn-secondary "
+            (click)="model.dismiss();openModal(blockconformation)">Cancel</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="blockform.invalid">Submit</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #blockconformation let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" class="custom-btn btn-secondary" (click)="openModal(blockAssetForm);model.dismiss()">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="resetblockform();model.dismiss()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
 <!-- allocateAnasset -->
 <ng-template #allocateAnasset let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>

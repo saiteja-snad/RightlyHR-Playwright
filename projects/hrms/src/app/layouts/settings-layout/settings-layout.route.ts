@@ -11,6 +11,8 @@ import { AttendanceLockLayoutComponent } from "../../settings/attendance-configu
 import { ItConfigurationLayoutComponent } from "../../settings/it-configuration/it-configuration-layout/it-configuration-layout.component";
 import { TimesheetLockLayoutComponent } from "../../settings/timesheet-locking-configuration/timesheet-lock-layout/timesheet-lock-layout.component";
 import { EmployeeFieldsUpdateConfigurationsLayoutComponentComponent } from "../../settings/employee-fields-update-configuration/employee-fields-update-configurations-layout-component/employee-fields-update-configurations-layout-component.component";
+import { RateCardComponent } from "../../settings/employee-rate-card-configuration/rate-card/rate-card.component";
+import { RateCardLayoutComponent } from "../../settings/employee-rate-card-configuration/rate-card-layout/rate-card-layout.component";
 
 export default [
     { path: '', redirectTo: '/settings/overview', pathMatch: 'full' },
@@ -25,4 +27,5 @@ export default [
     { path: 'it-configuration', component: ItConfigurationLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/it-configuration/it-configuration.router')   },
     { path: 'timesheet-locking-configuration', component: TimesheetLockLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/timesheet-locking-configuration/timesheet-lock-configuration.route')   },
     { path: 'employee-fields-update-configurations', component: EmployeeFieldsUpdateConfigurationsLayoutComponentComponent, canActivate: [authGuard], loadChildren: () => import('../../settings/employee-fields-update-configuration/employee-fields-update-configurations.route') },
+    { path: 'employee-rate-card', compenent:RateCardLayoutComponent , canActivate: [authGuard], loadChildren: () => import('../../settings/employee-rate-card-configuration/rate-card.route') },
 ] as Route[];

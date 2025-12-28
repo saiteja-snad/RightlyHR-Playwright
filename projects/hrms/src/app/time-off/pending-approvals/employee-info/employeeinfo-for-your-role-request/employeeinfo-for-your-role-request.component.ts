@@ -76,12 +76,15 @@ export class EmployeeinfoForYourRoleRequestComponent {
   allFields: any;
   allPendingApprovals: any;
   allPendingApprovalItems: any;
-     selectedLeaveStatus: any;
+
+ selectedLeaveStatus: any;
+  totalCount: any;
   //emp: any;
  ImageUrl: any;
  ViewURL:any;
   @ViewChild('popupforaction') private popupforaction!: NgbModal;
   @ViewChild('popupforcurrentaction') private popupforcurrentaction!: NgbModal;
+
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
    private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder,private signalService: SignalsService,) { }
 
@@ -474,7 +477,10 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
            this.signalService.employeinfoDetailsTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
+             this.getAllPendingApprovals();
+             this.getApprovalStatusCounts();
             this.getAllPendingApprovals();
+
         },
       });
     }
@@ -562,10 +568,21 @@ isFieldChanged(objectKey: string, changedFields: any): boolean {
           this.signalService.employeinfoDetailsTriggerSignal.set(true);
           this.signalService.employeinfoDetailsForYouTriggerSignal.set(true);
            this.signalService.employeinfoDetailsForRoleTriggerSignal.set(true);
+            this.getAllPendingApprovals();
+            this.getApprovalStatusCounts();
+         
         },
       });
     }
   }
+   getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.pendingapprovalemployeid}&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.dataload = true;

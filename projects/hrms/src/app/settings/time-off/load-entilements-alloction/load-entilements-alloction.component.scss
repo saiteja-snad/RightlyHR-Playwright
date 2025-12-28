@@ -1,0 +1,66 @@
+.card {
+    border: 1px solid rgb(204, 218, 236) !important;
+    box-shadow: 0px 0px 6px 1px rgba(34, 34, 34, 0.1019607843);
+}
+
+.custom-table-content {
+    height: 47vh !important;
+}
+
+.custom-grid {
+    display: grid;
+    grid-template-columns: 5fr 5fr 2fr;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-success {
+    color: #00A912;
+    font-weight: 600;
+}
+
+.status-failed {
+    color: #EA362C;
+    font-weight: 600;
+}
+
+.status-partial {
+    color: #FF5722;
+    font-weight: 600;
+}
+
+.status-processing {
+    color: #3397E8;
+    font-weight: 600;
+}
+
+.status-completed {
+    color: #6f42c1;
+    font-weight: 600;
+}
+
+.status-pending {
+    color: #EE8B30;
+    font-weight: 600;
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}
+
+.custom-table-content {
+    .no-data-image {
+        width: 166px !important;
+        height: 138px !important;
+    }
+}

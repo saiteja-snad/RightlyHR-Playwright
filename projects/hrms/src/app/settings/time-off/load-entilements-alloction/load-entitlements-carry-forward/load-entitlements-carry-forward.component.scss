@@ -1,0 +1,12 @@
+.load-entitlement-container {
+    width: 100%;
+    height: calc(100dvh - 11rem);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .load-entitlement-content {
+        position: relative;
+        flex: 1;
+    }
+}

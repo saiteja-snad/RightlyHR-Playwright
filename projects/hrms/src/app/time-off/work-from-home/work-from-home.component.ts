@@ -21,6 +21,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { Skeleton } from "primeng/skeleton";
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-work-from-home',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
@@ -66,8 +67,10 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   years: number[] = [];
   activeEmplist = [] as any;
   loadingGraph: boolean = false;
+  totalCount: any;
   constructor(
     private modalService: NgbModal,
+    private authService:AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -512,13 +515,23 @@ wfhBalancesdetails=[] as any;
           this.sharedModalService.openErrorModal(err.error.message);
         },
         complete: () => {
+          this.getApprovalStatusCounts();
           this.addWFHForm.reset();
           this.spinnerLoader = false;
         },
       });
     }
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.wfhModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   formatDate(date: string | Date): string {
     const d = new Date(date);
     const month = ('0' + (d.getMonth() + 1)).slice(-2);

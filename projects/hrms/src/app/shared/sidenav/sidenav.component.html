@@ -12,7 +12,7 @@
             @if(this.rbac.allowedToAccess('Employee Dashboard.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/employee-dashboard');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/employee-dashboard')">
-                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Employee Dashboard
+                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon"> Dashboard
             </li>
             }
             <!--My Info-->
@@ -77,8 +77,23 @@
                 <img src="main-menu-icons/skill-management.png" alt="Icon" class="main-menu-icon">Skill Set
             </li>
             }
-            <!--On Behalf Of-->
-            @if(this.rbac.allowedToAccess('On Behalf Of.view')){
+
+
+
+            <!-- @if(this.rbac.allowedToAccess('On Behalf Of.view')){
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">Pending Approvals
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-onbehalfof-main-tabs />
+                    </ul>
+                </div>
+            </li>
+            } -->
+
+             @if(this.rbac.allowedToAccess('On Behalf Of.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
@@ -144,6 +159,14 @@
                     </ul>
                 </div>
             </li>
+
+
+            <!-- @if(this.rbac.allowedToAccess('Settings Icon.view')){ -->
+            <!-- <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/settings"
+                routerLinkActive="active-nav-link">
+                <i class="bi bi-gear gear-icon"></i>Settings
+            </li> -->
+            <!-- } -->
         </ul>
     </div>
 

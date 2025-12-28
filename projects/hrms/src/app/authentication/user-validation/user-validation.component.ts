@@ -175,8 +175,14 @@ export class UserValidationComponent implements OnInit, OnDestroy {
         }
       }
     }
+    
+    // Step 2: Check Employee Dashboard
+    if (this.rbac.allowedToAccess('Employee Dashboard.view')) {
+      this.router.navigate(['/employee-dashboard']);
+      return;
+    }
 
-    // Step 2: Check My Info permissions
+    // Step 3: Check My Info permissions
     for (const item of myInfoPermissions) {
       if (this.rbac.allowedToAccess(item.permission)) {
         const myInfoRoute = this.goToAccessibleRoute('/myinfo');
@@ -187,7 +193,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Step 3: Check remaining permissions
+    // Step 4: Check remaining permissions
     for (const item of permissionsWithRoutes) {
       if (this.rbac.allowedToAccess(item.permission)) {
         const finalRoute = item.route === '/settings'
@@ -201,7 +207,7 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Step 4: Fallback
+    // Step 5: Fallback
     this.router.navigate(['/unauthorized']);
   }
 
@@ -239,6 +245,9 @@ export class UserValidationComponent implements OnInit, OnDestroy {
         } else {
 
           this.navigateBasedOnPermission();
+          localStorage.removeItem('loadEntitlement')
+          localStorage.removeItem('carryForwardJobId')
+          localStorage.removeItem('intialloadEntitlement')
         }
       }, 2000);
     } else {

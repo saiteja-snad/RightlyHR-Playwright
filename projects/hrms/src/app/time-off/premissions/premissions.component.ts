@@ -19,8 +19,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { AuthService } from '../../services/auth.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+7
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -83,9 +85,11 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  totalCount: any;
 
   constructor(
     private modalService: NgbModal,
+     private authService:AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -393,13 +397,22 @@ getTeamManagersDetails() {
           this.sharedModalService.openErrorModal(errorMessage);
         },
         complete: () => {
+          this.getApprovalStatusCounts();
           this.spinnerLoader = false;
           this.permissionForm.reset();
         },
       });
     }
   }
-
+getApprovalStatusCounts() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

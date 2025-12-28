@@ -63,7 +63,7 @@
                     <td class="text-center">
                         <span *ngIf="!data.documentUrl; else approverejectbuttons"></span>
                         <ng-template #approverejectbuttons>
-                            <div class="dropdown">
+                            <div class="dropdown" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>

@@ -334,7 +334,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Compensation Details',
       'Draft Tab',
       "Letter Acknowledgment Configuration",
-      "Timesheet Locking Configuration Module"
+      "Timesheet Locking Configuration Module",
     ];
     return (
       enabledTabs.includes(field) &&
@@ -352,7 +352,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
     //     return permission === 'Update'; // Disable only 'Create'
     //   }
-    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Allocated',].includes(field)) {
+    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Allocated','Asset Management - Block'].includes(field)) {
       return !['View'].includes(permission); // Enable only 'View' and 'Update'
     }
     return false; // Default: all enabled
@@ -398,7 +398,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Settings Timeoff Module',
     'Assets Management Configuration Module',
     'Dynamic Forms Module',
-    "Timesheet Locking Configuration Module"
+    "Timesheet Locking Configuration Module",
+    "Rate Card Module",
+    "Rate Card In-active Tab",
+    "Rate Card Active Tab"
   ];
   employeeFields = [
     'Personal Tab',
@@ -508,6 +511,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
+
+   loadEntitlementsTab = [
+    'Initial Load Entitlements',
+    'Carry Forward Load Entitlements',
+  ];
   flexibleWFHTabsFields = [
     'Active Allocations Tab',
     'Allocation History Tab'
@@ -613,6 +621,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Cards Available',
     'Cards Expired',
     'Cards Hold',
+  ];
+  ratecardsModuleFields = [
+    'Rate Card View',
+    'Rate Card Active Tab',
+    'Rate Card In-active Tab',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',
@@ -808,6 +821,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'WFH (On Behalf Of Approvals)',
     'Comp Off (On Behalf Of Approvals)',
     'Permission (On Behalf Of Approvals)',
+    'Expenses (On Behalf Of Approvals)',
+    'Regularization (On Behalf Of Approvals)',
+    'Trainee Requests (On Behalf Of Approvals)',
     'My Team On Behalf Of Approvals',
     'On Behalf Of Approvals All Employees',
   ];
@@ -872,6 +888,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Remote Login Report',
     'Remote Login Report - Generate',
     'Remote Login Report - Export',
+    'Leave Carry Forward & Encashment Report',
+    'Leave Carry Forward & Encashment Report - Generate',
+    'Leave Carry Forward & Encashment Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -895,6 +914,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(Regularization)',
     'Attendance Team Manager List(Regularization)',
     'My Team Report(Regularization)',
+    'Attendance All Employees List(Leave Carry Forward & Encashment)',
+    'Attendance Team Manager List(Leave Carry Forward & Encashment)',
+    'My Team Report(Leave Carry Forward & Encashment)',
   ];
 
   timesheetReportsTabsFields = [
@@ -945,6 +967,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management - Allocated',
     'Asset Management - Under Maintenance',
     'Asset Management - Inactive',
+     'Asset Management - Block',
   ];
   assetManagementAllTabActions = [
     'All Allocate Asset',
@@ -965,6 +988,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Available Transfer Asset',
     'Available View Asset Details',
     'Available Update Asset Details',
+    'Available Block Asset'
   ];
   assetManagementAllocatedTabActions = [
     'Allocated Reallocate Asset',
@@ -981,6 +1005,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Inactive Mark as Active Asset',
     'Inactive View Asset Details',
     'Inactive Update Asset Details',
+  ];
+    assetManagementBlockTabActions = [
+    'Block View Asset Details',
+    'Block Update Asset Details',
+    'Block Mark as Available Asset'
   ];
   myInfoSubTabsFields = [
     'My Info Personal Tab',
@@ -1298,9 +1327,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   selectAllLettersTabs = [
     'NDA Document', 'MSA Document'
   ]
-  selectAllOnBehalfOf = [
-    'On Behalf Of', 'On Behalf Of WFH', 'On Behalf Of RemoteLogin'
-  ]
+
   selectAllOnBehalfOfWFH = [
     'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
     , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team', 'Request On Behalf Of WFH Button'
@@ -1309,6 +1336,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
     , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team', 'Request On Behalf Of RemoteLogin Button'
   ]
+
+  selectAllOnBehalfOf = [
+    'On Behalf Of', 'On Behalf Of WFH', 'On Behalf Of RemoteLogin', 'On Behalf Of Expenses'
+
+  ]
+
+  selectAllOnBehalfOfExpenses = [
+    'Waiting For Approval (On Behalf Of Expenses)', 'Approved (On Behalf Of Expenses)', 'Processed (On Behalf Of Expenses)', 'Rejected (On Behalf Of Expenses)'
+    , 'Cancelled (On Behalf Of Expenses)', 'On Behalf Of Expenses All Employees', 'On Behalf Of Expenses Team', 'Request On Behalf Of Expenses Button'
+  ]
+
   SkillSetManagementModule = ['Skills Dashboard', 'Skills Directory'];
   itSupportFields = [
     'IT Support Configuration ',
@@ -2236,6 +2274,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+
+  isOnBehalfOfExpensesTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
   isAttendanceLockingTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
@@ -2258,6 +2307,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // Existing logic: disable all if role is not selected
     return !this.roleToFilter?.id;
   }
+
 
 
   ngOnDestroy(): void {

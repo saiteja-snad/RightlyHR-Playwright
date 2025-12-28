@@ -1,11 +1,40 @@
 <div class="heading-content">
+
     <div class="commpoment-name navigator" (click)="navigateToSettings()">Settings</div>
+
+
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>
     <div class="commpoment-name">{{moduleName | translate}}</div>
+    @if(navigationname){
+    <div class="commpoment-name">
+        <i class="bi bi-chevron-double-right"></i>
+    </div>
+      @if(isshowsettingsforcarryforword()){
+    <div class="commpoment-name " >{{navigationname | translate}}
+    </div>
+    }
+    @if(isShowsettingsjobRouteforintial()){
+    <div class="commpoment-name navigator" (click)="navigateTointialloadentiments()">{{navigationname | translate}}
+    </div>
+    }
+    @if(isShowsettingsjobRoute()){
+    <div class="commpoment-name navigator" (click)="navigateToloadentiments()">{{navigationname | translate}}</div>
+    }
+    }
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>
     <div class="component-header">{{componentName | translate}}</div>
+
+    @if (isShowsformoduelinfo()) {
+    <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+    </div>
+    }
 </div>
+
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

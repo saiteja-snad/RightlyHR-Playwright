@@ -13,6 +13,7 @@ import {
   REGULARIZATION_SUB_TABS,
   REMOTE_LOGIN_SUB_TABS,
   SETTINGS_ASSEST_CONFIGURATION_TABS,
+  SETTINGS_TIMEOFF_load_entitlement_TABS ,
   SETTINGS_DYNAMIC_FORMS_TABS,
   SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS,
   SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_TABS,
@@ -43,6 +44,7 @@ import {
   SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS,
   SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS,
   ATTENDANCE_ELIGIBILITY_CRITERIA_TABS,
+  SETTINGS_RATECARD_TABS,
   SETTINGS_EMPLOYEE_FIELDS_JOB_TABS,
   PMS_CONFIGURATION_TABS,
   TEAM_PERFORMANCE_TABS,
@@ -73,6 +75,7 @@ import {
   SKILL_MANAGEMENT_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  ON_BEHALF_OF_EXPENSES_TABS,
   SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS,
   SETTINGS_TIMESHEET_LOCKING_TABS,
   MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES,
@@ -247,6 +250,12 @@ export class AccessNavigationService {
               return (route =
                 '/settings/timeoff-configurations/flexible-leave-allocation');
             }
+            if (
+              this.rbac.allowedToAccess('Load Entitlements Tab.view')
+            ) {
+              return (route =
+                'settings/timeoff-configurations/initial-load-entitlements');
+            }
 
             if (
               this.rbac.allowedToAccess(
@@ -293,6 +302,13 @@ export class AccessNavigationService {
 
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
+        }
+         if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+           for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 
@@ -508,6 +524,15 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -902,8 +927,19 @@ export class AccessNavigationService {
             return (route =
               '/settings/timeoff-configurations/load-entitlements');
           }
+
         }
 
+        break;
+        case '/settings/employee-rate-card/rate-card':
+        if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+           // return (route = '/settings/employee-rate-card/rate-card');
+          for (const item of SETTINGS_RATECARD_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
 
       case '/reports/standard-reports':
@@ -1121,6 +1157,15 @@ export class AccessNavigationService {
           }
         }
         break;
+      case '/settings/timeoff-configurations/load-entitlement':
+        if (this.rbac.allowedToAccess('Bulk Load Entitlements Tab.view')) {
+          for (const item of SETTINGS_TIMEOFF_load_entitlement_TABS ) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
 
       case '/settings/timeoff-configurations/leave-categoery':
         if (this.rbac.allowedToAccess('Leave Category Tab.view')) {
@@ -1144,6 +1189,14 @@ export class AccessNavigationService {
             '/settings/timeoff-configurations/flexible-leave-allocation');
         }
         break;
+
+      case '/settings/timeoff-configurations/loadentitlements':
+        if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
+          return (route =
+            '/settings/timeoff-configurations/loadentitlements');
+        }
+        break;
+
 
       case '/settings/timeoff-configurations/flexible-wfh-allocation':
         if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
@@ -1312,6 +1365,12 @@ export class AccessNavigationService {
               ) {
                 return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
               }
+              if (
+                this.rbac.allowedToAccess('Load Entitlements Tab.view')
+              ) {
+                return (route =
+                  '/settings/timeoff-configurations/loadentitlements');
+              }
 
               if (this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')) {
                 for (const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS) {
@@ -1320,9 +1379,7 @@ export class AccessNavigationService {
                   }
                 }
               }
-              if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {
-                return (route = '/settings/timeoff-configurations/load-entitlements');
-              }
+
             }
           }
         }
@@ -1431,6 +1488,15 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-remotelogin':
         if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
           for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/on-behalf-of/on-behalf-of-expenses':
+        if (this.rbac.allowedToAccess('On Behalf Of Expenses.view')) {
+          for (const item of ON_BEHALF_OF_EXPENSES_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

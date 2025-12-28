@@ -39,7 +39,7 @@ export class SettingsOverviewComponent {
   settingAttendanceConfigurationModule = MODULE_INFOS.SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO;
   settingItConfigurationModule = MODULE_INFOS.SETTINGS_IT_CONFIGURATION_MODULE_INFO
   settingLockingsystemnModule = MODULE_INFOS.SETTINGS_LOCKINGSYSTEM_MODULE_INFO;
-
+  settingrateCardModule=MODULE_INFOS.SETTINGS_RATE_CARD_MODULE_INFO;
   constructor(
     public rbac: RbacService,
     private router: Router,

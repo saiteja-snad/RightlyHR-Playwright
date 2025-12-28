@@ -16,7 +16,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+
+import { environment } from '../../../../environments/environment';
+
 import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+
 
 @Component({
   selector: 'app-desk-for-you-request',
@@ -39,6 +43,7 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   searchValue: any;
   selectedLeaveStatus: any;
+  totalCount: any;
 
   constructor(private http: HttpService, private readonly modalService: NgbModal, private signalService: SignalsService,
     public conformationPopup: OpenModalService, private fb: FormBuilder, public rbac: RbacService, public formValidation: FormValidationService) { }
@@ -110,7 +115,8 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
         this.conformationPopup.openSuccessModal("Desk allocation request Processed successfully")
-        this.getexpensespendingforyou()
+        this.getexpensespendingforyou();
+        this.getApprovalStatusCounts();
         this.signalService.deskForYouTriggerSignal.set(true);
         this.updatedeskitem()
       },
@@ -168,6 +174,7 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
+        this.getApprovalStatusCounts();
         this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
         this.rejectForm.reset();
         this.signalService.deskForYouTriggerSignal.set(true);
@@ -178,7 +185,14 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+ getApprovalStatusCounts() {
+    this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.deskAllocationModuleId}&EmployeeId=${this.employdata.employeeId}`).subscribe((res: any) => {
+      this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
+       this.http.updatePendingApprovalCounts(this.totalCount);
+   //Map counts to tabs
+    });
+  }
+ 
   cleardata() {
     this.rejectForm.reset();
     this.modalService.dismissAll();

@@ -7,11 +7,12 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
-import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { DocumentViewIconComponent } from '../../../../icons/document-view-icon/document-view-icon.component';
 
 @Component({
   selector: 'app-published-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, DataLoaderContentComponent, InfoIconComponent,NgbPopoverModule,DocumentViewIconComponent],
   templateUrl: './published-shifts.component.html',
   styleUrl: './published-shifts.component.scss'
 })
@@ -74,7 +75,9 @@ view(id: any): void {
       breakTime: item.allowedBreakTime,
       halfDayMinHrs: item.halfDayMinHrs,
       fullDayMinHrs: item.fullDayMinHrs,
-      description: item.shiftDescription
+      description: item.shiftDescription,
+      punchBeginBefore: item.punchBeginBefore || 0,
+      punchEndAfter: item.punchEndAfter || 0
     }))
   };
 
@@ -99,7 +102,10 @@ view(id: any): void {
       latesAllowed: item.latesAllowed,
       breakTime: item.allowedBreakTime,
       halfDayMinHrs: item.halfDayMinHrs,
-      fullDayMinHrs: item.fullDayMinHrs
+      fullDayMinHrs: item.fullDayMinHrs,  
+      punchBeginBefore: item.punchBeginBefore || 0,
+      punchEndAfter: item.punchEndAfter || 0
+
     }))
   };
     localStorage.setItem('clonedShiftData', JSON.stringify(transformedShift));

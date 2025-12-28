@@ -111,6 +111,18 @@ export class ReportsService {
   
     return this.http.get('Reports/RemoteLoginReports', { params });
   }
+  getExtraLogHoursReports(request: IWfhReportRequest) {
+    let params = new HttpParams();
+  
+    if (request.employeeId) { params = params.set('EmployeeId', request.employeeId);}
+    if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
+    }
+  
+    return this.http.get('Reports/ExtraLogHoursReports', { params });
+  }
 
   getInactiveReports(request: IInactiveReportRequest) {
     let params = new HttpParams();
@@ -211,6 +223,24 @@ export class ReportsService {
     }
 
     return this.http.get('Reports/Leave_Reports', { params });
+  }
+
+
+  getLeaveCarryForwardReport(request: IAttendanceDetails) {
+
+    let params = new HttpParams();
+    // if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeIds', request.employeeId);
+    if (request.teamManagerID) params = params.set('teamManagerIds', request.teamManagerID);
+    if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
+    if (request.LeaveName) params = params.set('leaveType', request.LeaveName);
+    if (request.year) params = params.set('Year', request.year);
+    if (request.shiftIds) params = params.set('shiftIds', request.shiftIds);
+    if (request.leaveCategoryIds) params = params.set('leaveCategoryIds', request.leaveCategoryIds);
+    if (request.subLocationIds) params = params.set('subLocationIds', request.subLocationIds);
+    if (request.locationIds) params = params.set('locationIds', request.locationIds);
+
+    return this.http.get('Reports/LeaveCarryForwardReport', { params });
   }
 
   getLeaveSummaryReport(request: ILeavesummery) {

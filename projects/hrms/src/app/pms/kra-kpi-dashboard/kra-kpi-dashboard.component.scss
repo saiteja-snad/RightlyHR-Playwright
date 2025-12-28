@@ -293,3 +293,16 @@
 }
 
 
+.clear-all-btn {
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.clear-all-btn:focus {
+  outline: none;
+}

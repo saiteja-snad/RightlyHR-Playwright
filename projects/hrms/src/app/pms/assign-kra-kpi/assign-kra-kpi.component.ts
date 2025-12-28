@@ -628,22 +628,20 @@ export class AssignKraKpiComponent implements OnInit {
     return '-'; // fallback if no data
   }
 
-  // Get average assigned approver rating across all KRAs for an employee
+  // Get sum of all KRA ratings for employee (accordion header rating)
   getAverageAssignedRating(emp: any): string {
     if (!emp.assignments || emp.assignments.length === 0) {
       return '-';
     }
 
-    let totalRating = 0;
-    const totalKras = emp.assignments.length;
+    let totalKraRatings = 0;
 
     emp.assignments.forEach((assignment: any) => {
       const kraRating = this.calculateKraRating(assignment);
-      totalRating += kraRating;
+      totalKraRatings += kraRating;
     });
 
-    const average = totalRating / totalKras;
-    return average.toFixed(1);
+    return totalKraRatings.toFixed(1);
   }
 
   getKraRating(kra: any): string {
@@ -656,15 +654,20 @@ export class AssignKraKpiComponent implements OnInit {
       return 0;
     }
 
-    let totalRating = 0;
-    const totalKpis = assignment.kpis.length;
+    let weightedKpiSum = 0;
 
     assignment.kpis.forEach((kpi: any) => {
-      const rating = Number(kpi.assignedApproverRating);
-      totalRating += !isNaN(rating) && rating > 0 ? rating : 0;
+      const rating = Number(kpi.assignedApproverRating) || 0;
+      const kpiWeight = Number(kpi.assignedKpiWeightage) || 0;
+
+      weightedKpiSum += rating * (kpiWeight / 100);
     });
 
-    return totalRating / totalKpis;
+    // Multiply by KRA weightage to get final KRA rating
+    const kraWeight = Number(assignment.individualWeightage) || 0;
+    const kraRating = weightedKpiSum * (kraWeight / 100);
+
+    return kraRating;
   }
 
   // Optional: Add color coding for status (like your existing getStatusClass)
@@ -1659,6 +1662,16 @@ assignExistingToSelectedEmployees(): void {
 
   if (selectedEmployees.length === 0) {
     this.popup.openErrorModal('Please select at least one employee to assign the KRA/KPIs.');
+    return;
+  }
+
+  // Check if any selected employee is already assigned
+  const alreadyAssignedEmployees = selectedEmployees.filter(emp =>
+    this.getEmpAssignedStatus(emp) === 'Assigned'
+  );
+
+  if (alreadyAssignedEmployees.length > 0) {
+    this.popup.openErrorModal('Already Assigned: One or more selected employees already have assigned KRA/KPIs. Please unselect them before proceeding.');
     return;
   }
 

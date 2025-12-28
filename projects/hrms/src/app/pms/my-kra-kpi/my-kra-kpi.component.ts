@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule } from 'primeng/paginator';
+import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
+import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 
 import { HttpService } from '../../services/http.service';
@@ -27,6 +30,9 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     TranslateModule,
     NgbPopoverModule,
     PaginatorModule,
+    AccordionModule,
+    TableModule,
+    Select,
     ModuleInfoIconComponent,
     NoDataFoundComponent,
     DataLoaderContentComponent,
@@ -42,6 +48,8 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
   dataload = false;
   moduleinfo = '';
 
+  searchText = '';
+
   page = 1;
   rows = 10;
   first = 0;
@@ -55,6 +63,9 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
 
   myKpiList: any[] = [];
   selectedKra: any;
+
+  reviewCycleOptions: { label: string; value: string }[] = [];
+  selectedReviewCycleId: string | null = null;
 
   // totalAssignedWeightage = 0;
   // isWeightageExceeded = false;
@@ -71,6 +82,7 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadReviewCycles();
     this.callApiTwice();
     this.updateModuleInfo();
   }
@@ -103,6 +115,14 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
       pageSize: this.rows,
     };
 
+    if (this.selectedReviewCycleId) {
+      params.reviewCycleId = this.selectedReviewCycleId;
+    }
+
+    if (this.searchText?.trim()) {
+      params.search = this.searchText.trim();
+    }
+
     this.dataload = true;
 
     this.http
@@ -110,28 +130,36 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           if (res.success && Array.isArray(res.data)) {
-            // 🔹 FLATTEN DATA
+            // Process new response format with review cycles
             this.kraList = res.data.flatMap((emp: any) =>
-              (emp.kras || []).map((k: any) => {
-                const kpis = k.kpis || [];
+              (emp.reviewCycles || []).map((reviewCycle: any) => {
+                const kras = (reviewCycle.kras || []).map((kraItem: any) => {
+                  const kpis = kraItem.kpis || [];
+                  return {
+                    kraId: kraItem.kra?.kraId,
+                    kraName: kraItem.kra?.kraName,
+                    effectiveDate: kraItem.kra?.effectiveDate,
+                    targetDate: kraItem.kra?.targetDate,
+                    weightageValue: kpis.length > 0 ? kpis[0].assignedKraWeightage : kraItem.kra?.weightageValue,
+                    overallStatus: kraItem.overallStatus,
+                    status: kraItem.kra?.status,
+                    kpisCount: kraItem.kpisCount || 0,
+                    kpis: kpis,
+                    progress: this.calculateKraProgress(kpis),
+                  };
+                });
 
                 return {
-                  kraId: k.kra.kraId,
-                  kraName: k.kra.kraName,
-                  effectiveDate: k.kra.effectiveDate,
-                  targetDate: k.kra.targetDate,
-                  weightageValue: k.kra.weightageValue,
-                  overallStatus: k.overallStatus,
-                  status: k.kra.status,
-                  kpisCount: k.kpisCount,
-                  kpis: k.kpis || [],
-                  progress: this.calculateKraProgress(kpis),
+                  reviewCycleName: reviewCycle.reviewCycle?.reviewCycleName || 'Unknown Review Cycle',
+                  reviewCycleId: reviewCycle.reviewCycle?.id,
+                  reviewCycleStatus: reviewCycle.reviewCycle?.status,
+                  kras: kras,
+                  totalKraWeightage: this.calculateTotalKraWeightage(kras)
                 };
               })
             );
 
-            this.collectionSize =
-              res.pagination?.totalRecords ?? this.kraList.length;
+            this.collectionSize = res.pagination?.totalRecords ?? this.kraList.length;
           } else {
             this.kraList = [];
             this.collectionSize = 0;
@@ -175,6 +203,70 @@ calculateKraProgress(kpis: any[]): number {
 
   const averageProgress = committedSum / totalKpis;
   return Math.round(Math.min(100, Math.max(0, averageProgress)));
+}
+
+calculateTotalKraWeightage(kras: any[]): number {
+  return kras.reduce((total, kra) => total + Number(kra.weightageValue || 0), 0);
+}
+
+calculateOverallRating(kras: any[]): number {
+  if (!kras || kras.length === 0) return 0;
+
+  let totalKraRatings = 0;
+
+  kras.forEach((kra: any) => {
+    const kraRating = this.calculateKraRating(kra);
+    totalKraRatings += kraRating;
+  });
+
+  return Math.round(totalKraRatings * 100) / 100;
+}
+
+calculateKraRating(assignment: any): number {
+  if (!assignment.kpis || assignment.kpis.length === 0) {
+    return 0;
+  }
+
+  let weightedKpiSum = 0;
+
+  assignment.kpis.forEach((kpi: any) => {
+    const rating = Number(kpi.assignedApproverRating) || 0;
+    const kpiWeight = Number(kpi.assignedKpiWeightage) || 0;
+
+    weightedKpiSum += rating * (kpiWeight / 100);
+  });
+
+  // Multiply by KRA weightage to get final KRA rating
+  const kraWeight = Number(assignment.weightageValue) || 0;
+  const kraRating = weightedKpiSum * (kraWeight / 100);
+
+  return kraRating;
+}
+
+loadReviewCycles(): void {
+  this.http.getData('reviewCycleHeader/getallnames').subscribe({
+    next: (res: any) => {
+      if (Array.isArray(res)) {
+        this.reviewCycleOptions = res.map((item: any) => ({
+          label: item.reviewCycleName,
+          value: item.id,
+        }));
+      } else {
+        this.reviewCycleOptions = [];
+      }
+    },
+    error: (err) => {
+      console.error('Failed to load review cycles', err);
+      this.reviewCycleOptions = [];
+    },
+  });
+}
+
+onReviewCycleChange(reviewCycleId: string | null) {
+  this.selectedReviewCycleId = reviewCycleId;
+  this.page = 1;
+  this.first = 0;
+  this.getMyKraList();
 }
 
   openKraKpiModal(kra: any, content: any) {
@@ -343,6 +435,7 @@ calculateKraProgress(kpis: any[]): number {
     this.getMyKraList();
   }
 
+
   getProgressClass(value: number): string {
     if (value >= 70) return 'bg-success';
     if (value >= 30) return 'bg-warning';
@@ -403,6 +496,7 @@ calculateKraProgress(kpis: any[]): number {
         kpiId: kpi.kpiId,
         kpiName: kpi.kpiName,
         weightageValue: kpi.weightageValue,
+        assignedKpiWeightage: kpi.assignedKpiWeightage,
         unitOfMeasurement: kpi.targetType || 'N/A',
         targetValue: kpi.targetValue,
         targetType: kpi.targetType,

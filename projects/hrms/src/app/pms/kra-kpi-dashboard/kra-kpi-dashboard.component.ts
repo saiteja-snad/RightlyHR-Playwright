@@ -401,6 +401,15 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
     this.loadDashboardData(this.selectedEmployeeId || undefined);
   }
 
+  clearAllFilters() {
+    this.selectedEmployeeId = null;
+    this.selectedReviewCycleId = null;
+    this.searchText = '';
+    this.page = 1;
+    this.first = 0;
+    this.loadDashboardData();
+  }
+
   onEmployeeChange(employeeId: any) {
     this.selectedEmployeeId = employeeId || null;
     this.page = 1;

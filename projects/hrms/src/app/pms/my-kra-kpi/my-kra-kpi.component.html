@@ -8,6 +8,17 @@
         <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
       </div>
     </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select"
+            (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true" showClear="true" />
+        </div>
+      </div>
+    </div>
   </div>
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
@@ -20,80 +31,107 @@
 
     <div class="w-100 right-content">
 
-      <!-- TABLE -->
+      <!-- Search Bar -->
+      <div class="input-group custom-search mb-4">
+        <span class="input-group-text custom-input-group-search">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="search"
+          class="form-control custom-search-input"
+          placeholder="Search by KRA name..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchTextChange()" />
+      </div>
+
+      <!-- REVIEW CYCLE ACCORDIONS -->
       @if (!dataload) {
-      <div class="custom-table-content w-100">
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th>{{ 'KRA Name' | translate }}</th>
-              <th class="text-center">{{ 'KPIs Count' | translate }}</th>
-              <th class="text-center">{{ 'Effective Date' | translate }}</th>
-              <th class="text-center">{{ 'Target Date' | translate }}</th>
-              <th class="text-center">{{ 'Weightage' | translate }}</th>
-              <th class="text-center">{{ 'Progress (%)' | translate }}</th>
-              <th class="text-center">{{ 'Status' | translate }}</th>
-            </tr>
-          </thead>
-
-
-          <tbody>
-            @if (kraList.length > 0) {
-            @for (kra of kraList; track kra.kraId) {
-            <tr>
-              <td class="kras-bold cursor" (click)="openKraKpiModal(kra, kraKpiModal)">{{ kra.kraName }}</td>
-
-              <td class="text-center kras-bold cursor" [class.text-muted]="kra.kpisCount === 0"
-                [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
-                (click)="openMyKpiCanvas(myKpiCanvas, kra)">
-                {{ kra.kpisCount }}
-              </td>
-
-              <td class="text-center">
-                {{ kra.effectiveDate | date:'mediumDate' }}
-              </td>
-
-              <td class="text-center">
-                {{ kra.targetDate | date:'mediumDate' }}
-              </td>
-
-              <td class="text-center">
-                {{ kra.weightageValue }}
-              </td>
-
-
-              <td class="text-center">
-                <div class="progress-wrapper">
-                  <div class="progress" style="height: 8px;">
-                    <div class="progress-bar" role="progressbar" [style.width.%]="kra.progress"
-                      [ngClass]="getProgressClass(kra.progress)" aria-valuemin="0" aria-valuemax="100">
+      <div class="custom-accordians">
+        <div class="custom-accordian-data-content">
+          @if (kraList.length > 0) {
+          <p-accordion>
+            @for (reviewCycle of kraList; track reviewCycle.reviewCycleId) {
+            <p-accordion-panel [value]="reviewCycle.reviewCycleId">
+              <!-- ACCORDION HEADER -->
+              <p-accordion-header>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                  <!-- LEFT: Review Cycle Name -->
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="text-truncate fw-semibold employee-name">
+                      <small class="text-muted me-1" style="font-size: 13px;">Review Cycle: </small>
+                     <strong class="fw-bold"> {{ reviewCycle.reviewCycleName }}</strong>
                     </div>
                   </div>
-                  <small class="fw-semibold">
-                    {{ kra.progress }}%
-                  </small>
+                  <!-- RIGHT: Total KRA Weightage and Rating -->
+                  <div class="d-flex align-items-center gap-4">
+                    <div class="text-center" style="width: 300px;">
+                      <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage: </small>
+                      <strong class="fw-bold">{{ reviewCycle.totalKraWeightage }}%</strong>
+                    </div>
+                    <div class="text-center" style="width: 300px;">
+                      <small class="text-muted me-1" style="font-size: 13px;">Overall Rating: </small>
+                      <strong class="fw-bold">{{ calculateOverallRating(reviewCycle.kras) || '-' }}</strong>
+                    </div>
+                  </div>
                 </div>
-              </td>
-
-
-
-              <td class="text-center">
-                <span class="kra-status" [ngClass]="getStatusClass(kra.overallStatus)">
-                  {{ kra.overallStatus || '-' }}
-                </span>
-              </td>
-            </tr>
+              </p-accordion-header>
+              <!-- ACCORDION CONTENT -->
+              <p-accordion-content>
+                <div class="custom-p-multi-select-table custom-accordian-table">
+                  @if (reviewCycle.kras.length > 0) {
+                  <p-table [value]="reviewCycle.kras">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>{{ 'KRA Name' | translate }}</th>
+                        <th class="text-center">{{ 'KPIs Count' | translate }}</th>
+                        <th class="text-center">{{ 'Effective Date' | translate }}</th>
+                        <th class="text-center">{{ 'Target Date' | translate }}</th>
+                        <th class="text-center">{{ 'Weightage' | translate }}</th>
+                        <th class="text-center">{{ 'Progress (%)' | translate }}</th>
+                        <th class="text-center">{{ 'Status' | translate }}</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-kra>
+                      <tr>
+                        <td (click)="openKraKpiModal(kra, kraKpiModal)"><span class="kras-bold cursor">{{ kra.kraName }}</span></td>
+                        <td class="text-center" [class.text-muted]="kra.kpisCount === 0"
+                          [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
+                          (click)="openMyKpiCanvas(myKpiCanvas, kra)">
+                          <span class="cursor kras-bold">{{ kra.kpisCount }}</span>
+                        </td>
+                        <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
+                        <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
+                        <td class="text-center">{{ kra.weightageValue }}</td>
+                        <td class="text-center">
+                          <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" [style.width.%]="kra.progress"
+                              [attr.aria-valuenow]="kra.progress" aria-valuemin="0" aria-valuemax="100"
+                              [ngClass]="getProgressClass(kra.progress)"></div>
+                          </div>
+                          <small class="fw-semibold">{{ kra.progress }}%</small>
+                        </td>
+                        <td class="text-center">
+                          <span class="kra-status" [ngClass]="getStatusClass(kra.overallStatus)">
+                            {{ kra.overallStatus || '-' }}
+                          </span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  } @else {
+                  <div class="p-4 text-center text-muted">
+                    <app-no-data-found />
+                  </div>
+                  }
+                </div>
+              </p-accordion-content>
+            </p-accordion-panel>
             }
-            } @else {
-            <tr>
-              <td colspan="7" class="text-center py-4">
-                <app-no-data-found />
-              </td>
-            </tr>
-            }
-          </tbody>
-
-        </table>
+          </p-accordion>
+          } @else {
+          <app-no-data-found />
+          }
+        </div>
       </div>
 
       <!-- PAGINATION -->
@@ -163,7 +201,7 @@
           <div class="d-flex justify-content-between gap-3 mb-3">
             <div class="text-center">
               <p class="project-role mb-1">Weightage</p>
-              <p class="project-dates m-0">{{ kpi.weightageValue }}%</p>
+              <p class="project-dates m-0">{{ kpi.assignedKpiWeightage }}%</p>
             </div>
 
             <div class="text-center">

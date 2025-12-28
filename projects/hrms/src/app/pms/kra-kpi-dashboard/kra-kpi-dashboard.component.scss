@@ -207,6 +207,12 @@
     }
 }
 
+.right-content {
+    height: calc(100dvh - 8.5rem) !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .completion-status-chart {
   min-height: 220px; // Gives breathing room
 }
@@ -282,3 +288,9 @@
 .status-rejected {
   color: #dc3545;
 }
+
+.component-left-tabs-container {
+  height: calc(100dvh - 8.5rem) !important;
+}
+
+

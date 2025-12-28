@@ -71,6 +71,11 @@ export class MyKraKpiComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (!sessionStorage.getItem('myKraKpiRefreshed')) {
+      sessionStorage.setItem('myKraKpiRefreshed', 'true');
+      window.location.reload();
+      return;
+    }
     this.getMyKraList();
     this.updateModuleInfo();
   }

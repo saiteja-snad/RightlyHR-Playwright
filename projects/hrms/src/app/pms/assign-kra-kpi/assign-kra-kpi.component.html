@@ -117,13 +117,13 @@
 
                 <!-- Assigned Rating -->
                 <div class="text-center" style="width: 300px;">
-                  <small class="text-muted me-1" style="font-size: 13px;">Assigned Rating:</small>
+                  <small class="text-muted me-1" style="font-size: 13px;">Rating:</small>
                   <strong>{{ getAverageAssignedRating(emp) }}</strong>
                 </div>
 
                 <!-- Assigned Status -->
                 <div class="text-center" style="width: 300px;">
-                  <small class="text-muted me-1" style="font-size: 13px;">Assigned Status:</small>
+                  <small class="text-muted me-1" style="font-size: 13px;">Status:</small>
                   <strong>
                     {{ getEmpAssignedStatus(emp) }}
                   </strong>
@@ -144,10 +144,10 @@
                     <th class="text-center">Review Cycle</th>
                     <th class="text-center">Total KPIs</th>
                     <th class="text-center">Weightage (%)</th>
-                    <!-- <th class="text-center">Status</th> -->
                     <th class="text-center">Effective Date</th>
                     <th class="text-center">Target Date</th>
                     <th class="text-center">Progress (%)</th>
+                    <th class="text-center">KRA Rating</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </ng-template>
@@ -175,6 +175,9 @@
                           [ngClass]="getProgressClass(getKraProgress(kra))"></div>
                       </div>
                       <small class="fw-semibold">{{ getKraProgress(kra) }}%</small>
+                    </td>
+                    <td class="text-center">
+                      <strong>{{ getKraRating(kra) }}</strong>
                     </td>
                     <td class="text-center">
                       <div class="dropdown">

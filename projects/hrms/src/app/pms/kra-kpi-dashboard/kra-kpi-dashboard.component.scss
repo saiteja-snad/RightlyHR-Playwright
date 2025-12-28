@@ -49,16 +49,6 @@
   }
 }
 
-// Performance chart specific styling
-.bar-chart {
-  p-chart {
-    canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-  }
-}
-
 // Pie chart specific styling
 .skill-chart-horizontal {
   p-chart {
@@ -264,15 +254,24 @@
 }
 
 .performance-bar-chart {
-  min-height: 280px !important; /* Ensures minimum height even with few bars */
-  height: 100% !important;
+    display: flex;
+    flex-direction: column;
+    height: 100% !important;
+    min-height: 250px !important;
 
-  // Important: Force the canvas to fill the container
-  canvas {
-    max-height: 100% !important;
-    width: 100% !important;
-  }
+    p-chart {
+        flex: 1;
+        height: 100% !important;
+        min-height: 250px !important;
+
+        canvas {
+            height: 250px !important;
+            width: 100% !important;
+        }
+    }
 }
+
+
 
 /* Blue for Created */
 .status-waiting-for-approval {

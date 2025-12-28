@@ -1,6 +1,7 @@
 .custom-p-multi-select-table {
   position: relative !important;
-  height: 35dvh;
+  max-height: calc(5 * 60px);
+  overflow-y: auto;
 }
 
 .popup-icon {

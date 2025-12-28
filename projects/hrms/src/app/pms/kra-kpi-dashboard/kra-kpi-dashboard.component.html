@@ -93,7 +93,6 @@
         <!-- Performance Distribution Chart -->
         <div class="col-xl-7 col-lg-6 mb-3">
           <div class="graph-card h-100 d-flex flex-column" style="height: 380px;">
-            <!-- Increased card height slightly -->
             <div class="d-flex align-items-center gap-2 mb-3">
               <div class="graph-header">Performance Distribution</div>
               <div class="module-info-content">
@@ -115,14 +114,13 @@
 
             <!-- Chart or No Data -->
             @else {
-            <ng-container *ngIf="hasPerformanceData; else noData">
               <div class="performance-bar-chart flex-grow-1 position-relative">
+                 <ng-container *ngIf="hasPerformanceData; else noData">
                 <!-- Key: flex-grow-1 + position-relative -->
-                <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions"
-                  style="height: 100%; width: 100%;">
+                <p-chart type="bar" [data]="performanceChartData" [options]="performanceChartOptions" style="height: 250px;">
                 </p-chart>
+                </ng-container>
               </div>
-            </ng-container>
 
             <ng-template #noData>
               <div class="graph-no-data-content h-100 d-flex align-items-center justify-content-center">
@@ -132,6 +130,7 @@
             }
           </div>
         </div>
+
 
         <!-- Completion Status chart -->
         <div class="col-xl-5 col-lg-6 mb-3">

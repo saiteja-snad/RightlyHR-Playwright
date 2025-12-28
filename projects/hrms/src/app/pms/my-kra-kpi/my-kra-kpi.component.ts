@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -37,7 +37,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
   templateUrl: './my-kra-kpi.component.html',
   styleUrl: './my-kra-kpi.component.scss',
 })
-export class MyKraKpiComponent implements OnInit {
+export class MyKraKpiComponent implements OnInit, OnDestroy {
   kraList: any[] = [];
   dataload = false;
   moduleinfo = '';
@@ -71,13 +71,19 @@ export class MyKraKpiComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!sessionStorage.getItem('myKraKpiRefreshed')) {
-      sessionStorage.setItem('myKraKpiRefreshed', 'true');
-      window.location.reload();
-      return;
-    }
-    this.getMyKraList();
+    this.callApiTwice();
     this.updateModuleInfo();
+  }
+
+  private callApiTwice(): void {
+    this.getMyKraList();
+    setTimeout(() => {
+      this.getMyKraList();
+    }, 100);
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup if needed
   }
 
   updateModuleInfo() {
@@ -525,7 +531,8 @@ onRowSelectionChange(): void {
   isWaitingForApproval(kpi: any): boolean {
     return (
       kpi?.assignedStatus === 'Waiting for Approval' ||
-      kpi?.assignedStatus === 'Approved'
+      kpi?.assignedStatus === 'Approved' ||
+      this.selectedKra?.overallStatus === 'Overdue'
     );
   }
 

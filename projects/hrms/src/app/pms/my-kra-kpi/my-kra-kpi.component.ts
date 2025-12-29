@@ -230,10 +230,10 @@ calculateOverallRating(kras: any[]): string {
   });
 
   const overallRating = totalKraRatings;
-  
+
   // Round to 1 decimal place, with special handling for .x8 values
   const rounded = Math.round(overallRating * 10) / 10;
-  
+
   return overallRating > 0 ? rounded.toFixed(1) : '-';
 }
 

@@ -270,13 +270,13 @@
               </th>
 
               <th>{{ 'KPI Name' | translate }}</th>
-              <th>{{ 'Weightage' | translate }}</th>
-              <th>{{ 'Unit of Measurement' | translate }}</th>
-              <th>{{ 'Target Value' | translate }}</th>
-              <th>{{ 'Target Date' | translate }}</th>
+              <th class="text-center">{{ 'Weightage' | translate }}</th>
+              <th class="text-center">{{ 'Unit of Measurement' | translate }}</th>
+              <th class="text-center">{{ 'Target Value' | translate }}</th>
+              <th class="text-center">{{ 'Target Date' | translate }}</th>
               <th>{{ 'Description' | translate }}</th>
-              <th>{{ 'Progress' | translate }}</th>
-              <th>{{ 'Attachment' | translate }}</th>
+              <th class="text-center">{{ 'Progress' | translate }}</th>
+              <th class="text-center">{{ 'Attachment' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -289,28 +289,28 @@
 
               <!-- KPI Name -->
               <td>
-                <input type="text" class="form-control custom-input" [(ngModel)]="myKpiList[i].kpiName" disabled />
+                <input type="text" class="form-control custom-input text-truncate" [title]="myKpiList[i].kpiName" [(ngModel)]="myKpiList[i].kpiName" disabled />
               </td>
 
               <!-- Weightage -->
-              <td>
+              <td class="text-center">
                 <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].weightageValue"
                   disabled />
               </td>
 
-              <td>
+              <td class="text-center">
                 <input type="text" class="form-control custom-input" [(ngModel)]="myKpiList[i].unitOfMeasurement"
                   disabled />
               </td>
 
               <!-- Target Value -->
-              <td>
+              <td class="text-center">
                 <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].targetValue"
                   disabled />
               </td>
 
               <!-- Target Date -->
-              <td>
+              <td class="text-center">
                 <input type="date" class="form-control custom-input" [(ngModel)]="myKpiList[i].targetDate" disabled />
               </td>
 
@@ -328,7 +328,7 @@
                 <ng-template #noDescription>NA</ng-template>
               </td>
               <!-- Assigned Weightage -->
-              <td>
+              <td class="text-center">
                 <input type="number" class="form-control custom-input" [(ngModel)]="myKpiList[i].assignedWeightage"
                   placeholder="0-100" pattern="[0-9]*" step="1" (input)="onWeightageInput($event, i)"
                   (blur)="clampWeightage(i)" [disabled]="isWaitingForApproval(myKpiList[i])"
@@ -336,7 +336,7 @@
               </td>
 
               <!-- Attachment -->
-              <td>
+              <td class="text-center">
                 <input type="file" class="form-control custom-input" (change)="onFileChange($event, i)" />
                 <!-- <div *ngIf="myKpiList[i].attachmentName" class="mt-1">{{ myKpiList[i].attachmentName }}</div> -->
               </td>

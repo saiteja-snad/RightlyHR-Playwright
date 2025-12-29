@@ -186,25 +186,25 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
               title: 'Total Employees Count',
               value: s.totalEmployees ?? 0,
               icons: './icons/Total Employee Count.png',
-              popover: 'The total number of employees in the organization.',
+              popover: 'This widget displays the total number of employees included in the current KRA/KPI cycle.It reflects only active employees mapped to the selected performance period.',
             },
             {
               title: 'Active KRAs',
               value: s.activeKras ?? 0,
               icons: './icons/Active KRAs.png',
-              popover: 'Number of active KRA assignments.',
+              popover: 'This widget displays the total number of KRAs that are currently active in the system.These KRAs are used to evaluate employee performance for the ongoing cycle.',
             },
             {
               title: 'Avg Score',
               value: s.averageScore ?? 0,
               icons: './icons/Available Employees Count.png',
-              popover: 'Average performance score across employees.',
+              popover: 'This widget displays the average performance score across all employees.The score is calculated based on completed and evaluated KRAs.',
             },
             {
               title: 'Over Due',
               value: s.offTrack ?? 0,
               icons: './icons/Not Updated.png',
-              popover: 'Employees/KRAs currently overdue.',
+              popover: 'This widget displays the number of employees with pending or overdue KRA submissions or reviews.It helps managers identify records that need immediate attention.',
             },
           ];
 

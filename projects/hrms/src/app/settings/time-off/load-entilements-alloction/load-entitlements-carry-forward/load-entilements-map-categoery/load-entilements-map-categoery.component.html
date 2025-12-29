@@ -16,19 +16,21 @@
                     <!-- Shift Header Row -->
                     <tr class="shift-header-row">
                         <td class=" text-center">
-                            Location Name: <b>{{shift.locationName}}</b>
+                            <span class="header-name">Location Name </span>: <b>{{shift.locationName}}</b>
                         </td>
                         <td class=" text-center">
-                            SubLocation Name : <b> {{shift.subLocationName}}</b>
+                            <span class="header-name"> Sub Location Name</span> : <b> {{shift.subLocationName}}</b>
                         </td>
-                        <td class="shift-header text-center">
+                        <td class="text-center">
                             <div class="d-flex align-items-center justify-content-center gap-2">
-                                <div class="code-box" [style.background]="hexToRgba(shift.color, 0.1)"
+                                <!-- <div class="code-box" [style.background]="hexToRgba(shift.color, 0.1)"
                                     [style.color]="shift.color">
                                     {{shift.code}}
-                                </div>
-                                <div class="categoryname" [style.color]="shift.color">
-                                    {{shift.shiftName}} ({{shift.shiftStartTime}} - {{shift.shiftEndTime}})
+                                </div> -->
+                                <div>
+                                    <span class="header-name">Shift Name</span> : <b
+                                        [style.color]="shift.color">{{shift.shiftName}} ({{shift.shiftStartTime}} -
+                                        {{shift.shiftEndTime}})</b>
                                 </div>
                             </div>
                         </td>
@@ -41,7 +43,7 @@
                                     [style.color]="category.categoryColor">{{category.categoryCode}}</div>
                                 <div class="text-start">
                                     <div class="categoryname" [style.color]="category.categoryColor">{{ category.name }}
-                                      </div>
+                                    </div>
                                     <div *ngIf="category.carryForwardAllowed || category.encashAllowedType"
                                         class="eligible-text">
                                         Eligible for {{ category.carryForwardAllowed ? ' Carry Forward' : '' }}

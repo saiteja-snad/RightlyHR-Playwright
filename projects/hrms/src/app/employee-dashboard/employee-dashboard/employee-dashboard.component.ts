@@ -793,19 +793,25 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
     this.offCanvasData = data;
   }
+
   getFilteredEmployees() {
     const key = this.offCanvasData?.key;
     const list = this.OffCanvasemployeeList?.[key] || [];
+    
+    // Filter first, then map only the filtered results
+    const filteredList = this.searchEmployeeText 
+      ? list.filter((emp: any) =>
+          emp.employeeName
+            ?.toLowerCase()
+            .includes(this.searchEmployeeText.toLowerCase())
+        )
+      : list;
 
-    if (!this.searchEmployeeText) {
-      return list;
-    }
-
-    return list.filter((emp: any) =>
-      emp.employeeName
-        ?.toLowerCase()
-        .includes(this.searchEmployeeText.toLowerCase())
-    );
+    // Only map profile URLs for filtered results
+    return filteredList.map((emp: any) => ({
+      ...emp,
+      profilePicUrl: this.getImageUrl(emp.profilePic)
+    }));
   }
 
   close() {

@@ -413,7 +413,12 @@
 
             <div *ngFor="let emp of getFilteredEmployees()" class="profile-content mb-2">
                 <div>
-                    <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    <ng-container *ngIf="emp.profilePicUrl; else showProfileIcon">
+                        <img [src]="emp.profilePicUrl" [width]="38" [height]="38" class="profile-img" />
+                    </ng-container>
+                    <ng-template #showProfileIcon>
+                        <app-profile-icon [iconWidth]="'38'" [iconHeight]="'38'" />
+                    </ng-template>
                 </div>
 
                 <div class="profile-info w-100">

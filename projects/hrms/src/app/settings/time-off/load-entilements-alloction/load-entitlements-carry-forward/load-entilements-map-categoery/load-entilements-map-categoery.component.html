@@ -15,25 +15,21 @@
                 <ng-container *ngFor="let shift of shiftwisedata">
                     <!-- Shift Header Row -->
                     <tr class="shift-header-row">
-                        <td class=" text-center">
-                            <span class="header-name">Location Name </span>: <b>{{shift?.locationName}}</b>
-                        </td>
-                        <td class=" text-center">
-                            <span class="header-name"> Sub Location Name</span> : <b> {{shift?.subLocationName}}</b>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center gap-2">
-                                <!-- <div class="code-box" [style.background]="hexToRgba(shift.color, 0.1)"
-                                    [style.color]="shift.color">
-                                    {{shift.code}}
-                                </div> -->
-                                <div>
-                                    <span class="header-name">Shift Name</span> : <b
-                                        [style.color]="shift?.color">{{shift?.shiftName}} ({{shift?.shiftStartTime}} -
-                                        {{shift?.shiftEndTime}})</b>
-                                </div>
+                        <td colspan="3" class="text-center">
+                            <div class="d-flex gap-3">
+                                <span><span class="header-name">Location Name </span> : <b>{{shift?.locationName}}</b></span>
+                             <span>   <span class="header-name"> Sub Location Name</span> : <b> {{shift?.subLocationName}}</b></span>
+                                <span>
+                                    <div>
+                                        <span class="header-name">Shift Name</span> : <b
+                                            [style.color]="shift?.color">{{shift?.shiftName}} ({{shift?.shiftStartTime}}
+                                            -
+                                            {{shift?.shiftEndTime}})</b>
+                                    </div>
+                                </span>
                             </div>
                         </td>
+
                     </tr>
                     <!-- Category Rows for this shift -->
                     <tr *ngFor="let category of shift?.categories">
@@ -42,7 +38,8 @@
                                 <div class="code-box" [style.background]="hexToRgba(category.categoryColor, 0.1)"
                                     [style.color]="category?.categoryColor">{{category?.categoryCode}}</div>
                                 <div class="text-start">
-                                    <div class="categoryname" [style.color]="category?.categoryColor">{{ category?.name }}
+                                    <div class="categoryname" [style.color]="category?.categoryColor">{{ category?.name
+                                        }}
                                     </div>
                                     <div *ngIf="category?.carryForwardAllowed || category?.encashAllowedType"
                                         class="eligible-text">

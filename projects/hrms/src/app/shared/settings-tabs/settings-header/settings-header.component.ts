@@ -17,7 +17,7 @@ import { HttpService } from '../../../services/http.service';
   styleUrl: './settings-header.component.scss'
 })
 
-export class SettingsHeaderComponent implements OnInit,OnDestroy {
+export class SettingsHeaderComponent implements OnInit, OnDestroy {
   moduleName: string = '';
   componentName: string = '';
   navigationname: string = '';
@@ -69,9 +69,9 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-create': MODULE_INFOS.CARRY_FORWORD_LEAVES_CREATE,
       '/settings/timeoff-configurations/leave-entitlements/load-entitlement-preview': MODULE_INFOS.CARRY_FORWORD_LEAVES_CREATE,
       '/settings/timeoff-configurations/load-entitlement/carry-forward': MODULE_INFOS.CARRY_FORWORD_LEAVES,
-      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements':MODULE_INFOS.Create_Initial_Leave_Entitlements,
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create':MODULE_INFOS.Initial_Leave_Entitlements,
-      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview':MODULE_INFOS.Initial_Leave_Entitlements
+      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements': MODULE_INFOS.Create_Initial_Leave_Entitlements,
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-create': MODULE_INFOS.Initial_Leave_Entitlements,
+      '/settings/timeoff-configurations/intial-leave-entitlements/intial-load-entitlement-preview': MODULE_INFOS.Initial_Leave_Entitlements
 
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
@@ -218,7 +218,7 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       this.moduleName = 'PMS Configurations';
       this.componentName = 'Assessor Configuration';
     }
-     else if (url.startsWith('/pmsconfiguration/kra')) {
+    else if (url.startsWith('/pmsconfiguration/kra')) {
       this.moduleName = 'PMS Configurations';
       this.componentName = 'KRA Configuration';
     }
@@ -386,7 +386,7 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
   isShowsettingsjobRoute() {
     const showPaths = [
       '/settings/timeoff-configurations/jobview',
-      '/settings/timeoff-configurations/leave-entitlements',
+      
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
@@ -401,11 +401,17 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
 
   isshowsettingsforcarryforword() {
     const showPaths = [
-      '/settings/timeoff-configurations/load-entitlement/carry-forward',
-      '/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'
+      '/settings/timeoff-configurations/leave-entitlements',
+   
     ];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
+
+navigateTocarryforword(){
+    this.router.navigate(['/settings/timeoff-configurations/load-entitlement/carry-forward'])
+    localStorage.removeItem('carryForwardJobId'),
+    localStorage.removeItem('loadEntitlement')
+}
 
   navigateTointialloadentiments() {
     this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
@@ -413,23 +419,28 @@ export class SettingsHeaderComponent implements OnInit,OnDestroy {
       localStorage.removeItem('intialloadEntitlement')
   }
 
-
+  navigateToloadentiments() {
+    this.router.navigate(['/settings/timeoff-configurations/load-entitlement/initial-load-entitlements'])
+    localStorage.removeItem('carryForwardJobId'),
+      localStorage.removeItem('intialloadEntitlement')
+  }
+ 
   navigateToSettings() {
     this.router.navigate(['/settings'])
 
   }
 
 
-  navigateToloadentiments() {
+  navigateTomain() {
     this.location.back();
     localStorage.removeItem('carryForwardJobId');
     localStorage.removeItem('loadEntitlement');
   }
 
   ngOnDestroy() {
-  this.destroy$.next();
-  this.destroy$.complete();
-}
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }
 

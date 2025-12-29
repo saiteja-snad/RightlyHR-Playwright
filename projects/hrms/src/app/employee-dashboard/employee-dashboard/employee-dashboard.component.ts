@@ -632,19 +632,22 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   getpreviousloggedtime() {
-    this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}&date=${this.previousDate}`)
+    this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          const today = res?.data?.attendanceData?.find((x: any) => x.date ===
-            this.currentYear + '-' + this.currentMonth + '-' + this.currentDate) ??
-            res?.data?.attendanceData?.[0];
-          const totalDuration = today?.duration?.totalDuration ?? "00:00:00";
+          const attendanceData = res?.data?.attendanceData || [];
+          // Find the last day with totalDuration > 00:00:00, excluding current date
+          const currentDateStr = this.currentYear + '-' + this.currentMonth + '-' + this.currentDate;
+          const previousDay = attendanceData
+            .filter((x: any) => x.date !== currentDateStr && x.duration?.totalDuration !== '00:00:00')
+            .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+          const totalDuration = previousDay?.duration?.totalDuration ?? "00:00:00";
           this.previousDurationLabel = totalDuration;
         },
         error: err => console.log(err),
       });
   }
-
   timeToSeconds(time: string | null | undefined): number {
     if (!time || !time.includes(':')) return 0;
     const parts = time.split(':').map(Number);
@@ -790,19 +793,25 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.offcanvasService.open(content, { position: 'end', backdrop: 'static', keyboard: false });
     this.offCanvasData = data;
   }
+
   getFilteredEmployees() {
     const key = this.offCanvasData?.key;
     const list = this.OffCanvasemployeeList?.[key] || [];
+    
+    // Filter first, then map only the filtered results
+    const filteredList = this.searchEmployeeText 
+      ? list.filter((emp: any) =>
+          emp.employeeName
+            ?.toLowerCase()
+            .includes(this.searchEmployeeText.toLowerCase())
+        )
+      : list;
 
-    if (!this.searchEmployeeText) {
-      return list;
-    }
-
-    return list.filter((emp: any) =>
-      emp.employeeName
-        ?.toLowerCase()
-        .includes(this.searchEmployeeText.toLowerCase())
-    );
+    // Only map profile URLs for filtered results
+    return filteredList.map((emp: any) => ({
+      ...emp,
+      profilePicUrl: this.getImageUrl(emp.profilePic)
+    }));
   }
 
   close() {

@@ -155,7 +155,7 @@ export class LeaveAlloctaionComponent {
         console.log(data);
         if (data.length > 0) {
           data.forEach((element: ILeavePolicyData) => {
-            if (element.allowedDays) {
+            if (element.allowedDays != null) {
               this.accessLevels[element.entityReferenceId] =
                 element.allowedDays;
               // this.policyDays[element.entityReferenceId].id = element.id;
@@ -172,7 +172,7 @@ export class LeaveAlloctaionComponent {
           });
 
         } else {
-          this.accessLevels = [];
+          this.accessLevels = {};
 
         }
       },

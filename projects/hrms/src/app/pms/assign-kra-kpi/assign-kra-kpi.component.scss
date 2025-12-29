@@ -135,10 +135,11 @@
   }
 }
 
-.employee-accordion-header-grid {
-  display: grid;
-  grid-template-columns: 1fr 200px 1fr;
-  align-items: center;
-  width: 100%;
-  gap: 16px;
+// Fix pagination arrow direction
+::ng-deep .pagination-content .p-paginator .p-icon {
+     transform: none !important;
+}
+
+::ng-deep .p-paginator {
+  direction: ltr !important;
 }

@@ -275,7 +275,7 @@
             <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">
               {{ kpi.assignedStatus || '-' }}
             </div>
-            <div>
+            <div *ngIf="kpi.assignedApproverRejectedComments && kpi.assignedApproverRejectedComments.trim()">
               <app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" />
             </div>
           </div>

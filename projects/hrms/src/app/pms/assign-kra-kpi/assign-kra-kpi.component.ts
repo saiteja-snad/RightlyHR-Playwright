@@ -6,6 +6,7 @@ import {
   inject,
   ViewChild,
   TemplateRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -61,6 +62,7 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
   ],
   templateUrl: './assign-kra-kpi.component.html',
   styleUrl: './assign-kra-kpi.component.scss',
+
 })
 export class AssignKraKpiComponent implements OnInit {
   @ViewChild('dt') table!: Table;
@@ -93,7 +95,7 @@ export class AssignKraKpiComponent implements OnInit {
   page = 1;
   rows = 10;
   first = 0;
-  collectionSize = 0;
+  collectionSize!: number;
   searchText = ''; // Replace searchValue
   dataload = false; // Replace dataLoad
   kraListForDropdown: any[] = [];
@@ -481,23 +483,23 @@ export class AssignKraKpiComponent implements OnInit {
 
     this.dataload = true;
 
-    this.http.getDataIncludeParams('Kra/getAll', params).subscribe({
+    this.http.getDataIncludeParams('Kra/getAll').subscribe({
       next: (res: any) => {
         if (res?.success && Array.isArray(res.data)) {
           this.kraListForDropdown = res.data.filter(
             (kra: any) => kra.status === 'Active'
           );
-          this.collectionSize = this.kraListForDropdown.length;
+
         } else {
           this.kraListForDropdown = [];
-          this.collectionSize = 0;
+
         }
         this.dataload = false;
       },
       error: (err) => {
         console.error('Failed to load KRAs', err);
         this.kraListForDropdown = [];
-        this.collectionSize = 0;
+
         this.dataload = false;
       },
     });
@@ -600,7 +602,7 @@ export class AssignKraKpiComponent implements OnInit {
             };
           });
 
-          this.collectionSize = res.pagination?.totalRecords || res.data.length || 0;
+          this.collectionSize = res.pagination?.totalRecords || 0;
         } else {
           this.kraList = [];
           this.groupedKraList = [];

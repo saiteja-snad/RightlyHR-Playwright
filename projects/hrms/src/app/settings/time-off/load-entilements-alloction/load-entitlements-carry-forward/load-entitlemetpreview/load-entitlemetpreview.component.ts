@@ -36,10 +36,10 @@ export class LoadEntitlemetpreviewComponent implements OnInit, OnDestroy {
   getdataforcarryforward(carryforwarddata: ICarryForward) {
     this.loading = true;
     this.http.getData(
-      `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata.location.id}
-    &subLocationIds=${carryforwarddata.subLocation.id}
-    &shiftIds=${carryforwarddata.shift.id}
-    &year=${carryforwarddata.year}&excludeJobProcessedEmployees=true&employeeTypes=Permanent,Contract,Trainee`
+      `Reports/LeaveCarryForwardReport?locationIds=${carryforwarddata?.location?.id}
+    &subLocationIds=${carryforwarddata?.subLocation?.id}
+    &shiftIds=${carryforwarddata?.shift?.id}
+    &year=${carryforwarddata?.year}&excludeJobProcessedEmployees=true&employeeTypes=Permanent,Contract,Trainee`
     ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;

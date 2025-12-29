@@ -65,13 +65,12 @@ filteredTabs: any[] = [];
   ) {
     effect(() => {
       if (this.http.onBehlafOfRemoteLoginSignal()) {
-        this.http.onBehalfOfRemoteLoginSelectedEmp$.subscribe((emp: number) => {
-          if (emp) {
-            this.getRemoteLoginRequest(emp);
-          } else {
-            this.resetWFHCounts();
-          }
-        });
+        const currentEmpId = this.http.onBehalfOfRemoteLoginSelectedEmp$.value;
+        if (currentEmpId) {
+          this.getRemoteLoginRequest(currentEmpId);
+        } else {
+          this.resetWFHCounts();
+        }
         this.http.onBehlafOfRemoteLoginSignal.set(false);
       }
     });
@@ -79,10 +78,26 @@ filteredTabs: any[] = [];
 
   ngOnInit(): void {
     this.filterTabsByRbac();
+    
+    this.http.onBehalfOfRemoteLoginSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
+      if (emp) {
+        this.getRemoteLoginRequest(emp);
+      } else {
+        this.resetWFHCounts();
+      }
+    });
+
+    // Listen for year changes
+    this.timeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      const currentEmpId = this.http.onBehalfOfRemoteLoginSelectedEmp$.value;
+      if (currentEmpId) {
+        this.getRemoteLoginRequest(currentEmpId);
+      }
+    });
   }
 
   getRemoteLoginRequest(employeeId: number) {
-    this.loading = true
+    this.loading = true;
     const selectedYear = this.timeoffYearFilterService.getSelectedYear();
     this.http.getFilterOnBehalfRemoteLoginDataByID(employeeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
@@ -99,15 +114,15 @@ filteredTabs: any[] = [];
           this.approvedRemoteLoginRequestsCount = approved.length;
           this.rejectedRemoteLoginRequestsCount = rejected.length;
           this.processedRemoteLoginRequestsCount = processed.length;
-          this.cancelRemoteLoginRequestsCount = cancelled.length
+          this.cancelRemoteLoginRequestsCount = cancelled.length;
           this.updateNavTabs();
-          this.loading = false
+          this.loading = false;
         } else {
           console.error('Invalid response format');
         }
       },
       error: (reason: any) => {
-        this.loading = true;
+        this.loading = false;
         console.log('remote login data', reason);
       }
     });
@@ -175,7 +190,7 @@ filteredTabs: any[] = [];
   }
 
   ngOnDestroy(): void {
-    this.http.onBehalfOfWFHSelectedEmp$.next(null);
+    this.http.onBehalfOfRemoteLoginSelectedEmp$.next(null);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }

@@ -12,6 +12,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-behalf-of-whf-processed',
@@ -34,34 +35,42 @@ wfhData: ICompOff[] = [];
 
   constructor(
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private timeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
       if (this.http.onBehlafOfWFHSignal()) {
-        this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
-          if (empId) {
-            this.getWFHRequests(empId);
-          }
-        });
+        const currentEmpId = this.http.onBehalfOfWFHSelectedEmp$.value;
+        if (currentEmpId) {
+          this.getWFHRequests(currentEmpId);
+        }
         this.http.onBehlafOfWFHSignal.set(false);
       }
     });
   }
 
   ngOnInit(): void {
-    this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
+    this.http.onBehalfOfWFHSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((empId: number) => {
       if (empId) {
         this.getWFHRequests(empId);
-      }else{
+      } else {
         this.wfhData = [];
       }
-    })
+    });
+
+    // Listen for year changes
+    this.timeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      const currentEmpId = this.http.onBehalfOfWFHSelectedEmp$.value;
+      if (currentEmpId) {
+        this.getWFHRequests(currentEmpId);
+      }
+    });
   }
 
   getWFHRequests(employeId: number) {
     this.dataload = true;
-    const year = new Date().getFullYear();
-    this.http.getFilterOnBehalfWFHDataByID(employeId, year).pipe(takeUntil(this.destroy$)).subscribe({
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    this.http.getFilterOnBehalfWFHDataByID(employeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.wfhData = response.filter(
           (element: { status: string }) => element.status.toLowerCase() === 'processed'

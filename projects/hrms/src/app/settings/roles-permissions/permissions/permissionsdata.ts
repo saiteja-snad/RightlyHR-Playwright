@@ -549,7 +549,7 @@ export const permissionsData = [
   { fields: 'Attendance All Employees List(Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(Regularization)', View: false, Update: false, Create: false, Delete: false },
-  
+
   { fields: 'Attendance All Employees List(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(Leave Carry Forward & Encashment)', View: false, Update: false, Create: false, Delete: false },
@@ -901,6 +901,8 @@ export const permissionsData = [
   { fields: 'Team KRA KPI', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (KRA)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (KRA)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (KRA KPI Dashboard)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (KRA KPI Dashboard)', View: false, Update: false, Create: false, Delete: false },
 
   //Review Cycle List Actions
   { fields: 'Create Review Cycle', View: false, Update: false, Create: false, Delete: false },

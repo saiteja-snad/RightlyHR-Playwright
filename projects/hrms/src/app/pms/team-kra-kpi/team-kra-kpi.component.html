@@ -27,7 +27,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
-            placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
             class="form-select custom-select">
           </p-select>
         </div>
@@ -39,7 +39,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
-            placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
             class="form-select custom-select">
           </p-select>
         </div>
@@ -51,7 +51,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">My Team</label>
         <div class="custom-p-select-content">
           <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
-            [filter]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            [filter]="true" placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
             class="form-select custom-select">
           </p-select>
         </div>
@@ -275,7 +275,7 @@
             <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">
               {{ kpi.assignedStatus || '-' }}
             </div>
-            <div>
+            <div *ngIf="kpi.assignedApproverRejectedComments && kpi.assignedApproverRejectedComments.trim()">
               <app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" />
             </div>
           </div>

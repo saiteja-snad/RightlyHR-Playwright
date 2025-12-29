@@ -435,8 +435,8 @@ export class KraKpiApprovalsComponent implements OnInit {
   }
 
   getProgressClass(progress: number): string {
-    if (progress >= 80) return 'bg-success';
-    if (progress >= 50) return 'bg-warning';
+    if (progress >= 70) return 'bg-success';
+    if (progress >= 30) return 'bg-warning';
     return 'bg-danger';
   }
 

@@ -209,8 +209,13 @@ onEmployeeChange(employeeId: number | null): void {
   this.subscription = this.http
     .getDataIncludeParams('Kpi/getTeamMembersAssignKpiKra', params)
     .subscribe((response: any) => {
-      this.teamKpiData = response?.data || [];
-      this.collectionSize = response?.pagination?.totalRecords || 0;
+      // Filter out current logged-in user's data
+      const filteredData = (response?.data || []).filter((item: any) =>
+        item.employeedata?.employeeId !== this.empinfo?.employeeId
+      );
+
+      this.teamKpiData = filteredData;
+      this.collectionSize = filteredData.length;
       this.groupEmployeeData(); // Group data for accordions
       this.loading = false;
     }, (err) => {

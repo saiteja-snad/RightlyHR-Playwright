@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { KraKpiManagementLayoutComponent } from '../kra-kpi-management-layout/kra-kpi-management-layout.component';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -68,6 +68,8 @@ interface DashboardResponse {
   ],
   templateUrl: './kra-kpi-dashboard.component.html',
   styleUrl: './kra-kpi-dashboard.component.scss',
+  encapsulation: ViewEncapsulation.None
+
 })
 export class KraKpiDashboardComponent implements OnInit, OnDestroy {
   moduleinfo = MODULE_INFOS.PMS_TEAM_KRA_KPI_LIST_MODULE_INFO;
@@ -134,10 +136,10 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     // Load employee dropdowns based on permissions
-    if (this.rbac.allowedToAccess('All Employees (KRA).view')) {
+    if (this.rbac.allowedToAccess('All Employees (KRA KPI Dashboard).view')) {
       this.loadAllActiveEmployees();
     }
-    if (this.rbac.allowedToAccess('My Team (KRA).view')) {
+    if (this.rbac.allowedToAccess('My Team (KRA KPI Dashboard).view')) {
       this.loadMyTeamEmployees();
     }
 
@@ -184,25 +186,25 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
               title: 'Total Employees Count',
               value: s.totalEmployees ?? 0,
               icons: './icons/Total Employee Count.png',
-              popover: 'The total number of employees in the organization.',
+              popover: 'This widget displays the total number of employees included in the current KRA/KPI cycle.It reflects only active employees mapped to the selected performance period.',
             },
             {
               title: 'Active KRAs',
               value: s.activeKras ?? 0,
               icons: './icons/Active KRAs.png',
-              popover: 'Number of active KRA assignments.',
+              popover: 'This widget displays the total number of KRAs that are currently active in the system.These KRAs are used to evaluate employee performance for the ongoing cycle.',
             },
             {
               title: 'Avg Score',
               value: s.averageScore ?? 0,
               icons: './icons/Available Employees Count.png',
-              popover: 'Average performance score across employees.',
+              popover: 'This widget displays the average performance score across all employees.The score is calculated based on completed and evaluated KRAs.',
             },
             {
               title: 'Over Due',
               value: s.offTrack ?? 0,
               icons: './icons/Not Updated.png',
-              popover: 'Employees/KRAs currently overdue.',
+              popover: 'This widget displays the number of employees with pending or overdue KRA submissions or reviews.It helps managers identify records that need immediate attention.',
             },
           ];
 
@@ -229,9 +231,9 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
 
           const avgScore = data.summary.averageScore ?? 0;
           // Assuming API returns value between 0-100 (or 0-1 → convert)
-          const avgPercent =
-            avgScore > 1 ? Math.round(avgScore) : Math.round(avgScore * 100);
-          this.averageScoreDisplay = `${avgPercent}%`;
+          // const avgPercent =
+          //   avgScore > 1 ? Math.round(avgScore) : Math.round(avgScore * 100);
+          this.averageScoreDisplay = `${avgScore}%`;
 
           // Performance Distribution (Bar Chart by Department)
           const rawPerfData = data.performanceDistribution || [];
@@ -262,8 +264,8 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
           };
 
           // Employee Table
-          this.teamKpiData = data.employees.items || [];
-          this.collectionSize = data.employees.totalCount || 0;
+          this.teamKpiData = data.employees?.items || [];
+          this.collectionSize = data.employees?.totalCount || 0;
 
           // Loaders off
           this.chartLoader = true;
@@ -284,7 +286,7 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
 
   initChartOptions() {
     this.attendanceSummaryOptions = {
-      cutout: '70%',
+      cutout: '75%',
       plugins: {
         legend: { display: false },
       },
@@ -463,18 +465,32 @@ export class KraKpiDashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           if (res.success && Array.isArray(res.data)) {
-            this.selectedEmployeeKras = res.data.flatMap((emp: any) =>
-              (emp.kras || []).map((k: any) => ({
-                kraId: k.kra.kraId,
-                kraName: k.kra.kraName,
-                effectiveDate: k.kra.effectiveDate,
-                targetDate: k.kra.targetDate,
-                weightageValue: k.kra.weightageValue,
-                status: k.kra.status,
-                kpisCount: k.kpisCount,
-                kpis: k.kpis || [],
-              }))
-            );
+            const allKras: any[] = [];
+
+            // Process new response format with reviewCycles
+            res.data.forEach((emp: any) => {
+              if (emp.reviewCycles && emp.reviewCycles.length > 0) {
+                emp.reviewCycles.forEach((reviewCycle: any) => {
+                  if (reviewCycle.kras && reviewCycle.kras.length > 0) {
+                    reviewCycle.kras.forEach((kraItem: any) => {
+                      allKras.push({
+                        kraId: kraItem.kra?.kraId,
+                        kraName: kraItem.kra?.kraName,
+                        reviewCycleName: reviewCycle.reviewCycle?.reviewCycleName,
+                        effectiveDate: kraItem.kra?.effectiveDate,
+                        targetDate: kraItem.kra?.targetDate,
+                        weightageValue: kraItem.kra?.weightageValue,
+                        status: kraItem.kra?.status,
+                        kpisCount: kraItem.kpisCount || 0,
+                        kpis: kraItem.kpis || []
+                      });
+                    });
+                  }
+                });
+              }
+            });
+
+            this.selectedEmployeeKras = allKras;
           }
           this.kraPopupLoading = false;
         },

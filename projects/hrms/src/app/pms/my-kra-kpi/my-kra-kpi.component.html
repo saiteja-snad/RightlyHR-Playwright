@@ -39,7 +39,7 @@
         <input
           type="search"
           class="form-control custom-search-input"
-          placeholder="Search by KRA name..."
+          placeholder="Search by Review Cycle Name..."
           [(ngModel)]="searchText"
           (ngModelChange)="onSearchTextChange()" />
       </div>
@@ -87,6 +87,7 @@
                         <th class="text-center">{{ 'Effective Date' | translate }}</th>
                         <th class="text-center">{{ 'Target Date' | translate }}</th>
                         <th class="text-center">{{ 'Weightage' | translate }}</th>
+                        <th class="text-center">{{ 'KRA Rating' | translate }}</th>
                         <th class="text-center">{{ 'Progress (%)' | translate }}</th>
                         <th class="text-center">{{ 'Status' | translate }}</th>
                       </tr>
@@ -102,6 +103,9 @@
                         <td class="text-center">{{ kra.effectiveDate | date:'mediumDate' }}</td>
                         <td class="text-center">{{ kra.targetDate | date:'mediumDate' }}</td>
                         <td class="text-center">{{ kra.weightageValue }}</td>
+                        <td class="text-center">
+                          <strong>{{ getKraRating(kra) }}</strong>
+                        </td>
                         <td class="text-center">
                           <div class="progress" style="height: 8px;">
                             <div class="progress-bar" role="progressbar" [style.width.%]="kra.progress"

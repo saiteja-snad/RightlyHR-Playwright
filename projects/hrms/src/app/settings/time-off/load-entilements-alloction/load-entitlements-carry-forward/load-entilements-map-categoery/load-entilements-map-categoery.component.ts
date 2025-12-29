@@ -20,10 +20,11 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   loading: boolean = false
   destroy$: Subject<boolean> = new Subject<boolean>();
-  currentYearData: ILeaveCategory[] = [];
+
+  shiftwisedata: any[] = [];
   nextYearData: ILeaveCategory[] = [];
-  currentYear = 0;
-  nextYear = 0;
+  nextYear!: number;
+  currentYear!: number;
   leaveTypes: string[] = [];
   employeesList: any[] = [];
 
@@ -32,29 +33,52 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.currentYear = new Date().getFullYear();
     this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '{}')
     this.getCarryForwardData(this.carryforwarddata)
     this.getdataforcarryforwardforplaylod(this.carryforwarddata)
+    this.getshiftdatawise(this.carryforwarddata)
   }
 
   getCarryForwardData(carryforwarddata: ICarryForward) {
     this.loading = true;
-    this.currentYear = carryforwarddata.year;    // example 2025
     this.nextYear = this.currentYear + 1;
-    const req1 = this.getDataByYear(carryforwarddata, this.currentYear);
-    const req2 = this.getDataByYear(carryforwarddata, this.nextYear);
-    forkJoin([req1, req2]).pipe(takeUntil(this.destroy$)).subscribe({
-      next: ([current, next]) => {
-        this.loading = false;
-        this.currentYearData = (current as ILeaveCategory[]).filter(x => x.encashAllowedType || x.carryForwardAllowed)
-        this.nextYearData = (next as ILeaveCategory[]).filter(x => x.encashAllowedType || x.carryForwardAllowed);
-      },
-      error: _ => (this.loading = false)
-    });
+    this.http
+      .getData(
+        `OrgLeavesCategories?locationId=${carryforwarddata.location.id}&subLocationId=${carryforwarddata.subLocation.id}&year=${this.nextYear}&status=Published&shiftId=${carryforwarddata.shift.id}`
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+
+          this.nextYearData = res.filter(
+            (x: { encashAllowedType: any; carryForwardAllowed: any; }) => x.encashAllowedType || x.carryForwardAllowed
+          );
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
   }
 
-  private getDataByYear(carryforwarddata: ICarryForward, year: number) {
-    return this.http.getData(`OrgLeavesCategories?locationId=${carryforwarddata.location.id}&subLocationId=${carryforwarddata.subLocation.id}&year=${year}&status=Published&shiftId=${carryforwarddata.shift.id}`);
+
+ 
+  getshiftdatawise(carryforwarddata: ICarryForward) {
+    this.http.getData(`LeaveCarryForward/categories-by-shift?year=${carryforwarddata.year}&locationIds=${carryforwarddata.location.id}&subLocationIds=${carryforwarddata.subLocation.id}&shiftIds=${carryforwarddata.shift.id}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          console.log(res.data);
+          this.shiftwisedata = res.data;
+
+
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
   }
 
   getdataforcarryforwardforplaylod(carryforwarddata: ICarryForward) {
@@ -107,7 +131,8 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
   }
 
   buildCarryForwardPayload() {
-    const categoryMap = new Map(this.currentYearData.map(x => [x.id, x.selectedDestinationId]));
+    const allCategories = this.shiftwisedata.flatMap(shift => shift.categories);
+    const categoryMap = new Map(allCategories.map((category: { id: any; selectedDestinationId: any; }) => [category.id, category.selectedDestinationId]));
     const payload = {
       jobType: "CarryForward",
       year: this.nextYear,
@@ -159,10 +184,7 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
     this.route.navigate(['/settings/timeoff-configurations/leave-entitlements/load-entitlement-execution'])
   }
 
-  getAvailableOptions(currentItem: any) {
-    const selectedIds = this.currentYearData.filter(x => x.selectedDestinationId && x.id !== currentItem.id).map(x => x.selectedDestinationId);
-    return this.nextYearData.filter(x => !selectedIds.includes(x.id));
-  }
+
 
   hexToRgba(hex: string, alpha: number = 1) {
     hex = hex.replace('#', '');
@@ -173,7 +195,8 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
   }
 
   isAllDropdownsSelected(): boolean {
-    return this.currentYearData.length > 0 && this.currentYearData.every(item => item.selectedDestinationId);
+    const allCategories = this.shiftwisedata.flatMap(shift => shift.categories);
+    return allCategories.length > 0 && allCategories.every(category => category.selectedDestinationId);
   }
   ngOnDestroy(): void {
     this.destroy$.next(true);

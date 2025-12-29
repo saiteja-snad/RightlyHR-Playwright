@@ -131,8 +131,8 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
   }
 
   buildCarryForwardPayload() {
-    const allCategories = this.shiftwisedata.flatMap(shift => shift.categories);
-    const categoryMap = new Map(allCategories.map((category: { id: any; selectedDestinationId: any; }) => [category.id, category.selectedDestinationId]));
+    const allCategories = this.shiftwisedata.flatMap(shift => shift?.categories);
+    const categoryMap = new Map(allCategories.map((category: { id: any; selectedDestinationId: any; }) => [category?.id, category?.selectedDestinationId]));
     const payload = {
       jobType: "CarryForward",
       year: this.nextYear,

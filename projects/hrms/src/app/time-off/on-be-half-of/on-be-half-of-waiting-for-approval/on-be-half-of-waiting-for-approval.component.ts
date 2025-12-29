@@ -12,6 +12,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-on-be-half-of-waiting-for-approval',
   imports: [
@@ -57,7 +58,7 @@ export class OnBeHalfOfWaitingForApprovalComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(private http: HttpService, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
@@ -84,7 +85,8 @@ export class OnBeHalfOfWaitingForApprovalComponent {
 
   getDataByLPID() {
     this.loading = true;
-    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
           this.loading = false;
           if (Array.isArray(response)) {

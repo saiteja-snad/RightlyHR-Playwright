@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-on-be-half-of-approval',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
@@ -42,7 +43,7 @@ export class OnBeHalfOfApprovalComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService,) {
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private timeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
@@ -66,7 +67,8 @@ export class OnBeHalfOfApprovalComponent {
 
   getDataByLPID() {
     this.loading = true;
-    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
         this.loading = false;
         console.log(response)

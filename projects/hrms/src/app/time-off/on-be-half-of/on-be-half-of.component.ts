@@ -8,7 +8,7 @@ import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
 import { environment } from '../../../environments/environment';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
@@ -24,6 +24,7 @@ import { ChartModule } from 'primeng/chart';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -151,6 +152,11 @@ export class OnBeHalfOfComponent {
   selectedMyTeamEmployee: any = null;
   selectedOtherEmployee: any = null;
 
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+
   constructor(
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
@@ -159,7 +165,8 @@ export class OnBeHalfOfComponent {
     private router: Router,
     private http: HttpService,
     public rbac: RbacService,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    private timeoffYearFilterService: TimeoffYearFilterService
   ) {
     const today = new Date();
     this.minStartDate = today.toISOString().split('T')[0];
@@ -181,6 +188,17 @@ export class OnBeHalfOfComponent {
     this.updateModuleInfo();
     this.getMyTeamData();
     this.initiateUpdateModuleInfo();
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    this.timeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
   initializeForm() {
@@ -632,7 +650,7 @@ export class OnBeHalfOfComponent {
   getCategoryDetails(employeeId: number) {
     console.log(employeeId);
     this.subscription = this.http
-      .getData(`LeaveEntitlements/employee/${employeeId}`)
+      .getData(`LeaveEntitlements/v2/employee/${employeeId}?year=${this.selectedYear}`)
       .subscribe({
         next: (response: any) => {
           if (response.success) {
@@ -796,7 +814,7 @@ export class OnBeHalfOfComponent {
   leavedatas: any;
   getLeavesData(employeeId: number) {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`Timeoff/${employeeId}`).subscribe({
+    this.subscription = this.http.getData(`Timeoff/${employeeId}?year=${this.selectedYear}`).subscribe({
       next: (response: any) => {
         this.leavedatatimeoff = response;
       },
@@ -1794,6 +1812,21 @@ export class OnBeHalfOfComponent {
       this.isWeekOffSelectedEndate = false;
       this.isHolidaySelectedEndate = false;
       this.issEndDategreater = true;
+    }
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;
+    this.timeoffYearFilterService.setSelectedYear(selectedYear);
+    
+    // Only refresh data and trigger signal if employee is selected
+    const employeeId = localStorage.getItem('onbehalfof');
+    if (employeeId && employeeId !== 'null') {
+      this.getLeavesData(parseInt(employeeId));
+      this.getCategoryDetails(parseInt(employeeId));
+      // Trigger refresh for child components only when employee is selected
+      this.http.onBehalfOfTriggerSignal.set(true);
     }
   }
 }

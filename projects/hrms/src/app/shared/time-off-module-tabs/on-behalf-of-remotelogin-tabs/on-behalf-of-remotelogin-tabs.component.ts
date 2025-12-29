@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-behalf-of-remotelogin-tabs',
@@ -59,7 +60,8 @@ filteredTabs: any[] = [];
   constructor(
     public readonly router: Router,
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private timeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
       if (this.http.onBehlafOfRemoteLoginSignal()) {
@@ -70,6 +72,7 @@ filteredTabs: any[] = [];
             this.resetWFHCounts();
           }
         });
+        this.http.onBehlafOfRemoteLoginSignal.set(false);
       }
     });
   }
@@ -80,7 +83,7 @@ filteredTabs: any[] = [];
 
   getRemoteLoginRequest(employeeId: number) {
     this.loading = true
-    const selectedYear = new Date().getFullYear();
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
     this.http.getFilterOnBehalfRemoteLoginDataByID(employeeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('remote login data', response);

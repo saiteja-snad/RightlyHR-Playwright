@@ -56,6 +56,13 @@ export class OnBehalfOfExpensesApprovedComponent {
         this.getexpensesheaderbyemployeeid();
       }
     });
+
+    // Listen for year changes
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(() => {
+      if (this.selectemp) {
+        this.getexpensesheaderbyemployeeid();
+      }
+    });
   }
 
   openModal(content: any) {
@@ -77,12 +84,12 @@ export class OnBehalfOfExpensesApprovedComponent {
 
   getexpensesheaderbyemployeeid(): void {
     const empId = this.selectemp;
-    const year = this.selectedYear ?? new Date().getFullYear();
+    const selectedYear = this.SelectedyeartimeOffService.getSelectedYear();
     const month = this.seletedMouthly ?? new Date().getMonth() + 1;
     const status = 'Approved';
     const searchQuery = this.searchTerm?.trim() || '';
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${status}&month=${month}&year=${year}&searchQuery=${searchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${status}&month=${month}&year=${selectedYear}&searchQuery=${searchQuery}`,).subscribe({
         next: (data: any) => {
           this.expenesEmplyeedata.next(data);
           const filteredData = data.filter((item: any) => !item.expenseSummary);

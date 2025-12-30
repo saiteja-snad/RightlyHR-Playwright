@@ -1,0 +1,179 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name navigator" (click)="navigateToAccessedRoute()">{{'Leaves'|translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>  </div>
+            <div class="component-header">Leave Summary</div>
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+      </button>
+    </div>
+  </div>
+
+  <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+    <div class="d-flex gap-3">
+        <div class="custom-table-content attendance-log-content">
+            @if(!dataload){
+        <table class="w-100">
+            <thead>
+                <th>{{ 'Year' | translate }}</th>
+                <th>{{ 'Date' | translate }}</th>
+                <th class="text-center">{{ 'Category' | translate }}</th>
+                <th>{{ 'Transaction Type' | translate }}</th>
+                <th class="text-center">{{ 'Opening' | translate }}</th>
+                <th class="text-center">{{ 'Credited (+)' | translate }}</th>
+                <th class="text-center">{{ 'Debited (-)' | translate }}</th>
+                <th class="text-center">{{ 'Closing' | translate }}</th>
+                <th>{{ 'Valid Upto' | translate }}</th>
+                <th>{{ 'Credited By' | translate }}</th>
+            </thead>
+
+            <tbody>
+                <ng-container *ngIf="leaveSummary.length > 0; else noDataTemplate">
+                    <tr *ngFor="let ledger of leaveSummary; let i = index">
+
+                        <!-- Year -->
+                        <td>{{ ledger.year }}</td>
+
+                        <!-- Transaction Date -->
+                        <td>{{ ledger.txnDate | dateformat }}</td>
+
+
+                        <td class="d-flex justify-content-center">
+                            <div class="leave-category-chip"
+                                [style.background-color]="getLighterColor(ledger.categoryColor)"
+                                [style.color]="ledger.categoryColor">
+                                {{ ledger.category }}</div>
+                        </td>
+
+                        <!-- Transaction Type -->
+                        <td>{{ ledger.transactionType }}</td>
+
+                        <!-- Opening Balance -->
+                        <td class="text-center">    {{ ledger.openingBalance }}</td>
+
+                        <!-- Credited -->
+                        <td class="text-center">  @if(ledger.credited > 0)  { <span>{{ ' + ' }}</span>} {{  ledger.credited }}</td>
+
+                        <!-- Debited -->
+                        <td class="text-center"> @if(ledger.debited > 0)  { <span>{{ ' - ' }}</span>} {{  ledger.debited }}</td>
+
+                        <!-- Closing Balance -->
+                        <td class="text-center">{{ ledger.closingBalance }}</td>
+
+                        <!-- Valid Upto -->
+                        <td>
+                            {{ ledger?.validUpto ? (ledger.validUpto | dateformat) : '-' }}
+                        </td>
+
+                        <!-- Credited By -->
+                        <td>
+                            {{ ledger.creditedByName || 'System Auto' }}
+                        </td>
+
+                    </tr>
+                </ng-container>
+
+                <ng-template #noDataTemplate>
+                    <tr class="table-placeholder">
+                        <app-no-data-found></app-no-data-found>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+
+        }@else{<app-data-loader-content />}
+    </div>
+  </div>
+</div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <!-- Year -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Year <span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="years" formControlName="year"
+              placeholder="Select year" class="form-select custom-select">
+            </p-select>
+          </div>
+          <div *ngIf="filterForm.get('year')?.touched && filterForm.get('year')?.invalid" class="error-msg">
+            <div *ngIf="filterForm.get('year')?.errors?.['required']">Year is required</div>
+          </div>
+        </div>
+
+        <!-- Employee -->
+        <div class="mb-3">
+          @if(rbac.allowedToAccess('All Employees (Time Off).view') && rbac.allowedToAccess('My Team (Time Off).view')) {
+          <label for="education" class="form-label custom-label text-nowrap filter-labels mb-3">
+            {{'Select Employee' | translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+              optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
+              class="form-select custom-select"></p-select>
+          </div>
+          }
+          @else if(rbac.allowedToAccess('All Employees (Time Off).view')) {
+          <label for="education" class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' |
+            translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+              optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
+              class="form-select custom-select"></p-select>
+          </div>
+          }
+          @else if (rbac.allowedToAccess('My Team (Time Off).view')) {
+          <label class="form-label filter-labels mb-3">{{'My Team'| translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
+              name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
+              class="form-select custom-select" [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
+            </p-select>
+          </div>
+        
+          }
+        </div>
+
+        <!-- Category -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Category</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="categoryDetails" optionLabel="category.name" [filter]="true" optionValue="category.id"
+              formControlName="category" placeholder="Please select category" class="form-select custom-select"
+              filterPlaceholder="Search category" [resetFilterOnHide]="true" >
+            </p-select>
+          </div>
+        </div>
+         
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+            {{'Clear All' | translate}}
+          </button>
+          <button type="submit" class="custom-btn btn-primary w-100">
+            {{'Apply' | translate}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

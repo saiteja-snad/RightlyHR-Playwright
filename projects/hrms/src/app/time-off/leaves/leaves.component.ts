@@ -356,6 +356,10 @@ getTeamManagersDetails() {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  navigateToLeaveSummary() {
+    this.router.navigate(['/time-off/leave-summary'])
+  }
+
   initializeForm() {
     this.leaveForm = this.fb.group({
       leaveType: [null, Validators.required],

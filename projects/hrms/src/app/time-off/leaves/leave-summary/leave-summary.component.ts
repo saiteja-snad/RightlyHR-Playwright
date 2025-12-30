@@ -204,6 +204,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
           this.dataload = false;
           console.error('Error fetching data:', error);
           this.leaveSummary = [];
+          this.yearOpeningBalance =  0;
+          this.yearClosingBalance = 0;
         },
         complete: () => {
           this.dataload = false;
@@ -256,7 +258,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
     const formValue = this.filterForm.value;
     this.selectedYear = formValue.year;
-    const empId = formValue.employee?.value || this.empinfo.employeeId;
+    const empId = formValue.employee || this.empinfo.employeeId;
     const categoryId = formValue.category;
 
     this.getLeaveSummaryByEmployee(empId, this.selectedYear, categoryId);

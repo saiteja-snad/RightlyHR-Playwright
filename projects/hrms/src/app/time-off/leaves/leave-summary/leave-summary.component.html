@@ -70,8 +70,9 @@
                 <th class="text-center">{{ 'Debited (-)' | translate }}</th>
                 <th class="text-center">{{ 'Closing' | translate }}</th>
                 <th>{{ 'Valid Upto' | translate }}</th>
-                <th>{{ 'Requested By' | translate }}</th>
                 <th>{{ 'Status' | translate }}</th>
+                <th>{{ 'Requested By' | translate }}</th>
+                <th>{{ 'Processed By' | translate }}</th>
             </thead>
 
             <tbody>
@@ -122,17 +123,31 @@
                             {{ ledger?.validUpto ? (ledger.validUpto | dateformat) : '-' }}
                         </td>
 
-                        <!-- Credited By -->
-                        <td>
-                            {{ ledger.creditedByName || 'System Auto' }}
-                        </td>
-
                          <!-- Status -->
                         <td>
                            @if(ledger.transactionType.toLowerCase() == 'leave debit') {  {{ ledger?.status  ||  '-' }} }
                            @else{
-                             -
+                             {{'-'}}
                            }
+                        </td>
+                         <!-- Requested By -->
+                        <td>
+                           @if(ledger.transactionType.toLowerCase() != 'leave debit'){
+                              {{ ledger.creditedByName || 'System Auto' }}
+                           }@else {
+                              {{'-'}}
+                            }
+                            
+                        </td>
+
+                        <!-- Processed By -->
+                        <td>
+                            @if(ledger.transactionType.toLowerCase() == 'leave debit'){
+                              {{ ledger.processedByName || '-' }}
+                            }@else {
+                              {{'-'}}
+                            }
+                            
                         </td>
 
                     </tr>
@@ -181,7 +196,7 @@
             {{'Select Employee' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value" showClear="true" placeholder="Select employee name" 
+              optionValue="value"  formControlName="employee" placeholder="Select employee name" 
               class="form-select custom-select"></p-select>
           </div>
           }
@@ -190,15 +205,15 @@
             translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value" showClear="true" placeholder="Select employee name" 
+              optionValue="value"  formControlName="employee"  placeholder="Select employee name" 
               class="form-select custom-select"></p-select>
           </div>
           }
           @else if (rbac.allowedToAccess('My Team (Time Off Leave Summary).view')) {
           <label class="form-label filter-labels mb-3">{{'My Team'| translate}}</label>
           <div class="custom-p-select-content">
-            <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
-              name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
+            <p-select [options]="getEmployeeInfo" optionLabel="fullName"  optionValue="employeeId"
+              name="myteamemployees" placeholder="Select employee name" formControlName="employee" [filter]="true" resetFilterOnHide="true"
               class="form-select custom-select" [autoDisplayFirst]="false" required >
             </p-select>
           </div>

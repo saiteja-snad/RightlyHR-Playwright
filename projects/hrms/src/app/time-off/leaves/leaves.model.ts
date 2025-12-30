@@ -169,4 +169,11 @@ export interface EmployeeLeaveLedger {
   creditedByFusionEmpId: string;
   creditedByName: string;
   status: string;
+
+  processedByEmployeeId: number;
+  processedByFusionEmpId: string;
+  processedByName: string;
+
+  referenceId: number;
+  referenceType: string;
 }

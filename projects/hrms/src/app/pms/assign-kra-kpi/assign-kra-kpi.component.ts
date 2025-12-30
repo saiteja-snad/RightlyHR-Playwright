@@ -120,11 +120,11 @@ export class AssignKraKpiComponent implements OnInit {
   ];
   filterForm = this.fb.group({
     jobRole: this.fb.control<number | null>(null),
-    department: this.fb.control<any[]>([]),
+    department: this.fb.control<any[]>({ value: [], disabled: true }),
     team: this.fb.control<any[]>({ value: [], disabled: true }),
-    location: this.fb.control<any[]>([]),
+    location: this.fb.control<any[]>({ value: [], disabled: true }),
     subLocation: this.fb.control<any[]>({ value: [], disabled: true }),
-    reviewCycle: this.fb.control<any[]>([]),
+    reviewCycle: this.fb.control<number | null>(null), // Changed to single select
   });
   activeEmplist = [] as any;
   JobroleDesignation = [] as IRole[];
@@ -200,7 +200,8 @@ export class AssignKraKpiComponent implements OnInit {
     this.loadReviewCycles();
     this.loadRatingScales();
     this.loadFilterReviewCycles();
-    this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
+    // Don't load data initially - show placeholder card instead
+    // this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
     this.getAllEmployeeDetails();
     this.getJobDesignation();
     this.getDepartment();
@@ -522,10 +523,14 @@ export class AssignKraKpiComponent implements OnInit {
       params.employeeIds = this.selectedEmployeeIds;
     }
 
-    if (filters.reviewCycle && filters.reviewCycle.length > 0) {
-      params.reviewCycleId = filters.reviewCycle.join(',');
+    if (filters.reviewCycle) {
+      params.reviewCycleId = filters.reviewCycle;
     }
-    this.loadAssignedKraKpiListWithFilters(params);
+
+    // Only load data if review cycle is selected
+    if (filters.reviewCycle) {
+      this.loadAssignedKraKpiListWithFilters(params);
+    }
   }
 
   // New method — for showing assigned KRA/KPI records in the table
@@ -535,6 +540,9 @@ export class AssignKraKpiComponent implements OnInit {
       next: (res: any) => {
         if (res.success && Array.isArray(res.data)) {
           const processedData: any[] = [];
+
+          // Auto-populate filter options from API response
+          this.autoPopulateFiltersFromResponse(res.data);
 
           res.data.forEach((item: any) => {
             const employeeData = item.employeedata || {};
@@ -704,8 +712,8 @@ export class AssignKraKpiComponent implements OnInit {
     if (filters.location) params.locationId = filters.location;
     if (filters.subLocation) params.subLocationId = filters.subLocation;
 
-    if (filters.reviewCycle && filters.reviewCycle.length > 0) {
-      params.reviewCycleIds = filters.reviewCycle.join(',');
+    if (filters.reviewCycle) {
+      params.reviewCycleIds = filters.reviewCycle;
     }
     return params;
   }
@@ -942,15 +950,25 @@ export class AssignKraKpiComponent implements OnInit {
     this.kpiRows.clear();
     this.selectedKraKpis = [];
     this.voidKpis = [];
+
+    // Get selected review cycle from filter
+    const selectedReviewCycle = this.filterForm.get('reviewCycle')?.value;
+
     // Explicitly reset new fields
     this.assignForm.patchValue({
       kraId: null,
       weightage: null,
       effectiveDate: '',
       targetDate: '',
-      reviewCycle: '',
+      reviewCycle: selectedReviewCycle || '', // Auto-populate from filter
       ratingScale: '',
     });
+
+    // Disable review cycle if it's auto-populated
+    if (selectedReviewCycle) {
+      this.assignForm.get('reviewCycle')?.disable();
+    }
+
     this.addKpiRow(); // Start with one row
     this.modalService.open(content, { backdrop: 'static', size: 'xl' });
   }
@@ -1070,8 +1088,8 @@ export class AssignKraKpiComponent implements OnInit {
           : "KRA/KPI's are assigned successfully";
 
         this.popup.openSuccessModal(successMessage);
-        this.clearAllFilters();
-        this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
+        // this.clearAllFilters();
+        // this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
         this.groupedKraList.forEach((emp) => (emp.selected = false));
         this.voidKpis = []; // Clear after success
       },
@@ -1221,12 +1239,19 @@ export class AssignKraKpiComponent implements OnInit {
     this.filteredEmployees = [];
     this.teamDropdownValues = [];
     this.subLocationsDropdown = [];
+    this.jobLocationDropDownData = [];
+    this.departmentDetails = [];
     this.page = 1;
     this.first = 0;
-    this.loadAssignedKraKpiListWithFilters({
-      pageNumber: 1,
-      pageSize: this.rows,
-    });
+    // Disable filter controls when no review cycle is selected
+    this.filterForm.get('location')?.disable();
+    this.filterForm.get('subLocation')?.disable();
+    this.filterForm.get('department')?.disable();
+    this.filterForm.get('team')?.disable();
+    // Clear data to show placeholder card
+    this.kraList = [];
+    this.groupedKraList = [];
+    this.collectionSize = 0;
   }
 
   isFilterApplied(): boolean {
@@ -1277,39 +1302,15 @@ export class AssignKraKpiComponent implements OnInit {
       });
     }
 
-    if (formValue.reviewCycle?.length) {
-      formValue.reviewCycle.forEach((selectedItem: any) => {
-        let cycleName: string;
+    if (formValue.reviewCycle) {
+      const cycleName = this.reviewCycleFilterOptions.find(
+        (opt) => String(opt.value) === String(formValue.reviewCycle)
+      )?.label || `Review Cycle ID: ${formValue.reviewCycle}`;
 
-        // Case 1: Full object selected (normal case)
-        if (
-          selectedItem &&
-          typeof selectedItem === 'object' &&
-          selectedItem.label
-        ) {
-          cycleName = selectedItem.label;
-        }
-        // Case 2: Only ID selected (number/string) — common in PrimeNG
-        else if (selectedItem != null) {
-          const id =
-            typeof selectedItem === 'object'
-              ? selectedItem.value
-              : selectedItem;
-          const found = this.reviewCycleFilterOptions.find(
-            (opt) => opt.value === id
-          );
-          cycleName = found ? found.label : `Review Cycle ID: ${id}`;
-        }
-        // Final fallback (should never hit)
-        else {
-          cycleName = 'Unknown Review Cycle';
-        }
-
-        filters.push({
-          type: 'reviewCycle',
-          label: cycleName,
-          value: selectedItem, // keep original for removal logic
-        });
+      filters.push({
+        type: 'reviewCycle',
+        label: cycleName,
+        value: formValue.reviewCycle,
       });
     }
     return filters;
@@ -1344,13 +1345,7 @@ export class AssignKraKpiComponent implements OnInit {
       this.filterForm.patchValue({ subLocation: updated });
       this.onSubLocationChange(updated);
     } else if (filter.type === 'reviewCycle') {
-      const updated = (current.reviewCycle ?? []).filter((c: any) => {
-        // Handle different possible structures
-        const currentValue = typeof c === 'object' ? c.value || c.id : c;
-        const filterValue = typeof filter.value === 'object' ? filter.value.value || filter.value.id : filter.value;
-        return currentValue !== filterValue;
-      });
-      this.filterForm.patchValue({ reviewCycle: updated });
+      this.filterForm.patchValue({ reviewCycle: null });
       this.applyFilters();
     }
     // Refresh table
@@ -1827,5 +1822,81 @@ assignExistingToSelectedEmployees(): void {
           this.isSubmitting = false;
         },
       });
+  }
+
+  // Check if review cycle is selected
+  hasReviewCycleSelected(): boolean {
+    const reviewCycle = this.filterForm.get('reviewCycle')?.value;
+    return reviewCycle !== null && reviewCycle !== undefined;
+  }
+
+  // Auto-populate filters from API response
+  autoPopulateFiltersFromResponse(data: any[]): void {
+    const uniqueLocations = new Map();
+    const uniqueSubLocations = new Map();
+    const uniqueDepartments = new Map();
+    const uniqueSubDepartments = new Map();
+
+    data.forEach((item: any) => {
+      // Collect unique locations
+      if (item.locations && item.locations.length > 0) {
+        item.locations.forEach((loc: any) => {
+          uniqueLocations.set(loc.id, {
+            id: loc.id,
+            jobLocationName: loc.jobLocationName
+          });
+        });
+      }
+
+      // Collect unique sub-locations
+      if (item.subLocations && item.subLocations.length > 0) {
+        item.subLocations.forEach((subLoc: any) => {
+          uniqueSubLocations.set(subLoc.id, {
+            id: subLoc.id,
+            jobSubLocationName: subLoc.jobSubLocationName
+          });
+        });
+      }
+
+      // Collect unique departments
+      if (item.departments && item.departments.length > 0) {
+        item.departments.forEach((dept: any) => {
+          uniqueDepartments.set(dept.sno, {
+            sno: dept.sno,
+            departmentName: dept.departmentName
+          });
+        });
+      }
+
+      // Collect unique sub-departments
+      if (item.subDepartments && item.subDepartments.length > 0) {
+        item.subDepartments.forEach((subDept: any) => {
+          uniqueSubDepartments.set(subDept.subdepartmentId, {
+            subdepartmentId: subDept.subdepartmentId,
+            subdepartmentName: subDept.subdepartmentName
+          });
+        });
+      }
+    });
+
+    // Update dropdown options
+    this.jobLocationDropDownData = Array.from(uniqueLocations.values());
+    this.subLocationsDropdown = Array.from(uniqueSubLocations.values());
+    this.departmentDetails = Array.from(uniqueDepartments.values());
+    this.teamDropdownValues = Array.from(uniqueSubDepartments.values());
+
+    // Auto-select all values and disable controls
+    this.filterForm.patchValue({
+      location: this.jobLocationDropDownData,
+      subLocation: this.subLocationsDropdown,
+      department: this.departmentDetails,
+      team: this.teamDropdownValues
+    });
+
+    // Disable the form controls
+    this.filterForm.get('location')?.disable();
+    this.filterForm.get('subLocation')?.disable();
+    this.filterForm.get('department')?.disable();
+    this.filterForm.get('team')?.disable();
   }
 }

@@ -75,11 +75,13 @@
   }
 
   <!-- Search Box -->
+  <!-- @if (groupedKraList.length > 0) { -->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search"><i class="bi bi-search"></i></span>
     <input type="search" [(ngModel)]="searchText" class="form-control custom-search-input"
       placeholder="Search by employee name" (ngModelChange)="onSearchTextChange()" autocomplete="off">
   </div>
+  <!-- } -->
 
   <!-- Table -->
   @if (!dataload) {
@@ -238,6 +240,18 @@
         </div>
         }
         <!-- PAGINATION ENDS HERE -->
+        } @else if (!hasReviewCycleSelected()) {
+        <!-- Placeholder Card -->
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 600px;">
+          <div class="text-center p-5 border rounded bg-light" style="max-width: 500px;">
+            <!-- <i class="bi bi-funnel" style="font-size: 3rem; color: var(--primary-color);"></i> -->
+            <h5 class="mb-3">{{ 'Please select review cycle to assign KRA/KPIs to employees' | translate }}</h5>
+            <button type="button" class="custom-btn btn-primary" (click)="toggleFilters(filterContent)">
+              <!-- <i class="bi bi-funnel me-2"></i> -->
+              {{ 'Select Review Cycle' | translate }}
+            </button>
+          </div>
+        </div>
         } @else {
         <app-no-data-found />
         }
@@ -520,6 +534,14 @@
           </p-multiSelect>
         </div>
       </div> -->
+      <div class="mb-4">
+        <label class="form-label filter-labels mb-3">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleFilterOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
+            formControlName="reviewCycle" (onChange)="applyFilters()" (onClear)="applyFilters()" />
+        </div>
+      </div>
 
       <!-- Location -->
       <div class="mb-4">
@@ -558,15 +580,6 @@
           <p-multiSelect [options]="teamDropdownValues" optionLabel="subdepartmentName" formControlName="team"
             placeholder="Select Team" class="form-select custom-select" (onChange)="onTeamChange($event.value)"
             (onClear)="onTeamChange([])" />
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <label class="form-label filter-labels mb-3">{{ 'Review Cycle' | translate }}</label>
-        <div class="custom-p-multiSelect-content">
-          <p-multiSelect [options]="reviewCycleFilterOptions" optionLabel="label" optionValue="value"
-            placeholder="Select Review Cycle" class="form-select custom-select" [filter]="true"
-            formControlName="reviewCycle" (onChange)="applyFilters()" (onClear)="applyFilters()" />
         </div>
       </div>
 

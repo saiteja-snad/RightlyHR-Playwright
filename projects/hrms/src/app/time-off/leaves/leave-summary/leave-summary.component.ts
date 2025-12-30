@@ -20,11 +20,14 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { EmployeeLeaveLedger } from '../leaves.model';
-import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { Select } from 'primeng/select';
 import { Router } from '@angular/router';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { ICategoryDetails } from '../../../Interfaces/timoff-model';
+import { MODULE_INFOS } from '../../../shared/modules-info';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+
 
 @Component({
   selector: 'app-leave-summary',
@@ -37,13 +40,13 @@ import { ICategoryDetails } from '../../../Interfaces/timoff-model';
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
+    ModuleInfoIconComponent,
     TranslateModule,
-    InfoIconComponent,
-    ModuleInformationComponent,
     DropdownModule,
     Select,
     ReactiveFormsModule,
-  ],
+    ModuleInformationComponent
+],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',
 })
@@ -56,7 +59,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
   leaveSummary: EmployeeLeaveLedger[] = [];
-  moduleinfo = 'Leave Summary';
+  moduleinfo = MODULE_INFOS.TIME_OFF_LEAVE_SUMMARY_MODULE_INFO;
   filterForm!: FormGroup;
   activeEmplist = [] as any;
   years = [
@@ -73,7 +76,10 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   selectedYear: any;
   currentYear: number = new Date().getFullYear();
   categoryDetails = [] as ICategoryDetails[];
-
+  yearOpeningBalance: number = 0;
+  yearClosingBalance: number = 0;
+  spinnerLoader = false;
+  disableBtn = false;
   constructor(
     private http: HttpService,
     public rbac: RbacService,
@@ -190,7 +196,9 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaveSummary = response.data;
+          this.leaveSummary = response?.data?.leaveLedger as EmployeeLeaveLedger[];
+          this.yearOpeningBalance = response?.data?.yearOpeningBalance || 0;
+          this.yearClosingBalance = response?.data?.yearEndClosingBalance || 0;
         },
         error: (error) => {
           this.dataload = false;

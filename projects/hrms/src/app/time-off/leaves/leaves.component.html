@@ -58,7 +58,7 @@
                 }
             </div>
             <div *ngIf="disaplyapplybutton">
-                @if (rbac.allowedToAccess('Request Leave Button.view')) {
+                @if (rbac.allowedToAccess('Leave Summary (Time Off).view')) {
                 <button type="button" (click)="navigateToLeaveSummary()" class="custom-btn btn-primary">View Leave Summary</button>
                 }
             </div>

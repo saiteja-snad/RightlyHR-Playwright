@@ -1,21 +1,55 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
+  <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
             <div class="commpoment-name navigator" (click)="navigateToAccessedRoute()">{{'Leaves'|translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>  </div>
             <div class="component-header">Leave Summary</div>
             <div>
-                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
 
     <div class="d-flex align-items-center gap-3">
-      <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
       </button>
+       @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view') && rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" 
+            [disabled]="leaveSummary?.length == 0 || disableBtn">
+            @if(spinnerLoader){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+        }
     </div>
   </div>
+  <div class="d-flex justify-content-start gap-3 mb-3">
+    <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-arrow-up-circle text-success"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Initial Opening ' + selectedYear | translate}}</div>
+          <div class="balance-value text-success">{{ yearOpeningBalance }}</div>
+        </div>
+    </div>
+      
+      <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-arrow-down-circle text-primary"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Year-End Closing Balance' | translate}}</div>
+          <div class="balance-value text-primary">{{ yearClosingBalance }}</div>
+        </div>
+      </div>
+  </div>
+  
+
 
   <!--Module Information-->
   <ng-template #popContent>
@@ -36,7 +70,8 @@
                 <th class="text-center">{{ 'Debited (-)' | translate }}</th>
                 <th class="text-center">{{ 'Closing' | translate }}</th>
                 <th>{{ 'Valid Upto' | translate }}</th>
-                <th>{{ 'Credited By' | translate }}</th>
+                <th>{{ 'Requested By' | translate }}</th>
+                <th>{{ 'Status' | translate }}</th>
             </thead>
 
             <tbody>
@@ -64,13 +99,23 @@
                         <td class="text-center">    {{ ledger.openingBalance }}</td>
 
                         <!-- Credited -->
-                        <td class="text-center">  @if(ledger.credited > 0)  { <span>{{ ' + ' }}</span>} {{  ledger.credited }}</td>
-
+                        <td class="text-center">
+                          <div class="credit">
+                            @if(ledger.credited > 0) { <span>{{ ' + ' }}</span>}{{ ledger.credited }}
+                          </div>
+                        </td>
                         <!-- Debited -->
-                        <td class="text-center"> @if(ledger.debited > 0)  { <span>{{ ' - ' }}</span>} {{  ledger.debited }}</td>
-
+                        <td class="text-center">
+                          <div class="debit">
+                            @if(ledger.debited > 0) { <span>{{ ' - ' }}</span>}{{ ledger.debited }}
+                          </div>
+                        </td>
                         <!-- Closing Balance -->
-                        <td class="text-center">{{ ledger.closingBalance }}</td>
+                        <td class="text-center">
+                          <div class="closing">
+                            {{ ledger.closingBalance }}
+                          </div>
+                        </td>
 
                         <!-- Valid Upto -->
                         <td>
@@ -80,6 +125,14 @@
                         <!-- Credited By -->
                         <td>
                             {{ ledger.creditedByName || 'System Auto' }}
+                        </td>
+
+                         <!-- Status -->
+                        <td>
+                           @if(ledger.transactionType.toLowerCase() == 'leave debit') {  {{ ledger?.status  ||  '-' }} }
+                           @else{
+                             -
+                           }
                         </td>
 
                     </tr>
@@ -123,30 +176,30 @@
 
         <!-- Employee -->
         <div class="mb-3">
-          @if(rbac.allowedToAccess('All Employees (Time Off).view') && rbac.allowedToAccess('My Team (Time Off).view')) {
+          @if(rbac.allowedToAccess('All Employees (Time Off Leave Summary).view') && rbac.allowedToAccess('My Team (Time Off Leave Summary).view')) {
           <label for="education" class="form-label custom-label text-nowrap filter-labels mb-3">
             {{'Select Employee' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
+              optionValue="value" showClear="true" placeholder="Select employee name" 
               class="form-select custom-select"></p-select>
           </div>
           }
-          @else if(rbac.allowedToAccess('All Employees (Time Off).view')) {
+          @else if(rbac.allowedToAccess('All Employees (Time Off Leave Summary).view')) {
           <label for="education" class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' |
             translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value" showClear="true" placeholder="Select employee name" (onChange)="onCheckemployee($event.value)"
+              optionValue="value" showClear="true" placeholder="Select employee name" 
               class="form-select custom-select"></p-select>
           </div>
           }
-          @else if (rbac.allowedToAccess('My Team (Time Off).view')) {
+          @else if (rbac.allowedToAccess('My Team (Time Off Leave Summary).view')) {
           <label class="form-label filter-labels mb-3">{{'My Team'| translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
               name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
-              class="form-select custom-select" [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
+              class="form-select custom-select" [autoDisplayFirst]="false" required >
             </p-select>
           </div>
         

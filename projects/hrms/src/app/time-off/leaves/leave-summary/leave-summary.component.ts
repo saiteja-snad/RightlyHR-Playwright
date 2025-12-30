@@ -78,6 +78,10 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   categoryDetails = [] as ICategoryDetails[];
   yearOpeningBalance: number = 0;
   yearClosingBalance: number = 0;
+  totalCredited: number = 0;
+  totalDebited: number = 0;
+  // yearOpeningBalance: number = 0;
+  // yearClosingBalance: number = 0;
   spinnerLoader = false;
   disableBtn = false;
   constructor(
@@ -199,6 +203,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
           this.leaveSummary = response?.data?.leaveLedger as EmployeeLeaveLedger[];
           this.yearOpeningBalance = response?.data?.yearOpeningBalance || 0;
           this.yearClosingBalance = response?.data?.yearEndClosingBalance || 0;
+          this.totalCredited = response?.data?.totalCredited || 0;
+          this.totalDebited = response?.data?.totalDebited || 0;
         },
         error: (error) => {
           this.dataload = false;
@@ -206,6 +212,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
           this.leaveSummary = [];
           this.yearOpeningBalance =  0;
           this.yearClosingBalance = 0;
+          this.totalCredited = 0;
+          this.totalDebited =  0;
         },
         complete: () => {
           this.dataload = false;

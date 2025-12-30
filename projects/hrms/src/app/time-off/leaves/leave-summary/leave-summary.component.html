@@ -27,8 +27,9 @@
         }
     </div>
   </div>
-  <div class="d-flex justify-content-start gap-3 mb-3">
-    <div class="balance-card">
+  <div class="balance-summary-section mb-4">
+    <div class="balance-cards-container">
+      <div class="balance-card">
         <div class="balance-icon">
           <i class="bi bi-arrow-up-circle text-success"></i>
         </div>
@@ -36,8 +37,8 @@
           <div class="balance-label">{{'Initial Opening ' + selectedYear | translate}}</div>
           <div class="balance-value text-success">{{ yearOpeningBalance }}</div>
         </div>
-    </div>
-      
+      </div>
+        
       <div class="balance-card">
         <div class="balance-icon">
           <i class="bi bi-arrow-down-circle text-primary"></i>
@@ -47,6 +48,27 @@
           <div class="balance-value text-primary">{{ yearClosingBalance }}</div>
         </div>
       </div>
+
+      <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-plus-circle text-info"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Total Credited' | translate}}</div>
+          <div class="balance-value text-info">{{ totalCredited }}</div>
+        </div>
+      </div>
+
+      <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-dash-circle text-warning"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Total Debited' | translate}}</div>
+          <div class="balance-value text-warning">{{ totalDebited }}</div>
+        </div>
+      </div>
+    </div>
   </div>
   
 

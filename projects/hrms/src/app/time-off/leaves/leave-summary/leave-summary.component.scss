@@ -107,3 +107,20 @@
   font-weight: 700;
   line-height: 1.2;
 }
+.balance-summary-section {
+  width: 100%;
+}
+
+.balance-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .balance-cards-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+}

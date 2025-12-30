@@ -55,7 +55,7 @@
 
   <div class="fliter-chip-content mb-3" *ngIf="isFilterApplied()">
     <div class="d-flex align-items-center gap-2 flex-wrap">
-      <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="true"
+      <p-chip *ngFor="let filter of getSelectedFilters() | slice:0:3" [label]="filter.label" [removable]="false"
         (onRemove)="removeFilter(filter)" />
       <!-- More chip -->
       <p-chip *ngIf="getSelectedFilters().length > 3" class="more-chip" [removable]="false"

@@ -29,6 +29,7 @@
   </div>
   <div class="balance-summary-section mb-4">
     <div class="balance-cards-container">
+      @if(!dataload){
       <div class="balance-card">
         <div class="balance-icon">
           <i class="bi bi-arrow-up-circle text-success"></i>
@@ -49,16 +50,6 @@
         </div>
       </div>
 
-      <!-- <div class="balance-card">
-        <div class="balance-icon">
-          <i class="bi bi-plus-circle text-info"></i>
-        </div>
-        <div class="balance-content">
-          <div class="balance-label">{{'Total Credited' | translate}}</div>
-          <div class="balance-value text-info">{{ totalCredited }}</div>
-        </div>
-      </div> -->
-
       <div class="balance-card">
         <div class="balance-icon">
           <i class="bi bi-dash-circle debit"></i>
@@ -68,6 +59,37 @@
           <div class="balance-value debit">{{ totalDebited }}</div>
         </div>
       </div>
+      }@else{
+      <div class="balance-card">
+        <div class="balance-icon">
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+        </div>
+        <div class="balance-content">
+          <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+        
+      <div class="balance-card">
+        <div class="balance-icon">
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+        </div>
+        <div class="balance-content">
+          <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+
+      <div class="balance-card">
+        <div class="balance-icon">
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+        </div>
+        <div class="balance-content">
+          <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+      }
     </div>
   </div>
   

@@ -30,6 +30,7 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpResponse } from '@angular/common/http';
+import { SkeletonModule } from 'primeng/skeleton';
 
 
 @Component({
@@ -49,7 +50,8 @@ import { HttpResponse } from '@angular/common/http';
     Select,
     ReactiveFormsModule,
     ModuleInformationComponent,
-    MultiSelectModule
+    MultiSelectModule,
+    SkeletonModule
 ],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',

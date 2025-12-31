@@ -138,7 +138,16 @@
                         </td>
 
                         <!-- Transaction Type -->
-                        <td>{{ ledger.transactionType }}</td>
+                        <td>
+                          <div class="transaction-type-container">
+                            <span class="transaction-main">{{ ledger.transactionType }}</span>
+                            @if(ledger.subStatus) {
+                              <div class="card substatus-card">
+                                {{ledger.subStatus}}
+                              </div>
+                            }
+                          </div>
+                        </td>
 
                         <!-- Opening Balance -->
                         <td class="text-center">    {{ ledger.openingBalance }}</td>
@@ -169,7 +178,7 @@
 
                          <!-- Status -->
                         <td>
-                           @if(ledger.transactionType.toLowerCase() == 'leave debit') {
+                           @if(ledger.transactionType.toLowerCase() == 'leave debit' && ledger.status.toLowerCase() != 'published'){
                              <span [style.color]="getStatusColor(ledger.status)"> <b> {{ ledger?.status || '-' }} </b></span>
                            }@else{
                              {{'-'}}

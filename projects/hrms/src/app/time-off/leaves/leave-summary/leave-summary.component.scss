@@ -66,6 +66,29 @@
   font-weight: 600;
 }
 
+.transaction-type-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.transaction-main {
+  // font-weight: 500;
+  // color: #374151;
+  padding: 0.25rem;
+}
+
+.substatus-card {
+  border: 0.5px solid;
+  font-weight: 500;
+  font-size: var(--fontsize10);
+  color: #f43f5e;
+  border-radius: 0.25rem;
+  line-height: 100%;
+  padding: 0.25rem;
+  width: fit-content;
+}
+
 .balance-card {
   display: flex;
   align-items: center;

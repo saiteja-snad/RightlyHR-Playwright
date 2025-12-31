@@ -31,6 +31,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpResponse } from '@angular/common/http';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Chip } from 'primeng/chip';
 
 
 @Component({
@@ -51,7 +52,8 @@ import { SkeletonModule } from 'primeng/skeleton';
     ReactiveFormsModule,
     ModuleInformationComponent,
     MultiSelectModule,
-    SkeletonModule
+    SkeletonModule,
+    Chip
 ],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',

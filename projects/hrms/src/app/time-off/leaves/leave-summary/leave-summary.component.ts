@@ -27,6 +27,9 @@ import { ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { MultiSelectModule } from 'primeng/multiselect';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { HttpResponse } from '@angular/common/http';
 
 
 @Component({
@@ -45,7 +48,8 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
     DropdownModule,
     Select,
     ReactiveFormsModule,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    MultiSelectModule
 ],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',
@@ -73,6 +77,12 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  transactionTypes = [
+    { label: 'Carry Forward', value: 'Carry Forward' },
+    { label: 'Leave Debit', value: 'Leave Debit' },
+    { label: 'On Demand Allocation', value: 'On Demand Allocation' },
+    { label: 'Yearly Allocation', value:'Yearly Allocation' },
+  ];
   selectedYear: any;
   currentYear: number = new Date().getFullYear();
   categoryDetails = [] as ICategoryDetails[];
@@ -84,18 +94,25 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   // yearClosingBalance: number = 0;
   spinnerLoader = false;
   disableBtn = false;
+  empName: string = '';
   constructor(
     private http: HttpService,
     public rbac: RbacService,
     public router: Router,
     private accessNav: AccessNavigationService,
     private fb: FormBuilder,
-    private offcanvasService: NgbOffcanvas
+    private offcanvasService: NgbOffcanvas,
+    private conformationPopup: OpenModalService,
   ) {}
 
   ngOnInit(): void {
     this.selectedYear = new Date().getFullYear();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empName = `${
+                  this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
+                }${this.empinfo.firstName ?? ''} ${
+                  this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
+                }${this.empinfo.lastName ?? ''}`.trim();
     this.initializeForm();
     this.getLeaveSummaryByEmployee(this.empinfo.employeeId, this.selectedYear);
     this.getAllEmployeeDetails();
@@ -106,7 +123,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     this.filterForm = this.fb.group({
       employee: [null],
       year: [this.selectedYear, Validators.required],
-      category: [null]
+      category: [null],
+      transactionType: [null],
     });
     
     // Watch for employee and year changes to update categories
@@ -188,11 +206,14 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     }
   }
 
-  getLeaveSummaryByEmployee(empId: number, year: number, categoryId?: number) {
+  getLeaveSummaryByEmployee(empId: number, year: number, categoryId?: number, transactionTypes?: any[]) {
     this.dataload = true;
     let url = `EmployeeLeaveLedger/${empId}?year=${year}`;
     if (categoryId) {
       url += `&categoryIds=${categoryId}`;
+    }
+    if (transactionTypes && transactionTypes.length > 0) {
+      url += `&transactionTypes=${transactionTypes.join(',')}`;
     }
     
     this.http
@@ -255,6 +276,11 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       year: this.currentYear,
     });
     this.selectedYear = this.currentYear;
+    this.empName = `${
+                  this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
+                }${this.empinfo.firstName ?? ''} ${
+                  this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
+                }${this.empinfo.lastName ?? ''}`.trim();
     this.getLeaveSummaryByEmployee(this.empinfo.employeeId, this.selectedYear);
   }
 
@@ -268,9 +294,71 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     this.selectedYear = formValue.year;
     const empId = formValue.employee || this.empinfo.employeeId;
     const categoryId = formValue.category;
-
-    this.getLeaveSummaryByEmployee(empId, this.selectedYear, categoryId);
+    const transactionTypes = formValue.transactionType;
+    
+    // Update empName based on selected employee
+    if (formValue.employee) {
+      const selectedEmp = this.activeEmplist.find((emp: any) => emp.value === formValue.employee);
+      this.empName = selectedEmp ? selectedEmp.label: '';
+    } else {
+      this.empName = `${
+                  this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
+                }${this.empinfo.firstName ?? ''} ${
+                  this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
+                }${this.empinfo.lastName ?? ''}`.trim();
+    }
+    
+    this.getLeaveSummaryByEmployee(empId, this.selectedYear, categoryId, transactionTypes);
     this.closeCanvas();
+  }
+
+  exportLeaveSummary(): void {
+    const formValue = this.filterForm.value;
+    const empId = formValue.employee || this.empinfo.employeeId;
+    const year = formValue.year || this.selectedYear;
+    
+    let url = `EmployeeLeaveLedger/${empId}/export?year=${year}`;
+    
+    if (formValue.category) {
+      url += `&categoryIds=${formValue.category}`;
+    }
+    
+    if (formValue.transactionType && formValue.transactionType.length > 0) {
+      url += `&transactionTypes=${formValue.transactionType.join(',')}`;
+    }
+    this.http.downloadTimesheetReport(url).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // Extract filename from Content-Disposition
+        let filename = 'Leave_Summary.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
+        }
+        //  Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Leave Summary Exported Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
   }
 
   // function to get the data of employees by hierarchy
@@ -348,6 +436,20 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .toString(16)
       .padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   }
+
+  getStatusColor(status: string): string {
+    if (!status) return '#000';
+    const lowerStatus = status.toLowerCase();
+    if (lowerStatus.includes('waiting') || lowerStatus.includes('pending')) {
+      return '#ffc107'; // Yellow for waiting/pending
+    }
+    if (lowerStatus.includes('approved') || lowerStatus.includes('processed')) {
+      return '#4caf50'; // Green for approved/processed
+    }
+    return '#000'; // Default black
+  }
+
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -3,7 +3,7 @@
         <div class="heading-content">
             <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
             <div class="commpoment-name navigator" (click)="navigateToAccessedRoute()">{{'Leaves'|translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>  </div>
-            <div class="component-header">Leave Summary</div>
+            <div class="component-header">Leave Summary @if(empName){({{empName}})}</div>
             <div>
                  <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
@@ -14,9 +14,9 @@
         <i class="bi bi-funnel me-2"></i>Filters
         <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
       </button>
-       @if(rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Generate.view') && rbac.allowedToAccess('Leave Carry Forward & Encashment Report - Export.view')){
+       @if(rbac.allowedToAccess('Leave Summary (Time Off).view') && rbac.allowedToAccess('Leave Summary (Time Off) - Export.view')){
           <button type="button" class="custom-btn btn-primary" 
-            [disabled]="leaveSummary?.length == 0 || disableBtn">
+            [disabled]="leaveSummary.length == 0 || disableBtn" (click)="exportLeaveSummary()">
             @if(spinnerLoader){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <div class="balance-card">
+      <!-- <div class="balance-card">
         <div class="balance-icon">
           <i class="bi bi-plus-circle text-info"></i>
         </div>
@@ -57,15 +57,15 @@
           <div class="balance-label">{{'Total Credited' | translate}}</div>
           <div class="balance-value text-info">{{ totalCredited }}</div>
         </div>
-      </div>
+      </div> -->
 
       <div class="balance-card">
         <div class="balance-icon">
-          <i class="bi bi-dash-circle text-warning"></i>
+          <i class="bi bi-dash-circle debit"></i>
         </div>
         <div class="balance-content">
           <div class="balance-label">{{'Total Debited' | translate}}</div>
-          <div class="balance-value text-warning">{{ totalDebited }}</div>
+          <div class="balance-value debit">{{ totalDebited }}</div>
         </div>
       </div>
     </div>
@@ -147,8 +147,9 @@
 
                          <!-- Status -->
                         <td>
-                           @if(ledger.transactionType.toLowerCase() == 'leave debit') {  {{ ledger?.status  ||  '-' }} }
-                           @else{
+                           @if(ledger.transactionType.toLowerCase() == 'leave debit') {
+                             <span [style.color]="getStatusColor(ledger.status)"> <b> {{ ledger?.status || '-' }} </b></span>
+                           }@else{
                              {{'-'}}
                            }
                         </td>
@@ -164,7 +165,7 @@
 
                         <!-- Processed By -->
                         <td>
-                            @if(ledger.transactionType.toLowerCase() == 'leave debit'){
+                            @if(ledger.transactionType.toLowerCase() == 'leave debit' && ledger.status.toLowerCase() != 'waiting for approval') {
                               {{ ledger.processedByName || '-' }}
                             }@else {
                               {{'-'}}
@@ -218,7 +219,7 @@
             {{'Select Employee' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value"  formControlName="employee" placeholder="Select employee name" 
+              optionValue="value"  formControlName="employee" placeholder="Please select employee" 
               class="form-select custom-select"></p-select>
           </div>
           }
@@ -227,7 +228,7 @@
             translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value"  formControlName="employee"  placeholder="Select employee name" 
+              optionValue="value"  formControlName="employee"  placeholder="Please select employee" 
               class="form-select custom-select"></p-select>
           </div>
           }
@@ -235,7 +236,7 @@
           <label class="form-label filter-labels mb-3">{{'My Team'| translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" optionLabel="fullName"  optionValue="employeeId"
-              name="myteamemployees" placeholder="Select employee name" formControlName="employee" [filter]="true" resetFilterOnHide="true"
+              name="myteamemployees" placeholder="Please select employee" formControlName="employee" [filter]="true" resetFilterOnHide="true"
               class="form-select custom-select" [autoDisplayFirst]="false" required >
             </p-select>
           </div>
@@ -251,6 +252,17 @@
               formControlName="category" placeholder="Please select category" class="form-select custom-select"
               filterPlaceholder="Search category" [resetFilterOnHide]="true" >
             </p-select>
+          </div>
+        </div>
+
+        <!-- Transaction Type -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Transaction Type</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect  [options]="transactionTypes" optionLabel="label"  optionValue="value"
+              formControlName="transactionType" placeholder="Please select transaction type" class="form-select custom-select"
+               [resetFilterOnHide]="true" filterPlaceHolder="Search transaction type" >
+            </p-multiSelect>
           </div>
         </div>
          

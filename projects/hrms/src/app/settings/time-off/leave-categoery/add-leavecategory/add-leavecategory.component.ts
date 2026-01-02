@@ -49,12 +49,6 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy{
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
 
-  leaveTypeDropdown = [
-    { label: 'Birthday', value: 'birthday_leave' },
-    { label: 'Marriage Anniversary', value: 'marriage_anniversary_leave' },
-    { label: 'Birthday/Marriage Anniversary', value: 'birthday_marriage_anniversary_leave ' }
-  ];
-
   shiftsArray = [] as any[];
   leaveTypes : ILetterType[] = [];
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
@@ -408,22 +402,14 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy{
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm.value;
-    
-    // Get leaveTypeId based on selected leaveType
-    let leaveTypeId = null;
-    if (formData.leaveType) {
-      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName === formData.leaveType);
-      leaveTypeId = selectedLeaveType?.id || null;
-    }
-    
+        
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID,
       subLocation: this.leavePolicyForm.value.subLocation,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
-      leaveType: this.leavePolicyForm.value.leaveType,
-      leaveTypeId: leaveTypeId,
+      leaveTypeId: formData.leaveType,
       name: this.leavePolicyForm.value.name,
       categoryCode: this.leavePolicyForm.value.categoryCode,
       validity: this.leavePolicyForm.value.validity,

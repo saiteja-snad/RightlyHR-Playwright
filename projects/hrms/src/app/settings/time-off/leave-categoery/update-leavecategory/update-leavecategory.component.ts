@@ -47,11 +47,6 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
-  leaveTypeDropdown = [
-    { label: 'Birthday', value: 'birthday_leave' },
-    { label: 'Marriage Anniversary', value: 'marriage_anniversary_leave' },
-    { label: 'Birthday/Marriage Anniversary', value: 'birthday_marriage_anniversary_leave' }
-  ];
   shiftsArray = [] as any[];
   leaveTypes: ILetterType[] = [];
   updateLeaveCategoryData = {} as Iorgcategoryleaves;
@@ -426,12 +421,6 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
-    // Find leaveType based on leaveTypeId
-    let leaveTypeValue = null;
-    if (data.leaveTypeId && this.leaveTypes.length > 0) {
-      const matchingLeaveType = this.leaveTypes.find(lt => lt.id === data.leaveTypeId);
-      leaveTypeValue = matchingLeaveType?.normalizedName?.trim() || null;
-    }
     
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
@@ -439,7 +428,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
       subLocation: data.subLocationName,
       shiftId: data.shiftId,
       type: data.type,
-      leaveType: leaveTypeValue,
+      leaveType: data.leaveTypeId,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -469,9 +458,9 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
     });
     
     // Force update leaveType after a delay to ensure dropdown is ready
-    setTimeout(() => {
-      this.leavePolicyForm.get('leaveType')?.setValue(leaveTypeValue);
-    }, 100);
+    // setTimeout(() => {
+    //   this.leavePolicyForm.get('leaveType')?.setValue(leaveTypeValue);
+    // }, 100);
     // Manually trigger value changes for dependent fields
     // Manually trigger the initial state for dependent fields
     this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
@@ -525,13 +514,6 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
   onSubmit() {
     const formData = this.leavePolicyForm.value;
     
-    // Get leaveTypeId based on selected leaveType
-    let leaveTypeId = null;
-    if (formData.leaveType) {
-      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName === formData.leaveType);
-      leaveTypeId = selectedLeaveType?.id || null;
-    }
-    
     let payload = {
       id: this.updateLeaveCategoryData.id,
       applicableYear:
@@ -548,7 +530,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
         this.updateLeaveCategoryData.shiftId,
       type:
         this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
-      leaveTypeId: leaveTypeId,
+      leaveTypeId: formData.leaveType,
       name:
         this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
       categoryCode:
@@ -641,13 +623,6 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
   onPublished() {
     const formData = this.leavePolicyForm.value;
     
-    // Get leaveTypeId based on selected leaveType
-    let leaveTypeId = null;
-    if (formData.leaveType) {
-      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName === formData.leaveType);
-      leaveTypeId = selectedLeaveType?.id ?? this.updateLeaveCategoryData.applicableYear;
-    }
-    
     console.log('Form Data:', formData);
     let payload = {
       id: this.updateLeaveCategoryData.id,
@@ -667,7 +642,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
         this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
       leaveType:
         this.leavePolicyForm.value.leaveType ?? this.updateLeaveCategoryData.leaveType,
-      leaveTypeId: leaveTypeId,
+      leaveTypeId: formData.leaveType,
       name:
         this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
       categoryCode:

@@ -48,11 +48,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy{
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
-  leaveTypeDropdown = [
-    { label: 'Birthday', value: 'birthday_leave' },
-    { label: 'Marriage Anniversary', value: 'marriage_anniversary_leave' },
-    { label: 'Birthday/Marriage Anniversary', value: 'birthday_marriage_anniversary_leave' }
-  ];
+
   shiftsArray = [] as any[];
   leaveTypes: ILetterType[] = [];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
@@ -371,16 +367,11 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy{
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
     // Find leaveType based on leaveTypeId
-    let leaveTypeValue = null;
-    if (data.leaveTypeId && this.leaveTypes.length > 0) {
-      const matchingLeaveType = this.leaveTypes.find(lt => lt.id === data.leaveTypeId);
-      leaveTypeValue = matchingLeaveType?.normalizedName?.trim() || null;
-    }
     
     this.leavePolicyForm?.patchValue({
       applicableYear: data.applicableYear,
       type: data.type,
-      leaveType: leaveTypeValue,
+      leaveType: data.leaveTypeId,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -410,9 +401,9 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy{
     });
     
     // Force update leaveType after a delay to ensure dropdown is ready
-    setTimeout(() => {
-      this.leavePolicyForm.get('leaveType')?.setValue(leaveTypeValue);
-    }, 100);
+    // setTimeout(() => {
+    //   this.leavePolicyForm.get('leaveType')?.setValue(leaveTypeValue);
+    // }, 100);
     this.setupDependentFieldListeners();
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm?.get('futureDatesAllowed')?.updateValueAndValidity();
@@ -428,21 +419,13 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy{
   onSubmit() {
     const formData = this.leavePolicyForm;
     
-    // Get leaveTypeId based on selected leaveType
-    let leaveTypeId = null;
-    if (this.leavePolicyForm.value.leaveType) {
-      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName?.trim() === this.leavePolicyForm.value.leaveType);
-      leaveTypeId = selectedLeaveType?.id || null;
-    }
-    
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID.id,
       subLocation: this.leavePolicyForm.value.subLocation.id,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
-      leaveType: this.leavePolicyForm.value.leaveType,
-      leaveTypeId: leaveTypeId,
+      leaveTypeId: this.leavePolicyForm.value.leaveType,
       name: this.leavePolicyForm.value.name,
       categoryCode: this.leavePolicyForm.value.categoryCode,
       validity: this.leavePolicyForm.value.validity,

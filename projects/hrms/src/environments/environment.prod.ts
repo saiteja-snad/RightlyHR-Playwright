@@ -3,9 +3,10 @@ export const environment = {
   webSocketUrl: 'ws://api.fusion.snadhr.com',
   ApiUrl:'https://snadapi.rightlyhr.com/api/',
      viewUrl:"https://sasda001.blob.core.windows.net/rightlyhr/",
-  modules: [
+ modules: [
     { id: 20, moduleName: 'Probation' },
-    { id: 24, moduleName: 'PMS' }  
+    { id: 24, moduleName: 'PMS' },
+    { id: 33, moduleName: 'ExitFeedback' }   
   ],
   //SNAD HR
  clientId: '9a09dcfb-a22f-4fdf-a014-38990e558d80',

@@ -59,6 +59,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   totalLeavesChartOptions: any;
   currentDate: number = new Date().getDate();
   previousDate: any;
+  previousMonthStartDate: any;
   startOfWeek: any;
   endOfWeek: any;
   totalHours: any
@@ -110,20 +111,25 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.setIconBasedOnTime();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeedata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.currentTime = new Date();
+    const currentDate = new Date();
+    const firstDayPrevMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      1
+    );
+    this.previousMonthStartDate = `${firstDayPrevMonth.getFullYear()}-${String(firstDayPrevMonth.getMonth() + 1).padStart(2, '0')}-${String(firstDayPrevMonth.getDate()).padStart(2, '0')}`;
     this.currentYear = new Date().getFullYear(); // e.g., 2025
     this.currentMonth = new Date().getMonth() + 1;
     const today = new Date();
     today.setDate(today.getDate() - 1);
-    const previousDate = today;
-    this.previousDate = previousDate.getDate();
+    this.previousDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     this.nextMonth = this.currentMonth === 12 ? 1 : this.currentMonth + 1;
     this.currentDate = new Date().getDate();
     this.setCurrentWeek();
     this.getAllTeammembersList();
     this.getworkanniversary();
     this.getGenderCountChart();
-    this.getpreviousloggedtime();
+
     this.gettodayloggedtime();
     this.getbrithday();
     this.loadEvents();
@@ -132,6 +138,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     this.getWeeklyWorkLogHours();
     this.getCategoryempDetails(this.empinfo?.employeeId);
     this.buildDisabledFutureWeekDates();
+    this.getpreviousloggedtime();
+
   }
 
   setIconBasedOnTime() {
@@ -632,12 +640,16 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   getpreviousloggedtime() {
-    this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?year=${this.currentYear}&month=${this.currentMonth}`)
+    console.log(this.previousMonthStartDate);
+
+    this.http.getData(`v2/AttendanceData/employee/${this.empinfo.employeeId}?fromdate=${this.previousMonthStartDate}&todate=${this.previousDate}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           const attendanceData = res?.data?.attendanceData || [];
           // Find the last day with totalDuration > 00:00:00, excluding current date
-          const currentDateStr = this.currentYear + '-' + this.currentMonth + '-' + this.currentDate;
+          const currentDateStr = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-${String(this.currentDate).padStart(2, '0')}`;
+          console.log(currentDateStr);
+
           const previousDay = attendanceData
             .filter((x: any) => x.date !== currentDateStr && x.duration?.totalDuration !== '00:00:00')
             .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
@@ -648,6 +660,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         error: err => console.log(err),
       });
   }
+
   timeToSeconds(time: string | null | undefined): number {
     if (!time || !time.includes(':')) return 0;
     const parts = time.split(':').map(Number);
@@ -797,14 +810,14 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   getFilteredEmployees() {
     const key = this.offCanvasData?.key;
     const list = this.OffCanvasemployeeList?.[key] || [];
-    
+
     // Filter first, then map only the filtered results
-    const filteredList = this.searchEmployeeText 
+    const filteredList = this.searchEmployeeText
       ? list.filter((emp: any) =>
-          emp.employeeName
-            ?.toLowerCase()
-            .includes(this.searchEmployeeText.toLowerCase())
-        )
+        emp.employeeName
+          ?.toLowerCase()
+          .includes(this.searchEmployeeText.toLowerCase())
+      )
       : list;
 
     // Only map profile URLs for filtered results

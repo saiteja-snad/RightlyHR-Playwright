@@ -118,7 +118,6 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
       1
     );
     this.previousMonthStartDate = `${firstDayPrevMonth.getFullYear()}-${String(firstDayPrevMonth.getMonth() + 1).padStart(2, '0')}-${String(firstDayPrevMonth.getDate()).padStart(2, '0')}`;
-    console.log(this.previousMonthStartDate);
     this.currentYear = new Date().getFullYear(); // e.g., 2025
     this.currentMonth = new Date().getMonth() + 1;
     const today = new Date();

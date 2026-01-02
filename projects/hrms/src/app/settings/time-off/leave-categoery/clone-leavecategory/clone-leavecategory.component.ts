@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 @Component({
   selector: 'app-clone-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -16,7 +17,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
   encapsulation: ViewEncapsulation.None
 })
 
-export class CloneLeavecategoryComponent {
+export class CloneLeavecategoryComponent implements OnInit, OnDestroy{
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -47,7 +48,13 @@ export class CloneLeavecategoryComponent {
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
+  leaveTypeDropdown = [
+    { label: 'Birthday', value: 'birthday_leave' },
+    { label: 'Marriage Anniversary', value: 'marriage_anniversary_leave' },
+    { label: 'Birthday/Marriage Anniversary', value: 'birthday_marriage_anniversary_leave' }
+  ];
   shiftsArray = [] as any[];
+  leaveTypes: ILetterType[] = [];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
 
@@ -57,9 +64,9 @@ export class CloneLeavecategoryComponent {
   ngOnInit(): void {
     this.intializeForm();
     this.updatecloneLeaveCategoryData = JSON.parse(localStorage.getItem('cloneleavecategory') ?? '{}');
-    this.patchFormValues(this.updatecloneLeaveCategoryData);
     this.setupDependentFieldListeners();
     this.jobLocationList();
+    this.getLeaveTypes();
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
@@ -76,6 +83,7 @@ export class CloneLeavecategoryComponent {
       shiftId: [null, Validators.required],
       // Leave Category Information
       type: [undefined, Validators.required],
+      leaveType: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
       validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
@@ -214,6 +222,20 @@ export class CloneLeavecategoryComponent {
     }
   }
 
+  getLeaveTypes() {
+    this.subscription = this.http.getData('LeaveType').subscribe({
+      next: (data: any) => {
+        this.leaveTypes = data;
+        this.patchFormValues(this.updatecloneLeaveCategoryData);
+      },
+      error: (err) => {
+        console.error('Error fetching leave types:', err);
+        this.leaveTypes = [];
+        this.patchFormValues(this.updatecloneLeaveCategoryData);
+      }
+    });
+  }
+
   getOrgLeavesCategories() {
     this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
       next: (responseData: any) => {
@@ -348,12 +370,17 @@ export class CloneLeavecategoryComponent {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    // Find leaveType based on leaveTypeId
+    let leaveTypeValue = null;
+    if (data.leaveTypeId && this.leaveTypes.length > 0) {
+      const matchingLeaveType = this.leaveTypes.find(lt => lt.id === data.leaveTypeId);
+      leaveTypeValue = matchingLeaveType?.normalizedName?.trim() || null;
+    }
+    
     this.leavePolicyForm?.patchValue({
       applicableYear: data.applicableYear,
-      // locationID: data.locationID,
-      // subLocation: data.subLocation,
-      // shiftId: data.shiftId,
       type: data.type,
+      leaveType: leaveTypeValue,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -381,6 +408,11 @@ export class CloneLeavecategoryComponent {
       probationDays: data.probationDays,
       probationFrequencyType: data.probationFrequencyType
     });
+    
+    // Force update leaveType after a delay to ensure dropdown is ready
+    setTimeout(() => {
+      this.leavePolicyForm.get('leaveType')?.setValue(leaveTypeValue);
+    }, 100);
     this.setupDependentFieldListeners();
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm?.get('futureDatesAllowed')?.updateValueAndValidity();
@@ -395,12 +427,22 @@ export class CloneLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm;
+    
+    // Get leaveTypeId based on selected leaveType
+    let leaveTypeId = null;
+    if (this.leavePolicyForm.value.leaveType) {
+      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName?.trim() === this.leavePolicyForm.value.leaveType);
+      leaveTypeId = selectedLeaveType?.id || null;
+    }
+    
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID.id,
       subLocation: this.leavePolicyForm.value.subLocation.id,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
+      leaveType: this.leavePolicyForm.value.leaveType,
+      leaveTypeId: leaveTypeId,
       name: this.leavePolicyForm.value.name,
       categoryCode: this.leavePolicyForm.value.categoryCode,
       validity: this.leavePolicyForm.value.validity,
@@ -458,5 +500,11 @@ export class CloneLeavecategoryComponent {
 
   closepopup() {
     this.modalService.dismissAll();
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
   }
 }

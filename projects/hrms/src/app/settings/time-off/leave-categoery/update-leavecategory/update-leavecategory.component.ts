@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 @Component({
   selector: 'app-update-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -15,7 +16,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './update-leavecategory.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class UpdateLeavecategoryComponent {
+export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -46,7 +47,13 @@ export class UpdateLeavecategoryComponent {
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
+  leaveTypeDropdown = [
+    { label: 'Birthday', value: 'birthday_leave' },
+    { label: 'Marriage Anniversary', value: 'marriage_anniversary_leave' },
+    { label: 'Birthday/Marriage Anniversary', value: 'birthday_marriage_anniversary_leave' }
+  ];
   shiftsArray = [] as any[];
+  leaveTypes: ILetterType[] = [];
   updateLeaveCategoryData = {} as Iorgcategoryleaves;
 
   constructor(
@@ -63,7 +70,7 @@ export class UpdateLeavecategoryComponent {
       localStorage.getItem('updateleavecategory') ?? '{}'
     );
     this.jobLocationList();
-    this.patchFormValues(this.updateLeaveCategoryData);
+    this.getLeaveTypes();
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
 
@@ -81,6 +88,7 @@ export class UpdateLeavecategoryComponent {
       shiftId: [undefined, Validators.required],
       // Leave Category Information
       type: [undefined, Validators.required],
+      leaveType: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: [
         '',
@@ -252,6 +260,20 @@ export class UpdateLeavecategoryComponent {
     }
   }
 
+  getLeaveTypes() {
+    this.subscription = this.http.getData('LeaveType').subscribe({
+      next: (data: any) => {
+        this.leaveTypes = data;
+        this.patchFormValues(this.updateLeaveCategoryData);
+      },
+      error: (err) => {
+        console.error('Error fetching leave types:', err);
+        this.leaveTypes = [];
+        this.patchFormValues(this.updateLeaveCategoryData);
+      }
+    });
+  }
+
   getOrgLeavesCategories() {
     this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
       next: (responseData: any) => {
@@ -404,12 +426,20 @@ export class UpdateLeavecategoryComponent {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    // Find leaveType based on leaveTypeId
+    let leaveTypeValue = null;
+    if (data.leaveTypeId && this.leaveTypes.length > 0) {
+      const matchingLeaveType = this.leaveTypes.find(lt => lt.id === data.leaveTypeId);
+      leaveTypeValue = matchingLeaveType?.normalizedName?.trim() || null;
+    }
+    
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
       locationID: data.locationID,
       subLocation: data.subLocationName,
       shiftId: data.shiftId,
       type: data.type,
+      leaveType: leaveTypeValue,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -437,6 +467,11 @@ export class UpdateLeavecategoryComponent {
       probationDays: data.probationDays,
       probationFrequencyType: data.probationFrequencyType,
     });
+    
+    // Force update leaveType after a delay to ensure dropdown is ready
+    setTimeout(() => {
+      this.leavePolicyForm.get('leaveType')?.setValue(leaveTypeValue);
+    }, 100);
     // Manually trigger value changes for dependent fields
     // Manually trigger the initial state for dependent fields
     this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
@@ -489,6 +524,14 @@ export class UpdateLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm.value;
+    
+    // Get leaveTypeId based on selected leaveType
+    let leaveTypeId = null;
+    if (formData.leaveType) {
+      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName === formData.leaveType);
+      leaveTypeId = selectedLeaveType?.id || null;
+    }
+    
     let payload = {
       id: this.updateLeaveCategoryData.id,
       applicableYear:
@@ -505,6 +548,7 @@ export class UpdateLeavecategoryComponent {
         this.updateLeaveCategoryData.shiftId,
       type:
         this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
+      leaveTypeId: leaveTypeId,
       name:
         this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
       categoryCode:
@@ -596,6 +640,14 @@ export class UpdateLeavecategoryComponent {
 
   onPublished() {
     const formData = this.leavePolicyForm.value;
+    
+    // Get leaveTypeId based on selected leaveType
+    let leaveTypeId = null;
+    if (formData.leaveType) {
+      const selectedLeaveType = this.leaveTypes.find(lt => lt.normalizedName === formData.leaveType);
+      leaveTypeId = selectedLeaveType?.id ?? this.updateLeaveCategoryData.applicableYear;
+    }
+    
     console.log('Form Data:', formData);
     let payload = {
       id: this.updateLeaveCategoryData.id,
@@ -613,6 +665,9 @@ export class UpdateLeavecategoryComponent {
         this.updateLeaveCategoryData.shiftId,
       type:
         this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
+      leaveType:
+        this.leavePolicyForm.value.leaveType ?? this.updateLeaveCategoryData.leaveType,
+      leaveTypeId: leaveTypeId,
       name:
         this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
       categoryCode:
@@ -723,5 +778,11 @@ export class UpdateLeavecategoryComponent {
 
   closepopup() {
     this.modalService.dismissAll();
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
   }
 }

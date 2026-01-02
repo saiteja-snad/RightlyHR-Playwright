@@ -88,6 +88,20 @@
           </div>
         </div>
 
+        <!-- Leave Type -->
+        <div class="col-md-3 mb-3">
+          <label class="form-label custom-label mb-2" for="LeaveType">Leave Type<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="leaveTypeDropdown" optionLabel="label" optionValue="value" placeholder="Select Leave Type"
+              formControlName="leaveType" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('leaveType')?.invalid && 
+                                            (leavePolicyForm.get('leaveType')?.touched)">
+            Leave Type is required
+          </div>
+        </div>
+
         <!-- Name -->
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="email">Leave Category Name<span

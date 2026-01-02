@@ -1314,6 +1314,7 @@ getTeamManagersDetails() {
       this.leaveFormData.status = "Waiting for Approval";
       this.leaveFormData.requestType = "TimeOff";
       this.leaveFormData.employeeId = empdata.employeeId;
+      this.leaveFormData.requestedBy   = empdata.employeeId;
       this.leaveFormData.durationType = this.selectedValue;
       this.leaveFormData.duration = this.dateDiff;
       this.leaveFormData.date = moment();

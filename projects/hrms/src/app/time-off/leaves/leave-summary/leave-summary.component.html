@@ -186,17 +186,17 @@
                         </td>
                          <!-- Requested By -->
                         <td>
-                           @if(ledger.transactionType.toLowerCase() != 'leave debit'){
+                           <!-- @if(ledger.transactionType.toLowerCase() != 'leave debit'){ -->
                               {{ ledger.creditedByName || 'System Auto' }}
-                           }@else {
+                           <!-- }@else {
                               {{'-'}}
-                            }
+                            } -->
                             
                         </td>
 
                         <!-- Processed By -->
                         <td>
-                            @if(ledger.transactionType.toLowerCase() == 'leave debit' && ledger.status.toLowerCase() != 'waiting for approval') {
+                            @if(ledger.transactionType.toLowerCase() == 'leave debit' &&  !(ledger.subStatus)  && ledger.status.toLowerCase() != 'waiting for approval') {
                               {{ ledger.processedByName || '-' }}
                             }@else {
                               {{'-'}}
@@ -250,7 +250,7 @@
             {{'Select Employee' | translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value"  formControlName="employee" placeholder="Please select employee" 
+              optionValue="value"  formControlName="employee" placeholder="Please select employee"  filterPlaceholder="Search employee" 
               class="form-select custom-select"></p-select>
           </div>
           }
@@ -259,7 +259,7 @@
             translate}}</label>
           <div class="custom-p-select-content">
             <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
-              optionValue="value"  formControlName="employee"  placeholder="Please select employee" 
+              optionValue="value"  formControlName="employee"  placeholder="Please select employee"  filterPlaceholder="Search employee" 
               class="form-select custom-select"></p-select>
           </div>
           }
@@ -268,7 +268,7 @@
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" optionLabel="fullName"  optionValue="employeeId"
               name="myteamemployees" placeholder="Please select employee" formControlName="employee" [filter]="true" resetFilterOnHide="true"
-              class="form-select custom-select" [autoDisplayFirst]="false" required >
+              class="form-select custom-select" [autoDisplayFirst]="false" filterPlaceholder="Search employee"  required >
             </p-select>
           </div>
         

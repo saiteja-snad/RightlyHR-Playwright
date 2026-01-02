@@ -152,7 +152,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   }
   onEmployeeOrYearChange() {
     const formValue = this.filterForm.value;
-    const empId = formValue.employee?.value || this.empinfo.employeeId;
+    const empId = formValue.employee || this.empinfo.employeeId;
     const year = formValue.year;
     
     // Reset category selection
@@ -271,8 +271,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   }
 
   isFilterApplied(): boolean {
-    const { employee, year, category } = this.filterForm.value;
-    return !!(employee || category || (year && year !== this.currentYear));
+    const { employee, year, category,transactionType } = this.filterForm.value;
+    return !!(employee || category || (year && year !== this.currentYear) || (transactionType && transactionType.length > 0));
   }
 
   clearAllFilters(): void {

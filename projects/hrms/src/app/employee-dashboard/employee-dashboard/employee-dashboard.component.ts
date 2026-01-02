@@ -637,7 +637,9 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           const attendanceData = res?.data?.attendanceData || [];
           // Find the last day with totalDuration > 00:00:00, excluding current date
-          const currentDateStr = this.currentYear + '-' + this.currentMonth + '-' + this.currentDate;
+          const currentDateStr = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-${String(this.currentDate).padStart(2, '0')}`;
+          console.log(currentDateStr);
+          
           const previousDay = attendanceData
             .filter((x: any) => x.date !== currentDateStr && x.duration?.totalDuration !== '00:00:00')
             .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
@@ -648,6 +650,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         error: err => console.log(err),
       });
   }
+  
   timeToSeconds(time: string | null | undefined): number {
     if (!time || !time.includes(':')) return 0;
     const parts = time.split(':').map(Number);

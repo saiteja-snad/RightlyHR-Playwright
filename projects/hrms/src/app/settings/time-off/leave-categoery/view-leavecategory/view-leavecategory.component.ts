@@ -9,10 +9,11 @@ import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MultiSelect } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-view-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule,MultiSelect],
   templateUrl: './view-leavecategory.component.html',
   styleUrl: './view-leavecategory.component.scss',
 })
@@ -43,6 +44,10 @@ export class ViewLeavecategoryComponent {
   global: any[] = [
     { label: 'Yes', value: true },
     { label: 'No', value: false },
+  ];
+  gapCalculationOptions = [
+    { label: 'From Leave End Date', value: 'end_date' },
+    { label: 'From Leave Start Date', value: 'start_date' }
   ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
@@ -172,6 +177,18 @@ export class ViewLeavecategoryComponent {
         [this.dependentRequiredValidator('isProbationAllowed')],
       ],
       probationFrequencyType: [{ value: undefined, disabled: true }, Validators.required],
+      // New Leave Category Fields
+      minimumAdvanceApplyDays: [{ value: null, disabled: true }, Validators.required],
+      maxLeaveDurationCalendarDays: [{ value: null, disabled: true }, Validators.required],
+      includeWeekends: [{ value: null, disabled: true }, Validators.required],
+      includeHolidays: [{ value: null, disabled: true }, Validators.required],
+      allowLeaveCombination: [{ value: false, disabled: true }, Validators.required],
+      restrictedAdjacentLeaveTypes: [{ value: null, disabled: true }],
+      blockLeaveOnWeekends: [{ value: null, disabled: true }],
+      blockPreviousDayLeave: [{ value: null, disabled: true }],
+      blockNextDayLeave: [{ value: null, disabled: true }],
+      minimumGapBetweenSameLeaveType: [{ value: 30, disabled: true }, Validators.required],
+      gapCalculationBasis: [{ value: null, disabled: true }, Validators.required],
     });
   }
 
@@ -440,6 +457,18 @@ export class ViewLeavecategoryComponent {
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
       probationFrequencyType: data.probationFrequencyType,
+      // New Leave Category Fields
+      minimumAdvanceApplyDays: data.minimumAdvanceApplyDays,
+      maxLeaveDurationCalendarDays: data.maxLeaveDurationCalendarDays,
+      includeWeekends: data.includeWeekends,
+      includeHolidays: data.includeHolidays,
+      allowLeaveCombination: data.allowLeaveCombination,
+      restrictedAdjacentLeaveTypes: data.restrictedAdjacentLeaveTypes ? data.restrictedAdjacentLeaveTypes.split(',').map((id: string) => parseInt(id.trim())) : null,
+      blockLeaveOnWeekends: data.blockLeaveOnWeekends,
+      blockPreviousDayLeave: data.blockPreviousDayLeave,
+      blockNextDayLeave: data.blockNextDayLeave,
+      minimumGapBetweenSameLeaveType: data.minimumGapBetweenSameLeaveType,
+      gapCalculationBasis: data.gapCalculationBasis,
     });
 
     // Manually trigger value changes for dependent fields

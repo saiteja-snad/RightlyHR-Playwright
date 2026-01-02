@@ -2,15 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
+import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IJob } from '../../../../Interfaces/letters-model';
 @Component({
   selector: 'app-update-leavecategory',
-  imports: [CommonModule, Select, ReactiveFormsModule],
+  imports: [CommonModule, Select, MultiSelect, ReactiveFormsModule],
   templateUrl: './update-leavecategory.component.html',
   styleUrl: './update-leavecategory.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -42,13 +44,17 @@ export class UpdateLeavecategoryComponent {
     { label: 'Yes', value: true },
     { label: 'No', value: false },
   ];
+  gapCalculationOptions = [
+    { label: 'From Leave End Date', value: 'end_date' },
+    { label: 'From Leave Start Date', value: 'start_date' }
+  ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
   shiftsArray = [] as any[];
   updateLeaveCategoryData = {} as Iorgcategoryleaves;
-
+  empinfo = {} as IJob;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -64,7 +70,8 @@ export class UpdateLeavecategoryComponent {
     );
     this.jobLocationList();
     this.patchFormValues(this.updateLeaveCategoryData);
-    this.getOrgLeavesCategories();
+    // this.getOrgLeavesCategories();
+    this.setupDependentFieldListenerS();
     const currentYear = new Date().getFullYear();
 
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
@@ -135,6 +142,18 @@ export class UpdateLeavecategoryComponent {
         [this.dependentRequiredValidator('isProbationAllowed')],
       ],
       probationFrequencyType: [{ value: null }],
+      // New Leave Category Fields
+      minimumAdvanceApplyDays: [null, Validators.required],
+      maxLeaveDurationCalendarDays: [null, Validators.required],
+      includeWeekends: [null, Validators.required],
+      includeHolidays: [null, Validators.required],
+      allowLeaveCombination: [false, Validators.required],
+      restrictedAdjacentLeaveTypes: [null],
+      blockLeaveOnWeekends: [null],
+      blockPreviousDayLeave: [null],
+      blockNextDayLeave: [null],
+      minimumGapBetweenSameLeaveType: [30, Validators.required],
+      gapCalculationBasis: [null, Validators.required],
     });
   }
 
@@ -177,16 +196,100 @@ export class UpdateLeavecategoryComponent {
 
 
   private setupDependentFieldListenerS() {
-    // Keep your existing listener setup code
-    this.leavePolicyForm.get('futureDatesAllowed')?.valueChanges.subscribe((value: any) => {
+    this.leavePolicyForm?.get('futureDatesAllowed')?.valueChanges.subscribe((value: any) => {
       this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
     });
 
-    this.leavePolicyForm.get('pastDateAllowed')?.valueChanges.subscribe((value: any) => {
+    this.leavePolicyForm?.get('pastDateAllowed')?.valueChanges.subscribe((value: any) => {
       this.updateDependentFieldState('pastDateAllowed', 'pastDatesAllowedDays');
     });
 
-    // ... rest of your listener setup
+    this.leavePolicyForm?.get('carryForwardAllowed')?.valueChanges.subscribe((value: any) => {
+      this.updateDependentFieldState('carryForwardAllowed', 'carryForwardAllowedValue');
+    });
+
+    this.leavePolicyForm?.get('encashAllowedType')?.valueChanges.subscribe((value: any) => {
+      this.updateDependentFieldState('encashAllowedType', 'encashAllowedValue');
+    });
+
+    this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
+      const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
+      const typeControl = this.leavePolicyForm.get('noticePeriodFrequencyType');
+      if (value) {
+        daysControl?.enable();
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        typeControl?.enable();
+        typeControl?.setValidators([Validators.required]);
+      } else {
+        daysControl?.disable();
+        daysControl?.clearValidators();
+        daysControl?.setValue(0);
+        typeControl?.disable();
+        typeControl?.clearValidators();
+        typeControl?.setValue(null);
+      }
+      daysControl?.updateValueAndValidity();
+      typeControl?.updateValueAndValidity();
+    });
+
+    this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
+      const daysControl = this.leavePolicyForm.get('probationDays');
+      const typeControl = this.leavePolicyForm.get('probationFrequencyType');
+      if (value) {
+        daysControl?.enable();
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
+        typeControl?.enable();
+        typeControl?.setValidators([Validators.required]);
+      } else {
+        daysControl?.disable();
+        daysControl?.clearValidators();
+        daysControl?.setValue(0);
+        typeControl?.disable();
+        typeControl?.clearValidators();
+        typeControl?.setValue(null);
+      }
+      daysControl?.updateValueAndValidity();
+      typeControl?.updateValueAndValidity();
+    });
+
+    this.leavePolicyForm?.get('allowLeaveCombination')?.valueChanges.subscribe((value: any) => {
+      const restrictedTypesControl = this.leavePolicyForm.get('restrictedAdjacentLeaveTypes');
+      const blockPreviousControl = this.leavePolicyForm.get('blockPreviousDayLeave');
+      const blockNextControl = this.leavePolicyForm.get('blockNextDayLeave');
+      
+      if (value === true) {
+        restrictedTypesControl?.setValidators([Validators.required]);
+        blockPreviousControl?.setValidators([Validators.required]);
+        blockNextControl?.setValidators([Validators.required]);
+      } else {
+        restrictedTypesControl?.clearValidators();
+        blockPreviousControl?.clearValidators();
+        blockNextControl?.clearValidators();
+        restrictedTypesControl?.setValue(null);
+        blockPreviousControl?.setValue(null);
+        blockNextControl?.setValue(null);
+      }
+      restrictedTypesControl?.updateValueAndValidity();
+      blockPreviousControl?.updateValueAndValidity();
+      blockNextControl?.updateValueAndValidity();
+    });
+    // Update published categories when location/sublocation/year/shift changes
+    this.leavePolicyForm?.get('applicableYear')?.valueChanges.subscribe(() => this.updatePublishedCategories());
+    this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
+    this.leavePolicyForm?.get('subLocation')?.valueChanges.subscribe(() => this.updatePublishedCategories());
+    this.leavePolicyForm?.get('shiftId')?.valueChanges.subscribe(() => this.updatePublishedCategories());
+    
+  }
+
+  updatePublishedCategories() {
+    const year = this.leavePolicyForm.get('applicableYear')?.value;
+    const locationId = this.leavePolicyForm.get('locationID')?.value?.id || this.leavePolicyForm.get('locationID')?.value;
+    const sublocationId = this.leavePolicyForm.get('subLocation')?.value?.id || this.leavePolicyForm.get('subLocation')?.value;
+    const shiftId = this.leavePolicyForm.get('shiftId')?.value;
+    
+    if (year && locationId && sublocationId && shiftId) {
+      this.getOrgLeavesCategories(locationId, sublocationId, year, shiftId);
+    }
   }
   navigate() {
     this.router.navigate([
@@ -252,14 +355,23 @@ export class UpdateLeavecategoryComponent {
     }
   }
 
-  getOrgLeavesCategories() {
-    this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
+  getOrgLeavesCategories(locationId?: any, sublocationId?: any, year?: any, shiftId?: any) {
+    let url = 'OrgLeavesCategories';
+    const params = [];
+    
+    if (locationId) params.push(`locationId=${locationId}`);
+    if (sublocationId) params.push(`sublocationId=${sublocationId}`);
+    if (year) params.push(`year=${year}`);
+    if (shiftId) params.push(`shiftId=${shiftId}`);
+    params.push(`status=Published`);
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+    
+    this.subscription = this.http.getData(url).subscribe({
       next: (responseData: any) => {
-        this, responseData.orgcategory;
         this.postOrgPloicyDetailsArray = responseData as [];
-        this.publishedCategories = responseData.filter(
-          (x: any) => x.status === 'Published'
-        );
+        this.publishedCategories = responseData.filter((x: any) => x.status === 'Published');
       },
       error: (error) => {
         console.error(error);
@@ -404,6 +516,8 @@ export class UpdateLeavecategoryComponent {
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    console.log('Patching form with data:', data);
+    this.getOrgLeavesCategories(data.locationID, data.subLocation, data.applicableYear, data.shiftId);
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
       locationID: data.locationID,
@@ -436,6 +550,18 @@ export class UpdateLeavecategoryComponent {
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
       probationFrequencyType: data.probationFrequencyType,
+      // New Leave Category Fields
+      minimumAdvanceApplyDays: data.minimumAdvanceApplyDays,
+      maxLeaveDurationCalendarDays: data.maxLeaveDurationCalendarDays,
+      includeWeekends: data.includeWeekends,
+      includeHolidays: data.includeHolidays,
+      allowLeaveCombination: data.allowLeaveCombination,
+      restrictedAdjacentLeaveTypes: data.restrictedAdjacentLeaveTypes ? data.restrictedAdjacentLeaveTypes.split(',').map((id: string) => parseInt(id.trim())) : null,
+      blockLeaveOnWeekends: data.blockLeaveOnWeekends,
+      blockPreviousDayLeave: data.blockPreviousDayLeave,
+      blockNextDayLeave: data.blockNextDayLeave,
+      minimumGapBetweenSameLeaveType: data.minimumGapBetweenSameLeaveType,
+      gapCalculationBasis: data.gapCalculationBasis,
     });
     // Manually trigger value changes for dependent fields
     // Manually trigger the initial state for dependent fields
@@ -489,6 +615,7 @@ export class UpdateLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm.value;
+    console.log('Form Data:', formData);
     let payload = {
       id: this.updateLeaveCategoryData.id,
       applicableYear:
@@ -570,8 +697,20 @@ export class UpdateLeavecategoryComponent {
         this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
       probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
-      addedBy: 3356,
-      lastModifiedBy: 3356,
+      // New Leave Category Fields
+      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays,
+      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays,
+      includeWeekends: this.leavePolicyForm.value.includeWeekends,
+      includeHolidays: this.leavePolicyForm.value.includeHolidays,
+      allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
+      restrictedAdjacentLeaveTypes: this.leavePolicyForm.value.restrictedAdjacentLeaveTypes?.join(','),
+      blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
+      blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
+      blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
+      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType,
+      gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
+      // addedBy: this.empinfo.employeeId,
+      lastModifiedBy: this.empinfo.employeeId,
       status: this.updateLeaveCategoryData.status,
       addedDate: this.updateLeaveCategoryData.addedDate,
       lastModifiedDate: new Date(),
@@ -678,8 +817,20 @@ export class UpdateLeavecategoryComponent {
         this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
       probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
-      addedBy: 3356,
-      lastModifiedBy: 3356,
+      // New Leave Category Fields
+      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays,
+      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays,
+      includeWeekends: this.leavePolicyForm.value.includeWeekends,
+      includeHolidays: this.leavePolicyForm.value.includeHolidays,
+      allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
+      restrictedAdjacentLeaveTypes: this.leavePolicyForm.value.restrictedAdjacentLeaveTypes?.join(','),
+      blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
+      blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
+      blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
+      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType,
+      gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
+      // addedBy: this.empinfo.employeeId,
+      lastModifiedBy: this.empinfo.employeeId,
       status: 'Published',
       addedDate: this.updateLeaveCategoryData.addedDate,
       lastModifiedDate: new Date(),

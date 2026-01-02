@@ -39,6 +39,18 @@ export interface Iorgcategoryleaves {
   isApplicableProRataLeave: any;
   probationDays: any;
   isProbationAllowed: any;
+  // New Leave Category Fields
+  minimumAdvanceApplyDays?: number | null;
+  maxLeaveDurationCalendarDays?: number | null;
+  includeWeekends?: boolean | null;
+  includeHolidays?: boolean | null;
+  allowLeaveCombination?: boolean | null;
+  restrictedAdjacentLeaveTypes?: string | null;
+  blockLeaveOnWeekends?: boolean | null;
+  blockPreviousDayLeave?: boolean | null;
+  blockNextDayLeave?: boolean | null;
+  minimumGapBetweenSameLeaveType?: number | null;
+  gapCalculationBasis?: string | null;
 }
 export interface ICategoryDetails {
   category: Iorgcategoryleaves;
@@ -326,74 +338,6 @@ export interface IRegularizationvalue {
   attribute: string;
   value: string;
   meta: string;
-}
-export interface OrgShiftItem {
-  id: number;
-  headerID: number;
-  shiftName: string;
-  shiftStartTime: string;
-  duration: number;
-  shiftEndTime: string;
-  shiftDescription: string;
-  status: string;
-  code: string;
-  allowedGracePeriod: number;
-  latesAllowed: number;
-  allowedBreakTime: number;
-  halfDayMinHrs: number;
-  fullDayMinHrs: number;
-}
-export interface ShiftData {
-  id: number;
-  locationId: number;
-  subLocationId: number;
-  applicableyear: number;
-  status: string;
-  addedby: number;
-  addedDate: string;
-  statusCode: number;
-  orgShiftsItems: OrgShiftItem[];
-}
-export interface Iorgcategoryleaves {
-  id: any;
-  applicableYear: any;
-  locationID: any;
-  subLocation: any;
-  shiftId: any;
-  type: any;
-  name: string;
-  categoryColor: string;
-  categoryCode: string;
-  allowedHalfDay: boolean;
-  allowedGender: any;
-  allowedMaritalStatus: any;
-  excludeWeekends: boolean;
-  excludeHolidays: boolean;
-  futureDatesAllowed: boolean;
-  futureDatesAllowedDays: any;
-  pastDateAllowed: boolean;
-  pastDatesAllowedDays: any;
-  carryForwardAllowed: boolean;
-  carryForwardAllowedType: boolean;
-  carryForwardAllowedValue: any;
-  encashAllowedType: boolean;
-  encashAllowedValue: any;
-  parentId: any;
-  validity: any;
-  status: string;
-  addedBy: any;
-  addedDate: any;
-  lastModifiedBy: any;
-  lastModifiedDate: any;
-  shiftName: any;
-  subLocationName: any;
-  locationName: any;
-  noticePeriodAllowedValue: any;
-  noticeperiodAllowedType: any;
-  isOptionalHoliday: boolean;
-  isApplicableProRataLeave: any;
-  probationDays: any;
-  isProbationAllowed: any;
 }
 export interface OrgShiftItem {
   id: number;

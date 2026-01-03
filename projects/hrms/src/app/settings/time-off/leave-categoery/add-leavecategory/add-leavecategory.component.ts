@@ -591,7 +591,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       includeWeekends: this.leavePolicyForm.value.includeWeekends,
       includeHolidays: this.leavePolicyForm.value.includeHolidays,
       allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
-      restrictedAdjacentLeaveTypes: this.leavePolicyForm.value.restrictedAdjacentLeaveTypes.join(','),
+      restrictedAdjacentLeaveTypes: this.leavePolicyForm.value?.restrictedAdjacentLeaveTypes?.join(','),
       blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
       blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
       blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,

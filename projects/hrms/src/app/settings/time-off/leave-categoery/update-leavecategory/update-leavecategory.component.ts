@@ -60,8 +60,9 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
   gapCalculationOptions = [
+
+    { label: 'From Leave Start Date', value: 'start_date' },
     { label: 'From Leave End Date', value: 'end_date' },
-    { label: 'From Leave Start Date', value: 'start_date' }
   ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
@@ -165,8 +166,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       ],
       probationFrequencyType: [{ value: null }],
       // New Leave Category Fields
-      minimumAdvanceApplyDays: [null, Validators.required],
-      maxLeaveDurationCalendarDays: [null, Validators.required],
+      minimumAdvanceApplyDays: [null, [Validators.required, Validators.max(366)]],
+      maxLeaveDurationCalendarDays: [null, [Validators.required, Validators.max(366)]],
       includeWeekends: [null, Validators.required],
       includeHolidays: [null, Validators.required],
       allowLeaveCombination: [false, Validators.required],
@@ -282,8 +283,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       const restrictedTypesControl = this.leavePolicyForm.get('restrictedAdjacentLeaveTypes');
       const blockPreviousControl = this.leavePolicyForm.get('blockPreviousDayLeave');
       const blockNextControl = this.leavePolicyForm.get('blockNextDayLeave');
-      
-      if (value === true) {
+
+      if (value === false) {
         restrictedTypesControl?.setValidators([Validators.required]);
         blockPreviousControl?.setValidators([Validators.required]);
         blockNextControl?.setValidators([Validators.required]);
@@ -294,6 +295,9 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
         restrictedTypesControl?.setValue(null);
         blockPreviousControl?.setValue(null);
         blockNextControl?.setValue(null);
+        restrictedTypesControl?.markAsUntouched();
+        blockPreviousControl?.markAsUntouched();
+        blockNextControl?.markAsUntouched();
       }
       restrictedTypesControl?.updateValueAndValidity();
       blockPreviousControl?.updateValueAndValidity();
@@ -304,12 +308,12 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
     this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('subLocation')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('shiftId')?.valueChanges.subscribe(() => this.updatePublishedCategories());
-    
+
     this.leavePolicyForm?.get('enableSandwichPolicy')?.valueChanges.subscribe((value: any) => {
       const applySandwichOnControl = this.leavePolicyForm.get('applySandwichOn');
       const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
       const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
-      
+
       if (value === true) {
         applySandwichOnControl?.setValidators([Validators.required]);
         sandwichCalculationBasisControl?.setValidators([Validators.required]);
@@ -321,6 +325,9 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
         applySandwichOnControl?.setValue(null);
         sandwichCalculationBasisControl?.setValue(null);
         sandwichApplicabilityConditionControl?.setValue(null);
+        applySandwichOnControl?.markAsUntouched();
+        sandwichCalculationBasisControl?.markAsUntouched();
+        sandwichApplicabilityConditionControl?.markAsUntouched();
       }
       applySandwichOnControl?.updateValueAndValidity();
       sandwichCalculationBasisControl?.updateValueAndValidity();
@@ -333,7 +340,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
     const locationId = this.leavePolicyForm.get('locationID')?.value?.id || this.leavePolicyForm.get('locationID')?.value;
     const sublocationId = this.leavePolicyForm.get('subLocation')?.value?.id || this.leavePolicyForm.get('subLocation')?.value;
     const shiftId = this.leavePolicyForm.get('shiftId')?.value;
-    
+
     if (year && locationId && sublocationId && shiftId) {
       this.getOrgLeavesCategories(locationId, sublocationId, year, shiftId);
     }
@@ -405,7 +412,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
   getOrgLeavesCategories(locationId?: any, sublocationId?: any, year?: any, shiftId?: any) {
     let url = 'OrgLeavesCategories';
     const params = [];
-    
+
     if (locationId) params.push(`locationId=${locationId}`);
     if (sublocationId) params.push(`sublocationId=${sublocationId}`);
     if (year) params.push(`year=${year}`);
@@ -414,7 +421,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
     if (params.length > 0) {
       url += `?${params.join('&')}`;
     }
-    
+
     this.subscription = this.http.getData(url).subscribe({
       next: (responseData: any) => {
         this.postOrgPloicyDetailsArray = responseData as [];

@@ -123,9 +123,9 @@
               Valid Days is required
             </span>
           </div>
-          <span class="error-msg" *ngIf="leavePolicyForm.get('validity')?.errors?.['max']">
+          <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.errors?.['max']">
             Valid Days cannot exceed 366
-          </span>
+          </div>
         </div>
 
         <!-- Color -->
@@ -265,9 +265,13 @@
           <label class="form-label custom-label mb-2" for="minimumAdvanceApplyDays">Minimum Advance Apply Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="minimumAdvanceApplyDays" class="form-control custom-input"
             id="minimumAdvanceApplyDays" placeholder="Enter days" autocomplete="off" min="0">
-          <div class="error-msg" *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.invalid && leavePolicyForm.get('minimumAdvanceApplyDays')?.touched">
-            Minimum Advance Apply Days is required
-          </div>
+          <div class="error-msg"
+              *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.hasError('required') && leavePolicyForm.get('minimumAdvanceApplyDays')?.touched">
+             Minimum Advance Apply Days is required
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.errors?.['max']" >
+               Minimum Advance Apply Days cannot exceed 366
+            </div>
         </div>
       </div>
       
@@ -277,10 +281,14 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="maxLeaveDurationCalendarDays">Max Leave Duration (Calendar Days)<span class="text-danger">*</span></label>
           <input type="number" formControlName="maxLeaveDurationCalendarDays" class="form-control custom-input"
-            id="maxLeaveDurationCalendarDays" placeholder="Enter days" autocomplete="off" min="1">
-          <div class="error-msg" *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.invalid && leavePolicyForm.get('maxLeaveDurationCalendarDays')?.touched">
-            Max Leave Duration is required
-          </div>
+            id="maxLeaveDurationCalendarDays" placeholder="Enter days" autocomplete="off" min="0" maxlength="3">
+         <div class="error-msg"
+              *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.hasError('required') && leavePolicyForm.get('maxLeaveDurationCalendarDays')?.touched">
+              Max Leave Duration is required
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.errors?.['max']">
+              Max Leave Duration cannot exceed 366
+            </div>
         </div>
 
         <!-- Include Weekends -->
@@ -324,7 +332,7 @@
             Allow Leave Combination is required
           </div>
         </div>
-       @if(leavePolicyForm.get('allowLeaveCombination')?.value === true ){
+       @if(leavePolicyForm.get('allowLeaveCombination')?.value === false ){
         <!-- Restricted Adjacent Leave Types -->
         <div class="col-md-3 mb-3" >
           <label class="form-label custom-label mb-2" for="restrictedAdjacentLeaveTypes">Restricted Adjacent Leave Types<span class="text-danger">*</span></label>

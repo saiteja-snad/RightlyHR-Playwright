@@ -47,8 +47,9 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'No', value: false }
   ];
   gapCalculationOptions = [
+    
+    { label: 'From Leave Start Date', value: 'start_date' },
     { label: 'From Leave End Date', value: 'end_date' },
-    { label: 'From Leave Start Date', value: 'start_date' }
   ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
@@ -127,8 +128,8 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]],
       probationFrequencyType: [{ value: null, disabled: true }],
       // New Leave Category Fields
-      minimumAdvanceApplyDays: [null, Validators.required],
-      maxLeaveDurationCalendarDays: [null, Validators.required],
+      minimumAdvanceApplyDays: [null, [Validators.required, Validators.max(366)]],
+      maxLeaveDurationCalendarDays: [null, [Validators.required, Validators.max(366)]],
       includeWeekends: [null, Validators.required],
       includeHolidays: [null, Validators.required],
       allowLeaveCombination: [false, Validators.required],
@@ -181,21 +182,17 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
   }
 
 
-    onNumberInput(event: Event, fieldName: string): void {
+  onNumberInput(event: Event, fieldName: string): void {
     const inputElement = event.target as HTMLInputElement;
-    let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
-    // Replace multiple decimals with a single one
-    const decimalCheck = sanitizedValue.split('.');
-    if (decimalCheck.length > 2) {
-      sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
-    }
+    let sanitizedValue = inputElement.value.replace(/[^0-9]/g, '');
+    
     // Set the sanitized value back to the input
     inputElement.value = sanitizedValue;
-    // Update the form control value only if the value contains digits or a valid decimal
-    if (/^\d*\.?\d*$/.test(sanitizedValue)) {
+    
+    // Update the form control value only if the value contains digits
+    if (/^\d*$/.test(sanitizedValue)) {
       this.leavePolicyForm.get(fieldName)?.setValue(sanitizedValue);
     }
- 
   }
 
 
@@ -398,7 +395,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       const blockPreviousControl = this.leavePolicyForm.get('blockPreviousDayLeave');
       const blockNextControl = this.leavePolicyForm.get('blockNextDayLeave');
       
-      if (value === true) {
+      if (value === false ) {
         restrictedTypesControl?.setValidators([Validators.required]);
         blockPreviousControl?.setValidators([Validators.required]);
         blockNextControl?.setValidators([Validators.required]);
@@ -409,6 +406,9 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
         restrictedTypesControl?.setValue(null);
         blockPreviousControl?.setValue(null);
         blockNextControl?.setValue(null);
+        restrictedTypesControl?.markAsUntouched();
+        blockPreviousControl?.markAsUntouched();
+        blockNextControl?.markAsUntouched();
       }
       restrictedTypesControl?.updateValueAndValidity();
       blockPreviousControl?.updateValueAndValidity();
@@ -430,6 +430,9 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
             sandwichApplicabilityConditionControl?.setValue(null);
             sandwichCalculationBasisControl?.setValue(null);
             applySandwichOnControl?.setValue(null);
+            sandwichApplicabilityConditionControl?.markAsUntouched();
+            sandwichCalculationBasisControl?.markAsUntouched();
+            applySandwichOnControl?.markAsUntouched();
           }
           sandwichApplicabilityConditionControl?.updateValueAndValidity();
           sandwichCalculationBasisControl?.updateValueAndValidity();

@@ -61,8 +61,9 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
   gapCalculationOptions = [
-    { label: 'From Leave End Date', value: 'end_date' },
-    { label: 'From Leave Start Date', value: 'start_date' }
+ 
+    { label: 'From Leave Start Date', value: 'start_date' },
+       { label: 'From Leave End Date', value: 'end_date' },
   ];
   leaveTypeOptions = [
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
@@ -141,8 +142,8 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]],
       probationFrequencyType: [{ value: null, disabled: true }],
       // New Leave Category Fields
-      minimumAdvanceApplyDays: [null, Validators.required],
-      maxLeaveDurationCalendarDays: [null, Validators.required],
+    minimumAdvanceApplyDays: [null, [Validators.required, Validators.max(366)]],
+      maxLeaveDurationCalendarDays: [null, [Validators.required, Validators.max(366)]],
       includeWeekends: [null, Validators.required],
       includeHolidays: [null, Validators.required],
       allowLeaveCombination: [false, Validators.required],
@@ -371,7 +372,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       const blockPreviousControl = this.leavePolicyForm.get('blockPreviousDayLeave');
       const blockNextControl = this.leavePolicyForm.get('blockNextDayLeave');
       
-      if (value === true) {
+      if (value === false) {
         restrictedTypesControl?.setValidators([Validators.required]);
         blockPreviousControl?.setValidators([Validators.required]);
         blockNextControl?.setValidators([Validators.required]);
@@ -382,6 +383,9 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
         restrictedTypesControl?.setValue(null);
         blockPreviousControl?.setValue(null);
         blockNextControl?.setValue(null);
+        restrictedTypesControl?.markAsUntouched();
+        blockPreviousControl?.markAsUntouched();
+        blockNextControl?.markAsUntouched();
       }
       restrictedTypesControl?.updateValueAndValidity();
       blockPreviousControl?.updateValueAndValidity();
@@ -409,6 +413,9 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
         applySandwichOnControl?.setValue(null);
         sandwichCalculationBasisControl?.setValue(null);
         sandwichApplicabilityConditionControl?.setValue(null);
+        applySandwichOnControl?.markAsUntouched();
+        sandwichCalculationBasisControl?.markAsUntouched();
+        sandwichApplicabilityConditionControl?.markAsUntouched();
       }
       applySandwichOnControl?.updateValueAndValidity();
       sandwichCalculationBasisControl?.updateValueAndValidity();
@@ -642,13 +649,12 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       sandwichApplicabilityCondition: data.sandwichApplicabilityCondition
     });
     // Manually trigger value changes for dependent fields
-    this.leavePolicyForm?.get('futureDatesAllowed')?.updateValueAndValidity();
-    this.leavePolicyForm?.get('pastDateAllowed')?.updateValueAndValidity();
-    this.leavePolicyForm?.get('carryForwardAllowed')?.updateValueAndValidity();
-    this.leavePolicyForm?.get('encashAllowedType')?.updateValueAndValidity();
-    this.leavePolicyForm?.get('noticeperiodAllowedType')?.updateValueAndValidity();
-    this.leavePolicyForm?.get('isProbationAllowed')?.updateValueAndValidity();
-    this.leavePolicyForm?.get('probationFrequencyType')?.updateValueAndValidity();
+  this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
+    this.updateDependentFieldState('pastDateAllowed', 'pastDatesAllowedDays');
+    this.updateDependentFieldState('carryForwardAllowed', 'carryForwardAllowedValue');
+    this.updateDependentFieldState('encashAllowedType', 'encashAllowedValue');
+    this.updateDependentFieldState('noticeperiodAllowedType', 'noticePeriodAllowedValue');
+    this.updateDependentFieldState('isProbationAllowed', 'probationDays');
 
     this.setupDependentFieldListeners();
     this.setupDependentFieldListenerS();

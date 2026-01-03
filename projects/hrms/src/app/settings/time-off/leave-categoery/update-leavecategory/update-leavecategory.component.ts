@@ -78,7 +78,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
-      locationID: [undefined, Validators.required],
+      locationID: [null, Validators.required],
       subLocation: [undefined, Validators.required],
       shiftId: [undefined, Validators.required],
       // Leave Category Information
@@ -150,11 +150,15 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy{
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
         this.jobLocationDropDownData = data.jobLocations;
+        const foundLocation = this.jobLocationDropDownData.find(
+          (x: any) => x.id === this.updateLeaveCategoryData.locationID
+        );
+        console.log(foundLocation);
+        console.log(this.updateLeaveCategoryData.locationID);
+        
+        
         this.leavePolicyForm.patchValue({
-          locationID: this.jobLocationDropDownData.find(
-            (x: any) =>
-              x.jobLocationName === this.updateLeaveCategoryData.locationName
-          ),
+          locationID: foundLocation?.id
         });
         this.getSubLocationByid(this.updateLeaveCategoryData.locationID);
       },

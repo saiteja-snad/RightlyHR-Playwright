@@ -430,7 +430,7 @@ export class ViewLeavecategoryComponent {
     const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
-      locationID: this.jobLocationDropDownData.find(loc => loc.jobLocationName === data.locationName),
+      locationID: data.locationName,
       subLocation: data.subLocationName,
       shiftId: data.shiftName,
       type: data.type,

@@ -30,7 +30,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="Location">Location <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue=""
+            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue="id"
               placeholder="Select location" formControlName="locationID" class="custom-select w-100"
               (onChange)="getSubLocationByid($event.value.id)">
             </p-select>

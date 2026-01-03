@@ -488,8 +488,11 @@
               id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="0"
               (input)="onNumberInput($event, 'minimumGapBetweenSameLeaveType')">
             <div class="error-msg"
-              *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.invalid && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
+              *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.hasError('required') && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
               Minimum Gap Between Same Leave Type is required
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.errors?.['max']">
+              Minimum Gap Between Same Leave Type cannot exceed 366
             </div>
           </div>
           <!-- Gap Calculation Basis -->

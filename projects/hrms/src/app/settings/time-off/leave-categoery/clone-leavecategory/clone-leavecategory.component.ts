@@ -153,7 +153,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       blockLeaveOnWeekends: [null],
       blockPreviousDayLeave: [null],
       blockNextDayLeave: [null],
-      minimumGapBetweenSameLeaveType: [30, Validators.required],
+      minimumGapBetweenSameLeaveType: [30, [Validators.required, Validators.max(366)]],
       gapCalculationBasis: [null, Validators.required],
       enableSandwichPolicy: [false, Validators.required],
       applySandwichOn: [null,],

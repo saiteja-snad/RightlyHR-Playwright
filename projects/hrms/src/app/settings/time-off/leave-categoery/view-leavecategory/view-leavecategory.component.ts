@@ -179,18 +179,18 @@ export class ViewLeavecategoryComponent {
   }
 
   ngOnInit(): void {
+    this.getLeaveTypes();
     this.updatecloneLeaveCategoryData = JSON.parse(
       localStorage.getItem('viewleavecategory') ?? '{}'
     );
-    this.patchFormValues(this.updatecloneLeaveCategoryData);
-    console.log(this.updatecloneLeaveCategoryData);
+    this.setupDependentFieldListeners();
+    this.jobLocationList();
+    
+    this.getOrgLeavesCategories();
     this.getparentIdLC(
       this.updatecloneLeaveCategoryData.parentId,
       this.updatecloneLeaveCategoryData.parentId
     );
-    this.setupDependentFieldListeners();
-    this.jobLocationList();
-    this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
@@ -206,6 +206,7 @@ export class ViewLeavecategoryComponent {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
         this.jobLocationDropDownData = data.jobLocations;
+        this.patchFormValues(this.updatecloneLeaveCategoryData);
       },
     });
   }
@@ -413,6 +414,7 @@ export class ViewLeavecategoryComponent {
     this.subscription = this.http.getData('LeaveType').subscribe({
       next: (data: any) => {
         this.leaveTypes = data;
+        // this.patchFormValues(this.updatecloneLeaveCategoryData);
       },
       error: (err) => {
         console.error('Error fetching leave types:', err);
@@ -424,14 +426,15 @@ export class ViewLeavecategoryComponent {
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
     // if (!this.jobLocationDropDownData.length || !this.leaveTypes.length) return;
-    
+    // debugger
+    const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
       locationID: this.jobLocationDropDownData.find(loc => loc.jobLocationName === data.locationName),
       subLocation: data.subLocationName,
       shiftId: data.shiftName,
       type: data.type,
-      leaveType: this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.name || '',
+      leaveType: leaveTypeValue,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,

@@ -51,6 +51,7 @@ export interface Iorgcategoryleaves {
   blockNextDayLeave?: boolean | null;
   minimumGapBetweenSameLeaveType?: number | null;
   gapCalculationBasis?: string | null;
+  leaveType: string;
 }
 export interface ICategoryDetails {
   category: Iorgcategoryleaves;

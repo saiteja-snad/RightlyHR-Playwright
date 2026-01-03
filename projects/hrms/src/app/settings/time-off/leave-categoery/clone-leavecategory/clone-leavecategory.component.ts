@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 @Component({
   selector: 'app-clone-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule],
@@ -69,7 +70,9 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
+
   shiftsArray = [] as any[];
+  leaveTypes: ILetterType[] = [];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
   destroy$: Subject<boolean> = new Subject<boolean>();
   empinfo = {} as IJob;
@@ -87,6 +90,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     this.setupDependentFieldListenerS();
     this.validateAllowedDays();
     this.jobLocationList();
+    this.getLeaveTypes();
     // this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
@@ -94,10 +98,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
-  }
+
 
   intializeForm() {
     this.leavePolicyForm = this.fb.group({
@@ -108,6 +109,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       shiftId: [null, Validators.required],
       // Leave Category Information
       type: [undefined, Validators.required],
+      leaveType: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
       validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
@@ -285,6 +287,20 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       })
     } else {
     }
+  }
+
+    getLeaveTypes() {
+    this.subscription = this.http.getData('LeaveType').subscribe({
+      next: (data: any) => {
+        this.leaveTypes = data;
+        this.patchFormValues(this.updatecloneLeaveCategoryData);
+      },
+      error: (err) => {
+        console.error('Error fetching leave types:', err);
+        this.leaveTypes = [];
+        this.patchFormValues(this.updatecloneLeaveCategoryData);
+      }
+    });
   }
 
   getOrgLeavesCategories(locationId?: any, sublocationId?: any, year?: any, shiftId?: any) {
@@ -601,10 +617,8 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     // this.getOrgLeavesCategories(data.locationID, data.subLocation, data.applicableYear, data.shiftId);
     this.leavePolicyForm?.patchValue({
       applicableYear: data.applicableYear,
-      // locationID: data.locationID,
-      // subLocation: data.subLocation,
-      // shiftId: data.shiftId,
       type: data.type,
+      leaveType: data.leaveTypeId,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -665,12 +679,14 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm;
+    
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID.id,
       subLocation: this.leavePolicyForm.value.subLocation.id,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
+      leaveTypeId: this.leavePolicyForm.value.leaveType,
       name: this.leavePolicyForm.value.name,
       categoryCode: this.leavePolicyForm.value.categoryCode,
       validity: this.leavePolicyForm.value.validity,
@@ -744,5 +760,13 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
 
   closepopup() {
     this.modalService.dismissAll();
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

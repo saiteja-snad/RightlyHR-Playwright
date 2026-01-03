@@ -11,6 +11,7 @@ import { ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IJob } from '../../../../Interfaces/letters-model';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 @Component({
   selector: 'app-add-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule,MultiSelectModule],
@@ -70,6 +71,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
   shiftsArray = [] as any[];
+  leaveTypes : ILetterType[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   empinfo = {} as IJob;
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
@@ -80,6 +82,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.jobLocationList();
     // this.getOrgLeavesCategories();
+    this.getLeaveTypes();
     const currentYear = new Date().getFullYear();
 
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
@@ -94,6 +97,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       shiftId: [undefined, Validators.required],
       // Leave Category Information
       type: [undefined, Validators.required],
+      leaveType: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
       validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
@@ -223,10 +227,16 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
     })
   }
 
-
-
-
-
+  getLeaveTypes() {
+    this.subscription = this.http.getData(`LeaveType`).subscribe({
+      next: (data: any) => {
+        this.leaveTypes = data as ILetterType[];
+      },
+      error: (err: any) => {
+        this.leaveTypes = [];
+      }
+    });
+  }
 
   OnClickLocation(id: any) {
     const locationID = id;
@@ -484,6 +494,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       subLocation: data.subLocation,
       shiftId: data.shiftId,
       type: data.type,
+      leaveType: data.leaveType,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -540,12 +551,14 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm.value;
+        
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID,
       subLocation: this.leavePolicyForm.value.subLocation,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
+      leaveTypeId: formData.leaveType,
       name: this.leavePolicyForm.value.name,
       categoryCode: this.leavePolicyForm.value.categoryCode,
       validity: this.leavePolicyForm.value.validity,
@@ -621,7 +634,11 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next(true);
+      this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
   }
+
 }

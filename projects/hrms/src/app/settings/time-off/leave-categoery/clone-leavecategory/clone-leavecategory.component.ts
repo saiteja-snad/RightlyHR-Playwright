@@ -209,16 +209,15 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       return null;
     };
   }
-
   onNumberInput(event: Event, fieldName: string): void {
     const inputElement = event.target as HTMLInputElement;
-    let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
-    const decimalCheck = sanitizedValue.split('.');
-    if (decimalCheck.length > 2) {
-      sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
-    }
+    let sanitizedValue = inputElement.value.replace(/[^0-9]/g, '');
+    
+    // Set the sanitized value back to the input
     inputElement.value = sanitizedValue;
-    if (/^\d*\.?\d*$/.test(sanitizedValue)) {
+    
+    // Update the form control value only if the value contains digits
+    if (/^\d*$/.test(sanitizedValue)) {
       this.leavePolicyForm.get(fieldName)?.setValue(sanitizedValue);
     }
   }

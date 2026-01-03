@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 @Component({
   selector: 'app-add-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -16,7 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   encapsulation: ViewEncapsulation.None
 })
 
-export class AddLeavecategoryComponent {
+export class AddLeavecategoryComponent implements OnInit, OnDestroy{
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -47,8 +48,9 @@ export class AddLeavecategoryComponent {
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
-  shiftsArray = [] as any[];
 
+  shiftsArray = [] as any[];
+  leaveTypes : ILetterType[] = [];
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
     private router: Router, private modalService: NgbModal) {
   }
@@ -56,6 +58,7 @@ export class AddLeavecategoryComponent {
   ngOnInit(): void {
     this.jobLocationList();
     this.getOrgLeavesCategories();
+    this.getLeaveTypes();
     const currentYear = new Date().getFullYear();
 
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
@@ -70,6 +73,7 @@ export class AddLeavecategoryComponent {
       shiftId: [undefined, Validators.required],
       // Leave Category Information
       type: [undefined, Validators.required],
+      leaveType: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
       validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
@@ -168,10 +172,16 @@ export class AddLeavecategoryComponent {
     })
   }
 
-
-
-
-
+  getLeaveTypes() {
+    this.subscription = this.http.getData(`LeaveType`).subscribe({
+      next: (data: any) => {
+        this.leaveTypes = data as ILetterType[];
+      },
+      error: (err: any) => {
+        this.leaveTypes = [];
+      }
+    });
+  }
 
   OnClickLocation(id: any) {
     const locationID = id;
@@ -352,6 +362,7 @@ export class AddLeavecategoryComponent {
       subLocation: data.subLocation,
       shiftId: data.shiftId,
       type: data.type,
+      leaveType: data.leaveType,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,
@@ -391,12 +402,14 @@ export class AddLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm.value;
+        
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID,
       subLocation: this.leavePolicyForm.value.subLocation,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
+      leaveTypeId: formData.leaveType,
       name: this.leavePolicyForm.value.name,
       categoryCode: this.leavePolicyForm.value.categoryCode,
       validity: this.leavePolicyForm.value.validity,
@@ -454,4 +467,11 @@ export class AddLeavecategoryComponent {
   closepopup() {
     this.modalService.dismissAll();
   }
+
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

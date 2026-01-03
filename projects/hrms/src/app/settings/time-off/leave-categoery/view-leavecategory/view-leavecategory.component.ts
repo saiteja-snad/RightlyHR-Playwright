@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ILetterType } from '../../../../Interfaces/leave-type.model';
 
 @Component({
   selector: 'app-view-leavecategory',
@@ -51,6 +52,7 @@ export class ViewLeavecategoryComponent {
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
   @ViewChild('deletepopup') deletepopup: any;
+  leaveTypes: ILetterType[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -70,6 +72,7 @@ export class ViewLeavecategoryComponent {
       shiftId: [{ value: undefined, disabled: true }, Validators.required],
       // Leave Category Information
       type: [{ value: undefined, disabled: true }, Validators.required],
+      leaveType: [{ value: undefined, disabled: true }, Validators.required],
       name: [
         { value: '', disabled: true },
         [Validators.required, this.restrictInputValidator],
@@ -176,18 +179,18 @@ export class ViewLeavecategoryComponent {
   }
 
   ngOnInit(): void {
+    this.getLeaveTypes();
     this.updatecloneLeaveCategoryData = JSON.parse(
       localStorage.getItem('viewleavecategory') ?? '{}'
     );
-    this.patchFormValues(this.updatecloneLeaveCategoryData);
-    console.log(this.updatecloneLeaveCategoryData);
+    this.setupDependentFieldListeners();
+    this.jobLocationList();
+    
+    this.getOrgLeavesCategories();
     this.getparentIdLC(
       this.updatecloneLeaveCategoryData.parentId,
       this.updatecloneLeaveCategoryData.parentId
     );
-    this.setupDependentFieldListeners();
-    this.jobLocationList();
-    this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
     for (let year = currentYear; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
@@ -203,6 +206,7 @@ export class ViewLeavecategoryComponent {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
         this.jobLocationDropDownData = data.jobLocations;
+        this.patchFormValues(this.updatecloneLeaveCategoryData);
       },
     });
   }
@@ -406,14 +410,31 @@ export class ViewLeavecategoryComponent {
     }
   }
 
+  getLeaveTypes() {
+    this.subscription = this.http.getData('LeaveType').subscribe({
+      next: (data: any) => {
+        this.leaveTypes = data;
+        // this.patchFormValues(this.updatecloneLeaveCategoryData);
+      },
+      error: (err) => {
+        console.error('Error fetching leave types:', err);
+        this.leaveTypes = [];
+      }
+    });
+  }
+
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
+    // if (!this.jobLocationDropDownData.length || !this.leaveTypes.length) return;
+    // debugger
+    const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
       locationID: data.locationName,
       subLocation: data.subLocationName,
       shiftId: data.shiftName,
       type: data.type,
+      leaveType: leaveTypeValue,
       name: data.name,
       categoryCode: data.categoryCode,
       validity: data.validity,

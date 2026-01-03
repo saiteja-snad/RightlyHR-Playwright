@@ -39,6 +39,7 @@ export interface Iorgcategoryleaves {
   isApplicableProRataLeave: any;
   probationDays: any;
   isProbationAllowed: any;
+  leaveType: string;
 }
 export interface ICategoryDetails {
   category: Iorgcategoryleaves;

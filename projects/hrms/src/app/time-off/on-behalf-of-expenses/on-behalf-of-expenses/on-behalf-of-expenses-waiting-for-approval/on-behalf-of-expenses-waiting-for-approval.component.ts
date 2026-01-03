@@ -61,6 +61,13 @@ export class OnBehalfOfExpensesWaitingForApprovalComponent {
         this.getExpensesHeaderByEmployeeId();
       }
     });
+
+    // Listen for year changes
+    this.SelectedyeartimeOffService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.selectemp) {
+        this.getExpensesHeaderByEmployeeId();
+      }
+    });
   }
 
   openModal(content: any) {
@@ -78,10 +85,11 @@ export class OnBehalfOfExpensesWaitingForApprovalComponent {
 
   getExpensesHeaderByEmployeeId(): void {
     this.loading = true;
-    const empId = this.selectemp
+    const empId = this.selectemp;
+    const selectedYear = this.SelectedyeartimeOffService.getSelectedYear();
     const status = 'Waiting for Approval';
     const searchQuery = this.searchTerm?.trim() || '';
-    this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${encodeURIComponent(status)}&searchQuery=${encodeURIComponent(searchQuery)}`)
+    this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${encodeURIComponent(status)}&year=${selectedYear}&searchQuery=${encodeURIComponent(searchQuery)}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {

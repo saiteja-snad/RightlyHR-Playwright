@@ -1,23 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { MultiSelect } from 'primeng/multiselect';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { IJob } from '../../../../Interfaces/letters-model';
 @Component({
   selector: 'app-clone-leavecategory',
-  imports: [CommonModule, Select, MultiSelect, ReactiveFormsModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, MultiSelectModule],
   templateUrl: './clone-leavecategory.component.html',
   styleUrl: './clone-leavecategory.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
-export class CloneLeavecategoryComponent {
+export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -44,6 +46,20 @@ export class CloneLeavecategoryComponent {
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
+  applySandwichOnOptions = [
+    { label: 'Weekends', value: 'weekends' },
+    { label: 'Holidays', value: 'holidays' },
+    { label: 'Both', value: 'both' }
+  ];
+  sandwichCalculationBasisOptions = [
+    { label: 'Start Date/End Date', value: 'start_date/end_date' },
+    { label: 'Continuous Leave', value: 'continuous_leave' }
+  ];
+  sandwichApplicabilityConditionOptions = [
+    { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
+    { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
+    { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
+  ];
   gapCalculationOptions = [
     { label: 'From Leave End Date', value: 'end_date' },
     { label: 'From Leave Start Date', value: 'start_date' }
@@ -54,23 +70,32 @@ export class CloneLeavecategoryComponent {
   ];
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  empinfo = {} as IJob;
 
 
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router, private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intializeForm();
     this.updatecloneLeaveCategoryData = JSON.parse(localStorage.getItem('cloneleavecategory') ?? '{}');
     this.patchFormValues(this.updatecloneLeaveCategoryData);
     // this.setupDependentFieldListeners();
     this.setupDependentFieldListenerS();
+    this.validateAllowedDays();
     this.jobLocationList();
     // this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 
   intializeForm() {
@@ -127,6 +152,10 @@ export class CloneLeavecategoryComponent {
       blockNextDayLeave: [null],
       minimumGapBetweenSameLeaveType: [30, Validators.required],
       gapCalculationBasis: [null, Validators.required],
+      enableSandwichPolicy: [false, Validators.required],
+      applySandwichOn: [null,],
+      sandwichCalculationBasis: [null],
+      sandwichApplicabilityCondition: [null]
     });
     this.validateAllowedDays()
   }
@@ -164,6 +193,31 @@ export class CloneLeavecategoryComponent {
         }
       }
     });
+  }
+
+  private maxValidDaysValidator(maxControlName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.parent) return null;
+      const maxControl = control.parent.get(maxControlName);
+      const maxValue = maxControl?.value;
+      if (control.value && maxValue && +control.value > +maxValue) {
+        return { maxExceeded: true };
+      }
+      return null;
+    };
+  }
+
+  onNumberInput(event: Event, fieldName: string): void {
+    const inputElement = event.target as HTMLInputElement;
+    let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
+    const decimalCheck = sanitizedValue.split('.');
+    if (decimalCheck.length > 2) {
+      sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
+    }
+    inputElement.value = sanitizedValue;
+    if (/^\d*\.?\d*$/.test(sanitizedValue)) {
+      this.leavePolicyForm.get(fieldName)?.setValue(sanitizedValue);
+    }
   }
 
 
@@ -339,6 +393,27 @@ export class CloneLeavecategoryComponent {
     this.leavePolicyForm?.get('subLocation')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('shiftId')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     
+    this.leavePolicyForm?.get('enableSandwichPolicy')?.valueChanges.subscribe((value: any) => {
+      const applySandwichOnControl = this.leavePolicyForm.get('applySandwichOn');
+      const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      
+      if (value === true) {
+        applySandwichOnControl?.setValidators([Validators.required]);
+        sandwichCalculationBasisControl?.setValidators([Validators.required]);
+        sandwichApplicabilityConditionControl?.setValidators([Validators.required]);
+      } else {
+        applySandwichOnControl?.clearValidators();
+        sandwichCalculationBasisControl?.clearValidators();
+        sandwichApplicabilityConditionControl?.clearValidators();
+        applySandwichOnControl?.setValue(null);
+        sandwichCalculationBasisControl?.setValue(null);
+        sandwichApplicabilityConditionControl?.setValue(null);
+      }
+      applySandwichOnControl?.updateValueAndValidity();
+      sandwichCalculationBasisControl?.updateValueAndValidity();
+      sandwichApplicabilityConditionControl?.updateValueAndValidity();
+    });
   }
 
   private updateDependentFieldState(parentControlName: string, dependentControlName: string) {
@@ -561,6 +636,10 @@ export class CloneLeavecategoryComponent {
       blockNextDayLeave: data.blockNextDayLeave,
       minimumGapBetweenSameLeaveType: data.minimumGapBetweenSameLeaveType,
       gapCalculationBasis: data.gapCalculationBasis,
+      enableSandwichPolicy: data.enableSandwichPolicy,
+      applySandwichOn: data.applySandwichOn,
+      sandwichCalculationBasis: data.sandwichCalculationBasis,
+      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition
     });
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm?.get('futureDatesAllowed')?.updateValueAndValidity();
@@ -624,8 +703,12 @@ export class CloneLeavecategoryComponent {
       blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
       minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType,
       gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
-      addedBy: 3356,
-      lastModifiedBy: 3356,
+      enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
+      applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
+      sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
+      sandwichApplicabilityCondition: this.leavePolicyForm.value.sandwichApplicabilityCondition,
+      addedBy: this.empinfo.employeeId,
+      lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",
       addedDate: new Date(),
       lastModifiedDate: new Date()

@@ -54,6 +54,20 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
     { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
+  applySandwichOnOptions = [
+    { label: 'Weekends', value: 'weekends' },
+    { label: 'Holidays', value: 'holidays' },
+    { label: 'Both', value: 'both' }
+  ];
+  sandwichCalculationBasisOptions = [
+    { label: 'Start Date/End Date', value: 'start_date/end_date' },
+    { label: 'Continuous Leave', value: 'continuous_leave' }
+  ];
+  sandwichApplicabilityConditionOptions = [
+    { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
+    { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
+    { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
+  ];
   shiftsArray = [] as any[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   empinfo = {} as IJob;
@@ -64,7 +78,7 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.jobLocationList();
-    this.getOrgLeavesCategories();
+    // this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
 
     for (let year = currentYear + 1; year >= currentYear - 10; year--) {
@@ -124,6 +138,10 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       blockNextDayLeave: [null],
       minimumGapBetweenSameLeaveType: [30, Validators.required],
       gapCalculationBasis: [null, Validators.required],
+      enableSandwichPolicy: [false, Validators.required],
+      applySandwichOn: [null,],
+      sandwichCalculationBasis: [null],
+      sandwichApplicabilityCondition: [null]
     });
     this.setupDependentFieldListeners();
     this.validateAllowedDays();
@@ -161,6 +179,25 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+
+    onNumberInput(event: Event, fieldName: string): void {
+    const inputElement = event.target as HTMLInputElement;
+    let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
+    // Replace multiple decimals with a single one
+    const decimalCheck = sanitizedValue.split('.');
+    if (decimalCheck.length > 2) {
+      sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
+    }
+    // Set the sanitized value back to the input
+    inputElement.value = sanitizedValue;
+    // Update the form control value only if the value contains digits or a valid decimal
+    if (/^\d*\.?\d*$/.test(sanitizedValue)) {
+      this.leavePolicyForm.get(fieldName)?.setValue(sanitizedValue);
+    }
+ 
+  }
+
 
 
 
@@ -378,6 +415,27 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       blockNextControl?.updateValueAndValidity();
     });
 
+    this.leavePolicyForm?.get('enableSandwichPolicy')?.valueChanges.subscribe((value: any) => {
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
+      const applySandwichOnControl = this.leavePolicyForm.get('applySandwichOn');
+          if (value === true) {
+            sandwichApplicabilityConditionControl?.setValidators([Validators.required]);
+            sandwichCalculationBasisControl?.setValidators([Validators.required]);
+            applySandwichOnControl?.setValidators([Validators.required]);
+          } else {
+            sandwichApplicabilityConditionControl?.clearValidators();
+            sandwichCalculationBasisControl?.clearValidators();
+            applySandwichOnControl?.clearValidators();
+            sandwichApplicabilityConditionControl?.setValue(null);
+            sandwichCalculationBasisControl?.setValue(null);
+            applySandwichOnControl?.setValue(null);
+          }
+          sandwichApplicabilityConditionControl?.updateValueAndValidity();
+          sandwichCalculationBasisControl?.updateValueAndValidity();
+          applySandwichOnControl?.updateValueAndValidity();
+      });
+       
     // Update published categories when location/sublocation/year/shift changes
     this.leavePolicyForm?.get('applicableYear')?.valueChanges.subscribe(() => this.updatePublishedCategories());
     this.leavePolicyForm?.get('locationID')?.valueChanges.subscribe(() => this.updatePublishedCategories());
@@ -461,6 +519,11 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       blockNextDayLeave: data.blockNextDayLeave,
       minimumGapBetweenSameLeaveType: data.minimumGapBetweenSameLeaveType,
       gapCalculationBasis: data.gapCalculationBasis,
+      enableSandwichPolicy: data.enableSandwichPolicy,
+      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
+      sandwichCalculationBasis: data.sandwichCalculationBasis,
+      applySandwichOn: data.applySandwichOn
+
     });
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm.get('futureDatesAllowed')?.updateValueAndValidity();
@@ -518,6 +581,10 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
       minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType,
       gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
+      enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
+      sandwichApplicabilityCondition: this.leavePolicyForm.value.sandwichApplicabilityCondition,
+      sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
+      applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
       addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",

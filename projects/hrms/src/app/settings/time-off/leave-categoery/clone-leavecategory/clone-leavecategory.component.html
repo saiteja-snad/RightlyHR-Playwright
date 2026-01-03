@@ -365,6 +365,63 @@
       }
       </div>
 
+       <div class="row">
+        <div class="component-sub-header mb-3">Sandwich Policy</div>
+        <!-- Enable Sandwich Policy -->
+        <div class="col-md-3 mb-3">
+          <label class="form-label custom-label mb-2" for="enableSandwichPolicy">Enable Sandwich Policy<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+              formControlName="enableSandwichPolicy" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('enableSandwichPolicy')?.invalid && leavePolicyForm.get('enableSandwichPolicy')?.touched">
+            Enable Sandwich Policy is required
+          </div>
+        </div>
+
+        @if(leavePolicyForm.get('enableSandwichPolicy')?.value === true ){
+        <!-- applySandwichOn -->
+        <div class="col-md-3 mb-3" >
+          <label class="form-label custom-label mb-2" for="applySandwichOn">Apply Sandwich On<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+           <p-select [options]="applySandwichOnOptions" optionLabel="label" optionValue="value" placeholder="Select option"
+              formControlName="applySandwichOn" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('applySandwichOn')?.invalid && leavePolicyForm.get('applySandwichOn')?.touched">
+            Apply Sandwich On is required
+          </div>
+        </div>
+
+        <!-- sandwichCalculationBasis -->
+        <div class="col-md-3 mb-3" >
+          <label class="form-label custom-label mb-2" for="sandwichCalculationBasis">Sandwich Calculation Basis<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="sandwichCalculationBasisOptions" optionLabel="label" optionValue="value" placeholder="Select option"
+              formControlName="sandwichCalculationBasis" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('sandwichCalculationBasis')?.invalid && leavePolicyForm.get('sandwichCalculationBasis')?.touched">
+            Sandwich Calculation Basis is required
+          </div>
+        </div>
+
+        <!-- sandwichApplicabilityCondition -->
+        <div class="col-md-3 mb-3" >
+          <label class="form-label custom-label mb-2" for="sandwichApplicabilityCondition">Sandwich Applicability Condition<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="sandwichApplicabilityConditionOptions" optionLabel="label" optionValue="value" placeholder="Select option"
+              formControlName="sandwichApplicabilityCondition" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('sandwichApplicabilityCondition')?.invalid && leavePolicyForm.get('sandwichApplicabilityCondition')?.touched">
+            Sandwich Applicability Condition is required
+          </div>
+        </div>
+        }
+      </div>
+
       <div class="row">
         <div class="component-sub-header mb-3">Leave Interval</div>
         <!-- Minimum Gap Between Same Leave Type -->

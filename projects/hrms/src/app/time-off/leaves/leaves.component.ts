@@ -91,6 +91,7 @@ export class LeavesComponent {
   isHolidaySelected = false;
   model: any;
   disableSubmitButton: boolean = false;
+  @ViewChild('sandwichConfirmationModal') sandwichModal: any;
   @ViewChild('leaveForm') work!: NgForm;
   //graph
   leaveCategoryData: any;
@@ -101,6 +102,8 @@ export class LeavesComponent {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  sandwichMessage: string = '';
+  sandwichData: any = null;
 
   constructor(
     private http: HttpService,
@@ -1317,88 +1320,136 @@ getTeamManagersDetails() {
       this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
-      if (this.empdata.probationEndDate) {
-        let currentDate = moment();
-        let probationEndDate = moment(this.empdata.probationEndDate);
-        let currentDateWithoutTime = currentDate.startOf('day');
-        let probationEndDateWithoutTime = probationEndDate.startOf('day');
-        if (currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)) {
-          let dateOfJoining = moment(this.empdata.dateOfJoining);
-          let startdate = moment(this.startDate);
-          let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
-          let months = 1;
-          months += Math.floor(probationDaysDiff / 30);
-        }
+      
+      // Check sandwich policy
+      if (this.selectedleave?.category?.enableSandwichPolicy) {
+        this.checkSandwichPolicy();
+        return;
       }
-      const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
-      // if (category) {
-      //   category.booked += this.leaveFormData.duration;
-      // }
-      if (category?.category.isOptionalHoliday) {
-        const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
-        if (this.mustUseOptLevs) {
-          if (isOptHoliday) {
-            if (this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
-              this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
-              return;
-            } else {
-              this.optLevsUsed += this.leaveFormData.duration;
-            }
-          }
+      
+      this.submitLeaveRequest();
+    } else {
+      this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
+    }
+  }
+
+  checkSandwichPolicy() {
+    const payload = {
+      employeeId: this.leaveFormData.employeeId,
+      categoryId: this.leaveFormData.categoryId,
+      startDate: this.leaveFormData.startdate,
+      endDate: this.leaveFormData.enddate
+    };
+
+    this.subscription = this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', payload).subscribe({
+      next: (response: any) => {
+        if (response.isSandwichApplied) {
+          this.showSandwichConfirmation(response);
+        } else {
+          this.submitLeaveRequest();
         }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  showSandwichConfirmation(sandwichData: any) {
+    const deductionDays = sandwichData?.excessDays || 0 ;
+    const categoryName = sandwichData?.excessDaysCategory || 'leave';
+    this.sandwichMessage = `This leave request falls under the Sandwich Leave Policy. Due to insufficient leave balance, ${deductionDays} days will be treated as ${categoryName}`;
+    this.sandwichData = sandwichData;
+    
+    this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
+      this.isLoading = false;
+    });
+  }
+
+  confirmSandwichPolicy(modal: any) {
+    modal.dismiss();
+    this.leaveFormData.duration = this.sandwichData.totalLeaveDays;
+    this.submitLeaveRequest();
+  }
+
+  submitLeaveRequest() {
+    if (this.empdata.probationEndDate) {
+      let currentDate = moment();
+      let probationEndDate = moment(this.empdata.probationEndDate);
+      let currentDateWithoutTime = currentDate.startOf('day');
+      let probationEndDateWithoutTime = probationEndDate.startOf('day');
+      if (currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)) {
+        let dateOfJoining = moment(this.empdata.dateOfJoining);
+        let startdate = moment(this.startDate);
+        let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
+        let months = 1;
+        months += Math.floor(probationDaysDiff / 30);
+      }
+    }
+    const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
+    
+    if (category?.category.isOptionalHoliday) {
+      const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
+      if (this.mustUseOptLevs) {
         if (isOptHoliday) {
-          if (this.optionalLeaveAllowedDays !== undefined) {
-            if (this.optLevsUsed <= this.optionalLeaveAllowedDays) {
-              if (this.selectedleave.category.name?.toLowerCase() === 'optional holiday') {
-                this.optLevsUsed++;
-              } else {
-                this.optLevsUsed--;
-              }
-            } else {
-              this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
-              return;
-            }
-          }
-        } else { }
-        let otherCategoriesUsed = 0;
-        this.lpdata.forEach((leave: any) => {
-          const leaveDate = moment(leave.startdate).format('YYYY-MM-DD');
-          const isOptionalHoliday = this.optionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(leaveDate));
-          if (isOptionalHoliday && leave.categoryName !== 'Optional Holiday') {
-            otherCategoriesUsed += leave.duration;
-          }
-        });
-        if (isOptHoliday && this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
-          if (otherCategoriesUsed + this.leaveFormData.duration > 1) {
+          if (this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
             this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
             return;
           } else {
-            otherCategoriesUsed += this.leaveFormData.duration;
+            this.optLevsUsed += this.leaveFormData.duration;
           }
         }
       }
-      this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.conformationPopup.openSuccessModal('Leave requested successfully');
-            setTimeout(() => {
-              this.modalService.dismissAll();
-              this.leaveForm.reset();
-              window.location.reload();
-            }, 2000);
-            this.isLoading = false;
+      if (isOptHoliday) {
+        if (this.optionalLeaveAllowedDays !== undefined) {
+          if (this.optLevsUsed <= this.optionalLeaveAllowedDays) {
+            if (this.selectedleave.category.name?.toLowerCase() === 'optional holiday') {
+              this.optLevsUsed++;
+            } else {
+              this.optLevsUsed--;
+            }
+          } else {
+            this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
+            return;
           }
-        },
-        error: (err: any) => {
-          this.conformationPopup.openErrorModal(err.error.message);
-          this.isLoading = true;
-          this.isLoading = false;
+        }
+      }
+      let otherCategoriesUsed = 0;
+      this.lpdata.forEach((leave: any) => {
+        const leaveDate = moment(leave.startdate).format('YYYY-MM-DD');
+        const isOptionalHoliday = this.optionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(leaveDate));
+        if (isOptionalHoliday && leave.categoryName !== 'Optional Holiday') {
+          otherCategoriesUsed += leave.duration;
         }
       });
+      if (isOptHoliday && this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
+        if (otherCategoriesUsed + this.leaveFormData.duration > 1) {
+          this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
+          return;
+        } else {
+          otherCategoriesUsed += this.leaveFormData.duration;
+        }
+      }
     }
-    else {
-      this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
-    }
+    
+    this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.conformationPopup.openSuccessModal('Leave requested successfully');
+          setTimeout(() => {
+            this.modalService.dismissAll();
+            this.leaveForm.reset();
+            window.location.reload();
+          }, 2000);
+          this.isLoading = false;
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.message);
+        this.isLoading = false;
+      }
+    });
   }
 
   cleardata() {

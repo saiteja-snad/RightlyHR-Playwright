@@ -339,3 +339,16 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #sandwichConfirmationModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text mb-4">{{ sandwichMessage }}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichPolicy(modal)">Continue</button>
+        </div>
+    </div>
+</ng-template>

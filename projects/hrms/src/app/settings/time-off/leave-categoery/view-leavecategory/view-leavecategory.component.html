@@ -258,7 +258,7 @@
         <div class="component-sub-header mb-3">Advance Notice</div>
         <!-- Minimum Advance Apply Days -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="minimumAdvanceApplyDays">Minimum Advance Apply Days<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="minimumAdvanceApplyDays">Minimum Advance Apply Days</label>
           <input type="number" formControlName="minimumAdvanceApplyDays" class="form-control custom-input"
             id="minimumAdvanceApplyDays" placeholder="Enter days" autocomplete="off" min="0">
           <div class="error-msg" *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.invalid && leavePolicyForm.get('minimumAdvanceApplyDays')?.touched">
@@ -271,7 +271,7 @@
         <div class="component-sub-header mb-3">Maximum Leave Duration</div>
         <!-- Max Leave Duration Calendar Days -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="maxLeaveDurationCalendarDays">Max Leave Duration (Calendar Days)<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="maxLeaveDurationCalendarDays">Max Leave Duration (Calendar Days)</label>
           <input type="number" formControlName="maxLeaveDurationCalendarDays" class="form-control custom-input"
             id="maxLeaveDurationCalendarDays" placeholder="Enter days" autocomplete="off" min="1">
           <div class="error-msg" *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.invalid && leavePolicyForm.get('maxLeaveDurationCalendarDays')?.touched">
@@ -281,7 +281,7 @@
 
         <!-- Include Weekends -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="includeWeekends">Include Weekends<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="includeWeekends">Include Weekends</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="includeWeekends" class="custom-select w-100">
@@ -294,7 +294,7 @@
 
         <!-- Include Holidays -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="includeHolidays">Include Holidays<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="includeHolidays">Include Holidays</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="includeHolidays" class="custom-select w-100">
@@ -310,7 +310,7 @@
         <div class="component-sub-header mb-3">Leave Combination</div>
         <!-- Allow Leave Combination -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="allowLeaveCombination">Allow Leave Combination<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="allowLeaveCombination">Allow Leave Combination</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="allowLeaveCombination" class="custom-select w-100">
@@ -366,7 +366,7 @@
         <div class="component-sub-header mb-3">Sandwich Policy</div>
         <!-- Enable Sandwich Policy -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="enableSandwichPolicy">Enable Sandwich Policy<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="enableSandwichPolicy">Enable Sandwich Policy</label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
               formControlName="enableSandwichPolicy" class="custom-select w-100">
@@ -423,7 +423,7 @@
         <div class="component-sub-header mb-3">Leave Interval</div>
         <!-- Minimum Gap Between Same Leave Type -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="minimumGapBetweenSameLeaveType">Minimum Gap Between Same Leave Type (Days)<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="minimumGapBetweenSameLeaveType">Minimum Gap Between Same Leave Type (Days)</label>
           <input type="number" formControlName="minimumGapBetweenSameLeaveType" class="form-control custom-input"
             id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="0">
           <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.invalid && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
@@ -433,7 +433,7 @@
         
         <!-- Gap Calculation Basis -->
         <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gapCalculationBasis">Gap Calculation Basis<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2" for="gapCalculationBasis">Gap Calculation Basis<span class="text-danger" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value > 0">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="gapCalculationOptions" optionLabel="label" optionValue="value" placeholder="Select basis"
               formControlName="gapCalculationBasis" class="custom-select w-100">

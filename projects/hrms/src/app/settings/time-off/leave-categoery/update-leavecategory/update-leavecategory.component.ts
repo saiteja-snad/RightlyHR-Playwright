@@ -167,18 +167,18 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       ],
       probationFrequencyType: [{ value: null }],
       // New Leave Category Fields
-      minimumAdvanceApplyDays: [null, [Validators.required, Validators.max(366)]],
-      maxLeaveDurationCalendarDays: [null, [Validators.required, Validators.max(366)]],
-      includeWeekends: [null, Validators.required],
-      includeHolidays: [null, Validators.required],
-      allowLeaveCombination: [false, Validators.required],
+      minimumAdvanceApplyDays: [null, [Validators.min(1), Validators.max(366)]],
+      maxLeaveDurationCalendarDays: [null, [Validators.min(1), Validators.max(366)]],
+      includeWeekends: [false],
+      includeHolidays: [false],
+      allowLeaveCombination: [true],
       restrictedAdjacentLeaveTypes: [null],
       blockLeaveOnWeekends: [null],
       blockPreviousDayLeave: [null],
       blockNextDayLeave: [null],
-      minimumGapBetweenSameLeaveType: [30, [Validators.required, Validators.max(366)]],
-      gapCalculationBasis: [null, Validators.required],
-      enableSandwichPolicy: [false, Validators.required],
+      minimumGapBetweenSameLeaveType: [30, [Validators.min(1), Validators.max(366)]],
+      gapCalculationBasis: [null],
+      enableSandwichPolicy: [false],
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
       sandwichApplicabilityCondition: [null]
@@ -337,6 +337,17 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       applySandwichOnControl?.updateValueAndValidity();
       sandwichCalculationBasisControl?.updateValueAndValidity();
       sandwichApplicabilityConditionControl?.updateValueAndValidity();
+    });
+
+    this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe((value: any) => {
+      const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
+      if (value && value > 0) {
+        gapCalculationBasisControl?.setValidators([Validators.required]);
+      } else {
+        gapCalculationBasisControl?.clearValidators();
+        gapCalculationBasisControl?.setValue(null);
+      }
+      gapCalculationBasisControl?.updateValueAndValidity();
     });
   }
 
@@ -806,8 +817,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
       probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
       // New Leave Category Fields
-      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays,
-      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays,
+      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays || null,
+      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays || null,
       includeWeekends: this.leavePolicyForm.value.includeWeekends,
       includeHolidays: this.leavePolicyForm.value.includeHolidays,
       allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
@@ -815,7 +826,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
       blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
       blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
-      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType,
+      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType || null,
       gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
       enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
       applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
@@ -934,8 +945,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
       probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
       // New Leave Category Fields
-      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays,
-      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays,
+      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays || null,
+      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays || null,
       includeWeekends: this.leavePolicyForm.value.includeWeekends,
       includeHolidays: this.leavePolicyForm.value.includeHolidays,
       allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
@@ -943,7 +954,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
       blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
       blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
-      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType,
+      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType || null,
       gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
       enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
       applySandwichOn: this.leavePolicyForm.value.applySandwichOn,

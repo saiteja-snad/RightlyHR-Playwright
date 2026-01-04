@@ -362,6 +362,32 @@
       }
       </div>
 
+      <div class="row">
+        <div class="component-sub-header mb-3">Leave Interval</div>
+        <!-- Minimum Gap Between Same Leave Type -->
+        <div class="col-md-3 mb-3">
+          <label class="form-label custom-label mb-2" for="minimumGapBetweenSameLeaveType">Minimum Gap Between Same Leave Type (Days)</label>
+          <input type="number" formControlName="minimumGapBetweenSameLeaveType" class="form-control custom-input"
+            id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="0">
+          <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.invalid && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
+            Minimum Gap Between Same Leave Type is required
+          </div>
+        </div>
+        
+        <!-- Gap Calculation Basis -->
+        <div class="col-md-3 mb-3">
+          <label class="form-label custom-label mb-2" for="gapCalculationBasis">Gap Calculation Basis<span class="text-danger" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value > 0">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="gapCalculationOptions" optionLabel="label" optionValue="value" placeholder="Select basis"
+              formControlName="gapCalculationBasis" class="custom-select w-100">
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('gapCalculationBasis')?.invalid && leavePolicyForm.get('gapCalculationBasis')?.touched">
+            Gap Calculation Basis is required
+          </div>
+        </div>
+      </div>
+
        <div class="row">
         <div class="component-sub-header mb-3">Sandwich Policy</div>
         <!-- Enable Sandwich Policy -->
@@ -419,31 +445,7 @@
         }
       </div>
 
-      <div class="row">
-        <div class="component-sub-header mb-3">Leave Interval</div>
-        <!-- Minimum Gap Between Same Leave Type -->
-        <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="minimumGapBetweenSameLeaveType">Minimum Gap Between Same Leave Type (Days)</label>
-          <input type="number" formControlName="minimumGapBetweenSameLeaveType" class="form-control custom-input"
-            id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="0">
-          <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.invalid && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
-            Minimum Gap Between Same Leave Type is required
-          </div>
-        </div>
-        
-        <!-- Gap Calculation Basis -->
-        <div class="col-md-3 mb-3">
-          <label class="form-label custom-label mb-2" for="gapCalculationBasis">Gap Calculation Basis<span class="text-danger" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value > 0">*</span></label>
-          <div class="custom-p-select-content">
-            <p-select [options]="gapCalculationOptions" optionLabel="label" optionValue="value" placeholder="Select basis"
-              formControlName="gapCalculationBasis" class="custom-select w-100">
-            </p-select>
-          </div>
-          <div class="error-msg" *ngIf="leavePolicyForm.get('gapCalculationBasis')?.invalid && leavePolicyForm.get('gapCalculationBasis')?.touched">
-            Gap Calculation Basis is required
-          </div>
-        </div>
-      </div>
+      
 
         <div class="component-sub-header mb-3">Allow Requests For Future Dates</div>
 

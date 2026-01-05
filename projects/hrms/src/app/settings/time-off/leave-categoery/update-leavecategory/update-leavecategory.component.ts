@@ -169,8 +169,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       // New Leave Category Fields
       minimumAdvanceApplyDays: [null, [Validators.min(1), Validators.max(366)]],
       maxLeaveDurationCalendarDays: [null, [Validators.min(1), Validators.max(366)]],
-      includeWeekends: [false],
-      includeHolidays: [false],
+      includeWeekends: [{ value: false, disabled: true }],
+      includeHolidays: [{ value: false, disabled: true }],
       allowLeaveCombination: [true],
       restrictedAdjacentLeaveTypes: [null],
       blockLeaveOnWeekends: [null],
@@ -348,6 +348,23 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
         gapCalculationBasisControl?.setValue(null);
       }
       gapCalculationBasisControl?.updateValueAndValidity();
+    });
+
+    this.leavePolicyForm?.get('maxLeaveDurationCalendarDays')?.valueChanges.subscribe((value: any) => {
+      const includeWeekendsControl = this.leavePolicyForm.get('includeWeekends');
+      const includeHolidaysControl = this.leavePolicyForm.get('includeHolidays');
+      
+      if (value && value > 0) {
+        includeWeekendsControl?.enable();
+        includeHolidaysControl?.enable();
+      } else {
+        includeWeekendsControl?.disable();
+        includeHolidaysControl?.disable();
+        includeWeekendsControl?.setValue(false);
+        includeHolidaysControl?.setValue(false);
+      }
+      includeWeekendsControl?.updateValueAndValidity();
+      includeHolidaysControl?.updateValueAndValidity();
     });
   }
 

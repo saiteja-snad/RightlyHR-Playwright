@@ -317,7 +317,8 @@
             <label class="form-label custom-label mb-2" for="includeWeekends">Include Weekends</label>
             <div class="custom-p-select-content">
               <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
-                formControlName="includeWeekends" class="custom-select w-100">
+                formControlName="includeWeekends" class="custom-select w-100"
+                [disabled]="!leavePolicyForm.get('maxLeaveDurationCalendarDays')?.value || leavePolicyForm.get('maxLeaveDurationCalendarDays')?.value <= 0">
               </p-select>
             </div>
             <div class="error-msg"
@@ -331,7 +332,8 @@
             <label class="form-label custom-label mb-2" for="includeHolidays">Include Holidays</label>
             <div class="custom-p-select-content">
               <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
-                formControlName="includeHolidays" class="custom-select w-100">
+                formControlName="includeHolidays" class="custom-select w-100"
+                [disabled]="!leavePolicyForm.get('maxLeaveDurationCalendarDays')?.value || leavePolicyForm.get('maxLeaveDurationCalendarDays')?.value <= 0">
               </p-select>
             </div>
             <div class="error-msg"

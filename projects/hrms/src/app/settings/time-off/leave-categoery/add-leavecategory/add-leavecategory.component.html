@@ -78,8 +78,8 @@
           <label class="form-label custom-label mb-2" for="LeaveCategory">Leave Category Type<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value" placeholder="Select Category"
-              formControlName="type" class="custom-select w-100">
+            <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value"
+              placeholder="Select Category" formControlName="type" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg"
@@ -130,9 +130,10 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="email">Valid Days <span class="text-danger">*</span></label>
 
-          <input type="number" formControlName="validity" class="form-control custom-input" id="validdates" autocomplete="off"
-            placeholder="Please enter valid days" required>
-          <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched)">
+          <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
+            autocomplete="off" placeholder="Please enter valid days" required>
+          <div class="error-msg"
+            *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched)">
             <ng-container *ngIf="leavePolicyForm.get('validity')?.errors?.['required']">
               Valid Days is required
             </ng-container>
@@ -141,10 +142,8 @@
             </ng-container>
 
           </div>
-          <span class="error-msg" *ngIf="leavePolicyForm.get('validity')?.errors?.['max']">
-            Valid Days cannot exceed 366
-          </span>
-          
+
+
         </div>
 
         <!-- Color -->
@@ -195,8 +194,7 @@
               placeholder="Select marital status" formControlName="allowedMaritalStatus" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
                                             (leavePolicyForm.get('allowedMaritalStatus')?.touched  )">
             Allowed Marital Status is required
           </div>
@@ -241,8 +239,7 @@
               formControlName="isOptionalHoliday" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('isOptionalHoliday')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('isOptionalHoliday')?.invalid && 
                                             (leavePolicyForm.get('isOptionalHoliday')?.touched  )">
             Is Optional Holiday is required
           </div>
@@ -277,8 +274,249 @@
           </div>
         </div>
 
-        <div class="component-sub-header mb-3">Allow Requests For Future Dates</div>
+        <!-- Advanced Leave Settings Section -->
+        <div class="row">
+          <div class="component-sub-header mb-3">Advance Notice</div>
+          <!-- Minimum Advance Apply Days -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="minimumAdvanceApplyDays">Minimum Advance Apply Days</label>
+            <input type="number" formControlName="minimumAdvanceApplyDays" class="form-control custom-input"
+              id="minimumAdvanceApplyDays" placeholder="No. of days" autocomplete="off"
+              (input)="onNumberInput($event, 'minimumAdvanceApplyDays')" min="1" maxlength="3">
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.hasError('required') && leavePolicyForm.get('minimumAdvanceApplyDays')?.touched">
+              Minimum Advance Apply Days is required
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.errors?.['max']" >
+               Minimum Advance Apply Days cannot exceed 366
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('minimumAdvanceApplyDays')?.errors?.['min']" >
+               Minimum Advance Apply Days must be at least 1
+            </div>
+          </div>
+        </div>
 
+        <div class="row">
+          <div class="component-sub-header mb-3">Maximum Leave Duration</div>
+          <!-- Max Leave Duration Calendar Days -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="maxLeaveDurationCalendarDays">Max Leave Duration (Calendar Days)</label>
+            <input type="number" formControlName="maxLeaveDurationCalendarDays" class="form-control custom-input"
+              id="maxLeaveDurationCalendarDays" placeholder="No. of days" autocomplete="off" min="1" maxlength="3"
+              (input)="onNumberInput($event, 'maxLeaveDurationCalendarDays')">
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.hasError('required') && leavePolicyForm.get('maxLeaveDurationCalendarDays')?.touched">
+              Max Leave Duration is required
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.errors?.['max']">
+              Max Leave Duration cannot exceed 366
+            </div>
+             <div class="error-msg" *ngIf="leavePolicyForm.get('maxLeaveDurationCalendarDays')?.errors?.['min']">
+              Max Leave Duration must be at least 1
+            </div>
+          </div>
+
+          <!-- Include Weekends -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="includeWeekends">Include Weekends</label>
+            <div class="custom-p-select-content">
+              <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+                formControlName="includeWeekends" class="custom-select w-100">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('includeWeekends')?.invalid && leavePolicyForm.get('includeWeekends')?.touched">
+              Include Weekends is required
+            </div>
+          </div>
+
+          <!-- Include Holidays -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="includeHolidays">Include Holidays</label>
+            <div class="custom-p-select-content">
+              <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+                formControlName="includeHolidays" class="custom-select w-100">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('includeHolidays')?.invalid && leavePolicyForm.get('includeHolidays')?.touched">
+              Include Holidays is required
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="component-sub-header mb-3">Leave Combination</div>
+          <!-- Allow Leave Combination -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="allowLeaveCombination">Allow Leave Combination</label>
+            <div class="custom-p-select-content">
+              <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+                formControlName="allowLeaveCombination" class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('allowLeaveCombination')?.invalid && leavePolicyForm.get('allowLeaveCombination')?.touched">
+              Allow Leave Combination is required
+            </div>
+          </div>
+
+          @if(leavePolicyForm.get('allowLeaveCombination')?.value === false ){
+          <!-- Restricted Adjacent Leave Types -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="restrictedAdjacentLeaveTypes">Restricted Adjacent Leave
+              Types<span class="text-danger">*</span></label>
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect [options]="publishedCategories" optionLabel="name" optionValue="id"
+                placeholder="Select categories" formControlName="restrictedAdjacentLeaveTypes"
+              class="form-select custom-select" filterPlaceHolder="Search categories">
+              </p-multiSelect>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('restrictedAdjacentLeaveTypes')?.invalid && leavePolicyForm.get('restrictedAdjacentLeaveTypes')?.touched">
+              Restricted Adjacent Leave Types is required
+            </div>
+          </div>
+
+          <!-- Block Previous Day Leave -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="blockPreviousDayLeave">Block Previous Day Leave<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+                formControlName="blockPreviousDayLeave" class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('blockPreviousDayLeave')?.invalid && leavePolicyForm.get('blockPreviousDayLeave')?.touched">
+              Block Previous Day Leave is required
+            </div>
+          </div>
+
+          <!-- Block Next Day Leave -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="blockNextDayLeave">Block Next Day Leave<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+                formControlName="blockNextDayLeave" class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('blockNextDayLeave')?.invalid && leavePolicyForm.get('blockNextDayLeave')?.touched">
+              Block Next Day Leave is required
+            </div>
+          </div>
+          }
+        </div>
+
+
+        <div class="row">
+          <div class="component-sub-header mb-3">Leave Interval</div>
+          <!-- Minimum Gap Between Same Leave Type -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="minimumGapBetweenSameLeaveType">Minimum Gap Between Same
+              Leave Type (Days)</label>
+            <input type="number" formControlName="minimumGapBetweenSameLeaveType" class="form-control custom-input"
+              id="minimumGapBetweenSameLeaveType" placeholder="Default: 30 days" autocomplete="off" min="1"
+              (input)="onNumberInput($event, 'minimumGapBetweenSameLeaveType')">
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.hasError('required') && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
+              Minimum Gap Between Same Leave Type is required
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.errors?.['max']">
+              Minimum Gap Between Same Leave Type cannot exceed 366
+            </div>
+            <div class="error-msg" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.errors?.['min']">
+              Minimum Gap Between Same Leave Type must be at least 1
+            </div>
+          </div>
+          <!-- Gap Calculation Basis -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="gapCalculationBasis">Gap Calculation Basis<span
+                class="text-danger" *ngIf="leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.value > 0">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="gapCalculationOptions" optionLabel="label" optionValue="value"
+                placeholder="Select basis" formControlName="gapCalculationBasis" class="custom-select w-100">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('gapCalculationBasis')?.hasError('required') && leavePolicyForm.get('minimumGapBetweenSameLeaveType')?.touched">
+              Gap Calculation Basis is required
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="row">
+          <div class="component-sub-header mb-3">Sandwich Policy</div>
+          <!-- Enable Sandwich Policy -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="enableSandwichPolicy">Enable Sandwich Policy</label>
+            <div class="custom-p-select-content">
+              <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
+                formControlName="enableSandwichPolicy"class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('enableSandwichPolicy')?.invalid && leavePolicyForm.get('enableSandwichPolicy')?.touched">
+              Enable Sandwich Policy is required
+            </div>
+          </div>
+
+          @if(leavePolicyForm.get('enableSandwichPolicy')?.value === true ){
+          <!-- applySandwichOn -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="applySandwichOn">Apply Sandwich On<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="applySandwichOnOptions" optionLabel="label" optionValue="value"
+                placeholder="Select option" formControlName="applySandwichOn"class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('applySandwichOn')?.hasError('required') && leavePolicyForm.get('applySandwichOn')?.touched">
+              Apply Sandwich On is required
+            </div>
+          </div>
+
+          <!-- sandwichCalculationBasis -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="sandwichCalculationBasis">Sandwich Calculation Basis<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="sandwichCalculationBasisOptions" optionLabel="label" optionValue="value"
+                placeholder="Select option" formControlName="sandwichCalculationBasis" class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('sandwichCalculationBasis')?.invalid && leavePolicyForm.get('sandwichCalculationBasis')?.touched">
+              Sandwich Calculation Basis is required
+            </div>
+          </div>
+
+          <!-- sandwichApplicabilityCondition -->
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="sandwichApplicabilityCondition">Sandwich Applicability
+              Condition<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="sandwichApplicabilityConditionOptions" optionLabel="label" optionValue="value"
+                placeholder="Select option" formControlName="sandwichApplicabilityCondition"
+               class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('sandwichApplicabilityCondition')?.invalid && leavePolicyForm.get('sandwichApplicabilityCondition')?.touched">
+              Sandwich Applicability Condition is required
+            </div>
+          </div>
+          }
+        </div>
+
+
+      
+        <div class="component-sub-header mb-3">Allow Requests For Future Dates</div>
         <!-- Future Dates Allowed  -->
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="gender">Allowed<span class="text-danger">*</span></label>
@@ -297,7 +535,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="gender">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="futureDatesAllowedDays" class="form-control custom-input"
-            id="FutureDatesAllowedUnits"    placeholder="No. of days" autocomplete="off" min="1">
+            id="FutureDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1">
           <div class="error-msg" *ngIf="leavePolicyForm.get('futureDatesAllowed')?.value === true && 
                     leavePolicyForm.get('futureDatesAllowedDays')?.invalid && (leavePolicyForm.get('futureDatesAllowedDays')?.touched 
                      )">
@@ -307,11 +545,11 @@
             <span *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['min']">
               Future Dates Allowed days must be at least 1
             </span>
-            <span  *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['maxExceeded']">
-             Value cannot exceed the Valid Days limit
+            <span *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['maxExceeded']">
+              Value cannot exceed the Valid Days limit
             </span>
           </div>
-          
+
         </div>
 
         <div class="component-sub-header mb-3">Allow Requests For Past Dates</div>
@@ -334,7 +572,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="pastdatesdays">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="pastDatesAllowedDays" class="form-control custom-input"
-            id="PastDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1"    >
+            id="PastDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1">
           <div class="error-msg" *ngIf="leavePolicyForm.get('pastDateAllowed')?.value === true && 
                   leavePolicyForm.get('pastDatesAllowedDays')?.invalid && (leavePolicyForm.get('pastDatesAllowedDays')?.touched 
                    )">
@@ -344,7 +582,7 @@
             <span *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['min']">
               Past Dates Allowed days must be at least 1
             </span>
-            <span  *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['maxExceeded']">
+            <span *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['maxExceeded']">
               Value cannot exceed the Valid Days limit
             </span>
           </div>
@@ -360,8 +598,7 @@
               formControlName="carryForwardAllowed" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('carryForwardAllowed')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('carryForwardAllowed')?.invalid && 
                                             (leavePolicyForm.get('carryForwardAllowed')?.touched  )">
             Carry Forward Leave is required
           </div>
@@ -380,8 +617,8 @@
             <span *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['min']">
               Carry Forward days must be at least 1
             </span>
-             <span  *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['maxExceeded']">
-             Value cannot exceed the Valid Days limit
+            <span *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['maxExceeded']">
+              Value cannot exceed the Valid Days limit
             </span>
           </div>
         </div>
@@ -416,8 +653,8 @@
             <span *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['min']">
               Encash days must be at least 1
             </span>
-             <span  *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['maxExceeded']">
-             Value cannot exceed the Valid Days limit
+            <span *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['maxExceeded']">
+              Value cannot exceed the Valid Days limit
             </span>
           </div>
         </div>
@@ -437,14 +674,15 @@
             Probation Rules Applicable is required
           </div>
         </div>
-         <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true">
+        <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true">
           <label class="form-label custom-label mb-2" for="probationFrequencyType">
-           Leave Type Selection<span class="text-danger">*</span>
+            Leave Type Selection<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select [options]="leaveTypeOptions" optionLabel="label" optionValue="value" placeholder="Select Leave Type"
-              formControlName="probationFrequencyType" class="custom-select w-100" appendTo="body">
-            </p-select> 
+            <p-select [options]="leaveTypeOptions" optionLabel="label" optionValue="value"
+              placeholder="Select Leave Type" formControlName="probationFrequencyType" class="custom-select w-100"
+              appendTo="body">
+            </p-select>
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('probationFrequencyType')?.invalid && leavePolicyForm.get('probationFrequencyType')?.touched">
@@ -457,8 +695,7 @@
               class="text-danger">*</span></label>
           <input type="number" formControlName="probationDays" class="form-control custom-input"
             id="ProbationPeriodUnits" placeholder="No. of days" autocomplete="off" min="1">
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true && 
                   leavePolicyForm.get('probationDays')?.invalid && (leavePolicyForm.get('probationDays')?.touched  )">
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['required']">
               Leaves Allowed is required
@@ -466,8 +703,8 @@
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['min']">
               Leaves Allowed must be at least 1
             </span>
-             <span  *ngIf="leavePolicyForm.get('probationDays')?.errors?.['maxExceeded']">
-             Value cannot exceed the Valid Days limit
+            <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['maxExceeded']">
+              Value cannot exceed the Valid Days limit
             </span>
           </div>
         </div>
@@ -479,11 +716,10 @@
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
-              formControlName="noticeperiodAllowedType" class="custom-select w-100"  appendTo="body">
+              formControlName="noticeperiodAllowedType" class="custom-select w-100" appendTo="body">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.invalid && 
                                             (leavePolicyForm.get('noticeperiodAllowedType')?.touched  )">
             Notice Period Rules Applicable is required
           </div>
@@ -491,12 +727,13 @@
 
         <div class="col-md-3 mb-3" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true">
           <label class="form-label custom-label mb-2" for="noticePeriodFrequencyType">
-           Leave Type Selection<span class="text-danger">*</span>
+            Leave Type Selection<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select [options]="leaveTypeOptions" optionLabel="label" optionValue="value" placeholder="Select Leave Type"
-              formControlName="noticePeriodFrequencyType" class="custom-select w-100" appendTo="body">
-            </p-select> 
+            <p-select [options]="leaveTypeOptions" optionLabel="label" optionValue="value"
+              placeholder="Select Leave Type" formControlName="noticePeriodFrequencyType" class="custom-select w-100"
+              appendTo="body">
+            </p-select>
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('noticePeriodFrequencyType')?.invalid && leavePolicyForm.get('noticePeriodFrequencyType')?.touched">
@@ -512,18 +749,21 @@
           <div class="error-msg" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true && leavePolicyForm.get('noticePeriodAllowedValue')?.invalid
              && (leavePolicyForm.get('noticePeriodAllowedValue')?.touched  )">
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['required']">
-             Leaves Allowed is required
+              Leaves Allowed is required
             </span>
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['min']">
               Leaves Allowed must be at least 1
             </span>
-             <span  *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['maxExceeded']">
-             Value cannot exceed the Valid Days limit
+            <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['maxExceeded']">
+              Value cannot exceed the Valid Days limit
             </span>
           </div>
         </div>
       </div>
+
     </div>
+
+
     <!-- Form submission buttons -->
     <div class="d-flex justify-content-end gap-3">
       <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)">Cancel</button>

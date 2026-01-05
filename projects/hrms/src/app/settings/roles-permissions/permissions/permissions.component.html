@@ -3167,7 +3167,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'My Info Personal Tab' || per.fields === 'My Info Job Tab' ||
 
-                            per.fields === 'My Info Documents Tab' || per.fields === 'My Info Team Members Tab' || per.fields === 'My Info My Team Members Tab'|| per.fields === 'My Info Onboard Request Tab'">
+                            per.fields === 'My Info Documents Tab' || per.fields === 'My Info Team Members Tab' || per.fields === 'My Info My Team Members Tab'|| per.fields === 'My Info Onboard Request Tab' || per.fields === 'My Info Exit Feedback Details'|| per.fields === 'My Info Separation Request Details' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -3303,7 +3303,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'My Info Pre-Onboarding Details' ||
                             per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Offboarding Details' ||
-                            per.fields === 'My Info Job Details' || per.fields === 'My Info Separation Request Details' ||
+                            per.fields === 'My Info Job Details'  ||
                             per.fields === 'My Info No Due Clearance Details' || per.fields === 'My Info Probation Details' ||
                             per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details' || per.fields === 'My Info Contract Details' || per.fields === 'My Info Project Details' ||
 

@@ -1018,6 +1018,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Team Members Tab',
     'My Info My Team Members Tab',
     'My Info Onboard Request Tab',
+    'My Info Exit Feedback Details',
+    'My Info Separation Request Details'
   ];
   myInfoPersonalSubTabsFields = [
     'My Info Basic Information',

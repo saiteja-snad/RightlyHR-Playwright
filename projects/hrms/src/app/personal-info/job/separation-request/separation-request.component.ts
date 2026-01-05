@@ -23,6 +23,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.component';
 import { AuthService } from '../../../services/auth.service';
+import { SeparationSubTabsComponent } from "../../../shared/personalinfo-tabs/separation-sub-tabs/separation-sub-tabs.component";
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -37,7 +38,8 @@ import { AuthService } from '../../../services/auth.service';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent,
-  ],
+    SeparationSubTabsComponent
+],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss',
 })
@@ -110,7 +112,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getNodueClearance();
     }
   }
-
+ isActive(route: string): boolean {
+    return this.router.url.includes(route);
+  }
   formInitialization() {
     this.recallreason = this.fb.group({
       recallReason: [

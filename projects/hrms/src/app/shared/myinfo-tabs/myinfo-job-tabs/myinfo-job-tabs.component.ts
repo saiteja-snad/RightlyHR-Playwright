@@ -41,7 +41,7 @@ filterTabs(): void {
     { label: 'Employment History', link: '/myinfo/job/past-experiences', icon: '/images/experience.png', permission: { feature: 'My Info Previous Experience Details', action: 'view' } },
     { label: 'Certifications', link: '/myinfo/job/certifications', icon: '/images/certificate.png', permission: { feature: 'My Info Certification Details', action: 'view' } },
     { label: 'Desk info', link: '/myinfo/job/desk-details', icon: '/images/desk.png', permission: { feature: 'My Info Desk Details', action: 'view' } },
-    { label: 'Separation Request', link: '/myinfo/job/separation-details', icon: '/images/sepration-request.png', permission: { feature: 'My Info Separation Request Details', action: 'view' } },
+    { label: 'Separation Request', link: '/myinfo/job/separation-details/separation-requests', icon: '/images/sepration-request.png', permission: { feature: 'My Info Separation Request Details', action: 'view' } },
     { label: 'No Due Clearance Info', link: '/myinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'My Info No Due Clearance Details', action: 'view' } },
     { label: 'Contract Info', link: '/myinfo/job/contactor-info', icon: '/my-info-icons/contractor.png', permission: { feature: 'My Info Contract Details', action: 'view' } },
     { label: 'Cards', link: '/myinfo/job/cards', icon: '/cards-icons/Allocated.png', permission: { feature: 'My Info Card Details', action: 'view' } },

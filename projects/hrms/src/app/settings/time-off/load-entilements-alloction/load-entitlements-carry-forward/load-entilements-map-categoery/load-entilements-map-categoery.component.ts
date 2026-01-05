@@ -33,8 +33,8 @@ export class LoadEntilementsMapCategoeryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.currentYear = new Date().getFullYear();
     this.carryforwarddata = JSON.parse(localStorage.getItem('loadEntitlement') ?? '{}')
+    this.currentYear =this.carryforwarddata?.year;
     this.getCarryForwardData(this.carryforwarddata)
     this.getdataforcarryforwardforplaylod(this.carryforwarddata)
     this.getshiftdatawise(this.carryforwarddata)

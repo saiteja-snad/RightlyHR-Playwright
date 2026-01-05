@@ -92,15 +92,37 @@
                         </div>
                         <div class="separator"></div>
                         <div class="leave-category-text">
-                            @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
-                            <p class="m-0">Processed</p>
-                            <p class="m-0">{{item.utilizedDays}}</p>
+                        <p class="m-0">Processed</p>
+                            @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
-                            @if (!item.category.isProbationAllowed) {
-                            <p class="m-0">Processed</p>
-                            <p class="m-0">{{item.utilizedDays}}</p>
+                            @else if (!item.category.isProbationAllowed) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
+                            }
+                            @else {
+                            <p class="m-0">0</p>
                             }
                         </div>
+                          @if (
+                        ['comp off',
+                        'compoff',
+                        'compensatory off',
+                        'compensatory leaves',
+                        'compensatory leave',
+                        'compensatory off leave',
+                        'compensatoryoff leaves',
+                        'compensatoryoff leave',
+                        'compensatory off leaves',
+                        'comp off leave',
+                        'compoff leave'
+                        ].includes((item.category?.name ?? '').toLowerCase())
+                        ) {
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p class="m-0">{{ 'Expired' | translate }}</p>
+                            <p class="m-0">{{ item.expiryDaysLeaves }}</p>
+                        </div>
+                        }
                     </div>
                 </div>
                 <div class="progress-content">

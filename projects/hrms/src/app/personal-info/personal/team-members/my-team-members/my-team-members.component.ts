@@ -25,9 +25,7 @@ import { AccessNavigationService } from '../../../../services/access-navigation.
 })
 
 export class MyTeamMembersComponent {
-  isActive(route: string): boolean {
-    return this.router.url.includes(route);
-  }
+ 
   teamData: any;
   empinfo = {} as any;
   searchValue: any;
@@ -74,7 +72,9 @@ export class MyTeamMembersComponent {
     });
   }
 
-
+ isActive(route: string): boolean {
+    return this.router.url.includes(route);
+  }
 
   mapToTreeNodes(data: any[]): any[] {
     return data.map(item => ({

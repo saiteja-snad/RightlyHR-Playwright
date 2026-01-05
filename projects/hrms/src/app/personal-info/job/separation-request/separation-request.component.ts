@@ -24,6 +24,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.component';
 import { AuthService } from '../../../services/auth.service';
 import { SeparationSubTabsComponent } from "../../../shared/personalinfo-tabs/separation-sub-tabs/separation-sub-tabs.component";
+import { MyinfoSeparationSubTabsComponent } from "../../../shared/myinfo-tabs/myinfo-separation-sub-tabs/myinfo-separation-sub-tabs.component";
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -38,7 +39,8 @@ import { SeparationSubTabsComponent } from "../../../shared/personalinfo-tabs/se
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent,
-    SeparationSubTabsComponent
+    SeparationSubTabsComponent,
+    MyinfoSeparationSubTabsComponent
 ],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss',
@@ -112,6 +114,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getNodueClearance();
     }
   }
+  
  isActive(route: string): boolean {
     return this.router.url.includes(route);
   }

@@ -1321,7 +1321,6 @@ getTeamManagersDetails() {
       this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
       
-      // Check sandwich policy
       if (this.selectedleave?.category?.enableSandwichPolicy) {
         this.checkSandwichPolicy();
         return;
@@ -1338,7 +1337,10 @@ getTeamManagersDetails() {
       employeeId: this.leaveFormData.employeeId,
       categoryId: this.leaveFormData.categoryId,
       startDate: this.leaveFormData.startdate,
-      endDate: this.leaveFormData.enddate
+      endDate: this.leaveFormData.enddate,
+      durationType: this.leaveFormData.durationType,
+      isDaytype: this.leaveFormData.isDaytype,
+      duration: this.leaveFormData.duration
     };
 
     this.subscription = this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', payload).subscribe({
@@ -1357,9 +1359,17 @@ getTeamManagersDetails() {
   }
 
   showSandwichConfirmation(sandwichData: any) {
-    const deductionDays = sandwichData?.excessDays || 0 ;
+    const deductionDays = sandwichData?.excessDays || 0;
     const categoryName = sandwichData?.excessDaysCategory || 'leave';
-    this.sandwichMessage = `This leave request falls under the Sandwich Leave Policy. Due to insufficient leave balance, ${deductionDays} days will be treated as ${categoryName}`;
+    const totalLeaveDays = sandwichData?.totalLeaveDays || this.dateDiff;
+    const selectedCategoryDays = totalLeaveDays - deductionDays;
+    
+    if (deductionDays > 0) {
+      this.sandwichMessage = `This leave request falls under the sandwich policy. Due to insufficient leave balance, ${deductionDays} day(s) out of ${totalLeaveDays} will be treated as ${categoryName}, and the ${selectedCategoryDays} day(s) will be deducted from the ${this.selectedleave?.category.name}.`;
+    } else {
+      this.sandwichMessage = `This leave request falls under the Sandwich Leave Policy. ${totalLeaveDays} days will be deducted from the balance of ${this.selectedleave?.category.name}`;
+    }
+    
     this.sandwichData = sandwichData;
     
     this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
@@ -1374,6 +1384,7 @@ getTeamManagersDetails() {
   }
 
   submitLeaveRequest() {
+    this.isLoading = true;
     if (this.empdata.probationEndDate) {
       let currentDate = moment();
       let probationEndDate = moment(this.empdata.probationEndDate);

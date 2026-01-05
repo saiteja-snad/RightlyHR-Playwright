@@ -97,7 +97,7 @@
                     <td>{{item.entity?.employeeName}}</td>
                     <td>{{item.entity?.leaveCategoryName}}</td>
                     <td>
-                        @if(item?.entity?.isSandwichLeave && item?.entity?.categoryBreakdown?.length > 1) {
+                        @if(item?.entity?.isSandwichLeave) {
                             <a type="button" class="text-primary text-decoration-underline" (click)="openSandwichBreakdown(item, sandwichBreakdownModal)">{{item?.entity?.leaveDuration}}</a>
                         } @else {
                             {{item?.entity?.leaveDuration}}
@@ -489,20 +489,8 @@
                             <tr *ngFor="let breakdown of selectedSandwichItem?.entity?.categoryBreakdown">
                                 <td>{{breakdown.categoryName}}</td>
                                 <td>{{breakdown.duration}}</td>
-                                <td class="text-nowrap">
-                                    @if(breakdown.leaveDates && breakdown.leaveDates.length > 1) {
-                                        {{breakdown.leaveDates[0] | dateformat}}
-                                    } @else {
-                                        {{breakdown.leaveDates[0] | dateformat}}
-                                    }
-                                </td>
-                                <td class="text-nowrap">
-                                    @if(breakdown.leaveDates && breakdown.leaveDates.length > 1) {
-                                        {{breakdown.leaveDates[breakdown.leaveDates.length - 1] | dateformat}}
-                                    } @else {
-                                        {{breakdown.leaveDates[0] | dateformat}}
-                                    }
-                                </td>
+                                <td>{{breakdown.startDate | dateformat}}</td>
+                                <td>{{breakdown.endDate | dateformat}}</td>
                             </tr>
                         </tbody>
                     </table>

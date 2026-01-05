@@ -79,4 +79,5 @@ export interface Ilpid {
   rejectedReason: string;
   actualStatus: string;
   durationType: any;
+  isSandwichLeave: boolean
 }

@@ -1,6 +1,5 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- <div > <span class="component-sub-header"> Separation Request</span></div> -->
         <div *ngIf="isActive('/personalinfo')">
             <app-separation-sub-tabs></app-separation-sub-tabs>
         </div>
@@ -8,4 +7,123 @@
             <app-myinfo-separation-sub-tabs></app-myinfo-separation-sub-tabs>
         </div>
     </div>
+    <div class="custom-table-content">
+        @if (!isDataLoaded) {
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Initiated Date'|translate}}</th>
+                    <th>{{'Last Working Day'|translate}}</th>
+                    <th>{{'Document Url'|translate}}</th>
+                    <th>{{'Status'|translate}}</th>
+                    <th>{{'Form Submit'|translate}}</th>
+                    <th>{{'Actions'|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(((exitfeedbackdata | async) ?? []).length > 0) {
+                @for (item of (exitfeedbackdata | async); track item.id) {
+                <tr>
+                    <td>{{ item.initiatedAt ? (item.initiatedAt | date):'-' }}</td>
+                    <td>{{ item.lastWorkingDate ? (item.lastWorkingDate | date):'-' }}</td>
+                    <td>{{ item.documentUrl ? (item.documentUrl):'-' }}</td>
+                    <td>{{ item.status ? (item.status):'-' }}</td>
+                    <td>
+                        @if(item.status === 'Initiated') {
+                        <div>
+                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">
+                                Form Submit
+                            </button>
+                        </div>
+                        } @else {
+                        <div class="text-muted">-</div>
+                        }
+                    </td>
+                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
+                    'trainee prospective' && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+                    <td>
+                        <div class="dropdown">
+                            @if(item.status != 'Rejected'){
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            }
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" (click)="openInitiateModal(item)">
+                                        <i class="bi bi-repeat me-2"></i>Initiate
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    }
+                </tr>
+                }
+                }
+                @else{
+                <tr>
+                    <td>
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
 </div>
+
+<!-- Initiate Form Modal -->
+<ng-template #initiateModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Initiate Exit Feedback Form</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="initiateForm" (ngSubmit)="initiateExitFeedback()">
+                <div class="mb-3">
+                    <label for="formId" class="form-label custom-label mb-2">Select Form<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select 
+                            [options]="availableForms" 
+                            optionLabel="formName" 
+                            optionValue="formId"
+                            placeholder="Please select a form" 
+                            class="form-select custom-select" 
+                            formControlName="formId">
+                        </p-select>
+                    </div>
+                    <div *ngIf="initiateForm.get('formId')?.touched && initiateForm.get('formId')?.invalid" class="error-msg">
+                        Form selection is required
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="initiateForm.invalid || isLoading">
+                        @if(isLoading){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>Loading...</span>
+                        </div>
+                        }@else {
+                        <span>Initiate</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

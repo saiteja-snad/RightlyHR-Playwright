@@ -126,10 +126,7 @@
           </td>
           <td>{{item.status?item.status:'NA'}}</td>
           @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
-          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee
-          prospective'
-          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee
-          inactive' )){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective' && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
           <td class="text-center">
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&

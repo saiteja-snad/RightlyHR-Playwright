@@ -38,11 +38,13 @@ export default [
       //{ path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
       {
         path: 'separation-details', children: [
+          { path: '', redirectTo: 'separation-requests', pathMatch: 'full' },
           { path: 'separation-requests', loadComponent: () => import('./job/separation-request/separation-request.component').then(m => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
           { path: 'exit-feedback-details', loadComponent: () => import('./job/separation-request/employee-exit-feedback/employee-exit-feedback.component').then(m => m.EmployeeExitFeedbackComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
         
         ]
       },
+      { path: 'separation-request/exit-feedback-form', loadComponent: () => import('./job/separation-request/exit-feedback-form/exit-feedback-form.component').then(m => m.ExitFeedbackFormComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
       { path: 'employee-off-boarding', loadComponent: () => import('./job/employe-off-boarding/employe-off-boarding.component').then((m) => m.EmployeOffBoardingComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
       { path: 'trainee-onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent), data: { permission: 'Employee Info Onboarding Request Details.view' } },
 

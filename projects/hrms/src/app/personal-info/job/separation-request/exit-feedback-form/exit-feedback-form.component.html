@@ -1,0 +1,88 @@
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h4 class="component-sub-header">{{ formDetails.formName || 'Exit Feedback Form' }}</h4>
+      <p class="text-muted mb-0" *ngIf="formDetails.ratingScaleRange">Rating Scale: {{ formDetails.ratingScaleRange }}</p>
+    </div>
+    <button type="button" class="custom-btn btn-secondary" (click)="goBack()">
+      <i class="bi bi-arrow-left me-2"></i>Back
+    </button>
+  </div>
+
+  @if (!isDataLoaded) {
+    <div class="form-container">
+      @if (formSections.length > 0) {
+        @for (section of formSections; track section.id) {
+          <div class="section-card mb-4">
+            <div class="section-header">
+              <h5 class="section-title">{{ section.sectionName }}</h5>
+            </div>
+            
+            <div class="section-content">
+              @if (section.questions && section.questions.length > 0) {
+                @for (question of section.questions; track question.id) {
+                  <div class="question-item mb-4">
+                    <div class="question-text mb-3">
+                      <strong>{{ question.question }}</strong>
+                      @if (question.required) {
+                        <span class="text-danger ms-1">*</span>
+                      }
+                    </div>
+                    
+                    @if (question.options && question.options.length > 0) {
+                      <div class="options-container">
+                        @for (option of question.options; track option.optionId) {
+                          <div class="option-item">
+                            <div class="form-check">
+                              <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                [name]="'question_' + question.id"
+                                [id]="'option_' + option.optionId"
+                                [value]="option.optionId">
+                              <label class="form-check-label" [for]="'option_' + option.optionId">
+                                {{ option.option }}
+                                @if (option.optionWeightage > 0) {
+                                  <span class="rating-badge ms-2">{{ option.optionWeightage }}</span>
+                                }
+                              </label>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    } @else if (question.type === 'text') {
+                      <div class="text-input-container">
+                        <textarea 
+                          class="form-control" 
+                          rows="3" 
+                          placeholder="Enter your response...">
+                        </textarea>
+                      </div>
+                    }
+                  </div>
+                }
+              } @else {
+                <p class="text-muted">No questions available in this section.</p>
+              }
+            </div>
+          </div>
+        }
+        
+        <div class="form-actions mt-4">
+          <button type="button" class="custom-btn btn-primary me-3">
+            Submit Form
+          </button>
+          <button type="button" class="custom-btn btn-secondary" (click)="goBack()">
+            Cancel
+          </button>
+        </div>
+      } @else {
+        <div class="text-center py-5">
+          <p class="text-muted">No form data available.</p>
+        </div>
+      }
+    </div>
+  } @else {
+    <app-data-loader-content />
+  }
+</div>

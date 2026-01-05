@@ -809,6 +809,9 @@ export const permissionsData = [
   { fields: 'Employee Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Re-request for no due', View: false, Update: false, Create: false, Delete: false },
 
+  //Employee Info Exit Feedback
+  { fields: 'Employee Info Exit Feedback Form', View: false, Update: false, Create: false, Delete: false },
+
   //Employee Info Probation Details
   { fields: 'Employee Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Re-Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },

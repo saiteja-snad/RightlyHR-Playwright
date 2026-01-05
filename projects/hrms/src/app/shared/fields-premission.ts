@@ -89,6 +89,10 @@ export const EMPLOYEE_INFO_CLAIMS = [
     claim: 'Employee Submission Of No Due Clearance'
   },
   {
+    permission: 'initiateexitfeedbackform',
+    claim: 'Employee Info Exit Feedback Form'
+  },
+  {
     permission: 'contractconversionrequest',
     claim: 'Employee Info Contract Conversion Request'
   },

@@ -15,6 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-employee-exit-feedback',
@@ -34,6 +35,8 @@ export class EmployeeExitFeedbackComponent {
   selectedItem: any;
   isLoading = false;
   @ViewChild('initiateModal') initiateModal!: TemplateRef<any>;
+  @ViewChild('documentViewModal') documentViewModal!: TemplateRef<any>;
+  documentViewUrl: SafeResourceUrl | null = null;
   
   constructor(
     private router: Router,
@@ -41,7 +44,8 @@ export class EmployeeExitFeedbackComponent {
     private http: HttpService,
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private openModalService: OpenModalService
+    private openModalService: OpenModalService,
+    private sanitizer: DomSanitizer
   ) {
     this.initiateForm = this.fb.group({
       formId: [null, Validators.required]
@@ -99,7 +103,6 @@ export class EmployeeExitFeedbackComponent {
   }
 
   openForm(item: IExitFeedback): void {
-    // Store the form data in localStorage similar to assessmentform component
     const formData = {
       entity: {
         employeeId: this.empinfo.employeeId,
@@ -109,9 +112,15 @@ export class EmployeeExitFeedbackComponent {
       }
     };
     localStorage.setItem('exitfeedbackformdata', JSON.stringify(formData));
-    
-    // Navigate to the exit feedback form component
-    this.router.navigate(['/personalinfo/job/separation-request/exit-feedback-form']);
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+      this.router.navigate(['/personalinfo/job/separation-request/exit-feedback-form']);
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+     this.router.navigate(['/myinfo/job/separation-request/exit-feedback-form']);
+    }
   }
 
   openInitiateModal(item: any): void {
@@ -132,27 +141,13 @@ export class EmployeeExitFeedbackComponent {
     });
   }
 
-  initiateExitFeedback(): void {
-    if (this.initiateForm.valid && this.selectedItem) {
-      this.isLoading = true;
-      const payload = {
-        employeeId : this.selectedItem.employeeId,
-        empFormId: this.initiateForm.get('formId')?.value,
-        status: 'Initiated',
-        initiatedBy: this.empinfo.employeeId
-      };
-      
-      this.subscription = this.http.putData(`ExitFeedbackRequest/${this.selectedItem.id}`, payload).subscribe({
-        next: (response: any) => {
-          this.isLoading = false;
-          this.modalService.dismissAll();
-          this.openModalService.openSuccessModal('Exit feedback form initiated successfully');
-          this.fetchExitFeedbackDetails(); // Refresh the data
-        },
-        error: (err: any) => {
-          this.isLoading = false;
-          this.openModalService.openErrorModal(err.error?.message || 'Failed to initiate form');
-        }
+  viewDocument(documentUrl: string): void {
+    if (documentUrl) {
+      this.documentViewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(documentUrl);
+      this.modalService.open(this.documentViewModal, { 
+        centered: true, 
+        size: 'xl',
+        backdrop: 'static'
       });
     }
   }

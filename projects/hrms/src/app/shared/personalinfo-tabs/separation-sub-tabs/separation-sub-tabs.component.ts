@@ -18,8 +18,8 @@ export class SeparationSubTabsComponent {
   empinfo: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [
-    { label: 'separation-requests', link: '/personalinfo/job/separation-details/separation-requests', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' }, count: 0 },
-    { label: 'exit-feedback-details', link: '/personalinfo/job/separation-details/exit-feedback-details', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' }, count: 0 },
+    { label: 'Separation-Requests', link: '/personalinfo/job/separation-details/separation-requests', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' }, count: 0 },
+    { label: 'Exit-Feedback-Details', link: '/personalinfo/job/separation-details/exit-feedback-details', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' }, count: 0 },
   ];
   constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService, private http: HttpService) { }
 

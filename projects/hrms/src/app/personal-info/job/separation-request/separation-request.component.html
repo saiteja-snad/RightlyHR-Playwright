@@ -150,6 +150,12 @@
                     Relieving</a>
                 </li>}
                 }
+                @if(canAccess('view','initiateexitfeedbackform')){
+                @if((item.status === 'Processed' || item.status === 'Early Relieving Processed') && areAllNodueRecordsApproved(item) && !recallandearlyrelievingbuttonConditions){
+                <li (click)="openInitiateModal(item)">
+                  <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">Initiate Exit Feedback</a>
+                </li>}
+                }
               </ul>
             </div>
           </td>
@@ -461,6 +467,7 @@
   </div>
 </ng-template>
 
+
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
@@ -502,4 +509,53 @@
       <div><strong>Days:</strong> {{ noticeDetailsData?.noticePeriodTypeDays }}</div>
     </div>
   </div>
+</ng-template>
+
+<ng-template #initiateModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Initiate Exit Feedback Form</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="initiateForm" (ngSubmit)="initiateExitFeedback()">
+                <div class="mb-3">
+                    <label for="formId" class="form-label custom-label mb-2">Select Form<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select 
+                            [options]="availableForms" 
+                            optionLabel="formName" 
+                            optionValue="formId"
+                            placeholder="Please select a form" 
+                            class="form-select custom-select" 
+                            formControlName="formId">
+                        </p-select>
+                    </div>
+                    <div *ngIf="initiateForm.get('formId')?.touched && initiateForm.get('formId')?.invalid" class="error-msg">
+                        Form selection is required
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="initiateForm.invalid || isLoading">
+                        @if(isLoading){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>Loading...</span>
+                        </div>
+                        }@else {
+                        <span>Initiate</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </ng-template>

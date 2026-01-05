@@ -4,23 +4,24 @@
 }
 
 .section-card {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  background: var(--white-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
 .section-header {
-  background: #f8f9fa;
+  background: var(--table-header-bg-color);
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .section-title {
   margin: 0;
-  color: #333;
+  color: var(--primary-color);
   font-weight: 600;
+  font-size: var(--fontsize16);
 }
 
 .section-content {
@@ -28,7 +29,7 @@
 }
 
 .question-item {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--ash-color-100);
   padding-bottom: 1rem;
   
   &:last-child {
@@ -38,8 +39,8 @@
 }
 
 .question-text {
-  color: #333;
-  font-size: 1rem;
+  color: var(--input-label-color);
+  font-size: var(--fontsize14);
   line-height: 1.5;
 }
 
@@ -58,36 +59,42 @@
     }
     
     .form-check-label {
-      font-size: 0.95rem;
-      color: #555;
+      font-size: var(--fontsize14);
+      color: var(--input-color);
       cursor: pointer;
       
       &:hover {
-        color: #333;
+        color: var(--primary-color);
       }
     }
   }
 }
 
 .rating-badge {
-  background: #007bff;
-  color: white;
+  background: var(--primary-color);
+  color: var(--white-color);
   padding: 0.2rem 0.5rem;
   border-radius: 12px;
-  font-size: 0.75rem;
+  font-size: var(--fontsize12);
   font-weight: 500;
 }
 
 .text-input-container {
-  .form-control {
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  .custom-input {
+    border: 1px solid var(--input-border-color);
+    border-radius: 0.5rem;
     padding: 0.75rem;
-    font-size: 0.95rem;
+    font-size: var(--fontsize14);
+    background-color: var(--input-bg-color);
     
     &:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(11, 58, 131, 0.25);
+      background-color: var(--white-color);
+    }
+    
+    &::placeholder {
+      color: var(--input-placeholder-color);
     }
   }
 }
@@ -95,17 +102,11 @@
 .form-actions {
   text-align: center;
   padding: 2rem 0;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border-color);
   
   .custom-btn {
     min-width: 120px;
   }
-}
-
-.component-sub-header {
-  color: #333;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
 }
 
 @media (max-width: 768px) {

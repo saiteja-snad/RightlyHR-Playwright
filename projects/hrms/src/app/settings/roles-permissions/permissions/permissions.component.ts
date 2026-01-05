@@ -1133,6 +1133,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Submission Of No Due Clearance',
     'Employee Re-request for no due',
   ];
+   employeeExitFeedbackFields = [
+    'Employee Info Exit Feedback Form'
+  ];
   employeeProbationRequestFields = [
     'Employee Request for Probation Confirmation',
     'Employee Re-Request for Probation Confirmation',

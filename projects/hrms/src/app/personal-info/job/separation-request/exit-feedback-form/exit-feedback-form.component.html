@@ -1,8 +1,7 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3" [style.display]="isGeneratingPdf ? 'none' : 'flex'">
     <div>
       <h4 class="component-sub-header">{{ formDetails.formName || 'Exit Feedback Form' }}</h4>
-      <p class="text-muted mb-0" *ngIf="formDetails.ratingScaleRange">Rating Scale: {{ formDetails.ratingScaleRange }}</p>
     </div>
     <button type="button" class="custom-btn btn-secondary" (click)="goBack()">
       <i class="bi bi-arrow-left me-2"></i>Back
@@ -10,7 +9,7 @@
   </div>
 
   @if (!isDataLoaded) {
-    <div class="form-container">
+    <div class="form-container" id="content">
       @if (formSections.length > 0) {
         @for (section of formSections; track section.id) {
           <div class="section-card mb-4">
@@ -39,7 +38,8 @@
                                 type="radio" 
                                 [name]="'question_' + question.id"
                                 [id]="'option_' + option.optionId"
-                                [value]="option.optionId">
+                                [value]="option.optionId"
+                                (change)="onAnswerChange(question.id, option.optionId)">
                               <label class="form-check-label" [for]="'option_' + option.optionId">
                                 {{ option.option }}
                                 @if (option.optionWeightage > 0) {
@@ -53,9 +53,11 @@
                     } @else if (question.type === 'text') {
                       <div class="text-input-container">
                         <textarea 
-                          class="form-control" 
+                          class="form-control custom-input" 
                           rows="3" 
-                          placeholder="Enter your response...">
+                          placeholder="Enter your response..."
+                          [value]="getTextAnswer(question.id)"
+                          (input)="onTextAnswerChange(question.id, $event)">
                         </textarea>
                       </div>
                     }
@@ -68,9 +70,16 @@
           </div>
         }
         
-        <div class="form-actions mt-4">
-          <button type="button" class="custom-btn btn-primary me-3">
-            Submit Form
+        <div class="form-actions mt-4" [style.display]="isGeneratingPdf ? 'none' : 'block'">
+          <button type="button" class="custom-btn btn-primary me-3" (click)="submitForm()" [disabled]="isSubmitting">
+            @if(isSubmitting){
+            <div class="button-loader-content">
+              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+              <span>Submitting...</span>
+            </div>
+            }@else {
+            <span>Submit Form</span>
+            }
           </button>
           <button type="button" class="custom-btn btn-secondary" (click)="goBack()">
             Cancel

@@ -831,6 +831,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'no-due-clearance-details': 'No Due Clearance',
     'probation-details': 'Probation Info',
     'separation-details': 'Separation Request',
+    'separation-requests': 'Separation Request',
+    'exit-feedback-details': 'Exit Feedback Details',
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'contactor-info': 'Contractor Info',
@@ -901,6 +903,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
       '/myinfo/job/separation-details':
         MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/separation-details/separation-requests':
+        MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/separation-details/exit-feedback-details':
+        MODULE_INFOS.JOB_MODULE_EXIT_FEEDBACK_MODULE_INFO,
       '/myinfo/job/no-due-clearance-details':
         MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
       '/myinfo/job/probation-details':
@@ -964,8 +970,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/job-details':
         MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
-      '/personalinfo/job/separation-details':
+      '/personalinfo/job/separation-details/separation-requests':
         MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/separation-details/exit-feedback-details':
+        MODULE_INFOS.JOB_MODULE_EXIT_FEEDBACK_MODULE_INFO,
       '/personalinfo/job/no-due-clearance-details':
         MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
       '/personalinfo/job/probation-details':

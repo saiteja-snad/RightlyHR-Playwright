@@ -1228,23 +1228,19 @@ getTeamManagersDetails() {
       this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
-      if (this.enableHalfDayOptions === false) {
-        this.leaveForm.get('halfdayavailing')?.disable();
-        this.leaveForm.get('availing')?.disable();
-      }
       this.toggleFullDayOptions(false);
       if (this.dateDifference > 1) {
         this.leaveForm.get('halfdayavailing')?.disable();
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
         this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
+      } else {
+        // For single day, enable half day options
+        this.leaveForm.get('halfdayavailing')?.enable();
+        this.leaveForm.get('availing')?.enable();
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
       }
-      // else{
-      //   this.leaveForm.get('availing')?.enable();
-      // }
-      // if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
-      //   this.disableSubmitButton = false;
-      // }
       this.selectedValue = '2'
     }
   }
@@ -1275,8 +1271,8 @@ getTeamManagersDetails() {
 
   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    this.chooseDayType('half')
     if (isHalfDay) {
+      this.chooseDayType('half');
       // Default to 'firsthalf' if not already set
       const availingValue = this.leaveForm.get('availing')?.value;
       if (!availingValue) {

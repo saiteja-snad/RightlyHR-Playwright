@@ -87,7 +87,8 @@ import {
   MyINFO_TEAM_NUMBERS,
   MY_KRA_KPI_TABS,
   PERFORMANCE_REVIEW_TABS,
-  MY_INFO_SEPARATION_REQUEST_ROUTES
+  MY_INFO_SEPARATION_REQUEST_ROUTES,
+  Employee_INFO_Separation_Request
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -1893,6 +1894,16 @@ export class AccessNavigationService {
       case '/personalinfo/job/team':
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
           for (const item of Employee_TEAM_NUMBERS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/personalinfo/job/separation-details':
+        if (this.rbac.allowedToAccess('Employee Info Separation Request Details.view')) {
+          for (const item of Employee_INFO_Separation_Request) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

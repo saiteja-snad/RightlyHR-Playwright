@@ -548,6 +548,11 @@ export const
     { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
 
   ]
+
+export const Employee_INFO_Separation_Request = [
+  { permission: 'Employee Info Separation Request Details.view', route: '/personalinfo/job/separation-details/separation-request' },
+  { permission: 'Employee Info Exit Feedback Details.view', route: '/personalinfo/job/separation-details/exit-feedback-details' },
+];
 export const MY_INFO_SEPARATION_REQUEST_ROUTES = [
   { permission: 'My Info Separation Request Details.view', route: '/myinfo/job/separation-details/separation-requests' },
   { permission: 'My Info Exit Feedback Details.view', route: '/myinfo/job/separation-details/exit-feedback-details' }
@@ -569,7 +574,6 @@ export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Onboarding Details.view', route: '/personalinfo/job/onboarding-details' },
   { permission: 'Employee Info Offboarding Details.view', route: '/personalinfo/job/employmentType' },
   { permission: 'Employee Info Job Details.view', route: '/personalinfo/job/job-details' },
-  { permission: 'Employee Info Separation Request Details.view', route: '/personalinfo/job/separation-details' },
   { permission: 'Employee Info No Due Clearance Details.view', route: '/personalinfo/job/no-due-clearance-details' },
   { permission: 'Employee Info Probation Details.view', route: '/personalinfo/job/probation-details' },
   { permission: 'Employee Info Previous Experience Details.view', route: '/personalinfo/job/past-experiences' },

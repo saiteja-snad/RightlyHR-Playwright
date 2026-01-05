@@ -1092,7 +1092,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info My Team Members Tab',
     'No Due Form',
     'Employee Info Contract Conversion Request',
-    'Employee Info Card Details'
+    'Employee Info Card Details',
+    'Employee Info Exit Feedback Details'
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',

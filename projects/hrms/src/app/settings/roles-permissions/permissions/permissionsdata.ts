@@ -766,6 +766,8 @@ export const permissionsData = [
   { fields: 'Employee Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Exit Feedback Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info ', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },

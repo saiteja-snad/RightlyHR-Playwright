@@ -937,17 +937,7 @@ export class OnBeHalfOfComponent {
   }
 
   showSandwichConfirmation(sandwichData: any) {
-    const deductionDays = sandwichData?.excessDays || 0;
-    const categoryName = sandwichData?.excessDaysCategory || 'leave';
-    const totalLeaveDays = sandwichData?.totalLeaveDays || this.dateDiff;
-    const selectedCategoryDays = totalLeaveDays - deductionDays;
-
-    if (deductionDays > 0) {
-      this.sandwichMessage = `This leave request falls under the sandwich policy. Due to insufficient leave balance, ${deductionDays} day(s) out of ${totalLeaveDays} will be treated as ${categoryName}, and the ${selectedCategoryDays} day(s) will be deducted from the ${this.selectedleave?.category.name}.`;
-    } else {
-      this.sandwichMessage = `This leave request falls under the Sandwich Leave Policy. ${totalLeaveDays} days will be deducted from the balance of ${this.selectedleave?.category.name}`;
-    }
-
+    this.sandwichMessage = sandwichData.errorMessage || 'This leave request falls under the Sandwich Leave Policy.';
     this.sandwichData = sandwichData;
 
     this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {

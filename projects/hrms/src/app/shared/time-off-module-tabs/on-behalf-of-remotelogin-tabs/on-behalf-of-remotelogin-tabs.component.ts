@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-behalf-of-remotelogin-tabs',
@@ -59,28 +60,45 @@ filteredTabs: any[] = [];
   constructor(
     public readonly router: Router,
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private timeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
       if (this.http.onBehlafOfRemoteLoginSignal()) {
-        this.http.onBehalfOfRemoteLoginSelectedEmp$.subscribe((emp: number) => {
-          if (emp) {
-            this.getRemoteLoginRequest(emp);
-          } else {
-            this.resetWFHCounts();
-          }
-        });
+        const currentEmpId = this.http.onBehalfOfRemoteLoginSelectedEmp$.value;
+        if (currentEmpId) {
+          this.getRemoteLoginRequest(currentEmpId);
+        } else {
+          this.resetWFHCounts();
+        }
+        this.http.onBehlafOfRemoteLoginSignal.set(false);
       }
     });
   }
 
   ngOnInit(): void {
     this.filterTabsByRbac();
+    
+    this.http.onBehalfOfRemoteLoginSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
+      if (emp) {
+        this.getRemoteLoginRequest(emp);
+      } else {
+        this.resetWFHCounts();
+      }
+    });
+
+    // Listen for year changes
+    this.timeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      const currentEmpId = this.http.onBehalfOfRemoteLoginSelectedEmp$.value;
+      if (currentEmpId) {
+        this.getRemoteLoginRequest(currentEmpId);
+      }
+    });
   }
 
   getRemoteLoginRequest(employeeId: number) {
-    this.loading = true
-    const selectedYear = new Date().getFullYear();
+    this.loading = true;
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
     this.http.getFilterOnBehalfRemoteLoginDataByID(employeeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('remote login data', response);
@@ -96,15 +114,15 @@ filteredTabs: any[] = [];
           this.approvedRemoteLoginRequestsCount = approved.length;
           this.rejectedRemoteLoginRequestsCount = rejected.length;
           this.processedRemoteLoginRequestsCount = processed.length;
-          this.cancelRemoteLoginRequestsCount = cancelled.length
+          this.cancelRemoteLoginRequestsCount = cancelled.length;
           this.updateNavTabs();
-          this.loading = false
+          this.loading = false;
         } else {
           console.error('Invalid response format');
         }
       },
       error: (reason: any) => {
-        this.loading = true;
+        this.loading = false;
         console.log('remote login data', reason);
       }
     });
@@ -172,7 +190,7 @@ filteredTabs: any[] = [];
   }
 
   ngOnDestroy(): void {
-    this.http.onBehalfOfWFHSelectedEmp$.next(null);
+    this.http.onBehalfOfRemoteLoginSelectedEmp$.next(null);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }

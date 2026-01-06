@@ -7,7 +7,7 @@ import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { DownloadExpenseComponent } from '../../../../claimsandexpenses/download-expense/download-expense.component';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
@@ -24,7 +24,6 @@ import { DataLoaderContentComponent } from '../../../../shared/data-loader-conte
 })
 export class OnBehalfOfExpensesProcessedComponent {
   empinfo: any
-  subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
   selectedData = {} as any;
@@ -42,8 +41,10 @@ export class OnBehalfOfExpensesProcessedComponent {
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   draftsCount: number = 0;
   loading = false
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  
   ngOnInit(): void {
-    this.http.selectedEmployeeIdExpensesforonbehalf$.subscribe((id) => {
+    this.http.selectedEmployeeIdExpensesforonbehalf$.pipe(takeUntil(this.destroy$)).subscribe((id) => {
       console.log(id)
       if (id) {
         this.selectemp = id;
@@ -51,6 +52,12 @@ export class OnBehalfOfExpensesProcessedComponent {
       } else {
         this.selectemp = null;
         this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+        this.expenesEmplyeedata.next([]);
+      }
+    });
+
+    this.SelectedyeartimeOffService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.selectemp) {
         this.getexpensesheaderbyemployeeid();
       }
     });
@@ -71,13 +78,12 @@ export class OnBehalfOfExpensesProcessedComponent {
   }
 
   getexpensesheaderbyemployeeid(): void {
-    const empId = this.selectemp 
-    const year = this.selectedYear ?? new Date().getFullYear();
+    const empId = this.selectemp;
+    const selectedYear = this.SelectedyeartimeOffService.getSelectedYear();
     const month = this.seletedMouthly ?? new Date().getMonth() + 1;
     const status = 'Processed';
     const searchQuery = this.searchTerm?.trim() || '';
-    this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${status}&month=${month}&year=${year}&searchQuery=${searchQuery}`,).subscribe({
+    this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=${status}&month=${month}&year=${selectedYear}&searchQuery=${searchQuery}`,).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.expenesEmplyeedata.next(data);
           const filteredData = data.filter((item: any) => !item.expenseSummary);
@@ -100,8 +106,8 @@ export class OnBehalfOfExpensesProcessedComponent {
   viewItem(expid: number,) {
     console.log(expid);
     this.updataid = expid;
-    this.subscription = this.http
-      .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
+    this.http
+      .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.expenseheaderiteams = data
 
@@ -112,7 +118,7 @@ export class OnBehalfOfExpensesProcessedComponent {
 
   }
   onSelectDownload(file: any): void {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         // Check if the response body is of type Blob
         const blob: Blob = res.body as Blob;
@@ -155,8 +161,8 @@ export class OnBehalfOfExpensesProcessedComponent {
     const lowerUrl = url?.toLowerCase();
 
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
-      this.subscription = this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+      this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
             const blob = new Blob([res['body']], { type: 'image/png' });
@@ -190,9 +196,9 @@ export class OnBehalfOfExpensesProcessedComponent {
 
 
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
-    }
+    this.expenesEmplyeedata.next([]);
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
 }

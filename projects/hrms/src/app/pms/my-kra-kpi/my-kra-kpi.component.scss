@@ -101,7 +101,13 @@
 .custom-p-multi-select-table {
   position: relative !important;
   height: 35dvh;
-  overflow-x: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

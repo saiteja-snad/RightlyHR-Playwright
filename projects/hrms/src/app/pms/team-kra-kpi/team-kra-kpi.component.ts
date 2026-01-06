@@ -116,8 +116,9 @@ export class TeamKraKpiComponent implements OnInit, OnDestroy {
     // Load review cycles
     this.loadReviewCycles();
 
-    // Default: load data for current logged-in user
-    this.loadTeamKpiData();
+    // Don't load data on init - wait for user action
+    // this.loadTeamKpiData();
+    this.loading = false;
     this.updateModuleInfo();
   }
 
@@ -180,7 +181,13 @@ onEmployeeChange(employeeId: number | null): void {
   this.selectedEmployeeId = employeeId ?? null;
   this.page = 1;
   this.first = 0;
-  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+  if (employeeId) {
+    this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+  } else {
+    this.teamKpiData = [];
+    this.groupedEmployeeData = [];
+    this.collectionSize = 0;
+  }
 }
 
 
@@ -209,8 +216,13 @@ onEmployeeChange(employeeId: number | null): void {
   this.subscription = this.http
     .getDataIncludeParams('Kpi/getTeamMembersAssignKpiKra', params)
     .subscribe((response: any) => {
-      this.teamKpiData = response?.data || [];
-      this.collectionSize = response?.pagination?.totalRecords || 0;
+      // Filter out current logged-in user's data
+      const filteredData = (response?.data || []).filter((item: any) =>
+        item.employeedata?.employeeId !== this.empinfo?.employeeId
+      );
+
+      this.teamKpiData = filteredData;
+      this.collectionSize = filteredData.length;
       this.groupEmployeeData(); // Group data for accordions
       this.loading = false;
     }, (err) => {
@@ -222,62 +234,65 @@ onEmployeeChange(employeeId: number | null): void {
     });
 }
 
-// New method to group employees by employeeId
+// New method to group data by employee-review cycle combinations
 private groupEmployeeData(): void {
-  const employeeMap = new Map<number, any>();
+  const accordionData: any[] = [];
 
   this.teamKpiData.forEach(item => {
     const employeeId = item.employeedata.employeeId;
     const employeeName = `${item.employeedata.firstName || ''} ${item.employeedata.middleName || ''} ${item.employeedata.lastName || ''}`.trim();
     const fusionId = item.employeedata.fusionEmpId;
 
-    if (!employeeMap.has(employeeId)) {
-      employeeMap.set(employeeId, {
-        employeeId: employeeId,
-        employeeName: employeeName,
-        fusionId: fusionId,
-        employeedata: item.employeedata,
-        allKras: []
+    // Process review cycle data
+    const reviewCycleData = item.reviewCycleData;
+    const reviewCycleName = reviewCycleData?.reviewCycle?.reviewCycleName || 'N/A';
+    const reviewCycleId = reviewCycleData?.reviewCycle?.id;
+
+    // Process KRAs for this employee-review cycle combination
+    const krasData: any[] = [];
+    if (reviewCycleData?.kras && reviewCycleData.kras.length > 0) {
+      reviewCycleData.kras.forEach((kraItem: any) => {
+        const kraData = {
+          kraId: kraItem.kra?.kraId,
+          kraName: kraItem.kra?.kraName,
+          kpisCount: kraItem.kpisCount || 0,
+          effectiveDate: kraItem.kra?.effectiveDate,
+          targetDate: kraItem.kra?.targetDate,
+          kraWeightage: kraItem.kpis?.[0]?.assignedKraWeightage || kraItem.kra?.weightageValue,
+          kpis: kraItem.kpis || [],
+          progress: this.calculateKraProgress(kraItem.kpis || []),
+          overallStatus: kraItem.kra?.overallStatus
+        };
+        krasData.push(kraData);
       });
     }
 
-    // Process all review cycles and their KRAs
-    if (item.reviewCycles && item.reviewCycles.length > 0) {
-      item.reviewCycles.forEach((reviewCycleItem: any) => {
-        if (reviewCycleItem.kras && reviewCycleItem.kras.length > 0) {
-          reviewCycleItem.kras.forEach((kraItem: any) => {
-            const kraData = {
-              kraId: kraItem.kra?.kraId,
-              kraName: kraItem.kra?.kraName,
-              reviewCycleName: reviewCycleItem.reviewCycle?.reviewCycleName || 'N/A',
-              kpisCount: kraItem.kpisCount || 0,
-              effectiveDate: kraItem.kra?.effectiveDate,
-              targetDate: kraItem.kra?.targetDate,
-              kraStatus: kraItem.kra?.kpis?.overallStatus,
-              kraWeightage: kraItem.kpis?.length > 0 ? kraItem.kpis[0].assignedKraWeightage : kraItem.kra?.weightageValue,
-              kpis: kraItem.kpis || [],
-              progress: this.calculateKraProgress(kraItem.kpis || []),
-              overallStatus: kraItem.kpis?.length > 0 ? kraItem.kpis[0].overallStatus : kraItem.kra?.overallStatus,
-              kraRating: this.calculateKraRating({
-                kpis: kraItem.kpis || [],
-                individualWeightage: kraItem.kpis?.length > 0 ? kraItem.kpis[0].assignedKraWeightage : kraItem.kra?.weightageValue
-              })
-            };
-
-            employeeMap.get(employeeId)?.allKras.push(kraData);
-          });
-        }
-      });
-    }
+    // Create accordion entry for this employee-review cycle combination
+    accordionData.push({
+      employeeId: employeeId,
+      employeeName: employeeName,
+      fusionId: fusionId,
+      reviewCycleName: reviewCycleName,
+      reviewCycleId: reviewCycleId,
+      employeedata: item.employeedata,
+      allKras: krasData,
+      accordionId: `${employeeId}_${reviewCycleId}` // Unique ID for accordion
+    });
   });
 
-  this.groupedEmployeeData = Array.from(employeeMap.values());
+  this.groupedEmployeeData = accordionData;
 }
 
 onSearchTextChange() {
   this.page = 1;
   this.first = 0;
-  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+  if (this.searchText && this.searchText.trim()) {
+    this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+  } else {
+    this.teamKpiData = [];
+    this.groupedEmployeeData = [];
+    this.collectionSize = 0;
+  }
 }
 
 
@@ -297,9 +312,48 @@ onPageSizeChange(newSize: number) {
   this.loadTeamKpiData(this.selectedEmployeeId || undefined);
 }
 
+// Helper method to check if should show placeholder card
+shouldShowPlaceholder(): boolean {
+  return !this.loading && this.groupedEmployeeData.length === 0 && 
+         !this.selectedReviewCycleId && !this.searchText && !this.selectedEmployeeId;
+}
+
 // Helper method to get total KRAs count for an employee
 getTotalKrasCount(allKras: any[]): number {
   return allKras?.length || 0;
+}
+
+// Helper method to calculate total KRA weightage
+getTotalKraWeightage(allKras: any[]): number {
+  if (!allKras || allKras.length === 0) return 0;
+  return allKras.reduce((total, kra) => {
+    const kraWeightage = kra.kpis?.[0]?.assignedKraWeightage || kra.kraWeightage || 0;
+    return total + Number(kraWeightage);
+  }, 0);
+}
+
+// Helper method to calculate overall rating
+getOverallRating(allKras: any[]): string {
+  if (!allKras || allKras.length === 0) return '-';
+
+  let totalWeightedRating = 0;
+  let totalWeightage = 0;
+
+  allKras.forEach(kra => {
+    const kraWeightage = Number(kra.kpis?.[0]?.assignedKraWeightage || kra.kraWeightage || 0);
+    const kraRating = this.calculateKraRating({
+      kpis: kra.kpis || [],
+      individualWeightage: kraWeightage
+    });
+
+    totalWeightedRating += kraRating;
+    totalWeightage += kraWeightage;
+  });
+
+  if (totalWeightage === 0) return '-';
+
+  const overallRating = totalWeightedRating / (totalWeightage / 100);
+  return overallRating > 0 ? overallRating.toFixed(1) : '-';
 }
 
 // Helper method to get status class for badges
@@ -366,6 +420,8 @@ getApproverStatusClass(status: string | null | undefined): string {
     case null:
     case undefined:
       return 'status-waiting';
+    case 'Created':
+      return 'status-created';
     default:
       return 'bg-secondary';
   }
@@ -468,7 +524,13 @@ onReviewCycleChange(reviewCycleId: string | null) {
   this.selectedReviewCycleId = reviewCycleId;
   this.page = 1;
   this.first = 0;
-  this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+  if (reviewCycleId) {
+    this.loadTeamKpiData(this.selectedEmployeeId || undefined);
+  } else {
+    this.teamKpiData = [];
+    this.groupedEmployeeData = [];
+    this.collectionSize = 0;
+  }
 }
 
 clearAllFilters() {
@@ -477,7 +539,9 @@ clearAllFilters() {
   this.searchText = '';
   this.page = 1;
   this.first = 0;
-  this.loadTeamKpiData();
+  this.teamKpiData = [];
+  this.groupedEmployeeData = [];
+  this.collectionSize = 0;
 }
 
 

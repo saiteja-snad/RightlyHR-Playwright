@@ -214,7 +214,7 @@
                             <span class="text-danger">*</span></label>
                         <!-- <input type="date" class="form-control custom-input" formControlName="enddate"
                         [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')"> -->
-                        <input type="date" class="form-control custom-input" formControlName="enddate" [min]="leaveFormData.startdate"
+                        <input type="date" class="form-control custom-input" formControlName="enddate" [min]="leaveForm.get('startdate')?.value"
                             (ngModelChange)="onEndDate('add')" />
                         <div class="error-msg">
                             <div *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">End Date is required</div>
@@ -302,9 +302,9 @@
                         <ng-template #error>
                             <div class="error-msg">
                                 <p *ngIf="leaveFormData.isDaytype && isDayTypeselected">
-                                    The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
+                                    The leave balance for {{ selectedleave?.category?.name }} is insufficient.</p>
                                 <p *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
-                                    The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
+                                    The leave balance for {{ selectedleave?.category?.name }} is insufficient.</p>
                             </div>
                         </ng-template>
                     </div>

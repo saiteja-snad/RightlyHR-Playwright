@@ -79,6 +79,7 @@ export class OnBehalfOfExpensesTabsComponent {
 
   constructor(private http: HttpService, private rbac: RbacService, private router: Router, private SelectedyeartimeOffService: TimeoffYearFilterService) {
   }
+  
   ngOnInit(): void {
     this.selectemp = null;
     this.expenesEmplyeedata.next([]);
@@ -126,6 +127,13 @@ export class OnBehalfOfExpensesTabsComponent {
       .subscribe(() => {
         this.getexpensesheaderbyemployeeid();
       });
+
+    // Listen for year changes
+    this.SelectedyeartimeOffService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.selectemp) {
+        this.getexpensesheaderbyemployeeid();
+      }
+    });
   }
 
   getexpensesheaderbyemployeeid(): void {
@@ -145,10 +153,9 @@ export class OnBehalfOfExpensesTabsComponent {
     }
 
     const empId = this.selectemp;
-    const year = this.selectedYear ?? new Date().getFullYear();
-    const month = this.seletedMouthly ?? new Date().getMonth() + 1;
+    const selectedYear = this.SelectedyeartimeOffService.getSelectedYear();
 
-    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}`)
+    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${selectedYear}`)
       .subscribe({
         next: (data: any) => {
           this.expenesEmplyeedata.next(data);

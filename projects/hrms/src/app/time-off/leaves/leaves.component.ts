@@ -982,7 +982,7 @@ getTeamManagersDetails() {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
+    const dayPresent = this.orgweekend?.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;
@@ -1044,9 +1044,9 @@ getTeamManagersDetails() {
       next: (data: any) => {
         this.custompolicyleaves = data;
         this.optionalHolidays = this.custompolicyleaves?.orgHolidaysItems.filter((item: { isOptional: boolean }) => item.isOptional);
-        this.optionalHolidayCount = this.optionalHolidays.length;
+        this.optionalHolidayCount = this.optionalHolidays?.length;
         this.blockDates = this.custompolicyleaves?.orgHolidaysItems.map((item: { holidayDate: any }) => item.holidayDate);
-        this.blockDates.find((item: any) => {
+        this.blockDates?.find((item: any) => {
           this.blockedData = this.formatDate(item)
         })
       }

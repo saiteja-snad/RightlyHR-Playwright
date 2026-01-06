@@ -18,6 +18,17 @@
         {{ 'Clear All' | translate }}
       </button>
 
+
+      <div class="d-flex align-items-center gap-2">
+        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
+        <div class="custom-p-select-content">
+          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
+            placeholder="Select Review Cycle" class="form-select custom-select" [(ngModel)]="selectedReviewCycleId"
+            (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true"
+            showClear="true" />
+        </div>
+      </div>
+
       <!-- Employee Selection Dropdown -->
       @if (
       rbac.allowedToAccess('All Employees (KRA).view') &&
@@ -27,7 +38,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
-            placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
             class="form-select custom-select">
           </p-select>
         </div>
@@ -39,7 +50,7 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">Select Employee</label>
         <div class="custom-p-select-content">
           <p-select [options]="activeEmplist" optionLabel="label" optionValue="value" [filter]="true" showClear="true"
-            placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
             class="form-select custom-select">
           </p-select>
         </div>
@@ -51,23 +62,13 @@
         <label class="form-label custom-label text-nowrap filter-labels m-0">My Team</label>
         <div class="custom-p-select-content">
           <p-select [options]="myTeamEmployees" optionLabel="fullName" optionValue="employeeId" showClear="true"
-            [filter]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event.value)"
+            [filter]="true" placeholder="Please select employee" [(ngModel)]="selectedEmployeeId" (onChange)="onEmployeeChange($event.value)"
             class="form-select custom-select">
           </p-select>
         </div>
       </div>
       }
 
-
-      <div class="d-flex align-items-center gap-2">
-        <label class="form-label filter-labels m-0">{{ 'Review Cycle' | translate }}</label>
-        <div class="custom-p-select-content">
-          <p-select [options]="reviewCycleOptions" optionLabel="label" optionValue="value"
-            placeholder="Select Review Cycle" class="form-select custom-select" [(ngModel)]="selectedReviewCycleId"
-            (onChange)="onReviewCycleChange($event.value)" (onClear)="onReviewCycleChange(null)" [filter]="true"
-            showClear="true" />
-        </div>
-      </div>
     </div>
   </div>
 
@@ -100,21 +101,36 @@
           <div class="custom-accordian-data-content">
             @if (groupedEmployeeData.length > 0) {
             <p-accordion>
-              @for (employee of groupedEmployeeData; track employee.employeeId) {
-              <p-accordion-panel [value]="employee.employeeId">
+              @for (accordionItem of groupedEmployeeData; track accordionItem.accordionId) {
+              <p-accordion-panel [value]="accordionItem.accordionId">
                 <!-- ACCORDION HEADER -->
                 <p-accordion-header>
                   <div class="d-flex justify-content-between align-items-center w-100">
                     <div class="d-flex align-items-center gap-3">
                       <div class="text-truncate fw-semibold employee-name">
-                        {{ employee.employeeName }} - ({{ employee.fusionId }})
+                        {{ accordionItem.employeeName }} - ({{ accordionItem.fusionId }})
                       </div>
                     </div>
+
+                    <!-- RIGHT: Review Cycle, Total KRA Weightage, Overall Rating -->
                     <div class="d-flex align-items-center">
-                      <!-- <div class="text-center" style="width: 200px;">
-                              <small class="text-muted me-1" style="font-size: 13px;">Total KRAs:</small>
-                              <strong>{{ getTotalKrasCount(employee.allKras) }}</strong>
-                            </div> -->
+                      <!-- Review Cycle -->
+                      <div class="text-center" style="width: 250px;">
+                        <small class="text-muted me-1" style="font-size: 13px;">Review Cycle:</small>
+                        <strong>{{ accordionItem.reviewCycleName }}</strong>
+                      </div>
+
+                      <!-- Total KRA Weightage -->
+                      <div class="text-center" style="width: 200px;">
+                        <small class="text-muted me-1" style="font-size: 13px;">Total KRA Weightage:</small>
+                        <strong>{{ getTotalKraWeightage(accordionItem.allKras) }}%</strong>
+                      </div>
+
+                      <!-- Overall Rating -->
+                      <div class="text-center" style="width: 150px;">
+                        <small class="text-muted me-1" style="font-size: 13px;">Overall Rating:</small>
+                        <strong>{{ getOverallRating(accordionItem.allKras) }}</strong>
+                      </div>
                     </div>
                   </div>
                 </p-accordion-header>
@@ -122,12 +138,11 @@
                 <!-- ACCORDION CONTENT -->
                 <p-accordion-content>
                   <div class="custom-p-multi-select-table custom-accordian-table">
-                    @if (employee.allKras.length > 0) {
-                    <p-table [value]="employee.allKras">
+                    @if (accordionItem.allKras.length > 0) {
+                    <p-table [value]="accordionItem.allKras">
                       <ng-template pTemplate="header">
                         <tr>
                           <th>{{ 'KRA Name' | translate }}</th>
-                          <th class="text-center">{{ 'Review Cycle' | translate }}</th>
                           <th class="text-center">{{ 'KPIs Count' | translate }}</th>
                           <th class="text-center">{{ 'Target Date' | translate }}</th>
                           <th class="text-center">{{ 'KRA Weightage' | translate }}</th>
@@ -139,7 +154,6 @@
                       <ng-template pTemplate="body" let-kra>
                         <tr>
                           <td>{{ kra.kraName }}</td>
-                          <td class="text-center">{{ kra.reviewCycleName }}</td>
                           <td class="text-center">
                             <span class="kras-bold cursor" [class.text-muted]="kra.kpisCount === 0"
                               [style.pointer-events]="kra.kpisCount === 0 ? 'none' : 'auto'"
@@ -161,10 +175,10 @@
                             <small class="fw-semibold">{{ kra.progress }}%</small>
                           </td>
                           <td class="text-center">
-                                    <span class="kra-status fw-bold" [ngClass]="getKraStatusClass(kra.overallStatus)">
-                                      {{ kra.overallStatus || '-' }}
-                                    </span>
-                                  </td>
+                            <span class="kra-status fw-bold" [ngClass]="getKraStatusClass(kra.overallStatus)">
+                              {{ kra.overallStatus || '-' }}
+                            </span>
+                          </td>
                         </tr>
                       </ng-template>
                     </p-table>
@@ -178,6 +192,14 @@
               </p-accordion-panel>
               }
             </p-accordion>
+            } @else if (shouldShowPlaceholder()) {
+            <!-- Placeholder Card -->
+            <div class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+              <div class="text-center p-5 border rounded bg-light" style="max-width: 500px;">
+                <h5 class="mb-3">{{ 'Please select review cycle or search by employee name' | translate }}</h5>
+                <p class="text-muted mb-3">{{ 'Use the filters above to view Team KRA/KPIs data' | translate }}</p>
+              </div>
+            </div>
             } @else {
             <app-no-data-found />
             }
@@ -275,7 +297,7 @@
             <div [ngClass]="getApproverStatusClass(kpi.assignedStatus)" class="fw-bold">
               {{ kpi.assignedStatus || '-' }}
             </div>
-            <div>
+            <div *ngIf="kpi.assignedApproverRejectedComments && kpi.assignedApproverRejectedComments.trim()">
               <app-info-icon ngbPopover="{{ kpi.assignedApproverRejectedComments || '-' }}" container="body" />
             </div>
           </div>

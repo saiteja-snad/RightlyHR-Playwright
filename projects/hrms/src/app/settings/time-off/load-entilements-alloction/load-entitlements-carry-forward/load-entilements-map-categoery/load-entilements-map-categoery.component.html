@@ -12,41 +12,63 @@
                 <th class="text-center">Target Category ({{ nextYear }})</th>
             </thead>
             <tbody>
-                <tr *ngFor="let item of currentYearData">
-                    <td>
-                        <div class="d-flex justify-content-center align-items-center gap-3">
-                            <div class="code-box" [style.background]="hexToRgba(item.categoryColor, 0.1)"
-                                [style.color]="item.categoryColor">{{item.categoryCode}}</div>
-                            <div class="text-start">
-                                <div class="categoryname" [style.color]="item.categoryColor">{{ item.name }}
-                                    {{currentYear}}</div>
-                                <div *ngIf="item.carryForwardAllowed || item.encashAllowedType" class="eligible-text">
-                                    Eligible for {{ item.carryForwardAllowed ? ' Carry Forward' : '' }}
-                                    <!-- {{ item.carryForwardAllowed && item.encashAllowedType ?? '' }}
-                                    {{ item.encashAllowedType ? ' Encash' : '' }} -->
+                <ng-container *ngFor="let shift of shiftwisedata">
+                    <!-- Shift Header Row -->
+                    <tr class="shift-header-row">
+                        <td colspan="3" class="text-center">
+                            <div class="d-flex gap-3">
+                                <span><span class="header-name">Location Name </span> : <b>{{shift?.locationName}}</b></span>
+                             <span>   <span class="header-name"> Sub Location Name</span> : <b> {{shift?.subLocationName}}</b></span>
+                                <span>
+                                    <div>
+                                        <span class="header-name">Shift Name</span> : <b
+                                            [style.color]="shift?.color">{{shift?.shiftName}} ({{shift?.shiftStartTime}}
+                                            -
+                                            {{shift?.shiftEndTime}})</b>
+                                    </div>
+                                </span>
+                            </div>
+                        </td>
+
+                    </tr>
+                    <!-- Category Rows for this shift -->
+                    <tr *ngFor="let category of shift?.categories">
+                        <td>
+                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                <div class="code-box" [style.background]="hexToRgba(category.categoryColor, 0.1)"
+                                    [style.color]="category?.categoryColor">{{category?.categoryCode}}</div>
+                                <div class="text-start">
+                                    <div class="categoryname" [style.color]="category?.categoryColor">{{ category?.name
+                                        }}
+                                    </div>
+                                    <div *ngIf="category?.carryForwardAllowed || category?.encashAllowedType"
+                                        class="eligible-text">
+                                        Eligible for {{ category?.carryForwardAllowed ? ' Carry Forward' : '' }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
-                    <td class="text-center">
-                        <i class="bi bi-arrow-right"></i>
-                    </td>
-                    <td class="text-center">
-                        <div class="custom-p-select-content">
-                            <p-select [options]="nextYearData" class="form-select custom-select"
-                                placeholder="Please select target category" optionLabel="name" optionValue="id"
-                                appendTo="body" filterPlaceholder="Search category"
-                                [(ngModel)]="item.selectedDestinationId">
-                            </p-select>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                        <td class="text-center">
+                            <i class="bi bi-arrow-right"></i>
+                        </td>
+                        <td class="text-center">
+                            <div class="custom-p-select-content">
+                                <p-select [options]="nextYearData" class="form-select custom-select"
+                                    placeholder="Please select target category" optionLabel="name" optionValue="id"
+                                    appendTo="body" filterPlaceholder="Search category"
+                                    [(ngModel)]="category.selectedDestinationId">
+                                </p-select>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
     </div>
     <div class="d-flex justify-content-end">
-      
-        <p>  <b>Note :</b>Previous year leave balances will lapse if the corresponding leave categories are not mapped.</p>
+
+        <p> <b>Note :</b>Previous year leave balances will lapse if the corresponding leave categories are not mapped.
+        </p>
     </div>
 
 

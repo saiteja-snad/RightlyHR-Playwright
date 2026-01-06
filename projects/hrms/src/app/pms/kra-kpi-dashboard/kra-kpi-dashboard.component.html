@@ -16,7 +16,7 @@
           {{ 'Clear All' | translate }}
         </button>
 
-      @if(rbac.allowedToAccess('All Employees (KRA).view') && rbac.allowedToAccess('My Team (KRA).view')) {
+      @if(rbac.allowedToAccess('All Employees (KRA KPI Dashboard).view') && rbac.allowedToAccess('My Team (KRA KPI Dashboard).view')) {
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
         <div class="custom-p-select-content">
@@ -27,7 +27,7 @@
         </div>
       </div>
       }
-      @else if(rbac.allowedToAccess('All Employees (KRA).view')) {
+      @else if(rbac.allowedToAccess('All Employees (KRA KPI Dashboard).view')) {
       <div class="d-flex align-items-center gap-2">
         <label class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee' | translate}}</label>
         <div class="custom-p-select-content">
@@ -38,7 +38,7 @@
         </div>
       </div>
       }
-      @else if(rbac.allowedToAccess('My Team (KRA).view')) {
+      @else if(rbac.allowedToAccess('My Team (KRA KPI Dashboard).view')) {
       <div class="d-flex align-items-center gap-2">
         <label class="form-label filter-labels m-0">{{'My Team' | translate}}</label>
         <div class="custom-p-select-content">
@@ -66,7 +66,7 @@
       <app-kra-kpi-management-layout />
     </div>
 
-    <div class="w-100 right-content">
+    <div class="w-100 right-content-dashboard">
       <!--Summary cards-->
       @if(chartLoader && summaryCards.length > 0){
       <div class="cards-grid-container mb-3">
@@ -96,7 +96,7 @@
       <!--Charts content-->
       <div class="row">
         <!-- Performance Distribution Chart -->
-        <div class="col-xl-7 col-lg-6 mb-3">
+        <div class="col-xl-8 col-lg-7 mb-3">
           <div class="graph-card h-100 d-flex flex-column" style="height: 380px;">
             <div class="d-flex align-items-center gap-2 mb-3">
               <div class="graph-header">Performance Distribution</div>
@@ -104,7 +104,7 @@
                 <app-module-info-icon placement="bottom" [ngbPopover]="performanceInfo" class="module-icon" />
                 <ng-template #performanceInfo>
                   <div class="module-info-text">
-                    Shows average performance score by department.
+                    This widget displays how employee performance scores are distributed across departments or teams.It helps compare performance trends and identify high and low performing areas.
                   </div>
                 </ng-template>
               </div>
@@ -138,14 +138,13 @@
 
 
         <!-- Completion Status chart -->
-        <div class="col-xl-5 col-lg-6 mb-3">
+        <div class="col-xl-4 col-lg-5 mb-3">
           <div class="graph-card h-100 d-flex flex-column" style="height: 250px;">
             <div class="d-flex align-items-center gap-2 mb-3">
               <div class="graph-header">Completion Status</div>
               <div class="module-info-content">
                 <app-module-info-icon placement="bottom" [ngbPopover]="completionStatusInfo" class="module-icon" />
-                <ng-template #completionStatusInfo>Shows the completion status distribution of KRA/KPI
-                  assignments.</ng-template>
+                <ng-template #completionStatusInfo>This widget displays employee counts grouped by completion ranges (>80%, 50–80%, <50%) .It helps quickly assess overall progress and identify completion gaps.</ng-template>
               </div>
             </div>
             <!--Graph-->
@@ -221,7 +220,7 @@
               <span class="input-group-text custom-input-group-search">
                 <i class="bi bi-search"></i>
               </span>
-              <input type="search" class="form-control custom-search-input" placeholder="Search by KRA name..."
+              <input type="search" class="form-control custom-search-input" placeholder="Search by Employee Name..."
                 [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" />
             </div>
 
@@ -341,7 +340,7 @@
         @if (selectedEmployeeKras.length > 0) {
         @for (kra of selectedEmployeeKras; track kra.kraId) {
         <div class="mb-4">
-          <h6 class="fw-bold mb-3">{{ kra.kraName }}</h6>
+          <h6 class="fw-bold mb-3">{{ kra.kraName }} - {{ kra.reviewCycleName }}</h6>
           <div class="custom-table-content popup-kpi-table">
             <table class="w-100">
               <thead>

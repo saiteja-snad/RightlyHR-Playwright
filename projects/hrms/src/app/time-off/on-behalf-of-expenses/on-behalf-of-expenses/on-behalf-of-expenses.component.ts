@@ -58,6 +58,12 @@ export class OnBehalfOfExpensesComponent {
   pendingCount = 0;
   rejectedCount = 0;
   draftsCount = 0;
+  
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+  
   constructor(public router: Router, private authService: AuthService, public rbac: RbacService, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
 ngOnInit(): void {
@@ -66,6 +72,18 @@ ngOnInit(): void {
   this.initiateUpdateModuleInfo();
   this.getEmployeeId();
   this.getMyTeam();
+
+  this.currentYear = new Date().getFullYear();
+  this.selectedYear = this.currentYear;
+  // Populate years list
+  for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    this.years.push(i);
+  }
+  // Initialize the form with the selectedYear
+  this.yearSelectionForm = new FormGroup({
+    selectedYear: new FormControl(this.selectedYear)
+  });
+  this.SelectedyeartimeOffService.setSelectedYear(this.selectedYear);
 
   // Clear previous selection when navigating away
   this.router.events
@@ -138,10 +156,9 @@ ngOnInit(): void {
   }
 getexpensesheaderbyemployeeid(empId: any): void {
   if (!empId) return;
-  const year = new Date().getFullYear();
   this.spinnerLoader = true;
 
-  this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${year}`)
+  this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${this.selectedYear}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data: any) => {
@@ -343,6 +360,16 @@ getexpensesheaderbyemployeeid(empId: any): void {
   }
   get isOnBehalfAddPage(): boolean {
     return this.router.url.includes('/on-behalf-of/on-behalf-of-expenses/add');
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;
+    this.SelectedyeartimeOffService.setSelectedYear(selectedYear);
+    
+    if (this.selectedOtherEmployee?.employeeId) {
+      this.getexpensesheaderbyemployeeid(this.selectedOtherEmployee.employeeId);
+    }
   }
 
 

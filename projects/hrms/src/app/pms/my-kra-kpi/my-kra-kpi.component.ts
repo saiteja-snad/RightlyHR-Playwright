@@ -20,6 +20,7 @@ import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-kra-kpi',
@@ -73,6 +74,8 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
   isAllSelected = false;
   selectedKpis: any[] = [];
 
+  private subscription!: Subscription;
+
   constructor(
     private http: HttpService,
     private offcanvasService: NgbOffcanvas,
@@ -95,7 +98,14 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup if needed
+    // Unsubscribe from active subscriptions
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    // Close any open modals
+    this.modalService.dismissAll();
+    // Close any open offcanvas
+    this.offcanvasService.dismiss();
   }
 
   updateModuleInfo() {
@@ -125,7 +135,7 @@ export class MyKraKpiComponent implements OnInit, OnDestroy {
 
     this.dataload = true;
 
-    this.http
+    this.subscription = this.http
       .getDataIncludeParams('Kpi/getEmployeeAssignKpiKra', params)
       .subscribe({
         next: (res: any) => {
@@ -209,8 +219,8 @@ calculateTotalKraWeightage(kras: any[]): number {
   return kras.reduce((total, kra) => total + Number(kra.weightageValue || 0), 0);
 }
 
-calculateOverallRating(kras: any[]): number {
-  if (!kras || kras.length === 0) return 0;
+calculateOverallRating(kras: any[]): string {
+  if (!kras || kras.length === 0) return '-';
 
   let totalKraRatings = 0;
 
@@ -219,7 +229,12 @@ calculateOverallRating(kras: any[]): number {
     totalKraRatings += kraRating;
   });
 
-  return Math.round(totalKraRatings * 100) / 100;
+  const overallRating = totalKraRatings;
+
+  // Round to 1 decimal place, with special handling for .x8 values
+  const rounded = Math.round(overallRating * 10) / 10;
+
+  return overallRating > 0 ? rounded.toFixed(1) : '-';
 }
 
 calculateKraRating(assignment: any): number {
@@ -241,6 +256,11 @@ calculateKraRating(assignment: any): number {
   const kraRating = weightedKpiSum * (kraWeight / 100);
 
   return kraRating;
+}
+
+getKraRating(kra: any): string {
+  const rating = this.calculateKraRating(kra);
+  return rating > 0 ? rating.toFixed(1) : '-';
 }
 
 loadReviewCycles(): void {

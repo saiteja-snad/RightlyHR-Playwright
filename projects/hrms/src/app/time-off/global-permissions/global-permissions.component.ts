@@ -2,7 +2,7 @@ import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
@@ -22,9 +22,11 @@ import { HttpParams } from '@angular/common/http';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent, ModuleInformationComponent, DataLoaderContentComponent,ModuleInfoIconComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent, ModuleInformationComponent, DataLoaderContentComponent,ModuleInfoIconComponent, Select],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
@@ -83,8 +85,13 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     clearLabel: 'Clear', // could be rtl 
   };
   dateRange!: { startDate: dayjs.Dayjs; endDate: dayjs.Dayjs; };
+  
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
 
-  constructor(private http: HttpService, private modalService: NgbModal, public rbac: RbacService, public readonly router: Router) {
+  constructor(private http: HttpService, private modalService: NgbModal, public rbac: RbacService, public readonly router: Router, private timeoffYearFilterService: TimeoffYearFilterService) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
@@ -99,6 +106,19 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear;
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    this.timeoffYearFilterService.setSelectedYear(this.selectedYear);
+    
     this.getAllGlobalPermissions();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
@@ -203,6 +223,8 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     params = addParamIfExists(params, 'sublocation', this.subLocationId);
     params = addParamIfExists(params, 'department', this.departmentId);
     params = addParamIfExists(params, 'subdepartment', this.teamId);
+    params = addParamIfExists(params, 'year', this.selectedYear);
+    
     this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?${params}`).subscribe({
       next: (response: any) => {
         this.loading = false;
@@ -222,6 +244,13 @@ getEmployeeNames(employeeIds: any[]): void {
   // Assuming employeeIds is an array of employee objects
   this.selectedEmployees = employeeIds;
 }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;
+    this.timeoffYearFilterService.setSelectedYear(selectedYear);
+    this.getAllGlobalPermissions();
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -4,11 +4,11 @@
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="year" class="form-label custom-label mb-2">
-                        {{ "Year" | translate }}<span class="text-danger">*</span>
+                        {{ "Source Year" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                            class="form-select custom-select" formControlName="year" placeholder="Please select year"
+                            class="form-select custom-select" formControlName="year" placeholder="Please select source year"
                             (onChange)="enableLocation()"    >
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
@@ -16,7 +16,7 @@
                     </div>
                     <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
                         class="error-msg">
-                        <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']"> Year is required</div>
+                        <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">Source year is required</div>
                     </div>
                 </div>
 

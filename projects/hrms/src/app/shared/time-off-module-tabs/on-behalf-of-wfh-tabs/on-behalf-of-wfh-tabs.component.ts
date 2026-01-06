@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-behalf-of-wfh-tabs',
@@ -60,28 +61,45 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   constructor(
     public readonly router: Router,
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private timeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
       if (this.http.onBehlafOfWFHSignal()) {
-        this.http.onBehalfOfWFHSelectedEmp$.subscribe((emp: number) => {
-          if (emp) {
-            this.getWFHRequest(emp);
-          } else {
-            this.resetWFHCounts();
-          }
-        });
+        const currentEmpId = this.http.onBehalfOfWFHSelectedEmp$.value;
+        if (currentEmpId) {
+          this.getWFHRequest(currentEmpId);
+        } else {
+          this.resetWFHCounts();
+        }
+        this.http.onBehlafOfWFHSignal.set(false);
       }
     });
   }
 
   ngOnInit(): void {
     this.filterTabsByRbac();
+    
+    this.http.onBehalfOfWFHSelectedEmp$.pipe(takeUntil(this.destroy$)).subscribe((emp: number) => {
+      if (emp) {
+        this.getWFHRequest(emp);
+      } else {
+        this.resetWFHCounts();
+      }
+    });
+
+    // Listen for year changes
+    this.timeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      const currentEmpId = this.http.onBehalfOfWFHSelectedEmp$.value;
+      if (currentEmpId) {
+        this.getWFHRequest(currentEmpId);
+      }
+    });
   }
 
   getWFHRequest(employeeId: number) {
-    this.loading = true
-    const selectedYear = new Date().getFullYear();
+    this.loading = true;
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
     this.http.getFilterOnBehalfWFHDataByID(employeeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
@@ -97,15 +115,15 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;
           this.processedWFHRequestsCount = processed.length;
-          this.cancelWFHRequestsCount = cancelled.length
+          this.cancelWFHRequestsCount = cancelled.length;
           this.updateNavTabs();
-          this.loading = false
+          this.loading = false;
         } else {
           console.error('Invalid response format');
         }
       },
       error: (reason: any) => {
-        this.loading = true;
+        this.loading = false;
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
       }
     });

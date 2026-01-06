@@ -1419,6 +1419,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.isModalOpen = false;
       });
       this.dayForm = dayForm; // keep reference
+      console.log(this.dayForm);
+      
       const selectedResource = this.resourcesArrayList.find(
         (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
           res.client?.clientId === this.dayForm.get('clientId')?.value && res.phase?.phaseId === this.dayForm.get('phaseId')?.value

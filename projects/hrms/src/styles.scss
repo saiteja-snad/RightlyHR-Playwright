@@ -189,7 +189,7 @@ body {
 
     .sidnav-main-content {
         width: 100%;
-        height: calc(100dvh - 9rem);
+        height: calc(100dvh - 8rem);
         overflow-y: auto;
         padding: 0.5rem 0.25rem 0rem;
         position: relative;
@@ -217,7 +217,7 @@ body {
     }
 
     .sidenav-footer-content {
-        padding-top: 0.5rem;
+        padding-top: 0.75rem;
     }
 
     .logout-text {
@@ -237,8 +237,8 @@ body {
     }
 
     .powered-by-image {
-        width: 4.75rem;
-        height: 4.25rem;
+        width: 4.5rem;
+        height: 3rem;
     }
 
     .custom-main-menu-dropdown {

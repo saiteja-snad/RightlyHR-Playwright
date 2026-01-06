@@ -1068,6 +1068,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Submission Of No Due Clearance',
     'Re-request for no due',
   ];
+  myInfoExitFeedbackFields = [
+    'My Info Exit Feedback Submit',
+  ];
   employeeInfoSubTabsFields = [
     'Employee Info Personal Tab',
     'Employee Info Job Tab',

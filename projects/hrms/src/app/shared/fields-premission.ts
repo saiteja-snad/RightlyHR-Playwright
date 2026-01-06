@@ -240,6 +240,10 @@ export const MY_INFO_CLAIMS = [
     permission: 'submissionnodue',
     claim: 'Submission Of No Due Clearance'
   },
+  {
+    permission: 'submitform',
+    claim: 'My Info Exit Feedback Submit'
+  },
 
 
   {

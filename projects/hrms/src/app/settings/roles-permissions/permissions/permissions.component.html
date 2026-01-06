@@ -3404,6 +3404,41 @@
                                 </td>
                             </tr>
                         </ng-container>
+
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectAllMyInfoExitFeedbackDetails
+                                        (change)="toggleSelectAll(myInfoExitFeedbackFields, selectAllMyInfoExitFeedbackDetails?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                        [checked]="isAllSelected(myInfoExitFeedbackFields)"
+                                        [indeterminate]="isSomeSelected(myInfoExitFeedbackFields)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div>My Info Exit Feedback Details</div>
+                                </div>
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'My Info Exit Feedback Submit'">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                        [disabled]="true">
+                                </td>
+                            </tr>
+                        </ng-container>
                          <!-- My Info View History tabs -->
                         <tr>
                             <th colspan="5" class="custom-header">
@@ -3704,7 +3739,7 @@
                                         [checked]="isAllSelected(employeeExitFeedbackFields)"
                                         [indeterminate]="isSomeSelected(employeeExitFeedbackFields)"
                                         [disabled]="!roleToFilter?.id">
-                                    <div> Employee Info No Due Clearance Details</div>
+                                    <div> Employee Info Exit Feedback Details</div>
                                 </div>
                             </th>
                         </tr>

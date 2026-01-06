@@ -154,54 +154,62 @@ export class ExitFeedbackFormComponent implements OnInit, OnDestroy {
   FormDownload(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.isGeneratingPdf = true;
-      const pdfContent = document.getElementById('content');
-      if (pdfContent) {
-        html2canvas(pdfContent, { scale: 2, scrollX: 0, scrollY: 0, useCORS: true }).then(
-          (canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let heightLeft = imgHeight;
-            let position = 0;
-            
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
-            heightLeft -= pageHeight;
-            
-            while (heightLeft >= 0) {
-              position = heightLeft - imgHeight;
-              pdf.addPage();
+      
+      // Wait for DOM to update before capturing
+      setTimeout(() => {
+        const pdfContent = document.getElementById('content');
+        if (pdfContent) {
+          html2canvas(pdfContent, { scale: 2, scrollX: 0, scrollY: 0, useCORS: true }).then(
+            (canvas) => {
+              const imgData = canvas.toDataURL('image/png');
+              const pdf = new jsPDF('p', 'mm', 'a4');
+              const imgWidth = pdf.internal.pageSize.getWidth();
+              const pageHeight = pdf.internal.pageSize.getHeight();
+              const imgHeight = (canvas.height * imgWidth) / canvas.width;
+              let heightLeft = imgHeight;
+              let position = 0;
+              
               pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
               heightLeft -= pageHeight;
+              
+              while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
+                heightLeft -= pageHeight;
+              }
+              
+              const fileName = `${this.formData.entity.employeeId}_${new Date().getTime()}_Exit_Feedback_Form.pdf`;
+              pdf.save(fileName);
+              const blob = pdf.output('blob');
+              const file = new File([blob], fileName, {
+                type: 'application/pdf',
+              });
+              this.formFile = file;
+              this.ExitFeedbackFormUpload(
+                this.formData.entity.employeeId,
+                this.formFile
+              ).then(() => {
+                resolve();
+              }).catch((error) => {
+                reject(error);
+              });
             }
-            
-            const fileName = `${this.formData.entity.employeeId}_${new Date().getTime()}_Exit_Feedback_Form.pdf`;
-            pdf.save(fileName);
-            const blob = pdf.output('blob');
-            const file = new File([blob], fileName, {
-              type: 'application/pdf',
-            });
-            this.formFile = file;
-            this.ExitFeedbackFormUpload(
-              this.formData.entity.employeeId,
-              this.formFile
-            ).then(() => {
-              resolve();
-            }).catch((error) => {
-              reject(error);
-            });
-          }
-        );
-      } else {
-        reject('PDF content not found');
-      }
+          ).catch((error) => {
+            this.isGeneratingPdf = false;
+            reject(error);
+          });
+        } else {
+          reject('PDF content not found');
+        }
+      }, 2000);
     });
   }
 
   ExitFeedbackFormUpload(empId: number, file: File): Promise<void> {
     return new Promise((resolve, reject) => {
       let filePath = `/FusionDocuments/Employee Documents/Exit Feedback Form/${empId}`;
+      
       this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
         next: (data: any) => {
           console.log('Upload response:', data);
@@ -268,7 +276,7 @@ export class ExitFeedbackFormComponent implements OnInit, OnDestroy {
         this.openModalService.openSuccessModal('Form submitted successfully');
         setTimeout(() => {
           this.goBack();
-        }, 5000);
+        }, 2000);
         
       },
       error: (err: any) => {
@@ -316,6 +324,9 @@ export class ExitFeedbackFormComponent implements OnInit, OnDestroy {
     
     this.subscription = this.http.putData(`ExitFeedbackRequest/${parsedData.entity.id}`, payload).subscribe({
       next: (response: any) => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
         console.log('Exit feedback updated successfully with document URL');
       },
       error: (err: any) => {

@@ -16,10 +16,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DownloadIconComponent } from '../../../../icons/download-icon/download-icon.component';
 
 @Component({
   selector: 'app-employee-exit-feedback',
-  imports: [CommonModule, SeparationSubTabsComponent, MyinfoSeparationSubTabsComponent, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, RouterModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, SeparationSubTabsComponent, MyinfoSeparationSubTabsComponent, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent, RouterModule, ReactiveFormsModule, Select,DownloadIconComponent],
   templateUrl: './employee-exit-feedback.component.html',
   styleUrl: './employee-exit-feedback.component.scss'
 })
@@ -141,15 +142,20 @@ export class EmployeeExitFeedbackComponent {
     });
   }
 
-  viewDocument(documentUrl: string): void {
-    if (documentUrl) {
-      this.documentViewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(documentUrl);
-      this.modalService.open(this.documentViewModal, { 
-        centered: true, 
-        size: 'xl',
-        backdrop: 'static'
-      });
-    }
+   onSelectBankProofDownload(file: any) {
+    
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
+      next: (res: any) => {
+        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
+        let blob: Blob = res.body as Blob;
+        let a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        let filename = file.documentUrl.split('/')[file.documentUrl.split('/').length - 1];
+        a.download = filename;
+        a.click();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
 }

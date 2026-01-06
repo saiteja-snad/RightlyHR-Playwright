@@ -14,7 +14,7 @@
                 <tr>
                     <th>{{'Initiated Date'|translate}}</th>
                     <th>{{'Last Working Day'|translate}}</th>
-                    <th>{{'Document Url'|translate}}</th>
+                    <th>{{'Form'|translate}}</th>
                     <th>{{'Status'|translate}}</th>
                     <th>{{'Action'|translate}}</th>
                 </tr>
@@ -27,16 +27,16 @@
                     <td>{{ item.lastWorkingDate ? (item.lastWorkingDate | date):'-' }}</td>
                     <td>
                         @if(item.documentUrl) {
-                        <div (click)="viewDocument(item.documentUrl)" class="cursor pointer" title="View Document">
-                            <i class="bi bi-eye text-primary"></i>
-                        </div>
+                        <span *ngIf="item.documentUrl;else noData" (click)="onSelectBankProofDownload(item)">
+                                  <app-download-icon /></span>
+                            <ng-template #noData>-</ng-template>
                         } @else {
                         <div>-</div>
                         }
                     </td>
                     <td>{{ item.status ? (item.status):'-' }}</td>
                     <td>
-                        @if(item.status === 'Initiated') {
+                        @if(item.status === 'Initiated' && canAccess('view','submitform')) {
                         <div>
                             <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">
                                 Form Submit

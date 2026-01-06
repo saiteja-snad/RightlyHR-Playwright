@@ -321,5 +321,4 @@ export const MODULE_INFOS = {
     Create_Initial_Leave_Entitlements: 'Use this section to bulk allocate leave entitlements for employees by selecting location, sub-location, shift, and leave category. The system validates applicable leave rules and processes entitlements for eligible employees.',
     CARRY_FORWORD_LEAVES_CREATE: "This module helps to initiate the Leave Carry Forward workflow by allowing you to define the processing scope, review eligible employee leave balances, map the previous year’s leave categories to the new fiscal year, and execute the carry-forward job updates seamlessly.",
     TIME_OFF_LEAVE_SUMMARY_MODULE_INFO: "This module provides a detailed transaction-level view of all leave-related activities for an employee, showing how leave balances are updated over time through credits, debits, allocations, and adjustments, ensuring transparency and auditability",
-
 }

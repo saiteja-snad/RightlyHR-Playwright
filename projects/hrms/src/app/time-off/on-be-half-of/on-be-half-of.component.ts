@@ -377,11 +377,12 @@ export class OnBeHalfOfComponent {
 
   getAvailableLeaves(item: any): number {
     if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked;
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked;
+      return item.allowedDays - item.utilizedDays - item.booked -(item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
+
 
   getTransparentColor(hex: string, opacity: number): string {
     // Remove leading # if present

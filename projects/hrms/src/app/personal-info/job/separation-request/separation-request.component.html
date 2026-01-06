@@ -150,11 +150,10 @@
                     Relieving</a>
                 </li>}
                 }
-                @if(canAccess('view','initiateexitfeedbackform')){
-                @if((item.status === 'Processed' || item.status === 'Early Relieving Processed') && areAllNodueRecordsApproved(item) && !recallandearlyrelievingbuttonConditions){
+                @if(canAccess('view','initiateexitfeedbackform') && (item.status === 'Processed' || item.status === 'Early Relieving Processed') && areAllNodueRecordsApproved(item) && canInitiateExitFeedback(item) && !recallandearlyrelievingbuttonConditions){
                 <li (click)="openInitiateModal(item)">
                   <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">Initiate Exit Feedback</a>
-                </li>}
+                </li>
                 }
               </ul>
             </div>

@@ -116,12 +116,14 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getNodueClearance();
       this.fetchSeparationDetails();
       this.getAvailableForms();
+      this.getExitFeeddBackDetails();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       this.getEmployeeId();
       this.fetchSeparationDetails();
       this.getNodueClearance();
       this.getAvailableForms();
+      this.getExitFeeddBackDetails();
     }
   }
   
@@ -347,6 +349,55 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   areAllNodueRecordsApproved(item: any): boolean {
     return this.allNodueApproved;
   }
+
+  exitfeedbackdata = [] as any;
+  exitfeedbacksubmitted = false;
+  canInitiateExitFeedback(item: any): boolean {
+    return !this.exitfeedbacksubmitted;
+  }
+  getExitFeeddBackDetails() {
+    let employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http
+      .getData(`ExitFeedbackRequest/employee/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Raw exit feedback data:', data);
+          console.log('Data type:', typeof data);
+          console.log('Is array:', Array.isArray(data));
+          
+          // Handle different response structures
+          let feedbackArray = [];
+          if (Array.isArray(data)) {
+            feedbackArray = data;
+          } else if (data && Array.isArray(data.data)) {
+            feedbackArray = data.data;
+          } else if (data && data.length !== undefined) {
+            feedbackArray = [data];
+          }
+          
+          this.exitfeedbackdata = feedbackArray;
+          console.log('Processed feedback array:', this.exitfeedbackdata);
+          console.log('Array length:', this.exitfeedbackdata.length);
+          
+          const existingRecords = this.exitfeedbackdata.filter((ele: any) => {
+            const status = ele?.status?.toLowerCase();
+            console.log('Checking status:', status);
+            return status === 'initiated' || status === 'submitted';
+          });
+          
+          console.log('Filtered records:', existingRecords);
+          this.exitfeedbacksubmitted = existingRecords.length > 0;
+          console.log('Exit feedback submitted:', this.exitfeedbacksubmitted);
+        },
+        error: (err: any) => {
+          console.error('Error fetching exit feedback:', err);
+          this.exitfeedbackdata = [];
+          this.exitfeedbacksubmitted = false;
+        }
+      });
+  }
+
+  
 
   shouldShowButton(date: string): boolean {
     console.log(date);

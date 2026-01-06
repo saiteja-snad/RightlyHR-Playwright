@@ -1419,6 +1419,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.isModalOpen = false;
       });
       this.dayForm = dayForm; // keep reference
+      console.log(this.dayForm);
+      
       const selectedResource = this.resourcesArrayList.find(
         (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
           res.client?.clientId === this.dayForm.get('clientId')?.value && res.phase?.phaseId === this.dayForm.get('phaseId')?.value
@@ -1661,6 +1663,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   cleardata() {
     this.timesheetForm.reset()
+    this.dayForm.reset();
+    this.selectedclientid = null;
+    this.selectedprojectid = null;
+    this.selectedPhaseId=null;
+    this.selectedProjectResource=null;
     this.modalService.dismissAll();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);

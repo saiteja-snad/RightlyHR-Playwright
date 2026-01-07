@@ -338,6 +338,23 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       sandwichCalculationBasisControl?.updateValueAndValidity();
       sandwichApplicabilityConditionControl?.updateValueAndValidity();
     });
+
+    this.leavePolicyForm?.get('sandwichCalculationBasis')?.valueChanges.subscribe((value: any) => {
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      if (value === 'start_date/end_date') {
+        sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
+        sandwichApplicabilityConditionControl?.disable();
+      } else {
+        sandwichApplicabilityConditionControl?.enable();
+      }
+    });
+
+    // Initial check for sandwichCalculationBasis
+    if (this.leavePolicyForm.get('sandwichCalculationBasis')?.value === 'start_date/end_date') {
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
+      sandwichApplicabilityConditionControl?.disable();
+    }
   }
 
   updatePublishedCategories() {
@@ -820,7 +837,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
       applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
       sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: this.leavePolicyForm.value.sandwichApplicabilityCondition,
+      sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
       // addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: this.updateLeaveCategoryData.status,

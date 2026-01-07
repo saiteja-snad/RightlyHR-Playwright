@@ -68,7 +68,7 @@
                                 }
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
                                 @if(traineeofferLetter.status=='Approved'){
-                                <li (click)="releaseTraineeOfferLetter(traineeofferLetter)">
+                                <li (click)="openModal(confirmpopup)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' |
                                         translate}}</a>
                                 </li>
@@ -117,6 +117,21 @@
                             </div> -->
                     </td>}
                 </tr>
+                    <!--Delete Confirmation popup-->
+            <ng-template #confirmpopup let-model>
+                <div class="result-popup-content" ngbAutofocus>
+                    <div>
+                        <app-confirmation-icon />
+                        <p class="confirmation-text mb-4">Are you sure you want to release the Intern offer letter?</p>
+                    </div>
+                    <div class="custom-modal-footer">
+                        <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
+                        <button type="submit" class="custom-btn btn-primary"
+                            (click)="releaseTraineeOfferLetter(traineeofferLetter);model.dismiss()">Yes</button>
+                        
+                    </div>
+                </div>
+            </ng-template>
                 }
                 }
                 @else {

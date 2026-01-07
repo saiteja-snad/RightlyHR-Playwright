@@ -1,0 +1,7 @@
+.p-select-label.p-placeholder {
+    color: var(--p-select-placeholder-color);
+}
+
+.p-select.ng-invalid.ng-dirty .p-select-label.p-placeholder {
+    color: var(--p-select-placeholder-color) !important;
+}

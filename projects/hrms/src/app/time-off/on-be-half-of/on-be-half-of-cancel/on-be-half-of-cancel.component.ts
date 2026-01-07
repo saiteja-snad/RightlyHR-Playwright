@@ -13,6 +13,7 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-be-half-of-cancel',
@@ -45,7 +46,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) {
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private timeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
@@ -70,7 +71,8 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   getDataByLPID() {
     this.loading = true;
     let empid = this.cadidateEmployeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    this.subscription = this.http.getData(`Timeoff/${empid}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
         this.loading = false;
         console.log(response);

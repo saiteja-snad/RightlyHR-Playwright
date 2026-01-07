@@ -26,6 +26,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import moment from 'moment';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { DatePicker } from 'primeng/datepicker';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-document-history-offer-letter',
@@ -39,7 +40,8 @@ import { DatePicker } from 'primeng/datepicker';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     DatePicker,
-  ],
+    ConfirmationIconComponent
+],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -212,6 +214,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
         },
       });
   }
+  
   employeeEmail(Values: any) {
     const loggedInUser = this.authService.getToken();
     let emaildetails = {

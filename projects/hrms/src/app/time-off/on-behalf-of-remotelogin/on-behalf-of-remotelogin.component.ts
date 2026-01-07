@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule, FormControl } from '@angular/forms';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,6 +18,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { AuthService } from '../../services/auth.service';
 import { OnBehalfOfRemoteloginTabsComponent } from '../../shared/time-off-module-tabs/on-behalf-of-remotelogin-tabs/on-behalf-of-remotelogin-tabs.component';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-on-behalf-of-remotelogin',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule, ModuleInfoIconComponent,
@@ -39,9 +40,14 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
   selectedEmpFusionId!: string;
   today: string = new Date().toISOString().split('T')[0];
 
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
     private sharedModalService: OpenModalService, public rbac: RbacService, public formsValidation: FormValidationsService, 
-    public readonly router: Router, private authService: AuthService) { }
+    public readonly router: Router, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -51,6 +57,18 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getMyTeam();
     this.handleAvailingChange();
+
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    this.timeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
   addRemoteLoginForm!: FormGroup;
@@ -150,8 +168,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
   }
 
   getRemoteLoginRequest(employeedId: any) {
-    const year = new Date().getFullYear();
-    this.http.getFilterOnBehalfRemoteLoginDataByID(employeedId, year).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterOnBehalfRemoteLoginDataByID(employeedId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.remoteLogin = response;
       },
@@ -230,6 +247,17 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
           this.spinnerLoader = false;
         },
       });
+    }
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;
+    this.timeoffYearFilterService.setSelectedYear(selectedYear);
+    
+    if (this.selectedOtherEmployee?.employeeId) {
+      this.getRemoteLoginRequest(this.selectedOtherEmployee.employeeId);
+      this.http.onBehlafOfRemoteLoginSignal.set(true);
     }
   }
 

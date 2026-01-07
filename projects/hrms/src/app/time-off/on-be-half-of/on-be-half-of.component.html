@@ -32,6 +32,16 @@
             </div>
             }
 
+            <div class="d-flex gap-2 align-items-center">
+                <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
+                <form autocomplete="off" [formGroup]="yearSelectionForm">
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
+                            class="form-select custom-select" (onChange)="onYearChange()">
+                        </p-select>
+                    </div>
+                </form>
+            </div>
             
             <!-- @if(showbutton){ -->
              @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {

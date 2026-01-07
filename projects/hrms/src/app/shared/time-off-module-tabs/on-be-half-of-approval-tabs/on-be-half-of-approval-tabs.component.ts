@@ -9,6 +9,7 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { CancelledComponent } from '../../../time-off/leaves/cancelled/cancelled.component';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-on-be-half-of-approval-tabs',
   imports: [CommonModule, RouterModule, TabsModule, SidetabsloadersComponent],
@@ -41,16 +42,16 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     public readonly router: Router,
     private http: HttpService,
     private authService: AuthService,
-    private rbac: RbacService
+    private rbac: RbacService,
+    private timeoffYearFilterService: TimeoffYearFilterService
   ) {
-    // Signal reaction for employee switch
+    // Signal reaction for employee switch or year change
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
-        if (this.cadidateEmployeeId != null) {
+        if (this.cadidateEmployeeId && !isNaN(this.cadidateEmployeeId)) {
           this.getDataByLPID();
         }
-        // this.http.resetTriggerSignal();
       }
     });
   }
@@ -67,7 +68,8 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
 
   getDataByLPID() {
     this.loading=true
-    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
+    const selectedYear = this.timeoffYearFilterService.getSelectedYear();
+    this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}?year=${selectedYear}`).subscribe({
       next: (response: any) => {
         this.loading=false
         if (Array.isArray(response)) {

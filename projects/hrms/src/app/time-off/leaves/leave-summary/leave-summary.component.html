@@ -188,7 +188,7 @@
                         </td>
 
                         <td>
-                          @if(ledger.transactionType.toLowerCase() == 'leave debit'){
+                          @if(ledger.transactionType.toLowerCase() == 'leave debit' && !ledger?.subStatus){
                             <app-info-icon class="info-pending" [ngbPopover]="messageContent" triggers="click"  popoverClass="pending-popover" (click)="setActiveMessage(ledger)" />
                           }@else {
                             {{"-"}}

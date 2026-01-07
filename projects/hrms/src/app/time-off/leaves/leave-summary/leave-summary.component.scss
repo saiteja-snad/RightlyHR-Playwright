@@ -147,3 +147,26 @@
     gap: 16px;
   }
 }
+
+.info-pending {
+  color: #0b3a83 !important;
+  padding-left: 0.25rem;
+  cursor: pointer;
+}
+
+.leave-details {
+  .detail-item {
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      color: #374151;
+      margin-right: 8px;
+    }
+  }
+}

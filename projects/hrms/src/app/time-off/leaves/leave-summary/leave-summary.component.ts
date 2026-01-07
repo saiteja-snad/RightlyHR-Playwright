@@ -53,7 +53,7 @@ import { Chip } from 'primeng/chip';
     ModuleInformationComponent,
     MultiSelectModule,
     SkeletonModule,
-    Chip
+    InfoIconComponent
 ],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',
@@ -71,6 +71,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   filterForm!: FormGroup;
   activeEmplist = [] as any;
   years = [
+    { label: (new Date().getFullYear() - 2).toString(), value: new Date().getFullYear() - 2 },
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
     { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
     { label: (new Date().getFullYear() + 1).toString(), value: new Date().getFullYear() + 1 }
@@ -99,6 +100,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   disableBtn = false;
   empName: string = '';
+  activeMessage: string = '';
   constructor(
     private http: HttpService,
     public rbac: RbacService,
@@ -144,6 +146,23 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
   onRowsChange() {
     this.first = 0;
+  }
+
+   setActiveMessage(ledger: EmployeeLeaveLedger) {
+    if (ledger.transactionType === 'Leave Debit') {
+      const isWaitingForApproval = ledger.status?.toLowerCase() === 'waiting for approval';
+      const processedByRow = !isWaitingForApproval ? `<div class="detail-item"><strong>Processed by:</strong> ${ledger.processedByName || '-'}</div>` : '';
+      
+      this.activeMessage = `
+        <div class="leave-details">
+          <div class="detail-item"><strong>Status:</strong> ${ledger.status || '-'}</div>
+          <div class="detail-item"><strong>Requested by:</strong> ${ledger.creditedByName || '-'}</div>
+          ${processedByRow}
+        </div>
+      `;
+    } else {
+      this.activeMessage = '';
+    }
   }
 
   onPageChange(event: PaginatorState) {
@@ -442,6 +461,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   }
 
   getStatusColor(status: string): string {
+    console.log(status);
+    
     if (!status) return '#000';
     const lowerStatus = status.toLowerCase();
     if (lowerStatus.includes('waiting') || lowerStatus.includes('pending')) {

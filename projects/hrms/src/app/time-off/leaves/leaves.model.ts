@@ -177,4 +177,5 @@ export interface EmployeeLeaveLedger {
 
   referenceId: number;
   referenceType: string;
+  entitlementType: string;
 }

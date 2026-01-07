@@ -113,10 +113,11 @@
                 <th class="text-center">{{ 'Credited (+)' | translate }}</th>
                 <th class="text-center">{{ 'Debited (-)' | translate }}</th>
                 <th class="text-center">{{ 'Closing' | translate }}</th>
-                <th>{{ 'Valid Upto' | translate }}</th>
-                <th>{{ 'Status' | translate }}</th>
+                <th class="text-center">{{ 'Valid Upto' | translate }}</th>
+                <th></th>
+              <!--  <th>{{ 'Status' | translate }}</th>
                 <th>{{ 'Requested By' | translate }}</th>
-                <th>{{ 'Processed By' | translate }}</th>
+                <th>{{ 'Processed By' | translate }}</th> -->
             </thead>
 
             <tbody>
@@ -154,15 +155,25 @@
 
                         <!-- Credited -->
                         <td class="text-center">
-                          <div class="credit">
-                            @if(ledger.credited > 0) { <span>{{ ' + ' }}</span>}{{ ledger.credited }}
-                          </div>
+                          
+                            @if(ledger.entitlementType.toLowerCase() == 'cr'){ 
+                              <div class="credit"><span>{{ ' + ' }}</span>
+                            {{ ledger.credited }}
+                            </div>
+                          }@else{
+                              {{ '-' }}
+                            }
+                     
                         </td>
                         <!-- Debited -->
                         <td class="text-center">
-                          <div class="debit">
-                            @if(ledger.debited > 0) { <span>{{ ' - ' }}</span>}{{ ledger.debited }}
-                          </div>
+                            @if(ledger.entitlementType.toLowerCase() == 'dr' ) {  <div class="debit">
+                              <span>{{ ' - ' }}</span>
+                              {{ ledger.debited }}
+                            </div>
+                          }@else{
+                              {{ '-' }}
+                            }
                         </td>
                         <!-- Closing Balance -->
                         <td class="text-center">
@@ -172,37 +183,45 @@
                         </td>
 
                         <!-- Valid Upto -->
-                        <td>
+                        <td class="text-center">
                             {{ ledger?.validUpto ? (ledger.validUpto | dateformat) : '-' }}
                         </td>
 
-                         <!-- Status -->
                         <td>
+                          @if(ledger.transactionType.toLowerCase() == 'leave debit'){
+                            <app-info-icon class="info-pending" [ngbPopover]="messageContent" triggers="click"  popoverClass="pending-popover" (click)="setActiveMessage(ledger)" />
+                          }@else {
+                            {{"-"}}
+                          }
+                        </td>
+
+                         <!-- Status -->
+                        <!-- <td>
                            @if(ledger.transactionType.toLowerCase() == 'leave debit' && ledger.status.toLowerCase() != 'published'){
                              <span [style.color]="getStatusColor(ledger.status)"> <b> {{ ledger?.status || '-' }} </b></span>
                            }@else{
                              {{'-'}}
                            }
-                        </td>
+                        </td> -->
                          <!-- Requested By -->
-                        <td>
+                        <!-- <td> -->
                            <!-- @if(ledger.transactionType.toLowerCase() != 'leave debit'){ -->
-                              {{ ledger.creditedByName || 'System Auto' }}
+                              <!-- {{ ledger.creditedByName || 'System Auto' }} -->
                            <!-- }@else {
                               {{'-'}}
                             } -->
                             
-                        </td>
+                        <!-- </td> -->
 
                         <!-- Processed By -->
-                        <td>
-                            @if(ledger.transactionType.toLowerCase() == 'leave debit' &&  !(ledger.subStatus)  && ledger.status.toLowerCase() != 'waiting for approval') {
+                        <!-- <td> -->
+                            <!-- @if(ledger.transactionType.toLowerCase() == 'leave debit' &&  !(ledger.subStatus)  && ledger.status.toLowerCase() != 'waiting for approval') {
                               {{ ledger.processedByName || '-' }}
                             }@else {
                               {{'-'}}
-                            }
+                            } -->
                             
-                        </td>
+                        <!-- </td> -->
 
                     </tr>
                 </ng-container>
@@ -309,4 +328,8 @@
       </form>
     </div>
   </div>
+</ng-template>
+
+<ng-template #messageContent>
+  <div class="module-info-text" [innerHTML]="activeMessage"></div>
 </ng-template>

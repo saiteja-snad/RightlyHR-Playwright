@@ -939,7 +939,6 @@ export class OnBeHalfOfComponent {
   showSandwichConfirmation(sandwichData: any) {
     this.sandwichMessage = sandwichData.errorMessage || 'This leave request falls under the Sandwich Leave Policy.';
     this.sandwichData = sandwichData;
-
     this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
       this.isLoading = false;
     });

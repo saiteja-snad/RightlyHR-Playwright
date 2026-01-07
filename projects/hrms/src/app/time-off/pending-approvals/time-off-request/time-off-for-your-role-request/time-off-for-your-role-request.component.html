@@ -460,6 +460,34 @@
     </div>
 </ng-template>
 
+<!-- Sandwich Bulk Recheck Confirmation Modal -->
+<ng-template #sandwichBulkRecheckModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{ sandwichBulkMessage }}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichBulkRecheck(modal)">Proceed</button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Sandwich Recheck Confirmation Modal -->
+<ng-template #sandwichRecheckModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{ sandwichRecheckMessage }}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichRecheck(modal)">Proceed</button>
+        </div>
+    </div>
+</ng-template>
+
 <!-- Sandwich Breakdown Modal -->
 <ng-template #sandwichBreakdownModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>

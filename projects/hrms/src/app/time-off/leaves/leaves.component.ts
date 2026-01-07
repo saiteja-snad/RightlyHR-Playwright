@@ -1356,9 +1356,7 @@ getTeamManagersDetails() {
 
   showSandwichConfirmation(sandwichData: any) {
     this.sandwichMessage = sandwichData?.errorMessage || '';
-    
     this.sandwichData = sandwichData;
-    
     this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
       this.isLoading = false;
     });

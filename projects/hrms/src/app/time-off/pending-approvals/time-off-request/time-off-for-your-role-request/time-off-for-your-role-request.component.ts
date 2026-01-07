@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil, forkJoin } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import {
   LeaveApproval,
@@ -66,6 +66,8 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('sandwichRecheckModal') sandwichRecheckModal: any;
+  @ViewChild('sandwichBulkRecheckModal') sandwichBulkRecheckModal: any;
   selectedLeaveStatus: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
@@ -75,6 +77,8 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   totalCount: any;
+  sandwichRecheckMessage: string = '';
+  sandwichBulkMessage: string = '';
   onRowsChange() {
     this.first = 0;
   }
@@ -509,33 +513,83 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   handleProcess(selecteddata: any) {
     this.selectedLeaveData = selecteddata;
     let approvedBy = this.LOGIN.employeeId.toString();
-    let message = null;
     if (this.selectedProducts && this.selectedProducts.length > 0) {
-      this.requestBody = {
-        requestProcessedBy: approvedBy,
-        status: 'Processed',
-        moduleId: environment.leavesModuleId,
-        headerRequests: this.selectedProducts.map((item) => ({
-          headerID: item.approvalHeader.id,
-          currentStage: item.approvalHeader.currentapprovalStage
-        }))
-      }
-      message = 'Processing Selected Leave Requests...';
-    } else {
-      this.requestBody = {
-        requestProcessedBy: approvedBy,
-        status: 'Processed',
-        moduleId: environment.leavesModuleId,
-        headerRequests: [
-          {
-            headerID: this.selectedLeaveData.approvalHeader?.id,
-            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+      const sandwichIds = this.selectedProducts
+        .filter(item => item?.entity?.isSandwichLeave)
+        .map(item => item.entity.leaveId);
+      if (sandwichIds.length > 0) {
+        const checks = sandwichIds.map(id => this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', { timeoffId: id }));
+        forkJoin(checks).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (responses: any[]) => {
+            const adj = responses.find(res => res && res.isAdjacentGating === true);
+            if (adj) {
+              this.conformationPopup.openErrorModal(adj?.errorMessage || '');
+              return;
+            }
+            const firstNonSandwich = responses.find(res => res && res.isSandwichApplied === false);
+            this.sandwichBulkMessage = firstNonSandwich?.errorMessage || '';
+            if (this.sandwichBulkMessage) {
+              this.modalService.open(this.sandwichBulkRecheckModal, { centered: true, backdrop: 'static' });
+            } else {
+              this.processBulkItems();
+            }
           },
-        ],
-      };
-      message = 'Processing Selected Leave Requests...';
+          error: (err: any) => {
+            this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
+          }
+        });
+        return;
+      } else {
+        this.processBulkItems();
+        return;
+      }
     }
-
+    const entity = this.selectedLeaveData?.entity;
+    if (entity?.isSandwichLeave) {
+      const timeoffId = entity.leaveId;
+      this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', { timeoffId }).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          if (response?.isAdjacentGating) {
+            this.conformationPopup.openErrorModal(response?.errorMessage || '');
+            return;
+          }
+          if (response.isSandwichApplied) {
+            this.processSingleItem();
+          } else {
+            this.sandwichRecheckMessage = response?.errorMessage || '';
+            this.modalService.open(this.sandwichRecheckModal, { centered: true, backdrop: 'static' });
+          }
+        },
+        error: (err: any) => {
+          this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
+        }
+      });
+    } else {
+      this.processSingleItem();
+    }
+  }
+  confirmSandwichRecheck(modal: any) {
+    modal.dismiss();
+    this.processSingleItem();
+  }
+  confirmSandwichBulkRecheck(modal: any) {
+    modal.dismiss();
+    this.processBulkItems();
+  }
+  processSingleItem() {
+    const approvedBy = this.LOGIN.employeeId.toString();
+    const message = 'Processing Selected Leave Requests...';
+    this.requestBody = {
+      requestProcessedBy: approvedBy,
+      status: 'Processed',
+      moduleId: environment.leavesModuleId,
+      headerRequests: [
+        {
+          headerID: this.selectedLeaveData.approvalHeader?.id,
+          currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+        },
+      ],
+    };
     this.conformationPopup.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -543,10 +597,10 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-           if(this.selectedProducts.length > 1){
-            this.signalService.handleResponse(this.responseSummary, 'Selected Leave requests processed successfully');
-            }else{
-            this.signalService.handleResponse(this.responseSummary, 'Leave request processed successfully');
+            if (this.selectedProducts.length > 1) {
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave requests processed successfully');
+            } else {
+              this.signalService.handleResponse(this.responseSummary, 'Leave request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -558,12 +612,63 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
           this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
-            this.conformationPopup.openErrorModal(reason.error.message)
+            this.conformationPopup.openErrorModal(reason.error.message);
+          } else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message);
+          } else {
+            this.conformationPopup.openErrorModal('Request Processed Failed');
           }
-          else if (reason.error.statusCode == 400) {
-            this.conformationPopup.openErrorModal(reason.error.message)
+        },
+        complete: () => {
+          this.multiSelect = false;
+          this.signalService.timeOffsidenavCountSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.getAllPendingApprovals();
+          this.getApprovalStatusCounts();
+          this.selectedProducts = [];
+          this.searchValue = null;
+        },
+      });
+  }
+  processBulkItems() {
+    const approvedBy = this.LOGIN.employeeId.toString();
+    const message = 'Processing Selected Leave Requests...';
+    this.requestBody = {
+      requestProcessedBy: approvedBy,
+      status: 'Processed',
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
+    };
+    this.conformationPopup.openLoaderModal(message);
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.responseSummary = response.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            if (this.selectedProducts.length > 1) {
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave requests processed successfully');
+            } else {
+              this.signalService.handleResponse(this.responseSummary, 'Leave request processed successfully');
+            }
+          } else {
+            this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
-          else {
+        },
+        error: (reason: any) => {
+          this.modalService.dismissAll();
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message);
+          } else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message);
+          } else {
             this.conformationPopup.openErrorModal('Request Processed Failed');
           }
         },

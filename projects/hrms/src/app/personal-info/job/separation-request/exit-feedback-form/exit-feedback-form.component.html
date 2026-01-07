@@ -12,9 +12,13 @@
     <div>
       <!-- <div *ngIf="dynamicFormHeader.length > 0 , else nodata"> -->
       <div class="card assessment-form-card" id="content">
-        <div class="text-center pt-3 pb-5"><b>{{this.formDetails.formName}}</b></div>
-        
-        <div class="row row-cols-2 mx-4 mb-5">
+        <div class="d-flex justify-content-end mb-3">
+          <app-lettersheader />
+        </div>
+      
+        <div class="text-center pt-3 pb-4"><b>{{this.formDetails.formName}}</b></div>
+      
+        <div class="row row-cols-2 mx-4 mb-3">
           <div class="col">
             <p class="text-start d-flex gap-1 mb-1"><b>Employee ID : </b>
               <span>{{this.formDetails.fusionEmpId}}</span>
@@ -46,23 +50,23 @@
             </p>
           </div>
         </div>
-  
+      
         <!--form Content-->
         @if (!isDataLoaded) {
         <div class="form-container" id="content">
           @if (formSections.length > 0) {
           @for (section of formSections; track section.id; let isLast = $last) {
-          <p class="form-label mb-4"><b>{{ section.sectionName }}</b></p>
+          <p class="form-label mb-3"><b>{{ section.sectionName }}</b></p>
           @if (section.questions && section.questions.length > 0) {
           @for (question of section.questions; track question.id) {
-          <div class="question-item mb-4">
+          <div class="question-item mb-3">
             <div class="question-text mb-3">
               <b>{{ question.question }}</b>
               @if (question.required) {
               <span class="text-danger ms-1">*</span>
               }
             </div>
-  
+      
             @if (question.options && question.options.length > 0) {
             <div class="options-container">
               @for (option of question.options; track option.optionId) {
@@ -85,7 +89,7 @@
             <div class="text-input-container">
               <textarea class="form-control custom-input" rows="3" placeholder="Enter your response..."
                 [value]="getTextAnswer(question.id)" (input)="onTextAnswerChange(question.id, $event)">
-                                          </textarea>
+                                                </textarea>
             </div>
             }
           </div>
@@ -109,7 +113,7 @@
       </div>
       <!-- </div> -->
   
-      <div class="my-4" [style.display]="isGeneratingPdf ? 'none' : 'block'">
+      <div class="my-3" [style.display]="isGeneratingPdf ? 'none' : 'block'">
         <div class="form-actions">
           <button type="button" class="custom-btn btn-primary me-3" (click)="submitForm()" [disabled]="isSubmitting">
             @if(isSubmitting){

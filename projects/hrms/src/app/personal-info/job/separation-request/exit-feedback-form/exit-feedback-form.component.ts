@@ -10,6 +10,8 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { AuthService } from '../../../../services/auth.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { LettersheaderComponent } from "../../../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 
 interface IFormSection {
   id: number;
@@ -55,7 +57,7 @@ interface IFormDetails {
 
 @Component({
   selector: 'app-exit-feedback-form',
-  imports: [CommonModule, TranslateModule, DataLoaderContentComponent, ReactiveFormsModule],
+  imports: [CommonModule, TranslateModule, DataLoaderContentComponent, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './exit-feedback-form.component.html',
   styleUrl: './exit-feedback-form.component.scss'
 })

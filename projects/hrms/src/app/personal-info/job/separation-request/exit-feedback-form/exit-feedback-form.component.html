@@ -1,76 +1,116 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3" [style.display]="isGeneratingPdf ? 'none' : 'flex'">
-    <div>
+    <!-- <div>
       <h4 class="component-sub-header">{{ formDetails.formName || 'Exit Feedback Form' }}</h4>
-    </div>
+    </div> -->
     <button type="button" class="custom-btn btn-secondary" (click)="goBack()">
       <i class="bi bi-arrow-left me-2"></i>Back
     </button>
   </div>
 
-  @if (!isDataLoaded) {
-    <div class="form-container" id="content">
-      @if (formSections.length > 0) {
-        @for (section of formSections; track section.id) {
-          <div class="section-card mb-4">
-            <div class="section-header">
-              <h5 class="section-title">{{ section.sectionName }}</h5>
-            </div>
-            
-            <div class="section-content">
-              @if (section.questions && section.questions.length > 0) {
-                @for (question of section.questions; track question.id) {
-                  <div class="question-item mb-4">
-                    <div class="question-text mb-3">
-                      <strong>{{ question.question }}</strong>
-                      @if (question.required) {
-                        <span class="text-danger ms-1">*</span>
-                      }
-                    </div>
-                    
-                    @if (question.options && question.options.length > 0) {
-                      <div class="options-container">
-                        @for (option of question.options; track option.optionId) {
-                          <div class="option-item">
-                            <div class="form-check">
-                              <input 
-                                class="form-check-input" 
-                                type="radio" 
-                                [name]="'question_' + question.id"
-                                [id]="'option_' + option.optionId"
-                                [value]="option.optionId"
-                                (change)="onAnswerChange(question.id, option.optionId)">
-                              <label class="form-check-label" [for]="'option_' + option.optionId">
-                                {{ option.option }}
-                                @if (option.optionWeightage > 0) {
-                                  <span class="rating-badge ms-2">{{ option.optionWeightage }}</span>
-                                }
-                              </label>
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    } @else if (question.type === 'text') {
-                      <div class="text-input-container">
-                        <textarea 
-                          class="form-control custom-input" 
-                          rows="3" 
-                          placeholder="Enter your response..."
-                          [value]="getTextAnswer(question.id)"
-                          (input)="onTextAnswerChange(question.id, $event)">
-                        </textarea>
-                      </div>
-                    }
-                  </div>
-                }
-              } @else {
-                <p class="text-muted">No questions available in this section.</p>
+  <div class="assessment-form-content">
+    <div>
+      <!-- <div *ngIf="dynamicFormHeader.length > 0 , else nodata"> -->
+      <div class="card assessment-form-card" id="content">
+        <div class="text-center pt-3 pb-5"><b>{{this.formDetails.formName}}</b></div>
+        
+        <div class="row row-cols-2 mx-4 mb-5">
+          <div class="col">
+            <p class="text-start d-flex gap-1 mb-1"><b>Employee ID : </b>
+              <span>{{this.formDetails.fusionEmpId}}</span>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-start d-flex gap-1 mb-1"><b>Employee Name : </b>
+              <span>{{this.formDetails.employeeName}}</span>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-start d-flex gap-1 mb-1"><b>Designation : </b>
+              <span>{{this.formDetails.jobRole}}</span>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-start d-flex gap-1 mb-1"><b>Location / Sublocation : </b>
+              <span>{{this.formDetails.location}} / {{this.formDetails.sublocation}}</span>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-start d-flex gap-1 mb-1"><b>DOJ : </b>
+              <span>{{this.formDetails.doj | date}}</span>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-start d-flex gap-1 mb-1"><b>Department / Team : </b>
+              <span>{{this.formDetails.department}} / {{this.formDetails.team}}</span>
+            </p>
+          </div>
+        </div>
+  
+        <!--form Content-->
+        @if (!isDataLoaded) {
+        <div class="form-container" id="content">
+          @if (formSections.length > 0) {
+          @for (section of formSections; track section.id; let isLast = $last) {
+          <p class="form-label mb-4"><b>{{ section.sectionName }}</b></p>
+          @if (section.questions && section.questions.length > 0) {
+          @for (question of section.questions; track question.id) {
+          <div class="question-item mb-4">
+            <div class="question-text mb-3">
+              <b>{{ question.question }}</b>
+              @if (question.required) {
+              <span class="text-danger ms-1">*</span>
               }
             </div>
+  
+            @if (question.options && question.options.length > 0) {
+            <div class="options-container">
+              @for (option of question.options; track option.optionId) {
+              <div class="option-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" [name]="'question_' + question.id"
+                    [id]="'option_' + option.optionId" [value]="option.optionId"
+                    (change)="onAnswerChange(question.id, option.optionId)">
+                  <label class="form-check-label" [for]="'option_' + option.optionId">
+                    {{ option.option }}
+                    @if (option.optionWeightage > 0) {
+                    <span class="rating-badge ms-2">{{ option.optionWeightage }}</span>
+                    }
+                  </label>
+                </div>
+              </div>
+              }
+            </div>
+            } @else if (question.type === 'text') {
+            <div class="text-input-container">
+              <textarea class="form-control custom-input" rows="3" placeholder="Enter your response..."
+                [value]="getTextAnswer(question.id)" (input)="onTextAnswerChange(question.id, $event)">
+                                          </textarea>
+            </div>
+            }
           </div>
+          }
+          } @else {
+          <p class="text-muted">No questions available in this section.</p>
+          }
+          @if (!isLast) {
+          <hr>
+          }
+          }
+          } @else {
+          <div class="text-center py-5">
+            <p class="text-muted">No form data available.</p>
+          </div>
+          }
+        </div>
+        } @else {
+        <app-data-loader-content />
         }
-        
-        <div class="form-actions mt-4" [style.display]="isGeneratingPdf ? 'none' : 'block'">
+      </div>
+      <!-- </div> -->
+  
+      <div class="my-4" [style.display]="isGeneratingPdf ? 'none' : 'block'">
+        <div class="form-actions">
           <button type="button" class="custom-btn btn-primary me-3" (click)="submitForm()" [disabled]="isSubmitting">
             @if(isSubmitting){
             <div class="button-loader-content">
@@ -81,17 +121,9 @@
             <span>Submit Form</span>
             }
           </button>
-          <button type="button" class="custom-btn btn-secondary" (click)="goBack()">
-            Cancel
-          </button>
+          <button type="button" class="custom-btn btn-secondary" (click)="goBack()">Cancel</button>
         </div>
-      } @else {
-        <div class="text-center py-5">
-          <p class="text-muted">No form data available.</p>
-        </div>
-      }
+      </div>
     </div>
-  } @else {
-    <app-data-loader-content />
-  }
+  </div>
 </div>

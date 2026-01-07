@@ -36,6 +36,14 @@ interface IFormOption {
 }
 
 interface IFormDetails {
+  department: any;
+  team: any;
+  doj: string | number | Date;
+  sublocation: any;
+  location: any;
+  jobRole: any;
+  employeeName: any;
+  fusionEmpId: any;
   formId: number;
   formName: string;
   moduleId: number;
@@ -108,7 +116,7 @@ export class ExitFeedbackFormComponent implements OnInit, OnDestroy {
   getFormDetails(formId: number): void {
     this.isDataLoaded = true;
     this.subscription = this.http
-      .getData(`ExitFeedbackRequest/getFormResponseByFormId/${formId}`)
+      .getData(`ExitFeedbackRequest/getFormResponseByFormId/${formId}?employeeId=${this.empinfo.employeeId}`)
       .subscribe({
         next: (response: any) => {
           if (response.success && response.data) {

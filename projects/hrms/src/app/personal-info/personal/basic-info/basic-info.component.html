@@ -91,7 +91,7 @@
              <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Middle Name')" />
 
-         
+
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="middleName"
             formControlName="middleName" placeholder="Please enter middle name"
@@ -104,7 +104,7 @@
                  <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('Last Name')" />
 
-      
+
             }</label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="lastName"
             formControlName="lastName" placeholder="Please enter last name"
@@ -153,7 +153,7 @@
              <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
               popoverClass="pending-popover" (click)="setActiveMessage('BloodGroup')" />
 
-            
+
             }
           </label>
           <div class="custom-p-select-content">
@@ -186,7 +186,10 @@
         <div class="col-md-6 col-lg-4 mb-3"
           *ngIf="basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'">
           <label for="maritalStatus" class="form-label custom-label mb-2">Married date<span
-              class="text-danger">*</span></label>
+              class="text-danger">*</span>@if(isFieldPendingApproval('Married Date')) {
+            <app-info-icon class="info-pending" [ngbPopover]="pendingPopover" triggers="click"
+              popoverClass="pending-popover" (click)="setActiveMessage('Married Date')" />
+            }</label>
           <input type="date" class="form-control custom-input" id="dob" formControlName="marriageDate"
             [min]="getdateofbirth()" [max]="currentdata | date:'yyyy-MM-dd'" onkeypress="return false" />
           <div *ngIf="basicInfoForm.get('marriageDate')?.invalid && basicInfoForm.get('marriageDate')?.touched"

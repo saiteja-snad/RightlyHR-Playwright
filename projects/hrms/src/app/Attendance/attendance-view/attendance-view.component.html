@@ -371,7 +371,14 @@
                   <tbody>
                     <tr *ngFor="let log of permissions_list">
                       <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
+                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }} 
+                      <a type="button" [ngbPopover]="reason">
+                        <app-info-icon />
+                      </a>
+                      <ng-template #reason>
+                        <p class="mb-0">{{log.notes}}</p>
+                      </ng-template>
+                     </td>
                       <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                     </tr>
                   </tbody>
@@ -399,7 +406,14 @@
                   <tbody>
                     <tr *ngFor="let log of regularization_list">
                       <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
+                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }} 
+                      <a type="button" [ngbPopover]="regularization_reason">
+                        <app-info-icon />
+                      </a>
+                      <ng-template #regularization_reason>
+                        <p class="mb-0">{{log.notes}}</p>
+                      </ng-template>
+                      </td>
                       <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                     </tr>
                   </tbody>
@@ -426,7 +440,8 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let log of extra_logs">
-                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
+                      <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }} 
+                      </td>
                       <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                       <td>
                         <a [ngbPopover]="desprictionContent">

@@ -315,6 +315,7 @@ export const MODULE_INFOS = {
     SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
     My_Timesheet_Resource_Summary_view:"The Summary tab provides an overall view of the employee’s timesheet activity, including project allocation, billable distribution, and allocated vs actual hours. It helps managers quickly assess workload patterns and utilization through visual charts and aggregated project data.",
     SETTINGS_RATE_CARD_MODULE_INFO:"The Rate Card Configuration module allows HR and Finance teams to define and manage role-based rate cards for employees. Rates can be configured based on job roles and applied consistently across projects to ensure accurate and transparent billing.",
+    
      JOB_VIEW: 'View detailed results of the selected leave carry-forward job, including processed employees, individual processing status, and any validation or error details.',
   CARRY_FORWORD_LEAVES: 'This module helps to initiate the Leave Carry Forward workflow by defining the processing scope, reviewing the eligible employee leave balances, mapping the previous year’s leave categories to the new fiscal year, and executing carry-forward job updates seamlessly.',
   Initial_Leave_Entitlements: 'Start a new leave entitlement load job. Define the entitlement scope, review eligible employees, validate rules, and process leave entitlements through a guided three-step workflow.',

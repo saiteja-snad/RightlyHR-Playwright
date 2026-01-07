@@ -54,11 +54,11 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
   ];
   sandwichCalculationBasisOptions = [
     { label: 'Start Date/End Date', value: 'start_date/end_date' },
-    { label: 'Continuous Leave', value: 'continuous_leave' }
+    // { label: 'Continuous Leave', value: 'continuous_leave' }
   ];
   sandwichApplicabilityConditionOptions = [
-    { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
-    { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
+    // { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
+    // { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
   gapCalculationOptions = [

@@ -550,7 +550,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', { timeoffId }).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           if (response?.isAdjacentGating) {
-            this.conformationPopup.openErrorModal(response?.errorMessage || '');
+            this.conformationPopup.openErrorModal(response?.errorMessage || '', 4500);
             return;
           }
           if (response.isSandwichApplied) {

@@ -45,7 +45,7 @@
           <i class="bi bi-arrow-down-circle text-primary"></i>
         </div>
         <div class="balance-content">
-          <div class="balance-label">{{'Year-End Closing Balance' | translate}}</div>
+          <div class="balance-label">{{'Available Balance' | translate}}</div>
           <div class="balance-value text-primary">{{ yearClosingBalance }}</div>
         </div>
       </div>
@@ -55,7 +55,7 @@
           <i class="bi bi-dash-circle debit"></i>
         </div>
         <div class="balance-content">
-          <div class="balance-label">{{'Total Debited' | translate}}</div>
+          <div class="balance-label">{{'Total Availed' | translate}}</div>
           <div class="balance-value debit">{{ totalDebited }}</div>
         </div>
       </div>
@@ -107,13 +107,13 @@
             <thead>
                 <th>{{ 'Year' | translate }}</th>
                 <th>{{ 'Date' | translate }}</th>
-                <th class="text-center">{{ 'Category' | translate }}</th>
-                <th>{{ 'Transaction Type' | translate }}</th>
-                <th class="text-center">{{ 'Opening' | translate }}</th>
-                <th class="text-center">{{ 'Credited (+)' | translate }}</th>
-                <th class="text-center">{{ 'Debited (-)' | translate }}</th>
-                <th class="text-center">{{ 'Closing' | translate }}</th>
-                <th class="text-center">{{ 'Valid Upto' | translate }}</th>
+                <th>{{ 'Category' | translate }}</th>
+                <th>{{ 'Types' | translate }}</th>
+                <th class="text-center">{{ 'Previous Balance' | translate }}</th>
+                <th class="text-center">{{ 'Accural (+)' | translate }}</th>
+                <th class="text-center">{{ 'Availed (-)' | translate }}</th>
+                <th class="text-center">{{ 'Balance' | translate }}</th>
+                <!-- <th class="text-center">{{ 'Valid Upto' | translate }}</th> -->
                 <th></th>
               <!--  <th>{{ 'Status' | translate }}</th>
                 <th>{{ 'Requested By' | translate }}</th>
@@ -128,13 +128,11 @@
                         <td>{{ ledger.year }}</td>
 
                         <!-- Transaction Date -->
-                        <td>{{ ledger.txnDate | dateformat }}</td>
+                        <td>{{ ledger.txnDate | date: 'MMM dd' }}</td>
 
 
-                        <td class="d-flex justify-content-center">
-                            <div class="leave-category-chip"
-                                [style.background-color]="getLighterColor(ledger.categoryColor)"
-                                [style.color]="ledger.categoryColor">
+                        <td class="d-flex">
+                            <div class="text-center fw-medium"[style.color]="ledger.categoryColor">
                                 {{ ledger.category }}</div>
                         </td>
 
@@ -183,9 +181,9 @@
                         </td>
 
                         <!-- Valid Upto -->
-                        <td class="text-center">
+                        <!-- <td class="text-center">
                             {{ ledger?.validUpto ? (ledger.validUpto | dateformat) : '-' }}
-                        </td>
+                        </td> -->
 
                         <td>
                           @if(ledger.transactionType.toLowerCase() == 'leave debit' && !ledger?.subStatus){

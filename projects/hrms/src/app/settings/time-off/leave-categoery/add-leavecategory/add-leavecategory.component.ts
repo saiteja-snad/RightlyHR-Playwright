@@ -63,11 +63,11 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
   ];
   sandwichCalculationBasisOptions = [
     { label: 'Start Date/End Date', value: 'start_date/end_date' },
-    { label: 'Continuous Leave', value: 'continuous_leave' }
+    // { label: 'Continuous Leave', value: 'continuous_leave' }
   ];
   sandwichApplicabilityConditionOptions = [
-    { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
-    { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
+    // { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
+    // { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
   shiftsArray = [] as any[];
@@ -449,6 +449,15 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
           applySandwichOnControl?.updateValueAndValidity();
       });
 
+    this.leavePolicyForm?.get('sandwichCalculationBasis')?.valueChanges.subscribe((value: any) => {
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      if (value === 'start_date/end_date') {
+        sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
+        sandwichApplicabilityConditionControl?.disable();
+      } else {
+        sandwichApplicabilityConditionControl?.enable();
+      }
+      });
     this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe((value: any) => {
       const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
       if (value && value > 0) {
@@ -626,9 +635,9 @@ export class AddLeavecategoryComponent implements OnInit, OnDestroy {
       minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType || null,
       gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
       enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
-      sandwichApplicabilityCondition: this.leavePolicyForm.value.sandwichApplicabilityCondition,
-      sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
       applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
+      sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
+      sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
       addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",

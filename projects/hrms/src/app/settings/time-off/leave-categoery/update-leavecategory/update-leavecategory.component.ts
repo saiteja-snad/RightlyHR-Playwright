@@ -53,11 +53,11 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
   ];
   sandwichCalculationBasisOptions = [
     { label: 'Start Date/End Date', value: 'start_date/end_date' },
-    { label: 'Continuous Leave', value: 'continuous_leave' }
+    // { label: 'Continuous Leave', value: 'continuous_leave' }
   ];
   sandwichApplicabilityConditionOptions = [
-    { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
-    { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
+    // { label: 'Leave Before Holiday/Weekend', value: 'leave_before_holiday/weekend' },
+    // { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
   gapCalculationOptions = [
@@ -339,6 +339,22 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       sandwichApplicabilityConditionControl?.updateValueAndValidity();
     });
 
+    this.leavePolicyForm?.get('sandwichCalculationBasis')?.valueChanges.subscribe((value: any) => {
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      if (value === 'start_date/end_date') {
+        sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
+        sandwichApplicabilityConditionControl?.disable();
+      } else {
+        sandwichApplicabilityConditionControl?.enable();
+      }
+    });
+
+    // Initial check for sandwichCalculationBasis
+    if (this.leavePolicyForm.get('sandwichCalculationBasis')?.value === 'start_date/end_date') {
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      sandwichApplicabilityConditionControl?.setValue('leave_on_both_sides_of_holiday/weekend');
+      sandwichApplicabilityConditionControl?.disable();
+    }
     this.leavePolicyForm?.get('minimumGapBetweenSameLeaveType')?.valueChanges.subscribe((value: any) => {
       const gapCalculationBasisControl = this.leavePolicyForm.get('gapCalculationBasis');
       if (value && value > 0) {
@@ -848,7 +864,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
       applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
       sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: this.leavePolicyForm.value.sandwichApplicabilityCondition,
+      sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
       // addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: this.updateLeaveCategoryData.status,

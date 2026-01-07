@@ -901,8 +901,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/job-details':
         MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
-      '/myinfo/job/separation-details':
-        MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      // '/myinfo/job/separation-details':
+      //   MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
       '/myinfo/job/separation-details/separation-requests':
         MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
       '/myinfo/job/separation-details/exit-feedback-details':

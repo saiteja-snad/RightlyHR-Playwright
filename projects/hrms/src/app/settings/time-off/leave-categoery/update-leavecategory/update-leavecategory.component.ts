@@ -60,6 +60,11 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
     // { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
+  adjacentLeaveTypeRuleOptions = [
+    { label: 'Same Category', value: 'same_category' },
+    { label: 'Different Category', value: 'different_category' },
+    { label: 'Both', value: 'both' }
+  ];
   gapCalculationOptions = [
 
     { label: 'From Leave Start Date', value: 'start_date' },
@@ -90,7 +95,6 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
     this.jobLocationList();
     this.patchFormValues(this.updateLeaveCategoryData);
     // this.getOrgLeavesCategories();
-    this.setupDependentFieldListenerS();
     this.validateAllowedDays();
     this.getLeaveTypes();
     const currentYear = new Date().getFullYear();
@@ -181,7 +185,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: [false],
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
-      sandwichApplicabilityCondition: [null]
+      sandwichApplicabilityCondition: [null],
+      adjacentLeaveTypeRule: [null]
     });
   }
 
@@ -318,25 +323,31 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       const applySandwichOnControl = this.leavePolicyForm.get('applySandwichOn');
       const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
       const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      const adjacentLeaveTypeRuleControl = this.leavePolicyForm.get('adjacentLeaveTypeRule');
 
       if (value === true) {
         applySandwichOnControl?.setValidators([Validators.required]);
         sandwichCalculationBasisControl?.setValidators([Validators.required]);
         sandwichApplicabilityConditionControl?.setValidators([Validators.required]);
+        adjacentLeaveTypeRuleControl?.setValidators([Validators.required]);
       } else {
         applySandwichOnControl?.clearValidators();
         sandwichCalculationBasisControl?.clearValidators();
         sandwichApplicabilityConditionControl?.clearValidators();
+        adjacentLeaveTypeRuleControl?.clearValidators();
         applySandwichOnControl?.setValue(null);
         sandwichCalculationBasisControl?.setValue(null);
         sandwichApplicabilityConditionControl?.setValue(null);
+        adjacentLeaveTypeRuleControl?.setValue(null);
         applySandwichOnControl?.markAsUntouched();
         sandwichCalculationBasisControl?.markAsUntouched();
         sandwichApplicabilityConditionControl?.markAsUntouched();
+        adjacentLeaveTypeRuleControl?.markAsUntouched();
       }
       applySandwichOnControl?.updateValueAndValidity();
       sandwichCalculationBasisControl?.updateValueAndValidity();
       sandwichApplicabilityConditionControl?.updateValueAndValidity();
+      adjacentLeaveTypeRuleControl?.updateValueAndValidity();
     });
 
     this.leavePolicyForm?.get('sandwichCalculationBasis')?.valueChanges.subscribe((value: any) => {
@@ -683,7 +694,8 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: data.enableSandwichPolicy,
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition
+      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
+      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule
     });
     
     // Force update leaveType after a delay to ensure dropdown is ready
@@ -765,106 +777,107 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
 
   // Form submission
   onSubmit() {
-    const formData = this.leavePolicyForm.value;
+    const formData = this.leavePolicyForm.getRawValue();
     console.log('Form Data:', formData);
     let payload = {
       id: this.updateLeaveCategoryData.id,
       applicableYear:
-        this.leavePolicyForm.value.applicableYear ??
+        formData.applicableYear ??
         this.updateLeaveCategoryData.applicableYear,
       locationID:
-        this.leavePolicyForm.value.locationID.id ??
+        formData.locationID.id ??
         this.updateLeaveCategoryData.locationID,
       subLocation:
-        this.leavePolicyForm.value.subLocation.id ??
+        formData.subLocation.id ??
         this.updateLeaveCategoryData.subLocation,
       shiftId:
-        this.leavePolicyForm.value.shiftId ??
+        formData.shiftId ??
         this.updateLeaveCategoryData.shiftId,
       type:
-        this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
+        formData.type ?? this.updateLeaveCategoryData.type,
       leaveTypeId: formData.leaveType,
       name:
-        this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
+        formData.name ?? this.updateLeaveCategoryData.name,
       categoryCode:
-        this.leavePolicyForm.value.categoryCode ??
+        formData.categoryCode ??
         this.updateLeaveCategoryData.categoryCode,
       validity:
-        this.leavePolicyForm.value.validity ??
+        formData.validity ??
         this.updateLeaveCategoryData.validity,
       categoryColor:
-        this.leavePolicyForm.value.categoryColor ??
+        formData.categoryColor ??
         this.updateLeaveCategoryData.parentId,
       parentId:
-        this.leavePolicyForm.value.parentId ??
+        formData.parentId ??
         this.updateLeaveCategoryData.applicableYear,
       allowedGender:
-        this.leavePolicyForm.value.allowedGender ??
+        formData.allowedGender ??
         this.updateLeaveCategoryData.allowedGender,
       allowedMaritalStatus:
-        this.leavePolicyForm.value.allowedMaritalStatus ??
+        formData.allowedMaritalStatus ??
         this.updateLeaveCategoryData.allowedMaritalStatus,
       excludeWeekends:
-        this.leavePolicyForm.value.excludeWeekends ??
+        formData.excludeWeekends ??
         this.updateLeaveCategoryData.excludeWeekends,
       excludeHolidays:
-        this.leavePolicyForm.value.excludeHolidays ??
+        formData.excludeHolidays ??
         this.updateLeaveCategoryData.excludeHolidays,
       isOptionalHoliday:
-        this.leavePolicyForm.value.isOptionalHoliday ??
+        formData.isOptionalHoliday ??
         this.updateLeaveCategoryData.isOptionalHoliday,
       allowedHalfDay:
-        this.leavePolicyForm.value.allowedHalfDay ??
+        formData.allowedHalfDay ??
         this.updateLeaveCategoryData.allowedHalfDay,
       isApplicableProRataLeave:
-        this.leavePolicyForm.value.isApplicableProRataLeave ??
+        formData.isApplicableProRataLeave ??
         this.updateLeaveCategoryData.isApplicableProRataLeave,
       futureDatesAllowed:
-        this.leavePolicyForm.value.futureDatesAllowed ??
+        formData.futureDatesAllowed ??
         this.updateLeaveCategoryData.futureDatesAllowed,
       futureDatesAllowedDays:
-        this.leavePolicyForm.value.futureDatesAllowedDays ?? 0,
+        formData.futureDatesAllowedDays ?? 0,
       pastDateAllowed:
-        this.leavePolicyForm.value.pastDateAllowed ??
+        formData.pastDateAllowed ??
         this.updateLeaveCategoryData.pastDateAllowed,
       pastDatesAllowedDays:
-        this.leavePolicyForm.value.pastDatesAllowedDays ?? 0,
+        formData.pastDatesAllowedDays ?? 0,
       carryForwardAllowed:
-        this.leavePolicyForm.value.carryForwardAllowed ??
+        formData.carryForwardAllowed ??
         this.updateLeaveCategoryData.carryForwardAllowed,
       carryForwardAllowedValue:
-        this.leavePolicyForm.value.carryForwardAllowedValue ?? 0,
+        formData.carryForwardAllowedValue ?? 0,
       encashAllowedType:
-        this.leavePolicyForm.value.encashAllowedType ??
+        formData.encashAllowedType ??
         this.updateLeaveCategoryData.encashAllowedType,
-      encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
+      encashAllowedValue: formData.encashAllowedValue ?? 0,
       noticeperiodAllowedType:
-        this.leavePolicyForm.value.noticeperiodAllowedType ??
+        formData.noticeperiodAllowedType ??
         this.updateLeaveCategoryData.noticeperiodAllowedType,
       noticePeriodAllowedValue:
-        this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
-      noticePeriodFrequencyType: this.leavePolicyForm.value.noticePeriodFrequencyType,
+        formData.noticePeriodAllowedValue ?? 0,
+      noticePeriodFrequencyType: formData.noticePeriodFrequencyType,
       isProbationAllowed:
-        this.leavePolicyForm.value.isProbationAllowed ??
+        formData.isProbationAllowed ??
         this.updateLeaveCategoryData.isProbationAllowed,
-      probationDays: this.leavePolicyForm.value.probationDays ?? 0,
-      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
+      probationDays: formData.probationDays ?? 0,
+      probationFrequencyType: formData.probationFrequencyType,
       // New Leave Category Fields
-      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays || null,
-      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays || null,
-      includeWeekends: this.leavePolicyForm.value.includeWeekends,
-      includeHolidays: this.leavePolicyForm.value.includeHolidays,
-      allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
-      restrictedAdjacentLeaveTypes: this.leavePolicyForm.value.restrictedAdjacentLeaveTypes?.join(','),
-      blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
-      blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
-      blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
-      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType || null,
-      gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
-      enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
-      applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
-      sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
+      minimumAdvanceApplyDays: formData.minimumAdvanceApplyDays || null,
+      maxLeaveDurationCalendarDays: formData.maxLeaveDurationCalendarDays || null,
+      includeWeekends: formData.includeWeekends,
+      includeHolidays: formData.includeHolidays,
+      allowLeaveCombination: formData.allowLeaveCombination,
+      restrictedAdjacentLeaveTypes: formData.restrictedAdjacentLeaveTypes?.join(','),
+      blockLeaveOnWeekends: formData.blockLeaveOnWeekends,
+      blockPreviousDayLeave: formData.blockPreviousDayLeave,
+      blockNextDayLeave: formData.blockNextDayLeave,
+      minimumGapBetweenSameLeaveType: formData.minimumGapBetweenSameLeaveType || null,
+      gapCalculationBasis: formData.gapCalculationBasis,
+      enableSandwichPolicy: formData.enableSandwichPolicy,
+      applySandwichOn: formData.applySandwichOn,
+      sandwichCalculationBasis: formData.sandwichCalculationBasis,
+      sandwichApplicabilityCondition: formData.sandwichApplicabilityCondition,
+      adjacentLeaveTypeRule: formData.adjacentLeaveTypeRule,
       // addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: this.updateLeaveCategoryData.status,
@@ -890,109 +903,110 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
   }
 
   onPublished() {
-    const formData = this.leavePolicyForm.value;
+    const formData = this.leavePolicyForm.getRawValue();
     
     console.log('Form Data:', formData);
     let payload = {
       id: this.updateLeaveCategoryData.id,
       applicableYear:
-        this.leavePolicyForm.value.applicableYear ??
+        formData.applicableYear ??
         this.updateLeaveCategoryData.applicableYear,
       locationID:
-        this.leavePolicyForm.value.locationID.id ??
+        formData.locationID.id ??
         this.updateLeaveCategoryData.locationID,
       subLocation:
-        this.leavePolicyForm.value.subLocation.id ??
+        formData.subLocation.id ??
         this.updateLeaveCategoryData.subLocation,
       shiftId:
-        this.leavePolicyForm.value.shiftId ??
+        formData.shiftId ??
         this.updateLeaveCategoryData.shiftId,
       type:
-        this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
+        formData.type ?? this.updateLeaveCategoryData.type,
       leaveType:
-        this.leavePolicyForm.value.leaveType ?? this.updateLeaveCategoryData.leaveType,
+        formData.leaveType ?? this.updateLeaveCategoryData.leaveType,
       leaveTypeId: formData.leaveType,
       name:
-        this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
+        formData.name ?? this.updateLeaveCategoryData.name,
       categoryCode:
-        this.leavePolicyForm.value.categoryCode ??
+        formData.categoryCode ??
         this.updateLeaveCategoryData.categoryCode,
       validity:
-        this.leavePolicyForm.value.validity ??
+        formData.validity ??
         this.updateLeaveCategoryData.validity,
       categoryColor:
-        this.leavePolicyForm.value.categoryColor ??
+        formData.categoryColor ??
         this.updateLeaveCategoryData.parentId,
       parentId:
-        this.leavePolicyForm.value.parentId ??
+        formData.parentId ??
         this.updateLeaveCategoryData.applicableYear,
       allowedGender:
-        this.leavePolicyForm.value.allowedGender ??
+        formData.allowedGender ??
         this.updateLeaveCategoryData.allowedGender,
       allowedMaritalStatus:
-        this.leavePolicyForm.value.allowedMaritalStatus ??
+        formData.allowedMaritalStatus ??
         this.updateLeaveCategoryData.allowedMaritalStatus,
       excludeWeekends:
-        this.leavePolicyForm.value.excludeWeekends ??
+        formData.excludeWeekends ??
         this.updateLeaveCategoryData.excludeWeekends,
       excludeHolidays:
-        this.leavePolicyForm.value.excludeHolidays ??
+        formData.excludeHolidays ??
         this.updateLeaveCategoryData.excludeHolidays,
       isOptionalHoliday:
-        this.leavePolicyForm.value.isOptionalHoliday ??
+        formData.isOptionalHoliday ??
         this.updateLeaveCategoryData.isOptionalHoliday,
       allowedHalfDay:
-        this.leavePolicyForm.value.allowedHalfDay ??
+        formData.allowedHalfDay ??
         this.updateLeaveCategoryData.allowedHalfDay,
       isApplicableProRataLeave:
-        this.leavePolicyForm.value.isApplicableProRataLeave ??
+        formData.isApplicableProRataLeave ??
         this.updateLeaveCategoryData.isApplicableProRataLeave,
       futureDatesAllowed:
-        this.leavePolicyForm.value.futureDatesAllowed ??
+        formData.futureDatesAllowed ??
         this.updateLeaveCategoryData.futureDatesAllowed,
       futureDatesAllowedDays:
-        this.leavePolicyForm.value.futureDatesAllowedDays ?? 0,
+        formData.futureDatesAllowedDays ?? 0,
       pastDateAllowed:
-        this.leavePolicyForm.value.pastDateAllowed ??
+        formData.pastDateAllowed ??
         this.updateLeaveCategoryData.pastDateAllowed,
       pastDatesAllowedDays:
-        this.leavePolicyForm.value.pastDatesAllowedDays ?? 0,
+        formData.pastDatesAllowedDays ?? 0,
       carryForwardAllowed:
-        this.leavePolicyForm.value.carryForwardAllowed ??
+        formData.carryForwardAllowed ??
         this.updateLeaveCategoryData.carryForwardAllowed,
       carryForwardAllowedValue:
-        this.leavePolicyForm.value.carryForwardAllowedValue ?? 0,
+        formData.carryForwardAllowedValue ?? 0,
       encashAllowedType:
-        this.leavePolicyForm.value.encashAllowedType ??
+        formData.encashAllowedType ??
         this.updateLeaveCategoryData.encashAllowedType,
-      encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
+      encashAllowedValue: formData.encashAllowedValue ?? 0,
       noticeperiodAllowedType:
-        this.leavePolicyForm.value.noticeperiodAllowedType ??
+        formData.noticeperiodAllowedType ??
         this.updateLeaveCategoryData.noticeperiodAllowedType,
       noticePeriodAllowedValue:
-        this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
-      noticePeriodFrequencyType: this.leavePolicyForm.value.noticePeriodFrequencyType,
+        formData.noticePeriodAllowedValue ?? 0,
+      noticePeriodFrequencyType: formData.noticePeriodFrequencyType,
       isProbationAllowed:
-        this.leavePolicyForm.value.isProbationAllowed ??
+        formData.isProbationAllowed ??
         this.updateLeaveCategoryData.isProbationAllowed,
-      probationDays: this.leavePolicyForm.value.probationDays ?? 0,
-      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType,
+      probationDays: formData.probationDays ?? 0,
+      probationFrequencyType: formData.probationFrequencyType,
       // New Leave Category Fields
-      minimumAdvanceApplyDays: this.leavePolicyForm.value.minimumAdvanceApplyDays || null,
-      maxLeaveDurationCalendarDays: this.leavePolicyForm.value.maxLeaveDurationCalendarDays || null,
-      includeWeekends: this.leavePolicyForm.value.includeWeekends,
-      includeHolidays: this.leavePolicyForm.value.includeHolidays,
-      allowLeaveCombination: this.leavePolicyForm.value.allowLeaveCombination,
-      restrictedAdjacentLeaveTypes: this.leavePolicyForm.value.restrictedAdjacentLeaveTypes?.join(','),
-      blockLeaveOnWeekends: this.leavePolicyForm.value.blockLeaveOnWeekends,
-      blockPreviousDayLeave: this.leavePolicyForm.value.blockPreviousDayLeave,
-      blockNextDayLeave: this.leavePolicyForm.value.blockNextDayLeave,
-      minimumGapBetweenSameLeaveType: this.leavePolicyForm.value.minimumGapBetweenSameLeaveType || null,
-      gapCalculationBasis: this.leavePolicyForm.value.gapCalculationBasis,
-      enableSandwichPolicy: this.leavePolicyForm.value.enableSandwichPolicy,
-      applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
-      sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: this.leavePolicyForm.value.sandwichApplicabilityCondition,
+      minimumAdvanceApplyDays: formData.minimumAdvanceApplyDays || null,
+      maxLeaveDurationCalendarDays: formData.maxLeaveDurationCalendarDays || null,
+      includeWeekends: formData.includeWeekends,
+      includeHolidays: formData.includeHolidays,
+      allowLeaveCombination: formData.allowLeaveCombination,
+      restrictedAdjacentLeaveTypes: formData.restrictedAdjacentLeaveTypes?.join(','),
+      blockLeaveOnWeekends: formData.blockLeaveOnWeekends,
+      blockPreviousDayLeave: formData.blockPreviousDayLeave,
+      blockNextDayLeave: formData.blockNextDayLeave,
+      minimumGapBetweenSameLeaveType: formData.minimumGapBetweenSameLeaveType || null,
+      gapCalculationBasis: formData.gapCalculationBasis,
+      enableSandwichPolicy: formData.enableSandwichPolicy,
+      applySandwichOn: formData.applySandwichOn,
+      sandwichCalculationBasis: formData.sandwichCalculationBasis,
+      sandwichApplicabilityCondition: formData.sandwichApplicabilityCondition,
+      adjacentLeaveTypeRule: formData.adjacentLeaveTypeRule,
       // addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: 'Published',
@@ -1016,9 +1030,19 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
   }
 
   navigateToCloneLeaveCategory() {
+    const formValues = this.leavePolicyForm.getRawValue();
+    const dataToClone = {
+      ...this.updateLeaveCategoryData,
+      enableSandwichPolicy: formValues.enableSandwichPolicy,
+      applySandwichOn: formValues.applySandwichOn,
+      sandwichCalculationBasis: formValues.sandwichCalculationBasis,
+      sandwichApplicabilityCondition: formValues.sandwichApplicabilityCondition,
+      adjacentLeaveTypeRule: formValues.adjacentLeaveTypeRule
+    };
+
     localStorage.setItem(
       'cloneleavecategory',
-      JSON.stringify(this.updateLeaveCategoryData)
+      JSON.stringify(dataToClone)
     );
     this.router.navigate([
       '/settings/timeoff-configurations/cloneleavecategory',

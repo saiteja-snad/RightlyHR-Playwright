@@ -23,7 +23,7 @@ import { EmployeeLeaveLedger } from '../leaves.model';
 import { Select } from 'primeng/select';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
-import { ICategoryDetails } from '../../../Interfaces/timoff-model';
+import { ICategoryDetails, IEAV } from '../../../Interfaces/timoff-model';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
@@ -87,10 +87,11 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   ];
   transactionTypes = [
     { label: 'Carry Forward', value: 'Carry Forward' },
-    { label: 'Leave Debit', value: 'Leave Debit' },
+    { label: 'Leave Availed', value: 'Leave Availed' },
     { label: 'On Demand Allocation', value: 'On Demand Allocation' },
     { label: 'Yearly Allocation', value:'Yearly Allocation' },
   ];
+  eavData: IEAV[] = [];
   selectedYear: any;
   currentYear: number = new Date().getFullYear();
   categoryDetails = [] as ICategoryDetails[];
@@ -132,6 +133,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
                   this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
                 }${this.empinfo.lastName ?? ''}`.trim();
     this.initializeForm();
+    this.getEAVData();
     this.getAllEmployeeDetails();
     this.applyQueryParamsToSelectionState();
     this.syncSelectionsAndLoadData();
@@ -162,6 +164,31 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
         }
       });
   }
+ 
+   getEAVData() {
+      const params = 'LeaveSummary';
+      const param = [
+        'AllocationTypes'
+      ];
+      this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (data: any) => {
+            this.eavData = data as IEAV[];
+            // this.futureDatesAllowed = parseInt(
+            //   this.permissionsValue?.find((item: any) => item.attribute === 'futureDatesAllowed')?.value ?? '0',
+            //   10
+            // );
+            // this.pastDatesAllowed = parseInt(
+            //   this.permissionsValue?.find((item: any) => item.attribute === 'pastDatesAllowed')?.value ?? '0',
+            //   10
+            // );
+          },
+          error(err) {
+            console.log('errors', err);
+          },
+        });
+    }
 
   onRowsChange() {
     this.first = 0;

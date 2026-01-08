@@ -5,6 +5,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
+import { Select } from 'primeng/select';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -23,6 +24,8 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.component';
 import { AuthService } from '../../../services/auth.service';
+import { SeparationSubTabsComponent } from "../../../shared/personalinfo-tabs/separation-sub-tabs/separation-sub-tabs.component";
+import { MyinfoSeparationSubTabsComponent } from "../../../shared/myinfo-tabs/myinfo-separation-sub-tabs/myinfo-separation-sub-tabs.component";
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -37,7 +40,10 @@ import { AuthService } from '../../../services/auth.service';
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent,
-  ],
+    SeparationSubTabsComponent,
+    MyinfoSeparationSubTabsComponent,
+    Select
+],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss',
 })
@@ -46,6 +52,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
+  initiateForm!: FormGroup;
+  selectedItem :any;
+  availableForms: any[] = [];
   substatus: any;
   status: any;
   loading = false;
@@ -64,6 +73,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   isDataLoaded = false;
   totalCount:any;
  @ViewChild('NoticePopup') NoticePopup?: TemplateRef<any>;
+ @ViewChild('initiateModal') initiateModal!: TemplateRef<any>;
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -75,7 +85,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     private router: Router,
     public formValidations: FormValidationsService
   ) {
-    // Initialize any required services or dependencies here
+    this.initiateForm = this.fb.group({
+      formId: [null, Validators.required]
+    });
   }
 
   ngOnInit(): void {
@@ -103,14 +115,21 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getEmployeeId();
       this.getNodueClearance();
       this.fetchSeparationDetails();
+      this.getAvailableForms();
+      this.getExitFeeddBackDetails();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       this.getEmployeeId();
       this.fetchSeparationDetails();
       this.getNodueClearance();
+      this.getAvailableForms();
+      this.getExitFeeddBackDetails();
     }
   }
-
+  
+ isActive(route: string): boolean {
+    return this.router.url.includes(route);
+  }
   formInitialization() {
     this.recallreason = this.fb.group({
       recallReason: [
@@ -309,6 +328,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
 
   nodueclearancedetails = [] as any;
+  allNodueApproved = false;
   getNodueClearance() {
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
@@ -317,9 +337,67 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           console.log(data);
           this.nodueclearancedetails = data;
+          
+          // Check if all nodue records are approved
+          const validItems = data.filter((ele: any) => ele.subStatus?.toLowerCase() !== 'rerequested');
+          const approvedCount = validItems.filter((ele: any) => ele.status?.toLowerCase() === 'approved').length;
+          this.allNodueApproved = validItems.length > 0 && approvedCount === validItems.length;
         },
       });
   }
+
+  areAllNodueRecordsApproved(item: any): boolean {
+    return this.allNodueApproved;
+  }
+
+  exitfeedbackdata = [] as any;
+  exitfeedbacksubmitted = false;
+  canInitiateExitFeedback(item: any): boolean {
+    return !this.exitfeedbacksubmitted;
+  }
+  getExitFeeddBackDetails() {
+    let employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http
+      .getData(`ExitFeedbackRequest/employee/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Raw exit feedback data:', data);
+          console.log('Data type:', typeof data);
+          console.log('Is array:', Array.isArray(data));
+          
+          // Handle different response structures
+          let feedbackArray = [];
+          if (Array.isArray(data)) {
+            feedbackArray = data;
+          } else if (data && Array.isArray(data.data)) {
+            feedbackArray = data.data;
+          } else if (data && data.length !== undefined) {
+            feedbackArray = [data];
+          }
+          
+          this.exitfeedbackdata = feedbackArray;
+          console.log('Processed feedback array:', this.exitfeedbackdata);
+          console.log('Array length:', this.exitfeedbackdata.length);
+          
+          const existingRecords = this.exitfeedbackdata.filter((ele: any) => {
+            const status = ele?.status?.toLowerCase();
+            console.log('Checking status:', status);
+            return status === 'initiated' || status === 'submitted';
+          });
+          
+          console.log('Filtered records:', existingRecords);
+          this.exitfeedbacksubmitted = existingRecords.length > 0;
+          console.log('Exit feedback submitted:', this.exitfeedbacksubmitted);
+        },
+        error: (err: any) => {
+          console.error('Error fetching exit feedback:', err);
+          this.exitfeedbackdata = [];
+          this.exitfeedbacksubmitted = false;
+        }
+      });
+  }
+
+  
 
   shouldShowButton(date: string): boolean {
     console.log(date);
@@ -549,6 +627,53 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  
+  openInitiateModal(item: any): void {
+    this.selectedItem = item;
+    this.initiateForm.reset();
+    this.modalService.open(this.initiateModal, { centered: true, backdrop: 'static' });
+  }
+
+  getAvailableForms(): void {
+    this.subscription = this.http.getData('Form/getAllFormDetails?status=Active&moduleid=33').subscribe({
+      next: (response: any) => {
+        this.availableForms = response.data || response || [];
+      },
+      error: (err: any) => {
+        console.error('Error loading forms:', err);
+        this.availableForms = [];
+      }
+    });
+  }
+
+  initiateExitFeedback(): void {
+    if (this.initiateForm.valid && this.selectedItem) {
+      this.isLoading = true;
+      const payload = {
+        employeeId : this.selectedItem.employeeId,
+        empFormId: this.initiateForm.get('formId')?.value,
+        status: 'Initiated',
+        initiatedBy: this.empinfo.employeeId,
+        separationId : this.selectedItem.id,
+        moduleId : 33,
+        lastWorkingDate : this.selectedItem.lastWorkingDate
+      };
+      
+      this.subscription = this.http.postdata(`ExitFeedbackRequest/initiate`, payload).subscribe({
+        next: (response: any) => {
+          this.isLoading = false;
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Exit feedback form initiated successfully');
+        },
+        error: (err: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(err.error?.message || 'Failed to initiate form');
+        }
+      });
+    }
+  }
+
 
   difference = 0;
   getBlockedFutureDate(lastWorkingDate: string): string {

@@ -1018,6 +1018,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Team Members Tab',
     'My Info My Team Members Tab',
     'My Info Onboard Request Tab',
+    'My Info Exit Feedback Details',
+    'My Info Separation Request Details'
   ];
   myInfoPersonalSubTabsFields = [
     'My Info Basic Information',
@@ -1066,6 +1068,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Submission Of No Due Clearance',
     'Re-request for no due',
   ];
+  myInfoExitFeedbackFields = [
+    'My Info Exit Feedback Submit',
+  ];
   employeeInfoSubTabsFields = [
     'Employee Info Personal Tab',
     'Employee Info Job Tab',
@@ -1090,7 +1095,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info My Team Members Tab',
     'No Due Form',
     'Employee Info Contract Conversion Request',
-    'Employee Info Card Details'
+    'Employee Info Card Details',
+    'Employee Info Exit Feedback Details'
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',
@@ -1129,6 +1135,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   employeeNoDueClearanceFields = [
     'Employee Submission Of No Due Clearance',
     'Employee Re-request for no due',
+  ];
+   employeeExitFeedbackFields = [
+    'Employee Info Exit Feedback Form'
   ];
   employeeProbationRequestFields = [
     'Employee Request for Probation Confirmation',

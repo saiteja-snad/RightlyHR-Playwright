@@ -106,15 +106,15 @@
         <table class="w-100">
             <thead>
                 <th>{{ 'Year' | translate }}</th>
-                <th>{{ 'Date' | translate }}</th>
-                <th>{{ 'Category' | translate }}</th>
+                <th>{{ 'Start Date' | translate }}</th>
+                <th>{{ 'End Date' | translate }}</th>
+                <th>{{ 'Leave Category' | translate }}</th>
                 <th>{{ 'Types' | translate }}</th>
                 <th class="text-center">{{ 'Previous Balance' | translate }}</th>
                 <th class="text-center">{{ 'Accural (+)' | translate }}</th>
                 <th class="text-center">{{ 'Availed (-)' | translate }}</th>
                 <th class="text-center">{{ 'Balance' | translate }}</th>
                 <!-- <th class="text-center">{{ 'Valid Upto' | translate }}</th> -->
-                <th></th>
               <!--  <th>{{ 'Status' | translate }}</th>
                 <th>{{ 'Requested By' | translate }}</th>
                 <th>{{ 'Processed By' | translate }}</th> -->
@@ -128,8 +128,9 @@
                         <td>{{ ledger.year }}</td>
 
                         <!-- Transaction Date -->
-                        <td>{{ ledger.txnDate | date: 'MMM dd' }}</td>
+                        <td>{{ ledger.startDate | date: 'MMM dd' }}</td>
 
+                        <td>{{ ledger.endDate | date: 'MMM dd' }}</td>
 
                         <td class="d-flex">
                             <div class="text-center fw-medium"[style.color]="ledger.categoryColor">
@@ -138,12 +139,10 @@
 
                         <!-- Transaction Type -->
                         <td>
-                          <div class="transaction-type-container">
+                          <div class="d-flex align-items-center gap-2">
                             <span class="transaction-main">{{ ledger.transactionType }}</span>
-                            @if(ledger.subStatus) {
-                              <div class="card substatus-card">
-                                {{ledger.subStatus}}
-                              </div>
+                            @if(ledger.transactionType.toLowerCase() == 'leave availed' ){
+                            <app-info-icon class="info-pending" [ngbPopover]="messageContent" triggers="click"  popoverClass="pending-popover" (click)="setActiveMessage(ledger)" />
                             }
                           </div>
                         </td>
@@ -185,13 +184,7 @@
                             {{ ledger?.validUpto ? (ledger.validUpto | dateformat) : '-' }}
                         </td> -->
 
-                        <td>
-                          @if(ledger.transactionType.toLowerCase() == 'leave debit' && !ledger?.subStatus){
-                            <app-info-icon class="info-pending" [ngbPopover]="messageContent" triggers="click"  popoverClass="pending-popover" (click)="setActiveMessage(ledger)" />
-                          }@else {
-                            {{"-"}}
-                          }
-                        </td>
+                  
 
                          <!-- Status -->
                         <!-- <td>
@@ -294,22 +287,22 @@
 
         <!-- Category -->
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Category</label>
-          <div class="custom-p-select-content">
-            <p-select [options]="categoryDetails" optionLabel="category.name" [filter]="true" optionValue="category.id"
-              formControlName="category" placeholder="Please select category" class="form-select custom-select"
-              filterPlaceholder="Search category" [resetFilterOnHide]="true" >
-            </p-select>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Leave Category</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="categoryDetails" optionLabel="category.name" [filter]="true" optionValue="category.id"
+              formControlName="category" placeholder="Please select leave category" class="form-select custom-select"
+              filterPlaceholder="Search category" [resetFilterOnHide]="true" filterPlaceHolder="Search leave category" >
+            </p-multiSelect>
           </div>
         </div>
 
         <!-- Transaction Type -->
         <div class="mb-3">
-          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Transaction Type</label>
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Type</label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect  [options]="transactionTypes" optionLabel="label"  optionValue="value"
-              formControlName="transactionType" placeholder="Please select transaction type" class="form-select custom-select"
-               [resetFilterOnHide]="true" filterPlaceHolder="Search transaction type" >
+              formControlName="transactionType" placeholder="Please select type" class="form-select custom-select"
+               [resetFilterOnHide]="true" filterPlaceHolder="Search type" >
             </p-multiSelect>
           </div>
         </div>

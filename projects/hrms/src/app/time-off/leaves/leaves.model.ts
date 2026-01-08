@@ -178,4 +178,7 @@ export interface EmployeeLeaveLedger {
   referenceId: number;
   referenceType: string;
   entitlementType: string;
+
+  startDate: string; // ISO Date string
+  endDate: string; // ISO Date string
 }

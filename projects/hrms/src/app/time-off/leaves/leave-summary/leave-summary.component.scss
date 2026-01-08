@@ -66,10 +66,11 @@
   font-weight: 600;
 }
 
-.transaction-type-container {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.p-inputtext {
+    font-family: inherit  !important;
+    font-feature-settings: inherit;
+    font-size: 0.8rem  !important;
+    color: var(--p-inputtext-color)  !important;
 }
 
 .transaction-main {

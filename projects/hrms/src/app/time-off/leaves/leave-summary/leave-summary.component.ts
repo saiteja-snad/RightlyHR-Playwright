@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -57,6 +57,7 @@ import { Chip } from 'primeng/chip';
 ],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 export class LeaveSummaryComponent implements OnInit, OnDestroy {
   totalRecords = 100;
@@ -149,12 +150,14 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   }
 
    setActiveMessage(ledger: EmployeeLeaveLedger) {
-    if (ledger.transactionType === 'Leave Debit') {
+    if (ledger.transactionType === 'Leave Availed') {
       const isWaitingForApproval = ledger.status?.toLowerCase() === 'waiting for approval';
       const processedByRow = !isWaitingForApproval ? `<div class="detail-item"><strong>Processed by:</strong> ${ledger.processedByName || '-'}</div>` : '';
+      const formattedDate = new Date(ledger.txnDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
       
       this.activeMessage = `
         <div class="leave-details">
+          <div class="detail-item"><strong>Applied Date:</strong> ${formattedDate}</div>
           <div class="detail-item"><strong>Status:</strong> ${ledger.status || '-'}</div>
           <div class="detail-item"><strong>Requested by:</strong> ${ledger.creditedByName || '-'}</div>
           ${processedByRow}

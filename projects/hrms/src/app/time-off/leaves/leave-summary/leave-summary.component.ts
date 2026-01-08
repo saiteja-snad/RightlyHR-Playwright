@@ -176,7 +176,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       this.activeMessage = `
         <div class="leave-details">
           <div class="detail-item"><strong>Applied Date:</strong> <span>${formattedDate}</span></div>
-          <div class="detail-item"><strong>Status:</strong> <span>${ledger.status || '-'}</span></div>
+          <div class="detail-item"><strong>Leave Status:</strong> <span>${ledger.status || '-'}</span></div>
           <div class="detail-item"><strong>Requested by:</strong> <span>${ledger.creditedByName || '-'}</span></div>
           ${processedByRow}
         </div>

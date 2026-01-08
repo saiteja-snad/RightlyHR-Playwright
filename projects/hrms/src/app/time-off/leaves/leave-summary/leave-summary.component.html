@@ -108,8 +108,8 @@
                 <th>{{ 'Year' | translate }}</th>
                 <th>{{ 'Start Date' | translate }}</th>
                 <th>{{ 'End Date' | translate }}</th>
-                <th>{{ 'Leave Category' | translate }}</th>
-                <th>{{ 'Types' | translate }}</th>
+                <th >{{ 'Leave Category' | translate }}</th>
+                <th >{{ 'Types' | translate }}</th>
                 <th class="text-center">{{ 'Previous Balance' | translate }}</th>
                 <th class="text-center">{{ 'Accural (+)' | translate }}</th>
                 <th class="text-center">{{ 'Availed (-)' | translate }}</th>
@@ -125,21 +125,21 @@
                     <tr *ngFor="let ledger of leaveSummary; let i = index">
 
                         <!-- Year -->
-                        <td>{{ ledger.year }}</td>
+                        <td >{{ ledger.year }}</td>
 
                         <!-- Transaction Date -->
-                        <td>{{ ledger.startDate | date: 'MMM dd' }}</td>
+                        <td >{{ ledger.startDate | date: 'MMM dd' }}</td>
 
-                        <td>{{ ledger.endDate | date: 'MMM dd' }}</td>
+                        <td >{{ ledger.endDate | date: 'MMM dd' }}</td>
 
-                        <td class="d-flex">
-                            <div class="text-center fw-medium"[style.color]="ledger.categoryColor">
+                        <td>
+                            <div class="fw-medium"[style.color]="ledger.categoryColor">
                                 {{ ledger.category }}</div>
                         </td>
 
                         <!-- Transaction Type -->
                         <td>
-                          <div class="d-flex align-items-center gap-2">
+                          <div class="d-flex gap-2">
                             <span class="transaction-main">{{ ledger.transactionType }}</span>
                             @if(ledger.transactionType.toLowerCase() == 'leave availed' ){
                             <app-info-icon class="info-pending" [ngbPopover]="messageContent" triggers="click"  popoverClass="pending-popover" (click)="setActiveMessage(ledger)" />

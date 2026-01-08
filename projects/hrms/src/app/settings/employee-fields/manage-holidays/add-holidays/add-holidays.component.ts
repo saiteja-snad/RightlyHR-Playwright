@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-add-holidays',
   imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule],
@@ -30,7 +31,7 @@ export class AddHolidaysComponent {
   groupedLocationData: any[] = [];
   shiftDropdown: any[] = []; // To store the dynamically fetched shifts
   isDuplicateholidayName: boolean[] = [];
-  constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, public router: Router,    public formValidations: FormValidationsService, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
   ngOnInit(): void {

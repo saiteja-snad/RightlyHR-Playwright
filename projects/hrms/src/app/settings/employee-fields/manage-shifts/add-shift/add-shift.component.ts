@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-add-shift',
@@ -37,6 +38,7 @@ export class AddShiftComponent {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService
   ) { }
 
   ngOnInit(): void {

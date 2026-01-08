@@ -9,6 +9,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import moment from 'moment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-update-holidays',
@@ -29,7 +30,7 @@ export class UpdateHolidaysComponent {
   shiftDropdown: any[] = [];
   isDuplicateholidayName: boolean[] = [];
    initialPoliciesState: any;
-  constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder,    public formValidations: FormValidationsService, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
   ngOnInit(): void {

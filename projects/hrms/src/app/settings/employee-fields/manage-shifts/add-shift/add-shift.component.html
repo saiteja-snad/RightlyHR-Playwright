@@ -92,7 +92,7 @@
                             <label class="form-label custom-label">{{'Shift Name'|translate}}<span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input w-100" formControlName="shiftName"
-                                placeholder="Please enter shift name" (input)="checkDuplicate1(i)" />
+                                placeholder="Please enter shift name" (input)="checkDuplicate1(i)"  (keydown)="formValidations.restrictInput($event)" />
                             <div *ngIf="shift.get('shiftName')?.invalid && (shift.get('shiftName')?.dirty || shift.get('shiftName')?.touched)"
                                 class="error-msg">
                                 <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is required'

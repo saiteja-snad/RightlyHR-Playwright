@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-update-shift',
@@ -46,7 +47,7 @@ export class UpdateShiftComponent {
   initialPoliciesState: any;
   constructor(
     private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private http: HttpService,
-    private conformationPopup: OpenModalService, private modalService: NgbModal) { }
+    private conformationPopup: OpenModalService, private modalService: NgbModal, public formValidations: FormValidationsService) { }
     
 ngOnInit(): void {
   this.initializeForm();

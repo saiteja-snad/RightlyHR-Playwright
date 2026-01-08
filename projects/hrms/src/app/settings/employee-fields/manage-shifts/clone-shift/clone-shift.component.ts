@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-clone-shift',
@@ -48,6 +49,7 @@ export class CloneShiftComponent {
     private http: HttpService,
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
+    public formValidations: FormValidationsService
   ) { }
 
   ngOnInit(): void {

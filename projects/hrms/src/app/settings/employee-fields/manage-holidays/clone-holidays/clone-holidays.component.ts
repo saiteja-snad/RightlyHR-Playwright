@@ -9,6 +9,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import moment from 'moment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-clone-holidays',
@@ -30,7 +31,7 @@ export class CloneHolidaysComponent {
   shiftDropdown: any[] = [];
   hidePublishCloneButtons: boolean = false;
   isDuplicateholidayName: boolean[] = [];
-  constructor(private fb: FormBuilder, public router: Router, private confirmation: OpenModalService, private http: HttpService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, public router: Router,public formValidations: FormValidationsService, private confirmation: OpenModalService, private http: HttpService, private modalService: NgbModal) { }
 
   // ng oninit method start
   ngOnInit(): void {

@@ -64,7 +64,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         this.fb.group({
           policyName: [row.policyName, [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyFile: [row.policyAttachment],
-          policyDescription: [row.policyDescription, [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+          policyDescription: [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
           policyNewFile: [''],
           acknowledged: [row.requiresAcknowledgment],
           notification: [row.sendEmailNotification],

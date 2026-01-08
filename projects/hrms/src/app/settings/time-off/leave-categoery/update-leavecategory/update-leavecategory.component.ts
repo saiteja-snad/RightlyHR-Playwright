@@ -63,6 +63,7 @@ export class UpdateLeavecategoryComponent implements OnInit, OnDestroy {
   adjacentLeaveTypeRuleOptions = [
     { label: 'Same Category', value: 'same_category' },
     { label: 'Different Category', value: 'different_category' },
+    { label: 'Both', value: 'both' }
   ];
   gapCalculationOptions = [
 

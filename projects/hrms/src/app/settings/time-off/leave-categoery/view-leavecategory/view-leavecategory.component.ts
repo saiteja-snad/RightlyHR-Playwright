@@ -64,6 +64,7 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
   adjacentLeaveTypeRuleOptions = [
     { label: 'Same Category', value: 'same_category' },
     { label: 'Different Category', value: 'different_category' },
+    { label: 'Both', value: 'both' }
   ];
   gapCalculationOptions = [
     { label: 'From Leave End Date', value: 'end_date' },

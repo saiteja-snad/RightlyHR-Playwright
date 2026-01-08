@@ -150,7 +150,7 @@
                     Relieving</a>
                 </li>}
                 }
-                @if(canAccess('view','initiateexitfeedbackform') && (item.status === 'Processed' || item.status === 'Early Relieving Processed') && areAllNodueRecordsApproved(item) && canInitiateExitFeedback(item) && !recallandearlyrelievingbuttonConditions){
+                @if(canAccess('view','initiateexitfeedbackform') && (item.status === 'Processed' || item.status === 'Early Relieving Processed') && empdata?.substatus?.toLowerCase() === 'cleared no due' && areAllNodueRecordsApproved(item) && canInitiateExitFeedback(item) && !recallandearlyrelievingbuttonConditions){
                 <li (click)="openInitiateModal(item)">
                   <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">Initiate Exit Feedback</a>
                 </li>

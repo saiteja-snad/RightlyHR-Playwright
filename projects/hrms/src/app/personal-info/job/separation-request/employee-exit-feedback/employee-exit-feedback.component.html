@@ -36,7 +36,7 @@
                     </td>
                     <td>{{ item.status ? (item.status):'-' }}</td>
                     <td>
-                        @if(item.status === 'Initiated' && canAccess('view','submitform')) {
+                        @if(item.status === 'Initiated') {
                         <div>
                             <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">
                                 Form Submit

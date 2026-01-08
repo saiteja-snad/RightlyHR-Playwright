@@ -28,8 +28,9 @@
                     <td>
                         @if(item.documentUrl) {
                         <span *ngIf="item.documentUrl;else noData" (click)="onSelectBankProofDownload(item)">
-                                  <app-download-icon /></span>
-                            <ng-template #noData>-</ng-template>
+                            <app-download-icon />
+                        </span>
+                        <ng-template #noData>-</ng-template>
                         } @else {
                         <div>-</div>
                         }
@@ -38,9 +39,7 @@
                     <td>
                         @if(item.status === 'Initiated') {
                         <div>
-                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">
-                                Form Submit
-                            </button>
+                            <button (click)="openForm(item)" type="button" class="custom-btn btn-primary">Form Submit</button>
                         </div>
                         } @else {
                         <div class="text-muted">-</div>
@@ -77,13 +76,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-0" style="height: 80vh;">
-            <iframe 
-                [src]="documentViewUrl" 
-                width="100%" 
-                height="100%" 
-                frameborder="0"
-                style="border: none;">
-            </iframe>
+            <iframe [src]="documentViewUrl" width="100%" height="100%" frameborder="0" style="border: none;"></iframe>
         </div>
     </div>
 </ng-template>

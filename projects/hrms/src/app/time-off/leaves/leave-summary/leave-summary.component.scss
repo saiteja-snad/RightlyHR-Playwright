@@ -31,7 +31,8 @@
     right: 8px;
     width: 8px;
     height: 8px;
-    background-color: #0B3A83;
+     background: linear-gradient(269.82deg, var(--btn-primary-color) 0.16%, #FFFFFF 304.88%);
+    color: var(--btn-color-tp);
     border-radius: 50%;
     border: 2px solid white;
     animation: pulse 2s infinite;
@@ -167,7 +168,7 @@
     
     strong {
       color: #374151;
-      margin-right: 8px;
+      // margin-right: 8px;
     }
   }
 }

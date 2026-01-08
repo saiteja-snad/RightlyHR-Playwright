@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
@@ -22,7 +22,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
   styleUrl: './leaves-approval.component.scss'
 })
 
-export class LeavesApprovalComponent {
+export class LeavesApprovalComponent implements OnInit, OnDestroy {
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -38,14 +38,9 @@ export class LeavesApprovalComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-  onRowsChange() {
-    this.first = 0;
-  }
-  onPageChange(event: PaginatorState) {
-    this.first = event.first;
-    this.rows = event.rows;
-  }
+  
   selectedYear: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
@@ -53,7 +48,7 @@ export class LeavesApprovalComponent {
     // this.loggedinuser = this.authService.getToken();
     // this.empdata = this.loggedinuser;
     // this.getDataByLPID();
-    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+    this.TimeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
         this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
@@ -71,10 +66,18 @@ export class LeavesApprovalComponent {
     });
   }
 
+  onRowsChange() {
+    this.first = 0;
+  }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
   getDataByLPID() {
     this.loading = true;
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
@@ -96,7 +99,7 @@ export class LeavesApprovalComponent {
   getDataByEmpLPID() {
     this.loading = true;
     let empid = this.selectempid;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
@@ -113,5 +116,10 @@ export class LeavesApprovalComponent {
         this.loading = false;
       }
     });
+  }
+
+    ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

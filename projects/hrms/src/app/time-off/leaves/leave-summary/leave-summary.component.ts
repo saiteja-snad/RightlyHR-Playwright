@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from '@a
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, startWith, Subject, takeUntil, finalize } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { IJob } from '../../../Interfaces/letters-model';
@@ -21,7 +21,7 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { EmployeeLeaveLedger } from '../leaves.model';
 import { Select } from 'primeng/select';
-import { Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { MODULE_INFOS } from '../../../shared/modules-info';
@@ -32,6 +32,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpResponse } from '@angular/common/http';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Chip } from 'primeng/chip';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { TimeoffSelectionService } from '../../../services/timeoff-selection.service';
 
 
 @Component({
@@ -102,28 +104,38 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   disableBtn = false;
   empName: string = '';
   activeMessage: string = '';
+  selectedEmployeeId: number | null = null;
   constructor(
     private http: HttpService,
     public rbac: RbacService,
     public router: Router,
+    private route: ActivatedRoute,
     private accessNav: AccessNavigationService,
     private fb: FormBuilder,
     private offcanvasService: NgbOffcanvas,
     private conformationPopup: OpenModalService,
+    private timeoffYearFilterService: TimeoffYearFilterService,
+    private timeoffSelectionService: TimeoffSelectionService
   ) {}
 
   ngOnInit(): void {
-    this.selectedYear = new Date().getFullYear();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    const initialYear =
+      this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
+    this.selectedYear = initialYear;
+    if (this.timeoffYearFilterService.getSelectedYear() === null) {
+      this.timeoffYearFilterService.setSelectedYear(initialYear);
+    }
     this.empName = `${
                   this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
                 }${this.empinfo.firstName ?? ''} ${
                   this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
                 }${this.empinfo.lastName ?? ''}`.trim();
     this.initializeForm();
-    this.getLeaveSummaryByEmployee(this.empinfo.employeeId, this.selectedYear);
     this.getAllEmployeeDetails();
-    this.getCategoryDetails(this.empinfo.employeeId, this.selectedYear);
+    this.applyQueryParamsToSelectionState();
+    this.syncSelectionsAndLoadData();
+    this.getTeamManagersDetails();
   }
 
   initializeForm() {
@@ -134,15 +146,21 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       transactionType: [null],
     });
     
-    // Watch for employee and year changes to update categories
-    this.filterForm.get('employee')?.valueChanges.subscribe(() => {
-      this.onEmployeeOrYearChange();
-    });
+    this.filterForm
+      .get('employee')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.onEmployeeOrYearChange();
+      });
     
-    this.filterForm.get('year')?.valueChanges.subscribe((year) => {
-      console.log('Year changed to:', year);
-      this.onYearChange(year);
-    });
+    this.filterForm
+      .get('year')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe((year) => {
+        if (year) {
+          this.onYearChange(year);
+        }
+      });
   }
 
   onRowsChange() {
@@ -152,14 +170,14 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
    setActiveMessage(ledger: EmployeeLeaveLedger) {
     if (ledger.transactionType === 'Leave Availed') {
       const isWaitingForApproval = ledger.status?.toLowerCase() === 'waiting for approval';
-      const processedByRow = !isWaitingForApproval ? `<div class="detail-item"><strong>Processed by:</strong> ${ledger.processedByName || '-'}</div>` : '';
+      const processedByRow = !isWaitingForApproval ? `<div class="detail-item"><strong>Processed by:</strong> <span>${ledger.processedByName || '-'}</span></div>` : '';
       const formattedDate = new Date(ledger.txnDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
       
       this.activeMessage = `
         <div class="leave-details">
-          <div class="detail-item"><strong>Applied Date:</strong> ${formattedDate}</div>
-          <div class="detail-item"><strong>Status:</strong> ${ledger.status || '-'}</div>
-          <div class="detail-item"><strong>Requested by:</strong> ${ledger.creditedByName || '-'}</div>
+          <div class="detail-item"><strong>Applied Date:</strong> <span>${formattedDate}</span></div>
+          <div class="detail-item"><strong>Status:</strong> <span>${ledger.status || '-'}</span></div>
+          <div class="detail-item"><strong>Requested by:</strong> <span>${ledger.creditedByName || '-'}</span></div>
           ${processedByRow}
         </div>
       `;
@@ -188,9 +206,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
   onYearChange(year: number) {
     const formValue = this.filterForm.value;
-    const empId = formValue.employee?.value || this.empinfo.employeeId;
-    
-    console.log('Using year directly:', year);
+    const empId = formValue.employee || this.empinfo.employeeId;
     
     // Reset category selection
     this.filterForm.get('category')?.setValue(null);
@@ -206,6 +222,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .getData(
         `LeaveEntitlements/v2/employee/${empId}?year=${year}`
       )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           if (response.success) {
@@ -221,6 +238,89 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
         },
         complete: () => {},
       });
+  }
+
+  private syncSelectionsAndLoadData(): void {
+    const initialYear =
+      this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
+    const initialEmployeeId =
+      this.http.getCurrentEmployeeIdTimeoff() ?? this.empinfo.employeeId;
+
+    const employeeId$ = this.http.selectedEmployeeIdTimeoff$.pipe(
+      startWith(initialEmployeeId),
+      map((id) => (id ?? this.empinfo.employeeId) as number),
+      distinctUntilChanged()
+    );
+
+    const year$ = this.timeoffYearFilterService.selectedYear$.pipe(
+      startWith(initialYear),
+      filter((year): year is number => year !== null),
+      distinctUntilChanged()
+    );
+
+    combineLatest([employeeId$, year$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([employeeId, year]) => {
+        this.selectedEmployeeId = employeeId;
+        this.selectedYear = year;
+
+        this.filterForm.patchValue(
+          { employee: employeeId, year },
+          { emitEvent: false }
+        );
+
+        this.getLeaveSummaryByEmployee(employeeId, year);
+        this.getCategoryDetails(employeeId, year);
+        this.updateEmpName(employeeId);
+      });
+  }
+
+  private applyQueryParamsToSelectionState(): void {
+    this.applySelectionFromParamMap(this.route.snapshot.queryParamMap);
+    this.route.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => this.applySelectionFromParamMap(params));
+  }
+
+  private applySelectionFromParamMap(params: ParamMap): void {
+    const employeeIdParam = params.get('employeeId');
+    const yearParam = params.get('year');
+
+    const employeeId = employeeIdParam ? Number(employeeIdParam) : null;
+    const year = yearParam ? Number(yearParam) : null;
+
+    if (employeeId !== null && !Number.isNaN(employeeId)) {
+      this.http.setEmployeeIdTimeoff(employeeId);
+    }
+
+    if (year !== null && !Number.isNaN(year)) {
+      this.timeoffYearFilterService.setSelectedYear(year);
+    }
+
+    // Update the new service as well
+    if ((employeeId !== null && !Number.isNaN(employeeId)) || (year !== null && !Number.isNaN(year))) {
+        const currentSelection = this.timeoffSelectionService.getSelection();
+        this.timeoffSelectionService.updateSelection(
+            employeeId !== null && !Number.isNaN(employeeId) ? employeeId : currentSelection.employeeId,
+            year !== null && !Number.isNaN(year) ? year : currentSelection.year
+        );
+    }
+  }
+
+  private updateEmpName(employeeId: number): void {
+    if (employeeId === this.empinfo.employeeId) {
+      this.empName = `${
+        this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
+      }${this.empinfo.firstName ?? ''} ${
+        this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
+      }${this.empinfo.lastName ?? ''}`.trim();
+      return;
+    }
+
+    const selectedEmp = this.activeEmplist.find((emp: any) => emp.value === employeeId);
+    if (selectedEmp?.label) {
+      this.empName = selectedEmp.label;
+    }
   }
 
   navigateToAccessedRoute(route: string = '/time-off/leaves') {
@@ -300,6 +400,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   clearAllFilters(): void {
     this.filterForm.reset({
       year: this.currentYear,
+      employee:this.empinfo.employeeId
     });
     this.selectedYear = this.currentYear;
     this.empName = `${
@@ -339,21 +440,29 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   }
 
   exportLeaveSummary(): void {
+    this.spinnerLoader = true;
     const formValue = this.filterForm.value;
     const empId = formValue.employee || this.empinfo.employeeId;
     const year = formValue.year || this.selectedYear;
     
     let url = `EmployeeLeaveLedger/${empId}/export?year=${year}`;
     
-    if (formValue.category) {
-      url += `&categoryIds=${formValue.category}`;
+    if (formValue.category && formValue.category.length > 0) {
+      url += `&categoryIds=${formValue.category.join(',')}`;
     }
     
     if (formValue.transactionType && formValue.transactionType.length > 0) {
-      url += `&transactionTypes=${formValue.transactionType.join(',')}`;
+      const encodedTypes = formValue.transactionType.map((t: string) => encodeURIComponent(t)).join(',');
+      url += `&transactionTypes=${encodedTypes}`;
     }
-    this.http.downloadTimesheetReport(url).subscribe({
+    this.http.downloadTimesheetReport(url)
+    .pipe(finalize(() => this.spinnerLoader = false))
+    .subscribe({
       next: (response: HttpResponse<Blob>) => {
+        if (!response.body) {
+          this.conformationPopup.openErrorModal('No data received for export.');
+          return;
+        }
         // Extract filename from Content-Disposition
         let filename = 'Leave_Summary.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
@@ -368,8 +477,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
           }
         }
         //  Download the blob as before
-        const blob = new Blob([response.body!], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        const blob = new Blob([response.body], {
+          type: response.body.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -377,11 +486,11 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
-        console.log('Downloaded file:', filename);
         this.conformationPopup.openSuccessModal("Leave Summary Exported Successfully");
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('No records found');
+        console.error('Export error:', err);
+        this.conformationPopup.openErrorModal('Failed to export leave summary.');
       },
       complete: () => { }
     });
@@ -398,7 +507,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           if (response && response.length) {
-            const myTeam = response.filter((e: any) => e.isAccess);
+            const myTeam = response.filter((e: any) => e.isAccess && e.employeeId !== this.empinfo?.employeeId);
 
             this.getEmployeeInfo = myTeam.map((emp: any) => {
               const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
@@ -431,12 +540,15 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.activeEmplist = res.map((employee: any) => ({
+          this.activeEmplist = res.filter((e: any) => e.employeeId !== this.empinfo?.employeeId).map((employee: any) => ({
             label: `${employee.fusionEmpId ?? ''} - ${
               employee.firstName ?? ''
             }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
             value: employee.employeeId,
           }));
+          if (this.selectedEmployeeId !== null) {
+            this.updateEmpName(this.selectedEmployeeId);
+          }
         },
       });
   }
@@ -482,5 +594,6 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.http.setEmployeeIdTimeoff(null);
   }
 }

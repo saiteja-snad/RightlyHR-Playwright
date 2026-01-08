@@ -61,6 +61,10 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
     { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
+  adjacentLeaveTypeRuleOptions = [
+    { label: 'Same Category', value: 'same_category' },
+    { label: 'Different Category', value: 'different_category' },
+  ];
   gapCalculationOptions = [
     { label: 'From Leave End Date', value: 'end_date' },
     { label: 'From Leave Start Date', value: 'start_date' }
@@ -211,7 +215,8 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: [{ value: false, disabled: true }, Validators.required],
       applySandwichOn: [{ value: null, disabled: true }],
       sandwichCalculationBasis: [{ value: null, disabled: true }],
-      sandwichApplicabilityCondition: [{ value: null, disabled: true }]
+      sandwichApplicabilityCondition: [{ value: null, disabled: true }],
+      adjacentLeaveTypeRule: [{ value: null, disabled: true }]
     });
   }
 
@@ -421,6 +426,37 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
         }
         daysControl?.updateValueAndValidity();
       });
+
+    this.leavePolicyForm?.get('enableSandwichPolicy')?.valueChanges.subscribe((value: any) => {
+      const applySandwichOnControl = this.leavePolicyForm.get('applySandwichOn');
+      const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
+      const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      const adjacentLeaveTypeRuleControl = this.leavePolicyForm.get('adjacentLeaveTypeRule');
+      
+      if (value === true) {
+        applySandwichOnControl?.setValidators([Validators.required]);
+        sandwichCalculationBasisControl?.setValidators([Validators.required]);
+        sandwichApplicabilityConditionControl?.setValidators([Validators.required]);
+        adjacentLeaveTypeRuleControl?.setValidators([Validators.required]);
+      } else {
+        applySandwichOnControl?.clearValidators();
+        sandwichCalculationBasisControl?.clearValidators();
+        sandwichApplicabilityConditionControl?.clearValidators();
+        adjacentLeaveTypeRuleControl?.clearValidators();
+        applySandwichOnControl?.setValue(null);
+        sandwichCalculationBasisControl?.setValue(null);
+        sandwichApplicabilityConditionControl?.setValue(null);
+        adjacentLeaveTypeRuleControl?.setValue(null);
+        applySandwichOnControl?.markAsUntouched();
+        sandwichCalculationBasisControl?.markAsUntouched();
+        sandwichApplicabilityConditionControl?.markAsUntouched();
+        adjacentLeaveTypeRuleControl?.markAsUntouched();
+      }
+      applySandwichOnControl?.updateValueAndValidity();
+      sandwichCalculationBasisControl?.updateValueAndValidity();
+      sandwichApplicabilityConditionControl?.updateValueAndValidity();
+      adjacentLeaveTypeRuleControl?.updateValueAndValidity();
+    });
   }
 
   restrictInputValidator(control: AbstractControl) {
@@ -529,6 +565,29 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
     // if (!this.jobLocationDropDownData.length || !this.leaveTypes.length) return;
     // debugger
     const leaveTypeValue = this.leaveTypes.find(lt => lt.id === data.leaveTypeId)?.id || '';
+    const enableSandwichPolicy =
+      data.enableSandwichPolicy === true ||
+      data.enableSandwichPolicy === 'true' ||
+      data.enableSandwichPolicy === 1 ||
+      data.enableSandwichPolicy === '1';
+    const sandwichApplicabilityCondition =
+      typeof data.sandwichApplicabilityCondition === 'string'
+        ? data.sandwichApplicabilityCondition.replace('holiday_weekend', 'holiday/weekend')
+        : data.sandwichApplicabilityCondition;
+    const adjacentLeaveTypeRule =
+      typeof data.adjacentLeaveTypeRule === 'string'
+        ? (data.adjacentLeaveTypeRule.trim().toLowerCase() === 'same category'
+            ? 'same_category'
+            : data.adjacentLeaveTypeRule.trim().toLowerCase() === 'different category'
+              ? 'different_category'
+              : data.adjacentLeaveTypeRule)
+        : data.adjacentLeaveTypeRule;
+    const resolvedSandwichApplicabilityCondition =
+      enableSandwichPolicy === true &&
+      data.sandwichCalculationBasis === 'start_date/end_date' &&
+      !sandwichApplicabilityCondition
+        ? 'leave_on_both_sides_of_holiday/weekend'
+        : sandwichApplicabilityCondition;
     this.leavePolicyForm.patchValue({
       applicableYear: data.applicableYear,
       locationID: data.locationName,
@@ -574,10 +633,11 @@ export class ViewLeavecategoryComponent implements OnInit, OnDestroy {
       blockNextDayLeave: data.blockNextDayLeave,
       minimumGapBetweenSameLeaveType: data.minimumGapBetweenSameLeaveType,
       gapCalculationBasis: data.gapCalculationBasis,
-      enableSandwichPolicy: data.enableSandwichPolicy,
+      enableSandwichPolicy,
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition
+      sandwichApplicabilityCondition: resolvedSandwichApplicabilityCondition,
+      adjacentLeaveTypeRule
     });
 
     // Manually trigger value changes for dependent fields

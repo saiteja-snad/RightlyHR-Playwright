@@ -61,6 +61,10 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
     // { label: 'Leave After Holiday/Weekend', value: 'leave_after_holiday/weekend' },
     { label: 'Leave on Both Sides of Holiday/Weekend', value: 'leave_on_both_sides_of_holiday/weekend' }
   ];
+  adjacentLeaveTypeRuleOptions = [
+    { label: 'Same Category', value: 'same_category' },
+    { label: 'Different Category', value: 'different_category' },
+  ];
   gapCalculationOptions = [
  
     { label: 'From Leave Start Date', value: 'start_date' },
@@ -158,7 +162,8 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: [false],
       applySandwichOn: [null,],
       sandwichCalculationBasis: [null],
-      sandwichApplicabilityCondition: [null]
+      sandwichApplicabilityCondition: [null],
+      adjacentLeaveTypeRule: [null]
     });
     this.validateAllowedDays()
   }
@@ -416,25 +421,31 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       const applySandwichOnControl = this.leavePolicyForm.get('applySandwichOn');
       const sandwichCalculationBasisControl = this.leavePolicyForm.get('sandwichCalculationBasis');
       const sandwichApplicabilityConditionControl = this.leavePolicyForm.get('sandwichApplicabilityCondition');
+      const adjacentLeaveTypeRuleControl = this.leavePolicyForm.get('adjacentLeaveTypeRule');
       
       if (value === true) {
         applySandwichOnControl?.setValidators([Validators.required]);
         sandwichCalculationBasisControl?.setValidators([Validators.required]);
         sandwichApplicabilityConditionControl?.setValidators([Validators.required]);
+        adjacentLeaveTypeRuleControl?.setValidators([Validators.required]);
       } else {
         applySandwichOnControl?.clearValidators();
         sandwichCalculationBasisControl?.clearValidators();
         sandwichApplicabilityConditionControl?.clearValidators();
+        adjacentLeaveTypeRuleControl?.clearValidators();
         applySandwichOnControl?.setValue(null);
         sandwichCalculationBasisControl?.setValue(null);
         sandwichApplicabilityConditionControl?.setValue(null);
+        adjacentLeaveTypeRuleControl?.setValue(null);
         applySandwichOnControl?.markAsUntouched();
         sandwichCalculationBasisControl?.markAsUntouched();
         sandwichApplicabilityConditionControl?.markAsUntouched();
+        adjacentLeaveTypeRuleControl?.markAsUntouched();
       }
       applySandwichOnControl?.updateValueAndValidity();
       sandwichCalculationBasisControl?.updateValueAndValidity();
       sandwichApplicabilityConditionControl?.updateValueAndValidity();
+      adjacentLeaveTypeRuleControl?.updateValueAndValidity();
     });
 
     this.leavePolicyForm?.get('sandwichCalculationBasis')?.valueChanges.subscribe((value: any) => {
@@ -703,7 +714,8 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       enableSandwichPolicy: data.enableSandwichPolicy,
       applySandwichOn: data.applySandwichOn,
       sandwichCalculationBasis: data.sandwichCalculationBasis,
-      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition
+      sandwichApplicabilityCondition: data.sandwichApplicabilityCondition,
+      adjacentLeaveTypeRule: data.adjacentLeaveTypeRule
     });
     // Manually trigger value changes for dependent fields
   this.updateDependentFieldState('futureDatesAllowed', 'futureDatesAllowedDays');
@@ -772,6 +784,7 @@ export class CloneLeavecategoryComponent implements OnInit, OnDestroy {
       applySandwichOn: this.leavePolicyForm.value.applySandwichOn,
       sandwichCalculationBasis: this.leavePolicyForm.value.sandwichCalculationBasis,
       sandwichApplicabilityCondition: this.leavePolicyForm.get('sandwichApplicabilityCondition')?.value,
+      adjacentLeaveTypeRule: this.leavePolicyForm.value.adjacentLeaveTypeRule,
       addedBy: this.empinfo.employeeId,
       lastModifiedBy: this.empinfo.employeeId,
       status: "Pending for submission",

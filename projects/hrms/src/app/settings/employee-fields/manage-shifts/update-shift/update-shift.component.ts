@@ -108,6 +108,51 @@ ngOnInit(): void {
      this.initialPoliciesState = JSON.stringify(this.shifts.getRawValue());
     this.hideBUTTON = false;
   }
+restrictShiftCode(event: KeyboardEvent) {
+  const key = event.key;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  const allowed = /^[A-Za-z0-9_-]$/;
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
+restrictShiftName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  const allowed = /^[A-Za-z0-9 \-\/()]$/;
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
 
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {

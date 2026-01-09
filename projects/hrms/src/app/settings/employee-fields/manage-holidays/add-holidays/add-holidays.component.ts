@@ -111,6 +111,34 @@ export class AddHolidaysComponent {
       isOptional: [false]
     });
   }
+restrictHolidayName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed characters
+  const allowed = /^[A-Za-z0-9 .&'()\ -]$/;
+
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
 
   //add holiday button click method works
   addMomentRow() {

@@ -110,9 +110,9 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
 
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
+      policyName: ['', [Validators.required, Validators.pattern(/^(?!\s)[A-Za-z0-9 _\-\/]+$/)]],
       policyFile: [''],
-      policyDescription: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
+      policyDescription: ['', [Validators.required, Validators.pattern(/^(?!\s)[A-Za-z0-9 .,:;?\-_\/&()%'"\n\r]+$/)]],
       policyNewFile: ['', Validators.required],
       acknowledged: [false],
       notification: [false],
@@ -124,7 +124,64 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     this.hidePublishCloneButtons = true;
     this.policies.push(policyGroup);
   }
+  // allowed characters A-Z a-z 0-9 space - _ /
+restrictPolicyName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
 
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed: A-Z a-z 0-9 space - _ /
+  const allowed = /^[A-Za-z0-9 _\-\/]$/;
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
+restrictPolicyDescription(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab' ||
+    key === 'Enter'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed description characters
+  const allowed =
+    /^[A-Za-z0-9 .,:;?\-_\/&()%'" ]$/;
+
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {
       this.policies.removeAt(index);

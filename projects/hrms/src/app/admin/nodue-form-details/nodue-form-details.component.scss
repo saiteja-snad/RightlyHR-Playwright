@@ -13,7 +13,6 @@
         border-radius: 0.5rem;
         height: 380mm;
         position: relative;
-        background-image: url('/images/water-mark.png');
         background-repeat: no-repeat;
         background-position: center;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -45,26 +44,6 @@
 
         .letter-signature {
             font-size: var(--fontsize24) !important;
-        }
-
-        .letter-footer {
-            width: 270mm;
-            background-color: var(--primary-color);
-            color: #fff;
-            position: absolute;
-            bottom: 0px;
-            padding: 0.625rem;
-
-            .company-name {
-                font-size: var(--fontsize14) !important;
-                font-weight: 600;
-                margin: 0.5rem !important;
-            }
-
-            .company-address {
-                font-size: var(--fontsize12);
-                font-weight: 500;
-            }
         }
     }
 }

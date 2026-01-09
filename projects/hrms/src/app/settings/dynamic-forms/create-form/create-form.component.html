@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Rating Scale Range -->
-                <div class="col-md-4 mb-3">
+                <div class="col-md-4 mb-3" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
                     <label class="form-label custom-label mb-2">Rating Scale Range<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
@@ -82,7 +82,7 @@
 
                 <!-- Overall Rating -->
                 <div class="col-md-4 mb-3"
-                    *ngIf="createForm.get('moduleId')?.value && createForm.get('moduleId')?.value?.id !== 24">
+                    *ngIf="createForm.get('moduleId')?.value && (createForm.get('moduleId')?.value?.id !== 24 && createForm.get('moduleId')?.value?.id !== 33)">
                     <label class="form-label custom-label mb-2">Overall Rating<span class="text-danger">*</span></label>
                     <input type="number" formControlName="overAllRating" class="form-control custom-input"
                         placeholder="Enter Overall rating" min="1" pattern="[0-9]*" (input)="restrictToNumbers($event)">
@@ -98,7 +98,7 @@
 
                 <!-- CutOff Rating -->
                 <div class="col-md-4 mb-3"
-                    *ngIf="createForm.get('moduleId')?.value && createForm.get('moduleId')?.value?.id !== 24">
+                    *ngIf="createForm.get('moduleId')?.value && (createForm.get('moduleId')?.value?.id !== 24 && createForm.get('moduleId')?.value?.id !== 33)">
                     <label class="form-label custom-label mb-2">Cut Off Rating <span
                             class="text-danger">*</span></label>
                     <input type="number" formControlName="cutOffRating" class="form-control custom-input"
@@ -176,7 +176,7 @@
                             </div>
 
                             <!-- Section Weightage -->
-                            <div class="col-md-3 mt-1">
+                            <div class="col-md-3 mt-1" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
                                 <label class="form-label custom-label mb-2">Section Weightage <span
                                         class="text-danger">*</span></label>
                                 <input type="number" formControlName="weightage" id="sectionweightage"
@@ -244,7 +244,7 @@
                                             </div>
 
                                             <!-- Question Weightage -->
-                                            <div class="col-md-3">
+                                            <div class="col-md-3" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
                                                 <label class="form-label custom-label mb-2">Question Weightage<span
                                                         class="text-danger">*</span></label>
                                                 <div>
@@ -436,7 +436,7 @@
                                         </div>
 
                                         <!-- Question Weightage -->
-                                        <div class="col-md-3">
+                                        <div class="col-md-3" *ngIf="createForm.get('moduleId')?.value?.id !== 33">
                                             <div class="d-flex">
                                                 <input type="number" formControlName="questionWeightage"
                                                     class="form-control custom-input"

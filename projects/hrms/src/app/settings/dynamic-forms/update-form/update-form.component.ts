@@ -83,36 +83,37 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       overAllRating: [null],
       formId: [null, Validators.required],
       createdBy: [null, Validators.required],
-      ratingScaleRange: [null, Validators.required],
+      ratingScaleRange: [null],
       updatedBy: [null, Validators.required],
       status: ['', Validators.required],
       meta: [''],
       sectionId: [null, Validators.required],
       formHeaderId: [null, Validators.required],
-      sections: this.fb.array([this.createSection()]) // Sections FormArray
+      sections: this.fb.array([this.createSection()])
     }, { validators: [this.atLeastOneSectionValidator(), this.atLeastOneQuestionInSectionValidator(), this.cutOffRatingLessThanOverallRating, this.weightageValidator()] });
     this.formId = history.state.formId;
     this.handleOptionWeightageValidation();
     this.updateFormDetails(this.formId)
     this.getAllRatingScaleTypes();
-    // this.updateForm.get('moduleId')?.valueChanges.subscribe(value => {
-    //   console.log('Module ID:', value);
-    //   this.onModuleChange(value);
-    //   this.toggleRatingValidators(value);
-    // });
   }
 
   // Method to toggle validators based on moduleId
   toggleRatingValidators(moduleId: any): void {
     const cutOffRating = this.updateForm.get('cutOffRating');
     const overAllRating = this.updateForm.get('overAllRating');
-    if (moduleId !== 24) {
+    
+    if (moduleId === 33) {
+      // For moduleId 33, clear all validators
+      cutOffRating?.clearValidators();
+      overAllRating?.clearValidators();
+    } else if (moduleId !== 24) {
       cutOffRating?.setValidators([Validators.required, Validators.min(1)]);
       overAllRating?.setValidators([Validators.required, Validators.min(1)]);
     } else {
       cutOffRating?.clearValidators();
       overAllRating?.clearValidators();
     }
+    
     cutOffRating?.updateValueAndValidity();
     overAllRating?.updateValueAndValidity();
   }
@@ -123,15 +124,21 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
   weightageValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
-      const formGroup = control as FormGroup; // Assert control as FormGroup
+      const formGroup = control as FormGroup;
       const moduleId = formGroup.get('moduleId')?.value?.id;
       const overAllRating = formGroup.get('overAllRating')?.value;
-      const sections = formGroup.get('sections') as FormArray; // Assert as FormArray
+      const sections = formGroup.get('sections') as FormArray;
+      
       if (!sections || sections.length === 0) {
-        return null; // Return null if no sections exist
+        return null;
       }
+      
+      // Skip validation for moduleId 33
+      if (moduleId === 33) {
+        return null;
+      }
+      
       if (moduleId === 20 || moduleId === '20') {
-        // Validation logic for module ID 18
         const isValid = sections.controls.every(section => {
           const weightage = section.get('weightage')?.value || 0;
           return weightage <= overAllRating;
@@ -139,15 +146,13 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
         return isValid ? null : { weightageGreaterThanOverall: true };
       } else if (moduleId === '24' || moduleId === 24) {
         let errors: any = {};
-        // Calculate total weightage of all sections
         const totalWeightage = sections.controls.reduce((sum, section) => {
           const weightage = section.get('weightage')?.value || 0;
           return sum + weightage;
         }, 0);
         if (totalWeightage !== 100) {
-          errors.weightageNotEqualTo100 = true; // Error for total weightage
+          errors.weightageNotEqualTo100 = true;
         }
-        // Validate each section's question weightage separately
         sections.controls.forEach((section, index) => {
           const questions = section.get('questions')?.value || [];
           const sectionQuestionWeightage = questions.reduce((sum: any, question: { questionWeightage: any; }) => {
@@ -155,12 +160,11 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
           }, 0);
           if (sectionQuestionWeightage !== 100) {
             errors[`section${index}QuestionWeightageNotEqualTo100`] = true;
-            // Error for section questions
           }
         });
         return Object.keys(errors).length ? errors : null;
       }
-      return null; // Return null for other module IDs
+      return null;
     };
   }
 
@@ -211,10 +215,41 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     } else if (module?.id === 20) {
       this.updateForm.get('cutOffRating')?.setValidators([Validators.required]);
       this.updateForm.get('overAllRating')?.setValidators([Validators.required]);
+    } else if (module?.id === 33) {
+      this.clearModule33Validators();
     }
     // Update form validity
     this.updateForm.get('overAllRating')?.updateValueAndValidity();
     this.updateForm.get('cutOffRating')?.updateValueAndValidity();
+  }
+
+  private clearModule33Validators(): void {
+    // Clear root-level validators
+    this.updateForm.get('overAllRating')?.clearValidators();
+    this.updateForm.get('cutOffRating')?.clearValidators();
+    this.updateForm.get('ratingScaleRange')?.clearValidators();
+    this.updateForm.get('overAllRating')?.reset();
+    this.updateForm.get('cutOffRating')?.reset();
+    this.updateForm.get('ratingScaleRange')?.reset();
+
+    const sections = this.updateForm.get('sections') as FormArray;
+    sections.controls.forEach(section => {
+      section.get('sectionType')?.setValue('normal');
+      section.get('weightage')?.clearValidators();
+      section.get('weightage')?.reset();
+      section.get('ratingScaleType')?.clearValidators();
+      section.get('ratingScaleType')?.reset();
+
+      const questions = section.get('questions') as FormArray;
+      questions.controls.forEach(question => {
+        question.get('questionWeightage')?.clearValidators();
+        question.get('questionWeightage')?.reset();
+        question.get('questionWeightage')?.updateValueAndValidity();
+      });
+      
+      section.get('weightage')?.updateValueAndValidity();
+      section.get('ratingScaleType')?.updateValueAndValidity();
+    });
   }
 
   restrictToNumbers(event: Event): void {
@@ -351,20 +386,43 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
   // Method to add a new section
   addUpdateSection() {
+    const isModule33 = this.updateForm?.get('moduleId')?.value?.id === 33;
+    const weightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+    
     const sectionGroup = this.fb.group({
       id: [null],
-      sectionName: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
-      sectionType: ['', Validators.required],
+      sectionName: ['', [Validators.required, Validators.maxLength(255), this.formNameValidator()]],
+      sectionType: [isModule33 ? 'normal' : '', Validators.required],
       ratingScaleType: [null, Validators.required],
       order: [0],
-      weightage: [null, [Validators.required, Validators.min(1)]],
-      questions: this.fb.array([this.createQuestion('')]) // Questions FormArray
+      weightage: [null, weightageValidators],
+      questions: this.fb.array([this.createQuestion('')])
     });
+    
+    if (isModule33) {
+      this.applyModule33ValidatorsToSection(sectionGroup);
+    }
+    
     this.updateSections.push(sectionGroup);
     this.updateSectionOrders();
     setTimeout(() => {
       this.scrollToLastSection();
     }, 0);
+  }
+
+  private applyModule33ValidatorsToSection(section: FormGroup): void {
+    section.get('sectionType')?.setValue('normal');
+    section.get('weightage')?.clearValidators();
+    section.get('ratingScaleType')?.clearValidators();
+    
+    const questions = section.get('questions') as FormArray;
+    questions.controls.forEach(question => {
+      question.get('questionWeightage')?.clearValidators();
+      question.get('questionWeightage')?.updateValueAndValidity();
+    });
+    
+    section.get('weightage')?.updateValueAndValidity();
+    section.get('ratingScaleType')?.updateValueAndValidity();
   }
 
   scrollToLastSection() {
@@ -376,21 +434,21 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
   // Method to create a new question form group
   createQuestion(sectionType: string): FormGroup {
+    const isModule33 = this.updateForm?.get('moduleId')?.value?.id === 33;
     const typeValidators = sectionType === 'normal' ? [Validators.required] : [];
-    const isRatingSection = sectionType === 'rating';
+    const weightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+    
     const questionGroup = this.fb.group({
       id: [null],
       description: [''],
       type: ['', typeValidators],
       question: ['', [Validators.required, Validators.maxLength(1000)]],
-      options: this.fb.array([]), // Options FormArray
+      options: this.fb.array([]),
       order: [0],
       required: [false, Validators.required],
-      questionWeightage: [null, [Validators.required, Validators.min(1)]],
-      // unitofmeasurement: [null, isRatingSection ? [Validators.required] : []],// Add optionWeightage here 
-      // target: [null, isRatingSection ? [Validators.required] : []], // Add optionWeightage here 
+      questionWeightage: [null, weightageValidators],
     });
-    // Listen to changes in 'type' and update validation accordingly
+    
     questionGroup.get('type')?.valueChanges.subscribe((questionType: any) => {
       this.updateOptionsValidation(questionGroup, questionType);
     });
@@ -415,6 +473,13 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   // Method to add a question to a section
   addUpdateQuestion(sectionIndex: number) {
     const questionGroup = this.createQuestion('');
+    
+    // Apply module 33 validators if needed
+    if (this.updateForm?.get('moduleId')?.value?.id === 33) {
+      questionGroup.get('questionWeightage')?.clearValidators();
+      questionGroup.get('questionWeightage')?.updateValueAndValidity();
+    }
+    
     this.getUpdateQuestions(sectionIndex).push(questionGroup);
   }
 
@@ -556,12 +621,15 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   }
 
   createSection(): FormGroup {
+    const isModule33 = this.updateForm?.get('moduleId')?.value?.id === 33;
+    const weightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+    
     return this.fb.group({
-      sectionName: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
-      sectionType: ['', [Validators.required]],
+      sectionName: ['', [Validators.required, Validators.maxLength(255), this.formNameValidator()]],
+      sectionType: [isModule33 ? 'normal' : '', [Validators.required]],
       order: [0],
       ratingScaleType: [null],
-      weightage: [null, [Validators.required, Validators.min(1)]],
+      weightage: [null, weightageValidators],
       questions: this.fb.array([this.createQuestion('')])
     });
   }
@@ -571,17 +639,22 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   }
 
   assignValuestoUpdateForm(data: any) {
-    const [min, max] = data.ratingScaleRange.split('-').map(Number);
+    // Handle ratingScaleRange for moduleId 33 (might be null/undefined)
+    let min = 0, max = 0;
+    if (data.ratingScaleRange) {
+      [min, max] = data.ratingScaleRange.split('-').map(Number);
+    }
+    
     this.updateForm.patchValue({
       formHeader: data.formName,
       formId: data.formId,
       moduleId: this.modules.find((module) => module.id === data.moduleId),
       createdBy: data.createdBy,
       updatedBy: this.updateDetails.employeeId,
-      ratingScaleRange: this.uniqueRatingScaleRanges.find(
+      ratingScaleRange: data.ratingScaleRange ? this.uniqueRatingScaleRanges.find(
         (ratingScale) =>
           ratingScale.minimum === min && ratingScale.maximum === max
-      ),
+      ) : null,
       status: data.status,
       meta: data.meta,
       overAllRating: data.overAllRating || null,
@@ -589,11 +662,32 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       sectionId: data.sectionId,
       formHeaderId: data.formHeaderId,
     });
-    const [selectedMinimum, selectedMaximum] = data.ratingScaleRange.split('-').map(Number);
-    this.filteredRatingScaleTypes = this.ratingScaleTypes?.filter((type) => type.minimumRatingScale === selectedMinimum &&
-      type.maximumRatingScale === selectedMaximum) || [];
+    
+    // Set ratingScaleRange validator based on moduleId
+    if (data.moduleId !== 33) {
+      this.updateForm.get('ratingScaleRange')?.setValidators([Validators.required]);
+    } else {
+      this.updateForm.get('ratingScaleRange')?.clearValidators();
+    }
+    this.updateForm.get('ratingScaleRange')?.updateValueAndValidity();
+    
+    // Apply moduleId 33 handling after setting moduleId
+    if (data.moduleId === 33) {
+      this.clearModule33Validators();
+    }
+    
+    // Handle filteredRatingScaleTypes for moduleId 33
+    if (data.ratingScaleRange) {
+      const [selectedMinimum, selectedMaximum] = data.ratingScaleRange.split('-').map(Number);
+      this.filteredRatingScaleTypes = this.ratingScaleTypes?.filter((type) => type.minimumRatingScale === selectedMinimum &&
+        type.maximumRatingScale === selectedMaximum) || [];
+    } else {
+      this.filteredRatingScaleTypes = [];
+    }
+    
     const sectionsArray = this.updateForm.get('sections') as FormArray;
-    sectionsArray.clear(); // Clear existing sections
+    sectionsArray.clear();
+    
     data.sectionDetails.forEach((section: any, sectionIndex: number) => {
       const questionsArray = this.fb.array<FormGroup>([]);
       section.questions.forEach((question: any) => {
@@ -617,45 +711,50 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
         section.sectionItems.forEach((item: any) => {
           this.weightageArray.push(item.weightage);
         });
-        const isRatingSection = section.sectionType === 'rating';
+        
+        const isModule33 = data.moduleId === 33;
+        const questionWeightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+        
         const questionGroup = this.fb.group({
           id: [question.id],
           question: [question.question, [Validators.required, Validators.maxLength(1000)]],
           description: [question.description],
-          type: [question.type], // Initially without validation
+          type: [question.type],
           order: [question.order],
           required: [question.required],
-          questionWeightage: [question.questionWeightage, [Validators.required, Validators.min(1)]],
-          // target: [question.targetfield, isRatingSection ? [Validators.required, Validators.min(1)] : []],
-          // unitofmeasurement: [question.unitofmeasurement, isRatingSection ? [Validators.required] : []],
+          questionWeightage: [question.questionWeightage, questionWeightageValidators],
           createdBy: question.createdBy || this.updateDetails.createdBy,
           options: optionsArray,
         });
-        // Apply dynamic validation based on section type
+        
         if (section.sectionType === 'normal') {
           questionGroup.get('type')?.setValidators([Validators.required]);
         } else {
           questionGroup.get('type')?.clearValidators();
         }
-        questionGroup.get('type')?.updateValueAndValidity(); // Update validity after setting/clearing validators
+        questionGroup.get('type')?.updateValueAndValidity();
         questionsArray.push(questionGroup);
       });
+      
       let ratingScaleType = null;
-      // Determine ratingScaleType based on the first question or section type
       if (section.sectionType === 'rating' && section.questions.length > 0) {
-        // Assuming ratingScaleType is based on the first question's type
         ratingScaleType = section.questions[0].type;
       }
+      
+      const isModule33 = data.moduleId === 33;
+      const sectionWeightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+      
       const sectionGroup = this.fb.group({
         id: [section.id],
         order: [section.order],
-        sectionName: [section.sectionName, [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
+        sectionName: [section.sectionName, [Validators.required, Validators.maxLength(255), this.formNameValidator()]],
         sectionType: section.sectionType,
         ratingScaleType: [ratingScaleType],
-        weightage: [Number(this.weightageArray.at(this.weightageArray.length - 1)), [Validators.required, Validators.min(1)]],
+        weightage: [Number(this.weightageArray.at(this.weightageArray.length - 1)), sectionWeightageValidators],
         questions: questionsArray,
         createdBy: section.createdBy || this.updateDetails.createdBy,
       });
+      
       if (section.sectionType === 'rating') {
         sectionGroup.get('ratingScaleType')?.setValidators([Validators.required]);
       } else {
@@ -663,18 +762,52 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       }
       sectionsArray.push(sectionGroup);
     });
-
     
+    // Debug form validity for moduleId 33
+    if (data.moduleId === 33) {
+      setTimeout(() => {
+        this.checkFormValidity();
+      }, 100);
+    }
   }
 
-  prepareRatingScaleRanges(ratingScaleRange: string): { minimum: number; maximum: number }[] {
-    // Parse and create unique ranges from API data
-    const ranges = ratingScaleRange.split(',').map((range: string) => {
-      const [minimum, maximum] = range.split('-').map(Number);
-      return { minimum, maximum };
+  // Debug method to check form validity
+  checkFormValidity() {
+    console.log('Form valid:', this.updateForm.valid);
+    console.log('Form errors:', this.updateForm.errors);
+    
+    Object.keys(this.updateForm.controls).forEach(key => {
+      const control = this.updateForm.get(key);
+      if (control && control.errors) {
+        console.log(`${key} errors:`, control.errors);
+      }
     });
-    // Ensure no duplicates by stringifying the object and parsing it back
-    return Array.from(new Set(ranges.map((range) => JSON.stringify(range)))).map((item) => JSON.parse(item));
+    
+    const sections = this.updateForm.get('sections') as FormArray;
+    sections.controls.forEach((section, sIndex) => {
+      if (section.errors) {
+        console.log(`Section ${sIndex} errors:`, section.errors);
+      }
+      Object.keys(section.value).forEach(key => {
+        const control = section.get(key);
+        if (control && control.errors) {
+          console.log(`Section ${sIndex} ${key} errors:`, control.errors);
+        }
+      });
+      
+      const questions = section.get('questions') as FormArray;
+      questions.controls.forEach((question, qIndex) => {
+        if (question.errors) {
+          console.log(`Section ${sIndex} Question ${qIndex} errors:`, question.errors);
+        }
+        Object.keys(question.value).forEach(key => {
+          const control = question.get(key);
+          if (control && control.errors) {
+            console.log(`Section ${sIndex} Question ${qIndex} ${key} errors:`, control.errors);
+          }
+        });
+      });
+    });
   }
 
   isDraftType = false;
@@ -795,6 +928,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
 
   convertUpdateOptionsArray(sections: any[]): any[] {
+    const isModule33 = this.updateForm.get('moduleId')?.value?.id === 33;
+    
     return sections.map(section => {
       const sectionObj: any = {
         sectionName: section.sectionName,
@@ -809,9 +944,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
             required: question.required,
             question: question.question,
             order: question.order,
-            questionWeightage: question.questionWeightage,
-            // targetfield: question.target,
-            // unitofmeasurement: question.unitofmeasurement,
+            questionWeightage: isModule33 ? 0 : (question.questionWeightage || 0),
             status: 'Active',
             createdBy: this.updateDetails.employeeId,
             updatedBy: this.updateDetails.employeeId,
@@ -824,38 +957,35 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
                 updatedBy: this.updateDetails.employeeId,
                 meta: ''
               };
-              // Conditionally add 'optionId' if present
               if (option.optionId) {
                 optionObj.optionId = option.optionId;
               }
               return optionObj;
             })
           };
-          // Conditionally add 'id' to question object if present
+          
           if (question.id) {
             questionObj.id = question.id;
             questionObj.createdBy = question.createdBy
           }
-          // Handling rating scale type questions
+          
           if (section.sectionType === 'rating') {
-            // Add rating scale options to the question if it's a rating type
             const ratingScaleOptions = this.getRatingScaleOptions(section.ratingScaleType);
             if (ratingScaleOptions) {
               questionObj.options = ratingScaleOptions.map(scale => ({
                 option: scale.description,
                 isDefault: false,
-                optionWeightage: scale.scale.toString(), // Assign option weightage if needed
+                optionWeightage: scale.scale.toString(),
                 createdBy: this.updateDetails.employeeId,
                 updatedBy: this.updateDetails.employeeId,
                 meta: ''
               }));
             }
           } else {
-            // For non-rating type questions, handle other option types
             questionObj.options = question.options.map((option: any) => ({
               option: option.option,
               isDefault: false,
-              optionWeightage: '0', // Default handling of optionWeightage
+              optionWeightage: '0',
               createdBy: this.updateDetails.employeeId,
               updatedBy: this.updateDetails.employeeId,
               meta: ''
@@ -865,7 +995,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
         }),
         sectionItems: [
           {
-            weightage: section.weightage,
+            weightage: isModule33 ? 0 : (section.weightage || 0),
             status: "Active",
             createdBy: this.updateDetails.employeeId,
             updatedBy: this.updateDetails.employeeId,
@@ -873,11 +1003,10 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
           }
         ]
       };
-      // Conditionally add 'id' to section object if present
+      
       if (section.id) {
         sectionObj.id = section.id;
         sectionObj.createdBy = section.createdBy;
-        // Conditionally add 'sectionHeaderId' if section.id exists
         sectionObj.sectionItems[0].sectionHeaderId = section.id;
         sectionObj.sectionItems[0].createdBy = section.createdBy;
       }

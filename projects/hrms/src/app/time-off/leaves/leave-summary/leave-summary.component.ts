@@ -55,11 +55,11 @@ import { TimeoffSelectionService } from '../../../services/timeoff-selection.ser
     ModuleInformationComponent,
     MultiSelectModule,
     SkeletonModule,
-    InfoIconComponent
-],
+    InfoIconComponent,
+  ],
   templateUrl: './leave-summary.component.html',
   styleUrl: './leave-summary.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class LeaveSummaryComponent implements OnInit, OnDestroy {
   totalRecords = 100;
@@ -74,10 +74,22 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   filterForm!: FormGroup;
   activeEmplist = [] as any;
   years = [
-    { label: (new Date().getFullYear() - 2).toString(), value: new Date().getFullYear() - 2 },
-    { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
-    { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
-    { label: (new Date().getFullYear() + 1).toString(), value: new Date().getFullYear() + 1 }
+    {
+      label: (new Date().getFullYear() - 2).toString(),
+      value: new Date().getFullYear() - 2,
+    },
+    {
+      label: (new Date().getFullYear() - 1).toString(),
+      value: new Date().getFullYear() - 1,
+    },
+    {
+      label: new Date().getFullYear().toString(),
+      value: new Date().getFullYear(),
+    },
+    {
+      label: (new Date().getFullYear() + 1).toString(),
+      value: new Date().getFullYear() + 1,
+    },
   ];
   options = [
     { label: 10, value: 10 },
@@ -89,7 +101,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     { label: 'Carry Forward', value: 'Carry Forward' },
     { label: 'Leave Availed', value: 'Leave Availed' },
     { label: 'On Demand Allocation', value: 'On Demand Allocation' },
-    { label: 'Yearly Allocation', value:'Yearly Allocation' },
+    { label: 'Yearly Allocation', value: 'Yearly Allocation' },
   ];
   eavData: IEAV[] = [];
   selectedYear: any;
@@ -122,16 +134,17 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const initialYear =
-      this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
+      this.timeoffYearFilterService.getSelectedYear() ??
+      new Date().getFullYear();
     this.selectedYear = initialYear;
     if (this.timeoffYearFilterService.getSelectedYear() === null) {
       this.timeoffYearFilterService.setSelectedYear(initialYear);
     }
     this.empName = `${
-                  this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
-                }${this.empinfo.firstName ?? ''} ${
-                  this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
-                }${this.empinfo.lastName ?? ''}`.trim();
+      this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
+    }${this.empinfo.firstName ?? ''} ${
+      this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
+    }${this.empinfo.lastName ?? ''}`.trim();
     this.initializeForm();
     this.getEAVData();
     this.getAllEmployeeDetails();
@@ -142,19 +155,20 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.filterForm = this.fb.group({
-      employee: [null],
+      employee: [null], // Default to null so logged-in user data is shown
       year: [this.selectedYear, Validators.required],
       category: [null],
       transactionType: [null],
     });
-    
+
     this.filterForm
       .get('employee')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.onEmployeeOrYearChange();
+        // Remove immediate empName update - only update on Apply button
       });
-    
+
     this.filterForm
       .get('year')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
@@ -164,50 +178,75 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
         }
       });
   }
- 
-   getEAVData() {
-      const params = 'LeaveSummary';
-      const param = [
-        'AllocationTypes'
-      ];
-      this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (data: any) => {
-            this.eavData = data as IEAV[];
-            // this.futureDatesAllowed = parseInt(
-            //   this.permissionsValue?.find((item: any) => item.attribute === 'futureDatesAllowed')?.value ?? '0',
-            //   10
-            // );
-            // this.pastDatesAllowed = parseInt(
-            //   this.permissionsValue?.find((item: any) => item.attribute === 'pastDatesAllowed')?.value ?? '0',
-            //   10
-            // );
-          },
-          error(err) {
-            console.log('errors', err);
-          },
-        });
-    }
+
+  getEAVData() {
+    const params = 'LeaveSummary';
+    const param = ['AllocationTypes'];
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.eavData = data as IEAV[];
+          // this.futureDatesAllowed = parseInt(
+          //   this.permissionsValue?.find((item: any) => item.attribute === 'futureDatesAllowed')?.value ?? '0',
+          //   10
+          // );
+          // this.pastDatesAllowed = parseInt(
+          //   this.permissionsValue?.find((item: any) => item.attribute === 'pastDatesAllowed')?.value ?? '0',
+          //   10
+          // );
+        },
+        error(err) {
+          console.log('errors', err);
+        },
+      });
+  }
 
   onRowsChange() {
     this.first = 0;
   }
 
-   setActiveMessage(ledger: EmployeeLeaveLedger) {
+  setActiveMessage(ledger: EmployeeLeaveLedger) {
     if (ledger.transactionType === 'Leave Availed') {
-      const isWaitingForApproval = ledger.status?.toLowerCase() === 'waiting for approval';
-      const processedByRow = !isWaitingForApproval ? `<div class="detail-item"><strong>Processed by:</strong> <span>${ledger.processedByName || '-'}</span></div>` : '';
-      const formattedDate = new Date(ledger.txnDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-      
+      const status = ledger.status?.toLowerCase();
+
+      // ONLY when status is exactly "processed"
+      const isProcessed = status === 'processed';
+
+      const processedByRow = isProcessed
+        ? `<div class="detail-item">
+           <strong>Processed by:</strong>
+           <span>${ledger.processedByName || '-'}</span>
+         </div>`
+        : '';
+
+      const formattedDate = new Date(ledger.txnDate).toLocaleDateString(
+        'en-US',
+        {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }
+      );
+
       this.activeMessage = `
-        <div class="leave-details">
-          <div class="detail-item"><strong>Applied Date:</strong> <span>${formattedDate}</span></div>
-          <div class="detail-item"><strong>Leave Status:</strong> <span>${ledger.status || '-'}</span></div>
-          <div class="detail-item"><strong>Requested by:</strong> <span>${ledger.creditedByName || '-'}</span></div>
-          ${processedByRow}
+      <div class="leave-details">
+        <div class="detail-item">
+          <strong>Applied Date:</strong>
+          <span>${formattedDate}</span>
         </div>
-      `;
+        <div class="detail-item">
+          <strong>Leave Status:</strong>
+          <span>${ledger.status || '-'}</span>
+        </div>
+        <div class="detail-item">
+          <strong>Requested by:</strong>
+          <span>${ledger.creditedByName || '-'}</span>
+        </div>
+        ${processedByRow}
+      </div>
+    `;
     } else {
       this.activeMessage = '';
     }
@@ -221,10 +260,10 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     const formValue = this.filterForm.value;
     const empId = formValue.employee || this.empinfo.employeeId;
     const year = formValue.year;
-    
+
     // Reset category selection
     this.filterForm.get('category')?.setValue(null);
-    
+
     // Fetch categories for selected employee and year
     if (year) {
       this.getCategoryDetails(empId, year);
@@ -234,10 +273,10 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   onYearChange(year: number) {
     const formValue = this.filterForm.value;
     const empId = formValue.employee || this.empinfo.employeeId;
-    
+
     // Reset category selection
     this.filterForm.get('category')?.setValue(null);
-    
+
     // Fetch categories for selected employee and year
     if (year) {
       this.getCategoryDetails(empId, year);
@@ -246,16 +285,14 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
   getCategoryDetails(empId: number, year: number) {
     this.http
-      .getData(
-        `LeaveEntitlements/v2/employee/${empId}?year=${year}`
-      )
+      .getData(`LeaveEntitlements/v2/employee/${empId}?year=${year}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           if (response.success) {
             this.categoryDetails = response.data as ICategoryDetails[];
             // this.calculateProbationLeavs(this.categoryDetails);
-          }else {
+          } else {
             this.categoryDetails = [];
           }
         },
@@ -269,7 +306,8 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
   private syncSelectionsAndLoadData(): void {
     const initialYear =
-      this.timeoffYearFilterService.getSelectedYear() ?? new Date().getFullYear();
+      this.timeoffYearFilterService.getSelectedYear() ??
+      new Date().getFullYear();
     const initialEmployeeId =
       this.http.getCurrentEmployeeIdTimeoff() ?? this.empinfo.employeeId;
 
@@ -325,12 +363,17 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     }
 
     // Update the new service as well
-    if ((employeeId !== null && !Number.isNaN(employeeId)) || (year !== null && !Number.isNaN(year))) {
-        const currentSelection = this.timeoffSelectionService.getSelection();
-        this.timeoffSelectionService.updateSelection(
-            employeeId !== null && !Number.isNaN(employeeId) ? employeeId : currentSelection.employeeId,
-            year !== null && !Number.isNaN(year) ? year : currentSelection.year
-        );
+    if (
+      (employeeId !== null && !Number.isNaN(employeeId)) ||
+      (year !== null && !Number.isNaN(year))
+    ) {
+      const currentSelection = this.timeoffSelectionService.getSelection();
+      this.timeoffSelectionService.updateSelection(
+        employeeId !== null && !Number.isNaN(employeeId)
+          ? employeeId
+          : currentSelection.employeeId,
+        year !== null && !Number.isNaN(year) ? year : currentSelection.year
+      );
     }
   }
 
@@ -344,9 +387,18 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const selectedEmp = this.activeEmplist.find((emp: any) => emp.value === employeeId);
+    const selectedEmp = this.activeEmplist.find(
+      (emp: any) => emp.value === employeeId
+    );
     if (selectedEmp?.label) {
       this.empName = selectedEmp.label;
+    } else {
+      // Fallback: if employee not found in activeEmplist, set to logged-in user
+      this.empName = `${
+        this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
+      }${this.empinfo.firstName ?? ''} ${
+        this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
+      }${this.empinfo.lastName ?? ''}`.trim();
     }
   }
 
@@ -359,7 +411,12 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     }
   }
 
-  getLeaveSummaryByEmployee(empId: number, year: number, categoryId?: number, transactionTypes?: any[]) {
+  getLeaveSummaryByEmployee(
+    empId: number,
+    year: number,
+    categoryId?: number,
+    transactionTypes?: any[]
+  ) {
     this.dataload = true;
     let url = `EmployeeLeaveLedger/${empId}?year=${year}`;
     if (categoryId) {
@@ -368,13 +425,14 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     if (transactionTypes && transactionTypes.length > 0) {
       url += `&transactionTypes=${transactionTypes.join(',')}`;
     }
-    
+
     this.http
       .getData(url)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaveSummary = response?.data?.leaveLedger as EmployeeLeaveLedger[];
+          this.leaveSummary = response?.data
+            ?.leaveLedger as EmployeeLeaveLedger[];
           this.yearOpeningBalance = response?.data?.yearOpeningBalance || 0;
           this.yearClosingBalance = response?.data?.yearEndClosingBalance || 0;
           this.totalCredited = response?.data?.totalCredited || 0;
@@ -384,10 +442,10 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
           this.dataload = false;
           console.error('Error fetching data:', error);
           this.leaveSummary = [];
-          this.yearOpeningBalance =  0;
+          this.yearOpeningBalance = 0;
           this.yearClosingBalance = 0;
           this.totalCredited = 0;
-          this.totalDebited =  0;
+          this.totalDebited = 0;
         },
         complete: () => {
           this.dataload = false;
@@ -420,27 +478,30 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
   }
 
   isFilterApplied(): boolean {
-    const { employee, year, category,transactionType } = this.filterForm.value;
-    return !!(employee || category || (year && year !== this.currentYear) || (transactionType && transactionType.length > 0));
+    const { employee, year, category, transactionType } = this.filterForm.value;
+    return !!(
+      employee ||
+      category ||
+      (year && year !== this.currentYear) ||
+      (transactionType && transactionType.length > 0)
+    );
   }
 
   clearAllFilters(): void {
     this.filterForm.reset({
       year: this.currentYear,
-      employee:this.empinfo.employeeId
+      employee: null, // Reset to null so logged-in user is used
     });
     this.selectedYear = this.currentYear;
-    this.empName = `${
-                  this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
-                }${this.empinfo.firstName ?? ''} ${
-                  this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
-                }${this.empinfo.lastName ?? ''}`.trim();
+    // Update empName to logged-in user
+    this.updateEmpName(this.empinfo.employeeId);
     this.getLeaveSummaryByEmployee(this.empinfo.employeeId, this.selectedYear);
   }
 
   applyFilters(): void {
-    if (this.filterForm.invalid) {
-      this.filterForm.markAllAsTouched();
+    // Only check if year is invalid since it's the only required field
+    if (this.filterForm.get('year')?.invalid) {
+      this.filterForm.get('year')?.markAsTouched();
       return;
     }
 
@@ -449,20 +510,16 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     const empId = formValue.employee || this.empinfo.employeeId;
     const categoryId = formValue.category;
     const transactionTypes = formValue.transactionType;
-    
+
     // Update empName based on selected employee
-    if (formValue.employee) {
-      const selectedEmp = this.activeEmplist.find((emp: any) => emp.value === formValue.employee);
-      this.empName = selectedEmp ? selectedEmp.label: '';
-    } else {
-      this.empName = `${
-                  this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId + ' - ' : ''
-                }${this.empinfo.firstName ?? ''} ${
-                  this.empinfo.middleName ? this.empinfo.middleName + ' ' : ''
-                }${this.empinfo.lastName ?? ''}`.trim();
-    }
-    
-    this.getLeaveSummaryByEmployee(empId, this.selectedYear, categoryId, transactionTypes);
+    this.updateEmpName(empId);
+
+    this.getLeaveSummaryByEmployee(
+      empId,
+      this.selectedYear,
+      categoryId,
+      transactionTypes
+    );
     this.closeCanvas();
   }
 
@@ -471,56 +528,72 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     const formValue = this.filterForm.value;
     const empId = formValue.employee || this.empinfo.employeeId;
     const year = formValue.year || this.selectedYear;
-    
+
     let url = `EmployeeLeaveLedger/${empId}/export?year=${year}`;
-    
+
     if (formValue.category && formValue.category.length > 0) {
       url += `&categoryIds=${formValue.category.join(',')}`;
     }
-    
+
     if (formValue.transactionType && formValue.transactionType.length > 0) {
-      const encodedTypes = formValue.transactionType.map((t: string) => encodeURIComponent(t)).join(',');
+      const encodedTypes = formValue.transactionType
+        .map((t: string) => encodeURIComponent(t))
+        .join(',');
       url += `&transactionTypes=${encodedTypes}`;
     }
-    this.http.downloadTimesheetReport(url)
-    .pipe(finalize(() => this.spinnerLoader = false))
-    .subscribe({
-      next: (response: HttpResponse<Blob>) => {
-        if (!response.body) {
-          this.conformationPopup.openErrorModal('No data received for export.');
-          return;
-        }
-        // Extract filename from Content-Disposition
-        let filename = 'Leave_Summary.xlsx';
-        const contentDisposition = response.headers.get('content-disposition');
-        if (contentDisposition) {
-          // Handle both regular and UTF-8 encoded filenames
-          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-            filename = decodeURIComponent(utf8FilenameMatch[1]);
-          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-            filename = asciiFilenameMatch[1];
+    this.http
+      .downloadTimesheetReport(url)
+      .pipe(finalize(() => (this.spinnerLoader = false)))
+      .subscribe({
+        next: (response: HttpResponse<Blob>) => {
+          if (!response.body) {
+            this.conformationPopup.openErrorModal(
+              'No data received for export.'
+            );
+            return;
           }
-        }
-        //  Download the blob as before
-        const blob = new Blob([response.body], {
-          type: response.body.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.click();
-        window.URL.revokeObjectURL(url);
-        this.conformationPopup.openSuccessModal("Leave Summary Exported Successfully");
-      },
-      error: (err: any) => {
-        console.error('Export error:', err);
-        this.conformationPopup.openErrorModal('Failed to export leave summary.');
-      },
-      complete: () => { }
-    });
+          // Extract filename from Content-Disposition
+          let filename = 'Leave_Summary.xlsx';
+          const contentDisposition = response.headers.get(
+            'content-disposition'
+          );
+          if (contentDisposition) {
+            // Handle both regular and UTF-8 encoded filenames
+            const utf8FilenameMatch = contentDisposition.match(
+              /filename\*\=UTF\-8''([^;]+)/
+            );
+            const asciiFilenameMatch =
+              contentDisposition.match(/filename="?([^"]+)"?/);
+            if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+              filename = decodeURIComponent(utf8FilenameMatch[1]);
+            } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+              filename = asciiFilenameMatch[1];
+            }
+          }
+          //  Download the blob as before
+          const blob = new Blob([response.body], {
+            type:
+              response.body.type ||
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.click();
+          window.URL.revokeObjectURL(url);
+          this.conformationPopup.openSuccessModal(
+            'Leave Summary Exported Successfully'
+          );
+        },
+        error: (err: any) => {
+          console.error('Export error:', err);
+          this.conformationPopup.openErrorModal(
+            'Failed to export leave summary.'
+          );
+        },
+        complete: () => {},
+      });
   }
 
   // function to get the data of employees by hierarchy
@@ -534,7 +607,10 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           if (response && response.length) {
-            const myTeam = response.filter((e: any) => e.isAccess && e.employeeId !== this.empinfo?.employeeId);
+            const myTeam = response.filter(
+              (e: any) =>
+                e.isAccess && e.employeeId !== this.empinfo?.employeeId
+            );
 
             this.getEmployeeInfo = myTeam.map((emp: any) => {
               const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
@@ -567,13 +643,16 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.activeEmplist = res.filter((e: any) => e.employeeId !== this.empinfo?.employeeId).map((employee: any) => ({
-            label: `${employee.fusionEmpId ?? ''} - ${
-              employee.firstName ?? ''
-            }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-            value: employee.employeeId,
-          }));
-          if (this.selectedEmployeeId !== null) {
+          this.activeEmplist = res
+            .filter((e: any) => e.employeeId !== this.empinfo?.employeeId)
+            .map((employee: any) => ({
+              label: `${employee.fusionEmpId ?? ''} - ${
+                employee.firstName ?? ''
+              }  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+              value: employee.employeeId,
+            }));
+          // Update empName after activeEmplist is populated
+          if (this.selectedEmployeeId !== null && this.selectedEmployeeId !== this.empinfo.employeeId) {
             this.updateEmpName(this.selectedEmployeeId);
           }
         },
@@ -604,7 +683,7 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
 
   getStatusColor(status: string): string {
     console.log(status);
-    
+
     if (!status) return '#000';
     const lowerStatus = status.toLowerCase();
     if (lowerStatus.includes('waiting') || lowerStatus.includes('pending')) {
@@ -615,8 +694,6 @@ export class LeaveSummaryComponent implements OnInit, OnDestroy {
     }
     return '#000'; // Default black
   }
-
-
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -15,7 +15,7 @@ import { AuthService } from '../../../../services/auth.service';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-add-global-permissions',
   imports: [CommonModule, ReactiveFormsModule, MultiSelectModule, FormsModule, Select, TranslateModule],
@@ -31,7 +31,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     { sno: 1, Value: 'Location/Sub Location', item_text: 'Select by Location/Sub Location', selectedAllGroup: 'Group 1' },
     { sno: 2, Value: 'Department/Team', item_text: 'Select by Department/Team', selectedAllGroup: 'Group 1' },
     { sno: 3, Value: 'Employees', item_text: 'Select by Employees', selectedAllGroup: 'Group 1' }
-
   ];
   private modalRef: NgbModalRef | null = null;
   permissionTypes = [{ item_text: 'Permission'},{ item_text : 'WFH'}];
@@ -59,15 +58,9 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   requestcount!: number;
   isLoader = false;
 
-  constructor(
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    public rbac: RbacService,
-    public formValidation: FormValidationService
-  ) { }
+  constructor(private authService: AuthService, private conformationPopup: OpenModalService, 
+    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, public rbac: RbacService, 
+    public formValidation: FormValidationService, public router:Router) { }
 
   ngOnInit(): void {
     this.initalizingForm();
@@ -170,7 +163,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       const permissionDateControl = this.requestForm.get('permissionDate');
       const durationControl = this.requestForm.get('duration');
       const nameControl = this.requestForm.get('name');
-      
       if (requestType === 'WFH') {
         // Set validators for WFH
         workedDateControl?.setValidators([Validators.required]);
@@ -179,7 +171,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         permissionDateControl?.clearValidators();
         durationControl?.clearValidators();
         nameControl?.clearValidators();
-        
         // Handle availing change for halfType validation
         this.handleAvailingChange();
       } else if (requestType === 'Permission') {
@@ -192,7 +183,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         availingControl?.clearValidators();
         this.requestForm.get('halfType')?.clearValidators();
       }
-      
       // Update validity
       workedDateControl?.updateValueAndValidity();
       availingControl?.updateValueAndValidity();
@@ -268,7 +258,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   permissionsDuration() {
     this.subscription = this.http.getData("entityAttributeValues?entity=Permissions").subscribe({
       next: (data: any) => {
-        console.log(data);
         const permissionsDurationDetails = data.find((ele: any) => {
           return ele.attribute === 'globalPermissionsDuration'
         });
@@ -289,7 +278,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     for (let i = 0.5; i <= maxDuration; i += 0.5) {
       this.permissionHours.push({ duration: i });
     }
-    console.log(this.permissionHours);
   }
 
   //function to check the null values
@@ -324,7 +312,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.requestForm.get('sublocation')?.setValue(null);
     this.requestForm.get('selectedOptions')?.setValue(null);
     const ValuesForSublocation = this.requestForm.get('location')?.value;
-    console.log(ValuesForSublocation);
     this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation} `).subscribe({
       next: (data: any) => {
         this.subLocationsDropdown = data.jobSubLocations;
@@ -347,12 +334,12 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         this.locationWiseEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
         });
-        console.log(this.locationWiseEmployeesDetails)
         const selectedIds: any = [];
         this.locationWiseEmployeesDetails.forEach((ele: any) => {
           selectedIds.push(ele.employeeId)
@@ -362,7 +349,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.locationWiseEmployeesDetails = [];
         this.requestForm.get('selectedOptions')?.setValue(null);
       },
@@ -372,23 +359,22 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   getAllEmployees() {
     this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.getAllEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
         });
-        console.log(this.getAllEmployeesDetails)
         const selectedIds: any = [];
         this.getAllEmployeesDetails.forEach((ele: any) => {
           selectedIds.push(ele.employeeId)
         })
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.requestForm.get('selectedOptions')?.setValue(null);
       },
     })
@@ -398,14 +384,13 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   getEmployeesTeamwise() {
     //const locationId=this.requestForm.get('departmentName')?.value;
     const team = this.requestForm.get('teamSelectedOptions')?.value;
-    //console.log(team)
     this.subscription = this.http.getData(`Employeedata/getbyteam/${team}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.teamWiseEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
@@ -419,7 +404,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.requestForm.get('teamEmpselectedOptions')?.setValue(null);
       },
     })
@@ -465,15 +450,12 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.isLoader = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
-    
     if (this.requestForm.valid) {
       const formData = this.requestForm.value;
       const isFullDay = formData.availing === 'Full Day' || +formData.availing === 2;
       const duration = isFullDay ? '1' : '0.5';
-      
       let deptId_locationId = '';
       let teamId_sublocationId = '';
-
       if (formData.selectType === 'Location/Sub Location') {
         deptId_locationId = Array.isArray(formData.location) ? formData.location.join(',') : String(formData.location);
         teamId_sublocationId = Array.isArray(formData.sublocation) ? formData.sublocation.join(',') : String(formData.sublocation);
@@ -481,7 +463,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         deptId_locationId = Array.isArray(formData.department) ? formData.department.join(',') : String(formData.department);
         teamId_sublocationId = Array.isArray(formData.teamSelectedOptions) ? formData.teamSelectedOptions.join(',') : String(formData.teamSelectedOptions);
       }
-      
       const payLoad = {
         "requestedBy": loggedinuser.employeeId,
         "requestedDate": currentDate,
@@ -499,7 +480,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "teamId_sublocId": teamId_sublocationId,
         "durationType": formData.requestType === 'WFH' ? (isFullDay ? 2 : +formData.halfType) : undefined,
       }
-      
       this.http.postdata(`GlobalPermissions/postGlobalPermissions`, payLoad).subscribe({
         next: (response: any) => {
           this.isLoader = false;
@@ -572,5 +552,4 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
 }

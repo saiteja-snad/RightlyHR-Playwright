@@ -1,7 +1,12 @@
 <div class="custom-main-popup-container" ngbAutofocus>
   <div class="custom-poup-header-content popup-header-border">
-    <div>
-      <p class="popup-heading mb-0">{{'Add Global Permission'| translate}}</p>
+    <div class="popup-heading mb-0">
+      @if(router.url === '/on-behalf-of/global/permissions') {
+      {{'Add Permissions'| translate}}
+      }
+      @else if (router.url === '/on-behalf-of/global/wfh') {
+      {{'Add WFH'| translate}}
+      }
     </div>
   </div>
 
@@ -69,7 +74,6 @@
                 [filter]="true" [resetFilterOnHide]="true" [showClear]="true"
                 (onPanelHide)="onEmployeeDropdownTouched()" (onClear)="onEmployeeDropdownTouched()"
                 [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`" />
-
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
@@ -146,7 +150,7 @@
         </ng-container>
 
         <div class="mb-3">
-          <label for="requestType" class="form-label custom-label">Request Type <span class="error-msg">*</span></label>
+          <label for="requestType" class="form-label custom-label">Request Type<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select formControlName="requestType" [options]="permissionTypes" optionLabel="item_text"
               optionValue="item_text" placeholder="Select Request Type"  class="form-select custom-select">
@@ -165,8 +169,7 @@
         <!-- content -->
         <ng-container *ngIf="requestForm.get('requestType')?.value==='Permission'">
           <div class="mb-3">
-            <label for="requsteddate" class="form-lable custom-label">Permission Date<span
-                class="error-msg">*</span></label>
+            <label for="requsteddate" class="form-lable custom-label">Permission Date<span class="error-msg">*</span></label>
             <input type="date" class="form-control" formControlName="permissionDate" id="requsteddate"
               aria-label="Default select example" onkeydown="return false" autocomplete="off" startKey="start"
               [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
@@ -203,12 +206,14 @@
           </div>
 
           <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason<span
-                class="error-msg">*</span></label>
+            <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'Permission reason'| translate}}
+              <span class="error-msg">*</span></label>
             <textarea class="form-control" (keypress)="formValidation.restrictInputallowspicalcharters($event)"
               id="exampleFormControlTextarea1" formControlName="notes" (input)="onReasonInput()"
               placeholder="Reason for Permission" maxlength="250"></textarea>
-            <div class="my-1 text-end">{{requestForm.get('notes')?.value?.length || 0}}/250</div>
+            <div class="mt-2 textarea-count-text">
+              <span class="color">{{requestForm.get('notes')?.value?.length || 0}}/250</span>
+            </div>
             <div class="error-msg" *ngIf="requestForm.get('notes')?.touched && requestForm.get('notes')?.invalid">
               Reason is required
             </div>
@@ -259,12 +264,14 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason<span
-                class="error-msg">*</span></label>
+            <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'WFH reason'| translate}}
+              <span class="error-msg">*</span></label>
             <textarea class="form-control" (keypress)="formValidation.restrictInputallowspicalcharters($event)"
               id="exampleFormControlTextarea1" formControlName="notes" (input)="onReasonInput()"
               placeholder="Reason for Permission" maxlength="250"></textarea>
-            <div class="my-1 text-end">{{requestForm.get('notes')?.value?.length || 0}}/250</div>
+            <div class="mt-2 textarea-count-text">
+              <span class="color">{{requestForm.get('notes')?.value?.length || 0}}/250</span>
+            </div>
             <div class="error-msg" *ngIf="requestForm.get('notes')?.touched && requestForm.get('notes')?.invalid">
               Reason is required
             </div>

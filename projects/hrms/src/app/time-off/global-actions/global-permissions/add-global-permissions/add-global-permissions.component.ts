@@ -69,6 +69,18 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.permissionsDuration();
     this.setupValidationOnClear();
     this.setDateLimits();
+    this.setRequestTypeBasedOnRoute();
+  }
+
+  setRequestTypeBasedOnRoute() {
+    const currentUrl = this.router.url;
+    if (currentUrl === '/on-behalf-of/global/permissions') {
+      this.requestForm.get('requestType')?.setValue('Permission');
+      this.requestForm.get('requestType')?.disable();
+    } else if (currentUrl === '/on-behalf-of/global/wfh') {
+      this.requestForm.get('requestType')?.setValue('WFH');
+      this.requestForm.get('requestType')?.disable();
+    }
   }
 
   setDateLimits() {
@@ -450,12 +462,15 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.isLoader = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
+    
     if (this.requestForm.valid) {
-      const formData = this.requestForm.value;
+      const formData = this.requestForm.getRawValue(); // Use getRawValue to get disabled controls
       const isFullDay = formData.availing === 'Full Day' || +formData.availing === 2;
       const duration = isFullDay ? '1' : '0.5';
+      
       let deptId_locationId = '';
       let teamId_sublocationId = '';
+
       if (formData.selectType === 'Location/Sub Location') {
         deptId_locationId = Array.isArray(formData.location) ? formData.location.join(',') : String(formData.location);
         teamId_sublocationId = Array.isArray(formData.sublocation) ? formData.sublocation.join(',') : String(formData.sublocation);
@@ -463,6 +478,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         deptId_locationId = Array.isArray(formData.department) ? formData.department.join(',') : String(formData.department);
         teamId_sublocationId = Array.isArray(formData.teamSelectedOptions) ? formData.teamSelectedOptions.join(',') : String(formData.teamSelectedOptions);
       }
+      
       const payLoad = {
         "requestedBy": loggedinuser.employeeId,
         "requestedDate": currentDate,
@@ -471,7 +487,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "moduleId": formData.requestType === 'WFH' ? environment.wfhModuleId : environment.permissionsModuleId,
         "referenceTypeId": this.selectedPermissionId,
         "duration": formData.requestType === 'WFH' ? duration : formData.duration?.toString(),
-        "requestType": formData.requestType,
+        "requestType": formData.name,
         "requestTypeEntityId": formData.sublocation ? formData.location + "," + formData.sublocation : formData.department + "," + formData.teamSelectedOptions,
         "employeeIds": formData.selectedOptions.length > 0 ? formData.selectedOptions.toString() : formData.teamEmpselectedOptions.toString(),
         "meta": formData.notes,
@@ -480,6 +496,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "teamId_sublocId": teamId_sublocationId,
         "durationType": formData.requestType === 'WFH' ? (isFullDay ? 2 : +formData.halfType) : undefined,
       }
+      
       this.http.postdata(`GlobalPermissions/postGlobalPermissions`, payLoad).subscribe({
         next: (response: any) => {
           this.isLoader = false;

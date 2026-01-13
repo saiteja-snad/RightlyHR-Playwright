@@ -44,9 +44,9 @@
         <table class="w-100">
           <thead>
             <tr>
-              <th>Permission Requested Date</th>
-              <th>Permission Type</th>
-              <th>Duration(In Hrs)</th>
+              <th>WFH Requested Date</th>
+              <!-- <th>Permission Type</th> -->
+              <th>Duration</th>
               <th>Applicable For</th>
               <th>Department/Location</th>
               <th>Team/Sub Location</th>
@@ -67,8 +67,8 @@
                 </span>
                 <ng-template #permissiondate>-</ng-template>
               </td>
-              <td>{{item.requestType?item.requestType:'-'}}</td>
-              <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
+              <!-- <td>{{item.requestType?item.requestType:'-'}}</td> -->
+              <td>{{item.durationType ? item.durationType:'-'}}</td>
               <td>{{item.selectType?item.selectType:'-'}}</td>
               <td>{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}</td>
               <td>{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}</td>

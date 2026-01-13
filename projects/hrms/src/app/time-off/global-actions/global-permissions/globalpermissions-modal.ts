@@ -1,4 +1,5 @@
 export interface Iglobalpermissions {
+  durationType: any;
   firstName: string;
   lastName: string;
   middleName: string;

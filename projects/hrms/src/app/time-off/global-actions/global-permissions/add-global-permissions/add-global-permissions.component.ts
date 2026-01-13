@@ -487,7 +487,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "moduleId": formData.requestType === 'WFH' ? environment.wfhModuleId : environment.permissionsModuleId,
         "referenceTypeId": this.selectedPermissionId,
         "duration": formData.requestType === 'WFH' ? duration : formData.duration?.toString(),
-        "requestType": formData.name,
+        "requestType": formData.requestType,
         "requestTypeEntityId": formData.sublocation ? formData.location + "," + formData.sublocation : formData.department + "," + formData.teamSelectedOptions,
         "employeeIds": formData.selectedOptions.length > 0 ? formData.selectedOptions.toString() : formData.teamEmpselectedOptions.toString(),
         "meta": formData.notes,

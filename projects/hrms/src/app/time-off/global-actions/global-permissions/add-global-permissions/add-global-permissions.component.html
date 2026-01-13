@@ -268,7 +268,7 @@
               <span class="error-msg">*</span></label>
             <textarea class="form-control" (keypress)="formValidation.restrictInputallowspicalcharters($event)"
               id="exampleFormControlTextarea1" formControlName="notes" (input)="onReasonInput()"
-              placeholder="Reason for Permission" maxlength="250"></textarea>
+              placeholder="Reason for WFH" maxlength="250"></textarea>
             <div class="mt-2 textarea-count-text">
               <span class="color">{{requestForm.get('notes')?.value?.length || 0}}/250</span>
             </div>

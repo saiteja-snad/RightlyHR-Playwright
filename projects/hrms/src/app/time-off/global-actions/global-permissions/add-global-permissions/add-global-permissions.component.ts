@@ -462,15 +462,12 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.isLoader = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
-    
     if (this.requestForm.valid) {
       const formData = this.requestForm.getRawValue(); // Use getRawValue to get disabled controls
       const isFullDay = formData.availing === 'Full Day' || +formData.availing === 2;
       const duration = isFullDay ? '1' : '0.5';
-      
       let deptId_locationId = '';
       let teamId_sublocationId = '';
-
       if (formData.selectType === 'Location/Sub Location') {
         deptId_locationId = Array.isArray(formData.location) ? formData.location.join(',') : String(formData.location);
         teamId_sublocationId = Array.isArray(formData.sublocation) ? formData.sublocation.join(',') : String(formData.sublocation);
@@ -478,7 +475,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         deptId_locationId = Array.isArray(formData.department) ? formData.department.join(',') : String(formData.department);
         teamId_sublocationId = Array.isArray(formData.teamSelectedOptions) ? formData.teamSelectedOptions.join(',') : String(formData.teamSelectedOptions);
       }
-      
       const payLoad = {
         "requestedBy": loggedinuser.employeeId,
         "requestedDate": currentDate,
@@ -496,12 +492,17 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "teamId_sublocId": teamId_sublocationId,
         "durationType": formData.requestType === 'WFH' ? (isFullDay ? 2 : +formData.halfType) : undefined,
       }
-      
       this.http.postdata(`GlobalPermissions/postGlobalPermissions`, payLoad).subscribe({
         next: (response: any) => {
           this.isLoader = false;
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Global request submitted sucessfully')
+          let successMessage = 'Global request submitted successfully';
+          if (this.router.url === '/on-behalf-of/global/permissions') {
+            successMessage = 'Global permission request submitted successfully';
+          } else if (this.router.url === '/on-behalf-of/global/wfh') {
+            successMessage = 'Global WFH request submitted successfully';
+          }
+          this.conformationPopup.openSuccessModal(successMessage);
         },
         error: (err: any) => {
           if (this.modalRef) {

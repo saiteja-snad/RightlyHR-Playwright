@@ -4,17 +4,18 @@ import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
-import { AuthService } from '../../../services/auth.service';
-import { HttpService } from '../../../services/http.service';
-import { OpenModalService } from '../../../services/open-modal.service';
-import { RbacService } from '../../../services/rbac.service';
-import { IPermissionType } from '../../../Interfaces/timoff-model';
-import { IDepartment } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
-import { environment } from '../../../../environments/environment';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { FormValidationService } from '../../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { environment } from '../../../../../environments/environment';
+import { IDepartment } from '../../../../Interfaces/letters-model';
+import { IPermissionType } from '../../../../Interfaces/timoff-model';
+import { AuthService } from '../../../../services/auth.service';
+import { HttpService } from '../../../../services/http.service';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
+
 @Component({
   selector: 'app-add-global-permissions',
   imports: [CommonModule, ReactiveFormsModule, MultiSelectModule, FormsModule, Select, TranslateModule],
@@ -30,7 +31,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     { sno: 1, Value: 'Location/Sub Location', item_text: 'Select by Location/Sub Location', selectedAllGroup: 'Group 1' },
     { sno: 2, Value: 'Department/Team', item_text: 'Select by Department/Team', selectedAllGroup: 'Group 1' },
     { sno: 3, Value: 'Employees', item_text: 'Select by Employees', selectedAllGroup: 'Group 1' }
-
   ];
   private modalRef: NgbModalRef | null = null;
   permissionTypes = [{ item_text: 'Permission' }];
@@ -58,15 +58,9 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   requestcount!: number;
   isLoader = false;
 
-  constructor(
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    public rbac: RbacService,
-    public formValidation: FormValidationService
-  ) { }
+  constructor(private authService: AuthService, private conformationPopup: OpenModalService, 
+    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, public rbac: RbacService, 
+    public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.initalizingForm();
@@ -173,7 +167,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   permissionsDuration() {
     this.subscription = this.http.getData("entityAttributeValues?entity=Permissions").subscribe({
       next: (data: any) => {
-        console.log(data);
         const permissionsDurationDetails = data.find((ele: any) => {
           return ele.attribute === 'globalPermissionsDuration'
         });
@@ -194,7 +187,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     for (let i = 0.5; i <= maxDuration; i += 0.5) {
       this.permissionHours.push({ duration: i });
     }
-    console.log(this.permissionHours);
   }
 
   //function to check the null values
@@ -216,7 +208,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
-        this.jobLocationDropDownData = data
+        this.jobLocationDropDownData = data;
       },
       error: (err: any) => {
         console.log(err);
@@ -252,12 +244,12 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         this.locationWiseEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
         });
-        console.log(this.locationWiseEmployeesDetails)
         const selectedIds: any = [];
         this.locationWiseEmployeesDetails.forEach((ele: any) => {
           selectedIds.push(ele.employeeId)
@@ -267,7 +259,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.locationWiseEmployeesDetails = [];
         this.requestForm.get('selectedOptions')?.setValue(null);
       },
@@ -277,16 +269,15 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   getAllEmployees() {
     this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.getAllEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
         });
-        console.log(this.getAllEmployeesDetails)
         const selectedIds: any = [];
         this.getAllEmployeesDetails.forEach((ele: any) => {
           selectedIds.push(ele.employeeId)
@@ -306,11 +297,11 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     //console.log(team)
     this.subscription = this.http.getData(`Employeedata/getbyteam/${team}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.teamWiseEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
@@ -324,7 +315,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.requestForm.get('teamEmpselectedOptions')?.setValue(null);
       },
     })
@@ -375,7 +366,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       const formData = this.requestForm.value;
       let deptId_locationId = '';
       let teamId_sublocationId = '';
-
       if (formData.selectType === 'Location/Sub Location') {
         deptId_locationId = Array.isArray(formData.location) ? formData.location.join(',') : String(formData.location);
         teamId_sublocationId = Array.isArray(formData.sublocation) ? formData.sublocation.join(',') : String(formData.sublocation);
@@ -421,7 +411,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
             ...status,
             global: true,
           }));
-
         },
       })
     }

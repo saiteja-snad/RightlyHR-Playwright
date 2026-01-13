@@ -20,6 +20,7 @@ export interface Iglobalpermissions {
   teamId_sublocIdName: string;
   fusionEmpId: string;
 }
+
 export interface Iemployyes {
   firstName: string;
   lastName: string;

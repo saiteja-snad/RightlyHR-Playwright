@@ -1,15 +1,14 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">On Behalf Of <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name">On Behalf Of <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div>
       <div class="component-header">Global Permissions</div>
-       <div>
-                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
-            </div>
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" class="cursor" />
+      </div>
     </div>
-    <div>
-    </div>
-
+  
     <div class="d-flex gap-2">
       <div class="d-flex gap-2 align-items-center">
         <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
@@ -27,7 +26,6 @@
         }
       </div>
     </div>
-     
   </div>
 
   <!-- filters data -->
@@ -76,82 +74,90 @@
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-  <div class="custom-table-content">
-    @if(!loading){
-    <table class="w-100">
-      <thead>
-        <tr>
-          <th>Permission Requested Date</th>
-          <th>Permission Type</th>
-          <th>Duration(In Hrs)</th>
-          <th>Applicable For</th>
-          <th>Department/Location</th>
-          <th>Team/Sub Location</th>
-          <th>Request Type</th>
-          <th>Reason</th>
-          <th>List of Employees</th>
-          <th>Requested By</th>
-          <th>Request Raised Date</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @if(globalpermissions.length > 0){
-        <tr *ngFor="let item of globalpermissions | globalpermissions : searchValue">
-          <td>
-            <span *ngIf="item.permissionRequestedDate !== '0001-01-01T00:00:00'; else permissiondate">
-              {{item.permissionRequestedDate? (item.permissionRequestedDate | dateformat):'-' }}
-            </span>
-            <ng-template #permissiondate>-</ng-template>
-          </td>
-          <td>{{item.requestType?item.requestType:'-'}}</td>
-          <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
-          <td>{{item.selectType?item.selectType:'-'}}</td>
-          <td>{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}</td>
-          <td>{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}</td>
-          <td>{{item.type?item.type:'-'}}</td>
-          <td class="text-center">
-            <div>
-              <span *ngIf="item.meta;else res">
-                <a type="button" [ngbPopover]="reason">
-                  <app-info-icon />
-                </a>
-                <ng-template #reason>
-                  <p class="mb-0">{{item.meta}}</p>
-                </ng-template>
-              </span>
-              <ng-template #res>-</ng-template>
-            </div>
-          </td>
-          <td class="text-center">
-            <div>
-              <span *ngIf="item.employeeIds.length > 0; else emp">
-                <a type="button" (click)="openmodal(allemployeelist);getEmployeeNames(item.employeeIds)">
-                  <app-info-icon />
-                </a>
-              </span>
-              <ng-template #emp>-</ng-template>
-            </div>
-          </td>
-          <td>
-            <span *ngIf="item.firstName;else requestby">{{item?.firstName ??''}} {{item?.middleName??''}}
-              {{item?.lastName ??''}}</span>
-            <ng-template #requestby>-</ng-template>
-          </td>
-          <td> {{item.requestedDate?(item.requestedDate|dateformat):'-'}}</td>
-        </tr>
+  <div class="d-flex gap-3 w-100">
+    <div class="component-left-tabs-container">
+      <app-global-actions-tabs />
+    </div>
+  
+    <div class="component-right-content">
+      <div class="custom-table-content">
+        @if(!loading){
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Permission Requested Date</th>
+              <th>Permission Type</th>
+              <th>Duration(In Hrs)</th>
+              <th>Applicable For</th>
+              <th>Department/Location</th>
+              <th>Team/Sub Location</th>
+              <th>Request Type</th>
+              <th>Reason</th>
+              <th>List of Employees</th>
+              <th>Requested By</th>
+              <th>Request Raised Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @if(globalpermissions.length > 0){
+            <tr *ngFor="let item of globalpermissions | globalpermissions : searchValue">
+              <td>
+                <span *ngIf="item.permissionRequestedDate !== '0001-01-01T00:00:00'; else permissiondate">
+                  {{item.permissionRequestedDate? (item.permissionRequestedDate | dateformat):'-' }}
+                </span>
+                <ng-template #permissiondate>-</ng-template>
+              </td>
+              <td>{{item.requestType?item.requestType:'-'}}</td>
+              <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
+              <td>{{item.selectType?item.selectType:'-'}}</td>
+              <td>{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}</td>
+              <td>{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}</td>
+              <td>{{item.type?item.type:'-'}}</td>
+              <td class="text-center">
+                <div>
+                  <span *ngIf="item.meta;else res">
+                    <a type="button" [ngbPopover]="reason">
+                      <app-info-icon />
+                    </a>
+                    <ng-template #reason>
+                      <p class="mb-0">{{item.meta}}</p>
+                    </ng-template>
+                  </span>
+                  <ng-template #res>-</ng-template>
+                </div>
+              </td>
+              <td class="text-center">
+                <div>
+                  <span *ngIf="item.employeeIds.length > 0; else emp">
+                    <a type="button" (click)="openmodal(allemployeelist);getEmployeeNames(item.employeeIds)">
+                      <app-info-icon />
+                    </a>
+                  </span>
+                  <ng-template #emp>-</ng-template>
+                </div>
+              </td>
+              <td>
+                <span *ngIf="item.firstName;else requestby">{{item?.firstName ??''}} {{item?.middleName??''}}
+                  {{item?.lastName ??''}}</span>
+                <ng-template #requestby>-</ng-template>
+              </td>
+              <td> {{item.requestedDate?(item.requestedDate|dateformat):'-'}}</td>
+            </tr>
+            }
+            @else {
+            <tr>
+              <app-no-data-found />
+            </tr>
+            }
+          </tbody>
+        </table>
         }
         @else {
-        <tr>
-          <app-no-data-found />
-        </tr>
+        <app-data-loader-content />
         }
-      </tbody>
-    </table>
-  }
-  @else {
- <app-data-loader-content />
-  }
+      </div>
+    </div>
   </div>
 </div>
 
@@ -177,9 +183,7 @@
           <tbody>
             <tr *ngFor="let emp of selectedEmployees">
               <td>{{ emp.fusionEmpId || '-' }}</td>
-              <td>
-                {{ emp.firstName || '' }} {{ emp.middleName || '' }} {{ emp.lastName || '' }}
-              </td>
+              <td>{{ emp.firstName || '' }} {{ emp.middleName || '' }} {{ emp.lastName || '' }}</td>
             </tr>
           </tbody>
         </table>

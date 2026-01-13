@@ -170,7 +170,7 @@
         <ng-container *ngIf="requestForm.get('requestType')?.value==='Permission'">
           <div class="mb-3">
             <label for="requsteddate" class="form-lable custom-label">Permission Date<span class="error-msg">*</span></label>
-            <input type="date" class="form-control" formControlName="permissionDate" id="requsteddate"
+            <input type="date" class="form-control custom-input" formControlName="permissionDate" id="requsteddate"
               aria-label="Default select example" onkeydown="return false" autocomplete="off" startKey="start"
               [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
             <div class="error-msg"

@@ -22,7 +22,7 @@
       </div>
       <div>
         @if(rbac.allowedToAccess('Request Global Permission Button.view')){
-        <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Request Global Permission</button>
+        <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Raise Global Request</button>
         }
       </div>
     </div>
@@ -76,7 +76,7 @@
 
   <div class="d-flex gap-3 w-100">
     <div class="component-left-tabs-container">
-      <app-global-actions-tabs />
+      <app-global-actions-tabs (tabChanged)="onTabChanged($event)" />
     </div>
   
     <div class="component-right-content">

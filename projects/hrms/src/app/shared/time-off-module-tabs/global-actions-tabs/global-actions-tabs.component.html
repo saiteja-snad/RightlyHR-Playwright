@@ -1,7 +1,8 @@
 <div class="custom-sub-tabs-container">
   <ul class="nav flex-column">
     <li class="nav-item" *ngFor="let tab of filteredTabs">
-      <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
+      <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link" 
+           (click)="onTabClick(tab.moduleId)">
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
         <div class="d-flex">{{ tab.label }}</div>
       </div>

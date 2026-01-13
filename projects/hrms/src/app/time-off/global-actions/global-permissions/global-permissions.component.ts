@@ -94,7 +94,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
-        this.getAllGlobalPermissions();
+        this.getAllGlobalPermissions(environment.permissionsModuleId);
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
           global: false,
@@ -116,7 +116,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
       selectedYear: new FormControl(this.selectedYear)
     });
     this.timeoffYearFilterService.setSelectedYear(this.selectedYear);
-    this.getAllGlobalPermissions();
+    this.getAllGlobalPermissions(environment.permissionsModuleId);
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.getjobLocationList();
@@ -195,7 +195,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
   }
 
   //function to get the globalpermissions details
-  getAllGlobalPermissions() {
+  getAllGlobalPermissions(moduleId?: number) {
     this.loading = true;
     let params = new HttpParams();
     // Helper function to conditionally add parameters
@@ -212,6 +212,12 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     params = addParamIfExists(params, 'department', this.departmentId);
     params = addParamIfExists(params, 'subdepartment', this.teamId);
     params = addParamIfExists(params, 'year', this.selectedYear);
+    
+    // Add moduleId if provided (including 0)
+    if (moduleId !== null && moduleId !== undefined) {
+      params = params.set('moduleId', moduleId.toString());
+    }
+    
     this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?${params}`).subscribe({
       next: (response: any) => {
         this.loading = false;
@@ -235,7 +241,12 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;
     this.timeoffYearFilterService.setSelectedYear(selectedYear);
-    this.getAllGlobalPermissions();
+    this.getAllGlobalPermissions(environment.permissionsModuleId);
+  }
+
+  onTabChanged(moduleId: number): void {
+    // Use the same API method with moduleId parameter
+    this.getAllGlobalPermissions(moduleId);
   }
 
   ngOnDestroy(): void {

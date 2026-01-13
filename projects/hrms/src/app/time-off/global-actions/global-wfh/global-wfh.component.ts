@@ -19,18 +19,22 @@ import dayjs from 'dayjs';
 import { CommonModule } from '@angular/common';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
-import { AddGlobalWfhComponent } from './add-global-wfh/add-global-wfh.component';
-
+import { AddGlobalPermissionsComponent } from '../global-permissions/add-global-permissions/add-global-permissions.component';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { GlobalpermissionsPipe } from "../../../Pipes/globalpermissions.pipe";
 @Component({
   selector: 'app-global-wfh',
   imports: [CommonModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, PaginatorModule,
-    DropdownModule, ModuleInformationComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent],
+    DropdownModule, ModuleInformationComponent, ModuleInfoIconComponent, Select, GlobalActionsTabsComponent, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent, DateformatPipe, GlobalpermissionsPipe],
   templateUrl: './global-wfh.component.html',
   styleUrl: './global-wfh.component.scss'
 })
 
 export class GlobalWfhComponent {
- moduleinfo: string = '';
+  moduleinfo: string = '';
   totalRecords = 100
   first: any = 1;
   rows: any = 10;
@@ -89,7 +93,7 @@ export class GlobalWfhComponent {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
-        this.getAllGlobalPermissions();
+        this.getAllGlobalPermissions(environment.wfhModuleId);
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
           global: false,
@@ -111,7 +115,7 @@ export class GlobalWfhComponent {
       selectedYear: new FormControl(this.selectedYear)
     });
     this.timeoffYearFilterService.setSelectedYear(this.selectedYear);
-    this.getAllGlobalPermissions();
+    this.getAllGlobalPermissions(environment.wfhModuleId);
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.getjobLocationList();
@@ -182,7 +186,7 @@ export class GlobalWfhComponent {
   }
 
   openAdd() {
-    this.modalService.open(AddGlobalWfhComponent, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(AddGlobalPermissionsComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openmodal(contant: any) {
@@ -190,7 +194,7 @@ export class GlobalWfhComponent {
   }
 
   //function to get the globalpermissions details
-  getAllGlobalPermissions() {
+  getAllGlobalPermissions(moduleId?: number) {
     this.loading = true;
     let params = new HttpParams();
     // Helper function to conditionally add parameters
@@ -207,6 +211,12 @@ export class GlobalWfhComponent {
     params = addParamIfExists(params, 'department', this.departmentId);
     params = addParamIfExists(params, 'subdepartment', this.teamId);
     params = addParamIfExists(params, 'year', this.selectedYear);
+    
+    // Add moduleId if provided (including 0)
+    if (moduleId !== null && moduleId !== undefined) {
+      params = params.set('moduleId', moduleId.toString());
+    }
+    
     this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?${params}`).subscribe({
       next: (response: any) => {
         this.loading = false;
@@ -230,7 +240,12 @@ export class GlobalWfhComponent {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;
     this.timeoffYearFilterService.setSelectedYear(selectedYear);
-    this.getAllGlobalPermissions();
+    this.getAllGlobalPermissions(environment.wfhModuleId);
+  }
+
+  onTabChanged(moduleId: number): void {
+    // Use the same API method with moduleId parameter
+    this.getAllGlobalPermissions(moduleId);
   }
 
   ngOnDestroy(): void {

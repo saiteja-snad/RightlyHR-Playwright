@@ -509,7 +509,8 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
             this.modalRef.close();
             this.modalRef = null;
           }
-          this.conformationPopup.openErrorModal(err.error.message);
+          const errorMessage = err.error?.details?.split(': ')[1] || err.error?.message || 'An error occurred';
+          this.conformationPopup.openErrorModal(errorMessage);
           this.isLoader = false;
         },
         complete: () => {

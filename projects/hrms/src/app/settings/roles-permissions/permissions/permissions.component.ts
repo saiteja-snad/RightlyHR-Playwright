@@ -681,6 +681,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Cancelled (Time Off)',
     'My Team (Time Off)',
     'My Team (Regularization)',
+    'Leave Summary (Time Off)',
+    'My Team (Time Off Leave Summary)',
+    'All Employees (Time Off Leave Summary)'
   ];
   WFHModuleSubTabs = [
     'Waiting For Approval (WFH)',

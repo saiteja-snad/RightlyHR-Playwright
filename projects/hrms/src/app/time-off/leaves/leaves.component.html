@@ -57,6 +57,11 @@
                 <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">Request Leave</button>
                 }
             </div>
+            <div >
+                @if (rbac.allowedToAccess('Leave Summary (Time Off).view')) {
+                <button type="button" (click)="navigateToLeaveSummary()" class="custom-btn btn-primary">View Leave Summary</button>
+                }
+            </div>
         </div>
     </div>
 

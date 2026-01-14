@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
@@ -39,6 +39,7 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  destroy$: Subject<boolean> = new Subject<boolean>();
   onRowsChange() {
     this.first = 0;
   }
@@ -54,10 +55,10 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
     // this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     // this.getDataByLPID();
-    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+    this.TimeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
-        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+        this.http.selectedEmployeeIdTimeoff$.pipe(takeUntil(this.destroy$)).subscribe((id) => {
           if (id) {
             // Use the new employee ID here
             this.selectempid = id;
@@ -75,7 +76,7 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
   getDataByLPID() {
     this.loading = true;
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -95,7 +96,7 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
   getDataByEMPLPID() {
     let empid = this.selectempid;
     this.loading = true;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -123,5 +124,7 @@ export class LeavesProcessedComponent implements OnInit, OnDestroy{
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -305,6 +305,13 @@ export const permissionsData = [
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Time Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary (Time Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (Time Off Leave Summary)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Time Off Leave Summary)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary (Time Off) - Export', View: false, Update: false, Create: false, Delete: false },
+
+
+
   { fields: 'My Team (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
 

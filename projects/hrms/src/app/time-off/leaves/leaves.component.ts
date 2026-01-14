@@ -1,4 +1,4 @@
-import { Component, effect, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +8,7 @@ import { Select } from 'primeng/select';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
-import { filter, Subscription } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { environment } from '../../../environments/environment';
@@ -24,6 +24,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { Skeleton } from 'primeng/skeleton';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { TimeoffSelectionService } from '../../services/timeoff-selection.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
@@ -35,7 +36,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
   encapsulation: ViewEncapsulation.None,
 })
 
-export class LeavesComponent {
+export class LeavesComponent implements OnInit, OnDestroy{
   moduleinfo: string = '';
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
@@ -102,6 +103,7 @@ export class LeavesComponent {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
   sandwichMessage: string = '';
   sandwichData: any = null;
 
@@ -114,7 +116,10 @@ export class LeavesComponent {
     public rbac: RbacService,
     public router: Router,
     public formsValidation: FormValidationsService,
-    private signalService: SignalsService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+    private signalService: SignalsService, 
+    private TimeoffYearFilterService: TimeoffYearFilterService,
+    private timeoffSelectionService: TimeoffSelectionService
+  ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
@@ -154,7 +159,7 @@ export class LeavesComponent {
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
     // Populate years list
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    for (let i = this.currentYear - 2; i <= this.currentYear + 1; i++) {
       this.years.push(i);
     }
     // Now initialize the form with the selectedYear
@@ -163,11 +168,15 @@ export class LeavesComponent {
     });
     // Send initial year to the service so other component can pick it up
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+    
+    // Initialize new selection service
+    const currentEmpId = this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata.employeeId;
+    this.timeoffSelectionService.updateSelection(currentEmpId, this.selectedYear);
   }
 
   getAllEmployeeDetails() {
      const status = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
           label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
@@ -182,6 +191,10 @@ export class LeavesComponent {
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.TimeoffYearFilterService.setSelectedYear(selectedYear);
     const employeeId = this.http.getCurrentEmployeeIdTimeoff();
+    
+    // Update new service with the new year (and existing employee if any)
+    this.timeoffSelectionService.updateSelection(employeeId, selectedYear);
+
     if (employeeId) {
       this.onCheckemployee(employeeId);
     } else {
@@ -211,6 +224,9 @@ export class LeavesComponent {
       this.getCategoryempDetails(employeedId);
     } else {
       this.http.setEmployeeIdTimeoff(null);
+      // Update new service
+      this.timeoffSelectionService.updateSelection(null, this.selectedYear);
+
       this.disaplyapplybutton = true;
       this.getLeavesData(this.empdata.employeeId);
       this.getDataByLPID(this.empdata.employeeId);
@@ -235,7 +251,7 @@ export class LeavesComponent {
 
   getDataByLPID(employeeId: any) {
     let empid = employeeId;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.lpdata = response;
         // Reset counts
@@ -309,7 +325,7 @@ export class LeavesComponent {
   leavedatas: any;
   getLeavesData(employeeId: any) {
     let empdata = employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empdata}`).subscribe({
+    this.subscription = this.http.getData(`Timeoff/${empdata}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leavedatatimeoff = response;
         this.getDataByLPID(employeeId);
@@ -325,6 +341,7 @@ getTeamManagersDetails() {
 
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           if (response && response.length) {
@@ -357,6 +374,15 @@ getTeamManagersDetails() {
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  navigateToLeaveSummary() {
+    const employeeId =
+      this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata.employeeId;
+    const year = this.yearSelectionForm?.get('selectedYear')?.value ?? this.selectedYear;
+    this.router.navigate(['/time-off/leave-summary'], {
+      queryParams: { employeeId, year },
+    });
   }
 
   initializeForm() {
@@ -406,7 +432,7 @@ getTeamManagersDetails() {
 
   getCategoryDetails() {
     this.loadingGraph = true;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).subscribe({
+    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.loadingGraph = false;
@@ -428,7 +454,7 @@ getTeamManagersDetails() {
 
   getCategoryempDetails(employeedId: any) {
     const empdata = employeedId;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).subscribe({
+    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];
@@ -508,7 +534,7 @@ getTeamManagersDetails() {
   }
 
   getEmployeeid() {
-    this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
         // this.calculateProbationLeavs(this.categoryDetails);
@@ -899,7 +925,7 @@ getTeamManagersDetails() {
 
   getholidaybyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.orgholidays = data;
       },
@@ -910,7 +936,7 @@ getTeamManagersDetails() {
 
   getweekendbyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.orgweekend = data;
       },
@@ -1026,7 +1052,7 @@ getTeamManagersDetails() {
 
   getcustompolicybyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`LeavePolicy/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`LeavePolicy/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.custompolicyleaves = data;
       }
@@ -1039,7 +1065,7 @@ getTeamManagersDetails() {
 
   getOrgHolidaysByEmpId(): any {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.custompolicyleaves = data;
         this.optionalHolidays = this.custompolicyleaves?.orgHolidaysItems.filter((item: { isOptional: boolean }) => item.isOptional);
@@ -1053,7 +1079,7 @@ getTeamManagersDetails() {
   }
 
   getallpolicy() {
-    this.subscription = this.http.getData("LeavePolicy/getall").subscribe({
+    this.subscription = this.http.getData("LeavePolicy/getall").pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.allPolicy = data as ILeaves[];
         localStorage.setItem("getGradedata", JSON.stringify(data));
@@ -1064,7 +1090,7 @@ getTeamManagersDetails() {
 
   getLeaveTakenByEmpId() {
     let LBEId = this.empdata.employeeId;
-    this.subscription = this.http.getData(`LeaveBalance/getbyid/${LBEId}`).subscribe({
+    this.subscription = this.http.getData(`LeaveBalance/getbyid/${LBEId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         const groupedData = data.reduce((acc: any, curr: any) => {
           if (acc[curr.leavePolicyId]) {
@@ -1309,6 +1335,7 @@ getTeamManagersDetails() {
       this.leaveFormData.status = "Waiting for Approval";
       this.leaveFormData.requestType = "TimeOff";
       this.leaveFormData.employeeId = empdata.employeeId;
+      this.leaveFormData.requestedBy   = empdata.employeeId;
       this.leaveFormData.durationType = this.selectedValue;
       this.leaveFormData.duration = this.dateDiff;
       this.leaveFormData.date = moment();
@@ -1429,7 +1456,7 @@ getTeamManagersDetails() {
       }
     }
     
-    this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
+    this.subscription = this.http.postdata("Timeoff", this.leaveFormData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         if (data) {
           this.conformationPopup.openSuccessModal('Leave requested successfully');
@@ -1458,5 +1485,7 @@ getTeamManagersDetails() {
 
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -32,6 +32,7 @@ export class CancelledComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
   loading: boolean = false;
+  selectedSandwichItem: any = null;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -48,7 +49,7 @@ export class CancelledComponent implements OnInit, OnDestroy {
   selectedYear: any;
 
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,
-    private TimeoffYearFilterService: TimeoffYearFilterService) { }
+    private TimeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     // this.loggedinuser = this.authService.getToken();
@@ -111,10 +112,16 @@ export class CancelledComponent implements OnInit, OnDestroy {
     });
   }
 
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
   ngOnDestroy(): void {
-    // Clean up any subscriptions or resources
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
+
+
 }

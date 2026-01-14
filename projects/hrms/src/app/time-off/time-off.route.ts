@@ -40,6 +40,7 @@ import { ExtraHoursComponent } from './extra-hours/extra-hours.component';
 import { ExtraHoursWaitingForApprovalComponent } from './extra-hours/extra-hours-waiting-for-approval/extra-hours-waiting-for-approval.component';
 import { ExtraHoursProcessComponent } from './extra-hours/extra-hours-process/extra-hours-process.component';
 import { ExtraHoursRejectComponent } from './extra-hours/extra-hours-reject/extra-hours-reject.component';
+import { LeaveSummaryComponent } from './leaves/leave-summary/leave-summary.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -51,6 +52,7 @@ export default [
       { path: 'processed', component: LeavesProcessedComponent, data: { permission: 'Processed (Time Off).view' } },
       { path: 'rejected', component: LeavesRejectedComponent, data: { permission: 'Rejected (Time Off).view' } },
       { path: 'cancelled', component: CancelledComponent, data: { permission: 'Cancelled(Time Off).view' } },
+      // { path: 'leave-summary', component: LeaveSummaryComponent, data: { permission: 'Cancelled(Time Off).view' } },
     ],
   },
   {
@@ -119,4 +121,6 @@ export default [
       // { path: 'cancelled', component: ExtraHoursCancelComponent, data: { permission: 'Cancelled(Extra Hours).view' } },
     ],
   },
+  { path: 'leave-summary', component: LeaveSummaryComponent, data: { permission: 'Cancelled(Time Off).view' } }
+ 
 ] as Route[];

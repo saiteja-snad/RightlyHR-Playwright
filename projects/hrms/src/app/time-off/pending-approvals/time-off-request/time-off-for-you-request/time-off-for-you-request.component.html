@@ -50,13 +50,13 @@
                     <th>End Date</th>
                     <th class="text-center">Reason</th>
                     <th class="text-center">Approver Comments</th>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For
-                    You (Time Off).delete'))){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
                     <th>Action</th>
                     }
                 </tr>
             </ng-template>
             <ng-template #body let-item appendTo="body">
+                <!-- Main leave record -->
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
@@ -64,7 +64,13 @@
                     <td>{{item?.entity?.leavefusionempId}}</td>
                     <td>{{item?.entity?.employeeName}}</td>
                     <td>{{item?.entity?.leaveCategoryName}}</td>
-                    <td>{{item?.entity?.leaveDuration}}</td>
+                    <td>
+                        @if(item?.entity?.isSandwichLeave) {
+                            <a type="button" class="text-primary text-decoration-underline" (click)="openSandwichBreakdown(item, sandwichBreakdownModal)">{{item?.entity?.leaveDuration}}</a>
+                        } @else {
+                            {{item?.entity?.leaveDuration}}
+                        }
+                    </td>
                     <td>{{item?.entity?.leaveDurationType}}</td>
                     <td class="text-nowrap">{{item?.entity?.appliedDate | dateformat}}</td>
                     <td class="text-nowrap">{{item?.entity?.leaveStartDate | dateformat}}</td>
@@ -87,8 +93,7 @@
                         </div>
                         <ng-template #noComments>-</ng-template>
                     </td>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') ||rbac.allowedToAccess('For
-                    You (Time Off).delete'))){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') ||rbac.allowedToAccess('For You (Time Off).delete'))){
                     <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
@@ -132,6 +137,7 @@
                     </td>
                     }
                 </tr>
+                
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
@@ -464,6 +470,46 @@
                                 <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
                                 <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
                                 <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Sandwich Breakdown Modal -->
+<ng-template #sandwichBreakdownModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{selectedSandwichItem?.entity?.employeeName}} ({{selectedSandwichItem?.entity?.leavefusionempId}}) - Sandwich Leave Breakdown</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>Duration</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let breakdown of selectedSandwichItem?.entity?.categoryBreakdown">
+                                <td>{{breakdown.categoryName}}</td>
+                                <td>{{breakdown.duration}}</td>
+                                <td>{{breakdown.startDate | dateformat}}</td>
+                                <td>{{breakdown.endDate | dateformat}}</td>
                             </tr>
                         </tbody>
                     </table>

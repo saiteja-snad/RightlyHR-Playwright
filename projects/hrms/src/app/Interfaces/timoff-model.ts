@@ -112,6 +112,18 @@ export interface Ilpid {
   rejectedReason: string;
   actualStatus: string;
   durationType: any;
+  isSandwichLeave: boolean
+  categoryBreakdown: IcategoryBreakdown[];
+}
+
+export interface IcategoryBreakdown {
+  categoryId: number
+  categoryName: string
+  duration: number
+  categoryColor: string
+  leaveDates: Array<string>
+  startDate: string
+  endDate: string
 }
 export interface ILeaves {
   custompolicyleaves: any;

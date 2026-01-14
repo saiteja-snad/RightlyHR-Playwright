@@ -157,6 +157,10 @@ export class OnBeHalfOfComponent {
   selectedYear: number = this.currentYear;
   years: number[] = [];
 
+  @ViewChild('sandwichConfirmationModal') sandwichModal: any;
+  sandwichMessage: string = '';
+  sandwichData: any = null;
+
   constructor(
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
@@ -871,9 +875,10 @@ export class OnBeHalfOfComponent {
     }
   }
 
-  onSubmit() {
+  onSubmit(){
     let loggedInUser = this.authService.getToken();
     this.isSubmitted = true;
+    this.isLoading= true;
     if (this.leaveForm.valid) {
       this.dateDiff = this.leaveFormData.isDaytype
         ? this.dateDifference / 2
@@ -894,6 +899,81 @@ export class OnBeHalfOfComponent {
         this.leaveForm.get('enddate')?.value
       ).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value;
+
+      if (this.selectedleave?.category?.enableSandwichPolicy) {
+        this.checkSandwichPolicy();
+        return;
+      }
+      
+      this.submitLeaveRequest();
+    } else {
+      this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
+    }
+  }
+
+  checkSandwichPolicy() {
+    const payload = {
+      employeeId: this.leaveFormData.employeeId,
+      categoryId: this.leaveFormData.categoryId,
+      startDate: this.leaveFormData.startdate,
+      endDate: this.leaveFormData.enddate,
+      durationType: this.leaveFormData.durationType,
+      isDaytype: this.leaveFormData.isDaytype,
+      duration: this.leaveFormData.duration
+    };
+
+    this.subscription = this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', payload).subscribe({
+      next: (response: any) => {
+        if (response.isSandwichApplied) {
+          this.showSandwichConfirmation(response);
+        } else {
+          this.submitLeaveRequest();
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  showSandwichConfirmation(sandwichData: any) {
+    this.sandwichMessage = sandwichData.errorMessage || 'This leave request falls under the Sandwich Leave Policy.';
+    this.sandwichData = sandwichData;
+    this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
+      this.isLoading = false;
+    });
+  }
+
+  confirmSandwichPolicy(modal: any) {
+    modal.dismiss();
+    this.leaveFormData.duration = this.sandwichData.totalLeaveDays;
+    this.submitLeaveRequest();
+  }
+
+  submitLeaveRequest() {
+    let loggedInUser = this.authService.getToken();
+    this.isSubmitted = true;
+    // if (this.leaveForm.valid) {
+    //   this.dateDiff = this.leaveFormData.isDaytype
+    //     ? this.dateDifference / 2
+    //     : this.dateDifference;
+    //   this.leaveFormData.status = 'Processed';
+    //   this.leaveFormData.requestType = 'TimeOff';
+    //   let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    //   this.leaveFormData.employeeId = this.leaveapplication.employeeId;
+    //   this.leaveFormData.durationType = this.selectedValue;
+    //   this.leaveFormData.duration = this.dateDiff;
+    //   this.leaveFormData.requestedBy = loggedInUser.employeeId;
+    //   this.leaveFormData.date = moment();
+    //   this.leaveFormData.isdeleted = true;
+    //   this.leaveFormData.startdate = moment(
+    //     this.leaveForm.get('startdate')?.value
+    //   ).format('YYYY-MM-DD');
+    //   this.leaveFormData.enddate = moment(
+    //     this.leaveForm.get('enddate')?.value
+    //   ).format('YYYY-MM-DD');
+    //   this.leaveFormData.notes = this.leaveForm.get('reason')?.value;
       if (this.leaveapplication.probationEndDate) {
         // Check if the employee is still on probation
         let currentDate = moment();
@@ -991,6 +1071,7 @@ export class OnBeHalfOfComponent {
           .postdata('Timeoff', this.leaveFormData)
           .subscribe({
             next: (data: any) => {
+              this.isLoading= false;
               console.log(data);
               // localStorage.setItem('onbehalfof', JSON.stringify(data));
               if (data) {
@@ -1015,9 +1096,11 @@ export class OnBeHalfOfComponent {
               }
             },
             error: (err: any) => {
+              this.isLoading= false;
               this.conformationPopup.openErrorModal(err.error.message);
             },
             complete: () => {
+              this.isLoading= false;
               this.leaveForm.reset();
               this.http.onBehalfOfTriggerSignal.set(true);
             },
@@ -1027,7 +1110,7 @@ export class OnBeHalfOfComponent {
           'Maximum leave limit reached for this category'
         );
       }
-    }
+    
   }
 
   leaveBalance(Values: any) {

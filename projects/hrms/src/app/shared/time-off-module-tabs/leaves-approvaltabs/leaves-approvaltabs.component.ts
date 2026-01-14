@@ -1,6 +1,6 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
@@ -17,7 +17,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
   styleUrl: './leaves-approvaltabs.component.scss',
 })
 
-export class LeavesApprovaltabsComponent {
+export class LeavesApprovaltabsComponent implements OnInit, OnDestroy{
   loggedinuser = {} as any;
   empdata = {} as any;
   subscription!: Subscription;
@@ -33,6 +33,7 @@ export class LeavesApprovaltabsComponent {
   loading = false
   statusTabs: any[] = [];
   selectedYear: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,
     private signalService: SignalsService, private rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
@@ -51,10 +52,10 @@ export class LeavesApprovaltabsComponent {
   }
 
   ngOnInit(): void {
-    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+    this.TimeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
-        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+        this.http.selectedEmployeeIdTimeoff$.pipe(takeUntil(this.destroy$)).subscribe((id) => {
           if (id) {
             // Use the new employee ID here
             this.id = id;
@@ -79,7 +80,7 @@ export class LeavesApprovaltabsComponent {
   getDataByLPID() {
     this.loading = true
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.loading = false
         if (Array.isArray(response)) {
@@ -107,7 +108,7 @@ export class LeavesApprovaltabsComponent {
 
   getDataByLPempID() {
     let empid = this.id;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
@@ -134,7 +135,7 @@ export class LeavesApprovaltabsComponent {
   getAllTeamLeaveBalance() {
     const employeeId = this.empdata.employeeId;
     let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
-    this.subscription = this.http.getData(url).subscribe({
+    this.subscription = this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res?.success && Array.isArray(res?.data)) {
           this.teamLeaveBalanceCount = res.data.length;
@@ -151,7 +152,7 @@ export class LeavesApprovaltabsComponent {
   getAllTeamLeaveSummary() {
     const employeeId = this.empdata.employeeId;
     let url = `Employeedata/v1/getreportessdata?employeeId=${employeeId}`;
-    this.subscription = this.http.getData(url).subscribe({
+    this.subscription = this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.teamLeaveSummaryCount = res.length;
         this.updateStatusTabs();
@@ -217,5 +218,7 @@ export class LeavesApprovaltabsComponent {
       this.subscription.unsubscribe();
       this.http.setEmployeeIdTimeoff(null);
     }
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

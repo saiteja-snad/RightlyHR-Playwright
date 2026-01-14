@@ -511,6 +511,20 @@
               Sandwich Applicability Condition is required
             </div>
           </div>
+
+          <div class="col-md-3 mb-3">
+            <label class="form-label custom-label mb-2" for="adjacentLeaveTypeRule">Adjacent Leave Type Rule<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="adjacentLeaveTypeRuleOptions" optionLabel="label" optionValue="value"
+                placeholder="Select option" formControlName="adjacentLeaveTypeRule" class="form-select custom-select">
+              </p-select>
+            </div>
+            <div class="error-msg"
+              *ngIf="leavePolicyForm.get('adjacentLeaveTypeRule')?.invalid && leavePolicyForm.get('adjacentLeaveTypeRule')?.touched">
+              Adjacent Leave Type Rule is required
+            </div>
+          </div>
           }
         </div>
 

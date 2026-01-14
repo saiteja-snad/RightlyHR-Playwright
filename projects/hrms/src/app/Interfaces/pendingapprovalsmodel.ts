@@ -55,6 +55,9 @@ export interface LeaveEntity {
   leaveDescription: string;
   leaveDurationType: string;
   leaveheaderId: number;
+  isSandwichLeave?: boolean;
+  leaveCategoryColor?: string;
+  categoryBreakdown?: any[];
   leaveApproverComments: any[];
 }
 

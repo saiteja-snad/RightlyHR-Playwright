@@ -13,7 +13,7 @@ import {
   REGULARIZATION_SUB_TABS,
   REMOTE_LOGIN_SUB_TABS,
   SETTINGS_ASSEST_CONFIGURATION_TABS,
-  SETTINGS_TIMEOFF_load_entitlement_TABS ,
+  SETTINGS_TIMEOFF_load_entitlement_TABS,
   SETTINGS_DYNAMIC_FORMS_TABS,
   SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS,
   SETTINGS_EMPLOYEE_FIELDS_UPDATE_CONFIG_TABS,
@@ -57,7 +57,6 @@ import {
   MY_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_DOCUMENTS_ROUTES,
   MY_INFO_DOCUMENTS_ROUTES,
-  MY_INFO_TEAM_MEMBERS,
   POLICY_REPORTS_TABS,
   SETTINGS_PROJECT_MANAGEMENT_TABS,
   PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS,
@@ -87,7 +86,9 @@ import {
   Employee_TEAM_NUMBERS,
   MyINFO_TEAM_NUMBERS,
   MY_KRA_KPI_TABS,
-  PERFORMANCE_REVIEW_TABS
+  PERFORMANCE_REVIEW_TABS,
+  MY_INFO_SEPARATION_REQUEST_ROUTES,
+  Employee_INFO_Separation_Request
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root',
@@ -303,8 +304,8 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
         }
-         if (this.rbac.allowedToAccess('Rate Card Module.view')) {
-           for (const item of SETTINGS_RATECARD_TABS) {
+        if (this.rbac.allowedToAccess('Rate Card Module.view')) {
+          for (const item of SETTINGS_RATECARD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -931,9 +932,9 @@ export class AccessNavigationService {
         }
 
         break;
-        case '/settings/employee-rate-card/rate-card':
+      case '/settings/employee-rate-card/rate-card':
         if (this.rbac.allowedToAccess('Rate Card Module.view')) {
-           // return (route = '/settings/employee-rate-card/rate-card');
+          // return (route = '/settings/employee-rate-card/rate-card');
           for (const item of SETTINGS_RATECARD_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1159,7 +1160,7 @@ export class AccessNavigationService {
         break;
       case '/settings/timeoff-configurations/load-entitlement':
         if (this.rbac.allowedToAccess('Bulk Load Entitlements Tab.view')) {
-          for (const item of SETTINGS_TIMEOFF_load_entitlement_TABS ) {
+          for (const item of SETTINGS_TIMEOFF_load_entitlement_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1900,6 +1901,16 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/personalinfo/job/separation-details':
+        if (this.rbac.allowedToAccess('Employee Info Separation Request Details.view')) {
+          for (const item of Employee_INFO_Separation_Request) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
       case '/myinfo/job/team':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
           for (const item of MyINFO_TEAM_NUMBERS) {
@@ -1909,7 +1920,15 @@ export class AccessNavigationService {
           }
         }
         break;
-
+      case '/myinfo/job/separation-details':
+        if (this.rbac.allowedToAccess('My Info Separation Request Details.view')) {
+          for (const item of MY_INFO_SEPARATION_REQUEST_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/pms/review-cycle':
         if (this.rbac.allowedToAccess('Review Cycle List.view')) {
           return (route = '/pms/review-cycle');

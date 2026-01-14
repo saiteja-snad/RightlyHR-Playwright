@@ -503,7 +503,10 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
             successMessage = 'Global WFH request submitted successfully';
           }
           this.conformationPopup.openSuccessModal(successMessage);
+          setTimeout(() => {
           window.location.reload();
+            
+          }, 2000);
         },
         error: (err: any) => {
           if (this.modalRef) {

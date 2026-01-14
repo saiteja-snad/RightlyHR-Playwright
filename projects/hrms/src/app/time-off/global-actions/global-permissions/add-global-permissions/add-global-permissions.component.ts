@@ -503,13 +503,17 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
             successMessage = 'Global WFH request submitted successfully';
           }
           this.conformationPopup.openSuccessModal(successMessage);
+          window.location.reload();
         },
         error: (err: any) => {
           if (this.modalRef) {
             this.modalRef.close();
             this.modalRef = null;
           }
-          const errorMessage = err.error?.details?.split(': ')[1] || err.error?.message || 'An error occurred';
+          let errorMessage = err.error?.details || err.error?.message || 'An error occurred';
+          if (errorMessage.includes(': ')) {
+            errorMessage = errorMessage.split(': ')[1];
+          }
           this.conformationPopup.openErrorModal(errorMessage);
           this.isLoader = false;
         },

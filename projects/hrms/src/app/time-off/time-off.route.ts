@@ -33,7 +33,6 @@ import { RemoteWaitingForApprovalComponent } from './remote-login/remote-waiting
 import { RemoteApprovedComponent } from './remote-login/remote-approved/remote-approved.component';
 import { RemoteProcessedComponent } from './remote-login/remote-processed/remote-processed.component';
 import { RemoteRejectedComponent } from './remote-login/remote-rejected/remote-rejected.component';
-import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 import { CancelledComponent } from './leaves/cancelled/cancelled.component';
 import { WfhCancellationComponent } from './work-from-home/wfh-cancellation/wfh-cancellation.component';
 import { PermissionsCancellationComponent } from './premissions/permissions-cancellation/permissions-cancellation.component';
@@ -59,9 +58,7 @@ export default [
   {
     path: 'wfh', component: WorkFromHomeComponent,
     children: [
-      {
-        path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent, data: { permission: 'Waiting For Approval (WFH).view' },
-      },
+      { path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent, data: { permission: 'Waiting For Approval (WFH).view' } },
       { path: 'approved', component: WfhApprovedComponent, data: { permission: 'Approved (WFH).view' } },
       { path: 'processed', component: WfhProcessedComponent, data: { permission: 'Processed (WFH).view' } },
       { path: 'rejected', component: WfhRejectedComponent, data: { permission: 'Rejected (WFH).view' } },
@@ -114,7 +111,6 @@ export default [
       { path: 'permissions', component: PermissionsComponent, data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
     ],
   },
-  
   {
     path: 'extra-hours', component: ExtraHoursComponent,
     children: [

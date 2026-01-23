@@ -809,8 +809,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'For Role (Claims and Expenses)',
   ];
   pendingApprovalEmployeinfoSubTabs = [
-  'For You (Employee Info)',
-  'For Role (Employee Info)',
+  'For You Employee Info',
+  'For Role Employee Info',
 ];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',

@@ -189,12 +189,12 @@ export default [
           {
             path: 'for-you',
             component: EmployeeinfoForYouRequestComponent,
-           data: { permission: 'For You (Employee Info).view' },
+           data: { permission: 'For You Employee Info.view' },
           },
           {
             path: 'for-your-role',
             component: EmployeeinfoForYourRoleRequestComponent,
-            data: { permission: 'For Role (Employee Info).view' },
+            data: { permission: 'For Role Employee Info.view' },
           },
 
           // { path: '', redirectTo: 'for-you', pathMatch: 'full' },

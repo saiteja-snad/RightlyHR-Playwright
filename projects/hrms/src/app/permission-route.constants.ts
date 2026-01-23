@@ -128,6 +128,7 @@ export const SETTINGS_IT_CONFIGURATION_IT_SUPPORT_TABS = [
   { route: '/settings/it-configuration/itsupport-category', permission: 'IT Support Category.view' },
   { route: '/settings/it-configuration/itsupport-sub-category', permission: 'IT Support Sub-Category.view' },
 ]
+
 export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS_CONFIG_UPDATE = [
   { route: '/settings/employee-fields-update-configurations/personal/basic-info', permission: 'Basic Info.view' },
   { route: '/settings/employee-fields-update-configurations/personal/contact-info', permission: 'Contact Info.view' },
@@ -143,7 +144,6 @@ export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS_CONFIG_UPDATE = [
   { route: '/settings/employee-fields-update-configurations/job/employment-history', permission: 'Employment History.view' },
 ];
 
-
 export const TIME_OFF_TABS = [
   { route: '/time-off/leaves', permission: 'Time Off Tab.view' },
   { route: '/time-off/remote', permission: 'Remote Login Tab.view' },
@@ -153,10 +153,12 @@ export const FLEXIBLE_WFH_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation', permission: 'Active Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view', permission: 'Allocation History Tab.view' },
 ]
+
 export const FLEXIBLE_WORKHOURS_ALLOCATION_TABS = [
   { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation', permission: 'Work Hours Allocations Tab.view' },
   { route: '/settings/timeoff-configurations/flexible-workhours-allocation/workhours-allocation-view', permission: 'Work Hours Allocation History Tab.view' },
 ]
+
 export const TIME_OFF_SUB_TABS = [
   { route: '/time-off/leaves/waiting-for-approval', permission: 'Waiting For Approval (Time Off).view' },
   { route: '/time-off/leaves/approved', permission: 'Approved (Time Off).view' },
@@ -212,10 +214,12 @@ export const STANDARD_REPORTS_TABS = [
   { route: '/reports/standard-reports/branch-data', permission: 'Branch Location Wise Data.view' },
   { route: '/reports/standard-reports/family-data', permission: 'Family Members Data.view' },
 ]
+
 export const SETTINGS_RATECARD_TABS = [
   { route: '/settings/employee-rate-card/rate-card/rate-card-active', permission: 'Rate Card Active Tab.view' },
   { route: '/settings/employee-rate-card/rate-card/rate-card-inactive', permission: 'Rate Card In-active Tab.view' },
 ]
+
 export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/leave-report', permission: 'Leave Report.view' },
   { route: '/reports/attendence-reports/leave-summary-report', permission: 'Leave Summary Report.view' },
@@ -250,7 +254,7 @@ export const ASSEST_ALLOCATION_TABS = [
   { route: '/assets-management/allocated-assets', permission: 'Asset Management - Allocated.view' },
   { route: '/assets-management/under-maintenance-assets', permission: 'Asset Management - Under Maintenance.view' },
   { route: '/assets-management/inactive-assets', permission: 'Asset Management - Inactive.view' },
-   { route: '/assets-management/block-assets', permission: 'Asset Management - Block.view' },
+  { route: '/assets-management/block-assets', permission: 'Asset Management - Block.view' },
 ];
 
 export const DESK_ALLOCATION_TABS = [
@@ -347,9 +351,10 @@ export const EXPENSES_REQUEST_SUB_TABS = [
   { route: '/pending-approvals/claimsandexpenses-request/for-you', permission: 'For You (Claims and Expenses).view' },
   { route: '/pending-approvals/claimsandexpenses-request/for-your-role', permission: 'For Role (Claims and Expenses).view' },
 ]
+
 export const EMPLOYEINFO_REQUEST_SUB_TABS = [
-  { route: '/pending-approvals/employeeinfo-request/for-you', permission: 'For You (Employee Info).view' },
-  { route: '/pending-approvals/employeeinfo-request/for-your-role', permission: 'For Role (Employee Info.view' },
+  { route: '/pending-approvals/employeeinfo-request/for-you', permission: 'For You Employee Info.view' },
+  { route: '/pending-approvals/employeeinfo-request/for-your-role', permission: 'For Role Employee Info.view' },
 ]
 export const DESK_REQUEST_SUB_TABS = [
   { route: '/pending-approvals/desk-approval/for-you', permission: 'For You (Desk Requests).view' },
@@ -476,7 +481,6 @@ export const PMS_TABS = [
   { route: '/pms/assign-kra-kpi', permission: 'Assign KRA KPI.view' },
   { route: '/pms/my-kra-kpi/view', permission: 'My KRA KPI.view' },
   { route: '/pms/my-kra-kpi/dashboard', permission: 'Dashboard KRA KPI.view' },
-
 ]
 
 export const MY_PERFORMANCE_TABS = [
@@ -493,7 +497,6 @@ export const PMS_CONFIGURATION_TABS = [
   { route: '/pmsconfiguration/increment', permission: 'Increment Percentage.view' },
   { route: '/pmsconfiguration/assessor', permission: 'Assessor Configuration.view' },
   { route: '/pmsconfiguration/kra', permission: 'Kra Configuration.view' }
-
 ]
 
 export const EVENTS_SUB_TABS = [
@@ -539,14 +542,13 @@ export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
 export const Employee_TEAM_NUMBERS = [
   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
-
 ]
 
 export const MyINFO_TEAM_NUMBERS = [
   { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
-
 ]
+
 export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
   { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },
   { permission: 'My Info Job Approval History.view', route: 'myinfo/approvals/job' },
@@ -645,7 +647,6 @@ export const CLIENTS_ROUTES = [
     permission: 'Client Documents.create'
   },
 ];
-
 
 export const PROJECTS_ROUTES = [
   {

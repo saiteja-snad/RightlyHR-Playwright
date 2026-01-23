@@ -1826,7 +1826,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/pending-approvals/employeeinfo-request':
+      case '/pending-approvals/employeeinfo-request': 
         if (this.rbac.allowedToAccess('EmployeeInfo Tab.view')) {
           for (const item of EMPLOYEINFO_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

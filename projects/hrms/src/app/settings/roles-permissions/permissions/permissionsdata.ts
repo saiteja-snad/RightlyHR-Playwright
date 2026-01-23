@@ -33,9 +33,6 @@ export const permissionsData = [
   { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
 
-
-
-
   //Personal field update config Tabs
   { fields: 'Basic Info', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contact Info', View: false, Update: false, Create: false, Delete: false },
@@ -166,7 +163,7 @@ export const permissionsData = [
   { fields: 'Bulk Load Entitlements Tab', View: false, Update: false, Create: false, Delete: false },
   //Settings Time OffBulk Load Entitlements Tab Section
 
-   { fields: 'Initial Load Entitlements', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Initial Load Entitlements', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Carry Forward Load Entitlements', View: false, Update: false, Create: false, Delete: false },
 
   //Settings Time Off Leave Category Tabs Section
@@ -406,6 +403,7 @@ export const permissionsData = [
   { fields: 'Contractor Details Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contract-Conversion Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'EmployeeInfo Tab', View: false, Update: false, Create: false, Delete: false },
+
   //Pending Approval Time Off Tabs Section
   { fields: 'For You (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Time Off)', View: false, Update: false, Create: false, Delete: false },
@@ -459,9 +457,10 @@ export const permissionsData = [
   //Pending Approval Claims and Expenses Tabs Section
   { fields: 'For You (Claims and Expenses)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Claims and Expenses)', View: false, Update: false, Create: false, Delete: false },
+
   //Pending Approval employeeinfoTabs Section
-  { fields: 'For You (Employee Info)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'For Role (Employee Info)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'For You Employee Info', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'For Role Employee Info', View: false, Update: false, Create: false, Delete: false },
 
   //Pending Approval Desk Requests Tabs Section
   { fields: 'For You (Desk Requests)', View: false, Update: false, Create: false, Delete: false },
@@ -481,7 +480,7 @@ export const permissionsData = [
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Trainee Requests (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Expenses (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expenses (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
 
@@ -615,9 +614,9 @@ export const permissionsData = [
   { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
 
-{ fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Log Hours Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Log Hours Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Log Hours Report - Export', View: false, Update: false, Create: false, Delete: false },
 
 
   //Asset Management Sub Tabs Section
@@ -666,7 +665,7 @@ export const permissionsData = [
   { fields: 'Inactive Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Inactive Update Asset Details', View: false, Update: false, Create: false, Delete: false },
- //Asset Management Block Tab Actions
+  //Asset Management Block Tab Actions
   { fields: 'Block View Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Block Update Asset Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Block Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
@@ -1067,7 +1066,6 @@ export const permissionsData = [
   { fields: 'On Behalf Of RemoteLogin Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of RemoteLogin Button', View: false, Update: false, Create: false, Delete: false },
 
-
   //On-Behalf of Expenses
   { fields: 'On Behalf Of Expenses', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Waiting For Approval (On Behalf Of Expenses)', View: false, Update: false, Create: false, Delete: false },
@@ -1077,7 +1075,6 @@ export const permissionsData = [
   { fields: 'On Behalf Of Expenses All Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Expenses Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of Expenses Button', View: false, Update: false, Create: false, Delete: false },
-
 
   //Cards Management Tabs Section
   { fields: 'Cards Allocated', View: false, Update: false, Create: false, Delete: false },
@@ -1102,6 +1099,7 @@ export const permissionsData = [
   { fields: 'IT Support Configuration', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Category', View: false, Update: false, Create: false, Delete: false },
   { fields: 'IT Support Sub-Category', View: false, Update: false, Create: false, Delete: false },
+
   //flexible work hours Section
   { fields: 'Flexible Work Hours Allocation Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Work Hours Allocation History Tab', View: false, Update: false, Create: false, Delete: false },

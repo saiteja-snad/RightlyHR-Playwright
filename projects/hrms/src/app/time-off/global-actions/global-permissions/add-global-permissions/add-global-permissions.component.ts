@@ -4,17 +4,18 @@ import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
-import { AuthService } from '../../../services/auth.service';
-import { HttpService } from '../../../services/http.service';
-import { OpenModalService } from '../../../services/open-modal.service';
-import { RbacService } from '../../../services/rbac.service';
-import { IPermissionType } from '../../../Interfaces/timoff-model';
-import { IDepartment } from '../../../Interfaces/job-model';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
-import { environment } from '../../../../environments/environment';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { FormValidationService } from '../../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { environment } from '../../../../../environments/environment';
+import { IDepartment } from '../../../../Interfaces/letters-model';
+import { IPermissionType } from '../../../../Interfaces/timoff-model';
+import { AuthService } from '../../../../services/auth.service';
+import { HttpService } from '../../../../services/http.service';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-add-global-permissions',
   imports: [CommonModule, ReactiveFormsModule, MultiSelectModule, FormsModule, Select, TranslateModule],
@@ -30,10 +31,9 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     { sno: 1, Value: 'Location/Sub Location', item_text: 'Select by Location/Sub Location', selectedAllGroup: 'Group 1' },
     { sno: 2, Value: 'Department/Team', item_text: 'Select by Department/Team', selectedAllGroup: 'Group 1' },
     { sno: 3, Value: 'Employees', item_text: 'Select by Employees', selectedAllGroup: 'Group 1' }
-
   ];
   private modalRef: NgbModalRef | null = null;
-  permissionTypes = [{ item_text: 'Permission' }];
+  permissionTypes = [{ item_text: 'Permission'},{ item_text : 'WFH'}];
   // Options for the multi-select dropdown
   minDate!: string;  // Using definite assignment assertion
   maxDate!: string;  // Using definite assignment assertion
@@ -58,15 +58,9 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   requestcount!: number;
   isLoader = false;
 
-  constructor(
-    private authService: AuthService,
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    public rbac: RbacService,
-    public formValidation: FormValidationService
-  ) { }
+  constructor(private authService: AuthService, private conformationPopup: OpenModalService, 
+    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, public rbac: RbacService, 
+    public formValidation: FormValidationService, public router:Router) { }
 
   ngOnInit(): void {
     this.initalizingForm();
@@ -74,6 +68,54 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.getPermissionTypes();
     this.permissionsDuration();
     this.setupValidationOnClear();
+    this.setDateLimits();
+    this.setRequestTypeBasedOnRoute();
+  }
+
+  setRequestTypeBasedOnRoute() {
+    const currentUrl = this.router.url;
+    if (currentUrl === '/on-behalf-of/global/permissions') {
+      this.requestForm.get('requestType')?.setValue('Permission');
+      this.requestForm.get('requestType')?.disable();
+    } else if (currentUrl === '/on-behalf-of/global/wfh') {
+      this.requestForm.get('requestType')?.setValue('WFH');
+      this.requestForm.get('requestType')?.disable();
+    }
+  }
+
+  setDateLimits() {
+    this.minDate = moment().startOf('month').format('YYYY-MM-DD');
+    this.maxDate = moment().endOf('month').format('YYYY-MM-DD');
+  }
+
+  getPastDate(): string {
+    const currentDate = new Date();
+    const pastDate = new Date(currentDate);
+    pastDate.setDate(currentDate.getDate() - 30); // 30 days in the past
+    return pastDate.toISOString().split('T')[0];
+  }
+
+  getFutureDate(): string {
+    const currentDate = new Date();
+    const futureDate = new Date(currentDate);
+    futureDate.setDate(currentDate.getDate() + 30); // 30 days in the future
+    return futureDate.toISOString().split('T')[0];
+  }
+
+  getWFHBal(currentDate?: any) {
+    // This function can be implemented based on your WFH balance logic
+    console.log('WFH Balance check for date:', currentDate);
+  }
+
+  updateDuration() {
+    const availingValue = this.requestForm.get('availing')?.value;
+    if (availingValue === 'Full Day' || availingValue === 2) {
+      // Set duration to 1 for full day
+      this.requestForm.get('duration')?.setValue(1);
+    } else if (availingValue === 'Half Day' || availingValue === 1 || availingValue === 3) {
+      // Set duration to 0.5 for half day
+      this.requestForm.get('duration')?.setValue(0.5);
+    }
   }
 
   setupValidationOnClear() {
@@ -116,9 +158,64 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       duration: [null, Validators.required],
       // this.maxDuration(2),Validators.max(2)]
       name: [null, Validators.required,],
-      notes: [null, [Validators.required, Validators.maxLength(250)]]
+      notes: [null, [Validators.required, Validators.maxLength(250)]],
+      // WFH specific controls
+      workedDate: [null],
+      availing: [null],
+      halfType: [null]
     });
     this.validationCheck();
+    this.handleRequestTypeChange();
+  }
+
+  handleRequestTypeChange() {
+    this.requestForm.get('requestType')?.valueChanges.subscribe((requestType) => {
+      const workedDateControl = this.requestForm.get('workedDate');
+      const availingControl = this.requestForm.get('availing');
+      const permissionDateControl = this.requestForm.get('permissionDate');
+      const durationControl = this.requestForm.get('duration');
+      const nameControl = this.requestForm.get('name');
+      if (requestType === 'WFH') {
+        // Set validators for WFH
+        workedDateControl?.setValidators([Validators.required]);
+        availingControl?.setValidators([Validators.required]);
+        // Clear Permission validators
+        permissionDateControl?.clearValidators();
+        durationControl?.clearValidators();
+        nameControl?.clearValidators();
+        // Handle availing change for halfType validation
+        this.handleAvailingChange();
+      } else if (requestType === 'Permission') {
+        // Set validators for Permission
+        permissionDateControl?.setValidators([Validators.required]);
+        durationControl?.setValidators([Validators.required]);
+        nameControl?.setValidators([Validators.required]);
+        // Clear WFH validators
+        workedDateControl?.clearValidators();
+        availingControl?.clearValidators();
+        this.requestForm.get('halfType')?.clearValidators();
+      }
+      // Update validity
+      workedDateControl?.updateValueAndValidity();
+      availingControl?.updateValueAndValidity();
+      permissionDateControl?.updateValueAndValidity();
+      durationControl?.updateValueAndValidity();
+      nameControl?.updateValueAndValidity();
+      this.requestForm.get('halfType')?.updateValueAndValidity();
+    });
+  }
+
+  handleAvailingChange() {
+    this.requestForm.get('availing')?.valueChanges.subscribe((value) => {
+      const halfTypeControl = this.requestForm.get('halfType');
+      if (value === 'Half Day') {
+        halfTypeControl?.setValidators([Validators.required]);
+      } else {
+        halfTypeControl?.clearValidators();
+        halfTypeControl?.setValue(null);
+      }
+      halfTypeControl?.updateValueAndValidity();
+    });
   }
 
   //function to get lenghtof the globalpermissions
@@ -173,7 +270,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   permissionsDuration() {
     this.subscription = this.http.getData("entityAttributeValues?entity=Permissions").subscribe({
       next: (data: any) => {
-        console.log(data);
         const permissionsDurationDetails = data.find((ele: any) => {
           return ele.attribute === 'globalPermissionsDuration'
         });
@@ -194,7 +290,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     for (let i = 0.5; i <= maxDuration; i += 0.5) {
       this.permissionHours.push({ duration: i });
     }
-    console.log(this.permissionHours);
   }
 
   //function to check the null values
@@ -229,7 +324,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.requestForm.get('sublocation')?.setValue(null);
     this.requestForm.get('selectedOptions')?.setValue(null);
     const ValuesForSublocation = this.requestForm.get('location')?.value;
-    console.log(ValuesForSublocation);
     this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation} `).subscribe({
       next: (data: any) => {
         this.subLocationsDropdown = data.jobSubLocations;
@@ -252,12 +346,12 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         this.locationWiseEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
         });
-        console.log(this.locationWiseEmployeesDetails)
         const selectedIds: any = [];
         this.locationWiseEmployeesDetails.forEach((ele: any) => {
           selectedIds.push(ele.employeeId)
@@ -267,7 +361,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.locationWiseEmployeesDetails = [];
         this.requestForm.get('selectedOptions')?.setValue(null);
       },
@@ -277,23 +371,22 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   getAllEmployees() {
     this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.getAllEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
         });
-        console.log(this.getAllEmployeesDetails)
         const selectedIds: any = [];
         this.getAllEmployeesDetails.forEach((ele: any) => {
           selectedIds.push(ele.employeeId)
         })
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.requestForm.get('selectedOptions')?.setValue(null);
       },
     })
@@ -303,14 +396,13 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   getEmployeesTeamwise() {
     //const locationId=this.requestForm.get('departmentName')?.value;
     const team = this.requestForm.get('teamSelectedOptions')?.value;
-    //console.log(team)
     this.subscription = this.http.getData(`Employeedata/getbyteam/${team}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.teamWiseEmployeesDetails = data.map((employee: any) => {
           return {
             ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             selectedAllGroup: 'Group 1'
             // Concatenate first, middle (if present), and last name
           };
@@ -324,7 +416,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
       error: (err: any) => {
-        console.log(err)
+        console.log(err);
         this.requestForm.get('teamEmpselectedOptions')?.setValue(null);
       },
     })
@@ -371,11 +463,11 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
     if (this.requestForm.valid) {
-      // console.log(this.requestForm.value);
-      const formData = this.requestForm.value;
+      const formData = this.requestForm.getRawValue(); // Use getRawValue to get disabled controls
+      const isFullDay = formData.availing === 'Full Day' || +formData.availing === 2;
+      const duration = isFullDay ? '1' : '0.5';
       let deptId_locationId = '';
       let teamId_sublocationId = '';
-
       if (formData.selectType === 'Location/Sub Location') {
         deptId_locationId = Array.isArray(formData.location) ? formData.location.join(',') : String(formData.location);
         teamId_sublocationId = Array.isArray(formData.sublocation) ? formData.sublocation.join(',') : String(formData.sublocation);
@@ -387,41 +479,53 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "requestedBy": loggedinuser.employeeId,
         "requestedDate": currentDate,
         "type": formData.requestType,
-        "permissionRequestedDate": formData.permissionDate,
-        "moduleId": environment.permissionsModuleId,
+        "permissionRequestedDate": formData.requestType === 'WFH' ? formData.workedDate : formData.permissionDate,
+        "moduleId": formData.requestType === 'WFH' ? environment.wfhModuleId : environment.permissionsModuleId,
         "referenceTypeId": this.selectedPermissionId,
-        "duration": formData.duration?.toString(),
-        // "8888888888888888": formData.notes,
-        "requestType": formData.name,
+        "duration": formData.requestType === 'WFH' ? duration : formData.duration?.toString(),
+        "requestType": formData.requestType,
         "requestTypeEntityId": formData.sublocation ? formData.location + "," + formData.sublocation : formData.department + "," + formData.teamSelectedOptions,
         "employeeIds": formData.selectedOptions.length > 0 ? formData.selectedOptions.toString() : formData.teamEmpselectedOptions.toString(),
         "meta": formData.notes,
         "selectedType": formData.selectType,
         "deptId_locationId": deptId_locationId,
         "teamId_sublocId": teamId_sublocationId,
+        "durationType": formData.requestType === 'WFH' ? (isFullDay ? 2 : +formData.halfType) : undefined,
       }
       this.http.postdata(`GlobalPermissions/postGlobalPermissions`, payLoad).subscribe({
         next: (response: any) => {
           this.isLoader = false;
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Global request submitted sucessfully')
+          let successMessage = 'Global request submitted successfully';
+          if (this.router.url === '/on-behalf-of/global/permissions') {
+            successMessage = 'Global permission request submitted successfully';
+          } else if (this.router.url === '/on-behalf-of/global/wfh') {
+            successMessage = 'Global WFH request submitted successfully';
+          }
+          this.conformationPopup.openSuccessModal(successMessage);
+          setTimeout(() => {
+          window.location.reload();
+            
+          }, 2000);
         },
         error: (err: any) => {
           if (this.modalRef) {
-            this.modalRef.close(); // or this.modalRef.dismiss();
+            this.modalRef.close();
             this.modalRef = null;
           }
-          this.conformationPopup.openErrorModal(err.error.message);
+          let errorMessage = err.error?.details || err.error?.message || 'An error occurred';
+          if (errorMessage.includes(': ')) {
+            errorMessage = errorMessage.split(': ')[1];
+          }
+          this.conformationPopup.openErrorModal(errorMessage);
           this.isLoader = false;
         },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         complete: () => {
           this.requestForm.reset();
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             global: true,
           }));
-
         },
       })
     }

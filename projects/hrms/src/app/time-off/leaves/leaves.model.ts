@@ -135,3 +135,50 @@ export interface IRegularizationRecord {
   status: string;
   notes: string;
 }
+
+
+export interface EmployeeLeaveLedger {
+  employeeId: number;
+  fusionEmpId: string;
+  employeeName: string;
+  workEmail: string;
+  empStatus: string;
+  empType: string;
+
+  jobRole: string;
+  locationId: number;
+  sublocationId: number;
+  gradeId: number;
+  reportsTo: number;
+
+  categoryId: number;
+  categoryCode: string;
+  categoryColor: string;
+
+  year: number;
+  txnDate: string; // ISO Date string
+  category: string;
+  transactionType: string;
+
+  openingBalance: number;
+  credited: number;
+  debited: number;
+  closingBalance: number;
+  validUpto: string; // ISO Date string
+  creditedByEmployeeId: number;
+  creditedByFusionEmpId: string;
+  creditedByName: string;
+  status: string;
+  subStatus: string;
+
+  processedByEmployeeId: number;
+  processedByFusionEmpId: string;
+  processedByName: string;
+
+  referenceId: number;
+  referenceType: string;
+  entitlementType: string;
+
+  startDate: string; // ISO Date string
+  endDate: string; // ISO Date string
+}

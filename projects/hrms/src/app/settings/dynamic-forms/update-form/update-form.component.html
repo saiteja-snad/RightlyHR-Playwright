@@ -52,7 +52,7 @@
                 </div>
 
                 <!-- Rating Scale Range -->
-                <div class="col-md-4 custom-p-select-content">
+                <div class="col-md-4 custom-p-select-content" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
                     <label class="content-heading mb-2">Rating Scale Range<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="uniqueRatingScaleRanges" [filter]="false" [showClear]="false"
@@ -75,7 +75,7 @@
 
             <div class="row mb-3">
                 <!-- Overall Rating -->
-                <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 ">
+                <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 && updateForm.get('moduleId')?.value?.id !== 33">
                     <label class="form-label custom-label mb-2" for="overAllRating">Overall Rating
                         <span class="text-danger">*</span></label>
                     <input type="number" formControlName="overAllRating" class="form-control custom-input"
@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Cut Off Rating -->
-                <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !==  24 ">
+                <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 && updateForm.get('moduleId')?.value?.id !== 33">
                     <label class="form-label custom-label mb-2" for="cutOffRating">Cut Off Rating
                         <span class="text-danger">*</span></label>
                     <input type="number" formControlName="cutOffRating" class="form-control custom-input"
@@ -167,7 +167,7 @@
                                 </div>
                             </div>
                             <!-- Section Weightage -->
-                            <div class="col-md-3">
+                            <div class="col-md-3" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
                                 <label class="form-label custom-label mb-2">Section Weightage <span
                                         class="text-danger">*</span></label>
                                 <input type="number" formControlName="weightage" class="form-control custom-input"
@@ -230,7 +230,7 @@
                                                 </button>
                                             </div>
                                             <!-- Question Weightage -->
-                                            <div class="col-md-3">
+                                            <div class="col-md-3" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
                                                 <label class="form-label custom-label mb-2">Question Weightage<span
                                                         class="text-danger">*</span></label>
                                                 <input type="number" formControlName="questionWeightage"
@@ -415,7 +415,7 @@
                                             </div>
                                         </div>
                                         <!-- Question Weightage -->
-                                        <div class="col-md-3">
+                                        <div class="col-md-3" *ngIf="updateForm.get('moduleId')?.value?.id !== 33">
                                             <div class="d-flex">
                                                 <input type="number" formControlName="questionWeightage"
                                                     class="form-control custom-input"

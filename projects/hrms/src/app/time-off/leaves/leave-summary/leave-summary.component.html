@@ -1,0 +1,326 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name navigator" (click)="navigateToAccessedRoute()">{{'Leaves'|translate}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>  </div>
+            <div class="component-header">Leave Summary @if(empName){({{empName}})}</div>
+            <div>
+                 <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
+        </div>
+
+    <div class="d-flex align-items-center gap-3">
+       <button type="button" class="custom-btn btn-secondary position-relative" (click)="toggleFilters(filterContent)">
+        <i class="bi bi-funnel me-2"></i>Filters
+        <span *ngIf="isFilterApplied()" class="filter-indicator"></span>
+      </button>
+       @if(rbac.allowedToAccess('Leave Summary (Time Off).view') && rbac.allowedToAccess('Leave Summary (Time Off) - Export.view')){
+          <button type="button" class="custom-btn btn-primary" 
+            [disabled]="leaveSummary.length == 0 || disableBtn" (click)="exportLeaveSummary()">
+            @if(spinnerLoader){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+        }
+    </div>
+  </div>
+  <div class="balance-summary-section mb-4">
+    <div class="balance-cards-container">
+      @if(!dataload){
+      <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-arrow-up-circle text-success"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Initial Opening ' + selectedYear | translate}}</div>
+          <div class="balance-value text-success">{{ yearOpeningBalance }}</div>
+        </div>
+      </div>
+        
+      <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-arrow-down-circle text-primary"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Available Balance' | translate}}</div>
+          <div class="balance-value text-primary">{{ yearClosingBalance }}</div>
+        </div>
+      </div>
+
+      <div class="balance-card">
+        <div class="balance-icon">
+          <i class="bi bi-dash-circle debit"></i>
+        </div>
+        <div class="balance-content">
+          <div class="balance-label">{{'Total Availed' | translate}}</div>
+          <div class="balance-value debit">{{ totalDebited }}</div>
+        </div>
+      </div>
+      }@else{
+      <div class="balance-card">
+        <div class="balance-icon">
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+        </div>
+        <div class="balance-content">
+          <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+        
+      <div class="balance-card">
+        <div class="balance-icon">
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+        </div>
+        <div class="balance-content">
+          <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+
+      <div class="balance-card">
+        <div class="balance-icon">
+          <p-skeleton shape="circle" size="2rem"></p-skeleton>
+        </div>
+        <div class="balance-content">
+          <p-skeleton width="60%" height="1rem" class="mb-2"></p-skeleton>
+          <p-skeleton width="40%" height="1.5rem"></p-skeleton>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  
+
+
+  <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
+    <div class="d-flex gap-3">
+        <div class="custom-table-content attendance-log-content">
+            @if(!dataload){
+        <table class="w-100">
+            <thead>
+                <th>{{ 'Year' | translate }}</th>
+                <th>{{ 'Start Date' | translate }}</th>
+                <th>{{ 'End Date' | translate }}</th>
+                <th >{{ 'Leave Category' | translate }}</th>
+                <th >{{ 'Types' | translate }}</th>
+                <th class="text-center">{{ 'Previous Balance' | translate }}</th>
+                <th class="text-center">{{ 'Accural (+)' | translate }}</th>
+                <th class="text-center">{{ 'Availed (-)' | translate }}</th>
+                <th class="text-center">{{ 'Balance' | translate }}</th>
+                <!-- <th class="text-center">{{ 'Valid Upto' | translate }}</th> -->
+              <!--  <th>{{ 'Status' | translate }}</th>
+                <th>{{ 'Requested By' | translate }}</th>
+                <th>{{ 'Processed By' | translate }}</th> -->
+            </thead>
+
+            <tbody>
+                <ng-container *ngIf="leaveSummary.length > 0; else noDataTemplate">
+                    <tr *ngFor="let ledger of leaveSummary; let i = index">
+
+                        <!-- Year -->
+                        <td >{{ ledger.year }}</td>
+
+                        <!-- Transaction Date -->
+                        <td >{{ ledger.startDate | date: 'MMM dd' }}</td>
+
+                        <td >{{ ledger.endDate | date: 'MMM dd' }}</td>
+
+                        <td>
+                            <div class="fw-medium"[style.color]="ledger.categoryColor">
+                                {{ ledger.category }}</div>
+                        </td>
+
+                        <!-- Transaction Type -->
+                        <td>
+                          <div class="d-flex gap-2">
+                            <span class="transaction-main">{{ ledger.transactionType }}</span>
+                            @if(ledger.transactionType.toLowerCase() == 'leave availed' ){
+                            <app-info-icon class="info-pending" [ngbPopover]="messageContent" triggers="click"  popoverClass="pending-popover" (click)="setActiveMessage(ledger)" />
+                            }
+                          </div>
+                        </td>
+
+                        <!-- Opening Balance -->
+                        <td class="text-center">    {{ ledger.openingBalance }}</td>
+
+                        <!-- Credited -->
+                        <td class="text-center">
+                          
+                            @if(ledger.entitlementType.toLowerCase() == 'cr'){ 
+                              <div class="credit"><span>{{ ' + ' }}</span>
+                            {{ ledger.credited }}
+                            </div>
+                          }@else{
+                              {{ '-' }}
+                            }
+                     
+                        </td>
+                        <!-- Debited -->
+                        <td class="text-center">
+                            @if(ledger.entitlementType.toLowerCase() == 'dr' ) {  <div class="debit">
+                              <span>{{ ' - ' }}</span>
+                              {{ ledger.debited }}
+                            </div>
+                          }@else{
+                              {{ '-' }}
+                            }
+                        </td>
+                        <!-- Closing Balance -->
+                        <td class="text-center">
+                          <div class="closing">
+                            {{ ledger.closingBalance }}
+                          </div>
+                        </td>
+
+                        <!-- Valid Upto -->
+                        <!-- <td class="text-center">
+                            {{ ledger?.validUpto ? (ledger.validUpto | dateformat) : '-' }}
+                        </td> -->
+
+                  
+
+                         <!-- Status -->
+                        <!-- <td>
+                           @if(ledger.transactionType.toLowerCase() == 'leave debit' && ledger.status.toLowerCase() != 'published'){
+                             <span [style.color]="getStatusColor(ledger.status)"> <b> {{ ledger?.status || '-' }} </b></span>
+                           }@else{
+                             {{'-'}}
+                           }
+                        </td> -->
+                         <!-- Requested By -->
+                        <!-- <td> -->
+                           <!-- @if(ledger.transactionType.toLowerCase() != 'leave debit'){ -->
+                              <!-- {{ ledger.creditedByName || 'System Auto' }} -->
+                           <!-- }@else {
+                              {{'-'}}
+                            } -->
+                            
+                        <!-- </td> -->
+
+                        <!-- Processed By -->
+                        <!-- <td> -->
+                            <!-- @if(ledger.transactionType.toLowerCase() == 'leave debit' &&  !(ledger.subStatus)  && ledger.status.toLowerCase() != 'waiting for approval') {
+                              {{ ledger.processedByName || '-' }}
+                            }@else {
+                              {{'-'}}
+                            } -->
+                            
+                        <!-- </td> -->
+
+                    </tr>
+                </ng-container>
+
+                <ng-template #noDataTemplate>
+                    <tr class="table-placeholder">
+                        <app-no-data-found></app-no-data-found>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+
+        }@else{<app-data-loader-content />}
+    </div>
+  </div>
+</div>
+
+<!-- Filter Offcanvas -->
+<ng-template #filterContent let-offcanvas>
+  <div class="custom-filter-container">
+    <div class="offcanvas-filter-header-content offcanvas-filter-header-border">
+      <p class="filter-header m-0">{{'Filters' | translate}}</p>
+      <a (click)="closeCanvas()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+    </div>
+
+    <div class="offcanvas-filter-content">
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <!-- Year -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Year <span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="years" formControlName="year"
+              placeholder="Select year" class="form-select custom-select">
+            </p-select>
+          </div>
+          <div *ngIf="filterForm.get('year')?.touched && filterForm.get('year')?.invalid" class="error-msg">
+            <div *ngIf="filterForm.get('year')?.errors?.['required']">Year is required</div>
+          </div>
+        </div>
+
+        <!-- Employee -->
+        <div class="mb-3">
+          @if(rbac.allowedToAccess('All Employees (Time Off Leave Summary).view') && rbac.allowedToAccess('My Team (Time Off Leave Summary).view')) {
+          <label for="education" class="form-label custom-label text-nowrap filter-labels mb-3">
+            {{'Select Employee' | translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+              optionValue="value"  formControlName="employee" placeholder="Please select employee"  filterPlaceholder="Search employee" 
+              class="form-select custom-select"></p-select>
+          </div>
+          }
+          @else if(rbac.allowedToAccess('All Employees (Time Off Leave Summary).view')) {
+          <label for="education" class="form-label custom-label text-nowrap filter-labels mb-3">{{'Select Employee' |
+            translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+              optionValue="value"  formControlName="employee"  placeholder="Please select employee"  filterPlaceholder="Search employee" 
+              class="form-select custom-select"></p-select>
+          </div>
+          }
+          @else if (rbac.allowedToAccess('My Team (Time Off Leave Summary).view')) {
+          <label class="form-label filter-labels mb-3">{{'My Team'| translate}}</label>
+          <div class="custom-p-select-content">
+            <p-select [options]="getEmployeeInfo" optionLabel="fullName"  optionValue="employeeId"
+              name="myteamemployees" placeholder="Please select employee" formControlName="employee" [filter]="true" resetFilterOnHide="true"
+              class="form-select custom-select" [autoDisplayFirst]="false" filterPlaceholder="Search employee"  required >
+            </p-select>
+          </div>
+        
+          }
+        </div>
+
+        <!-- Category -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Leave Category</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="categoryDetails" optionLabel="category.name" [filter]="true" optionValue="category.id"
+              formControlName="category" placeholder="Please select leave category" class="form-select custom-select"
+              filterPlaceholder="Search category" [resetFilterOnHide]="true" filterPlaceHolder="Search leave category" >
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <!-- Transaction Type -->
+        <div class="mb-3">
+          <label class="form-label custom-label text-nowrap filter-labels mb-3">Select Type</label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect  [options]="eavData" optionLabel="value"  optionValue="value"
+              formControlName="transactionType" placeholder="Please select type" class="form-select custom-select"
+               [resetFilterOnHide]="true" filterPlaceHolder="Search type" >
+            </p-multiSelect>
+          </div>
+        </div>
+         
+
+        <div class="d-flex offcanvas-footer-content gap-3">
+          <button type="button" class="custom-btn btn-secondary w-100" (click)="clearAllFilters()">
+            {{'Clear All' | translate}}
+          </button>
+          <button type="submit" class="custom-btn btn-primary w-100">
+            {{'Apply' | translate}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #messageContent>
+  <div class="module-info-text" [innerHTML]="activeMessage"></div>
+</ng-template>

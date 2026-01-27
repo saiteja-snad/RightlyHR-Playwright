@@ -57,6 +57,11 @@
                 <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">Request Leave</button>
                 }
             </div>
+            <div >
+                @if (rbac.allowedToAccess('Leave Summary (Time Off).view')) {
+                <button type="button" (click)="navigateToLeaveSummary()" class="custom-btn btn-primary">View Leave Summary</button>
+                }
+            </div>
         </div>
     </div>
 
@@ -330,12 +335,33 @@
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <!-- <div>
           <app-confirmation-icon />
             <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
-        </div>
+        </div> -->
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="cleardata();modal.dismiss()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #sandwichConfirmationModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{ sandwichMessage }}</p>
+        </div>
+        <!-- <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text mb-4">{{ sandwichMessage }}</p>
+        </div> -->
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="button" class="custom-btn btn-primary" (click)="confirmSandwichPolicy(modal)">Proceed</button>
         </div>
     </div>
 </ng-template>

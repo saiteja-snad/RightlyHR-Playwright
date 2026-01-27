@@ -51,7 +51,7 @@ filterTabs(): void {
     { label: 'Employment History', link: '/personalinfo/job/past-experiences', icon: '/images/experience.png', permission: { feature: 'Employee Info Previous Experience Details', action: 'view' } },
     { label: 'Certifications', link: '/personalinfo/job/certifications', icon: '/images/certificate.png', permission: { feature: 'Employee Info Certification Details', action: 'view' } },
     { label: 'Desk Info', link: '/personalinfo/job/desk-details', icon: '/images/desk.png', permission: { feature: 'Employee Info Desk Details', action: 'view' } },
-    { label: 'Separation Request', link: '/personalinfo/job/separation-details', icon: '/images/sepration-request.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' } },
+    { label: 'Separation Request', link: '/personalinfo/job/separation-details/separation-requests', icon: '/images/sepration-request.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' } },
     { label: 'No Due Clearance Info', link: '/personalinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'Employee Info No Due Clearance Details', action: 'view' } },
     { label: 'Onboarding Documents', link: '/personalinfo/job/onboarding-verification', icon: '/my-info-icons/onboarding-icon.png', permission: { feature: 'Employee Info Documents Verification', action: 'view' } },
     { label: 'Trainee Onboard Request', link: '/personalinfo/job/trainee-onboarding-requests', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' } },
@@ -68,7 +68,7 @@ filterTabs(): void {
 }
 
   navigateToAccessedRoute(link: string): void {
-    if (link == '/personalinfo/job/team') {
+    if (link == '/personalinfo/job/team' || link == '/personalinfo/job/separation-details') {
       const actualRoute = this.accessNav.navigateToAccessedRoute(link);
       if (actualRoute) {
         this.router.navigate([actualRoute]);

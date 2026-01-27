@@ -7,7 +7,8 @@ export const environment = {
  
   modules: [
     { id: 20, moduleName: 'Probation' },
-    { id: 24, moduleName: 'PMS' }  
+    { id: 24, moduleName: 'PMS' },
+    { id: 33, moduleName: 'ExitFeedback' }   
   ],
 
 

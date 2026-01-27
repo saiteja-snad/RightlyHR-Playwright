@@ -1,4 +1,5 @@
 export interface Iglobalpermissions {
+  durationType: any;
   firstName: string;
   lastName: string;
   middleName: string;
@@ -20,6 +21,7 @@ export interface Iglobalpermissions {
   teamId_sublocIdName: string;
   fusionEmpId: string;
 }
+
 export interface Iemployyes {
   firstName: string;
   lastName: string;

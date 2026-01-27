@@ -77,7 +77,7 @@ filterTabs(): void {
   // }
 
   navigateToAccessedRoute(link: string): void {
-    if (link == '/myinfo/job/team') {
+    if (link == '/myinfo/job/team' || link == '/myinfo/job/separation-details') {
       const actualRoute = this.accessNav.navigateToAccessedRoute(link);
       if (actualRoute) {
         this.router.navigate([actualRoute]);

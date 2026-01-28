@@ -81,7 +81,7 @@
                             <label class="form-label custom-label">{{'Shift Code'|translate}}
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input w-100" formControlName="shiftCode"
-                                placeholder="Please enter shift code" (input)="checkDuplicate(i)" />
+                                placeholder="Please enter shift code" (input)="checkDuplicate(i)"(keydown)="restrictShiftCode($event)"  />
                             <div *ngIf="shift.get('shiftCode')?.invalid && (shift.get('shiftCode')?.dirty || shift.get('shiftCode')?.touched)"
                                 class="error-msg">
                                 <span *ngIf="shift.get('shiftCode')?.errors?.['required']">{{'Shift code is required'|translate}}</span>
@@ -94,7 +94,7 @@
                             <label class="form-label custom-label">{{'Shift Name'|translate}}
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input w-100" formControlName="shiftName"
-                                placeholder="Please enter shift name" (input)="checkDuplicate1(i)" />
+                                placeholder="Please enter shift name" (input)="checkDuplicate1(i)"  (keydown)="restrictShiftName($event)" />
                             <div *ngIf="shift.get('shiftName')?.invalid && (shift.get('shiftName')?.dirty || shift.get('shiftName')?.touched)"
                                 class="error-msg">
                                 <span *ngIf="shift.get('shiftName')?.errors?.['required']">{{'Shift name is required'|translate}}</span>

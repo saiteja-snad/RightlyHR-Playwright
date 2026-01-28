@@ -88,7 +88,7 @@
               <label class="form-label custom-label">{{'Holiday Name' | translate}}<span
                   class="text-danger">*</span></label>
               <input type="text" formControlName="holidayName" maxlength="50" class="form-control custom-input w-100"
-                placeholder="Please enter Holiday Name" (input)="checkDuplicate()">
+                placeholder="Please enter Holiday Name" (input)="checkDuplicate()"  (keydown)="restrictHolidayName($event)">
               <div
                 *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
                 class="error-msg">

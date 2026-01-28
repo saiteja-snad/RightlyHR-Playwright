@@ -106,7 +106,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
     let loggedInUser = this.authService.getToken();
     this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        this.employeeiddetails = data.map((emp: any) => {
+        this.employeeiddetails = data.filter((emp: any) => emp.employeeId != loggedInUser.employeeId).map((emp: any) => {
           const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
           const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''}`.trim();
           const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : '' }${emp.lastName ?? ''} 

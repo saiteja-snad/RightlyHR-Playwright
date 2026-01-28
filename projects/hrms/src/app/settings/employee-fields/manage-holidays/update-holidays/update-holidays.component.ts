@@ -9,6 +9,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import moment from 'moment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-update-holidays',
@@ -29,7 +30,7 @@ export class UpdateHolidaysComponent {
   shiftDropdown: any[] = [];
   isDuplicateholidayName: boolean[] = [];
    initialPoliciesState: any;
-  constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder,    public formValidations: FormValidationsService, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
   ngOnInit(): void {
@@ -68,7 +69,34 @@ export class UpdateHolidaysComponent {
     this.hidePublishCloneButtons = currentState === this.initialPoliciesState ? false : true;
   });
   }
+restrictHolidayName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
 
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed characters
+  const allowed = /^[A-Za-z0-9 .&'()\ -]$/;
+
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
   // this method used for year generate dynamically 
   generateYears(startYear: number, endYear: number) {
     const years = [];

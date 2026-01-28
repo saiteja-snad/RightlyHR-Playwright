@@ -6,7 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -38,6 +38,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   cancelForm!: FormGroup;
   selectedFields = {} as any;
   loading: boolean = false;
+  selectedSandwichItem: any = null;
   permissionForLoggedInUser: boolean = true;
   options = [
     { label: 10, value: 10 },
@@ -55,16 +56,17 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
   isLoading = false;
   selectedYear: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private signalService: SignalsService,
     private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder,
     private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+    this.TimeoffYearFilterService.selectedYear$.pipe(takeUntil(this.destroy$)).subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
-        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+        this.http.selectedEmployeeIdTimeoff$.pipe(takeUntil(this.destroy$)).subscribe((id) => {
           if (id) {
             // Use the new employee ID here
             this.selectempid = id;
@@ -107,7 +109,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       "rejectedReason": this.cancelForm.get('cancelReason')?.value,
       "cancelledBy": this.empdata.employeeId
     }
-    this.subscription = this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`, payload).subscribe({
+    this.subscription = this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res) {
           this.cancelForm.reset();
@@ -142,7 +144,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.loading = true;
     let empid = this.empdata.employeeId;
     this.permissionForLoggedInUser = true;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -164,7 +166,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   getDataByLPEMPID() {
     let empid = this.selectempid;
     this.permissionForLoggedInUser = false;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
@@ -177,10 +179,18 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     });
   }
 
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
   ngOnDestroy(): void {
-    // Clean up any subscriptions or resources
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
+
 }

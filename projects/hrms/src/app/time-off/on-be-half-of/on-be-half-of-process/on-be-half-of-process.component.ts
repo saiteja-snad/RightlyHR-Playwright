@@ -1,10 +1,10 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -19,7 +19,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
   styleUrl: './on-be-half-of-process.component.scss'
 })
 
-export class OnBeHalfOfProcessComponent {
+export class OnBeHalfOfProcessComponent implements OnInit, OnDestroy{
   loggedinuser = {} as any;
   cadidateEmployeeId!: number;
   subscription!: Subscription;
@@ -35,6 +35,7 @@ export class OnBeHalfOfProcessComponent {
     { label: 25, value: 25 }
   ];
   loading: boolean = false;
+  selectedSandwichItem: any = null;
   onRowsChange() {
     this.first = 0;
   }
@@ -43,7 +44,7 @@ export class OnBeHalfOfProcessComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService) {
+  constructor(private http: HttpService, private authService: AuthService, private timeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) {
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
@@ -84,5 +85,16 @@ export class OnBeHalfOfProcessComponent {
       }
 
     });
+  }
+
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

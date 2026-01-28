@@ -1,4 +1,4 @@
-import { Component, effect, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +8,7 @@ import { Select } from 'primeng/select';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
-import { filter, Subscription } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { environment } from '../../../environments/environment';
@@ -24,6 +24,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { Skeleton } from 'primeng/skeleton';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { TimeoffSelectionService } from '../../services/timeoff-selection.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
@@ -35,7 +36,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
   encapsulation: ViewEncapsulation.None,
 })
 
-export class LeavesComponent {
+export class LeavesComponent implements OnInit, OnDestroy{
   moduleinfo: string = '';
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
@@ -91,6 +92,7 @@ export class LeavesComponent {
   isHolidaySelected = false;
   model: any;
   disableSubmitButton: boolean = false;
+  @ViewChild('sandwichConfirmationModal') sandwichModal: any;
   @ViewChild('leaveForm') work!: NgForm;
   //graph
   leaveCategoryData: any;
@@ -101,6 +103,9 @@ export class LeavesComponent {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  sandwichMessage: string = '';
+  sandwichData: any = null;
 
   constructor(
     private http: HttpService,
@@ -111,7 +116,10 @@ export class LeavesComponent {
     public rbac: RbacService,
     public router: Router,
     public formsValidation: FormValidationsService,
-    private signalService: SignalsService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+    private signalService: SignalsService, 
+    private TimeoffYearFilterService: TimeoffYearFilterService,
+    private timeoffSelectionService: TimeoffSelectionService
+  ) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
@@ -151,7 +159,7 @@ export class LeavesComponent {
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
     // Populate years list
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+    for (let i = this.currentYear - 2; i <= this.currentYear + 1; i++) {
       this.years.push(i);
     }
     // Now initialize the form with the selectedYear
@@ -160,11 +168,15 @@ export class LeavesComponent {
     });
     // Send initial year to the service so other component can pick it up
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+    
+    // Initialize new selection service
+    const currentEmpId = this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata.employeeId;
+    this.timeoffSelectionService.updateSelection(currentEmpId, this.selectedYear);
   }
 
   getAllEmployeeDetails() {
      const status = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
           label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
@@ -179,6 +191,10 @@ export class LeavesComponent {
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.TimeoffYearFilterService.setSelectedYear(selectedYear);
     const employeeId = this.http.getCurrentEmployeeIdTimeoff();
+    
+    // Update new service with the new year (and existing employee if any)
+    this.timeoffSelectionService.updateSelection(employeeId, selectedYear);
+
     if (employeeId) {
       this.onCheckemployee(employeeId);
     } else {
@@ -208,6 +224,9 @@ export class LeavesComponent {
       this.getCategoryempDetails(employeedId);
     } else {
       this.http.setEmployeeIdTimeoff(null);
+      // Update new service
+      this.timeoffSelectionService.updateSelection(null, this.selectedYear);
+
       this.disaplyapplybutton = true;
       this.getLeavesData(this.empdata.employeeId);
       this.getDataByLPID(this.empdata.employeeId);
@@ -232,7 +251,7 @@ export class LeavesComponent {
 
   getDataByLPID(employeeId: any) {
     let empid = employeeId;
-    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.lpdata = response;
         // Reset counts
@@ -306,7 +325,7 @@ export class LeavesComponent {
   leavedatas: any;
   getLeavesData(employeeId: any) {
     let empdata = employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empdata}`).subscribe({
+    this.subscription = this.http.getData(`Timeoff/${empdata}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leavedatatimeoff = response;
         this.getDataByLPID(employeeId);
@@ -322,6 +341,7 @@ getTeamManagersDetails() {
 
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           if (response && response.length) {
@@ -354,6 +374,15 @@ getTeamManagersDetails() {
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  navigateToLeaveSummary() {
+    const employeeId =
+      this.http.getCurrentEmployeeIdTimeoff() ?? this.empdata.employeeId;
+    const year = this.yearSelectionForm?.get('selectedYear')?.value ?? this.selectedYear;
+    this.router.navigate(['/time-off/leave-summary'], {
+      queryParams: { employeeId, year },
+    });
   }
 
   initializeForm() {
@@ -403,7 +432,7 @@ getTeamManagersDetails() {
 
   getCategoryDetails() {
     this.loadingGraph = true;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).subscribe({
+    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.loadingGraph = false;
@@ -425,7 +454,7 @@ getTeamManagersDetails() {
 
   getCategoryempDetails(employeedId: any) {
     const empdata = employeedId;
-    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).subscribe({
+    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];
@@ -505,7 +534,7 @@ getTeamManagersDetails() {
   }
 
   getEmployeeid() {
-    this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
         // this.calculateProbationLeavs(this.categoryDetails);
@@ -896,7 +925,7 @@ getTeamManagersDetails() {
 
   getholidaybyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.orgholidays = data;
       },
@@ -907,7 +936,7 @@ getTeamManagersDetails() {
 
   getweekendbyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.orgweekend = data;
       },
@@ -1023,7 +1052,7 @@ getTeamManagersDetails() {
 
   getcustompolicybyempid() {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`LeavePolicy/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`LeavePolicy/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.custompolicyleaves = data;
       }
@@ -1036,7 +1065,7 @@ getTeamManagersDetails() {
 
   getOrgHolidaysByEmpId(): any {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${empdata.employeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.custompolicyleaves = data;
         this.optionalHolidays = this.custompolicyleaves?.orgHolidaysItems.filter((item: { isOptional: boolean }) => item.isOptional);
@@ -1050,7 +1079,7 @@ getTeamManagersDetails() {
   }
 
   getallpolicy() {
-    this.subscription = this.http.getData("LeavePolicy/getall").subscribe({
+    this.subscription = this.http.getData("LeavePolicy/getall").pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.allPolicy = data as ILeaves[];
         localStorage.setItem("getGradedata", JSON.stringify(data));
@@ -1061,7 +1090,7 @@ getTeamManagersDetails() {
 
   getLeaveTakenByEmpId() {
     let LBEId = this.empdata.employeeId;
-    this.subscription = this.http.getData(`LeaveBalance/getbyid/${LBEId}`).subscribe({
+    this.subscription = this.http.getData(`LeaveBalance/getbyid/${LBEId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         const groupedData = data.reduce((acc: any, curr: any) => {
           if (acc[curr.leavePolicyId]) {
@@ -1225,23 +1254,19 @@ getTeamManagersDetails() {
       this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
-      if (this.enableHalfDayOptions === false) {
-        this.leaveForm.get('halfdayavailing')?.disable();
-        this.leaveForm.get('availing')?.disable();
-      }
       this.toggleFullDayOptions(false);
       if (this.dateDifference > 1) {
         this.leaveForm.get('halfdayavailing')?.disable();
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
         this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
+      } else {
+        // For single day, enable half day options
+        this.leaveForm.get('halfdayavailing')?.enable();
+        this.leaveForm.get('availing')?.enable();
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
       }
-      // else{
-      //   this.leaveForm.get('availing')?.enable();
-      // }
-      // if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
-      //   this.disableSubmitButton = false;
-      // }
       this.selectedValue = '2'
     }
   }
@@ -1272,8 +1297,8 @@ getTeamManagersDetails() {
 
   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    this.chooseDayType('half')
     if (isHalfDay) {
+      this.chooseDayType('half');
       // Default to 'firsthalf' if not already set
       const availingValue = this.leaveForm.get('availing')?.value;
       if (!availingValue) {
@@ -1310,6 +1335,7 @@ getTeamManagersDetails() {
       this.leaveFormData.status = "Waiting for Approval";
       this.leaveFormData.requestType = "TimeOff";
       this.leaveFormData.employeeId = empdata.employeeId;
+      this.leaveFormData.requestedBy   = empdata.employeeId;
       this.leaveFormData.durationType = this.selectedValue;
       this.leaveFormData.duration = this.dateDiff;
       this.leaveFormData.date = moment();
@@ -1317,88 +1343,136 @@ getTeamManagersDetails() {
       this.leaveFormData.startdate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.enddate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
-      if (this.empdata.probationEndDate) {
-        let currentDate = moment();
-        let probationEndDate = moment(this.empdata.probationEndDate);
-        let currentDateWithoutTime = currentDate.startOf('day');
-        let probationEndDateWithoutTime = probationEndDate.startOf('day');
-        if (currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)) {
-          let dateOfJoining = moment(this.empdata.dateOfJoining);
-          let startdate = moment(this.startDate);
-          let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
-          let months = 1;
-          months += Math.floor(probationDaysDiff / 30);
-        }
+      
+      if (this.selectedleave?.category?.enableSandwichPolicy) {
+        this.checkSandwichPolicy();
+        return;
       }
-      const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
-      // if (category) {
-      //   category.booked += this.leaveFormData.duration;
-      // }
-      if (category?.category.isOptionalHoliday) {
-        const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
-        if (this.mustUseOptLevs) {
-          if (isOptHoliday) {
-            if (this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
-              this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
-              return;
-            } else {
-              this.optLevsUsed += this.leaveFormData.duration;
-            }
-          }
+      
+      this.submitLeaveRequest();
+    } else {
+      this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
+    }
+  }
+
+  checkSandwichPolicy() {
+    const payload = {
+      employeeId: this.leaveFormData.employeeId,
+      categoryId: this.leaveFormData.categoryId,
+      startDate: this.leaveFormData.startdate,
+      endDate: this.leaveFormData.enddate,
+      durationType: this.leaveFormData.durationType,
+      isDaytype: this.leaveFormData.isDaytype,
+      duration: this.leaveFormData.duration
+    };
+
+    this.subscription = this.http.getDataIncludeParams('Timeoff/CalculateLeaveImpact', payload).subscribe({
+      next: (response: any) => {
+        if (response.isSandwichApplied) {
+          this.showSandwichConfirmation(response);
+        } else {
+          this.submitLeaveRequest();
         }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error?.message || 'Error calculating leave impact');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  showSandwichConfirmation(sandwichData: any) {
+    this.sandwichMessage = sandwichData?.errorMessage || '';
+    this.sandwichData = sandwichData;
+    this.modalService.open(this.sandwichModal, { centered: true, backdrop: 'static' }).result.catch(() => {
+      this.isLoading = false;
+    });
+  }
+
+  confirmSandwichPolicy(modal: any) {
+    modal.dismiss();
+    this.leaveFormData.duration = this.sandwichData.totalLeaveDays;
+    this.submitLeaveRequest();
+  }
+
+  submitLeaveRequest() {
+    this.isLoading = true;
+    if (this.empdata.probationEndDate) {
+      let currentDate = moment();
+      let probationEndDate = moment(this.empdata.probationEndDate);
+      let currentDateWithoutTime = currentDate.startOf('day');
+      let probationEndDateWithoutTime = probationEndDate.startOf('day');
+      if (currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)) {
+        let dateOfJoining = moment(this.empdata.dateOfJoining);
+        let startdate = moment(this.startDate);
+        let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
+        let months = 1;
+        months += Math.floor(probationDaysDiff / 30);
+      }
+    }
+    const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
+    
+    if (category?.category.isOptionalHoliday) {
+      const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
+      if (this.mustUseOptLevs) {
         if (isOptHoliday) {
-          if (this.optionalLeaveAllowedDays !== undefined) {
-            if (this.optLevsUsed <= this.optionalLeaveAllowedDays) {
-              if (this.selectedleave.category.name?.toLowerCase() === 'optional holiday') {
-                this.optLevsUsed++;
-              } else {
-                this.optLevsUsed--;
-              }
-            } else {
-              this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
-              return;
-            }
-          }
-        } else { }
-        let otherCategoriesUsed = 0;
-        this.lpdata.forEach((leave: any) => {
-          const leaveDate = moment(leave.startdate).format('YYYY-MM-DD');
-          const isOptionalHoliday = this.optionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(leaveDate));
-          if (isOptionalHoliday && leave.categoryName !== 'Optional Holiday') {
-            otherCategoriesUsed += leave.duration;
-          }
-        });
-        if (isOptHoliday && this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
-          if (otherCategoriesUsed + this.leaveFormData.duration > 1) {
+          if (this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
             this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
             return;
           } else {
-            otherCategoriesUsed += this.leaveFormData.duration;
+            this.optLevsUsed += this.leaveFormData.duration;
           }
         }
       }
-      this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.conformationPopup.openSuccessModal('Leave requested successfully');
-            setTimeout(() => {
-              this.modalService.dismissAll();
-              this.leaveForm.reset();
-              window.location.reload();
-            }, 2000);
-            this.isLoading = false;
+      if (isOptHoliday) {
+        if (this.optionalLeaveAllowedDays !== undefined) {
+          if (this.optLevsUsed <= this.optionalLeaveAllowedDays) {
+            if (this.selectedleave.category.name?.toLowerCase() === 'optional holiday') {
+              this.optLevsUsed++;
+            } else {
+              this.optLevsUsed--;
+            }
+          } else {
+            this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
+            return;
           }
-        },
-        error: (err: any) => {
-          this.conformationPopup.openErrorModal(err.error.message);
-          this.isLoading = true;
-          this.isLoading = false;
+        }
+      }
+      let otherCategoriesUsed = 0;
+      this.lpdata.forEach((leave: any) => {
+        const leaveDate = moment(leave.startdate).format('YYYY-MM-DD');
+        const isOptionalHoliday = this.optionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(leaveDate));
+        if (isOptionalHoliday && leave.categoryName !== 'Optional Holiday') {
+          otherCategoriesUsed += leave.duration;
         }
       });
+      if (isOptHoliday && this.selectedleave.category.name?.toLowerCase() !== 'optional holiday') {
+        if (otherCategoriesUsed + this.leaveFormData.duration > 1) {
+          this.conformationPopup.openErrorModal('You must use Optional Holiday category for optional holidays');
+          return;
+        } else {
+          otherCategoriesUsed += this.leaveFormData.duration;
+        }
+      }
     }
-    else {
-      this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
-    }
+    
+    this.subscription = this.http.postdata("Timeoff", this.leaveFormData).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.conformationPopup.openSuccessModal('Leave requested successfully');
+          setTimeout(() => {
+            this.modalService.dismissAll();
+            this.leaveForm.reset();
+            window.location.reload();
+          }, 2000);
+          this.isLoading = false;
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.message);
+        this.isLoading = false;
+      }
+    });
   }
 
   cleardata() {
@@ -1411,5 +1485,7 @@ getTeamManagersDetails() {
 
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

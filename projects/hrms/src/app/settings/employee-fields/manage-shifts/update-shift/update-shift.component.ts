@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-update-shift',
@@ -46,7 +47,7 @@ export class UpdateShiftComponent {
   initialPoliciesState: any;
   constructor(
     private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private http: HttpService,
-    private conformationPopup: OpenModalService, private modalService: NgbModal) { }
+    private conformationPopup: OpenModalService, private modalService: NgbModal, public formValidations: FormValidationsService) { }
     
 ngOnInit(): void {
   this.initializeForm();
@@ -107,6 +108,51 @@ ngOnInit(): void {
      this.initialPoliciesState = JSON.stringify(this.shifts.getRawValue());
     this.hideBUTTON = false;
   }
+restrictShiftCode(event: KeyboardEvent) {
+  const key = event.key;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  const allowed = /^[A-Za-z0-9_-]$/;
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
+restrictShiftName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  const allowed = /^[A-Za-z0-9 \-\/()]$/;
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
 
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {

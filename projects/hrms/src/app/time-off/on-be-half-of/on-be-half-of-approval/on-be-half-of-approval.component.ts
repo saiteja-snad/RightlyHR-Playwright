@@ -1,4 +1,4 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
@@ -7,7 +7,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
-import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -20,7 +20,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
   styleUrl: './on-be-half-of-approval.component.scss'
 })
 
-export class OnBeHalfOfApprovalComponent {
+export class OnBeHalfOfApprovalComponent implements OnInit, OnDestroy{
   loggedinuser = {} as any;
   cadidateEmployeeId!:number;
   subscription!: Subscription;
@@ -29,6 +29,7 @@ export class OnBeHalfOfApprovalComponent {
   first: any = 0;
   rows: any = 10;
   loading: boolean = false;
+  selectedSandwichItem: any = null;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -43,7 +44,7 @@ export class OnBeHalfOfApprovalComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private timeoffYearFilterService: TimeoffYearFilterService) {
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private timeoffYearFilterService: TimeoffYearFilterService, private modalService: NgbModal) {
     effect(() => {
       if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
@@ -86,5 +87,16 @@ export class OnBeHalfOfApprovalComponent {
         console.error("Error fetching data:", reason);
       }
     });
+  }
+
+  openSandwichBreakdown(item: any, modal: any) {
+    this.selectedSandwichItem = item;
+    this.modalService.open(modal, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

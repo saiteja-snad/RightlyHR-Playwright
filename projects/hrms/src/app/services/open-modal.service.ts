@@ -20,12 +20,12 @@ export class OpenModalService {
     }, 2000);
   }
 
-  openErrorModal(status: string){
+  openErrorModal(status: string, duration: number = 2500){
     const errorModal = this.modalService.open(ErrorContentPopupComponent,{centered:true , backdrop: 'static' });
     errorModal.componentInstance.status = status;
     setTimeout(() => {
       errorModal.dismiss();
-    }, 2500);
+    }, duration);
   }
 
   openLoaderModal(status: string){

@@ -62,9 +62,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     this.updatePoliciesData.orgPolicyItems.forEach((row: any) => {
       this.policies.push(
         this.fb.group({
-          policyName: [row.policyName, [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+          policyName: [row.policyName, [Validators.required, Validators.pattern(/^(?!\s)[A-Za-z0-9 _\-\/]+$/)]],
           policyFile: [row.policyAttachment],
-          policyDescription: [row.policyDescription, [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+          policyDescription: [row.policyDescription,[Validators.required, Validators.pattern(/^(?!\s)[A-Za-z0-9 .,:;?\-_\/&()%'"\n\r]+$/)]],
           policyNewFile: [''],
           acknowledged: [row.requiresAcknowledgment],
           notification: [row.sendEmailNotification],
@@ -82,7 +82,64 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     });
   }
 
+  // allowed characters A-Z a-z 0-9 space - _ /
+restrictPolicyName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
 
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed: A-Z a-z 0-9 space - _ /
+  const allowed = /^[A-Za-z0-9 _\-\/]$/;
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
+restrictPolicyDescription(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab' ||
+    key === 'Enter'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed description characters
+  const allowed =
+    /^[A-Za-z0-9 .,:;?\-_\/&()%'" ]$/;
+
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
   checkIfFormEdited() {
     const formValue = this.policyForm.value;
 

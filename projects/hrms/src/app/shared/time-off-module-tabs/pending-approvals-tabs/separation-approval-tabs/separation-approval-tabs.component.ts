@@ -105,6 +105,11 @@ export class SeparationApprovalTabsComponent {
     this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.nodue_Request_data = data;
+        // Update the count for No Due Clearances tab based on array length
+        const noDueLink = this.navLinks.find(link => link.label === 'No Due Clearances');
+        if (noDueLink) {
+          noDueLink.count = data?.length || 0;
+        }
       },
     });
   }

@@ -34,9 +34,6 @@ export const MY_INFO_DOCUMENTS_ROUTES = [
   { permission: 'My Info Documents Tab.create', route: '/myinfo/documents' }
 ];
 
-export const MY_INFO_TEAM_MEMBERS = [
-  { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' }
-];
 
 export const MY_INFO_ONBOARD_REQUEST = [
   { permission: 'My Info Onboard Request Tab.view', route: '/myinfo/onboarding-request' }
@@ -543,11 +540,24 @@ export const Employee_TEAM_NUMBERS = [
   { permission: 'Employee Info My Team Members Tab.view', route: '/personalinfo/job/team/my-team-members' },
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team/team-members' },
 ]
+export const MY_INFO_TEAM_MEMBERS = [
+  { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' }
+];
 
 export const MyINFO_TEAM_NUMBERS = [
   { permission: 'My Info My Team Members Tab.view', route: '/myinfo/job/team/my-team-members' },
   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team/team-members' },
 ]
+
+export const Employee_INFO_Separation_Request = [
+  { permission: 'Employee Info Separation Request Details.view', route: '/personalinfo/job/separation-details/separation-request' },
+  { permission: 'Employee Info Exit Feedback Details.view', route: '/personalinfo/job/separation-details/exit-feedback-details' },
+];
+
+export const MY_INFO_SEPARATION_REQUEST_ROUTES = [
+  { permission: 'My Info Separation Request Details.view', route: '/myinfo/job/separation-details/separation-requests' },
+  { permission: 'My Info Exit Feedback Details.view', route: '/myinfo/job/separation-details/exit-feedback-details' }
+];
 
 export const MY_INFO_APPROVALS_VIEW_HISTORY_ROUTES = [
   { permission: 'My Info Personal Approval History.view', route: 'myinfo/approvals/personal' },
@@ -566,7 +576,6 @@ export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Onboarding Details.view', route: '/personalinfo/job/onboarding-details' },
   { permission: 'Employee Info Offboarding Details.view', route: '/personalinfo/job/employmentType' },
   { permission: 'Employee Info Job Details.view', route: '/personalinfo/job/job-details' },
-  { permission: 'Employee Info Separation Request Details.view', route: '/personalinfo/job/separation-details' },
   { permission: 'Employee Info No Due Clearance Details.view', route: '/personalinfo/job/no-due-clearance-details' },
   { permission: 'Employee Info Probation Details.view', route: '/personalinfo/job/probation-details' },
   { permission: 'Employee Info Previous Experience Details.view', route: '/personalinfo/job/past-experiences' },

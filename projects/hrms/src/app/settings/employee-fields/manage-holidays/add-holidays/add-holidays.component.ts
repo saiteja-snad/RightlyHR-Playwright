@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-add-holidays',
   imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule],
@@ -30,7 +31,7 @@ export class AddHolidaysComponent {
   groupedLocationData: any[] = [];
   shiftDropdown: any[] = []; // To store the dynamically fetched shifts
   isDuplicateholidayName: boolean[] = [];
-  constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, public router: Router,    public formValidations: FormValidationsService, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
   ngOnInit(): void {
@@ -110,6 +111,34 @@ export class AddHolidaysComponent {
       isOptional: [false]
     });
   }
+restrictHolidayName(event: KeyboardEvent) {
+  const key = event.key;
+  const input = event.target as HTMLInputElement;
+
+  // Allow control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent leading space
+  if (key === ' ' && input.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allowed characters
+  const allowed = /^[A-Za-z0-9 .&'()\ -]$/;
+
+  if (!allowed.test(key)) {
+    event.preventDefault();
+  }
+}
 
   //add holiday button click method works
   addMomentRow() {

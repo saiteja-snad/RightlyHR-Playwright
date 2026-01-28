@@ -302,6 +302,13 @@ export const permissionsData = [
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Time Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary (Time Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (Time Off Leave Summary)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Time Off Leave Summary)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Leave Summary (Time Off) - Export', View: false, Update: false, Create: false, Delete: false },
+
+
+
   { fields: 'My Team (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (KRA KPI)', View: false, Update: false, Create: false, Delete: false },
 
@@ -677,6 +684,8 @@ export const permissionsData = [
   { fields: 'My Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info My Team Members Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'My Info Exit Feedback Details', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Personal Sub Tabs Section
   { fields: 'My Info Basic Information', View: false, Update: false, Create: false, Delete: false },
@@ -697,7 +706,6 @@ export const permissionsData = [
 
   // { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
@@ -764,6 +772,8 @@ export const permissionsData = [
   { fields: 'Employee Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Exit Feedback Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info ', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
@@ -804,6 +814,11 @@ export const permissionsData = [
   //Employee Info No Due Clearance Details
   { fields: 'Employee Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Re-request for no due', View: false, Update: false, Create: false, Delete: false },
+
+  //Employee Info Exit Feedback
+  { fields: 'Employee Info Exit Feedback Form', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'My Info Exit Feedback Submit', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Info Probation Details
   { fields: 'Employee Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },

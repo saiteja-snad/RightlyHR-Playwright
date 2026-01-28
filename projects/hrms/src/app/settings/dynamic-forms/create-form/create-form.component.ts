@@ -48,10 +48,12 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     { value: 'checkbox', label: 'Check Box' },
     { value: 'rating', label: 'Rating' },
   ];
-  sectionTypes = [
-    { value: 'normal', label: 'Normal' },
-    { value: 'rating', label: 'Rating' },
-  ];
+  allSectionTypes = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'rating', label: 'Rating' },
+];
+
+sectionTypes = [...this.allSectionTypes];
   empinfo = {} as IJob;
   Validators: any;
   ratingScaleTypes!: IRatingScale[];
@@ -127,13 +129,49 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       this.createForm.get('cutOffRating')?.clearValidators();
       this.createForm.get('overAllRating')?.reset();
       this.createForm.get('cutOffRating')?.reset();
-    } else if (module?.id === 20) {
+      this.sectionTypes = [...this.allSectionTypes];
+    } 
+    else if (module?.id === 20) {
       this.createForm.get('cutOffRating')?.setValidators([Validators.required]);
       this.createForm.get('overAllRating')?.setValidators([Validators.required]);
+      this.sectionTypes = [...this.allSectionTypes];
+    }
+    else if (module?.id === 33) {
+      this.sectionTypes = this.allSectionTypes.filter(x => x.value === 'normal');
+      this.clearModule33Validators();
     }
     // Update form validity
     this.createForm.get('overAllRating')?.updateValueAndValidity();
     this.createForm.get('cutOffRating')?.updateValueAndValidity();
+  }
+
+  private clearModule33Validators(): void {
+    // Clear root-level validators
+    this.createForm.get('overAllRating')?.clearValidators();
+    this.createForm.get('cutOffRating')?.clearValidators();
+    this.createForm.get('ratingScaleRange')?.clearValidators();
+    this.createForm.get('overAllRating')?.reset();
+    this.createForm.get('cutOffRating')?.reset();
+    this.createForm.get('ratingScaleRange')?.reset();
+
+    const sections = this.createForm.get('sections') as FormArray;
+    sections.controls.forEach(section => {
+      section.get('type')?.setValue('normal');
+      section.get('weightage')?.clearValidators();
+      section.get('weightage')?.reset();
+      section.get('ratingScaleType')?.clearValidators();
+      section.get('ratingScaleType')?.reset();
+
+      const questions = section.get('questions') as FormArray;
+      questions.controls.forEach(question => {
+        question.get('questionWeightage')?.clearValidators();
+        question.get('questionWeightage')?.reset();
+        question.get('questionWeightage')?.updateValueAndValidity();
+      });
+      
+      section.get('weightage')?.updateValueAndValidity();
+      section.get('ratingScaleType')?.updateValueAndValidity();
+    });
   }
 
   disableKeyboard(event: KeyboardEvent): void {
@@ -304,13 +342,16 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
 
   createSection(): FormGroup {
+    const isModule33 = this.createForm?.get('moduleId')?.value?.id === 33;
+    const weightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+    
     return this.fb.group({
       sectionName: ['', [Validators.required, Validators.maxLength(255), this.formNameValidator()]],
-      type: ['', Validators.required],
+      type: [isModule33 ? 'normal' : '', Validators.required],
       order: [0],
       ratingScaleType: [null],
-      weightage: [null, [Validators.required, Validators.min(1)]],
-      questions: this.fb.array([this.createQuestion('')]), // Pass an empty string initially
+      weightage: [null, weightageValidators],
+      questions: this.fb.array([this.createQuestion('')]),
     });
   }
 
@@ -330,16 +371,16 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
 
   createQuestion(sectionType: string): FormGroup {
-    // Update to get the current section type from the parent form
-    const typeValidators =
-      sectionType === 'normal' ? [Validators.required] : [];
-    const isRatingSection = sectionType === 'rating';
+    const isModule33 = this.createForm?.get('moduleId')?.value?.id === 33;
+    const typeValidators = sectionType === 'normal' ? [Validators.required] : [];
+    const weightageValidators = isModule33 ? [] : [Validators.required, Validators.min(1)];
+    
     return this.fb.group({
       type: ['', typeValidators],
       question: ['', [Validators.required, Validators.maxLength(1000)]],
       order: [0],
       isRequired: [false],
-      questionWeightage: [null, [Validators.required, Validators.min(1)]],
+      questionWeightage: [null, weightageValidators],
       options: this.fb.array([]),
     });
   }
@@ -374,9 +415,30 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   addSection() {
     const newSection = this.createSection();
-    newSection.patchValue({ order: this.sections.length }); // Set the order dynamically
+    newSection.patchValue({ order: this.sections.length });
     this.sections.push(newSection);
-    this.updateSectionOrders(); // Update order for all sections
+    
+    // Apply module 33 validators if needed
+    if (this.createForm?.get('moduleId')?.value?.id === 33) {
+      this.applyModule33ValidatorsToSection(newSection);
+    }
+    
+    this.updateSectionOrders();
+  }
+
+  private applyModule33ValidatorsToSection(section: FormGroup): void {
+    section.get('type')?.setValue('normal');
+    section.get('weightage')?.clearValidators();
+    section.get('ratingScaleType')?.clearValidators();
+    
+    const questions = section.get('questions') as FormArray;
+    questions.controls.forEach(question => {
+      question.get('questionWeightage')?.clearValidators();
+      question.get('questionWeightage')?.updateValueAndValidity();
+    });
+    
+    section.get('weightage')?.updateValueAndValidity();
+    section.get('ratingScaleType')?.updateValueAndValidity();
   }
 
   removeSection(index: number) {
@@ -406,13 +468,19 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
 
   addQuestion(sectionIndex: number) {
-    const newQuestion = this.createQuestion(
-      this.sections.at(sectionIndex).get('type')?.value
-    );
+    const sectionType = this.sections.at(sectionIndex).get('type')?.value;
+    const newQuestion = this.createQuestion(sectionType);
     const questions = this.getQuestions(sectionIndex);
-    newQuestion.patchValue({ order: questions.length }); // Set the question order dynamically
+    newQuestion.patchValue({ order: questions.length });
+    
+    // Apply module 33 validators if needed
+    if (this.createForm?.get('moduleId')?.value?.id === 33) {
+      newQuestion.get('questionWeightage')?.clearValidators();
+      newQuestion.get('questionWeightage')?.updateValueAndValidity();
+    }
+    
     questions.push(newQuestion);
-    this.updateQuestionOrders(sectionIndex); // Update order for all questions in the section
+    this.updateQuestionOrders(sectionIndex);
   }
 
   removeQuestion(sectionIndex: number, questionIndex: number) {
@@ -547,6 +615,8 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   }
 
   convertOptionsArray(sections: any[]): any[] {
+    const isModule33 = this.createForm.get('moduleId')?.value?.id === 33;
+    
     return sections.map((section) => ({
       sectionName: section.sectionName,
       sectionType: section.type,
@@ -556,7 +626,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       updatedBy: this.dynamicForm.employeeId,
       ratingType: section.ratingScaleType,
       questions: section.questions.map((question: any) => {
-        // Explicitly typing the options as an array of objects
         const baseQuestion: {
           type: string;
           question: string;
@@ -575,39 +644,34 @@ export class CreateFormComponent implements OnInit, OnDestroy {
             meta: string;
           }[];
         } = {
-          type:
-            section.type === 'rating' ? section.ratingScaleType : question.type,
+          type: section.type === 'rating' ? section.ratingScaleType : question.type,
           question: question.question,
           required: question.isRequired,
           order: question.order,
           status: this.isDraftType ? 'draft' : 'active',
-          questionWeightage: question.questionWeightage,
+          questionWeightage: isModule33 ? 0 : (question.questionWeightage || 0),
           createdBy: this.dynamicForm.employeeId,
           updatedBy: this.dynamicForm.employeeId,
           options: [],
         };
-        // Handling rating scale type questions
+        
         if (section.type === 'rating') {
-          // Add rating scale options to the question if it's a rating type
-          const ratingScaleOptions = this.getRatingScaleOptions(
-            section.ratingScaleType
-          );
+          const ratingScaleOptions = this.getRatingScaleOptions(section.ratingScaleType);
           if (ratingScaleOptions) {
             baseQuestion.options = ratingScaleOptions.map((scale) => ({
               option: scale.description,
               isDefault: false,
-              optionWeightage: scale.scale.toString(), // Assign option weightage if needed
+              optionWeightage: scale.scale.toString(),
               createdBy: this.dynamicForm.employeeId,
               updatedBy: this.dynamicForm.employeeId,
               meta: '',
             }));
           }
         } else {
-          // For non-rating type questions, handle other option types
           baseQuestion.options = question.options.map((option: any) => ({
             option: option.option,
             isDefault: false,
-            optionWeightage: '0', // Default handling of optionWeightage
+            optionWeightage: '0',
             createdBy: this.dynamicForm.employeeId,
             updatedBy: this.dynamicForm.employeeId,
             meta: '',
@@ -617,7 +681,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       }),
       sectionItems: [
         {
-          weightage: section.weightage,
+          weightage: isModule33 ? 0 : (section.weightage || 0),
           status: this.isDraftType ? 'draft' : 'active',
           createdBy: this.dynamicForm.employeeId,
           updatedBy: this.dynamicForm.employeeId,

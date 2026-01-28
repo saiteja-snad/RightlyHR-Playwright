@@ -35,7 +35,16 @@ export default [
       { path: 'compensation-details', loadComponent: () => import('./job/compensation/compensation.component').then((m) => m.CompensationComponent), data: { permission: 'Employee Info Compensation Details.view' } },
       { path: 'no-due-clearance-details', loadComponent: () => import('./job/no-due-clearance/no-due-clearance.component').then((m) => m.NoDueClearanceComponent), data: { permission: 'Employee Info No Due Clearance Details.view' } },
       { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), data: { permission: 'Employee Info Probation Details.view' } },
-      { path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
+      //{ path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
+      {
+        path: 'separation-details', children: [
+          { path: '', redirectTo: 'separation-requests', pathMatch: 'full' },
+          { path: 'separation-requests', loadComponent: () => import('./job/separation-request/separation-request.component').then(m => m.SeparationRequestComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
+          { path: 'exit-feedback-details', loadComponent: () => import('./job/separation-request/employee-exit-feedback/employee-exit-feedback.component').then(m => m.EmployeeExitFeedbackComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
+        
+        ]
+      },
+      { path: 'separation-request/exit-feedback-form', loadComponent: () => import('./job/separation-request/exit-feedback-form/exit-feedback-form.component').then(m => m.ExitFeedbackFormComponent), data: { permission: 'Employee Info Separation Request Details.view' } },
       { path: 'employee-off-boarding', loadComponent: () => import('./job/employe-off-boarding/employe-off-boarding.component').then((m) => m.EmployeOffBoardingComponent), data: { permission: 'Employee Info Offboarding Details.view' } },
       { path: 'trainee-onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent), data: { permission: 'Employee Info Onboarding Request Details.view' } },
 

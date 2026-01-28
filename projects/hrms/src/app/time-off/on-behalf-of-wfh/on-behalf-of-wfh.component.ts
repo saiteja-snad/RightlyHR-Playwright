@@ -231,6 +231,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
         requestedCategory: environment.wfhModuleId,
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
+        raisedType : 'OnBehalfOf'
       };
       this.spinnerLoader = true;
       this.http.postdata('AttendanceRequests/postWFHRequest', payload).pipe(takeUntil(this.destroy$)).subscribe({

@@ -183,21 +183,10 @@ export default [
     { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
     { path: 'kra-kpi', component: KraKpiApprovalsComponent, data: { permission: 'KRA KPI approval Tab.view' } },
     {
-        path: 'employeeinfo-request',
-        component: EmployeeinfoRequestComponent,
+        path: 'employeeinfo-request', component: EmployeeinfoRequestComponent,
         children: [
-          {
-            path: 'for-you',
-            component: EmployeeinfoForYouRequestComponent,
-           data: { permission: 'For You (Employee Info).view' },
-          },
-          {
-            path: 'for-your-role',
-            component: EmployeeinfoForYourRoleRequestComponent,
-            data: { permission: 'For Role (Employee Info).view' },
-          },
-
-          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+            { path: 'for-you', component: EmployeeinfoForYouRequestComponent, data: { permission: 'For You Employee Info.view' } },
+            { path: 'for-your-role', component: EmployeeinfoForYourRoleRequestComponent, data: { permission: 'For Role Employee Info.view' } },
         ],
-      },
+    },
 ] as Route[];

@@ -82,6 +82,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     });
   }
 
+  
 
 restrictPolicyNamedescription(event: KeyboardEvent) {
   const key = event.key;

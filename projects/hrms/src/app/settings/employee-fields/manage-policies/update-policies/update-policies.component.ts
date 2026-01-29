@@ -162,6 +162,7 @@ restrictPolicyNamedescription(event: KeyboardEvent) {
     }
   }
 
+  
   acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
     const acknowledged = group.get('acknowledged')?.value;
     const notification = group.get('notification')?.value;

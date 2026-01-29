@@ -71,8 +71,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       }
     );
   }
-
-
+  
 restrictPolicyNamedescription(event: KeyboardEvent) {
   const key = event.key;
   const input = event.target as HTMLInputElement;

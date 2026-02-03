@@ -178,7 +178,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       note: Values.note,
       rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
       documentType: Values.documentType,
-      letterType: Values.letterType,
+      letterType: 'Contract Offer Letter',
       currencyType: Values.currencyType,
       
     };
@@ -246,7 +246,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       note: Values.note,
       rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
       documentType: Values.documentType,
-      letterType: Values.letterType,
+      letterType: 'Contract Offer Letter',
       currencyType: Values.currencyType
     };
     console.log(updateOfferLetterDetails);
@@ -372,7 +372,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
       rolesAndResponsibilitesId:
         this.selectedValuesOfOffer.rolesAndResponsibilitesId,
       documentType: this.selectedValuesOfOffer.documentType,
-      letterType: this.selectedValuesOfOffer.letterType,
+      letterType: 'Contract Offer Letter',
       currencyType: this.selectedValuesOfOffer.currencyType
     };
     console.log(updateOfferLetterDetails);

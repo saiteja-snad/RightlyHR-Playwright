@@ -111,8 +111,7 @@ export class SalaryRevisionLetterComponent implements OnInit, OnDestroy {
       dateofAppraisal: ['', Validators.required],
       Documenttype: [null, Validators.required],
       authorityid: [null, Validators.required],
-      jobValid: [false, Validators.requiredTrue],
-      SelectDropDown: [null, Validators.required],
+      jobValid: [false, Validators.requiredTrue]
     });
   }
   onclickSelectAddress(Value: any) {

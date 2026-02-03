@@ -33,9 +33,7 @@
                     <div *ngIf="employeeForm.get('dateofAppraisal')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')">{{'Date is required'|
                             translate }}</div>
-                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end
-                            date'|
-                            translate }}</div>
+                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end date'|translate }}</div>
                     </div>
                 </div>
 
@@ -117,6 +115,12 @@
                     <div class="letter-page-content my-4" id="pdfContent1"
                         [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
                         <div class="letter-page-sub-content">
+                             <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
+                             <app-lettersheader></app-lettersheader>
+                            </div>
+                             <ng-template #doc>
+                              <div class="hard-copy-letter"></div>
+                             </ng-template>
 
                             <div class="letter-header text-center">Salary Revision Letter</div>
                             <div class="text-end my-3"><span class="letter-sub-header">Date: </span>

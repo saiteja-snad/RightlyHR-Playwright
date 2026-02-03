@@ -123,7 +123,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.isloading = false;
-          this.allOfferLetters = data;
+          this.allOfferLetters = data.filter((x: any) => x.empType !== 'Contract');
           this.filterByMonth(); // Filter immediately if month is selected
         },
         error: (reason: any) => {

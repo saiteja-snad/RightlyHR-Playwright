@@ -204,31 +204,24 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   // }
   selectedEmployeeSalary: number = 0; // Add this at class level
 
-  Onclick(fusionemployeeId: any) {
+    Onclick(fusionemployeeId: any) {
     this.fusionEmpId = fusionemployeeId;
     this.appraisalData = this.employeeiddetails.find(
-      (c: any) => c.employeeId == fusionemployeeId
+      (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
     );
-
     this.disablebuttonforemployeeid = true;
     this.getCompensationById(this.appraisalData);
     this.getJobdetails(this.appraisalData);
-
-    if (this.appraisalData?.salary) {
+     if (this.appraisalData?.salary) {
       this.selectedEmployeeSalary = this.appraisalData.salary;
-
-      // 👉 Set validator dynamically based on current salary
-      // const bonusControl = this.employeeForm.get('bonus');
-      // bonusControl?.setValidators([
-      //   Validators.required,
-      //   this.bonusValidator(this.selectedEmployeeSalary)
-      // ]);
-      // bonusControl?.updateValueAndValidity();
     }
-
-    this.gender = this.appraisalData.gender === 'Male' ? 'Mr.' : 'Ms.';
+    if (this.appraisalData.gender == 'Male') {
+      return (this.gender = 'Mr.');
+    } else {
+      return (this.gender = 'Ms.');
+    }
+      
   }
-
   bonusValidator = (salary: number): ValidatorFn => {
     return (control: AbstractControl): ValidationErrors | null => {
       if (control.value != null && salary != null && control.value > salary) {
@@ -944,6 +937,9 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    // if (this.formValueSub) {
+    //   this.formValueSub.unsubscribe();
+    // }
   }
 
   checkaccess(rba: string): boolean {
@@ -1111,13 +1107,13 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
       dateofAppraisal: ['', Validators.required],
       reviewdate: [{ value: '', disabled: true }, Validators.required],
       JobRole: [''],
-      Documenttype: [null, Validators.required],
+       Documenttype: [null, Validators.required],
       note: [''],
       authorityid: [null, Validators.required],
       isPromotion: [false, Validators.required],
-      isVariablePay: [{ value: '', disabled: true }, Validators.required],
-      variablePayAmount: [{ value: '', disabled: true }, Validators.required],
-      jobValid: [false, Validators.requiredTrue]
+     isVariablePay: [{ value: '' }, Validators.required],
+      variablePayAmount: [{ value: '' }, Validators.required],
+      bonus: ['']
     })
   }
 }

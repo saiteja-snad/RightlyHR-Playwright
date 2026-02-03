@@ -6,15 +6,17 @@
     <div class="component-data-content">
         <div class="component-header mb-3">Offer Letter</div>
         <div class="card custom-main-sub-content p-4">
-            <div class="letter-data-content p-5">
+            <div class="letter-data-content p-4">
                 <div class="d-flex justify-content-center">
                     <div>
-                        <div class="letter-page-content my-4" id="pdfContent1">
+                        <div class="letter-page-content" id="pdfContent1">
                             <div class="letter-page-sub-content">
                                 <br />
-                               
-                                <div class="text-center mt-5 mb-4">
-                                    <p class="letter-header text-center mb-0"><b>OFFER LETTER</b></p>
+                                <div class="d-flex justify-content-end">
+                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                </div>
+                                <div class="w-100 mt-5 mb-4">
+                                    <p class="letter-header text-center mb-0">OFFER LETTER</p>
                                 </div>
                                 <div class="letter-div">
                                     <div class="row">
@@ -53,55 +55,19 @@
                                     <ol class="liststylenumber">
                                         <li class="mb-3">
                                             <b>Start Date and Duration: </b>Your internship will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> and is
-                                            expected to complete on <u> <b>{{traineeEmpData.trainingEndDate | dateformat}}</b></u>
-                                            lasting for a period of <b>{{ getTrainingDurationInMonths(traineeEmpData.dateOfJoining, traineeEmpData.trainingEndDate) }} Months</b>.
+                                            expected to complete on <u> <b>{{traineeEmpData.endDate | dateformat}}</b></u>
+                                            lasting for a period of <b>{{traineeEmpData.internshipperiod | number:'1.0-0'}} Months</b>.
                                         </li>
                                         <li class="mb-3"><b>Working Hours and Location:
                                             </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at
-                                            SNAD Developers India Pvt Ltd, {{traineeEmpData?.address}}. Occasionally, you may be required to work
+                                            RightlyHR, Floor#16, Vijay Krishna Towers, Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be required to work
                                             additional hours or remotely, depending on the nature of the projects and business requirements.
                                         </li>
                                         <li class="mb-3"><b>Reporting Manager: </b>You will be reporting to <u>{{traineeEmpData.reportingmanagerName }}</u></li>
                                         <li class="mb-3">
-                                            <b>Stipend/Salary and Benefits: </b>
-                                                  <ul class="bullet mt-2">
-                                            <ng-container *ngIf="stipendApplicablecheck===true">
-                                                 <li class="mb-1"><b> Stipend:</b>As per company policy, you will be entitled to
-                                                    receive a monthly
-                                                    stipend of INR <b>  {{stipendAmountmonthly}} </b> for the duration of your internship.
-                                                </li>
-                                                  <li class="mb-1"><b>Full-Time Employment:</b>
-                                                    Upon successful completion of your internship and subject to
-                                                    satisfactory performance, you may be considered for full-time
-                                                    employment with SNAD. The terms and conditions of full-time
-                                                    employment, including compensation and benefits, will be
-                                                    communicated at the time of confirmation.
-
-                                                </li>
-                                            </ng-container>
-                                            <ng-container *ngIf="stipendApplicablecheck===false">
-                                                <li class="mb-1"><b>Internship Period (First 3 Months):</b>
-                                                    This will be an unpaid internship, and you will
-                                                    not be eligible for any stipend/salary during this period.
-
-                                                </li>
-                                                <li class="mb-1">
-                                                    <b> Stipend (Next 3 Months):</b>
-                                                    Upon successful completion of the first 3 months, you will
-                                                    receive a stipend of <b>INR
-                                                        {{stipendAmountmonthly }} per month
-                                                    </b> for the next 3 months.
-                                                </li>
-                                                <li class="mb-1">
-                                                    <b>Full-Time Employment:</b>
-                                                    After completion 6 months from the date of joining, based
-                                                    on satisfactory performance, you will be appointed as a full-time
-                                                    employee of SNAD
-                                                    with a <b> CTC of <b>{{traineeEmpData?.salary}}</b>  per
-                                                        annum </b>
-                                                </li>
-                                            </ng-container>
-                                        </ul>
+                                            <b>Stipend/Salary and Benefits: </b>During the internship period,
+                                            you’re eligible to receive Rs.10,000/- per month as a stipend/salary. After successful completion of
+                                            the internship period, you will be appointed as an employee of RightlyHR with a CTC of <b>{{traineeEmpData.salary}}</b> per annum.
                                         </li>
                                         <li class="mb-3">
                                             <b>Responsibilities: </b>Your primary responsibilities will be
@@ -125,31 +91,34 @@
                                     </ol>
                                 </div>
                             </div>
-                           
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
                         </div>
 
                         <div class="letter-page-content my-4" id="pdfContent2">
                             <div class="letter-page-sub-content">
-                              
-                                <div class="pt-4">
+                                <div class="d-flex justify-content-end mb-4">
+                                    <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                </div>
+                                <div class="pt-2">
                                     <div *ngIf="true">
                                         <!-- <app-letterhead></app-letterhead> -->
                                     </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 7rem;"></div>
                                     </ng-template>
-                                    <div >
+                                    <div class="p-3">
                                         <p *ngIf="(traineeEmpData.note)"><b>Note:</b> {{traineeEmpData.note}} </p>
                                         <p>Please confirm your acceptance of this offer by signing and returning a scanned copy of this letter within 1 day to 
-                                            <a href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
-                                            target="_blank" rel="noopener noreferrer">
-                                            <u>hr&#64;snaddevelopers.com</u></a></p>
-                                        <p class="mb-4">We are excited about the possibility of you joining our team and look forward to a productive and successful internship.</p>
-                                        <p> Your Sincerely,</p>
-                                        <p><b>For SNAD Developers India Pvt Ltd</b></p>
+                                            <u><b>hr&#64;RightlyHR.com</b></u></p>
+                                        <p>We are excited about the possibility of you joining our team and look forward to a productive and successful internship.</p>
+                                        <p>Sincerely,</p>
+                                        <p><b>For RightlyHR</b></p>
                                     </div>
 
-                                    <div >
+                                    <div class="p-3">
                                         <p class="m-0 authority-signature">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
                                         <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
@@ -157,20 +126,23 @@
                                         <br>
                                         <hr>
                                         <br>
-                                        <p class="mb-3">
+                                        <p>
                                             I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</b></u>, 
                                             acknowledge that I have read and understood the terms of this Internship Offer, and I accept the offer as outlined above.
                                         </p>
                                     </div>
-                                    <div >
-                                        <p class="mb-2">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
+                                    <div class="p-3">
+                                        <p class=" mb-3 mt-4">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
                                            <span class="authority-signature">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</span> </span>
                                             <ng-template #signaturename1>_________________________</ng-template></p>
-                                        <p class="mb-2">Date: {{currentDate|dateformat}}</p>
+                                        <p class="mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
                                     </div>
                                 </div>
                             </div>
-                           
+                            <div class="letter-footer text-center">
+                                <p class="company-name">RightlyHR</p>
+                                <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032</p>
+                            </div>
                         </div>
                         <p class="error-msg text-center">Note: This acknowledgment is system-generated</p>
                     </div>
@@ -257,7 +229,7 @@
             </div>
             <div class="d-flex gap-5 w-100">
                 <button class="custom-btn btn-secondary w-50" (click)="closeModal()">Close</button>
-                <button class="custom-btn btn-primary w-50" [disabled]="loadingcircle" (click)="acceptoffer()">Yes</button>
+                <button class="custom-btn btn-primary w-50" (click)="acceptoffer()">Yes</button>
             </div>
         </div>
     </div>

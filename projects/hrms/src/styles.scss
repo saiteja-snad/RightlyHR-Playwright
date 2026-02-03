@@ -1217,6 +1217,7 @@ select:focus {
 
 // My Info Stylings Ends
 
+
 // letter main content
 .main-letter-content {
     display: flex;
@@ -1243,7 +1244,6 @@ select:focus {
         padding: 1.125rem;
         text-align: justify;
 
-
         .letter-sub-data-content {
             display: flex;
             justify-content: center;
@@ -1255,23 +1255,22 @@ select:focus {
             height: 380mm;
             width: 270mm;
             position: relative;
-            // background-image: url('/images/snad-footer.png');
-            background-size: 103% 102.5%;
+            background-image: url('/images/water-mark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
             overflow: hidden;
 
             .letter-page-sub-content {
-                padding: 20px 110px;
-                font-size: 16px;
+                padding: 1.5rem 5rem;
+                font-size: var(--fontsize16) !important;
                 color: #000000;
-                line-height: 18px;
-                text-align: justify;
             }
 
             .letter-footer {
                 width: 270mm;
+                background-color: #0B3A83;
+                color: #fff;
                 position: absolute;
                 bottom: 0px;
                 padding: 0.625rem;
@@ -1296,6 +1295,10 @@ select:focus {
         background-color: var(--input-bg-color) !important;
     }
 
+    p {
+        margin-bottom: 0.5rem !important;
+    }
+
     .border-box {
         border: 1px solid #000;
     }
@@ -1316,39 +1319,28 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
-        padding: 0.5rem 0.625rem;
+    th, td {
+        padding: 0.25rem 0.625rem;
         text-align: center;
-        color: #000;
-        font-size: var(--fontsize16) !important;
+        font-size: var(--fontsize14) !important;
     }
 
     th {
         font-weight: bold;
     }
 
-    tr:nth-child(4) {
+    tr:nth-child(4), tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
-    tr:nth-child(9) {
+    tr:nth-child(8) {
         background: #fff2cc;
-    }
-
-    .secondtable {
-        tr:nth-child(4) {
-            background: #FFFFFF;
-        }
     }
 }
 
@@ -1357,8 +1349,7 @@ select:focus {
 }
 
 .soft-copy-letter {
-    background-image: url('/images/snad-new-letter-bg.png') !important;
-    padding-top: 12.5rem !important;
+    margin-bottom: 2rem;
 }
 
 .list-style-none {
@@ -1371,21 +1362,20 @@ select:focus {
 
 .box {
     display: inline-block;
-    width: 24px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     border: 1px solid black;
     margin-right: 8px;
 }
 
 .letter-header {
     font-weight: 600;
-    font-size: var(--fontsize18);
+    font-size: var(--fontsize20);
 }
 
 .letter-sub-header {
     font-size: var(--fontsize16) !important;
-    font-weight: 700;
-    color: #000;
+    font-weight: 600;
 }
 
 .boldnone {
@@ -1393,9 +1383,12 @@ select:focus {
 }
 
 .letter-signature {
-    font-size: xx-large !important;
+    font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+// letter stylings
+
+// letter stylings
 
 // letter stylings
 .authorized-signatory {

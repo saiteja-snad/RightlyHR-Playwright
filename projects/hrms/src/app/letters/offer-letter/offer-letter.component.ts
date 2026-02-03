@@ -17,9 +17,12 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, ConfirmationIconComponent, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })

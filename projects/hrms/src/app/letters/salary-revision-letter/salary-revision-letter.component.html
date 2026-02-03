@@ -21,23 +21,7 @@
                         <p>{{'No results found'| translate }}</p>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="addressdata" optionValue="value" optionLabel="name"
-                            placeholder="Please select address" formControlName="SelectDropDown"
-                            (onChange)="onclickSelectAddress($event)" class="form-select custom-select"
-                            resetFilterOnHide="true">
-                            <option di [ngValue]="undefined">Select Address</option>
-                            <option value="c">Current Address</option>
-                            <option value="p">Permanent Address</option>
-                        </p-select>
-                    </div>
-                    <div
-                        *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
-                        <div class="error-msg">Address is required</div>
-                    </div>
-                </div>
+
                 <!-- Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Issued Date'| translate }} <span
@@ -49,7 +33,9 @@
                     <div *ngIf="employeeForm.get('dateofAppraisal')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')">{{'Date is required'|
                             translate }}</div>
-                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end date'|translate }}</div>
+                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end
+                            date'|
+                            translate }}</div>
                     </div>
                 </div>
 
@@ -132,42 +118,35 @@
                         [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
                         <div class="letter-page-sub-content">
 
-                            <div class="letter-header text-center text-decoration-underline">Salary Revision Letter
-                            </div>
+                            <div class="letter-header text-center">Salary Revision Letter</div>
                             <div class="text-end my-3"><span class="letter-sub-header">Date: </span>
                                 {{appraisalData.dateofAppraisal| dateformat}}
                             </div>
-                            @if(gender || appraisalData.firstName){
-                            <br>
-                            {{gender}} {{appraisalData.firstName}}
-                            {{appraisalData.middleName}} {{appraisalData.lastName}},
-                            }
-
-                            @if(employeeForm.get('SelectDropDown')?.value && appraisalData.addressLine1){
-                            <br>Address
-                            <br>
-                            {{appraisalData.addressLine1}}
-                            <br>{{appraisalData.addressLine2}}
-                            <br>{{appraisalData.city}}
-                            <br>{{appraisalData.state}} - {{appraisalData.zipCode}}.
-                            }
-                            <br>
-                            <p class="mt-3" *ngIf="gender || appraisalData.firstName">Dear {{gender}}
-                                {{appraisalData.firstName}}
+                            <p class="letter-sub-header">{{appraisalData.firstName}} {{appraisalData.middleName}}
+                                {{appraisalData.lastName}}
+                            </p>
+                            <p *ngIf="appraisalData.addressLine1">
+                                <b>{{appraisalData.addressLine1}}
+                                    <br>{{appraisalData.addressLine2}}
+                                    <br>{{appraisalData.city}}
+                                    <br>{{appraisalData.state}}</b>
+                            </p>
+                            <p class="letter-sub-header">Dear {{gender}} {{appraisalData.firstName}}
                                 {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
-                            <p class="mb-4">Management has truly recognized your potential for growth with the company
-                                and thus has given you a salary revision with great expectations.
-                                We would like you to take it as a challenge and prove your mettle.</p>
-                            <p class="mb-4">Keeping in view the above, Management has decided to revise your CTC to
-                                Rs.{{ (employeeCompensationDetails?.compensationamount || 0) +
-                                (appraisalData?.variablePayAmount || 0) }}/- w.e.f.
-                                This revision will be effective from <u>{{employeeCompensationDetails.compeffectivedate
-                                    | dateformat}}</u>.
-                                <!-- This will be in addition to your existing CTC, thereby increasing your CTC from Rs
+                            <p class="mb-4">Management has truly recognized your potential for growth with
+                                the
+                                company and thus has given you a good increment with great expectations. We would
+                                like
+                                you to take it as a challenge and prove your mettle. </p>
+                            <p class="mb-4">Keeping in view the above, Management has also decided to give
+                                you
+                                a revision of Rs. {{incrementSalary}}/- w.e.f.
+                                <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
+                                This will be in addition to your existing CTC, thereby increasing your CTC from Rs
                                 <span *ngIf="previusSalary?.compensationamount"></span>
                                 {{previusSalary?.compensationamount}}/- to current CTC of Rs
-                                {{appraisalData.salary}} /- -->
+                                {{appraisalData.salary}} /-
                             </p>
 
                             <p class="mb-4">We are confident that you will put in your best efforts in
@@ -182,24 +161,12 @@
                                 remain
                                 unchanged. </p>
                             <p class="mb-3">Yours sincerely, </p>
-                            <p class="letter-sub-header mb-5">For SNAD DEVELOPERS INDIA PVT LTD</p>
+                            <p class="letter-sub-header mb-5">For RightlyHR</p>
                             <div class="mb-3"></div>
-                            <div class="d-flex justify-content-between">
-                                <div class="w-50">
-                                    <p class="letter-signature">{{appraisalData.authorityName}}</p>
-                                    <p class="authorized-signatory mb-1">Authorized Signatory,</p>
-                                    <p class="authorized-signatory mb-1">{{appraisalData.authorityName}}</p>
-                                    <p class="authorized-signatory mb-0">{{authorityDesignation}}</p>
-                                </div>
-                                <div class="w-50">
-                                    <p><b> Employee Name:</b> {{appraisalData.firstName}}
-                                        {{appraisalData.middleName}} {{appraisalData.lastName}}
-                                    </p>
-                                    <p><b>Employee Signature:</b></p>
-                                    <p><b>Date : </b></p>
-                                </div>
-                            </div>
-
+                            <p class="letter-signature">{{appraisalData.authorityName}}</p>
+                            <p class="authorized-signatory mb-1">Authorized Signatory,</p>
+                            <p class="authorized-signatory mb-1">{{appraisalData.authorityName}}</p>
+                            <p class="authorized-signatory mb-0">{{authorityDesignation}}</p>
                         </div>
                         <!-- <div class="letter-footer">
                             <app-letter-footer />
@@ -208,30 +175,22 @@
 
                     <div class="letter-page-content my-4" id="pdfContent2"
                         [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
-                        <div class="letter-page-sub-content py-0">
-                            <!-- <div class="letter-header text-center mb-3">CONFIDENTIAL</div> -->
-                            <div class="letter-header text-center mb-3">Annexure – A</div>
-                            <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
-                            <div class="row">
-                                <div class="p-1 border-box col-md-2 name">NAME</div>
-                                <div class="p-1 border-box col-md-4 text-wrap"><b>{{appraisalData.firstName}}
-                                        {{appraisalData.middleName}} {{appraisalData.lastName}}</b></div>
-                                <div class="p-1 border-box col-md-2 name">Designation</div>
-                                <div class="p-1 border-box col-md-4"><b> {{appraisalData.jobRole}}</b></div>
-                            </div>
-                            <p class="text-center letter-sub-header my-3">Compensation Details <span
-                                    class="boldnone">(All figures in Rs.)</span></p>
+                        <div class="letter-page-sub-content">
+
+                            <div class="letter-header text-center mb-3">CONFIDENTIAL</div>
+                            <div class="letter-header text-center">Annexure – A</div>
+
                             <!-- start of paragraphs -->
-                            <!-- <p class="m-0"><span class="text-decoration-underline">Name:</span>
+                            <p class="m-0"><span class="text-decoration-underline">Name:</span>
                                 {{appraisalData.firstName}} {{appraisalData.middleName}} {{appraisalData.lastName}},
                             </p>
                             <p class="p-0 m-0">
                                 <span class="text-decoration-underline">Designation:</span>
                                 {{appraisalData.jobRole}}
                             </p>
-                            <p><span class="text-decoration-underline">Salary Structure:</span> </p> -->
+                            <p><span class="text-decoration-underline">Salary Structure:</span> </p>
                             <!-- second paragraph -->
-                            <div class="salary-details-table mb-2">
+                            <div class="salary-details-table mb-3">
                                 <table class="mytable w-100">
                                     <thead>
                                         <tr>
@@ -399,7 +358,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td style="width:56%;" class="p-0 pt-1 pb-1 text-center">Employer PF
+                                            <td style="width:59%;" class="p-0 pt-1 pb-1 text-center">Employer PF
                                                 Contribution</td>
                                             <td style="width:21%;" class="text-center p-0 pt-1 pb-1"><span
                                                     *ngIf="!appraisalData.pfContribution;else pfempr"> </span>
@@ -424,62 +383,32 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><b>Variable Amount</b></td>
-                                            <td colspan="2">
-                                                <b> {{appraisalData.variablePayAmount }}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>CTC=Gross Salary +(Employer PF+ESI+Variable Amount)</b></td>
-                                            <td class="text-center p-0 pt-1  bold"><span
-                                                    *ngIf="!appraisalData.grossSalary; else gross">
+                                            <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer
+                                                    PF+ESI+Medical Insurance)</b></td>
+                                            <td class="text-center p-0 pt-1 pb-1 bold"><span
+                                                    *ngIf="!appraisalData.grossSalary;else gross">
                                                 </span>
-                                                <ng-template #gross><b>{{ appraisalData.grossSalary }}</b></ng-template>
+                                                <ng-template #gross><b>{{appraisalData.grossSalary}}</b></ng-template>
                                             </td>
-                                            <td>
-                                                <span *ngIf="!appraisalData.salary; else grossper"></span>
-                                                <ng-template #grossper><b> {{(+appraisalData.salary || 0) +
-                                                        (+appraisalData.variablePayAmount || 0)}}</b></ng-template>
+                                            <td class="text-center p-0 pt-1 pb-1 bold"><span
+                                                    *ngIf="!appraisalData.salary;else grossper">
+                                                </span>
+                                                <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
                                             </td>
                                         </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <!-- </div> -->
-                            <div class="mb-3">
-                                <b>Additional Details Related to Salary Structure:</b>
-                            </div>
-                            <ul class="mb-2">
-
-                                <ol class="list-style-none mb-1 pt-2">
-                                    <li>a) TDS will be deducted from the Gross Salary after statutory deductions.</li>
-                                    <li>b) Employees are responsible for their Tax Planning.</li>
-                                    <li>c) Employees may avail tax benefit by submitting bills against Leave Travel
-                                        Allowance.</li>
-                                    <li>d) All eligible employees as per the respective policies of the Company will be
-                                        covered under the Group Medical Coverage Policy and Group Covid policy.</li>
-                                    <li>e) All the above benefits are as per the Company’s policies, which are
-                                        subjective to change from time to time. Further salary, allowances, any
-                                        alteration in salary structure and other payments/benefits will be governed by
-                                        The Company’s rules as well as statutory provisions in force from time to time
-                                        and subject to deduction of appropriate taxes as applicable under government
-                                        norms.</li>
-                                    <li>f) While the other terms and conditions of your appointment remain unchanged,
-                                        please do take note that as per the current Company’s Separation Policy, if you
-                                        resign from the services of the company, you will be liable to serve Ninety (90)
-                                        days i.e. Three (3) months of Notice Period.</li>
-                                    <li><b>g) Medical insurance amount will be calculated based on the number of
-                                            dependents; the respective amount will be deducted from your monthly
-                                            salary.</b></li>
-                                </ol>
+                            <p class="note text-decoration-underline">Note:</p>
+                            <ul>
+                                <li>Medical insurance amount will be calculated based on the
+                                    number of
+                                    dependents; the respective amount will be deducted from your monthly salary.
+                                </li>
                             </ul>
-                            <p><b> <span class="note text-decoration-underline">Note:</span> The above compensation
-                                    package is strictly confidential between you and the Company and should not be
-                                    discussed with anyone nor divulged to anyone in any manner whatsoever.</b></p>
-
                             <!-- end of second table -->
-                            <!-- <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
+                            <p class="letter-sub-header mb-5">FOR RightlyHR</p>
 
                             <div class="mb-3"></div>
                             <div class="d-flex justify-content-between">
@@ -492,8 +421,14 @@
 
                                 </div>
 
-                                
-                            </div> -->
+                                <div>
+                                    <p class="letter-sub-header">Employee Name: {{appraisalData.firstName}}
+                                        {{appraisalData.middleName}} {{appraisalData.lastName}}
+                                    </p>
+                                    <p class="letter-sub-header">Employee Signature:</p>
+                                    <p class="letter-sub-header">Date :</p>
+                                </div>
+                            </div>
                         </div>
                         <!-- <div class="letter-footer">
                             <app-letter-footer />

@@ -13,9 +13,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IEmployee } from './probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 @Component({
   selector: 'app-probation-confirmation-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './probation-confirmation-letter.component.html',
   styleUrl: './probation-confirmation-letter.component.scss'
 })

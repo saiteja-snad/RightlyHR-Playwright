@@ -7,7 +7,7 @@
 
                      <!-- Employee -->
                     <div class="mb-3">
-                        <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Select Employee' |translate}}<span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                                 [showClear]="false" placeholder="Please select employee" formControlName="employee"
@@ -31,23 +31,10 @@
                             <div class="error-msg">Issued date is required</div>
                         </div>
                     </div>
-
-                    <!-- Last Working Date for Contractor Prospective -->
-                    <div class="col-md-12 mb-4" *ngIf="isContractorProspective()">
-                        <label class="form-label custom-label mb-2">
-                            Last Working Date<span class="error-msg">*</span>
-                        </label>
-                        <input type="date" class="form-control custom-input" formControlName="lastWorkingDate"
-                        placeholder="Please enter last working date" (keydown)="preventTyping($event)" />
-
-                        <div *ngIf="employeeForm.get('lastWorkingDate')?.invalid && employeeForm.get('lastWorkingDate')?.touched">
-                            <div class="error-msg">Last working date is required</div>
-                        </div>
-                    </div>
     
                     <!-- Document Type -->
                     <div class="mb-3">
-                        <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Document Type' |translate}}<span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
                                 formControlName="documentType" class="form-select custom-select">
@@ -60,8 +47,7 @@
 
                     <!-- Signature Authority -->
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                            Authority Name<span class="error-msg">*</span></label>
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name' |translate}}<span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
                                 class="form-select custom-select" formControlName="signatureAuthority" resetFilterOnHide="true" [filter]="true" filterBy="fullName"
@@ -75,9 +61,7 @@
                     <div *ngIf="jobErrorMessage" class="error-msg">{{ jobErrorMessage }}</div>
                     
                     <div>
-                        <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Employee
-                            Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the
-                            Document.</p>
+                        <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>{{'Please Update Employee Full Name, Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document' | translate}}.</p>
                     </div>
 
                 </div>
@@ -98,14 +82,14 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
+                    <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
-                            <!-- <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
+                            <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
-                            </ng-template> -->
+                            </ng-template>
                             <div class="d-flex justify-content-end mb-3">
                                 <div>
                                     <span class="letter-sub-header">Issued Date: </span>
@@ -114,35 +98,33 @@
                             </div>
                             <div class="letter-header text-center mb-4">RELIEVING & EXPERIENCE LETTER </div>
                             <p>
-                                We hereby certify that <b>{{gender3}}{{ employeeFullname }}</b> was employed with SNAD Developers India Pvt Ltd as a 
+                                We hereby certify that <b>{{ employeeFullname }}</b> was employed with RightlyHR as a 
                                 <b>{{ selectedEmployeeJobDetails?.jobRole || '' }}</b> from
                                 <b>{{ employeeForm.get('employee')?.value?.dateOfJoining | dateformat }}</b> to
-                                <b>{{ getLastWorkingDate() | dateformat }}.</b>
+                                <b>{{ selectedEmployee?.lastworkingday | dateformat }}.</b>
                               </p>                              
                             <p>During <span>{{gender}}</span> tenure with our organization, <b>{{employeeFullname}}</b> exhibited commendable dedication, 
                                 professionalism, and competence in <span>{{gender}}</span> role.
                             </p>
         
                             <p>We deeply appreciate <b>{{employeeFullname}}</b> contributions during {{gender}}
-                                employment with SNAD, and we believe {{gender}} commitment and expertise will be an
+                                employment with Rightly HR, and we believe {{gender}} commitment and expertise will be an
                                 asset to any organization they choose to join in the future.
                             </p>
         
                             <p>We wish <b>{{employeeFullname}}</b> the very best for {{gender}} future endeavors, and we trust that {{gender2}} 
                                 will achieve continued success in {{gender}} professional journey.
                             </p>
-                            <p class="pt-4">Your Sincerely,</p>
-                            <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
-
-                            <div class="mb-3"></div>
-                            <p class="letter-signature" *ngIf="authorityFullName">{{authorityFullName}}</p>
-                            <p class="authorized-signatory mb-1">Authorized Signatory</p>
-                            <p class="authorized-signatory mb-1">{{authorityFullName}}</p>
-                            <p class="authorized-signatory mb-1">{{selectedAuthority?.designation}}</p>
+                            <p class="pt-4">Sincerely,</p>
+                            <p class="letter-sub-header">for RightlyHR,</p>
+                            <p class="m-0 letter-signature pt-4" *ngIf="authorityFullName">{{authorityFullName}}</p>
+                            <p class="m-0" *ngIf="!authorityFullName">Authorized Signatory</p>
+                            <p class="m-0">{{authorityFullName}}</p>
+                            <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
                         </div>
-                        <!-- <div class="letter-footer">
+                        <div class="letter-footer">
                             <app-letter-footer />
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>

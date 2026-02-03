@@ -16,10 +16,12 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-trainee-offer-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,
-    NgxCountriesDropdownModule, NgbPopoverModule],
+    NgxCountriesDropdownModule, NgbPopoverModule, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './trainee-offer-letter.component.html',
   styleUrl: './trainee-offer-letter.component.scss',
 })

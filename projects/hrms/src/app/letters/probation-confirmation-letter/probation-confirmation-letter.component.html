@@ -7,7 +7,7 @@
                 (ngSubmit)="postProbationLetterFormSubmit()">
                 <!-- Employee Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Select Employee' |translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" showClear="true"
                             filterBy="fullName" placeholder="Please select employee" formControlName="employeeId"
@@ -22,10 +22,10 @@
 
                 <!-- Issued Date -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Issued Date' |translate}}<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate"
                         placeholder="Please enter Date" [min]="todayDate"
-                        (onChange)="pathValuesFuction();DateValidation()" (keydown)="preventTyping($event)" />
+                        (change)="pathValuesFuction();DateValidation()" (keydown)="preventTyping($event)" />
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
@@ -42,9 +42,9 @@
 
                 <!-- Effective Date -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Effective Date' |translate}}<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveDate"
-                        placeholder="Please enter Date" (onChange)="pathValuesFuction();CheckDateValidation()" />
+                        placeholder="Please enter Date" (change)="pathValuesFuction();CheckDateValidation()" />
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched">
@@ -56,7 +56,7 @@
 
                 <!-- Document Type -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Document Type' |translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="documentType" optionValue="value" optionLabel="name"
                             (onChange)="pathValuesFuction()" placeholder="Please select document type"
@@ -71,7 +71,7 @@
 
                 <!-- Signature Authority name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Signature Authority Name<span
+                    <label class="form-label custom-label mb-2">{{'Signature Authority Name' |translate}}<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
@@ -126,37 +126,33 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent1"
-                        [ngClass]="{'soft-copy-letter': probationLetterData.Copys}">
+                    <div class="letter-page-content" id="pdfContent1">
                         <div class="letter-page-sub-content">
-                            <!-- <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
+                            <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
-                            </ng-template> -->
-                            <div class="text-center mb-5">
-                                <p class="letter-header text-center">PROBATION CONFIRMATION</p>
-                            </div>
-                            <div class="letter-div" *ngIf="probationLetterData">
+                            </ng-template>
+                            <div class="letter-div">
                                 <div class="d-flex justify-content-between mb-3">
                                     <ul class="list-style-none ps-0">
-                                        <li class="mb-2">To</li>
-                                        <li class="mb-1"
+                                        <li>To</li>
+                                        <li
                                             *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
                                             Name:</li>
                                         <ng-template #fullname>
-                                            <li class="mb-1">{{probationLetterData.firstName}} {{probationLetterData.middleName}}
+                                            <li>{{probationLetterData.firstName}} {{probationLetterData.middleName}}
                                                 {{probationLetterData.lastName}},</li>
                                         </ng-template>
-                                        <li class="mb-1">{{probationLetterData.fusionEmpId}}</li>
-                                        <li class="mb-1">{{probationLetterData.jobRole}}</li>
-                                        <li class="mb-1" >{{probationLetterData.department}}</li>
+                                        <li>{{probationLetterData.fusionEmpId}}</li>
+                                        <li>{{probationLetterData.jobRole}}</li>
+                                        <li>{{probationLetterData.department}}</li>
                                         <li>{{probationLetterData.workLocation}}</li>
                                     </ul>
                                     <div>
                                         <p><span class="letter-sub-header">Issued Date:</span>
-                                            {{probationConfirmationForm.get('issuedDate')?.value | dateformat }}</p>
+                                            {{probationLetterData.issuedDate | dateformat }}</p>
                                     </div>
                                 </div>
 
@@ -165,17 +161,17 @@
 
                                 <p class="mb-4">We are pleased to inform you that, following a comprehensive
                                     assessment of your performance during the probationary period, you have successfully
-                                    completed your probationary period with SNAD Developers India Pvt Ltd. </p>
+                                    completed your probationary period with RightlyHR. </p>
 
                                 <p class="mb-4">
-                                    Effective from {{probationConfirmationForm.get('effectiveDate')?.value | dateformat}}, your position as
+                                    Effective from {{probationLetterData.effectiveDate|dateformat}}, your position as
                                     <b>{{probationLetterData.jobRole}}</b> within our organization is officially
                                     confirmed,
                                     and your terms and conditions of employment will remain unchanged.
                                 </p>
 
                                 <p class="mb-4">
-                                    We believe that your continued presence at SNAD Developers India Pvt Ltd will
+                                    We believe that your continued presence at RightlyHR will
                                     further contribute to our success, and we look forward to seeing your continued
                                     growth and contributions to the organization.
                                 </p>
@@ -185,27 +181,26 @@
                                     successful and rewarding journey together.
                                 </p>
 
-                                <p class="pt-4"> Your Sincerely,</p>
-                                <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
+                                <p class="mb-2 pt-4">Sincerely,</p>
+                                <p class="letter-sub-header"><b>for RightlyHR</b></p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
-                                <div class="mb-3"></div>
-
-                                <p class="letter-signature">{{probationLetterData.authorityName}}</p>
-                                <p class="authorized-signatory mb-1">AuthoritySignature</p>
+                                <div *ngIf="!probationLetterData.authorityName" class="letter-sub-header pt-4">Authority
+                                    Signature</div>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationLetterData.authorityName">
-                                    <p class="authorized-signatory mb-1">Authority Name</p>
-                                    <p class="authorized-signatory mb-1">Designation</p>
+                                    <p class="letter-sub-header m-0">Authority Name</p>
+                                    <p class="letter-sub-header m-0">Designation</p>
                                 </div>
+                                <div class="letter-signature pt-4">{{probationLetterData.authorityName}}</div>
                                 <div>
-                                    <p class="mb-1 authorized-signatory">{{probationLetterData.authorityName}}</p>
-                                    <p class="authorized-signatory">{{probationLetterData.authorityDesignation}}</p>
+                                    <p class="mb-0"><b>{{probationLetterData.authorityName}}</b></p>
+                                    <p><b>{{probationLetterData.authorityDesignation}}</b></p>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="letter-footer">
+                        <div class="letter-footer">
                             <app-letter-footer />
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>

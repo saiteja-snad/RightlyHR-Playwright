@@ -20,7 +20,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAssertsType } from '../../Interfaces/job-model';
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, LetterFooterComponent, LettersheaderComponent],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })

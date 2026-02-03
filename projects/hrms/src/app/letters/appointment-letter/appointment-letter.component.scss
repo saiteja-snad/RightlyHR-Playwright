@@ -1,5 +1,36 @@
-* {
-    font-family: 'VERDANA', sans-serif !important;
+// * {
+//     font-family: 'VERDANA', sans-serif !important;
+// }
+
+// input:focus {
+//     outline: none !important;
+//     box-shadow: none !important;
+//     border: 1px solid #DEE8F3 !important;
+//     background-color: #F8FBFF !important;
+// }
+
+// .disabled {
+//     pointer-events: none;
+//     opacity: 0.5;
+// }
+
+// .soft-copy-letter {
+//     background-image: url('/images/snad-new-letter-bg.png') !important;
+//     padding-top: 12.5rem !important;
+// }
+
+// .authorized-signatory {
+//     font-size: 16px;
+//     font-weight: 700;
+// }
+
+// .roman-numbers-fornt li::marker {
+//     font-weight: bold;
+// }
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }
 
 input:focus {
@@ -12,23 +43,4 @@ input:focus {
 .disabled {
     pointer-events: none;
     opacity: 0.5;
-}
-
-.soft-copy-letter {
-    background-image: url('/images/snad-new-letter-bg.png') !important;
-    padding-top: 12.5rem !important;
-}
-
-.authorized-signatory {
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.roman-numbers-fornt li::marker {
-    font-weight: bold;
-}
-
-.letter-signature {
-    font-size: var(--fontsize32) !important;
-    font-family: "autographsignatureFont" !important;
 }

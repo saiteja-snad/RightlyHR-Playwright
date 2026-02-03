@@ -5,64 +5,79 @@
             <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
                 <!-- Employee -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Select Employee'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" placeholder="Please select employee" formControlName="fusionEmpId"
-                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true" />
+                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
+                        </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         <div class="error-msg">Employee is required</div>
                     </div>
                 </div>
+
                 <!-- Date -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Date <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Date'  | translate}} <span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateofbankloan"
                         placeholder="Please enter Date" (change)="DateValidation()" (keydown)="preventTyping($event)" />
-                    <div *ngIf="employeeForm.get('dateofbankloan')?.invalid && employeeForm.get('dateofbankloan')?.touched">
+                    <div
+                        *ngIf="employeeForm.get('dateofbankloan')?.invalid && employeeForm.get('dateofbankloan')?.touched">
                         <div class="error-msg">Date is required</div>
                     </div>
                 </div>
+
                 <!-- Document Type -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Document Type'  | translate}} <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
-                            formControlName="Documenttype" class="custom-select w-100" />
+                        <p-select [options]="employeementType" optionLabel="name"
+                            placeholder="Please select document type" formControlName="Documenttype"
+                            class="custom-select w-100">
+                        </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
                         <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
+
                 <!-- Signature Authority -->
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                        Authority Name<span class="error-msg">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="signatureAuthorityDetails" optionLabel="fullName"
                             placeholder="Please select signature authority name" class="custom-select w-100"
-                            formControlName="authorityid" resetFilterOnHide="true" (onChange)="onclickDesignation($event)"
-                            [filter]="true" filterBy="fullName" />
+                            formControlName="authorityid" resetFilterOnHide="true"
+                            (onChange)="onclickDesignation($event)" [filter]="true" filterBy="fullName" />
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
                     </div>
                 </div>
+
                 <div>
-                    <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
-                        Place, Joining Date, Designation, Last working date in Personal and Job Tabs Before Generating
-                        the Document.</p>
+                    <p class="note-text"><span class="note me-2">{{'Note'  | translate}}:</span>{{'Please Update Employee Full Name, Place, Joining Date, Designation, Last working date in Personal and Job Tabs Before Generating the Document.' | translate}}
+                    </p>
                 </div>
-                <div *ngIf="jobErrorMessage" class="error-msg">{{ jobErrorMessage }}</div>
+
+                <div *ngIf="jobErrorMessage" class="error-msg">
+                    {{ jobErrorMessage }}
+                </div>
+
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader">
-                        @if (spinnerLoader) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading' | translate}}...</span>
-                        } @else {
-                        <span>{{'Generate Document'| translate}}</span>
-                        }
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="employeeForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
                     </button>
                 </div>
             </form>
@@ -71,8 +86,17 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent" [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value?.value === true}">
+                    <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
+
+                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc"
+                                class="soft-copy-letter">
+                                <app-lettersheader></app-lettersheader>
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
+
                             <div class="py-3 text-end">
                                 <span class="letter-sub-header">Date: </span>
                                 {{employeeForm.get('dateofbankloan')?.value|dateformat}}
@@ -84,35 +108,42 @@
                                 <span>This letter is to confirm that
                                     <span *ngIf="!employeeFullname; else name">_______________________</span>
                                     <ng-template #name><b>{{employeeFullname}}</b></ng-template> has been working in our
-                                    Establishment "SNAD Developers India Pvt Ltd" currently designated as
-                                    <span *ngIf="!selectedEmployeeJobDetails?.jobRole;else role">_______________________</span>
+                                    Establishment
+                                    "RightlyHR" currently designated as
+                                    <span
+                                        *ngIf="!selectedEmployeeJobDetails?.jobRole;else role">_______________________</span>
                                     <ng-template #role><b> {{selectedEmployeeJobDetails.jobRole}} </b></ng-template>
-                                    since <span *ngIf="!selectedEmployeeJobDetails?.effectiveDate;else joining">_______________________.</span>
-                                    <ng-template #joining><b>{{selectedEmployeeJobDetails.effectiveDate|dateformat}}.</b></ng-template>
+                                    since <span
+                                        *ngIf="!selectedEmployeeJobDetails?.effectiveDate;else effectivedate">_______________________.</span>
+                                    <ng-template
+                                        #effectivedate><b>{{selectedEmployeeJobDetails.effectiveDate|dateformat}}.</b></ng-template>
                                 </span>
                             </p>
-                            <p>This letter is being issued on {{ hisOrHerdata}} request to enable {{herOrHimdata}} to apply for a bank Loan.</p>
+                            <p>
+                                This letter is being issued on {{ hisOrHerdata}} request to
+                                enable {{herOrHimdata}} to apply for a bank Loan.
+                            </p>
                             <p class="mb-5">If you have any further questions, you can call us at 8886651309.</p>
-                            <p>Your Sincerely,</p>
-                            <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
-                            <div class="mb-3"></div>
+                            <p class="py-4">Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
                             <!-- Show "Authority Signature" only when no authority is selected -->
-                            <div *ngIf="!authorityFullName" class="letter-sub-header mb-1">Authority Signature</div>
+                            <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="!authorityFullName">
-                                <p class="letter-sub-header mb-1">Authority Name</p>
-                                <p class="letter-sub-header mb-1">Designation</p>
+                                <p class="letter-sub-header">Authority Name</p>
+                                <p class="letter-sub-header">Designation</p>
                             </div>
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <p *ngIf="authorityFullName" class="letter-signature">
+                            <div *ngIf="authorityFullName" class="letter-signature mb-3">
                                 {{authorityFullName }}
-                            </p>
+                            </div>
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="authorityFullName">
-                                <p class="authorized-signatory mb-1">Authority Signature</p>
-                                <p class="authorized-signatory mb-1">{{authorityFullName }}</p>
-                                <p class="authorized-signatory mb-1">{{selectedAuthority.designation}}</p>
+                                <p>{{authorityFullName }}</p>
+                                <p>{{selectedAuthority.designation}}</p>
                             </div>
+                        </div>
+                        <div class="letter-footer">
+                            <app-letter-footer />
                         </div>
                     </div>
                 </div>

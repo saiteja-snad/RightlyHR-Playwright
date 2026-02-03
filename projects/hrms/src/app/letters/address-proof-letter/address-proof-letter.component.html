@@ -5,7 +5,7 @@
             <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postAddressLetterFormSubmit(employeeForm)">
                 <!-- Employee Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Select Employee'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"
@@ -19,7 +19,7 @@
 
                 <!-- Address -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Select Address'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="addressOptions" optionLabel="label" placeholder="Please select address"
                             formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
@@ -37,7 +37,7 @@
 
                 <!-- Document Type -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Document Type'  | translate}} <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionLabel="name"
                             placeholder="Please select document type" formControlName="Documenttype"
@@ -51,8 +51,7 @@
 
                 <!-- Signgature Authority -->
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
-                        Authority Name<span class="error-msg">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name'  | translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" placeholder="Please select signature authority name"
@@ -65,8 +64,7 @@
                 </div>
 
                 <div>
-                    <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
-                        Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
+                    <p class="note-text"><span class="note me-2">{{'Note'  | translate}}:</span>{{'Please Update Employee Full Name,Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.'  | translate}}</p>
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 pt-3">
@@ -89,19 +87,19 @@
 
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
-                <div class="letter-page-content" id="pdfContent" [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
+                <div class="letter-page-content" id="pdfContent">
                     <div class="letter-page-sub-content">
-                        <!-- <div *ngIf="employeeForm.get('Documenttype')?.value.value === true" class="">
+                        <div *ngIf="employeeForm.get('Documenttype')?.value.value === true" class="soft-copy-letter">
                             <app-lettersheader></app-lettersheader>
                         </div>
                         <ng-template #doc>
                             <div class="hard-copy-letter"></div>
-                        </ng-template> -->
+                        </ng-template>
 
                         <div class="py-5">
                             <div class="letter-header text-center"><u>TO WHOMSOEVER IT MAY CONCERN</u></div>
                         </div>
-                        <div class="mb-4">
+                        <div class="mb-5">
                             <p>
                                 <span>
                                     This letter is to confirm that
@@ -111,15 +109,15 @@
                                         <b>{{ employeeForm.value.firstName }} {{ employeeForm.value.middleName }}
                                             {{ employeeForm.value.lastName }}</b>
                                     </ng-template>
-                                    has been working in our Establishment "SNAD Developers India Pvt Ltd" as
+                                    has been working in our Establishment "RightlyHR" as
                                     <span
                                         *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">Fetching...</span>
                                     <ng-template #role>
                                         <b>{{ employeeForm.get('jobRole')?.value || '' }}</b>
                                     </ng-template> since
                                     <span
-                                        *ngIf="!employeeForm.get('effectiveDate')?.value;  else joining">_______________________</span>
-                                    <ng-template #joining><b>{{employeeForm.get('effectiveDate')?.value | dateformat
+                                        *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>
+                                    <ng-template #joining><b>{{ employeeForm.value.dateOfJoining | dateformat
                                             }}</b></ng-template>.
                                     Currently, residential address is
                                     <span *ngIf="!addressFlag; else address">_______________________</span>
@@ -158,39 +156,37 @@
                         <div class="mb-4">
                             <p>If you have any further questions, you can call us at 8886651309.</p>
                         </div>
-                          <div class="mb-5">
-                            <p>Your Sincerely,</p>
-                           <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
+                        <div class="mb-5">
+                            <p class="mb-0">Sincerely,</p>
+                            <p><b>For RightlyHR</b></p>
                         </div>
-                           <div class="mb-3"></div>
-                         <div>
+                        <div>
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!addressLetterData.authorityName?.trim()">
-                             <p class="letter-sub-header mb-1">  Authority Signature</p>
+                                Authority Signature
                             </div>
 
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="!addressLetterData.authorityName?.trim()">
-                                <p class="authorized-signatory mb-1">Authority Name</p>
-                                <p class="authorized-signatory ">Designation</p>
+                                <p>Authority Name</p>
+                                <p>Designation</p>
                             </div>
 
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <p *ngIf="addressLetterData.authorityName?.trim()" class="letter-signature">
+                            <div *ngIf="addressLetterData.authorityName?.trim()" class="letter-signature mb-3">
                                 {{ addressLetterData.authorityName }}
-                            </p>
+                            </div>
 
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="addressLetterData.authorityName?.trim()">
-                                <p class="authorized-signatory mb-1">  Authority Signature</p>
-                                <p class="authorized-signatory mb-1">{{ addressLetterData.authorityName }}</p>
-                                <p class="authorized-signatory mb-1">{{ authorityDesignation }}</p>
+                                <p>{{ addressLetterData.authorityName }}</p>
+                                <p>{{ authorityDesignation }}</p>
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="letter-footer">
+                    <div class="letter-footer">
                         <app-letter-footer />
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </div>

@@ -75,7 +75,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     this.todayDate = today.toISOString().split('T')[0];
   }
 
-  initializeForm() {
+   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmployeeId: ['', Validators.required],
       appointmentdate: ['', Validators.required],
@@ -84,6 +84,9 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
       documentType: ['', Validators.required],
+      assertType: ['', Validators.required],
+      model: ['', Validators.required],
+      serial: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
@@ -94,11 +97,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       country: [''],
       pinCode: ['']
     });
-    this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
-      this.JoiningDateValidation();
-    });
   }
-
   getAllActiveEmployees() {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {

@@ -174,6 +174,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
 
   }
 
+
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
@@ -192,8 +193,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       pinCode: [{ value: null, disabled: true }],
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
-      amount: ['',],
-      monthlyammount: ['',Validators.required],
+      amount: ['', Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],
@@ -204,12 +204,10 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       reportingmanagerId: [null, Validators.required],
       documentType: ['', Validators.required],
       internshipperiod: [null, Validators.required],
-      stipend: [null, Validators.required]
     });
     this.employeeForm.get('internshipperiod')?.valueChanges.subscribe((value: string) => {
       this.calculateEndDate(value);
     });
-
   }
 
   onclickcheckempidnull(empidValue: any) {

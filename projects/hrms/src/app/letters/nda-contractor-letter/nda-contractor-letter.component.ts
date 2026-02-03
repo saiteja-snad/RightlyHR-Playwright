@@ -420,9 +420,11 @@ export class NdaContractorLetterComponent {
 
         this.conformationPopup.openErrorModal(reason.error.details)
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
       },
       complete: () => {
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
       }
     });
   }
@@ -439,6 +441,7 @@ export class NdaContractorLetterComponent {
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
       },
     });
   }
@@ -486,13 +489,16 @@ export class NdaContractorLetterComponent {
     this.subscription = this.http.postdata(`CustomEmail/ndaletter`, emaildetails).subscribe({
       next: (data: any) => {
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
       },
       error: (err: any) => {
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
       },
       complete: () => {
         this.spinnerLoader = false;
+        this.spinnerLoader1 = false;
       }
     })
   }

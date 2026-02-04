@@ -41,6 +41,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   loadingcircle: boolean = false;
   currentDate = new Date();
   rejectForm!: FormGroup;
+  durationOfTraining:any;
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
   stipendApplicablecheck!: boolean;
@@ -189,7 +190,12 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+convertDaysToMonths(days: number): number {
+  if (days >= 28 && days <= 31) {
+    return 1;
+  }
+  return Math.ceil(days / 30);
+}
   //function to get the offerletter details 
   address = {} as IAddress;
   getOfferLetterDetails() {
@@ -203,7 +209,9 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.stipendApplicablecheck = this.getofferdata?.stipendApplicable;
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
-      
+        const days = this.getofferdata.durationOfTraining;
+        this.traineeEmpData.durationOfTraining = this.convertDaysToMonths(days);
+        this.durationOfTraining = this.traineeEmpData.durationOfTraining ;
         this.traineeEmpData.note = this.getofferdata.note
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())

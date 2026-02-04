@@ -196,6 +196,7 @@ convertDaysToMonths(days: number): number {
   }
   return Math.ceil(days / 30);
 }
+
   //function to get the offerletter details 
   address = {} as IAddress;
   getOfferLetterDetails() {

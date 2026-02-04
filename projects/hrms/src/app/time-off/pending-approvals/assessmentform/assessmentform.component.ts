@@ -713,7 +713,7 @@ export class AssessmentformComponent {
 
   //function to get the form answers
   getFormDetails(Value: any) {
-    this.subscription = this.http.getData(`ProbationFlow/getFormResponseByFormId/0?employeeId=${Value}`).subscribe({
+    this.subscription = this.http.getData(`ProbationFlow/getFormResponseByFormId/1?employeeId=${Value}`).subscribe({
       next: (response: any) => {
         this.dynamicFormDetails = response;
         this.dynamicFormQuestions = response.sectionDetails.filter(

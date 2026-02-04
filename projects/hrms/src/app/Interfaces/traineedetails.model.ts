@@ -25,7 +25,7 @@ export interface IApprovalHeader {
 }
 export interface IEntity {
     fusionEmpId: string,
-    employeeId:string,
+    empId:string,
     empName: string,
     traineeStartDate: any,
     traineeEndDate: any,

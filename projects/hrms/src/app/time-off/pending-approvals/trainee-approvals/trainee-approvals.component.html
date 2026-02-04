@@ -28,7 +28,7 @@
                 @if(((Trainees | async) ?? []).length > 0) {
                 <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
                     <td>
-                        <span *ngIf="trn.entity?.employeeId;else employeeid">{{trn.entity?.employeeId}}</span>
+                        <span *ngIf="trn.entity?.empId;else employeeid">{{trn.entity?.empId}}</span>
                         <ng-template #employeeid>-</ng-template>
                     </td>
                     <td>

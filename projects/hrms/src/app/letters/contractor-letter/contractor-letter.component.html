@@ -405,12 +405,12 @@
                     <div class="letter-page-content" id="pdfContent1"
                         [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
                         <div class="letter-page-sub-content">
-                            <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                            <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
-                            </ng-template> -->
+                            </ng-template>
                             <div class="letter-div">
                                 <div class="text-center mb-5">
                                     <p class="letter-header text-center">OFFER LETTER</p>
@@ -454,21 +454,24 @@
                                     {{prospectiveEmpData.lastName}},</p>
                             </div>
 
-                            <p class="mb-3">We are pleased to offer you contract employment in SNAD Developers India Pvt
-                                Ltd. as a <b>{{prospectiveEmpData?.jobRole}}</b> on a remuneration of
+                            <p class="mb-3">We are pleased to offer you contract employment in RightlyHR
+                                . as a <b>{{prospectiveEmpData?.jobRole}}</b> on a remuneration of
                                 <b>{{ selectedSymbol }} {{this.employeeForm.get('currencyType')?.value}} {{prospectiveEmpData.amount ?? 0 }} <span *ngIf="employeeForm.get('currencyType')?.value === 'INR'"> /-</span> per
                                     {{employeeForm.get('frequency')?.value}}</b>.
                                 You will have to submit weekly/monthly Time sheet approved by the reporting
                                 manager.
-                                You will be working part time as required by SNAD. Your approximate start
+                                You will be working part time as required by RightlyHR. Your approximate start
                                 date with the company is {{(employeeForm.get('dateOfJoining')?.value)|dateformat}}.
                             <p class="mb-3">Please note the following details regarding your consultancy engagement </p>
 
                             <div class="dynamicdata mb-3" [innerHTML]="safeRolesAndResponsibilities"></div>
-                            <p>SNAD Developers India Pvt Ltd is in the business of product development and
+                            <p>RightlyHR is in the business of product development and
                                 deployment and also providing technology and business consultants to various
                                 multinational companies. </p>
                                
+                        </div>
+                        <div class="letter-footer">
+                        <app-letter-footer />
                         </div>
                     </div>
 
@@ -476,6 +479,12 @@
                     <div class="letter-page-content my-4" id="pdfContent2"
                         [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
                         <div class="letter-page-sub-content">
+                             <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
                             <div class="pt-2">
                                  <p><b>{{prospectiveEmpData.title}} {{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
                                         {{prospectiveEmpData.lastName}}</b>,
@@ -483,7 +492,7 @@
                                     our office to
                                     confirm your acceptance of this offer. </p>
                                 <p><b>Yours Sincerely</b>,</p>
-                                <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
+                                <p class="mb-5 signature">For RightlyHR</p>
                                 <div class="mb-3"></div>
                                 <p class="letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                                     {{prospectiveEmpData.authorityName}}</p>
@@ -504,6 +513,9 @@
                                 <p>Name: </p>
                                 <p>Date: </p>
                             </div>
+                        </div>
+                         <div class="letter-footer">
+                        <app-letter-footer />
                         </div>
                     </div>
                 </div>

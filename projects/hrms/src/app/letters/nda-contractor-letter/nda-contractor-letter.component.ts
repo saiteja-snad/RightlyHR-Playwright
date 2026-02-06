@@ -19,9 +19,11 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IAssertsType } from '../../Interfaces/job-model';
 import { IEmployeeIdentity, IAsset, IEmployeeJobInfo, IEmployeeProfile, IEmployeeAddress } from '../appointment-letter/appointment-letter-model';
 import { IEmployeeSignatures } from '../letters.modal';
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-nda-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, NgbPopoverModule, DateformatPipe],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, NgbPopoverModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './nda-contractor-letter.component.html',
   styleUrl: './nda-contractor-letter.component.scss',
   encapsulation: ViewEncapsulation.None,

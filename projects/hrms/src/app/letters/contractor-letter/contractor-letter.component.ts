@@ -23,9 +23,11 @@ import { IFrequency } from '../../Interfaces/job-model';
 import { Editor } from 'primeng/editor';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -863,7 +865,7 @@ export class ContractorLetterComponent implements OnInit, OnDestroy{
       currencyType: this.employeeForm.get('currencyType')?.value
     };
 
-    console.log(postOfferLetterDetails);
+    console.log("postofferletterdeatails",postOfferLetterDetails);
     this.subscription = this.http.postdata('OfferLetter/postContractOfferLetter', postOfferLetterDetails).subscribe({
       next: (data: any) => {
         this.emailToSendManager();

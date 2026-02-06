@@ -118,12 +118,12 @@
                     <div class="letter-page-content" id="pdfContent1"
                         [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
                         <div class="letter-page-sub-content">
-                            <!-- <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
-                <app-lettersheader />
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template> -->
+                            <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
                             <div class="letter-div">
                                 <div class="text-center pb-3">
                                     <p class="letter-header text-center">
@@ -133,7 +133,7 @@
                             </div>
                             <p class="mb-3">This Non-Disclosure Agreement and Invention Assignment Agreement
                                 (hereinafter “Agreement”) is effective as of by and between </p>
-                            <p class="mb-3"><b>Snad Developers India Private Limited</b>, with its office at [Vijaya
+                            <p class="mb-3"><b>RightlyHR</b>, with its office at [Vijaya
                                 Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032] (hereinafter
                                 referred to as the “Company”)
                             </p>
@@ -157,7 +157,7 @@
                             <p class="m-0 p-0"><b>RECITALS: </b></p>
                             <p class="mb-3">A.As per the Appointment Letter dated {{ employeeForm.get('ndassentdate')?.value |
                 dateformat }}, the Receiving Party is
-                                working with the Snad Developers Private Limited, During the course of Engagement, the
+                                working with the RightlyHR, During the course of Engagement, the
                                 Receiving Party may be exposed to the Confidential Information (as defined below) of the
                                 Company and/or the Company’s affiliates, clients, customers, consultants, vendors,
                                 partners, agents or suppliers etc. The Receiving Party may also generate, create or
@@ -194,12 +194,21 @@
                                 </li>
                             </ol>
                         </div>
+                          <div class="letter-footer">
+                        <app-letter-footer />
+                        </div>
                     </div>
 
                     <!--page-2-->
                     <div class="letter-page-content my-4" id="pdfContent2"
                         [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
                         <div class="letter-page-sub-content">
+                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
                             <div class="pt-2">
                                 <ol start="2" class="mb-0">
                                     <li class="mb-3">
@@ -266,12 +275,21 @@
                                 </ol>
                             </div>
                         </div>
+                          <div class="letter-footer">
+                        <app-letter-footer />
+                        </div>
                     </div>
 
                     <!--page-3-->
                     <div class="letter-page-content my-4" id="pdfContent3"
                         [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
                         <div class="letter-page-sub-content">
+                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
                             <div class="pt-2">
                                 <ol type="a" start="10">
                                     <li class="mb-1">
@@ -354,12 +372,21 @@
                                 </ol>
                             </div>
                         </div>
+                          <div class="letter-footer">
+                        <app-letter-footer />
+                        </div>
                     </div>
 
                     <!--page-4-->
                     <div class="letter-page-content my-4" id="pdfContent4"
                         [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
                         <div class="letter-page-sub-content">
+                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
                             <div class="pt-2">
                                 <ol type="a" start="6">
                                     <li class="mb-1">
@@ -434,12 +461,21 @@
                                 </ol>
                             </div>
                         </div>
+                          <div class="letter-footer">
+                        <app-letter-footer />
+                        </div>
                     </div>
 
                     <!--page-5-->
                     <div class="letter-page-content my-4" id="pdfContent5"
                         [ngClass]="{'soft-copy-letter':employeeForm.get('documentType')?.value}">
                         <div class="letter-page-sub-content">
+                             <div *ngIf="employeeForm.get('documentType')?.value; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template>
                             <div class="pt-2">
                                 <ol start="9">
                                     <li class="mb-3">
@@ -508,7 +544,7 @@
 
                                         <div class="d-flex justify-content-between">
                                             <div>
-                                                <b>SNAD DEVELOPERS INDIA PVT. LTD</b>
+                                                <b>RightlyHR</b>
                                                 <p class="mt-4 "><span class="signature">Signature: </span><span class="letter-signature">{{authorityFullName}}</span> </p>
                                                 <p ><span class="signature">Name:</span> {{authorityFullName}}</p>
                                                 <p ><span class="signature">Title:</span> {{designationName}}</p>
@@ -524,6 +560,9 @@
                                         </div>
                                 </ol>
                             </div>
+                        </div>
+                          <div class="letter-footer">
+                        <app-letter-footer />
                         </div>
                     </div>
                 </div>

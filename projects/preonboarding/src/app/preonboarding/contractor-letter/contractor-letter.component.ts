@@ -19,10 +19,11 @@ import { IAddress } from '../../models/personal-details.model';
 import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-progressbar/detailed-step-progressbar.component';
 import { DateFormatPipe } from "../../pipes/date-format.pipe";
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
 
 @Component({
   selector: 'app-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe, LettersheaderComponent],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss'
 })

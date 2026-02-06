@@ -14,6 +14,10 @@
                             <!--page-1-->
                             <div class="letter-page-content" id="pdfContent1">
                                 <div class="letter-page-sub-content">
+                                    <div class="d-flex justify-content-end">
+                                        <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo"
+                                            class="logo-image">
+                                    </div>
 
                                     <div class="letter-div">
                                         <div class="text-center mb-5">
@@ -53,58 +57,66 @@
                                                 </ul>
                                             </div>
                                             <div class="col-md-4 letter-sub-header">
-                                                <p class="text-end p-0"> {{offerLetterData.offerSentDate | dateFormat}}
+                                                <p class="text-end p-0"> {{offerLetterData.offerIssueddate | dateFormat}}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
+                                   
 
                                     <div class="letter-sub-header mb-3">
                                         <p>Dear {{prosempdata.firstName}} {{prosempdata.middleName}}
                                             {{prosempdata.lastName}},</p>
                                     </div>
 
-                                    <p class="mb-3">We are pleased to offer you contract employment in SNAD Developers
-                                        India Pvt
-                                        Ltd. as a <b>{{prosempdata?.jobRole}}</b> on a remuneration of <b>{{ selectedSymbol }} {{this.offerLetterData.currencyType}}
-                                            {{prosempdata.salary ?? 0}}<span *ngIf="offerLetterData?.currencyType === 'INR'"> /-</span> per {{prosempdata.frequency}}</b>.
+                                    <p class="mb-3">We are pleased to offer you contract employment in RightlyHR
+                                        Ltd. as a <b>{{prosempdata?.jobRole}}</b> on a remuneration of <b>{{
+                                            selectedSymbol }} {{this.offerLetterData.currencyType}}
+                                            {{prosempdata.salary ?? 0}}<span
+                                                *ngIf="offerLetterData?.currencyType === 'INR'"> /-</span> per
+                                            {{prosempdata.frequency}}</b>.
                                         You will have to submit weekly/monthly Time sheet approved by the reporting
                                         manager.
-                                        You will be working part time as required by SNAD. Your approximate start
+                                        You will be working part time as required by RightlyHR. Your approximate start
                                         date with the company is {{prosempdata.dateOfJoining | dateformat}}.
                                     </p>
 
-                                     <p class="mb-2">Please note the following details regarding your consultancy engagement </p>
+                                    <p class="mb-2">Please note the following details regarding your consultancy
+                                        engagement </p>
                                     <div class="dynamicdata" [innerHTML]="safeRolesAndResponsibilities">
                                     </div>
-                                    <p>SNAD Developers India Pvt Ltd is in the business of product development and
-                                deployment and also providing technology and business consultants to various
-                                multinational companies. </p>
-                                  
-                                  
+                                    <p>RightlyHR is in the business of product development and
+                                        deployment and also providing technology and business consultants to various
+                                        multinational companies. </p>
+
+
 
                                 </div>
+                                 <div class="letter-footer text-center">
+                                        <p class="company-name">RightlyHR</p>
+                                        <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy
+                                            Colony, Gachibowli, HYD - 500032</p>
+                                    </div>
 
                             </div>
 
                             <!--page-2-->
-
-
-
                             <div class="letter-page-content my-4" id="pdfContent2">
                                 <div class="letter-page-sub-content">
+                                    <div class="d-flex justify-content-end">
+                                        <img src="/logos/rightlyhr-full-logo.png" alt="RightlyHr Logo" class="logo-image">
+                                        </div>
                                     <div class="pt-2">
-
                                         <div>
-
-                                            <p><b>{{prosempdata.title}} {{prosempdata.firstName}} {{prosempdata.middleName}}
+                                            <p><b>{{prosempdata.title}} {{prosempdata.firstName}}
+                                                    {{prosempdata.middleName}}
                                                     {{prosempdata.lastName}} </b>, please sign this offer letter
                                                 along with Non-Disclosure Agreement and return them to our office to
                                                 confirm your acceptance of this offer. </p>
 
 
                                             <p><b>Yours Sincerely</b>,</p>
-                                            <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
+                                            <p class="mb-5 signature">For RightlyHR</p>
                                             <div class="mb-3"></div>
                                             <p class="letter-signature" *ngIf="offerLetterData.authorityName?.trim()">
                                                 {{offerLetterData.authorityName}}</p>
@@ -121,7 +133,8 @@
                                                 </div>
                                             </div>
 
-                                            <p>I accept this offer letter and will provide the required pre-onboarding details and documents through the portal.
+                                            <p>I accept this offer letter and will provide the required pre-onboarding
+                                                details and documents through the portal.
                                             </p>
                                             <p class="mt-4">Signature: <span
                                                     class="letter-signature">{{prosempdata.firstName}}
@@ -133,11 +146,14 @@
 
                                         </div>
                                     </div>
+                                
                                 </div>
-
+                                  <div class="letter-footer text-center">
+                                        <p class="company-name">RightlyHR</p>
+                                        <p class="company-address mb-0">Vijaya Krishna Towers, Floor#16, Madhava Reddy
+                                            Colony, Gachibowli, HYD - 500032</p>
+                                    </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -154,7 +170,8 @@
                     @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted'){
                     <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
                     }
-                    @if(this.updatedOfferLetterDetails?.candidateStatus == null || this.updatedOfferLetterDetails?.candidateStatus == ''){
+                    @if(this.updatedOfferLetterDetails?.candidateStatus == null ||
+                    this.updatedOfferLetterDetails?.candidateStatus == ''){
                     <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
                     }
                     @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {

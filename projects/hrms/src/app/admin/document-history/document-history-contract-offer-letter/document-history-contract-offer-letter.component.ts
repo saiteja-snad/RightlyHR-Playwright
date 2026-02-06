@@ -96,7 +96,7 @@ export class DocumentHistoryContractOfferLetterComponent implements OnInit, OnDe
     this.isloading = true;
 
     // Build the URL with query param if empType is provided
-    let url = 'OfferLetter/getAllNames/approverNames?empType=contract';
+    let url = 'OfferLetter/getAllNames/approverNames?empType=Contract Offer Letter';
     this.subscription = this.http.getData(url).subscribe({
       next: (data: any) => {
         this.isloading = false;

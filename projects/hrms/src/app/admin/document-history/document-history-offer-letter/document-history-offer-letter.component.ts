@@ -119,7 +119,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   getOfferLetters() {
     this.isloading = true;
     this.subscription = this.http
-      .getData('OfferLetter/getAllNames/approverNames')
+      .getData('OfferLetter/getAllNames/approverNames?empType=Offer Letter')
       .subscribe({
         next: (data: any) => {
           this.isloading = false;

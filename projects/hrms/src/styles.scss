@@ -41,7 +41,7 @@
 
     // header colors
     --header-background-color: #FFFFFF;
-    --btn-header-color: #0B3A83;
+    --btn-header-color: #546e7a;
     --header-profile-dropdown-bg-color: rgba(11, 58, 131, 0.2);
     --header-info-border-color: #dae4f4;
     --profile-info-separator-line: #A1BEEB;
@@ -49,17 +49,17 @@
     // header colors ends
 
     //sidebar colors
-    --side-nav-background-color: #0B3A83;
+    --side-nav-background-color: #546e7a;
     --side-nav-item-color: #EAEAEA;
-    --side-nav-item-active-color: #0B3A83;
+    --side-nav-item-active-color: #546e7a;
     --side-nav-active-bg-color: #FFFFFF4D;
     //sidebar colors
 
     // button colors
-    --btn-primary-color: #0B3A83;
+    --btn-primary-color: #546e7a;
     --btn-secondary-color: #FFFFFF;
     --btn-color-tp: #FFFFFF;
-    --btn-color-ts: #0B3A83;
+    --btn-color-ts: #546e7a;
     --btn-success: #38930D;
     --btn-failure: #D82D24;
     --btn-publish: #26BD3D;
@@ -68,7 +68,7 @@
 
     // colors
     --white-color: #FFFFFF;
-    --primary-color: #0B3A83;
+    --primary-color: #546e7a;
     --ash-color: #707070;
     --black-color-100: #444444;
     --ash-color-100: #efefef;
@@ -95,7 +95,7 @@
     // table colors ends
 
     // nav tabs
-    --navtab-item-color: #0B3A83;
+    --navtab-item-color: #546e7a;
     --custom-component-tabs-bg-color: #D8E2F2;
     --card-tabs-active-bg-color: #CFDBEE;
     // nav tabs
@@ -172,10 +172,9 @@ body {
     background-color: var(--header-background-color);
 
     .company-logo-image {
-        height: 2.5rem;
+        height: 1.25rem;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -1255,7 +1254,7 @@ select:focus {
             height: 380mm;
             width: 270mm;
             position: relative;
-            background-image: url('/images/water-mark.png');
+            background-image: url('/images/claim-genius-watermark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -1269,7 +1268,7 @@ select:focus {
 
             .letter-footer {
                 width: 270mm;
-                background-color: #0B3A83;
+                background-color: #546e7a;
                 color: #fff;
                 position: absolute;
                 bottom: 0px;

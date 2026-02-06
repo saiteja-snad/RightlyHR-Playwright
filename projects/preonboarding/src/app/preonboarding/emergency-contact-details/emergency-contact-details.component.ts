@@ -79,8 +79,19 @@ export class EmergencyContactDetailsComponent {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data as Ipersonal;
-        this.selectedCountryCode?.set(this.empdata.emergencyNumberCountryFlag);
-        this.selectedCountryCode1?.set(this.empdata.emergencyPhoneCountryFlag);
+          // PRIMARY
+  if (this.empdata?.emergencynumbercountryflag) {
+    this.selectedCountryCode.set(this.empdata.emergencynumbercountryflag);
+    this.selectedCountryCodegflag = this.empdata.emergencynumbercountryflag;
+    this.selectedDialCode = this.empdata.emergencycode;
+  }
+
+  // SECONDARY (THIS WAS MISSING)
+  if (this.empdata?.emergencyphonecountryflag) {
+    this.selectedCountryCode1.set(this.empdata.emergencyphonecountryflag);
+    this.selectedCountryCodegflag1 = this.empdata.emergencyphonecountryflag;
+    this.selectedDialCode1 = this.empdata.emergencycode1;
+  }
         this.patchForm();
         this.loading = false;
       },

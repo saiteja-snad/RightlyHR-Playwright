@@ -95,7 +95,13 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employeeData = data as Ipersonal;
-        this.selectedCountryCode.set(this.employeeData?.contactNumberCountryFlag);
+         //set country flag AFTER data comes
+  if (this.employeeData?.contactnumbercountryflag) {
+    this.selectedCountryCode.set(this.employeeData.contactnumbercountryflag);
+    this.selectedCountryCodegflag = this.employeeData.contactnumbercountryflag;
+  }
+
+        // this.selectedCountryCode.set(this.employeeData?.contactNumberCountryFlag);
         this.getJobDetails();
 
         this.loading = false;
@@ -213,6 +219,7 @@ export class PersonalDetailsComponent implements OnInit {
       gender: this.employeeData.gender,
       salutation: this.employeeData.title,
       phonenumber: this.employeeData.contactnumber,
+      countyCode:this.employeeData.mobilePhoneCountryCode??null,
       dob: this.employeeData.dob,
       bloodGroup: this.employeeData.bloodGroup,
       location: this.jobdetails.lopcation,

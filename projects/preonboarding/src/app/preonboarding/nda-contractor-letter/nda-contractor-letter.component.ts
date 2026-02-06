@@ -20,9 +20,10 @@ import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-pro
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { PopupService } from '../../common-services/popup.service';
 import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
+import { LettersheaderComponent } from "../../../../../hrms/src/app/shared/letters-shared-content/lettersheader/lettersheader.component";
 @Component({
   selector: 'app-nda-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, DetailedStepProgressbarComponent, DateFormatPipe, LettersheaderComponent],
   templateUrl: './nda-contractor-letter.component.html',
   styleUrl: './nda-contractor-letter.component.scss'
 })

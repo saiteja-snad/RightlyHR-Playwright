@@ -350,7 +350,7 @@ export class OnBehalfOfExpensesComponent {
             .sort((a: any, b: any) => {
               const nameA = (a.firstName ?? '').toLowerCase();
               const nameB = (b.firstName ?? '').toLowerCase();
-              return nameA.localeCompare(nameB, 'en', { sensitivity: 'base' });
+              return nameA?.localeCompare(nameB, 'en', { sensitivity: 'base' });
             });
         },
         error: (reason: any) => {

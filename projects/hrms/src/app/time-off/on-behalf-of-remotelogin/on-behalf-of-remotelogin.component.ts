@@ -117,7 +117,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy {
         })
         // Alphabetical sorting by firstName
           .sort((a: any, b: any) =>
-            a.firstName.localeCompare(b.firstName, 'en', {
+            a?.firstName?.localeCompare(b?.firstName, 'en', {
               sensitivity: 'base',
             })
           );

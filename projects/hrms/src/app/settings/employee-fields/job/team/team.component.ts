@@ -107,11 +107,11 @@ export class TeamComponent implements OnInit, OnDestroy {
               ...emp,
               fullName: fullName.replace(/\s+/g, ' ')
             };
-          }).sort((a: any, b: any) => {
-            const nameA = (a.firstName ?? '').toLowerCase();
-            const nameB = (b.firstName ?? '').toLowerCase();
-            return nameA.localeCompare(nameB, 'en', { sensitivity: 'base' });
-          });
+          }) .sort((a: any, b: any) =>
+            a?.firstName?.localeCompare(b?.firstName, 'en', {
+              sensitivity: 'base',
+            })
+          );
         }
         console.log("Team details" + this.teamdetails)
       },

@@ -42,7 +42,7 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
     FormsModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
-],
+  ],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -225,7 +225,7 @@ export class OnBeHalfOfComponent {
       .get('enddate')
       ?.valueChanges.subscribe(() => this.updateHalfDayOptions());
 
-      this.leaveForm.get('leaveType')?.valueChanges.subscribe((leaveType: string) => {
+    this.leaveForm.get('leaveType')?.valueChanges.subscribe((leaveType: string) => {
       const startDateControl = this.leaveForm.get('startdate');
       const endDateControl = this.leaveForm.get('enddate');
 
@@ -261,32 +261,34 @@ export class OnBeHalfOfComponent {
   }
 
   getMyTeamData() {
-  const EmployeeId = this.empdata.employeeId;
+    const EmployeeId = this.empdata.employeeId;
 
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (response && response.length) {
-          this.getEmployeeInfo = response
-            .map((emp: any) => {
-              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            this.getEmployeeInfo = response
+              .map((emp: any) => {
+                const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+                const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
 
-              return {
-                ...emp,
-                fullName
-              };
-            })
-            //  Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-            );
-        }
-      },
-      error: (err) => console.error(err)
-    });
-}
+                return {
+                  ...emp,
+                  fullName
+                };
+              })
+              //  Alphabetical sorting by firstName
+              .sort((a: any, b: any) =>
+                a?.firstName?.localeCompare(b?.firstName, 'en', {
+                  sensitivity: 'base',
+                })
+              );
+          }
+        },
+        error: (err) => console.error(err)
+      });
+  }
 
   updateModuleInfo() {
     const url = this.router.url;
@@ -383,7 +385,7 @@ export class OnBeHalfOfComponent {
     if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
       return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked -(item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
 
@@ -410,7 +412,7 @@ export class OnBeHalfOfComponent {
     const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
     return percentage * 360;
   }
-   OnclickMyTeam(fusionemployeeId: any): void {
+  OnclickMyTeam(fusionemployeeId: any): void {
     this.selectedEmployeeId = fusionemployeeId?.value || null;
     this.selectedEmployeeName = fusionemployeeId?.label || '';
     if (!fusionemployeeId || !fusionemployeeId.value) {
@@ -514,20 +516,20 @@ export class OnBeHalfOfComponent {
       const startDateControl = this.leaveForm.get('startdate')?.value;
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
-      if(endDateControl && startDateControl){
-          endDateControl.disable();
-          this.leaveForm.patchValue({ fulldayavailing: '2' });
-          this.chooseDayType('full');
+      if (endDateControl && startDateControl) {
+        endDateControl.disable();
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.chooseDayType('full');
       }
       halfDayControl?.disable();
       this.disableSubmitButton = false;
     }
-    if(this.selectedleave?.category?.isOptionalHoliday === false){
+    if (this.selectedleave?.category?.isOptionalHoliday === false) {
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
-      if(endDateControl){
-          endDateControl.enable();
-          this.leaveForm.patchValue({ fulldayavailing: null });
+      if (endDateControl) {
+        endDateControl.enable();
+        this.leaveForm.patchValue({ fulldayavailing: null });
       }
       halfDayControl?.enable();
       this.disableSubmitButton = true;
@@ -564,7 +566,7 @@ export class OnBeHalfOfComponent {
   //   this.leaveForm.get('fulldayavailing')?.clearValidators();
   //   this.leaveForm.patchValue({ fulldayavailing: null });
   // }
-   toggleHalfDayOptions(isHalfDay: boolean) {
+  toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
     this.chooseDayType('half')
     if (isHalfDay) {
@@ -590,7 +592,7 @@ export class OnBeHalfOfComponent {
       this.enableButton = false;
     }
   }
-  
+
   toggleFullDayOptions(isFullDay: boolean) {
     this.enableButton = isFullDay;
     this.leaveForm.get('halfdayavailing')?.clearValidators();
@@ -599,36 +601,37 @@ export class OnBeHalfOfComponent {
   }
 
   getEmployeeId() {
-  let loggedInUser = this.authService.getToken();
+    let loggedInUser = this.authService.getToken();
 
-  this.subscription = this.http
-    .getData('Employeedata/ActiveEmployees')
-    .subscribe({
-      next: (data: any) => {
-        this.employeeiddetails = data
-          .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
-          .map((emp: any) => {
-            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-            const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+    this.subscription = this.http
+      .getData('Employeedata/ActiveEmployees')
+      .subscribe({
+        next: (data: any) => {
+          this.employeeiddetails = data
+            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
+            .map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
 
-            const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''}`.trim();
+              const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''}`.trim();
 
-            return {
-              ...emp,
-              fullName,
-              leaveRequestName
-            };
-          })
-          //  Alphabetical sorting by firstName
-          .sort((a: any, b: any) =>
-            a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-          );
-      },
-      error: (reason: any) => {
-        console.error(reason);
-      },
-    });
-}
+              return {
+                ...emp,
+                fullName,
+                leaveRequestName
+              };
+            })
+            .sort((a: any, b: any) =>
+              a?.firstName?.localeCompare(b?.firstName, 'en', {
+                sensitivity: 'base',
+              })
+            );;
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
+  }
 
 
   cadidateEmployeeId!: number;
@@ -665,8 +668,8 @@ export class OnBeHalfOfComponent {
             this.initChart(this.categoryDetails);
           }
         },
-        error: (reason: any) => {},
-        complete: () => {},
+        error: (reason: any) => { },
+        complete: () => { },
       });
   }
 
@@ -875,10 +878,10 @@ export class OnBeHalfOfComponent {
     }
   }
 
-  onSubmit(){
+  onSubmit() {
     let loggedInUser = this.authService.getToken();
     this.isSubmitted = true;
-    this.isLoading= true;
+    this.isLoading = true;
     if (this.leaveForm.valid) {
       this.dateDiff = this.leaveFormData.isDaytype
         ? this.dateDifference / 2
@@ -904,7 +907,7 @@ export class OnBeHalfOfComponent {
         this.checkSandwichPolicy();
         return;
       }
-      
+
       this.submitLeaveRequest();
     } else {
       this.conformationPopup.openErrorModal('Maximum leave limit reached for this category');
@@ -974,143 +977,143 @@ export class OnBeHalfOfComponent {
     //     this.leaveForm.get('enddate')?.value
     //   ).format('YYYY-MM-DD');
     //   this.leaveFormData.notes = this.leaveForm.get('reason')?.value;
-      if (this.leaveapplication.probationEndDate) {
-        // Check if the employee is still on probation
-        let currentDate = moment();
-        let probationEndDate = moment(this.leaveapplication.probationEndDate);
-        // Create new Moment objects without time information
-        let currentDateWithoutTime = currentDate.startOf('day');
-        let probationEndDateWithoutTime = probationEndDate.startOf('day');
+    if (this.leaveapplication.probationEndDate) {
+      // Check if the employee is still on probation
+      let currentDate = moment();
+      let probationEndDate = moment(this.leaveapplication.probationEndDate);
+      // Create new Moment objects without time information
+      let currentDateWithoutTime = currentDate.startOf('day');
+      let probationEndDateWithoutTime = probationEndDate.startOf('day');
 
-        if (
-          currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)
-        ) {
-          // The employee is still on probation
-          // Calculate the number of probation days
-          let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
-          let startdate = moment(this.startDate);
-          let enddate = moment(this.endDate);
-          let Duration = this.leaveFormData.duration;
-          let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
-          // Divide by 30 and round down to the nearest 0.5 or whole number
-          let months = 1;
-          months += Math.floor(probationDaysDiff / 30);
+      if (
+        currentDateWithoutTime.isSameOrBefore(probationEndDateWithoutTime)
+      ) {
+        // The employee is still on probation
+        // Calculate the number of probation days
+        let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
+        let startdate = moment(this.startDate);
+        let enddate = moment(this.endDate);
+        let Duration = this.leaveFormData.duration;
+        let probationDaysDiff = startdate.diff(dateOfJoining, 'days');
+        // Divide by 30 and round down to the nearest 0.5 or whole number
+        let months = 1;
+        months += Math.floor(probationDaysDiff / 30);
 
-          let totalAppliedLeaves = this.lpdata
-            .filter((element) => element.status !== 'rejected') // Exclude rejected leaves
-            .reduce((acc, element) => {
-              let appliedStartdate = moment(element.startdate).startOf('day');
-              let appliedEnddate = moment(element.enddate).startOf('day');
-              let appliedDuration =
-                appliedEnddate.diff(appliedStartdate, 'days') + 1;
-              return acc + appliedDuration;
-            }, 0);
-          let probationCategoryDetails: ICategoryDetails[] =
-            this.categoryDetails.filter((e) => e.category.isProbationAllowed);
-          let leaveCategory = this.leaveFormData.categoryId;
-          let isProbationLeave = probationCategoryDetails.some(
-            (e) => e.category.id == leaveCategory
+        let totalAppliedLeaves = this.lpdata
+          .filter((element) => element.status !== 'rejected') // Exclude rejected leaves
+          .reduce((acc, element) => {
+            let appliedStartdate = moment(element.startdate).startOf('day');
+            let appliedEnddate = moment(element.enddate).startOf('day');
+            let appliedDuration =
+              appliedEnddate.diff(appliedStartdate, 'days') + 1;
+            return acc + appliedDuration;
+          }, 0);
+        let probationCategoryDetails: ICategoryDetails[] =
+          this.categoryDetails.filter((e) => e.category.isProbationAllowed);
+        let leaveCategory = this.leaveFormData.categoryId;
+        let isProbationLeave = probationCategoryDetails.some(
+          (e) => e.category.id == leaveCategory
+        );
+        this.DisableSubmitButton = false;
+        if (isProbationLeave) {
+          let probationmonths = this.getMonthsArray(
+            new Date(this.empdata.dateOfJoining),
+            new Date(this.empdata.probationEndDate)
           );
-          this.DisableSubmitButton = false;
-          if (isProbationLeave) {
-            let probationmonths = this.getMonthsArray(
-              new Date(this.empdata.dateOfJoining),
-              new Date(this.empdata.probationEndDate)
-            );
-            let filterPayrollmonths = probationmonths.filter(
-              (x) => months >= x.id
-            );
-            var prbmnthstartdate =
-              filterPayrollmonths.length == 0
-                ? filterPayrollmonths[0].startDate
-                : filterPayrollmonths[0].startDate;
-            var prbmnthenddate =
-              filterPayrollmonths.length == 0
-                ? filterPayrollmonths[0].endDate
-                : filterPayrollmonths[filterPayrollmonths.length - 1].endDate;
+          let filterPayrollmonths = probationmonths.filter(
+            (x) => months >= x.id
+          );
+          var prbmnthstartdate =
+            filterPayrollmonths.length == 0
+              ? filterPayrollmonths[0].startDate
+              : filterPayrollmonths[0].startDate;
+          var prbmnthenddate =
+            filterPayrollmonths.length == 0
+              ? filterPayrollmonths[0].endDate
+              : filterPayrollmonths[filterPayrollmonths.length - 1].endDate;
 
-            //  var SelectedProbCat = probationCategoryDetails.find(x=>x.cate)
-            probationCategoryDetails.forEach((e) => {
-              e.probationLeaves = months * e.category.probationDays;
-              if (e.probationLeaves >= Duration) {
-                if (
-                  this.isWithinExistingRanges(
-                    prbmnthstartdate,
-                    prbmnthenddate,
-                    e.probationLeaves,
-                    Duration
-                  )
-                ) {
-                  this.DisableSubmitButton = true;
-                } else {
-                  this.DisableSubmitButton = false;
-                }
-              } else {
+          //  var SelectedProbCat = probationCategoryDetails.find(x=>x.cate)
+          probationCategoryDetails.forEach((e) => {
+            e.probationLeaves = months * e.category.probationDays;
+            if (e.probationLeaves >= Duration) {
+              if (
+                this.isWithinExistingRanges(
+                  prbmnthstartdate,
+                  prbmnthenddate,
+                  e.probationLeaves,
+                  Duration
+                )
+              ) {
                 this.DisableSubmitButton = true;
+              } else {
+                this.DisableSubmitButton = false;
               }
-            });
-            if (this.DisableSubmitButton) {
-              this.conformationPopup.openErrorModal(
-                'Leave application exceeds the allowed limit for the probation Leaves'
-              );
-              return;
+            } else {
+              this.DisableSubmitButton = true;
             }
+          });
+          if (this.DisableSubmitButton) {
+            this.conformationPopup.openErrorModal(
+              'Leave application exceeds the allowed limit for the probation Leaves'
+            );
+            return;
           }
         }
       }
-      const differenceInDays = this.calculateDifferenceInDays(
-        this.leaveFormData.startdate,
-        this.leaveFormData.enddate,
-        this.selectedleave.category.excludeWeekends
+    }
+    const differenceInDays = this.calculateDifferenceInDays(
+      this.leaveFormData.startdate,
+      this.leaveFormData.enddate,
+      this.selectedleave.category.excludeWeekends
+    );
+    // Add the difference to the existing booked days
+    const totalBookedDays = this.selectedleave.booked + differenceInDays;
+    // Check if the total booked days exceed the allowed limit
+    if (totalBookedDays <= this.selectedleave.allowedDays) {
+      this.subscription = this.http
+        .postdata('Timeoff', this.leaveFormData)
+        .subscribe({
+          next: (data: any) => {
+            this.isLoading = false;
+            console.log(data);
+            // localStorage.setItem('onbehalfof', JSON.stringify(data));
+            if (data) {
+              this.leaveBalance(data);
+              this.resetRadioButtons();
+              this.modalService.dismissAll();
+              this.conformationPopup.openSuccessModal(
+                'Leave processed successfully'
+              );
+              this.generateEmail(data);
+              this.startdatevalid = true;
+              this.disableSubmitButton = true;
+              this.issEndDategreater = true;
+              this.isDayTypeselected = false;
+              this.isstimeoffValid = true;
+              this.startdatevalid = true;
+              this.isHolidaySelected = false;
+              this.isWeekOffSelected = false;
+              this.isWeekOffSelectedEndate = false;
+              this.enableButton = false;
+              this.dateDiff = 0;
+            }
+          },
+          error: (err: any) => {
+            this.isLoading = false;
+            this.conformationPopup.openErrorModal(err.error.message);
+          },
+          complete: () => {
+            this.isLoading = false;
+            this.leaveForm.reset();
+            this.http.onBehalfOfTriggerSignal.set(true);
+          },
+        });
+    } else {
+      this.conformationPopup.openErrorModal(
+        'Maximum leave limit reached for this category'
       );
-      // Add the difference to the existing booked days
-      const totalBookedDays = this.selectedleave.booked + differenceInDays;
-      // Check if the total booked days exceed the allowed limit
-      if (totalBookedDays <= this.selectedleave.allowedDays) {
-        this.subscription = this.http
-          .postdata('Timeoff', this.leaveFormData)
-          .subscribe({
-            next: (data: any) => {
-              this.isLoading= false;
-              console.log(data);
-              // localStorage.setItem('onbehalfof', JSON.stringify(data));
-              if (data) {
-                this.leaveBalance(data);
-                this.resetRadioButtons();
-                this.modalService.dismissAll();
-                this.conformationPopup.openSuccessModal(
-                  'Leave processed successfully'
-                );
-                this.generateEmail(data);
-                this.startdatevalid = true;
-                this.disableSubmitButton = true;
-                this.issEndDategreater = true;
-                this.isDayTypeselected = false;
-                this.isstimeoffValid = true;
-                this.startdatevalid = true;
-                this.isHolidaySelected = false;
-                this.isWeekOffSelected = false;
-                this.isWeekOffSelectedEndate = false;
-                this.enableButton = false;
-                this.dateDiff = 0;
-              }
-            },
-            error: (err: any) => {
-              this.isLoading= false;
-              this.conformationPopup.openErrorModal(err.error.message);
-            },
-            complete: () => {
-              this.isLoading= false;
-              this.leaveForm.reset();
-              this.http.onBehalfOfTriggerSignal.set(true);
-            },
-          });
-      } else {
-        this.conformationPopup.openErrorModal(
-          'Maximum leave limit reached for this category'
-        );
-      }
-    
+    }
+
   }
 
   leaveBalance(Values: any) {
@@ -1217,89 +1220,89 @@ export class OnBeHalfOfComponent {
   startDateErrorMessage = '';
   endDateErrorMessage = '';
   calculateDateDifference(startDate: string, endDate: string) {
-  const start = moment(startDate, 'YYYY-MM-DD');
+    const start = moment(startDate, 'YYYY-MM-DD');
     const end = moment(endDate, 'YYYY-MM-DD');
     let diff = 0;
-  
+
     this.isHolidaySelected = false;
     this.isHolidaySelectedEndate = false;
     this.isNonOptionalHolidaySelected = false;
     this.startDateErrorMessage = '';
     this.endDateErrorMessage = '';
     this.isoptionalnotallowedatWorkingdate = false;
-  
+
     const nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => !h.isOptional);
     const optionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => h.isOptional);
-  
+
     // Loop from start to end
     let current = start.clone();
     while (current.isSameOrBefore(end, 'day')) {
       const isWeekend = this.selectedleave?.category.excludeWeekends &&
         this.orgweekend?.orgWeekendItems?.some((item: { weekday: string; }) => item.weekday === current.format('dddd'));
-  
+
       const isNonOptionalHoliday = this.selectedleave?.category.excludeHolidays &&
         nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(current, 'day'));
-  
+
       if (!isWeekend && !isNonOptionalHoliday) {
         diff++;
       }
-  
+
       current.add(1, 'day');
     }
-  
+
     // Optional holiday handling
     if (this.selectedleave?.category.isOptionalHoliday) {
       let dateRange: string[] = [];
       for (let m = start.clone(); m.diff(end, 'days') <= 0; m.add(1, 'days')) {
         dateRange.push(m.format('YYYY-MM-DD'));
       }
-  
+
       const hasNonOptional = dateRange.some(date =>
         !optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'))
       );
-  
+
       const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
         moment(holiday.holidayDate).isSame(startDate, 'day')
       );
-  
+
       const isEndOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
         moment(holiday.holidayDate).isSame(endDate, 'day')
       );
-  
+
       this.isoptionalnotallowedatWorkingdate = hasNonOptional || !isStartOptional || !isEndOptional;
     }
-  
+
     // Check if start or end date is a non-optional holiday
     if (nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(startDate, 'day'))) {
       this.isNonOptionalHolidaySelected = true;
     }
-  
+
     if (nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
       this.isHolidaySelected = true;
       this.isHolidaySelectedEndate = true;
     }
-  
+
     // // Check optional holiday misuse if optional leave not allowed
     // if (this.selectedleave?.category?.isOptionalHoliday === false) {
     //   const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: any; }) =>
     //     this.isSameDate(holiday.holidayDate, startDate)
     //   );
-  
+
     //   const isEndOptional = optionalHolidays?.some((holiday: { holidayDate: any; }) =>
     //     this.isSameDate(holiday.holidayDate, endDate)
     //   );
-  
+
     //   this.startDateErrorMessage = isStartOptional ? 'Selected start date is not allowed as it is an optional holiday' : '';
     //   this.endDateErrorMessage = isEndOptional ? 'Selected end date is not allowed as it is an optional holiday' : '';
-  
+
     //   if (isStartOptional || isEndOptional) {
     //     return;
     //   }
     // }
-  
+
     // Set final calculated difference
     this.dateDifference = diff;
-  
+
     if (diff > 1) {
       this.chooseDayType("full");
     } else {
@@ -1307,17 +1310,17 @@ export class OnBeHalfOfComponent {
       this.selectedValuehalf = false;
       this.enableButton = false;
     }
-  
+
     this.dateDiff = this.leaveFormData.isDaytype ? diff / 2 : diff;
-}
+  }
 
   isSameDate(date1: any, date2: any): boolean {
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
-  return d1.getFullYear() === d2.getFullYear() &&
-         d1.getMonth() === d2.getMonth() &&
-         d1.getDate() === d2.getDate();
-}
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+  }
 
 
   chooseDayType(daytype: any) {
@@ -1412,59 +1415,59 @@ export class OnBeHalfOfComponent {
 
   onstartdate(action: string) {
     this.leaveForm.get('enddate')?.reset();
+    this.disableSubmitButton = false;
+    this.leaveForm.patchValue({ halfdayavailing: null });
+    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ fulldayavailing: null });
+    if (this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null) {
+      this.disableSubmitButton = true;
+    }
+    this.isoptionalnotallowedatWorkingdate = false;
+    this.isstimeoffValid = true;
+    this.startdatevalid = true;
+    this.isNonOptionalHolidaySelected = false;
+    this.isHolidaySelected = false;
+    this.isWeekOffSelectedEndate = false;
+    this.isWeekOffSelected = false;
+    this.isHolidaySelectedEndate = false;
+    this.updateStartDateValidity1();
+    this.vldateofjoin1();
+    this.onEndDateChange();
+    this.checkWeekends(action);
+    this.dateCheckWithHolidayOrWeekend(action);
+    this.issEndDategreater = true;
+    if (this.selectedleave?.category?.isOptionalHoliday === true) {
+      const startDate = this.leaveForm.get('startdate')?.value;
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+      const optionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => h.isOptional);
+      const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
+        moment(holiday.holidayDate).isSame(startDate, 'day')
+      );
+      if (startDate && endDateControl && isStartOptional) {
+        endDateControl.setValue(startDate);
+        endDateControl.disable();
+        halfDayControl?.disable();
         this.disableSubmitButton = false;
-        this.leaveForm.patchValue({ halfdayavailing: null });
-        this.leaveForm.patchValue({ availing: null });
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.chooseDayType('full');
+      }
+    }
+    if (this.selectedleave?.category?.isOptionalHoliday === false) {
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+      const startDate = this.leaveForm.get('startdate')?.value;
+      if (startDate && endDateControl) {
+        endDateControl.setValue(null);
+        endDateControl.enable();
+        halfDayControl?.enable();
+        this.disableSubmitButton = true;
         this.leaveForm.patchValue({ fulldayavailing: null });
-        if (this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null) {
-          this.disableSubmitButton = true;
-        }
-        this.isoptionalnotallowedatWorkingdate = false;
-        this.isstimeoffValid = true;
-        this.startdatevalid = true;
-        this.isNonOptionalHolidaySelected = false;
-        this.isHolidaySelected = false;
-        this.isWeekOffSelectedEndate = false;
-        this.isWeekOffSelected = false;
-        this.isHolidaySelectedEndate = false;
-        this.updateStartDateValidity1();
-        this.vldateofjoin1();
-        this.onEndDateChange();
-        this.checkWeekends(action);
-        this.dateCheckWithHolidayOrWeekend(action);
-        this.issEndDategreater = true;
-        if (this.selectedleave?.category?.isOptionalHoliday === true) {
-          const startDate = this.leaveForm.get('startdate')?.value;
-          const endDateControl = this.leaveForm.get('enddate');
-          const halfDayControl = this.leaveForm.get('halfdayavailing');
-          const optionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => h.isOptional);
-          const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
-          moment(holiday.holidayDate).isSame(startDate, 'day')
-        );
-          if (startDate && endDateControl && isStartOptional) {
-            endDateControl.setValue(startDate);
-            endDateControl.disable();
-            halfDayControl?.disable();
-            this.disableSubmitButton = false;
-            this.leaveForm.patchValue({ fulldayavailing: '2' });
-            this.chooseDayType('full');
-          }
-        }
-        if (this.selectedleave?.category?.isOptionalHoliday === false) {
-          const endDateControl = this.leaveForm.get('enddate');
-          const halfDayControl = this.leaveForm.get('halfdayavailing');
-          const startDate = this.leaveForm.get('startdate')?.value;
-          if (startDate && endDateControl) {
-            endDateControl.setValue(null);
-            endDateControl.enable();
-            halfDayControl?.enable();
-            this.disableSubmitButton = true;
-            this.leaveForm.patchValue({ fulldayavailing: null });
-          }
-        }
-        // if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
-        //   this.disableSubmitButton = false;
-        // }
+      }
+    }
+    // if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
+    //   this.disableSubmitButton = false;
+    // }
   }
 
   updateStartDateValidity1(): void {
@@ -1903,7 +1906,7 @@ export class OnBeHalfOfComponent {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;
     this.timeoffYearFilterService.setSelectedYear(selectedYear);
-    
+
     // Only refresh data and trigger signal if employee is selected
     const employeeId = localStorage.getItem('onbehalfof');
     if (employeeId && employeeId !== 'null') {

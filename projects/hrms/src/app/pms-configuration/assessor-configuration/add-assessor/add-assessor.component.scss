@@ -3,3 +3,12 @@
     height: max-content;
     max-height: 30vh;
 }
+
+::ng-deep .p-select-overlay,
+::ng-deep .p-select-panel {
+    z-index: 10000 !important;
+}
+
+::ng-deep .p-overlay {
+    z-index: 10000 !important;
+}

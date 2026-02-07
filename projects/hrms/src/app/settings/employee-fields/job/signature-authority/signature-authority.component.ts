@@ -96,7 +96,7 @@ export class SignatureAuthorityComponent implements OnInit {
             };
           })
           .sort((a: any, b: any) =>
-            a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            a?.firstName?.localeCompare(b?.firstName, 'en', { sensitivity: 'base' })
           );
 
         console.log(this.employeeiddetails);

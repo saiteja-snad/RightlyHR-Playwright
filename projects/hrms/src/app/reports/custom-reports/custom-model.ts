@@ -80,7 +80,7 @@ export interface Ipersonal {
   workEmail: string;
   workPhone: number;
   subLocation: string;
-  branchCode: string;
+  branchcode: string;
   joblocationname: string;
   jobsublocationname: string;
   shiftname: string;

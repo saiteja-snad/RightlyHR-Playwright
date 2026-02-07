@@ -6,6 +6,11 @@
     <!--right data-->
     <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit()">
       <div class="d-flex gap-3">
+         @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
+      <button type="button" class="clear-all-btn" *ngIf="isActiveOrInactive()" (click)="clearAllFilters()">
+        Clear All
+      </button>
+      }
         @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
         <div class="d-flex gap-2 align-items-center">
           <div class="custom-label filter-labels text-nowrap">Employee Status</div>
@@ -19,15 +24,21 @@
           </div>
         </div>
 
+      
         <!-- Date Picker -->
+       <!-- Date Picker -->
         <div class="d-flex align-items-center gap-2" *ngIf="isActiveOrInactive()">
-          <div class="custom-label text-nowrap">
+          <div class="custom-label filter-labels text-nowrap m-0">
             {{ getDateLabel() }}
           </div>
-          <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" />
+          </div>
+          <!-- <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
             [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
             formControlName="dateOfJoining" [placeholder]="getDatePlaceholder()" class="form-control custom-input w-100"
-            [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+            [startKey]="'startDate'" [endKey]="'endDate'" readonly /> -->
         </div>
         }
         <div class="d-flex gap-2">

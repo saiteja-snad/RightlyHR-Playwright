@@ -2,22 +2,35 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable,Inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
-import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
+import { microsoftAuthConfig } from '../auth/auth.config';
 import { Router } from '@angular/router';
-import { catchError, map, throwError } from'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 
 export class AuthService {
 
+  private socialUser: SocialUser | null = null;
+  private userSubject = new BehaviorSubject<SocialUser | null>(null);
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private modalService: NgbModal,
     private oauthService: OAuthService,
-  ) { }
+    private socialService: SocialAuthService,
+  ) { 
+    this.socialService.authState.subscribe((user) => {
+      this.socialUser = user;
+      this.userSubject.next(user);
+      if (user) {
+        this.router.navigate(['/uservalidation']);
+      }
+    });
+  }
 
   ApiUrl = environment.ApiUrl;
 
@@ -109,10 +122,10 @@ export class AuthService {
     });
   }
 
-  loginWithGoogle() {
-    this.oauthService.configure(googleAuthConfig);
-    this.oauthService.loadDiscoveryDocumentAndLogin();
-  }
+  // loginWithGoogle() {
+  //   this.oauthService.configure(googleAuthConfig);
+  //   this.oauthService.loadDiscoveryDocumentAndLogin();
+  // }
 
   logout(): void {
     const tokenString = localStorage.getItem('currentUser');
@@ -198,6 +211,31 @@ export class AuthService {
       console.error('Failed to fetch IP address', err);
       return 'Unknown IP';
     }
+  }
+
+    /** Expose SocialUser as observable */
+  getUser$(): Observable<SocialUser | null> {
+    return this.userSubject.asObservable();
+  }
+
+  /** Get current SocialUser */
+  getUser(): SocialUser | null {
+    return this.socialUser;
+  }
+
+  /** Get ID token */
+  getIdToken(): string | null {
+    return this.socialUser?.idToken ?? null;
+  }
+
+  /** Get access token */
+  getAccessToken(): string | null {
+    return this.socialUser?.authToken ?? null;
+  }
+
+  /** Sign out */
+  signOut(): Promise<void> {
+    return this.socialService.signOut(true);
   }
 
   onLogout() {

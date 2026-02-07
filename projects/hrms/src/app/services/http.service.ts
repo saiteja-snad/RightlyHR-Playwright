@@ -64,6 +64,8 @@ export class HttpService {
     this.communicationService = new BehaviorSubject(null);
   }
 
+  loginErrorSignal = signal<string>('');
+
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();

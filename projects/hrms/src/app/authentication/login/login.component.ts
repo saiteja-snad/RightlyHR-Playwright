@@ -8,9 +8,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Carousel } from 'primeng/carousel';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { SignalsService } from '../../services/signals.service';
+import { GoogleSigninButtonModule, SocialAuthService, SocialLoginModule, SocialUser } from '@abacritt/angularx-social-login';
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule, Carousel, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, Carousel, ReactiveFormsModule, GoogleSigninButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -27,6 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   returnUrl!: string | null;
   spinnerLoader = false;
+  Status: any;
   carouselItems = [
     { subject: 'From onboarding to offboarding, manage every step of the employee journey with ease. RightlyHR streamlines your workflows and puts people first.' },
     { subject: 'Configure letters, automate approvals, and customize forms in just a few clicks. Say goodbye to paperwork chaos and hello to powerful simplicity.' },
@@ -44,6 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
+    this.initializeAuthState();
   }
 
   ngOnInit(): void {
@@ -66,6 +69,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.http.loginWithMicrosoft();
   }
 
+  // loginWithGoogle() {
+  //   if (this.signal.authSignal() !== '') {
+  //     this.signal.authSignal.set('');
+  //   }
+  //   this.http.loginWithGoogle();
+  // }
+
   viewpassword() {
     this.visible = !this.visible;
     this.changetype = !this.changetype;
@@ -86,6 +96,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
 
     this.loginForm.valueChanges.subscribe(() => {
+      this.Status = '';
       this.signal.authSignal.set('');
     });
   }
@@ -115,12 +126,29 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.spinnerLoader = false;
+          this.Status = 'Invalid Email ID or Password';
           this.signal.authSignal.set(err.error?.message || 'Login failed. Please try again');
         }
       });
     } else {
       console.log('Form invalid');
     }
+  }
+
+  private initializeAuthState() {
+    this.subscription = this.http.getUser$().subscribe({
+      next: (user) => {
+        if (user) {
+          console.log('User authenticated');
+        }
+      },
+      error: (err) => {
+        this.Status = err?.error?.message || 'Something went wrong';
+      },
+      complete:() =>{
+        this.Status= '';
+      }
+    });
   }
 
   ngOnDestroy(): void {

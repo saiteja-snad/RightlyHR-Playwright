@@ -13,6 +13,8 @@ import { provideDaterangepickerLocale } from "ngx-daterangepicker-bootstrap";
 import { OAuthService, provideOAuthClient } from 'angular-oauth2-oidc';
 import { microsoftAuthConfig } from './auth/auth.config';
 import { TokeninterceptorsInterceptor } from './auth/interceptor/tokeninterceptor.interceptor';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SOCIAL_AUTH_CONFIG } from '@abacritt/angularx-social-login';
+import { environment } from '../environments/environment';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, '/language/', '.json');
@@ -56,6 +58,24 @@ export const appConfig: ApplicationConfig = {
     provideNoopAnimations(),
     provideOAuthClient(),
     provideAppInitializer(() => initializeAuth()),
+    {
+      provide: SOCIAL_AUTH_CONFIG,
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(environment.googleClientId, {
+              oneTapEnabled: false,
+              scopes: 'email profile'
+            })
+          }
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    },
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
     {
       provide: HTTP_INTERCEPTORS,

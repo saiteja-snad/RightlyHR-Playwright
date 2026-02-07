@@ -36,6 +36,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.intilaizeChangePasswordForm();
     this.intializeGetStartedForm();
+     
     this.empinfo = JSON.parse(localStorage.getItem('currentUser') || '{}');
     this.employeeName = this.empinfo.name;
     this.getUserPreference(this.empinfo.employeeId);

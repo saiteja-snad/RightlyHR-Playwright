@@ -11,13 +11,3 @@ export const microsoftAuthConfig: AuthConfig = {
   showDebugInformation: true,
   strictDiscoveryDocumentValidation: false,
 };
-
-export const googleAuthConfig: AuthConfig = {
-  issuer: environment.auth.google.issuer,
-  clientId: environment.auth.google.clientId,
-  redirectUri: environment.auth.google.redirectUri,
-  responseType: 'code',
-  scope: environment.auth.google.scope,
-  showDebugInformation: true,
-  strictDiscoveryDocumentValidation: false,
-};

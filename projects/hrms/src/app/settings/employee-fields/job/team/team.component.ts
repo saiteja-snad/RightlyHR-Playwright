@@ -93,6 +93,7 @@ export class TeamComponent implements OnInit, OnDestroy {
       centered: true
     });
   }
+  
 getTeam() {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {

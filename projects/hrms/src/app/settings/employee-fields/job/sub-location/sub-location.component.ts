@@ -48,7 +48,7 @@ export class SubLocationComponent {
   ngOnInit(): void {
     this.AddForm = this.fb.group({
       AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
-      AddSubLocation: ['', Validators.required, Validators.pattern(/^[^\s].*$/)],
+      AddSubLocation: ['',[ Validators.required, Validators.pattern(/^[^\s].*$/)]],
       AddAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250), Validators.pattern(/^[^\s].*$/)]],
     });
 

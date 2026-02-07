@@ -58,6 +58,7 @@ export class OnBehalfOfExpensesWaitingForApprovalComponent {
       } else {
         this.selectemp = null;
         this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+        this.selectemp = this.empinfo.employeeId
         this.getExpensesHeaderByEmployeeId();
       }
     });

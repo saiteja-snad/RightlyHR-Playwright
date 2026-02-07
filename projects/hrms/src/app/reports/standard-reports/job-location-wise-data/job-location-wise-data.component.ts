@@ -190,7 +190,11 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+clearAllFilters(){
+  this.locationReportsForm.get('dateOfJoining')?.setValue(null);
+  this.locationReportsForm.get('empStatus')?.setValue('All Employees');
+  this.onSubmit(this.locationReportsForm);
+}
   // Function to get the data after click on Generat button
   onSubmit(form: FormGroup) {
     const formData = form.value;

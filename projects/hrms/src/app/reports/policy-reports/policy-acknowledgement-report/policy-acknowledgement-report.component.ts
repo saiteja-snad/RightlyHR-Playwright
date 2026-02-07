@@ -331,6 +331,7 @@ clearDropdowns(keys: string[]) {
 
   clearAllFilters(): void {
     this.policyAcknowledgementReport.reset();
+      this.policyAcknowledgementReports = [];
   }
 
   navigation(){

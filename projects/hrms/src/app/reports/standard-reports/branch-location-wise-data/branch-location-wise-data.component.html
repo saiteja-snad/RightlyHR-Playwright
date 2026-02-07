@@ -5,6 +5,9 @@
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex align-items-center gap-3">
+                   <div *ngIf="reportForm.get('dateOfJoining')?.value">
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+        </div>
                 @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
                     <label class="filter-labels text-nowrap m-0">Date Of Joining</label>

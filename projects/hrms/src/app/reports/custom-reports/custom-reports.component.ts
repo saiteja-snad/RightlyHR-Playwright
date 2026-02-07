@@ -15,6 +15,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
+import { DatePicker } from 'primeng/datepicker';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 interface FieldGroup {
@@ -31,6 +32,7 @@ interface FieldGroup {
     CommonModule,
     FormsModule,
     CalendarModule,
+     DatePicker,
     NgxDaterangepickerBootstrapDirective,
     AccordionModule,
     NoDataFoundComponent,
@@ -697,21 +699,37 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isActiveOrInactive(): boolean {
-    const status = this.employeeStatus?.toLowerCase();
-    return status === 'active' || status === 'inactive';
-  }
+clearAllFilters(): void {
+  this.reportForm.patchValue({
+    status: 'All Employees',
+    dateOfJoining: null
+  });
+
+  this.emp = [...this.copyData];
+  this.filteredData = [...this.copyData];
+  this.selectedData = [];
+
+  this.disableBtn = false;
+  this.hasPendingChanges = false;
+  this.onSubmit();
+}
+
+isActiveOrInactive(): boolean {
+  const status = this.reportForm.get('status')?.value?.toLowerCase();
+  return status === 'active' || status === 'inactive';
+}
 
   getDateLabel(): string {
     const status = this.reportForm.get('status')?.value?.toLowerCase();
     return status === 'active' ? 'Date of Joining' : 'Last Working Day';
   }
 
-  getDatePlaceholder(): string {
-    const status = this.employeeStatus?.toLowerCase();
-    return status === 'active' ? 'Please select date of joining' : 'Please select last working day';
-  }
-
+getDatePlaceholder(): string {
+  const status = this.reportForm.get('status')?.value?.toLowerCase();
+  return status === 'active'
+    ? 'Please select date of joining'
+    : 'Please select last working day';
+}
   generateExcel(): void {
     if (this.selectedData.length === 0) {
       return;
@@ -752,8 +770,8 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
     const link: HTMLAnchorElement = document.createElement('a');
     link.href = window.URL.createObjectURL(data);
-    link.download = `${this.loggedInUser.employeeId
-      }_${new Date().getTime()}_custom_reports.xlsx`;
+    link.download = `custom_reports-${this.loggedInUser.employeeId
+      }_${new Date().getTime()}.xlsx`;
     link.click();
     // Create file for potential upload
     const reportFile = new File(

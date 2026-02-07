@@ -895,7 +895,7 @@ showContractDetailSeperationDots= true;
       next: (response: any) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Contract Conversion Request raised successfully');
-        this.raiseConversionRequest();
+         this.getApprovalStatusCountscontract();
         this.isLoading = false;
         setTimeout(() => {
             window.location.reload();

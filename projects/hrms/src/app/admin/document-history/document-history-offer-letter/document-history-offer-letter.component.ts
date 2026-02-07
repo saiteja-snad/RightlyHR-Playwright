@@ -200,7 +200,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       note: Values.note,
       rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
       documentType: Values.documentType,
-      letterType : Values.letterType,
+      letterType : 'Offer Letter',
       currencyType : Values.currencyType
     };
     this.subscription = this.http
@@ -267,7 +267,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       note: Values.note,
       rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
       documentType: Values.documentType,
-      letterType : Values.letterType,
+      letterType : 'Offer Letter',
       currencyType : Values.currencyType
     };
     console.log(updateOfferLetterDetails);
@@ -392,7 +392,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       rolesAndResponsibilitesId:
         this.selectedValuesOfOffer.rolesAndResponsibilitesId,
       documentType: this.selectedValuesOfOffer.documentType,
-      letterType : this.selectedValuesOfOffer.letterType,
+      letterType : 'Offer Letter',
       currencyType : this.selectedValuesOfOffer.currencyType
     };
     console.log(updateOfferLetterDetails);

@@ -59,6 +59,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('entityAttributeValues?entity=PMS&attribute=assessorconfig').subscribe({
       next: (data: any) => {
         this.reviewCycleData = data;
+        console.log('Assessor Config Data:', this.reviewCycleData);
       },
     });
   }
@@ -67,27 +68,31 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   getAllActiveEmpList() {
     this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
         next: (res: any) => {
-          this.activeEmplist = res.map((employee: any) => {
+          this.activeEmplist = res?.map((employee: any) => {
             return {
               ...employee,
               fullName: `${employee.fusionEmpId ? 
-                employee.fusionEmpId + ' - ' : '' }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
+                employee.fusionEmpId + ' - ' : '' }${employee.firstName || ''} ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName || ''}`.trim(),
             };
-          });
+          }) || [];
+          console.log('Active Employee List Length:', this.activeEmplist.length);
         },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        error: (err: unknown) => { },
+        error: (err: unknown) => { 
+          console.error('Error loading employees:', err);
+          this.activeEmplist = [];
+        },
       });
   }
 
   // Check row state and trigger UI updates
   checkRowState(index: number) {
     const detail = this.assesorDetails[index];
+    console.log(`Row ${index} assessor:`, detail.assessors);
+    console.log(`Is HR:`, detail.assessors?.toLowerCase() === 'hr');
+    console.log(`Active Emp List Length:`, this.activeEmplist.length);
     if (this.isRowFilled(detail)) {
-      // Log if row is filled
       console.log(`Row ${index} is filled`);
     } else {
-      // Log if row is incomplete
       console.log(`Row ${index} is incomplete`);
     }
   }

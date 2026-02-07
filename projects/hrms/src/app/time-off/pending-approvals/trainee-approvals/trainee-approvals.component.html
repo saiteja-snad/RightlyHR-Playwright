@@ -47,7 +47,7 @@
                         <ng-template #starttime>-</ng-template>
                     </td>
                 <td class="text-center">
-                    <div *ngIf="trn?.entity?.comments; else approvercomments">
+                    <div *ngIf="trn?.entity?.comments?.length > 0; else approvercomments">
                         <div (click)="commentsFunction(trn?.entity?.comments,commentspopup)">
                             <i class="bi bi-info-circle-fill info-icon"></i>
                         </div>

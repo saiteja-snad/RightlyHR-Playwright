@@ -490,27 +490,27 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         // else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
         // Current Address
         else if (field === 'Address Line 1(current)')
-          data[field] = user.currentAddressLine1;
+          data[field] = user.currentaddressline1;
         else if (field === 'Address Line 2(current)')
-          data[field] = user.currentAddressLine2;
-        else if (field === 'City(current)') data[field] = user.currentCity;
-        else if (field === 'State(current)') data[field] = user.currentState;
+          data[field] = user.currentaddressline2;
+        else if (field === 'City(current)') data[field] = user.currentcity;
+        else if (field === 'State(current)') data[field] = user.currentstate;
         else if (field === 'Country(current)')
-          data[field] = user.currentCountry;
+          data[field] = user.currentcountry;
         else if (field === 'Zip Code/Post Code(current)')
-          data[field] = user.currentZipCode;
+          data[field] = user.currentzipcode;
         // Permanent Address
         else if (field === 'Address Line 1(permanemt)')
-          data[field] = user.permanentAddressLine1;
+          data[field] = user.permanentaddressline1;
         else if (field === 'Address Line 2(permanemt)')
-          data[field] = user.permanentAddressLine2;
-        else if (field === 'City(permanemt)') data[field] = user.permanentCity;
+          data[field] = user.permanentaddressline2;
+        else if (field === 'City(permanemt)') data[field] = user.permanentcity;
         else if (field === 'State(permanemt)')
-          data[field] = user.permanentState;
+          data[field] = user.permanentstate;
         else if (field === 'Country(permanemt)')
-          data[field] = user.permanentZipCode;
+          data[field] = user.permanentcountry;
         else if (field === 'Zip Code/Post Code(permanemt)')
-          data[field] = user.permanentZipCode;
+          data[field] = user.permanentzipcode;
         // Contact Details
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
@@ -550,8 +550,8 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         // Identity
         else if (field === 'Aadhaar Number') data[field] = user.aadhaar;
         else if (field === 'PAN Number') data[field] = user.pan;
-        else if (field === 'PF Number') data[field] = user.esic;
-        else if (field === 'ESIC Number') data[field] = user.pf;
+        else if (field === 'PF Number') data[field] = user.pf;
+        else if (field === 'ESIC Number') data[field] = user.esic;
         else if (field === 'UAN Number') data[field] = user.uan;
         // Bank
         else if (field === 'Bank Name') data[field] = user.bankName;
@@ -562,13 +562,13 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         // Pre Onboarding
         else if (field === 'Offer Sent Date')
           data[field] = this.formatDate(user.offerSentDate);
-        else if (field === 'Offer Sent By') data[field] = user.offerSentBy;
+        else if (field === 'Offer Sent By') data[field] = user.offersentby;
         else if (field === 'Offer Sent Status')
           data[field] = user.offerSentStatus;
         else if (field === 'Appointment Sent Date')
           data[field] = this.formatDate(user.appointmentSentDate);
         else if (field === 'Appointment Sent By')
-          data[field] = user.appointmentSentBy;
+          data[field] = user.appointmentsentby;
         else if (field === 'Appointment Sent Status')
           data[field] = user.appointmentSentStatus;
         // Onboarding
@@ -582,11 +582,11 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         else if (field === 'Notice Period') data[field] = user.noticePeriod;
         else if (field === 'Background Check Status')
           data[field] = user.backgroundCheckStatus;
-        else if (field === 'Salary Hold') data[field] = user.salaryHold;
+        else if (field === 'Salary Hold') data[field] = user.salaryhold;
         else if (field === 'PT') data[field] = user.pt;
-        else if (field === 'PF') data[field] = user.pfApplicable;
-        else if (field === 'ESIC') data[field] = user.esicApplicable;
-        else if (field === 'Insurance') data[field] = user.healthInsurance;
+        else if (field === 'PF') data[field] = user.pfapplicable;
+        else if (field === 'ESIC') data[field] = user.esicapplicable;
+        else if (field === 'Insurance') data[field] = user.healthinsurance;
         // Offboarding
         else if (field === 'Last Working Day')
           data[field] = this.formatDate(user.lastworkingday);
@@ -598,18 +598,18 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         else if (field === 'Grade Name') data[field] = user.gradeName;
         // Job Details
         else if (field === 'Job Effective Date')
-          data[field] = this.formatDate(user.jobEffectiveDate);
+          data[field] = this.formatDate(user.jobeffectivedate);
         else if (field === 'Job Role') data[field] = user.jobRole;
         else if (field === 'Department') data[field] = user.departmentName;
         else if (field === 'Team') data[field] = user.subdepartment_name;
-        else if (field === 'Team Manager') data[field] = user.teamManager;
+        else if (field === 'Team Manager') data[field] = user.teammanager;
         else if (field === 'Reporting Manager')
-          data[field] = user.reportingManager;
-        else if (field === 'Location') data[field] = user.jobLocationName;
+          data[field] = user.reportingmanager;
+        else if (field === 'Location') data[field] = user.joblocationname;
         else if (field === 'Sub Location')
-          data[field] = user.jobSubLocationName;
-        else if (field === 'Shift') data[field] = user.shiftName;
-        else if (field === 'Shift Code') data[field] = user.shiftCode;
+          data[field] = user.jobsublocationname;
+        else if (field === 'Shift') data[field] = user.shiftname;
+        else if (field === 'Shift Code') data[field] = user.shiftcode;
         // Compensation
         else if (field === 'Compensation Effective Date')
           data[field] = this.formatDate(user.compeffectivedate);

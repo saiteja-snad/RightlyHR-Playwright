@@ -330,6 +330,11 @@ onSubmit(form: FormGroup) {
   return code.startsWith('+') ? code : '';
 }
 
+clearAllFilters(){
+  this.masterDataForm.get('dateOfJoining')?.setValue(null);
+  this.masterDataForm.get('empStatus')?.setValue('All Employees');
+  this.onSubmit(this.masterDataForm);
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

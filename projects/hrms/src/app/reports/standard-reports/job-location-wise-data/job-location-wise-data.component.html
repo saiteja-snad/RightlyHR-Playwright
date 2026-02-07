@@ -6,7 +6,12 @@
         <div>
             <form autocomplete="off" [formGroup]="locationReportsForm" (ngSubmit)="onSubmit(locationReportsForm)">
                 <div class="d-flex align-items-center gap-3">
-                    <!-- Date of Joining -->
+                       
+                       <div *ngIf="locationReportsForm.get('dateOfJoining')?.value">
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+        </div>
+
+                                    <!-- Date of Joining -->
                     @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')){
                     <div class="d-flex align-items-center gap-2">
                         <label class="custom-label filter-labels text-nowrap m-0">{{"Date of Joining" | translate}}</label>

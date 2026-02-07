@@ -711,6 +711,7 @@ clearAllFilters(): void {
 
   this.disableBtn = false;
   this.hasPendingChanges = false;
+  this.onSubmit();
 }
 
 isActiveOrInactive(): boolean {

@@ -5,7 +5,12 @@
 
     <form autocomplete="off" [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
       <!-- DOJ -->
-      <div class="d-flex gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div *ngIf="masterDataForm.get('dateOfJoining')?.value
+        || masterDataForm.get('empStatus')?.value ">
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
+        </div>
+
         @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
         <div class="d-flex align-items-center gap-2">
           <label class="custom-label filter-labels text-nowrap m-0">Date of Joining</label>

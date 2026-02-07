@@ -366,6 +366,7 @@ clearDropdowns(keys: string[]) {
       'Policy Name',
     ];
 
+const UPPERCASE_HEADERS = NEW_SEQUENCE.map(h => h.toUpperCase());
     const modifiedData = this.policyAcknowledgementReports.map((record) => {
       const modifiedRecord: any = {};
       const recordAny = record as any;
@@ -404,7 +405,7 @@ clearDropdowns(keys: string[]) {
     });
 
     // Add headers
-    XLSX.utils.sheet_add_aoa(ws, [NEW_SEQUENCE], { origin: 'A2' });
+   XLSX.utils.sheet_add_aoa(ws, [UPPERCASE_HEADERS], { origin: 'A2' });
 
     // Add data
     XLSX.utils.sheet_add_json(ws, modifiedData, {

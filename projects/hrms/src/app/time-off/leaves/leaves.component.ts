@@ -1154,8 +1154,23 @@ getTeamManagersDetails() {
     // Loop from start to end
     let current = start.clone();
     while (current.isSameOrBefore(end, 'day')) {
-      const isWeekend = this.selectedleave?.category.excludeWeekends &&
-        this.orgweekend?.orgWeekendItems?.some((item: { weekday: string; }) => item.weekday === current.format('dddd'));
+      // const isWeekend = this.selectedleave?.category.excludeWeekends &&
+      //   this.orgweekend?.orgWeekendItems?.some((item: { weekday: string; }) => item.weekday === current.format('dddd'));
+
+      let isWeekend = false;
+      if (this.selectedleave?.category.excludeWeekends) {
+        const dayName = current.format('dddd');
+        const weekendItem = this.orgweekend?.orgWeekendItems?.find((item: any) => item.weekday === dayName);
+        if (weekendItem) {
+          const dayOfMonth = current.date();
+          const weekNumber = Math.ceil(dayOfMonth / 7);
+          if (weekNumber === 1 && weekendItem.firstweek) isWeekend = true;
+          else if (weekNumber === 2 && weekendItem.secondweek) isWeekend = true;
+          else if (weekNumber === 3 && weekendItem.thirdweek) isWeekend = true;
+          else if (weekNumber === 4 && weekendItem.fourthweek) isWeekend = true;
+          else if (weekNumber === 5 && weekendItem.fifthweek) isWeekend = true;
+        }
+      }
       const isNonOptionalHoliday = this.selectedleave?.category.excludeHolidays &&
         nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(current, 'day'));
       if (!isWeekend && !isNonOptionalHoliday) {

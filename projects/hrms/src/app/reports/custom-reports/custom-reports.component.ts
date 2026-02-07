@@ -298,6 +298,22 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   spinnerLoader2 = false;
   disableBtn = false;
 
+  // Status Mapping
+  statusMapping: { [key: string]: string[] } = {
+    // Broad Categories
+    "active": ["Active", "Active Employees", "Active Contract", "Active Contract Employees", "Active Trainees", "Trainee Active", "Probation", "Probation Employees", "Probation Employee"],
+    "inactive": ["Inactive", "Inactive Employees", "Inactive Contract", "Inactive Contract Employees", "Inactive Trainees", "Trainee Inactive"],
+    "prospective": ["Prospective", "Prospective Employees", "Prospective Contract", "Prospective Contract Employees", "Prospective Trainees", "Trainee Prospective"],
+    // Specific Categories
+    "active contract": ["Active Contract", "Active Contract Employees"],
+    "inactive contract": ["Inactive Contract", "Inactive Contract Employees"],
+    "prospective contract": ["Prospective Contract", "Prospective Contract Employees"],
+    "probation employee": ["Probation Employee", "Probation Employees"],
+    "trainee active": ["Trainee Active", "Active Trainees"],
+    "trainee inactive": ["Trainee Inactive", "Inactive Trainees"],
+    "trainee prospective": ["Trainee Prospective", "Prospective Trainees"]
+  };
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -450,6 +466,16 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       ? new Date(formData.dateOfJoining.endDate)
       : null;
     const filteredEmployees = this.emp.filter((user: Ipersonal) => {
+      // Filter by Status using statusMapping
+      if (empStatus !== 'all employees') {
+        const allowedStatuses = this.statusMapping[empStatus];
+        if (allowedStatuses) {
+           if (!user.empstatus || !allowedStatuses.some(s => s.toLowerCase() === user.empstatus.toLowerCase())) {
+             return false;
+           }
+        }
+      }
+
       // Determine the date field to use based on the selected status
       let dateToCheck: Date | null = null;
       if (empStatus === 'active' && user.dateOfJoining) {
@@ -642,21 +668,29 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       );
       this.emp = this.copyData;
       this.filteredData = this.emp;
-      if (employeeStatus.toLowerCase() == 'prospective') {
+
+      const allowedStatuses = this.statusMapping[employeeStatus.toLowerCase()];
+      if (allowedStatuses) {
         this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+          (emp) => emp.empstatus && allowedStatuses.some(s => s.toLowerCase() === emp.empstatus.toLowerCase())
         );
       }
-      if (employeeStatus.toLowerCase() == 'active') {
-        this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-        );
-      }
-      if (employeeStatus.toLowerCase() == 'inactive') {
-        this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-        );
-      }
+      
+      // if (employeeStatus.toLowerCase() == 'prospective') {
+      //   this.filteredData = this.emp.filter(
+      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+      //   );
+      // }
+      // if (employeeStatus.toLowerCase() == 'active') {
+      //   this.filteredData = this.emp.filter(
+      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+      //   );
+      // }
+      // if (employeeStatus.toLowerCase() == 'inactive') {
+      //   this.filteredData = this.emp.filter(
+      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+      //   );
+      // }
       this.emp = this.filteredData;
     } else {
       this.selectedFieldsOption = [];

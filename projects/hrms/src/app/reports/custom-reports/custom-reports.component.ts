@@ -717,7 +717,15 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       return;
     }
     this.spinnerLoader2 = true;
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.selectedData);
+    const dataWithDashes = this.selectedData.map(row => {
+      const newRow: any = {};
+      Object.keys(row).forEach(key => {
+        const value = row[key];
+        newRow[key] = (value === null || value === undefined || value === '' || value === 'null') ? '-' : value;
+      });
+      return newRow;
+    });
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataWithDashes);
     this.convertHeadersToUpperCase(ws);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');

@@ -300,6 +300,22 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   spinnerLoader2 = false;
   disableBtn = false;
 
+  // Status Mapping
+  statusMapping: { [key: string]: string[] } = {
+    // Broad Categories
+    "active": ["Active", "Active Employees", "Active Contract", "Active Contract Employees", "Active Trainees", "Trainee Active", "Probation", "Probation Employees", "Probation Employee"],
+    "inactive": ["Inactive", "Inactive Employees", "Inactive Contract", "Inactive Contract Employees", "Inactive Trainees", "Trainee Inactive"],
+    "prospective": ["Prospective", "Prospective Employees", "Prospective Contract", "Prospective Contract Employees", "Prospective Trainees", "Trainee Prospective"],
+    // Specific Categories
+    "active contract": ["Active Contract", "Active Contract Employees"],
+    "inactive contract": ["Inactive Contract", "Inactive Contract Employees"],
+    "prospective contract": ["Prospective Contract", "Prospective Contract Employees"],
+    "probation employee": ["Probation Employee", "Probation Employees"],
+    "trainee active": ["Trainee Active", "Active Trainees"],
+    "trainee inactive": ["Trainee Inactive", "Inactive Trainees"],
+    "trainee prospective": ["Trainee Prospective", "Prospective Trainees"]
+  };
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -452,6 +468,16 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       ? new Date(formData.dateOfJoining.endDate)
       : null;
     const filteredEmployees = this.emp.filter((user: Ipersonal) => {
+      // Filter by Status using statusMapping
+      if (empStatus !== 'all employees') {
+        const allowedStatuses = this.statusMapping[empStatus];
+        if (allowedStatuses) {
+           if (!user.empstatus || !allowedStatuses.some(s => s.toLowerCase() === user.empstatus.toLowerCase())) {
+             return false;
+           }
+        }
+      }
+
       // Determine the date field to use based on the selected status
       let dateToCheck: Date | null = null;
       if (empStatus === 'active' && user.dateOfJoining) {
@@ -492,27 +518,27 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         // else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
         // Current Address
         else if (field === 'Address Line 1(current)')
-          data[field] = user.currentAddressLine1;
+          data[field] = user.currentaddressline1;
         else if (field === 'Address Line 2(current)')
-          data[field] = user.currentAddressLine2;
-        else if (field === 'City(current)') data[field] = user.currentCity;
-        else if (field === 'State(current)') data[field] = user.currentState;
+          data[field] = user.currentaddressline2;
+        else if (field === 'City(current)') data[field] = user.currentcity;
+        else if (field === 'State(current)') data[field] = user.currentstate;
         else if (field === 'Country(current)')
-          data[field] = user.currentCountry;
+          data[field] = user.currentcountry;
         else if (field === 'Zip Code/Post Code(current)')
-          data[field] = user.currentZipCode;
+          data[field] = user.currentzipcode;
         // Permanent Address
         else if (field === 'Address Line 1(permanemt)')
-          data[field] = user.permanentAddressLine1;
+          data[field] = user.permanentaddressline1;
         else if (field === 'Address Line 2(permanemt)')
-          data[field] = user.permanentAddressLine2;
-        else if (field === 'City(permanemt)') data[field] = user.permanentCity;
+          data[field] = user.permanentaddressline2;
+        else if (field === 'City(permanemt)') data[field] = user.permanentcity;
         else if (field === 'State(permanemt)')
-          data[field] = user.permanentState;
+          data[field] = user.permanentstate;
         else if (field === 'Country(permanemt)')
-          data[field] = user.permanentZipCode;
+          data[field] = user.permanentcountry;
         else if (field === 'Zip Code/Post Code(permanemt)')
-          data[field] = user.permanentZipCode;
+          data[field] = user.permanentzipcode;
         // Contact Details
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
@@ -552,8 +578,8 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         // Identity
         else if (field === 'Aadhaar Number') data[field] = user.aadhaar;
         else if (field === 'PAN Number') data[field] = user.pan;
-        else if (field === 'PF Number') data[field] = user.esic;
-        else if (field === 'ESIC Number') data[field] = user.pf;
+        else if (field === 'PF Number') data[field] = user.pf;
+        else if (field === 'ESIC Number') data[field] = user.esic;
         else if (field === 'UAN Number') data[field] = user.uan;
         // Bank
         else if (field === 'Bank Name') data[field] = user.bankName;
@@ -564,13 +590,13 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         // Pre Onboarding
         else if (field === 'Offer Sent Date')
           data[field] = this.formatDate(user.offerSentDate);
-        else if (field === 'Offer Sent By') data[field] = user.offerSentBy;
+        else if (field === 'Offer Sent By') data[field] = user.offersentby;
         else if (field === 'Offer Sent Status')
           data[field] = user.offerSentStatus;
         else if (field === 'Appointment Sent Date')
           data[field] = this.formatDate(user.appointmentSentDate);
         else if (field === 'Appointment Sent By')
-          data[field] = user.appointmentSentBy;
+          data[field] = user.appointmentsentby;
         else if (field === 'Appointment Sent Status')
           data[field] = user.appointmentSentStatus;
         // Onboarding
@@ -580,15 +606,15 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
           data[field] = this.formatDate(user.probationEndDate);
         else if (field === 'Probation Status')
           data[field] = user.probationStatus;
-        else if (field === 'Branch Code') data[field] = user.branchCode;
+        else if (field === 'Branch Code') data[field] = user.branchcode;
         else if (field === 'Notice Period') data[field] = user.noticePeriod;
         else if (field === 'Background Check Status')
           data[field] = user.backgroundCheckStatus;
-        else if (field === 'Salary Hold') data[field] = user.salaryHold;
+        else if (field === 'Salary Hold') data[field] = user.salaryhold;
         else if (field === 'PT') data[field] = user.pt;
-        else if (field === 'PF') data[field] = user.pfApplicable;
-        else if (field === 'ESIC') data[field] = user.esicApplicable;
-        else if (field === 'Insurance') data[field] = user.healthInsurance;
+        else if (field === 'PF') data[field] = user.pfapplicable;
+        else if (field === 'ESIC') data[field] = user.esicapplicable;
+        else if (field === 'Insurance') data[field] = user.healthinsurance;
         // Offboarding
         else if (field === 'Last Working Day')
           data[field] = this.formatDate(user.lastworkingday);
@@ -600,18 +626,18 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         else if (field === 'Grade Name') data[field] = user.gradeName;
         // Job Details
         else if (field === 'Job Effective Date')
-          data[field] = this.formatDate(user.jobEffectiveDate);
+          data[field] = this.formatDate(user.jobeffectivedate);
         else if (field === 'Job Role') data[field] = user.jobRole;
         else if (field === 'Department') data[field] = user.departmentName;
         else if (field === 'Team') data[field] = user.subdepartment_name;
-        else if (field === 'Team Manager') data[field] = user.teamManager;
+        else if (field === 'Team Manager') data[field] = user.teammanager;
         else if (field === 'Reporting Manager')
-          data[field] = user.reportingManager;
-        else if (field === 'Location') data[field] = user.jobLocationName;
+          data[field] = user.reportingmanager;
+        else if (field === 'Location') data[field] = user.joblocationname;
         else if (field === 'Sub Location')
-          data[field] = user.jobSubLocationName;
-        else if (field === 'Shift') data[field] = user.shiftName;
-        else if (field === 'Shift Code') data[field] = user.shiftCode;
+          data[field] = user.jobsublocationname;
+        else if (field === 'Shift') data[field] = user.shiftname;
+        else if (field === 'Shift Code') data[field] = user.shiftcode;
         // Compensation
         else if (field === 'Compensation Effective Date')
           data[field] = this.formatDate(user.compeffectivedate);
@@ -644,21 +670,29 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       );
       this.emp = this.copyData;
       this.filteredData = this.emp;
-      if (employeeStatus.toLowerCase() == 'prospective') {
+
+      const allowedStatuses = this.statusMapping[employeeStatus.toLowerCase()];
+      if (allowedStatuses) {
         this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+          (emp) => emp.empstatus && allowedStatuses.some(s => s.toLowerCase() === emp.empstatus.toLowerCase())
         );
       }
-      if (employeeStatus.toLowerCase() == 'active') {
-        this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-        );
-      }
-      if (employeeStatus.toLowerCase() == 'inactive') {
-        this.filteredData = this.emp.filter(
-          (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-        );
-      }
+      
+      // if (employeeStatus.toLowerCase() == 'prospective') {
+      //   this.filteredData = this.emp.filter(
+      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+      //   );
+      // }
+      // if (employeeStatus.toLowerCase() == 'active') {
+      //   this.filteredData = this.emp.filter(
+      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+      //   );
+      // }
+      // if (employeeStatus.toLowerCase() == 'inactive') {
+      //   this.filteredData = this.emp.filter(
+      //     (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
+      //   );
+      // }
       this.emp = this.filteredData;
     } else {
       this.selectedFieldsOption = [];
@@ -700,7 +734,15 @@ getDatePlaceholder(): string {
       return;
     }
     this.spinnerLoader2 = true;
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.selectedData);
+    const dataWithDashes = this.selectedData.map(row => {
+      const newRow: any = {};
+      Object.keys(row).forEach(key => {
+        const value = row[key];
+        newRow[key] = (value === null || value === undefined || value === '' || value === 'null') ? '-' : value;
+      });
+      return newRow;
+    });
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataWithDashes);
     this.convertHeadersToUpperCase(ws);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');

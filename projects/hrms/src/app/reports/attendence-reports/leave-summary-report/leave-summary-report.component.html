@@ -6,11 +6,11 @@
     <form autocomplete="off" [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')){
-        <button type="reset" class="clear-all-btn" [disabled]="
-            !lvSummeryReportForm.get('employee')?.value &&
-            !lvSummeryReportForm.get('manager')?.value &&
-            !lvSummeryReportForm.get('leaveCategory')?.value &&
-            !lvSummeryReportForm.get('team')?.value" (click)="clearAllFilters()">
+        <button type="reset" class="clear-all-btn" *ngIf="
+            lvSummeryReportForm.get('employee')?.value ||
+            lvSummeryReportForm.get('manager')?.value ||
+            lvSummeryReportForm.get('leaveCategory')?.value ||
+            lvSummeryReportForm.get('team')?.value" (click)="clearAllFilters()">
           Clear All
         </button>
 

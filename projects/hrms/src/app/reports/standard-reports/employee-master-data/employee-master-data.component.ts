@@ -147,13 +147,13 @@ onSubmit(form: FormGroup) {
   let employeeStatus = formData.empStatus;
 
   if (employeeStatus === 'Active') {
-    employeeStatus = "Active Contract,Active Contract Employees,Active Employees,Active Trainees,";
+    employeeStatus = "Active Contract,Active,Trainee Active,";
   }
  if (employeeStatus === 'Inactive') {
-    employeeStatus = 'Inactive Employees,Inactive Contract,Inactive Contract Employees,Trainee Inactive,Inactive Trainees' ;
+    employeeStatus = 'Inactive,Inactive Contract,Trainee Inactive' ;
   }
    if (employeeStatus === 'Prospective') {
-    employeeStatus = 'Prospective Employees,Prospective Contract,Prospective Contract Employees,Trainee Prospective,Prospective Trainees';
+    employeeStatus = 'Prospective,Prospective Contract,Trainee Prospective';
   }
   if (employeeStatus === 'All Employees') {
     employeeStatus = '';

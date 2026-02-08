@@ -175,8 +175,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
         this.dataloader = false;
         this.employedata = data;
         this.loading = false;
-        this.selectedemergencycoutrycode.set(data.emergencyNumberCountryFlag);
-        this.selectedemergency1coutrycode.set(data.emergencyPhoneCountryFlag);
+        this.selectedemergencycoutrycode.set(data.emergencynumbercountryflag);
+        this.selectedemergency1coutrycode.set(data.emergencyphonecountryflag);
         if (this.familyRelations.length) {
           this.patchForm(data);
         }

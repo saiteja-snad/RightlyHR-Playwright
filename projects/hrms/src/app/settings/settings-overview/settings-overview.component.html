@@ -184,16 +184,16 @@
                         </p-accordion-panel>
                     </li>
                     }
-                    <!-- @if(rbac.allowedToAccess('Employee Fields Module.view')){
+                    @if(rbac.allowedToAccess('Employee Fields Module.view')){
                     <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/it-configuration')">
                         <p-accordion-panel value="8">
                             <p-accordion-header>
                                 <div>
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <img src="/main-menu-icons/locking system.png" alt="Icon" class="list-icon">
-                                        <div class="list-label-name">Locking System</div>
+                                        <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon" class="list-icon">
+                                        <div class="list-label-name">IT Support Configurations </div>
                                     </div>
-                                    <p class="list-description m-0">{{settingLockingsystemnModule}}</p>
+                                    <p class="list-description m-0">{{settingItConfigurationModule}}</p>
                                 </div>
                             </p-accordion-header>
                             <p-accordion-content>
@@ -201,7 +201,7 @@
                             </p-accordion-content>
                         </p-accordion-panel>
                     </li>
-                    } -->
+                    }
 
                     @if(rbac.allowedToAccess('Employee Fields Config Update Module.view')){
                     <li class="accordian-list-item">

@@ -129,9 +129,11 @@ export class RolesAndResponsibilitiesComponent implements OnInit,OnDestroy {
     }
 
     const formData = form.value;
+    console.log(formData);
+    
     const payload = {
-      jobId: formData.jobId,
-      jobRoleName: formData.designationName,
+      jobId: formData.designationName.id,
+      jobRoleName: formData.designationName.designationName,
       isdeleted: false,
       rolesAndResponsibilitesData: formData.rolesAndResponsibilities,
     };

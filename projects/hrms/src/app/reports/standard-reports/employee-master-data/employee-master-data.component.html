@@ -6,8 +6,7 @@
     <form autocomplete="off" [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
       <!-- DOJ -->
       <div class="d-flex align-items-center gap-3">
-        <div *ngIf="masterDataForm.get('dateOfJoining')?.value
-        || masterDataForm.get('empStatus')?.value ">
+        <div *ngIf="masterDataForm.get('dateOfJoining')?.value">
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()" > Clear All</button>
         </div>
 
@@ -91,9 +90,9 @@
           <th>Country(permanent)</th>
           <th>Zip Code/Post Code(permanent)</th>
           <th>Work Number</th>
-          <th>Mobile Phone</th>
-          <th>Work Mail-Id</th>
-          <th>Home Mail-Id</th>
+          <th>Phone Number</th>
+          <th>Work Mail</th>
+          <th>Personal Email</th>
           <th>Name (contact1)</th>
           <th>Email-Id (contact1)</th>
           <th>Phone Number (contact1)</th>
@@ -118,8 +117,8 @@
           <th>PF Number</th>
           <th>UAN Number</th>
           <th>Bank Name</th>
-          <th>Account Name</th>
-          <th>Account Number</th>
+          <th>Account Holder Number</th>
+          <th>Account Holder Number</th>
           <th>IFSC Code</th>
           <th>Offer Sent Date</th>
           <th>Offer Sent By</th>

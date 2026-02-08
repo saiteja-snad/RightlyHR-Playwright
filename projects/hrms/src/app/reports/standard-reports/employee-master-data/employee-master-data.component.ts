@@ -55,12 +55,15 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-  employeeStatusOptions = [
-    { label: 'All Employees', value: '' },
-    { label: 'Active', value: 'Active' },
-    { label: 'Inactive', value: 'Inactive' },
-    { label: 'Prospective', value: 'Prospective' }
-  ];
+employeeStatusOptions = [
+  { label: 'All Employees', value: '' },
+  {
+    label: 'Active',
+    value: 'Active,Trainee Active,Active Contract'
+  },
+  { label: 'Inactive', value: 'Inactive,Trainee Inactive,Active Inactive,Trainee Inactive,Inactive Trainees' },
+  { label: 'Prospective', value: 'Prospective,Prospective Contractors,Prospective Contract Employees,Prospective Trainees,Trainee Prospective'}
+];
 
   localeOptions: any;
 
@@ -119,45 +122,67 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-  onSubmit(form: FormGroup) {
-    this.spinnerLoader1 = true;
-    const formData = form.value;
-    const isEmptyStatus = !formData.empStatus;
-    const isEmptyDateRange = !formData.dateOfJoining;
-    if (isEmptyStatus && isEmptyDateRange) {
-      return;
-    }
-    this.dataload = true;
-    const dateRangeArray = formData.dateOfJoining || [];
-    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
-    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : startDate ? startDate : null;
-    const request: IStandardReportRequest = {
-      dateRange: {
-        startDate: startDate,
-        endDate: endDate
-      },
-      employeeStatus: formData.empStatus === 'All Employees' ? '' : formData.empStatus
-    };
-    this.subscription = this.reportsService.getStandardReports(request).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.employeeMasterData = res.standardReports || [];
-        }
-        console.log(this.employeeMasterData);
-      },
-      error: (err: any) => {
-        this.dataload = false;
-        this.spinnerLoader1 = false;
-        this.disableBtn = true;
-        this.employeeMasterData = [];
-      },
-      complete: () => {
-        this.dataload = false;
-        this.spinnerLoader1 = false;
-        this.disableBtn = false;
-      }
-    });
+onSubmit(form: FormGroup) {
+  this.spinnerLoader1 = true;
+
+  const formData = form.value;
+  const isEmptyStatus = !formData.empStatus;
+  const isEmptyDateRange = !formData.dateOfJoining;
+
+  if (isEmptyStatus && isEmptyDateRange) {
+    this.spinnerLoader1 = false;
+    return;
   }
+
+  this.dataload = true;
+
+  // 🔹 DOJ handling
+  const dateRangeArray = formData.dateOfJoining || [];
+  const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+  const endDate = dateRangeArray[1]
+    ? dayjs(dateRangeArray[1])
+    : startDate;
+
+  // 🔹 STATUS MAPPING (ONLY HERE)
+  let employeeStatus = formData.empStatus;
+
+  if (employeeStatus === 'Active') {
+    employeeStatus = "Active Contract,Active Contract Employees,Active Employees,Active Trainees,";
+  }
+ if (employeeStatus === 'Inactive') {
+    employeeStatus = 'Inactive Employees,Inactive Contract,Inactive Contract Employees,Trainee Inactive,Inactive Trainees' ;
+  }
+   if (employeeStatus === 'Prospective') {
+    employeeStatus = 'Prospective Employees,Prospective Contract,Prospective Contract Employees,Trainee Prospective,Prospective Trainees';
+  }
+  if (employeeStatus === 'All Employees') {
+    employeeStatus = '';
+  }
+
+  const request: IStandardReportRequest = {
+    dateRange: {
+      startDate,
+      endDate
+    },
+    employeeStatus
+  };
+
+  this.subscription = this.reportsService.getStandardReports(request).subscribe({
+    next: (res: any) => {
+      this.employeeMasterData = res?.standardReports || [];
+    },
+    error: () => {
+      this.employeeMasterData = [];
+      this.spinnerLoader1 = false;
+      this.dataload = false;
+    },
+    complete: () => {
+      this.spinnerLoader1 = false;
+      this.dataload = false;
+      this.disableBtn = false;
+    }
+  });
+}
 
   onClickEmpMasterExport() {
     this.spinnerLoader2 = true;
@@ -308,6 +333,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
 clearAllFilters(){
   this.masterDataForm.get('dateOfJoining')?.setValue(null);
   this.masterDataForm.get('empStatus')?.setValue('All Employees');
+  this.onSubmit(this.masterDataForm);
 }
   ngOnDestroy(): void {
     if (this.subscription) {

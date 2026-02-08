@@ -98,7 +98,11 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       dateOfJoining: [null],
     });
   }
-
+clearAllFilters(){
+  this.reportForm.get('dateOfJoining')?.setValue(null);
+  this.reportForm.get('location')?.setValue('All');
+  this.onSubmit(this.reportForm);
+}
   getBranchLocations() {
     this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

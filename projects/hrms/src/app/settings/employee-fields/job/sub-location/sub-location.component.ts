@@ -130,7 +130,8 @@ export class SubLocationComponent {
     this.selectedId = jobroletypelist.id;
     this.updateForm.patchValue({
       updateLocation: jobroletypelist.jobLocationId,
-      UpdateSubLocation: jobroletypelist.jobSubLocationName
+      UpdateSubLocation: jobroletypelist.jobSubLocationName,
+      UpdateAddress: jobroletypelist.address
     });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',

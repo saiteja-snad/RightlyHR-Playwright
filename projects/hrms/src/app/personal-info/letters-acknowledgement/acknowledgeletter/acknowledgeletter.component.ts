@@ -84,6 +84,8 @@ export class AcknowledgeletterComponent {
          this.documents = data.map((ele: any) => {
            if (ele.status === 'Generated')
              return { ...ele, status: 'Waiting for Review' };
+            if (ele.status === 'Extended')
+             return { ...ele, status: 'Waiting for Review' };
            if (ele.status === 'Acknowledged')
              return { ...ele, status: 'Accepted' };
            return ele;

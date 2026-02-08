@@ -531,13 +531,13 @@ toggleInactiveFilter(): void {
   getStatusConfirmMessage(): string {
   switch (this.pendingNewStatus) {
     case 'Active':
-      return 'Are you sure you want to activate this KRA?';
+      return 'Are you sure you want to activate this KPI?';
     case 'Inactive':
-      return 'Are you sure you want to inactivate this KRA?';
+      return 'Are you sure you want to inactivate this KPI?';
     case 'On Hold':
-      return 'Are you sure you want to hold this KRA?';
+      return 'Are you sure you want to hold this KPI?';
     default:
-      return 'Are you sure you want to change the status of this KRA?';
+      return 'Are you sure you want to change the status of this KPI?';
   }
 }
 

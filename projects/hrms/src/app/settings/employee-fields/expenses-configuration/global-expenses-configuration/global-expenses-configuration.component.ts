@@ -128,7 +128,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
 
   intiationalfrom() {
     this.expenseForm = this.fb.group({
-      selectedYear: [(this.selectedYear)],
+      selectedYear: [(this.selectedYear),Validators.required],
       approver: [null, [Validators.required]],
       approverValue: [null, [Validators.required]],
       budget: [

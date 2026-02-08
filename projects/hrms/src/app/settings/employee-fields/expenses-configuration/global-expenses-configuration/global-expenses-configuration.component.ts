@@ -179,7 +179,11 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
       frequency: [{ value: null, disabled: true }, [Validators.required]],
     });
   }
-
+resetdData(){
+ 
+  this.expenseForm.reset()
+   this.intiationalfrom();
+}
 
 
 

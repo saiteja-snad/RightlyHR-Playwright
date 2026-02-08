@@ -207,10 +207,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.employedata = data;
         this.patchForm(data);
+        this.selectedworkcoutrycode.set(data.workPhoneCountryFlag || data.workphonecountryflag );
+        this.selectedpersonalnumbercode.set(data.contactnumbercountryflag || data.mobilePhoneCountryCode);
         this.loading = false;
         this.dataLoader = false;
-        this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
-        this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
       },
       error: (reason) => {
         this.loading = false;

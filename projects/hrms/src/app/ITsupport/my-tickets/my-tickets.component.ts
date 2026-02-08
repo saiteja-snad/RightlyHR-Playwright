@@ -120,34 +120,71 @@ subCategoryDetails=[] as any;
       }
     });
   }
-   getsubcategoryName(selecteddata: any): void {
-    const selectedId = selecteddata.id; // Get the sno of the selected department
-    // Fetch the teams based on the selected department ID
-    this.subscription = this.http.getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`).subscribe({
-      next: (data: any) => {
-         if (data && data.length > 0) {
-          // Parse meta if it's a string
-          const parsedData = data.map((item:any) => ({
-            ...item,
-            meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
-          }));
+  //  getsubcategoryName(selecteddata: any): void {
+  //   const selectedId = selecteddata.id; // Get the sno of the selected department
+  //   // Fetch the teams based on the selected department ID
+  //   this.subscription = this.http.getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`).subscribe({
+  //     next: (data: any) => {
+  //        if (data && data.length > 0) {
+  //         // Parse meta if it's a string
+  //         const parsedData = data.map((item:any) => ({
+  //           ...item,
+  //           meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
+  //         }));
 
-          // Filter subcategories by category meta.id
-          this.subCategoryDetails = parsedData.filter(
-            (item:any) => item.meta?.id === selectedId
-          );
-        }else {
-          this.subCategoryDetails = []; // Reset if no teams are found
-        }
-        this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
+  //         // Filter subcategories by category meta.id
+  //         this.subCategoryDetails = parsedData.filter(
+  //           (item:any) => item.meta?.id === selectedId
+  //         );
+  //       }else {
+  //         this.subCategoryDetails = []; // Reset if no teams are found
+  //       }
+  //       this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
+  //     },
+  //     error: (err: any) => {
+  //       this.subCategoryDetails = []; // Reset on error
+  //       this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
+  //     }
+  //   });
+  //   this.itSupportForm.get('subcategoryId')?.enable();
+  // }
+  getsubcategoryName(selecteddata: any): void {
+  const selectedId = selecteddata.id;
+
+  this.subscription = this.http
+    .getData(`entityAttributeValues/getv1?entity=ItSupport&attribute=SubCategory`)
+    .subscribe({
+      next: (data: any) => {
+        const parsedData = (data || []).map((item: any) => ({
+          ...item,
+          meta: typeof item.meta === 'string' ? JSON.parse(item.meta) : item.meta
+        }));
+
+        this.subCategoryDetails = parsedData.filter(
+          (item: any) => item.meta?.id === selectedId
+        );
+
+        const subCatControl = this.itSupportForm.get('subcategoryId');
+
+        // ✅ ALWAYS enable
+        subCatControl?.enable();
+        subCatControl?.reset();
+
+        // ✅ ALWAYS required
+        subCatControl?.setValidators([Validators.required]);
+        subCatControl?.updateValueAndValidity();
       },
-      error: (err: any) => {
-        this.subCategoryDetails = []; // Reset on error
-        this.itSupportForm.patchValue({ subcategoryId: null }); // Reset the team selection
+      error: () => {
+        const subCatControl = this.itSupportForm.get('subcategoryId');
+        this.subCategoryDetails = [];
+        subCatControl?.enable();
+        subCatControl?.setValidators([Validators.required]);
+        subCatControl?.reset();
+        subCatControl?.updateValueAndValidity();
       }
     });
-    this.itSupportForm.get('subcategoryId')?.enable();
-  }
+}
+
   initiateUpdateModuleInfo() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))

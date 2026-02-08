@@ -308,11 +308,11 @@ export class OnBehalfOfExpensesComponent {
               };
             })
             // Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', {
-                sensitivity: 'base',
-              })
-            );
+              .sort((a: any, b: any) =>
+            a?.firstName?.localeCompare(b?.firstName, 'en', {
+              sensitivity: 'base',
+            })
+          );
         },
         error: (reason: any) => {
           console.error(reason);

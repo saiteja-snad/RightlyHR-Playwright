@@ -84,6 +84,8 @@ export class OpenTicketsComponent implements OnInit,OnDestroy {
   }
 
   openModal(content: any, ticket: any) {
+    console.log(ticket);
+    
     this.selectedTickets = ticket;
     this.getEmployee(this.selectedTickets.empId)
     this.itSupportForm.patchValue({

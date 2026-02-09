@@ -184,6 +184,7 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
       subLocation: ['', Validators.required],
       role: ['', Validators.required],
       effectivefrom: ['', Validators.required],
+      currency:['', Validators.required],
       rateItems: this.fb.array([this.createRateCardItems()]),
     });
   }
@@ -194,7 +195,7 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
   return this.rateItems.at(rateIndex).get('currencies') as FormArray;
 }
   addRateCardItems() {
-    this.rateItems.push(this.createRateCardItems());
+          this.rateItems.push(this.createRateCardItems());
   }
   createRateCardItems(): FormGroup {
     return this.fb.group({
@@ -296,7 +297,7 @@ onRateChange(rateIndex: number, currencyIndex: number) {
     this.subscription=this.http.postdata('RateCard',payload).subscribe({
           next: (res: any) => {
             this.isloading = false;
-            
+
             this.responseSummary = res.data;
           if (res.failureCount==0) {
             this.conformationPopup.openSuccessModal(

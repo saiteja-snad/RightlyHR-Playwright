@@ -19,7 +19,7 @@
                         <p-select formControlName="year" placeholder="Select Year" [options]="years"
                             class="form-select custom-select"></p-select>
                     </div>
-                    <div class="error-msg" *ngIf="ratecardForm.controls['year'].invalid && (ratecardForm.controls['year'].touched || 
+                    <div class="error-msg" *ngIf="ratecardForm.controls['year'].invalid && (ratecardForm.controls['year'].touched ||
                                         ratecardForm.controls['year'].dirty)">
                         <div *ngIf="ratecardForm.controls['year'].errors?.['required']">{{'Year is required'|translate}}
                         </div>
@@ -95,12 +95,29 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-4 mt-1">
+                <!-- currency -->
+                 <div>
+                    <label class="form-label custom-label mb-2">{{'Currency'|translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-multiSelect-content">
+                        <p-multiSelect class="form-select custom-select" optionLabel="code"
+                            optionValue="code" [options]="currencyCodes" display="chip" filterBy="code"
+                            [showClear]="false" [filter]="true" placeholder="Please select currency" (onChange)="addRateCardItems()"
+                            formControlName="currency">
+                        </p-multiSelect>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="ratecardForm.controls['currency'].invalid &&  (ratecardForm.controls['currency'].touched || ratecardForm.controls['currency'].dirty)">
+                        <div *ngIf="ratecardForm.controls['currency'].errors?.['required']">
+                            {{'Currency is required'|translate}}
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="pt-4 mt-1">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addRateCardItems()">
                         <i class="bi bi-plus me-2"></i> {{'Add New'|translate}}
                     </button>
-                </div>
+                </div> -->
             </div>
 
             <div formArrayName="rateItems">
@@ -116,31 +133,29 @@
                                     <!-- <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
                                         formControlName="experienceFrom" placeholder="min (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required /> -->
 
-                                        <input type="text" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"
-                                            (input)="onExperienceInput($event, i, 'experienceFrom')" (blur)="onExperienceBlur(i, 'experienceFrom')"
-                                            (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
-                                        
-                                        <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
-                                            Decimal value must be between 0 to 12
-                                        </div>
+                                    <input type="text" class="form-control custom-input" formControlName="experienceFrom" placeholder="min (year)"
+                                        (input)="onExperienceInput($event, i, 'experienceFrom')" (blur)="onExperienceBlur(i, 'experienceFrom')"
+                                        (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
+
+                                    <div class="error-msg" *ngIf="ratecard.get('experienceFrom')?.errors?.['invalidMonth']">
+                                        Decimal value must be between 0 to 12
+                                    </div>
                                         <!-- <div *ngIf="ratecard.get('experienceFrom')?.invalid && (ratecard.get('experienceFrom')?.dirty || ratecard.get('experienceFrom')?.touched)"
                                             class="error-msg">
                                             <span>Experiencefrom is required</span>
                                         </div> -->
                                 </div>
-                                
+
                                 <div class="pt-2">
                                     <span class="mx-2">-</span>
                                 </div>
                                 <div>
-                                    <!-- <input type="number" class="form-control custom-input" (input)="limitDigits($event, 4)"
-                                        formControlName="experienceTo" placeholder="max (year)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" required /> -->
-                                        <input type="text" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
-                                        (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
-                                        (wheel)="disableScroll($event)" />
+                                    <input type="text" class="form-control custom-input" formControlName="experienceTo" placeholder="max (year)"
+                                    (blur)="onExperienceBlur(i, 'experienceTo')" (keydown)="preventInvalidKeys($event)" (input)="onExperienceInput($event, i, 'experienceTo')"
+                                    (wheel)="disableScroll($event)" />
 
                                     <div class="error-msg" *ngIf="ratecard.get('experienceTo')?.errors?.['invalidMonth']">
-                                            Decimal value must be between 0 to 12
+                                        Decimal value must be between 0 to 12
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +163,7 @@
 
                         <!-- Rate Basic -->
                         <div class="w-100">
-                            <label class="form-label custom-label">{{'Rate Basic'|translate}}<span
+                            <label class="form-label custom-label">{{'Rate Basics'|translate}}<span
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select formControlName="frequencyType" placeholder="Please select rate basic"
@@ -166,12 +181,12 @@
                         <div class="w-100">
                             <label class="form-label custom-label">{{'Currency' | translate}}<span
                                     class="text-danger">*</span></label>
-                                    <div class="custom-p-select-content">
-                                        <p-select [options]="currencyCodes" optionLabel="code" [filter]="true" class="form-select custom-select"
-                                            filterBy="code" [showClear]="false" placeholder="Please select currency" resetFilterOnHide="true" formControlName="currency"
-                                            (onChange)="onCountryChange($event,i)">
-                                        </p-select>
-                                    </div>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="currencyCodes" optionLabel="code" [filter]="true" class="form-select custom-select"
+                                    filterBy="code" [showClear]="false" placeholder="Please select currency" resetFilterOnHide="true" formControlName="currency"
+                                    (onChange)="onCountryChange($event,i)">
+                                </p-select>
+                            </div>
                             <div *ngIf="ratecard.get('currency')?.invalid && (ratecard.get('currency')?.dirty || ratecard.get('currency')?.touched)"
                                 class="error-msg">
                                 <span>Currency is required</span>
@@ -190,7 +205,7 @@
                                             [formGroupName]="j">
                                             <div class="d-flex gap-2">
                                                 <input type="number" class="form-control custom-input w-100"
-                                                    formControlName="rate" placeholder="Please enter rate" 
+                                                    formControlName="rate" placeholder="Please enter rate"
                                                     (input)="onRateChange(i, j);limitDigits($event, 20)" (keydown)="preventInvalidKeys($event)" (wheel)="disableScroll($event)" />
                                             </div>
                                             <div *ngIf="currency.get('rate')?.invalid && (currency.get('rate')?.dirty || currency.get('rate')?.touched)"

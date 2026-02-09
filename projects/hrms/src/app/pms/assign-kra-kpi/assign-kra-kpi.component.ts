@@ -910,31 +910,7 @@ export class AssignKraKpiComponent implements OnInit {
   }
 
   removeKpiRow(index: number): void {
-    const row = this.kpiRows.at(index) as FormGroup;
-    const rowValue = row.getRawValue(); // ← Use getRawValue() to include disabled controls!
-    if (this.isEditMode && rowValue.kpiId && Number(rowValue.kpiId) > 0) {
-      // Get the original KPI name
-      const kpiName = this.getKpiNameById(rowValue.kpiId);
-      // Get UOM even if control is disabled
-      const uomValue = row.get('uom')?.value || '';
-      this.voidKpis.push({
-        assigneeId: rowValue.assigneeId,
-        kpiId: rowValue.kpiId,
-        kraId: Number(this.assignForm.get('kraId')?.value) || 0,
-        kpiName: kpiName,
-        weightageValue: String(rowValue.weightage || 0),
-        targetValue: String(rowValue.targetValue || ''),
-        targetDate: rowValue.targetDate || null,
-        targetType: uomValue, // ← This was the bug! Use actual UOM
-        description: rowValue.description?.trim() || '',
-        status: 'void',
-        // Optional: include these if backend needs them
-        reviewCycleId: Number(this.assignForm.get('reviewCycle')?.value) || 0,
-        ratingScaleId: Number(this.assignForm.get('ratingScale')?.value) || 0,
-      });
-      this.popup.openSuccessModal('KPI removed successfully');
-    }
-    // Always remove from form array
+    // Always remove from form array without confirmation in assign mode
     this.kpiRows.removeAt(index);
   }
 
@@ -1084,12 +1060,14 @@ export class AssignKraKpiComponent implements OnInit {
       next: () => {
         this.modalService.dismissAll();
         const successMessage = this.isEditMode
-          ? "KRA/KPI's are updated successfully"
-          : "KRA/KPI's are assigned successfully";
+          ? "KRAs/KPIs are Updated Successfully"
+          : "KRAs/KPIs are Assigned Successfully";
 
         this.popup.openSuccessModal(successMessage);
-        // this.clearAllFilters();
-        // this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
+
+        // Reload data with current filters to show updated assignments
+        this.applyFilters();
+
         this.groupedKraList.forEach((emp) => (emp.selected = false));
         this.voidKpis = []; // Clear after success
       },
@@ -1106,9 +1084,31 @@ export class AssignKraKpiComponent implements OnInit {
     });
   }
 
+  get combinedKpiOptions(): any[] {
+    // Combine allKpiOptions with selectedKraKpis to ensure assigned KPIs are available for display
+    const combined = [...this.allKpiOptions];
+
+    // Add any KPIs from selectedKraKpis that aren't already in allKpiOptions
+    this.selectedKraKpis.forEach(selectedKpi => {
+      const exists = combined.find(kpi => kpi.kpiId === selectedKpi.kpiId);
+      if (!exists) {
+        combined.push({
+          kpiId: selectedKpi.kpiId,
+          kpiName: selectedKpi.kpiName,
+          targetType: selectedKpi.targetType,
+          status: 'Active' // Assume active for display
+        });
+      }
+    });
+
+    return combined;
+  }
+
   getKpiNameById(id: number | null): string {
     if (!id) return 'Select KPI';
-    const found = this.allKpiOptions.find((k) => k.kpiId === id);
+
+    // Check in combinedKpiOptions which includes both available and assigned KPIs
+    const found = this.combinedKpiOptions.find((k) => k.kpiId === id);
     return found ? found.kpiName : 'Select KPI';
   }
 
@@ -1161,6 +1161,9 @@ export class AssignKraKpiComponent implements OnInit {
       reviewCycle: firstKpi.reviewCycleData?.id,
       ratingScale: firstKpi.optionsRating?.id,
     });
+
+    // Load existing KPIs for the selected KRA to populate selectedKraKpis
+    this.selectedKraKpis = kraAssignment.kpis || [];
 
     this.kpiRows.clear();
     kraAssignment.kpis.forEach((kpi: any) => {
@@ -1654,11 +1657,19 @@ export class AssignKraKpiComponent implements OnInit {
 
   // Updated: Single API call with array of employee assignments
 
+  // Error modal properties
+  errorModalMessage: string = '';
+  errorModalType: 'selection' | 'assigned' | 'weightage' | 'noAssignments' = 'selection';
+
+  @ViewChild('errorModal') errorModal!: TemplateRef<any>;
+
 assignExistingToSelectedEmployees(): void {
   const selectedEmployees = this.groupedKraList.filter((emp) => emp.selected);
 
   if (selectedEmployees.length === 0) {
-    this.popup.openErrorModal('Please select at least one employee to assign the KRA/KPIs.');
+    this.errorModalType = 'selection';
+    this.errorModalMessage = 'Please select at least one employee to assign the KRAs/KPIs.';
+    this.modalService.open(this.errorModal, { centered: true, backdrop: 'static' });
     return;
   }
 
@@ -1668,14 +1679,18 @@ assignExistingToSelectedEmployees(): void {
   );
 
   if (alreadyAssignedEmployees.length > 0) {
-    this.popup.openErrorModal('Already Assigned: One or more selected employees already have assigned KRA/KPIs. Please unselect them before proceeding.');
+    this.errorModalType = 'assigned';
+    this.errorModalMessage = 'One or more selected employees already have assigned KRAs/KPIs. Please unselect them before proceeding.';
+    this.modalService.open(this.errorModal, { centered: true, backdrop: 'static' });
     return;
   }
 
   // Validate weightage = 100%
   const invalidWeightage = selectedEmployees.some(emp => emp.totalKraWeightage !== 100);
   if (invalidWeightage) {
-    this.popup.openErrorModal('Total KRA weightage must be exactly 100% for all selected employees.');
+    this.errorModalType = 'weightage';
+    this.errorModalMessage = 'Total KRA weightage must not exceed 100% for all selected employees.';
+    this.modalService.open(this.errorModal, { centered: true, backdrop: 'static' });
     return;
   }
 
@@ -1729,7 +1744,9 @@ assignExistingToSelectedEmployees(): void {
   console.log('Total unique assignments:', uniqueAssignments.size);
 
   if (uniqueAssignments.size === 0) {
-    this.popup.openErrorModal('No valid KRA/KPI assignments found to copy.');
+    this.errorModalType = 'noAssignments';
+    this.errorModalMessage = 'No valid KRA/KPI assignments found to copy.';
+    this.modalService.open(this.errorModal, { centered: true, backdrop: 'static' });
     return;
   }
 
@@ -1806,7 +1823,10 @@ assignExistingToSelectedEmployees(): void {
           this.popup.openSuccessModal(
             `KRA/KPIs assigned successfully to ${this.confirmAssignEmployeeCount} employee(s)`
           );
-          this.loadAssignedKraKpiListWithFilters(this.getCurrentFilters());
+
+          // Reload data with current filters to show updated assignments
+          this.applyFilters();
+
           this.groupedKraList.forEach((emp) => (emp.selected = false));
           this.pendingAssignPayload = null;
         },

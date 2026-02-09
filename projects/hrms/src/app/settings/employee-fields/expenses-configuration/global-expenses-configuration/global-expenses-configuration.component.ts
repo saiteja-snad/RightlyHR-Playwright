@@ -179,9 +179,15 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
       frequency: [{ value: null, disabled: true }, [Validators.required]],
     });
   }
+
 resetdData(){
  
-  this.expenseForm.reset()
+ 
+  this.expenseForm.get('approverValue')?.reset();
+  this.expenseForm.get('approver')?.reset();  
+  this.expenseForm.get('frequency')?.reset();
+  this.expenseForm.get('budget')?.reset();
+  this.expenseForm.get('selectedYear')?.setValue(this.currentYear);
    this.intiationalfrom();
 }
 

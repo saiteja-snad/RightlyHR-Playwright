@@ -291,7 +291,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   }
 
   getAllActiveEmployees() {
-    const statuses: string = 'Active,Trainee Active';
+    const statuses: string = 'Active,Trainee Active,Active Contract';
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`).subscribe({
       next: (data: any) => {
         this.employeeDetails = data.map((employee: any) => {

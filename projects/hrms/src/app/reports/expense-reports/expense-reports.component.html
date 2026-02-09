@@ -4,7 +4,10 @@
         <form autocomplete="off" [formGroup]="ExpenseReportForm" (ngSubmit)="generateExpenseReport()"
             *ngIf="ExpenseReportForm">
             <div class="d-flex align-items-center gap-3 flex-wrap">
-                @if(rbac.allowedToAccess('Expense Report - Generate.view')){
+             @if(
+  rbac.allowedToAccess('Expense Report - Generate.view') &&
+  isAnyFilterSelected()
+){
                 <button type="button" class="clear-all-btn" [disabled]="
                 !ExpenseReportForm.get('employee')?.value &&
                 !ExpenseReportForm.get('dateRange')?.value &&
@@ -13,6 +16,7 @@
                 !ExpenseReportForm.get('team')?.value" (click)="clearAllFilters()">
                     {{'Clear All' | translate}}
                 </button>
+            }
                 <!-- Date Range -->
                 <div class="custom-date-range-picker">
                     <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
@@ -61,7 +65,7 @@
                     <p-select [options]="expenseStatus" optionLabel="value" optionValue="value" formControlName="status"
                         placeholder="Please select status" class="form-select custom-select"></p-select>
                 </div>
-                }
+                <!-- } -->
                 <div *ngIf="filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount" class="d-flex align-items-center gap-2">
                      <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'
                     | translate}}:</label>
@@ -72,7 +76,7 @@
                 <!-- Buttons -->
                 <div class="d-flex gap-2">
                     @if(rbac.allowedToAccess('Expense Report - Generate.view')){
-                    <button type="submit" class="custom-btn btn-secondary " [disabled]="isExpenseGenerateDisabled ">
+                    <button type="submit" class="custom-btn btn-secondary " [disabled]="isExpenseGenerateDisabled">
                         @if(spinnerLoader1){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading...' | translate}}</span>
@@ -114,7 +118,7 @@
                 </tr>
             </thead>
 
-            @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+            @if (!filteredleaveRecord || filteredleaveRecord.length === 0 ) {
             <tr>
                 <app-no-data-found />
             </tr>
@@ -166,7 +170,7 @@
                                 <th>{{ 'Description' | translate }}</th>
                                 <th>{{ 'Expense Type' | translate }}</th>
                                 <th>{{ 'Expense Date' | translate }}</th>
-                                <th>{{ 'Amount (USD)' | translate }}</th>
+                                <th>{{ 'Amount (INR)' | translate }}</th>
                                 <th>{{ 'Status' | translate }}</th>
                                 <th>{{ 'Receipt Number' | translate }}</th>
                             </tr>

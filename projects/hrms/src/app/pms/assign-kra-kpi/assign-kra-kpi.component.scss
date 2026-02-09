@@ -124,7 +124,7 @@
   border: 1px solid var(--content-border-color) !important;
 }
 
-::ng-deep .custom-accordian-data-content {
+.custom-accordian-data-content {
   .p-checkbox-box {
     transform: rotate(180deg) !important;
   }
@@ -136,10 +136,10 @@
 }
 
 // Fix pagination arrow direction
-::ng-deep .pagination-content .p-paginator .p-icon {
+.pagination-content .p-paginator .p-icon {
      transform: none !important;
 }
 
-::ng-deep .p-paginator {
+ .p-paginator {
   direction: ltr !important;
 }

@@ -262,7 +262,7 @@ export class DeskManagementComponent implements OnInit, OnDestroy {
 
   getEmployeedata() {
     this.employeeiddetails = [];
-    this.approvalname=[]
+
     const locationId = this.deskForm.get('locationId')?.value?.id;
     const sublocationId = this.deskForm.get('subLocationId')?.value?.id;
     const shift = this.deskForm.get('shifts')?.value?.id;

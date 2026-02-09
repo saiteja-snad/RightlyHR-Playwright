@@ -254,7 +254,7 @@ export class AllocatedAssetsListComponent {
   //   })
   // }
   getFilteredData() {
-    this.subscription = this.http.assetslocationId$.subscribe({
+    this.subscription = this.http.assetslocationId$.pipe(takeUntil(this.destroy$)).subscribe({
       next: (Value: any) => {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
@@ -428,7 +428,7 @@ export class AllocatedAssetsListComponent {
       params.first,
       params.rows,
       params.searchQuery
-    ).subscribe({
+    ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         // if (this.searchQuery && this.searchQuery.trim().length > 0) {
         //   const lowerSearch = this.searchQuery.toLowerCase();
@@ -956,7 +956,7 @@ export class AllocatedAssetsListComponent {
           },
           error: (error) => {
             console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal(error.error.message || 'Cannot reallocate to the same Employee');
+            this.conformationPopup.openErrorModal( 'Cannot reallocate to the same Employee');
           },
 
         });

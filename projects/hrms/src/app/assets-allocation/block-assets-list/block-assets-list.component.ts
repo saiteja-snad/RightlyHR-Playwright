@@ -110,7 +110,7 @@ export class BlockAssetsListComponent {
      this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
      this.http.assetsUpdateLocationId(this.selectedLocationId);
      this.getFilteredData();
-     this.http.assetDetailesadded$.subscribe(() => {
+     this.http.assetDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
        this.getFilteredData();
      });
      this.getassetsCategory()
@@ -272,7 +272,7 @@ export class BlockAssetsListComponent {
   //    })
   //  }
    getFilteredData() {
-    this.subscription = this.http.assetslocationId$.subscribe({
+    this.subscription = this.http.assetslocationId$.pipe(takeUntil(this.destroy$)).subscribe({
       next: (Value: any) => {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
@@ -399,7 +399,7 @@ export class BlockAssetsListComponent {
      };
      this.loading = true;
      this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid,params.category,
-       params.subcatageory,params.fromDate,params.toDate, params.status, params.first, params.rows, params.searchQuery).subscribe({
+       params.subcatageory,params.fromDate,params.toDate, params.status, params.first, params.rows, params.searchQuery).pipe(takeUntil(this.destroy$)).subscribe({
        next: (res: any) => {
          this.assetslist.next(res.items);
          this.loading = false;

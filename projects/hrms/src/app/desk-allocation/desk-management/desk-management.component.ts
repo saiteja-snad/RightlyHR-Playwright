@@ -201,6 +201,8 @@ export class DeskManagementComponent implements OnInit, OnDestroy {
     this.deskForm.get('deskid')?.markAsTouched();
     this.deskForm.get('deskid')?.updateValueAndValidity();
     this.deskForm.get('shifts')?.reset();
+    this.deskForm.get('employeid')?.reset();
+    this.deskForm.get('deskapprovalid')?.reset()
     this.shiftDropdown=[]
     if (selectedSubLocation && selectedSubLocation.id) {
       const locationId = this.deskForm.get('locationId')?.value?.id ?? this.deskForm.get('locationId')?.value; // Get the selected location ID

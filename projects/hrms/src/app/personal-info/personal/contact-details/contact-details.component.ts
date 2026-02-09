@@ -207,10 +207,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.employedata = data;
         this.patchForm(data);
+        this.selectedworkcoutrycode.set(data.workPhoneCountryFlag || data.workphonecountryflag );
+        this.selectedpersonalnumbercode.set(data.contactnumbercountryflag || data.mobilePhoneCountryCode);
         this.loading = false;
         this.dataLoader = false;
-        this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
-        this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
       },
       error: (reason) => {
         this.loading = false;
@@ -256,6 +256,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
       displayName: this.isMyInfoRoute ? 'Personal' : undefined,
       workEmail: this.contactForm.get('workMail')?.value || this.employedata.workEmail,
+      linkedinUrl: this.contactForm.get('linkedinurl')?.value || this.employedata.linkedinUrl,
     };
 
     // Only include non-pending fields

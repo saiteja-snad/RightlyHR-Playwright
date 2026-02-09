@@ -128,7 +128,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
 
   intiationalfrom() {
     this.expenseForm = this.fb.group({
-      selectedYear: [(this.selectedYear)],
+      selectedYear: [(this.selectedYear),Validators.required],
       approver: [null, [Validators.required]],
       approverValue: [null, [Validators.required]],
       budget: [
@@ -180,6 +180,14 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
     });
   }
 
+resetData(){
+  this.expenseForm.get('approverValue')?.reset();
+  this.expenseForm.get('approver')?.reset();  
+  this.expenseForm.get('frequency')?.reset();
+  this.expenseForm.get('budget')?.reset();
+  this.expenseForm.get('selectedYear')?.setValue(this.currentYear);
+   this.intiationalfrom();
+}
 
 
 

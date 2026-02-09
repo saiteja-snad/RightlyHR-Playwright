@@ -355,6 +355,7 @@ notPastYearValidator(): ValidatorFn {
          this.http.updateCount(res.data.status);
       },
       error: (errormessage) => {
+        this.loader = false;
         console.log(errormessage);
       },
     });

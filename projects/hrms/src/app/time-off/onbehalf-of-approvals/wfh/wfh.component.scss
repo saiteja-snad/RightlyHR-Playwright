@@ -9,3 +9,7 @@
     color: var(--btn-color-ts);
     border: 1px solid var(--btn-color-ts) !important;
 }
+
+.custom-header-btn-content{
+  z-index: 9 !important;  
+}

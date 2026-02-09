@@ -40,7 +40,8 @@ export class UserValidationComponent implements OnInit, OnDestroy {
     private rbac: RbacService,
     private modalService: NgbModal,
     private auth: AuthService,
-    public signal: SignalsService
+    public signal: SignalsService,
+    private authService: AuthService
   ) { }
 
   async ngOnInit() {
@@ -79,12 +80,45 @@ export class UserValidationComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Check for Google SocialAuth token
+    const socialUser = this.authService.getUser();
+    if (socialUser && !storedRes) {
+      const deviceName = this.authService.getDeviceName();
+      const ipAddress = await this.authService.getIpAddress();
+      const payload = {
+        provider: 'Google',
+        accessToken: socialUser.idToken,
+        deviceName,
+        ipAddress,
+        userAgent: navigator.userAgent
+      };
+      this.executeSocialLogin(payload);
+      return;
+    }
+
     if (storedRes) {
       const parsedRes = JSON.parse(storedRes);
       this.getUserDetails(parsedRes.email);
       return;
     }
     this.router.navigate(['/login']);
+  }
+
+    executeSocialLogin(payload: any) {
+    this.authService.postData('v2/Auth/social', payload).subscribe({
+      next: (res: any) => {
+        this.authService.storeAuthResponse(res);
+        console.log('Social Backend login success:', res);
+        this.getUserDetails(res.employeeId); // Note: API might return email or employeeId, adjust based on response structure
+      },
+      error: (err) => {
+        this.http.loginErrorSignal.set(err?.error?.message || 'Social login failed.');
+        this.router.navigate(['/login']);
+      },
+      complete: () => {
+        this.http.loginErrorSignal.set('');
+      }
+    });
   }
 
 

@@ -6,11 +6,11 @@
     <form autocomplete="off" [formGroup]="remoteReportForm" (ngSubmit)="generateWfhReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Remote Login Report - Generate.view')){
-        <button type="reset" class="clear-all-btn" [disabled]="
-            !remoteReportForm.get('dateRange')?.value &&
-            !remoteReportForm.get('employee')?.value &&
-            !remoteReportForm.get('manager')?.value  &&
-            !remoteReportForm.get('team')?.value" (click)="clearAllFilters()">
+        <button type="reset" class="clear-all-btn" *ngIf="
+            remoteReportForm.get('dateRange')?.value ||
+            remoteReportForm.get('employee')?.value ||
+            remoteReportForm.get('manager')?.value  ||
+            remoteReportForm.get('team')?.value" (click)="clearAllFilters()">
           Clear All
         </button>
 

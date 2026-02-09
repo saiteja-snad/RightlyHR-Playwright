@@ -6,10 +6,10 @@
     <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
-        <button type="reset" class="clear-all-btn"  [disabled]="
-            !inactiveReportForm.get('employee')?.value &&
-            !inactiveReportForm.get('manager')?.value &&
-            !inactiveReportForm.get('leaveCategory')?.value" (click)="clearAllFilters()">
+        <button type="reset" class="clear-all-btn"  *ngIf="
+            inactiveReportForm.get('employee')?.value ||
+            inactiveReportForm.get('manager')?.value ||
+            inactiveReportForm.get('leaveCategory')?.value" (click)="clearAllFilters()">
           Clear All
         </button>
         }

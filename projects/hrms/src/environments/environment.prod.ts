@@ -60,6 +60,7 @@ export const environment = {
   contractEmployeeConversionModuleId:26,
   extraHoursModuleId: 31,
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation',
-  secretKey:'A8fD@9!sLm#Qz7PpXv3$wK2*R9bT6yN!'
+  secretKey:'A8fD@9!sLm#Qz7PpXv3$wK2*R9bT6yN!',
+  googleClientId: '976695989594-cbrkrjdsf6phcujl32imv6l6t04plnd2.apps.googleusercontent.com',
 
 };

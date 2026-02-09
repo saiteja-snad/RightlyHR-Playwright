@@ -293,11 +293,11 @@ export class SettingsHeaderComponent implements OnInit, OnDestroy {
       this.componentName = 'Task';
     }
     else if (url.startsWith('/settings/it-configuration/itsupport-category')) {
-      this.moduleName = 'IT Configuration';
+      this.moduleName = 'IT Support Configuration';
       this.componentName = 'IT Support Category';
     }
     else if (url.startsWith('/settings/it-configuration/itsupport-sub-category')) {
-      this.moduleName = 'IT Configuration';
+      this.moduleName = 'IT Support Configuration';
       this.componentName = 'IT Support Sub Category';
     }
     // else if (url.startsWith('/settings/timesheet-locking-configuration')) {

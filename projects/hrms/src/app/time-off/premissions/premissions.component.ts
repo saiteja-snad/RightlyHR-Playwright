@@ -35,7 +35,7 @@ import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-inf
     NgbPopoverModule,
     ConfirmationIconComponent,
     ModuleInfoIconComponent,
-],
+  ],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -89,7 +89,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private modalService: NgbModal,
-     private authService:AuthService,
+    private authService: AuthService,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -126,8 +126,8 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
-   getAllEmployeeDetails() {
-     const status = ['Active', 'Trainee Active', 'Active Contract'];
+  getAllEmployeeDetails() {
+    const status = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
@@ -160,39 +160,39 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
   // function to get the data of employees by hierarchy
-getTeamManagersDetails() {
-  const EmployeeId = this.empinfo.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (Array.isArray(response) && response.length) {
-          const myTeam = response.filter((e: any) => e.isAccess);
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (Array.isArray(response) && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
 
-          this.getEmployeeInfo = myTeam
-            .map((emp: any) => {
-              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+            this.getEmployeeInfo = myTeam
+              .map((emp: any) => {
+                const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+                const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
 
-              return {
-                ...emp,
-                fullName
-              };
-            })
-            //  Alphabetical sort by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-            );
-        } else {
+                return {
+                  ...emp,
+                  fullName
+                };
+              })
+              //  Alphabetical sort by firstName
+              .sort((a: any, b: any) =>
+                a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+              );
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error(err);
           this.getEmployeeInfo = [];
         }
-      },
-      error: (err) => {
-        console.error(err);
-        this.getEmployeeInfo = [];
-      }
-    });
-}
+      });
+  }
 
 
   cleardata() {
@@ -392,8 +392,22 @@ getTeamManagersDetails() {
         },
         error: (err: any) => {
           this.spinnerLoader = false;
-          console.error(err);
-          const errorMessage = typeof err.error === 'string' ? err.error : err.error?.message || 'An error occurred';
+          console.error('API Error:', err);
+
+          let errorMessage = 'An unexpected error occurred';
+
+          if (err?.error) {
+            // Case 1: backend returns plain string
+            if (typeof err.error === 'string') {
+              errorMessage = err.error;
+            }
+            // Case 2: backend returns { message: '' }
+            else if (err.error?.message) {
+              errorMessage = err.error.message;
+            }
+          }
+       
+
           this.sharedModalService.openErrorModal(errorMessage);
         },
         complete: () => {
@@ -404,13 +418,13 @@ getTeamManagersDetails() {
       });
     }
   }
-getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=${environment.leavesModuleId}&EmployeeId=${EmployeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
-   //Map counts to tabs
+      this.http.updatePendingApprovalCounts(this.totalCount);
+      //Map counts to tabs
     });
   }
   ngOnDestroy(): void {

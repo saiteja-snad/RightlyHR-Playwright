@@ -180,9 +180,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
     });
   }
 
-resetdData(){
- 
- 
+resetData(){
   this.expenseForm.get('approverValue')?.reset();
   this.expenseForm.get('approver')?.reset();  
   this.expenseForm.get('frequency')?.reset();

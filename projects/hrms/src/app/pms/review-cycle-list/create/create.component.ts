@@ -258,10 +258,13 @@ export class CreateComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Review cycle created successfully');
           this.http.reviewCycleTriggerSignal.set(true);
+          this.reviewCycleForm.reset();
+          this.isLoading = false;
         },
         error: (error) => {
-          this.conformationPopup.openErrorModal(error.error.Message);
+          this.conformationPopup.openErrorModal(error.error.reason);
           console.error('Error:', error);
+          this.isLoading = false;
         },
       });
     } else {

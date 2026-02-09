@@ -257,7 +257,7 @@ export class SkillDirectoryManagementComponent {
 
   close(modal: any) {
     modal.close();
-    this.searchQuery = ''
+ 
     this.resourceSearchQuery = ''
   }
 

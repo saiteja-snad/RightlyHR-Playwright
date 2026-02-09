@@ -36,16 +36,8 @@
     color: var(--btn-color-ts);
     border: 1px solid var(--btn-color-ts) !important;
 }
-.component-header-content-ee {
-   
-    display: flex!important;
-    flex-wrap: wrap!important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    // top: 10 !important;
-    z-index: 10 !important;
-    /* min-height: 2.5rem; */
-    background-color: var(--body-bg-color);
-    /* padding: 0.5rem 0rem; */
-    /* gap: 0.5rem; */
+
+
+.custom-header-btn-content{
+  z-index: 9 !important;  
 }

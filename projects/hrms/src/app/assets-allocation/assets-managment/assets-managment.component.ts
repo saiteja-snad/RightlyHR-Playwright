@@ -19,9 +19,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TimesheetFilterService } from '../../services/timesheet-filter.service';
 import dayjs from 'dayjs';
 import { DatePicker } from 'primeng/datepicker';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, TranslateModule,Select,DatePicker, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
+  imports: [CommonModule, TabsModule, TranslateModule,Select,DatePicker, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule,ModuleInfoIconComponent],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation: ViewEncapsulation.None,

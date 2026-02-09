@@ -212,7 +212,7 @@ export class AssetsManagmentComponent {
       { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#1064CA', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
       { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF8000', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
       { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
-      { label: 'Block', route: '/assets-management/block-assets', count$: this.http.blockassetCountSubject, icon: '/assets-icon/Block.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Block', action: 'view' } },
+      { label: 'Block', route: '/assets-management/block-assets', count$: this.http.blockassetCountSubject, icon: '/assets-icon/Block.png',backgroundcolour: '#D32F2F', permission: { feature: 'Asset Management - Block', action: 'view' } },
     ];
     // Filter navTabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab =>
@@ -853,6 +853,7 @@ initChart() {
             this.http.allocatedassetCountSubject.value ?? 0,
             this.http.undermatinaceassetCountSubject.value ?? 0,
             this.http.inactiveaceassetCountSubject.value ?? 0,
+            this.http.blockassetCountSubject.value ??0
           ],
           backgroundColor: backgroundColors,
           borderWidth: 0,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,8 @@ import { Subscription } from 'rxjs';
   styleUrl: './global-actions-tabs.component.scss'
 })
 
-export class GlobalActionsTabsComponent implements OnInit, OnDestroy {
+export class GlobalActionsTabsComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() selectedYear!: number;
   @Output() tabChanged = new EventEmitter<number>();
   
   subscription!: Subscription;
@@ -40,6 +41,12 @@ export class GlobalActionsTabsComponent implements OnInit, OnDestroy {
     this.getTabCounts();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedYear'] && !changes['selectedYear'].firstChange) {
+      this.getTabCounts();
+    }
+  }
+
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
@@ -56,7 +63,8 @@ export class GlobalActionsTabsComponent implements OnInit, OnDestroy {
   }
 
   getCountByModuleId(moduleId: number, tab: any): void {
-    this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?moduleId=${moduleId}`).subscribe({
+    const year = this.selectedYear || new Date().getFullYear();
+    this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?moduleId=${moduleId}&year=${year}`).subscribe({
       next: (response: any) => {
         tab.count = response.totalRecords || 0;
       },

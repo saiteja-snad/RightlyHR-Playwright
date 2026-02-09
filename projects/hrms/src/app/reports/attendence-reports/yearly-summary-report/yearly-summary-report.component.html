@@ -6,11 +6,11 @@
     <form autocomplete="off" [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')){
-        <button type="reset" class="clear-all-btn" [disabled]="
-            !yearlyReportForm.get('employee')?.value &&
-            !yearlyReportForm.get('manager')?.value &&
-            !yearlyReportForm.get('leaveCategory')?.value &&
-            !yearlyReportForm.get('year')?.value" (click)="clearAllFilters()">
+        <button type="reset" class="clear-all-btn" *ngIf="
+            yearlyReportForm.get('employee')?.value ||
+            yearlyReportForm.get('manager')?.value ||
+            yearlyReportForm.get('leaveCategory')?.value ||
+            yearlyReportForm.get('year')?.value" (click)="clearAllFilters()">
           Clear All
         </button>
 

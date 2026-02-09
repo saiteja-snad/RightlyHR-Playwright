@@ -107,6 +107,7 @@ export class CardHoldDetailsComponent implements OnInit, OnDestroy {
         this.loader = false;
       },
       error: (errormessage: any) => {
+        this.loader = false;
         console.log(errormessage);
       }
     });

@@ -387,48 +387,46 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   onSelectDownload(file: any): void {
-    this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          // Check if the response body is of type Blob
-          const blob: Blob = res.body as Blob;
-          if (!blob) {
-            return;
+    this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
+      next: (res: any) => {
+        // Check if the response body is of type Blob
+        const blob: Blob = res.body as Blob;
+        if (!blob) {
+          return;
+        }
+        // Extract filename from 'content-disposition' header if available
+        const contentDisposition = res.headers.get('content-disposition');
+        let fileName = 'defaultFileName.pdf'; // Default filename
+        if (contentDisposition) {
+          const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(
+            contentDisposition
+          );
+          if (fileNameMatch !== null && fileNameMatch[1]) {
+            fileName = fileNameMatch[1].replace(/['"]/g, '');
           }
-          // Extract filename from 'content-disposition' header if available
-          const contentDisposition = res.headers.get('content-disposition');
-          let fileName = 'defaultFileName.pdf'; // Default filename
-          if (contentDisposition) {
-            const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(
-              contentDisposition
-            );
-            if (fileNameMatch !== null && fileNameMatch[1]) {
-              fileName = fileNameMatch[1].replace(/['"]/g, '');
-            }
-          } else {
-            // Extract filename from the original file path if 'content-disposition' is not available
-            const filePath = file;
-            const parts = filePath.split('/');
-            fileName = parts[parts.length - 1] || 'defaultFileName.pdf';
-          }
-          // Create a link element and trigger the download
-          const a = document.createElement('a');
-          const url = window.URL.createObjectURL(blob);
-          a.href = url;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          // Clean up
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-        },
-        error: (reason) => {
-          console.error('File download error:', reason);
-        },
-      });
+        } else {
+          // Extract filename from the original file path if 'content-disposition' is not available
+          const filePath = file;
+          const parts = filePath.split('/');
+          fileName = parts[parts.length - 1] || 'defaultFileName.pdf';
+        }
+        // Create a link element and trigger the download
+        const a = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        // Clean up
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (reason) => {
+        console.error('File download error:', reason);
+      },
+    });
   }
+
 
   onViewAttachement(url: any) {
     const lowerUrl = url?.toLowerCase();
@@ -475,6 +473,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       lowerUrl.endsWith('.png')
     );
   }
+
   selectedItem: any = null;
   openVerifyModal(item: any, content: any) {
     this.verifyModalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });

@@ -99,19 +99,49 @@ export class BankInfoComponent {
   ];
   }
   //function to initialize the form
-  initializeForm() {
-    this.fieldConfigForm = this.fb.group({
-      fieldNames: [[]],
-      approvalRequired: [true],
-      approvalType: ['', Validators.required],
-      selectedEmployee: [''],
-      selectedRole: [''],
-      selectedManager: [''],
-      // actionType: ['', Validators.required],
-      action: ['', ],
-    });
-    //this.handleActionTypeChange();
-  }
+initializeForm() {
+  this.fieldConfigForm = this.fb.group({
+    action: [null, Validators.required],
+    approvalType: [null, Validators.required],
+
+    selectedEmployee: [null],
+    selectedRole: [null],
+    selectedManager: [null],
+  });
+
+  this.handleApprovalTypeChange();
+}
+
+  handleApprovalTypeChange() {
+  this.fieldConfigForm.get('approvalType')?.valueChanges.subscribe(type => {
+    const employeeCtrl = this.fieldConfigForm.get('selectedEmployee');
+    const roleCtrl = this.fieldConfigForm.get('selectedRole');
+    const managerCtrl = this.fieldConfigForm.get('selectedManager');
+
+    // Clear all validators & values first
+    employeeCtrl?.clearValidators();
+    roleCtrl?.clearValidators();
+    managerCtrl?.clearValidators();
+
+    employeeCtrl?.setValue(null);
+    roleCtrl?.setValue(null);
+    managerCtrl?.setValue(null);
+
+    // Apply validator based on approval type
+    if (type === 'EMP') {
+      employeeCtrl?.setValidators([Validators.required]);
+    } else if (type === 'ROLE') {
+      roleCtrl?.setValidators([Validators.required]);
+    } else if (type === 'MANAGER') {
+      managerCtrl?.setValidators([Validators.required]);
+    }
+
+    employeeCtrl?.updateValueAndValidity();
+    roleCtrl?.updateValueAndValidity();
+    managerCtrl?.updateValueAndValidity();
+  });
+}
+
 handleActionTypeChange() {
   this.fieldConfigForm.get('actionType')?.valueChanges.subscribe(value => {
     const fieldNamesControl = this.fieldConfigForm.get('fieldNames');

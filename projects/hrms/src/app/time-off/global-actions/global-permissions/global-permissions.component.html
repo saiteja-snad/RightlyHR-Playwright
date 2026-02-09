@@ -76,7 +76,7 @@
 
   <div class="d-flex gap-3 w-100">
     <div class="component-left-tabs-container">
-      <app-global-actions-tabs (tabChanged)="onTabChanged($event)" />
+      <app-global-actions-tabs [selectedYear]="selectedYear" (tabChanged)="onTabChanged($event)" />
     </div>
   
     <div class="component-right-content">

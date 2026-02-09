@@ -62,12 +62,12 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   initializeRoleForm() {
     this.roleForm = this.fb.group({
-      role: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)
+      role: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)
       ]]
     });
 
     this.updateForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]]
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]]
     });
   }
 

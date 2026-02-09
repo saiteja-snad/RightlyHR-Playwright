@@ -175,6 +175,7 @@ body {
         height: 1.25rem;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -1213,6 +1214,7 @@ select:focus {
         }
     }
 }
+
 // My Info Stylings Ends
 
 
@@ -1253,7 +1255,7 @@ select:focus {
             height: 380mm;
             width: 270mm;
             position: relative;
-            background-image: url('/images/claim-genius-watermark.png');
+            // background-image: url('/images/claim-genius-watermark.png');
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -1266,6 +1268,7 @@ select:focus {
             }
 
             .letter-footer {
+                display: none;
                 width: 270mm;
                 background-color: #546e7a;
                 color: #fff;
@@ -1317,13 +1320,17 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-    table, th, td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -1333,7 +1340,8 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4), tr:nth-child(9) {
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -1348,6 +1356,14 @@ select:focus {
 
 .soft-copy-letter {
     margin-bottom: 2rem;
+}
+
+.letter-page-content:has(.soft-copy-letter ) {
+  background-image: url('/images/claim-genius-watermark.png');
+
+  .letter-footer{
+    display: block !important;
+  }
 }
 
 .list-style-none {
@@ -1384,6 +1400,7 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // letter stylings
@@ -1406,6 +1423,7 @@ select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 //My Info Stylings
@@ -1695,7 +1713,7 @@ input[type="file"] {
     .popup-header-border {
         border-bottom: 1.5px solid transparent;
         border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
-        var(--grid-border-color) 50.67%, var(--white-color) 108.91%);
+                var(--grid-border-color) 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }
@@ -2768,34 +2786,34 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .employee-label-info {
-  .popover {
-    --bs-popover-max-width: 25rem !important;
-    --bs-popover-border-color: var(--module-info-bg) !important;
-    background: var(--module-info-bg) !important;
+    .popover {
+        --bs-popover-max-width: 25rem !important;
+        --bs-popover-border-color: var(--module-info-bg) !important;
+        background: var(--module-info-bg) !important;
 
-    .popover-body {
-      padding: 0.5rem !important;
-      border-radius: 0.5rem;
-      border: 2px solid #FFF !important;
-      box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
-    }
+        .popover-body {
+            padding: 0.5rem !important;
+            border-radius: 0.5rem;
+            border: 2px solid #FFF !important;
+            box-shadow: 0px 0px 10px 0px rgba(11, 58, 131, 0.5019607843) !important;
+        }
 
-    .module-info-text {
-      font-weight: 400;
-      font-size: var(--fontsize12);
-      letter-spacing: 0%;
-      color: #424242;
-    }
+        .module-info-text {
+            font-weight: 400;
+            font-size: var(--fontsize12);
+            letter-spacing: 0%;
+            color: #424242;
+        }
 
-    .bs-popover-bottom>.popover-arrow::after {
-      border-bottom-color: #FFFFFF !important;
+        .bs-popover-bottom>.popover-arrow::after {
+            border-bottom-color: #FFFFFF !important;
+        }
     }
-  }
 
 }
 
 
-  .popup-view-image-content {
+.popup-view-image-content {
 
     width: 100%;
     height: 100%;

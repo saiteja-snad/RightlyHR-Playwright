@@ -207,7 +207,7 @@ export class InactiveDeskListComponent implements OnInit,OnDestroy {
       next: (res) => {
         console.log(res);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk has been successfully marked as available')
+        this.conformationPopup.openSuccessModal('Desk has been successfully marked as active')
         // this.getAllDesks(this.page, this.pageSize);
         this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
         this.getcount(null, null, this.Status);

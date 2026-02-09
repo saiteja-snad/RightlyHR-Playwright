@@ -256,6 +256,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       moduleName: this.isMyInfoRoute ? 'Contact Info' : undefined,
       displayName: this.isMyInfoRoute ? 'Personal' : undefined,
       workEmail: this.contactForm.get('workMail')?.value || this.employedata.workEmail,
+      linkedinUrl: this.contactForm.get('linkedinurl')?.value || this.employedata.linkedinUrl,
     };
 
     // Only include non-pending fields

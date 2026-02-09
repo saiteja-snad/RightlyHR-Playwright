@@ -311,8 +311,7 @@ export interface IExpenseReportsDetails {
   expensesItems?: IExpenseItemDetails[];
   startDate?: string;
   endDate?: string;
-    
-    totalExpenseAmount: number;
+  totalExpenseAmount: number;
   totalExpenseCount: number;
   totalItemsCount: number;
 

@@ -202,10 +202,10 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   //   return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   // }
 
-  get isExpenseGenerateDisabled(): boolean {
-  const { dateRange, status } = this.ExpenseReportForm.value;
-  return this.spinnerLoader1 || !(dateRange && status);
- }
+//   get isExpenseGenerateDisabled(): boolean {
+//   const { dateRange, status } = this.ExpenseReportForm.value;
+//   return this.spinnerLoader1 || !(dateRange && status);
+//  }
 
   formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -217,6 +217,52 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
+isAnyFilterSelected(): boolean {
+  if (!this.ExpenseReportForm) return false;
+
+  const {
+    employee,
+    dateRange,
+    manager,
+    leaveCategory,
+    team,
+    status
+  } = this.ExpenseReportForm.value;
+
+  return !!(
+    employee ||
+    manager ||
+    team ||
+    status ||
+    leaveCategory ||
+    (dateRange && dateRange.length)
+  );
+}
+
+get isExpenseGenerateDisabled(): boolean {
+  if (!this.ExpenseReportForm) return true;
+  if (this.spinnerLoader1) return true;
+
+  const {
+    dateRange,
+    employee,
+    manager,
+    team,
+    status,
+    leaveCategory
+  } = this.ExpenseReportForm.value;
+
+  const isAnyFilterSelected =
+    (Array.isArray(dateRange) && dateRange.length > 0) ||
+    !!employee ||
+    !!manager ||
+    !!team ||
+    !!status ||
+    !!leaveCategory;
+
+  return !isAnyFilterSelected; // 👈 key line
+}
+
 
   generateExpenseReport(): void {
     this.spinnerLoader1 = true;
@@ -278,7 +324,21 @@ export class ExpenseReportsComponent implements OnInit, OnDestroy {
     // Call API
     this.reportsService.getExpenseReports(request).subscribe({
       next: (response: any) => {
-        this.filteredleaveRecord = response ?? [];
+         if (
+    !response ||
+    response.length === 0 ||
+    (
+      response.length === 1 &&
+      response[0].totalExpenseCount === 0 &&
+      response[0].totalItemsCount === 0
+    )
+  ) {
+    // Treat as NO DATA
+    this.filteredleaveRecord = [];
+  } else {
+    this.filteredleaveRecord = response;
+  }
+
       },
       error: () => {
         this.spinnerLoader1 = false;
@@ -316,7 +376,7 @@ exportToExcelYearly(): void {
     teamManagerName: 'TEAM MANAGER',
     appliedDate: 'EXPENSE APPLIED DATE',
     expenseTitle: 'EXPENSE TITLE',
-    totalAmount: 'TOTAL AMOUNT (USD)',
+    totalAmount: 'TOTAL AMOUNT (INR)',
     expensesStatus: 'STATUS',
   };
 

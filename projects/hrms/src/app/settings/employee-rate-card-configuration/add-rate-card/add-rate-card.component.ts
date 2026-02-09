@@ -82,6 +82,10 @@ export class AddRateCardComponent implements OnInit, OnDestroy {
     symbol: "¥"
   },
 ];
+clientTypeOptions=[
+  {lable:'Internal',value:'Internal'},
+  {lable:'External',value:'External'},
+]
 minDate: string = '';
 maxDate: string = '';
   constructor(
@@ -169,15 +173,7 @@ maxDate: string = '';
         error: (reason: any) => console.log(reason),
       });
   }
-getCurrenciesArray(rateItem: FormGroup): FormArray {
-  return rateItem.get('currencies') as FormArray;
-}
-
-getFirstCurrency(rateItem: FormGroup): FormGroup | null {
-  const currencies = this.getCurrenciesArray(rateItem);
-  return currencies && currencies.length > 0 ? (currencies.at(0) as FormGroup) : null;
-}
-  initializeForm() {
+initializeForm() {
     this.ratecardForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
       location: ['', Validators.required],
@@ -185,8 +181,14 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
       role: ['', Validators.required],
       effectivefrom: ['', Validators.required],
       currency:['', Validators.required],
-      rateItems: this.fb.array([this.createRateCardItems()]),
+      clientType:['', Validators.required],
+      rateItems: this.fb.array([]),
     });
+      this.ratecardForm.get('currency')?.valueChanges.subscribe((data: number) => {
+      if (data) {
+      this.addRateCardItems();
+      }
+  });
   }
   get rateItems(): FormArray {
     return this.ratecardForm.get('rateItems') as FormArray;
@@ -194,25 +196,47 @@ getFirstCurrency(rateItem: FormGroup): FormGroup | null {
   getCurrencies(rateIndex: number): FormArray {
   return this.rateItems.at(rateIndex).get('currencies') as FormArray;
 }
-  addRateCardItems() {
-          this.rateItems.push(this.createRateCardItems());
+  getCurrencyName(code: string): string {
+    const currency = this.currencyCodes.find(c => c.code === code);
+    return currency ? `${currency.code} - ${currency.name}` : code;
   }
+
+  addMoreRateItems() {
+    this.rateItems.push(this.createRateCardItems());
+  }
+
+  addRateCardItems() {
+    const selectedCurrencies = this.ratecardForm.get('currency')?.value || [];
+
+    while (this.rateItems.length > 0) {
+      this.rateItems.removeAt(0);
+    }
+
+    if (selectedCurrencies.length > 0) {
+      this.rateItems.push(this.createRateCardItems());
+    }
+  }
+
   createRateCardItems(): FormGroup {
+    const selectedCurrencies = this.ratecardForm.get('currency')?.value || [];
+    const currenciesArray = this.fb.array(
+      selectedCurrencies.map((currencyCode: string) => {
+        const currency = this.currencyCodes.find(c => c.code === currencyCode);
+        return this.fb.group({
+          currencyCode: [currency?.code || '', Validators.required],
+          currencyName: [currency?.name || '', Validators.required],
+          symbol: [currency?.symbol || ''],
+          rate: ['', Validators.required]
+        });
+      })
+    );
+
     return this.fb.group({
       experienceFrom: ['',[ Validators.required,Validators.min(0), Validators.max(999)]],
       experienceTo: ['', [Validators.required,Validators.min(0), Validators.max(999)]],
       frequencyType: ['', Validators.required],
-      currency: ['', Validators.required],
-      currencies: this.fb.array([this.createCurrencies()]),
+      currencies: currenciesArray,
       status: ['Active'],
-    });
-  }
-  createCurrencies(): FormGroup {
-    return this.fb.group({
-      currencyCode: ['',Validators.required],
-      currencyName: ['',Validators.required],
-      symbol: [''],
-      rate: ['', Validators.required]
     });
   }
   isDeleteDisabled: boolean = false;
@@ -245,41 +269,7 @@ preventInvalidKeys(event: KeyboardEvent) {
 disableScroll(event: WheelEvent) {
   event.preventDefault();
 }
-onRateChange(rateIndex: number, currencyIndex: number) {
-   const currenciesArray = this.rateItems
-    .at(rateIndex)
-    .get('currencies') as FormArray;
-
-  const rateControl = currenciesArray
-    .at(currencyIndex)
-    .get('rate');
-
-  if (!rateControl) return;
-
-  // ✅ Ensure rate is always updated in the currency object
-  currenciesArray.at(currencyIndex).patchValue(
-    { rate: rateControl.value },
-    { emitEvent: false }
-  );
-}
-  onCountryChange(country: any, index: number) {
-   const rateItem = this.rateItems.at(index) as FormGroup;
-   const currenciesArray = rateItem.get('currencies') as FormArray;
-   const currencyData = {
-    currencyCode: country?.value?.code,
-    currencyName: country?.value?.name,
-    symbol: country?.value?.symbol,
-    rate: currenciesArray.at(0).get('rate')?.value || ''
-  };
-   if (currenciesArray.length > 0) {
-    // 🔁 Update existing currency
-    currenciesArray.at(0).patchValue(currencyData, { emitEvent: false });
-  } else {
-    // ➕ Create first currency
-    currenciesArray.push(this.fb.group(currencyData));
-  }
-  }
-   openModal(content: any) {
+openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   addRateCard() {

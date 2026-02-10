@@ -37,8 +37,8 @@
                                       <td >{{item.status? item.status:'-'}}</td>
                                         @if(canAccess('view','letteracknowledge')){
                                         <td>
-                                            <!-- <ng-container
-                                                *ngIf="(item.isAcknowledgmentRequired &&item?.status?.toLowerCase()==='waiting for review'&& i===0) else acknowledgementNotApplicable"> -->
+                                            <ng-container
+                                                *ngIf="(item.isAcknowledgmentRequired &&item?.status?.toLowerCase()==='waiting for review'&& i===0) else acknowledgementNotApplicable">
                                                 <div *ngIf="item?.letterType?.toLowerCase() === 'appointment letter'">
                                                     <a class="link-btn text-primary"
                                                         (click)="openpopup(openpopupAcknowledgement,item)"><span><u><b>Acknowledge</b></u></span>
@@ -82,12 +82,12 @@
                                                         (click)="openpopup(promtionAcknowledgement,item)"><span><u><b>Acknowledge</b></u></span>
                                                     </a>
                                                 </div>
-                                            <!-- </ng-container>
+                                            </ng-container>
                                             <ng-template #acknowledgementNotApplicable>
                                                 <span *ngIf="item?.status?.toLowerCase() === 'rejected'">No</span>
                                                 <span *ngIf="item?.status?.toLowerCase() === 'accepted'">Yes</span>
                                                 <span *ngIf="item?.status?.toLowerCase() === 'waiting for review'">NA</span>
-                                            </ng-template> -->
+                                            </ng-template>
                                         </td>
                                         }
 

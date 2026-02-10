@@ -24,9 +24,10 @@
       .letter-page-content {
           height: 380mm;
           width: 270mm;
-
-
-
+          position: relative;
+          // background-image: url('/images/claim-genius-watermark.png');
+          background-repeat: no-repeat;
+          background-position: center;
           box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
           overflow: hidden;
 
@@ -60,17 +61,14 @@
       }
   }
 
-  .soft-copy-letter {
-      position: relative;
-      background-image: url('/images/claim-genius-watermark.png') !important;
-     background-repeat: no-repeat;
-  background-position: center center;
-  background-size: contain;
 
-      .letter-footer {
-          display: block !important;
-      }
+  .letter-page-content:has(.soft-copy-letter ) {
+  background-image: url('/images/claim-genius-watermark.png');
+
+  .letter-footer{
+    display: block !important;
   }
+}
 
 
 

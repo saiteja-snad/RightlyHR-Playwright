@@ -48,8 +48,7 @@
                         </div>
                         <div>
                             <ng-container *ngIf="imageUrl; else showProfileIcon">
-                                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
-                                    class="profile-img">
+                                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image" class="profile-img">
                             </ng-container>
 
                             <ng-template #showProfileIcon>

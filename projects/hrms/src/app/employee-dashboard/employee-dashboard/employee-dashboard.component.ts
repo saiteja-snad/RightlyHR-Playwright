@@ -671,11 +671,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
   }
 
   buildCircularChart() {
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     this.todayChartData = {
       datasets: [
         {
           data: [this.todayDurationPercent, 100 - this.todayDurationPercent],
-          backgroundColor: ["#0B3A83", "#E5E7EB"],
+          backgroundColor: [primaryColor, "#E5E7EB"],
           borderWidth: 0
         }
       ]

@@ -402,7 +402,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
               errorMessage = err.error;
             }
             // Case 2: backend returns { message: '' }
-            else if (err.error?.message) {
+            else if (err?.error?.message) {
               errorMessage = err.error.message;
             }
           }

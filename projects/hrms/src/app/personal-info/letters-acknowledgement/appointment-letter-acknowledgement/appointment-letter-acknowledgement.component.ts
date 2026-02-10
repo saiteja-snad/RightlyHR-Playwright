@@ -101,10 +101,10 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
           const jobdata = data.find((emp: any) => emp.id = this.letterdata.jobId);
           const res = jobdata;
           this.employeeJobDetails = res;
-          Employee.jobRole = res.jobRole;
-          Employee.locationName = res.locationName;
-          Employee.subLocation = res.subLocation;
-          Employee.department = res.departmentName;
+          Employee.jobRole = res?.jobRole;
+          Employee.locationName = res?.locationName;
+          Employee.subLocation = res?.subLocation;
+          Employee.department = res?.departmentName;
         },
         error: (reason: any) => {
           console.log(reason);
@@ -127,14 +127,14 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
             this.address = this.employeeaddress.employeeAddresses.find(
               (address: IAddress) =>
                 address.type.toLowerCase() ==
-                this.appointmentletter.addressType.toLowerCase()
+                this.appointmentletter.addressType?.toLowerCase()
             );
-            this.appointmentletter.addressLine1 = this.address.addressLine1;
-            this.appointmentletter.addressLine2 = this.address.addressLine2;
-            this.appointmentletter.city = this.address.city;
-            this.appointmentletter.state = this.address.state;
-            this.appointmentletter.country = this.address.country;
-            this.appointmentletter.zipCode = this.address.zipCode;
+            this.appointmentletter.addressLine1 = this.address?.addressLine1;
+            this.appointmentletter.addressLine2 = this.address?.addressLine2;
+            this.appointmentletter.city = this.address?.city;
+            this.appointmentletter.state = this.address?.state;
+            this.appointmentletter.country = this.address?.country;
+            this.appointmentletter.zipCode = this.address?.zipCode;
           }
 
         },

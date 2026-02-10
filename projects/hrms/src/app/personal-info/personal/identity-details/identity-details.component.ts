@@ -126,7 +126,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
           Validators.maxLength(10),
           Validators.minLength(10)
         ]);
-      } else if (selected?.identityType1 === 'Pan') {
+      } else if (selected?.identityType1 === 'Pan' || selected?.identityType1 === 'PAN') {
         // PAN: CamelCase pattern (example: AbcDef1234)
         identityNumberControl?.setValidators([
           Validators.required,
@@ -175,7 +175,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
           Validators.maxLength(10),
           Validators.minLength(10)
         ]);
-      } else if (selected?.identityType1 === 'Pan') {
+      } else if (selected?.identityType1 === 'Pan' || selected?.identityType1 === 'PAN') {
         // PAN: CamelCase pattern (example: AbcDef1234)
         identityNumberControl?.setValidators([
           Validators.required,

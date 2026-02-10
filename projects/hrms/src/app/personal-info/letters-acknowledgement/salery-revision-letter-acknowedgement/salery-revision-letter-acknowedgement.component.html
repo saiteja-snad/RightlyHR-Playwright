@@ -3,9 +3,14 @@
         <div>
             <!--page-1-->
             <div class="letter-page-content my-4" id="pdfContent1"
-                [ngClass]="{'soft-copy-letter': appraisalData?.docType, 'hard-copy-letter': !appraisalData?.docType}">
+                >
                 <div class="letter-page-sub-content">
-
+                     <div *ngIf="appraisalData?.docType; else doc" class="soft-copy-letter">
+                        <app-lettersheader></app-lettersheader>
+                    </div>
+                    <ng-template #doc>
+                        <div class="hard-copy-letter"></div>
+                    </ng-template>
                     <div class="letter-header text-center">Salary Revision Letter</div>
                     <div class="text-end my-3"><span class="letter-sub-header">Date: </span>
                         {{appraisalData.dateofAppraisal| dateformat}}
@@ -60,11 +65,9 @@
                 </div>
             </div>
 
-            <div class="letter-page-content my-4" id="pdfContent2"
-                [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+            <div class="letter-page-content my-4" id="pdfContent2">
                 <div class="letter-page-sub-content">
-                    <div *ngIf="appraisalData.Documenttype; else doc"
-                        class="soft-copy-letter">
+                       <div *ngIf="appraisalData?.docType; else doc" class="soft-copy-letter">
                         <app-lettersheader></app-lettersheader>
                     </div>
                     <ng-template #doc>

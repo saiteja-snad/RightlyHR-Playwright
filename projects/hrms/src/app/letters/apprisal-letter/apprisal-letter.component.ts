@@ -657,19 +657,19 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     const jobdata = {
       employeeId: data.employeeId,
       effectiveDate: this.employeeCompensationDetails.compeffectivedate,
-      locationid: data.locationid,
+      locationid: data?.locationid,
       sublocationid: data.sublocationid,
       jobRole: this.employeeForm.get('JobRole')?.value?.value,
       status: 'Active',
-      subdeptId: data.subdeptId,
-      createddate: data.createddate,
-      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
-      reportsto: data.reportsto,
-      shiftId: data.shiftId,
+      subdeptId: data?.subdeptId,
+      createddate: data?.createddate,
+      gradeId: this.gradeIdValue?.gradeId ? this.gradeIdValue?.gradeId : data?.gradeId,
+      reportsto: data?.reportsto,
+      shiftId: data?.shiftId,
       jobTypeId: data.jobTypeId,
-      lopcation: data.lopcation,
-      bussinessArea: data.bussinessArea,
-      updateddate: data.updateddate,
+      lopcation: data?.lopcation,
+      bussinessArea: data?.bussinessArea,
+      updateddate: data?.updateddate,
     };
     console.log(jobdata);
 

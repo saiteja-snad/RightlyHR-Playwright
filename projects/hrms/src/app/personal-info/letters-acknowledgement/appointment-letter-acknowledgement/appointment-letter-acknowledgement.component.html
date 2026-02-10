@@ -1264,7 +1264,7 @@
         </div>
 
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="closepopup(rejectconfirmationpopup)">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();rejectForm.reset()">
             {{ 'Cancel' | translate }}
           </button>
 

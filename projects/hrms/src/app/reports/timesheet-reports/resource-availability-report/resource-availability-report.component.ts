@@ -41,6 +41,7 @@ export class ResourceAvailabilityReportComponent {
   destroy$ = new Subject<boolean>();
   empinfo: any;
   clients: Client[] = [];
+  phasesData: any[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
   projectsList: any[] = [];

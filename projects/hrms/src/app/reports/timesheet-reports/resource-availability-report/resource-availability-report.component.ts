@@ -71,6 +71,7 @@ export class ResourceAvailabilityReportComponent {
     { label: 25, value: 25 }
   ];
   today: Date = new Date();
+phasesData: any[]|undefined;
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,

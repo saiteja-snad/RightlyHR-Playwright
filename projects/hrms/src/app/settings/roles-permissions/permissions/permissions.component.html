@@ -787,8 +787,8 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Vendor Details' || per.fields === 'Asset Catagory'
-                            || per.fields === 'Asset Sub Catagory'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Vendor Details' || per.fields === 'Asset Category'
+                            || per.fields === 'Asset Sub Category'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

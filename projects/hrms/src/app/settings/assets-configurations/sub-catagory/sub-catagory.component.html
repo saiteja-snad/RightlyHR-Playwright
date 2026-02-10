@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="component-sub-header">{{'Asset Sub Catagory'|translate}}</div>
+    <div class="component-sub-header">{{'Asset Sub Category'|translate}}</div>
     <div class="custom-add-btn" (click)="openModal(addassetescataerys)"
-      *ngIf="rbac.allowedToAccess('Asset Sub Catagory.create')">
+      *ngIf="rbac.allowedToAccess('Asset Sub Category.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
   </div>
@@ -14,8 +14,8 @@
         <tr>
           <th>Asset Category</th>
           <th>Asset Sub Category</th>
-          <th *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || 
-          rbac.allowedToAccess('Asset Sub Catagory.delete')">Action</th>
+          <th *ngIf="rbac.allowedToAccess('Asset Sub Category.update') || 
+          rbac.allowedToAccess('Asset Sub Category.delete')">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -24,13 +24,13 @@
             <td>{{ getAssetCatData(asset.parentId) }}</td>
             <td>{{ asset.name }}</td>
             <td class="text-center"
-              *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || rbac.allowedToAccess('Asset Sub Catagory.delete')">
+              *ngIf="rbac.allowedToAccess('Asset Sub Category.update') || rbac.allowedToAccess('Asset Sub Category.delete')">
               <div class="d-flex gap-4">
-                <div *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update')">
+                <div *ngIf="rbac.allowedToAccess('Asset Sub Category.update')">
                   <a (click)="openupdate(updateassetescataerys, asset)"> <app-settings-update-icon />
                   </a>
                 </div>
-                <div *ngIf="rbac.allowedToAccess('Asset Sub Catagory.delete')">
+                <div *ngIf="rbac.allowedToAccess('Asset Sub Category.delete')">
                   <a (click)="opendelete(deleteconformation,asset)">  <app-settings-delete-icon /></a>
                 </div>
               </div>

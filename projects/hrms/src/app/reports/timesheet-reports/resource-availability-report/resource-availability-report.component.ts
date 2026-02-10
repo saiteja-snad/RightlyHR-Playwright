@@ -70,6 +70,7 @@ export class ResourceAvailabilityReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  phasesData:any =[];
   today: Date = new Date();
   constructor(
     public authService: AuthService,

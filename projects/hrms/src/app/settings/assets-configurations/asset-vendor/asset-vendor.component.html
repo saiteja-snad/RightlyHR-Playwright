@@ -131,7 +131,7 @@
                         <input id="phonenumber" type="text"  (paste)="formValidation.validatePaste($event)" inputmode="numeric" maxlength="15" minlength="10" formControlName="phonenumber"
                             class="form-control custom-input"
                             (keypress)="formValidation.restrictAlphabets($event)"autocomplete="off"
-                            placeholder="Please enter primary contact number" />
+                            placeholder="Please enter primary contact no" />
 
                         <div class="error-msg"
                             *ngIf="assetForm.controls['phonenumber'].invalid && (assetForm.controls['phonenumber'].touched)">
@@ -202,7 +202,7 @@
                         <label class="form-label custom-label mb-2" for="phonenumber">Secondary Contact</label>
                         <input id="phonenumber"  (paste)="formValidation.validatePaste($event)" type="text"  inputmode="numeric" maxlength="15" formControlName="secondaryphonenumber" autocomplete="off"
                             (keypress)="formValidation.restrictAlphabets($event)" class="form-control custom-input"
-                            placeholder="Please enter secondary contact number" />
+                            placeholder="Please enter secondary contact no" />
                         <div class="error-msg"
                             *ngIf="assetForm.controls['secondaryphonenumber'].invalid && (assetForm.controls['secondaryphonenumber'].touched || assetForm.controls['secondaryphonenumber'].dirty)">
                             <!-- Required error -->

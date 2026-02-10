@@ -81,6 +81,10 @@ export class UpdateRateCardComponent {
     symbol: "¥"
   },
 ];
+clientTypeOptions=[
+  {lable:'Internal',value:'Internal'},
+  {lable:'External',value:'External'},
+]
 minDate: string = '';
 maxDate: string = '';
    constructor(
@@ -206,6 +210,8 @@ setExperienceBands() {
         experienceTo: [band.experienceTo, Validators.required],
         frequencyType: [band.frequencyType, Validators.required],
         status: [band.status],
+        clientType:[band.clientType],
+        currency:[band.currency],
         currencies: this.fb.array([
           this.fb.group({
             currencyCode: [band.currencies?.[0]?.currencyCode, Validators.required],
@@ -218,6 +224,11 @@ setExperienceBands() {
     );
   });
 }
+ getCurrencyName(code: string): string {
+    const currency = this.currencyCodes.find(c => c.code === code);
+    return currency ? `${currency.code} - ${currency.name}` : code;
+  }
+
 
    ////this method used for location list show in location dropdown 
 geAllLocations() {
@@ -266,6 +277,8 @@ geAllLocations() {
       subLocation: ['', Validators.required],
       role: ['', Validators.required],
       effectivefrom: ['', Validators.required],
+      currency:['', Validators.required],
+      clientType:['', Validators.required],
       rateItems: this.fb.array([this.createRateCardItems()]),
     });
   }
@@ -278,19 +291,24 @@ getCurrencies(rateIndex: number): FormArray {
   addRateCardItems() {
     this.rateItems.push(this.createRateCardItems());
   }
+   addMoreRateItems() {
+    this.rateItems.push(this.createRateCardItems());
+  }
 createRateCardItems(): FormGroup {
-  return this.fb.group({
+    return this.fb.group({
     experienceFrom: ['', Validators.required],
     experienceTo: ['', Validators.required],
-    frequencyType: ['', Validators.required],
+    // frequencyType: ['', Validators.required],
     status: ['Active'],
     currencies: this.fb.array([
       this.createCurrencies()
     ])
-  });
+    });
 }
  createCurrencies(): FormGroup {
   return this.fb.group({
+    experienceFrom: ['',[ Validators.required,Validators.min(0), Validators.max(999)]],
+    experienceTo: ['', [Validators.required,Validators.min(0), Validators.max(999)]],
     currencyCode: ['', Validators.required],
     currencyName: [''],
     status: [''],
@@ -358,7 +376,8 @@ updateRateCard(){
       subLocationIds: formValues?.subLocation?.join(','),
       status: 'Active',
       createdBy: this.Employeeinfo.employeeId,
-       experienceBands: formValues.rateItems,
+      experienceBands: formValues.rateItems,
+      clientType:formValues.clientType.toString()
     };
     console.log(payload);
     this.subscription=this.http.putData(`RateCard/${this.updateratecardData.id}`,payload).subscribe({

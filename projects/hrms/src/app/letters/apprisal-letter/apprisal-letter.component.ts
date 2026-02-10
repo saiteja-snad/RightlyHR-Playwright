@@ -1076,9 +1076,9 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
           next: (data: any) => {
             this.conformationPopup.openSuccessModal('Email has been sent successfully'); // <-- Show popup here
             // Trigger job details POST API when promotion designation is selected
-      if (this.employeeForm.get('JobRole')?.value && this.appraisalData.employeeId) {
-        this.postPromotionJobDetails();
-      }
+      // if (this.employeeForm.get('JobRole')?.value && this.appraisalData.employeeId) {
+      //   this.postPromotionJobDetails();
+      // }
             setTimeout(() => {
               this.employeeForm.reset();
               this.appraisalData = {};

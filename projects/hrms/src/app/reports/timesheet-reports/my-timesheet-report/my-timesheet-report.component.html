@@ -5,7 +5,7 @@
 
     <form autocomplete="off" [formGroup]="MyTimesheetReportForm"
       (ngSubmit)="generatemytimesheetReport(page, pageSize, true, true)" *ngIf="MyTimesheetReportForm">
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center flex-wrap  gap-3">
         @if(rbac.allowedToAccess('My Timesheet Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
           MyTimesheetReportForm.get('client')?.value == null &&
@@ -13,7 +13,7 @@
           MyTimesheetReportForm.get('billable')?.value == null &&
           MyTimesheetReportForm.get('status')?.value == null &&
           MyTimesheetReportForm.get('dateRange')?.value == null
-          "(click)="clearAllFilters()">
+          " (click)="clearAllFilters()">
           @if(isFilterApplied()) {
           Clear All
           }
@@ -21,23 +21,36 @@
 
         <!-- Client Dropdown -->
         <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-              [resetFilterOnHide]="true" filterBy="label" formControlName="client" placeholder="Please select client"
-              class="form-select custom-select" (onChange)="getAllActiveProjects($event)">
-            </p-select>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
+              formControlName="client" class="form-select custom-select" placeholder="Please select client"
+              [maxSelectedLabels]="1" (onChange)="getAllActiveProjects($event)">
+            </p-multiSelect>
           </div>
         </div>
 
+
         <!-- Project Dropdown -->
         <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="projectsData" optionLabel="displayprojectName" optionValue="projectId" [filter]="true"
-              [resetFilterOnHide]="true" filterBy="displayprojectName" formControlName="project"
-              placeholder="Please select project" class="form-select custom-select">
-            </p-select>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="filteredProjects?.length ? filteredProjects : projectsData"
+              optionLabel="displayprojectName" [maxSelectedLabels]="1" optionValue="projectId" [filter]="true"
+              formControlName="project" placeholder="Please select project" class="form-select custom-select"
+              (onChange)="onProjectChange($event)">
+            </p-multiSelect>
+
           </div>
         </div>
+        <!-- Phases Dropdown -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true"[maxSelectedLabels]="1"
+              [resetFilterOnHide]="true" filterBy="phaseName" formControlName="phases"
+              placeholder="Please select phases" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
@@ -45,12 +58,12 @@
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
-        
+
         <!-- Belaible -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="BillableOptions"optionLabel="key" filterBy="key"
-              formControlName="billable" placeholder="Please select billable" class="form-select custom-select">
+            <p-select [options]="BillableOptions" optionLabel="key" filterBy="key" formControlName="billable"
+              placeholder="Please select billable" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -66,7 +79,8 @@
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('My Timesheet Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+          <button type="submit" class="custom-btn btn-secondary "
+            [disabled]="!isFilterApplied() || isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -78,7 +92,7 @@
 
           @if(rbac.allowedToAccess('My Timesheet Report - Generate.view') && rbac.allowedToAccess('My Timesheet Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportmytimesheetreport()"
-            [disabled]="filteredmytimesheetRecord.length == 0 || disableBtn">
+            [disabled]=" !isFilterApplied() || filteredmytimesheetRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -99,6 +113,7 @@
         <th>Worked Date</th>
         <th>Client Name</th>
         <th>Project Name</th>
+        <th>Phase/Milestone</th>
         <th>Description</th>
         <th>Logged Hrs</th>
         <th>Billable/Non-Billable</th>
@@ -117,25 +132,27 @@
           <td>{{ record.date ? (record.date | date) : '-' }}</td>
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
-           <td>
-          <div class="d-flex align-items-center gap-1">
-                <!-- Show info icon if description is present -->
-           <ng-container *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
-                  <div [ngbPopover]="popContent">
-                    <app-info-icon />
-                  </div>
-                </ng-container>
-              
-                <!-- Fallback when no description -->
-                <ng-template #noDescription>
-                  <div>-</div>
-                </ng-template>
-              
-                <!-- Popover content -->
-                <ng-template #popContent>
-                  {{ record.description }}
-                </ng-template>
-              </div>                 
+          <td>{{ record.phase ?? '-' }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-1">
+              <!-- Show info icon if description is present -->
+              <ng-container
+                *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
+                <div [ngbPopover]="popContent">
+                  <app-info-icon />
+                </div>
+              </ng-container>
+
+              <!-- Fallback when no description -->
+              <ng-template #noDescription>
+                <div>-</div>
+              </ng-template>
+
+              <!-- Popover content -->
+              <ng-template #popContent>
+                {{ record.description }}
+              </ng-template>
+            </div>
           </td>
           <!-- <td>{{ record.description ?? '-' }}</td> -->
           <td>{{ record.hoursWorked ?? '-' }}</td>

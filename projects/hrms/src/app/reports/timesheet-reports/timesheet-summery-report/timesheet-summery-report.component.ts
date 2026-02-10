@@ -49,6 +49,7 @@ export class TimesheetSummeryReportComponent {
   employeeData: any[] = [];
   loading: boolean = true;
   noclientproject = false;
+  phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
@@ -71,6 +72,7 @@ export class TimesheetSummeryReportComponent {
     { label: 25, value: 25 }
   ];
   today: Date = new Date();
+  employeeiddetails: any[] | undefined;
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -85,37 +87,62 @@ export class TimesheetSummeryReportComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.getClientsData();
+    this.getProjectsData();
+    this.getEmployeeData();
   }
 
   initializeForm() {
     this.TimesheetSummeryReportForm = this.fb.group({
       clientId: [null],
-      projectId: [{ value: null, disabled: true }],
-      employeid: [{ value: null, disabled: true }],
+      projectId: [null],
+      employeid: [[]],
       dateRange: [null],
-      billable: [null]
+      billable: [null],
+      phases: [{ value: null, disabled: true }],
     });
     this.TimesheetSummeryReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
   // clear all button show hide
+
   isFilterApplied(): boolean {
     const formValue = this.TimesheetSummeryReportForm.value;
-    return (
-      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-      (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-      (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
-      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-    );
+    const isClientSelected = Array.isArray(formValue.clientId) ? formValue.clientId.length > 0 : !!formValue.clientId;
+    const isProjectSelected = Array.isArray(formValue.projectId) ? formValue.projectId.length > 0 : !!formValue.projectId;
+    const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
+    const isBillableSelected = formValue.billable != null;
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
+    const isPhaseSelected = formValue.phases != null && formValue.phases.value != null;
+    return (isClientSelected ||isProjectSelected ||isEmployeeSelected ||isBillableSelected ||isDateRangeSelected ||isPhaseSelected);
   }
   // clear all button method
+  filteredProjects: any[] | undefined | null;
   clearAllFilters(): void {
+    this.filteredProjects = null;
+    //  Reset dropdown data (VERY IMPORTANT)
+    this.projectsList = [];
+    this.phasesData = [];
+    this.employeeData = [];
+    //  Reset form
+    this.TimesheetSummeryReportForm.reset();
     this.TimesheetSummeryReportForm.reset();
     this.filteredtimesheetsummeryRecord = [];
-    this.TimesheetSummeryReportForm.get('projectId')?.disable();
-    this.TimesheetSummeryReportForm.get('employeid')?.disable();
+    // reset specific controls properly
+    this.TimesheetSummeryReportForm.get('employeid')?.setValue([]);
+    this.TimesheetSummeryReportForm.get('projectId')?.setValue(null);
+    this.TimesheetSummeryReportForm.get('clientId')?.setValue(null);
+    this.TimesheetSummeryReportForm.get('billable')?.setValue(null);
+    this.TimesheetSummeryReportForm.get('status')?.setValue(null);
+    this.TimesheetSummeryReportForm.get('dateRange')?.setValue(null);
+    this.TimesheetSummeryReportForm.get('phases')?.setValue(null);
+    this.getClientsData();
+    this.getProjectsData();
+    this.getAllActiveEmployees();
+    this.getPhaseData();
+    this.getEmployeeData();
+    this.TimesheetSummeryReportForm.get('phases')?.disable();
+    // this.TimesheetSummeryReportForm.get('employeid')?.disable();
     this.collectionSize = 0;
   }
   // called for pagination 
@@ -151,15 +178,10 @@ export class TimesheetSummeryReportComponent {
           // Add "No Client/No Project" option
           if (!this.noclientproject) {
             this.clients.unshift({
-              clientId: 0,
-              clientName: 'No Client',
-              projects: [
-                {
-                  projectId: 0,
-                  projectName: 'No Project',
-                  isNoClientProject: true,
-                },
-              ]
+              clientId: 0, clientName: 'No Client',
+              projects: [{
+                  projectId: 0,projectName: 'No Project', isNoClientProject: true,
+                },]
             });
           }
           // 🔹 Create dropdown list
@@ -178,90 +200,295 @@ export class TimesheetSummeryReportComponent {
       }
     });
   }
-  // onclientchange call method
-  onClientChange(event: any): void {
-    const clientId = event.value;
-    this.TimesheetSummeryReportForm.patchValue({ projectId: null }); // reset project
-    this.TimesheetSummeryReportForm.get('projectId')?.enable();
-    this.TimesheetSummeryReportForm.get('employeid')?.disable();
-    this.TimesheetSummeryReportForm.get('employeid')?.setValue([]);
-    this.getProjectsByClientId(clientId);
-  }
-  // get all project based on clientid
-  getProjectsByClientId(clientId: number): void {
-    //If "No Client" selected, show only "No Project"
-    if (clientId === 0) {
-      this.projectsList = [
-        { label: 'No Project', value: 0 }
-      ];
-      return;
-    }
-    if (!clientId) return;
+  // adin access all project
+  getProjectsData() {
     this.loading = true;
-    this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData('v2/Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.loading = false;
-        if (Array.isArray(res?.data)) {
-          this.projectsList = res.data.map((project: any) => ({
-            label: project.projectName,
-            value: project.projectId
-          }));
-        } else {
-          this.projectsList = [];
+        this.projectsData = res?.data ?? [];
+        // Add "No Project" only if not already present
+        const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
+        if (!noProjectExists) {
+          this.projectsData.unshift({
+            projectId: 0,
+            projectName: 'No Project',
+            clientId: 0,
+            isNoClientProject: true,
+          });
         }
+
+        // Map for dropdown
+        this.projectsList = this.projectsData.map((project: any) => ({
+          label: project.projectName,
+          value: project.projectId,
+        }));
       },
       error: (err) => {
+        console.error('Error fetching projects data:', err);
         this.loading = false;
-        console.error('Error fetching projects:', err);
+        this.projectsData = [];
+        this.projectsList = [];
+      },
+      complete: () => {
+        this.loading = false;
       }
     });
   }
-
-  /** When project selected call this function */
-  onProjectChange(event: any) {
-    const selectedProjectId = event.value;
-    this.employeeData = [];
+// onclient changes
+  onClientChange(event: any): void {
+    const clientIds = Array.isArray(event.value) ? event.value : [];
+    const oldProjectIdsRaw = this.TimesheetSummeryReportForm.get('projectId')?.value;
+    const oldProjectIds = Array.isArray(oldProjectIdsRaw) ? oldProjectIdsRaw : oldProjectIdsRaw ? [oldProjectIdsRaw] : [];
     this.TimesheetSummeryReportForm.get('employeid')?.setValue([]);
-    if (selectedProjectId && selectedProjectId !== 0) {
-      this.projectId = selectedProjectId;
-      this.TimesheetSummeryReportForm.get('employeid')?.enable();
-      this.getAllActiveEmployees();
-    } else {
+    this.getProjectsByClientId(clientIds, oldProjectIds);
+    if (!clientIds || clientIds.length === 0) {
+      this.projectsList = [];
+           this.TimesheetSummeryReportForm.get('phases')?.setValue([]);
+      this.TimesheetSummeryReportForm.get('phases')?.disable();
+      this.TimesheetSummeryReportForm.patchValue({ projectId: [] }); // Clear selected projects
+      return;
+    }
+  }
+// fetch project by client id
+  getProjectsByClientId(clientIds: number[], oldProjectIds?: number[]): void {
+    // after this.projectsList is filled
+    if (!clientIds || clientIds.length === 0) {
+      this.loadAllProjects();  // <-- New helper function
+      return;
+    }
+    const hasNoClient = clientIds.includes(0);
+    const realClientIds = clientIds.filter(id => id !== 0);
+    //  CASE 1: ONLY "No Client"
+    if (hasNoClient && realClientIds.length === 0) {
+      this.projectsList = [
+        { label: "No Project", value: 0 }
+      ];
+      return;
+    }
+    //  CASE 2 & 3: Fetch all real client project
+    this.loading = true;
+    this.http.getData(`v2/Project?clientId=${realClientIds.join(',')}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          let projectList = [];
+          if (Array.isArray(res?.data)) {
+            projectList = res.data.map((p: any) => ({
+              label: p.projectName,
+              value: p.projectId
+            }));
+          }
+          //  CASE 3: Include No Project if 0 was selected WITH others
+          if (hasNoClient) {
+            projectList.unshift({ label: "No Project", value: 0 });
+          }
+          this.projectsList = projectList;
+          //  restore selected project AFTER list updated
+          const validSelectedProjects = (oldProjectIds || []).filter(id =>
+            this.projectsList.some(p => p.value === id)
+          );
+          this.TimesheetSummeryReportForm.patchValue({
+            projectId: validSelectedProjects.length ? validSelectedProjects : []
+          });
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+  }
+  loadAllProjects() {
+    this.loading = true;
+      this.http.getData(`v2/Project?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          if (Array.isArray(res?.data)) {
+            this.projectsList = res.data.map((p: any) => ({
+              label: p.projectName,
+              value: p.projectId
+            }));
+          } else {
+            this.projectsList = [];
+          }
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+  }
+  /** When project selected call this function */
+  // onProjectChange(event: any) {
+  //   const selectedProjectIds = event.value;
+  //   // CASE 1: No project is selected
+  //   if (!selectedProjectIds || selectedProjectIds.length === 0) {
+  //      this.projectId = [];
+  //     this.phasesData = [];  
+  //      this.employeeData = [];                                    
+  //     this.TimesheetSummeryReportForm.get('phases')?.setValue([]);    
+  //     this.TimesheetSummeryReportForm.get('phases')?.disable();   
+  //      this.getTeamManagersDetails();
+  //       this.projectId = 0;   
+  //         // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+  //       setTimeout(() => {
+  //         if (this.getEmployeeInfo?.length) {
+  //           this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+  //             id: emp.employeeId,
+  //             name: emp.fullName
+  //           }));
+  //         }
+  //       }, 300); 
+  //     return;
+  //   }
+  //   // CASE 2: Project(s) selected
+  //    this.projectId = selectedProjectIds;
+  //   this.TimesheetSummeryReportForm.get('phases')?.enable();          
+  //   this.getAllActiveEmployees();                                
+  // }
+
+  onProjectChange(event: any) {
+    const selectedProjectIds = event.value;
+    const selectedProjects: number[] = this.TimesheetSummeryReportForm.get('projectId')?.value || [];
+    // ---- CASE 1: No project selected ----
+    if (selectedProjects.length === 0) {
+      this.disablePhaseDropdown();
+      this.TimesheetSummeryReportForm.get('phases')?.setValue([]);
+      this.getEmployeeData();   // ← CALL THIS METHOD
+      return;
+    }
+    // ---- CASE 2: Only "No Project" selected (value = 0) ----
+    if (selectedProjects.length === 1 && selectedProjects[0] === 0) {
+      // Clear previous employee list + selected employees
+      this.employeeData = [];
+      this.TimesheetSummeryReportForm.get('employeid')?.setValue([]);
+      // Clear phases also + disable
+      this.phasesData = []; 
+      this.TimesheetSummeryReportForm.get('phases')?.setValue([]);
+      this.enablePhaseDropdown();
+     
+      // Fetch team manager details
       this.getTeamManagersDetails();
-      this.projectId = 0;
-      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+      // Load fresh employee list ONLY from getTeamManagersDetails()
       setTimeout(() => {
         if (this.getEmployeeInfo?.length) {
           this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
             id: emp.employeeId,
             name: emp.fullName
           }));
-          this.TimesheetSummeryReportForm.get('employeid')?.enable();
         }
       }, 300);
+      return;
     }
+    // ---- CASE 3: Real projects selected ----
+    this.enablePhaseDropdown();
+    this.projectId = selectedProjectIds;
+     this.getPhaseData();
+    this.getAllActiveEmployees();
   }
+  enablePhaseDropdown() {
+    this.TimesheetSummeryReportForm.get('phases')?.enable();
+  }
+  disablePhaseDropdown() {
+    this.TimesheetSummeryReportForm.get('phases')?.disable();
+  }
+
+  getPhaseData() {
+  const previousSelected = this.TimesheetSummeryReportForm.get('phases')?.value || [];
+  const params = {
+    projectId: this.projectId.join(','), 
+    status: 'yet to start,in progress,extended'
+  };
+  this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        // Extract all phases
+        this.phasesData = data?.data?.map((x: any) => ({
+          phaseId: x.phaseId,
+          projectId: x.project?.projectId,      // if you want project-wise grouping
+          phaseName: x.phaseName,
+          code: x.project?.meta?.graphData?.code ?? ''
+        })) ?? [];
+        // Remove duplicate phases
+        this.phasesData = this.removeDuplicatePhases(this.phasesData);
+        this.phasesData = this.phasesData.map((p: any) => ({
+        ...p,label: p.code ? `${p.phaseName} (${p.code})` : p.phaseName
+      }));
+        // Keep previously selected phases if still present
+        const validSelections = previousSelected.filter((selectedId: any) =>
+          this.phasesData.some((p: any) => p.phaseId === selectedId)
+        );
+        this.TimesheetSummeryReportForm.get('phases')?.setValue(validSelections);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.phasesData = [];
+        this.TimesheetSummeryReportForm.get('phases')?.setValue([]);
+      }
+    });
+}
   /** Get all employees for selected project */
   getAllActiveEmployees() {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
-           this.employeeData =
-          res?.data?.map((x: any) => ({
+  //  const previousSelected = this.TimesheetSummeryReportForm.get('phases')?.value || [];
+    this.http.getData(`v2/ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        // Employee List
+        this.employeeData = res?.data?.map((x: any) => ({
             id: x.employee?.id,
-            name: x.employee?.fusionEmployeeId
-              ? `${x.employee.fusionEmployeeId} - ${x.employee.name}`
-              : x.employee?.name || 'Unknown'
+            name: x.employee?.fusionEmployeeId ? `${x.employee.fusionEmployeeId} - ${x.employee.name}`: x.employee?.name || 'Unknown'
           })) ?? [];
+        const validEmployeeSelections = this.TimesheetSummeryReportForm.get('employeid')?.value?.filter((selectedId: any) =>
+          this.employeeData.some((emp: any) => emp.id === selectedId)
+        ) || [];
+        // update employee selection
+        this.TimesheetSummeryReportForm.get('employeid')?.setValue(validEmployeeSelections);
+      },
+      error: (err) => {
+        console.error("Error fetching employees:", err);
+        this.employeeData = [];
+        this.phasesData = [];
+        this.TimesheetSummeryReportForm.get('phases')?.setValue([]);
+      }
+    });
+  }
+  getEmployeeData() {
+    const loggedInUser = this.authService.getToken();
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        const employeedata = (data || []).map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
+            return {
+              ...employee,
+              firstName,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          })
+          .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
+        // Store all employees (including “All Employees” at the top)
+        this.employeeiddetails = [
+          ...employeedata
+        ];
 
-          this.TimesheetSummeryReportForm.get('employeid')?.enable();
-        },
-        error: (err) => {
-          console.error('Error fetching employees:', err);
-          this.employeeData = [];
-        }
-      });
+        // Step 2: Map for the dropdown component
+        this.employeeData = this.employeeiddetails.map((e: any) => ({
+          id: e.employeeId,
+          name: e.fullName
+        }));
+        // (Optional) log to verify
+        console.log('Employee dropdown data:', this.employeeData);
+      },
+      error: (reason: any) => {
+        console.error('Error fetching employees:', reason);
+        this.employeeData = [];
+      },
+    });
+  }
+
+
+  removeDuplicatePhases(list: any[]) {
+    const map = new Map();
+    list.forEach(item => map.set(item.phaseId, item));
+    return Array.from(map.values());
   }
 
   // no project selected show employee
@@ -288,13 +515,15 @@ export class TimesheetSummeryReportComponent {
 
   // Disable ,enable the generate,export button
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, belaible } = this.TimesheetSummeryReportForm.value;
+    const { clientId, projectId, employeid, dateRange, belaible, phases } = this.TimesheetSummeryReportForm.value;
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasBillable = belaible !== null && belaible !== undefined;
     const hasEmployeid = employeid !== null && employeid !== undefined;
-    return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid);
+    const hasphase = phases !== null && phases !== undefined;
+
+    return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid || hasphase);
   }
   // Timesheet Summery payload
   buildTimesheetReportParams() {
@@ -342,6 +571,9 @@ export class TimesheetSummeryReportComponent {
     }
     if (formValue.billable?.value) {
       params.Billable = formValue.billable.value;
+    }
+    if (formValue.phases) {
+      params.PhaseIds = formValue.phases;
     }
     return params;
   }
@@ -403,7 +635,7 @@ export class TimesheetSummeryReportComponent {
         }
         // Download the blob as before
         const blob = new Blob([response.body!],
-          {
+      {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
           });
         const url = window.URL.createObjectURL(blob);

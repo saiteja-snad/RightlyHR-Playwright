@@ -1,10 +1,11 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!-- Header -->
-    <app-reports-header/>
+    <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="ProjectEffortReportForm" (ngSubmit)="generateProjectEffortReport(page,pageSize,true, true)" *ngIf="ProjectEffortReportForm">
-      <div class="d-flex align-items-center gap-3">
+    <form autocomplete="off" [formGroup]="ProjectEffortReportForm"
+      (ngSubmit)="generateProjectEffortReport(page,pageSize,true, true)" *ngIf="ProjectEffortReportForm">
+      <div class="d-flex align-items-center flex-wrap  gap-3">
         @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
           ProjectEffortReportForm.get('clientId')?.value == null &&
@@ -16,45 +17,37 @@
           Clear All
           }
         </button>
-          <!-- Client-->
-         <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-              formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
-              (onChange)="onClientChange($event)">
-            </p-select>
-          </div>
-        </div>
-
         <!-- Project-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
-              defaultLabel="Please select project" formControlName="projectId"
-              class="form-select custom-select"></p-multiSelect>
+              [maxSelectedLabels]="1" placeholder="Please select project" formControlName="projectId"
+              class="form-select custom-select" (onChange)="onProjectChange($event)">
+            </p-multiSelect>
           </div>
-        </div>       
-         <!-- Date Range -->
+        </div>
+        <!-- Phases Dropdown -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
+              formControlName="phases" placeholder="Please select phases" class="form-select custom-select">
+            </p-multiSelect>
+
+          </div>
+        </div>
+        <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
-
-      <!-- Belaible -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="BillableOptions" optionLabel="key" filterBy="key"
-              formControlName="billable" placeholder="Please select billable" class="form-select custom-select">
-            </p-select>
-          </div>
-        </div>  
-        }    
+        }
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+          <button type="submit" class="custom-btn btn-secondary "
+            [disabled]="!isFilterApplied() || isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -66,7 +59,7 @@
 
           @if(rbac.allowedToAccess('Project Effort Report - Generate.view') && rbac.allowedToAccess('Project Effort Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportProjectEffortReport()"
-            [disabled]="filteredpendingapprovalRecord.length == 0 || disableBtn">
+            [disabled]="!isFilterApplied() || filteredpendingapprovalRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -87,30 +80,32 @@
 
         <th>Client Name</th>
         <th>Project Name</th>
+        <th>Phase/Milestone</th>
         <th>Allocated Hrs</th>
         <th>Billable Hrs</th>
         <th>Non-Billable Hrs</th>
         <th>Total Logged Hrs</th>
       </thead>
-    <tbody>
+      <tbody>
         @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
-          <tr>
-            <td colspan="6" class="text-center">
-              <app-no-data-found />
-            </td>
-          </tr>
+        <tr>
+          <td colspan="6" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
         }
         @else {
-          @for (record of filteredpendingapprovalRecord; track $index) {
-            <tr>
-              <td>{{ record.client ?? '-' }}</td>
-              <td>{{ record.project ?? '-' }}</td>
-              <td>{{ record.projectAllocatedHours ?? '-' }}</td>
-              <td>{{ record.billableHours ?? '-' }}</td>
-              <td>{{ record.nonBillableHours ?? '-' }}</td>
-              <td>{{ record.totalHours ?? '-' }}</td>
-            </tr>
-          }
+        @for (record of filteredpendingapprovalRecord; track $index) {
+        <tr>
+          <td>{{ record.client ?? '-' }}</td>
+          <td>{{ record.project ?? '-' }}</td>
+          <td>{{ record.phase ?? '-' }}</td>
+          <td>{{ record.projectAllocatedHours ?? '-' }}</td>
+          <td>{{ record.billableHours ?? '-' }}</td>
+          <td>{{ record.nonBillableHours ?? '-' }}</td>
+          <td>{{ record.totalHours ?? '-' }}</td>
+        </tr>
+        }
         }
       </tbody>
     </table>

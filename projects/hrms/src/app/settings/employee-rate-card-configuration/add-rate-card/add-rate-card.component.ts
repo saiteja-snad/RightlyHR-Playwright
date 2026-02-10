@@ -287,35 +287,35 @@ openModal(content: any) {
     };
     console.log(payload);
     
-    // this.subscription=this.http.postdata('RateCard',payload).subscribe({
-    //       next: (res: any) => {
-    //         this.isloading = false;
+    this.subscription=this.http.postdata('RateCard',payload).subscribe({
+          next: (res: any) => {
+            this.isloading = false;
 
-    //         this.responseSummary = res.data;
-    //       if (res.failureCount==0) {
-    //         this.conformationPopup.openSuccessModal(
-    //           'Rate Card created successfully'
-    //         );
-    //       } else {
-    //         this.openModal(this.Summary);
-    //         setTimeout(() => {
-    //           this.modalService.dismissAll();
-    //         }, 5000);
-    //       }
-    //         this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active'])
-    //       },
-    //       error: (err: any) => {
-    //         this.isloading = false;
-    //         this.modalService.dismissAll();
-    //         this.conformationPopup.openErrorModal(
-    //           err.error.message
-    //             ? err.error.message
-    //             : 'Failed to create rate card. Please try again later'
-    //         );
-    //       },
-    //       complete: () => {
-    //       },
-    //     });
+            this.responseSummary = res.data;
+          if (res.failureCount==0) {
+            this.conformationPopup.openSuccessModal(
+              'Rate Card created successfully'
+            );
+          } else {
+            this.openModal(this.Summary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
+          }
+            this.router.navigate(['/settings/employee-rate-card/rate-card/rate-card-active'])
+          },
+          error: (err: any) => {
+            this.isloading = false;
+            this.modalService.dismissAll();
+            this.conformationPopup.openErrorModal(
+              err.error.message
+                ? err.error.message
+                : 'Failed to create rate card. Please try again later'
+            );
+          },
+          complete: () => {
+          },
+        });
   }
 
 onExperienceInput(

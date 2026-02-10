@@ -186,6 +186,7 @@ export class OpenTicketsComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');
+         this.http.requestRefresh();
         localStorage.removeItem('ticketDetails');
         setTimeout(() => {
           this.itSupportForm.reset();

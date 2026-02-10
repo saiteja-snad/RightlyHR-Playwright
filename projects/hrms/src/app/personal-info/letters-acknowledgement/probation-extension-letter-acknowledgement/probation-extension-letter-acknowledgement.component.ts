@@ -11,10 +11,12 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 
 @Component({
   selector: 'app-probation-extension-letter-acknowledgement',
-  imports: [CommonModule, DateformatPipe, ConfirmationIconComponent],
+  imports: [CommonModule, DateformatPipe, ConfirmationIconComponent, LettersheaderComponent, LetterFooterComponent],
   templateUrl: './probation-extension-letter-acknowledgement.component.html',
   styleUrl: './probation-extension-letter-acknowledgement.component.scss'
 })

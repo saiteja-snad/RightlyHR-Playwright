@@ -16,13 +16,13 @@ import { Skeleton } from 'primeng/skeleton';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule,Skeleton,ModuleInfoIconComponent],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule, Skeleton, ModuleInfoIconComponent],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
-export class DeskManagementComponent implements OnInit,OnDestroy {
+export class DeskManagementComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   @ViewChild('createDeskModal') private readonly createDeskModal!: NgbModal;
   deskForm!: FormGroup;
@@ -49,13 +49,13 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   deskData: any;
   deskDataOptions: any;
   totaldeskCount: any;
- loading=false
+  loading = false
   constructor(private readonly fb: FormBuilder, public http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
     private router: Router, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-   
+
     this.intialdesk()
     this.intiallocationandsublocation()
     this.getjobLocationList()
@@ -69,7 +69,7 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   }
 
   initializeNavTabs(): void {
-    this.loading=true
+    this.loading = true
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       //{ label: 'All', route: '/desk/management/all-desks', icon: '/desk-icon/all-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
@@ -84,7 +84,7 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
       tab.permission && tab.permission.feature && tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
-    this.loading=false
+    this.loading = false
   }
 
   initiateUpdateModuleInfo() {
@@ -105,7 +105,7 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   intiallocationandsublocation() {
     this.locationfromdata = this.fb.group({
       locationId: [null],
-      subLocationId: [{ value: null, disabled: true },Validators.required],
+      subLocationId: [{ value: null, disabled: true }, Validators.required],
     });
   }
 
@@ -122,7 +122,7 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   }
 
   openModal(content: any) {
-    this.deskForm.reset(); 
+    this.deskForm.reset();
     this.deskForm.get('subLocationId')?.disable();
     this.deskForm.get('shifts')?.disable();
     this.deskForm.get('employeid')?.disable();
@@ -169,9 +169,11 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
 
   getSubLocationByid(selectedLocation: any): void {
     this.deskForm.get('subLocationId')?.enable();
-     this.deskForm.get('subLocationId')?.reset();
-  this.deskForm.get('subLocationId')?.markAsTouched();
-  this.deskForm.get('subLocationId')?.updateValueAndValidity();
+    this.deskForm.get('subLocationId')?.reset();
+    this.deskForm.get('deskid')?.reset();
+    this.deskdataid = []
+    this.deskForm.get('subLocationId')?.markAsTouched();
+    this.deskForm.get('subLocationId')?.updateValueAndValidity();
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
@@ -181,7 +183,7 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
           }
           // Reset the sub-location selection in the form
-        //  this.deskForm.patchValue({ subLocation: null });
+          //  this.deskForm.patchValue({ subLocation: null });
         },
         error: (err: any) => {
           this.subLocationsDropdown = []; // Reset on error
@@ -194,6 +196,14 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   }
 
   getShiftBYid(selectedSubLocation: any): void {
+    this.deskForm.get('deskid')?.reset();
+    this.deskdataid = []
+    this.deskForm.get('deskid')?.markAsTouched();
+    this.deskForm.get('deskid')?.updateValueAndValidity();
+    this.deskForm.get('shifts')?.reset();
+    this.deskForm.get('employeid')?.reset();
+    this.deskForm.get('deskapprovalid')?.reset()
+    this.shiftDropdown=[]
     if (selectedSubLocation && selectedSubLocation.id) {
       const locationId = this.deskForm.get('locationId')?.value?.id ?? this.deskForm.get('locationId')?.value; // Get the selected location ID
       const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
@@ -253,6 +263,8 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   }
 
   getEmployeedata() {
+    this.employeeiddetails = [];
+
     const locationId = this.deskForm.get('locationId')?.value?.id;
     const sublocationId = this.deskForm.get('subLocationId')?.value?.id;
     const shift = this.deskForm.get('shifts')?.value?.id;
@@ -266,11 +278,11 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
           // Transform the data to add `employeeName` and a combined property
           this.employeeiddetails = data.map((employee: any) => ({
             ...employee,
-            
+
             employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
 
-          })) .sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          })).sort((a: any, b: any) =>
+            a?.firstName?.toLowerCase()?.localeCompare(b?.firstName?.toLowerCase())
           );
         },
         error: (reason: any) => {
@@ -289,8 +301,8 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
           employeeNames: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} 
           ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
         })).sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-          );
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+        );
       },
       error: (errormessage) => {
         console.log(errormessage);
@@ -379,7 +391,7 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
             this.conformationPopup.openSuccessModal('Desk registered successfully ');
             this.getAllDesks(this.page, this.pageSize, null, null, 'All');
             this.getcount(null, null);
-           
+
             this.deskForm.reset();
             this.isToggled = false;
             this.http.setnewdeskDetails();
@@ -441,34 +453,34 @@ export class DeskManagementComponent implements OnInit,OnDestroy {
   }
 
 
-getcount(locationId: string | null, subLocationId: string | null) {
+  getcount(locationId: string | null, subLocationId: string | null) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
     params.append('status', status);
-   
-  
-  this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
-    next: (data: any) => {
-  const totalCount = data.totalCount || 0;
-  this.http.setTotalDeskCount(totalCount);
-  const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
-  const availableCount = statusCounts.find((item: any) => item.status === "Available")?.count || 0;
-  const allocateCount = statusCounts.find((item: any) => item.status === "Allocated")?.count || 0;
-  const inactiveCount = statusCounts.find((item: any) => item.status === "Inactive")?.count || 0;
-  const undermaintenceCount = statusCounts.find((item: any) => item.status === "Under Maintenance")?.count || 0;
-  const waitingForApprovalCount = statusCounts.find((item: any) => item.status === "Waiting for Approval")?.count || 0;
 
-  this.http.setAvailableDeskCount(availableCount);
-  this.http.setAllocatedDeskCount(allocateCount);
-  this.http.setundermatinaceDeskCount(undermaintenceCount);
-  this.http.setinactiveSubjectDeskCount(inactiveCount);
-  this.http.setWFASubjectDeskCount(waitingForApprovalCount);
 
-  // Move chart initialization here
-  setTimeout(() => this.initChart(), 0);
-},
-  });
+    this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        const totalCount = data.totalCount || 0;
+        this.http.setTotalDeskCount(totalCount);
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableCount = statusCounts.find((item: any) => item.status === "Available")?.count || 0;
+        const allocateCount = statusCounts.find((item: any) => item.status === "Allocated")?.count || 0;
+        const inactiveCount = statusCounts.find((item: any) => item.status === "Inactive")?.count || 0;
+        const undermaintenceCount = statusCounts.find((item: any) => item.status === "Under Maintenance")?.count || 0;
+        const waitingForApprovalCount = statusCounts.find((item: any) => item.status === "Waiting for Approval")?.count || 0;
+
+        this.http.setAvailableDeskCount(availableCount);
+        this.http.setAllocatedDeskCount(allocateCount);
+        this.http.setundermatinaceDeskCount(undermaintenceCount);
+        this.http.setinactiveSubjectDeskCount(inactiveCount);
+        this.http.setWFASubjectDeskCount(waitingForApprovalCount);
+
+        // Move chart initialization here
+        setTimeout(() => this.initChart(), 0);
+      },
+    });
   }
 
   onHitSubLocationChange() {
@@ -491,42 +503,42 @@ getcount(locationId: string | null, subLocationId: string | null) {
   }
 
 
-initChart(): void {
-  this.loading=true
-  combineLatest([
-    this.http.deskAvailableCountSubject,
-    this.http.deskAllocatedCountSubject,
-    this.http.deskUndermaindanaenceCountSubject,
-    this.http.deskinactiveCountSubject,
-    this.http.deskWiatingforapprovalCountsubject,
-  ]).subscribe(([available, allocated, underMaintenance, inactive, waitingForApproval]) => {
-    const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
-    const backgroundColors = chartTabs.map(item => item.backgroundcolour);
+  initChart(): void {
+    this.loading = true
+    combineLatest([
+      this.http.deskAvailableCountSubject,
+      this.http.deskAllocatedCountSubject,
+      this.http.deskUndermaindanaenceCountSubject,
+      this.http.deskinactiveCountSubject,
+      this.http.deskWiatingforapprovalCountsubject,
+    ]).subscribe(([available, allocated, underMaintenance, inactive, waitingForApproval]) => {
+      const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
+      const backgroundColors = chartTabs.map(item => item.backgroundcolour);
 
-    this.deskData = {
-      datasets: [
-        {
-          data: [
-            available ?? 0,
-            allocated ?? 0,
-            underMaintenance ?? 0,
-            inactive ?? 0,
-            waitingForApproval ?? 0
-          ],
-          backgroundColor: backgroundColors,
-          borderWidth: 0,
-        }
-      ]
-    };
+      this.deskData = {
+        datasets: [
+          {
+            data: [
+              available ?? 0,
+              allocated ?? 0,
+              underMaintenance ?? 0,
+              inactive ?? 0,
+              waitingForApproval ?? 0
+            ],
+            backgroundColor: backgroundColors,
+            borderWidth: 0,
+          }
+        ]
+      };
 
-    this.deskDataOptions = {
-      cutout: '70%',
-    };
-  });
-  this.loading=false
-}
+      this.deskDataOptions = {
+        cutout: '70%',
+      };
+    });
+    this.loading = false
+  }
 
-  
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

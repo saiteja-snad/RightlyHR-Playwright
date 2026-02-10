@@ -747,7 +747,7 @@
           <div class="letter-page-content my-4" id="pdfContent7">
             <div class="letter-page-sub-content">
               <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc"
-                class="soft-copy-lettermb-5">
+                class="soft-copy-letter mb-5">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
@@ -795,7 +795,7 @@
           </div>
 
           <!--page-8-->
-          <div class="letter-page-content my-4" id="pdfContent8">
+          <div class="letter-page-content my-4" id="pdfContent8" >
             <div class="letter-page-sub-content">
               <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
@@ -898,9 +898,10 @@
                 normal working hours or on the premises of the Company.
               </p>
             </div>
-            <div class="letter-footer">
+            <div    class="letter-footer">
               <app-letter-footer />
             </div>
+   
           </div>
 
           <!--page-9-->

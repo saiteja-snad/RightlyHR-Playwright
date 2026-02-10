@@ -19,9 +19,10 @@ import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-apprisal-letter-acknowedgement',
- imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LettersheaderComponent, ConfirmationIconComponent],
+ imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, NgbPopoverModule, LettersheaderComponent, ConfirmationIconComponent, LetterFooterComponent],
   templateUrl: './apprisal-letter-acknowedgement.component.html',
   styleUrl: './apprisal-letter-acknowedgement.component.scss'
 })

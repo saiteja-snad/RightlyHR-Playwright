@@ -20,7 +20,7 @@ export class PmsMainTabsComponent {
   columnsPerRow = 3;
   navTabs = [
     { label: 'Review Cycle', link: '/pms/review-cycle', icon: 'main-menu-icons/review-cycle.png', permission: { feature: 'Review Cycle List', action: 'view' } },
-    { label: 'Performance Review', link: '/pms/performace-review', icon: 'main-menu-icons/performance-review.png', permission: { feature: 'Review Cycle List', action: 'view' } },
+    { label: 'Performance Review', link: '/pms/performace-review', icon: 'main-menu-icons/performance-review.png', permission: { feature: 'My Performance Review', action: 'view' } },
     { label: 'KRA', link: '/pms/kra', icon: 'main-menu-icons/kra.png', permission: { feature: 'KRA', action: 'view' } },
     { label: 'KPI', link: '/pms/kpi', icon: 'main-menu-icons/kpi.png', permission: { feature: 'KPI', action: 'view' } },
     { label: 'Assign KRA/KPI', link: '/pms/assign-kra-kpi', icon: 'main-menu-icons/assign-kra-kpi.png', permission: { feature: 'Assign KRA KPI', action: 'view' } },

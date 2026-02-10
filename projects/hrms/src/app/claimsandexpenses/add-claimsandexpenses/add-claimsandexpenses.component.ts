@@ -17,7 +17,7 @@ import { AuthService } from '../../services/auth.service';
 import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInfoIconComponent,ModuleInformationComponent],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInfoIconComponent, ModuleInformationComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -74,8 +74,8 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
-    this.updateModuleInfo();
-    this.updateModuleInfoOnBehalfof()
+    this.updateModuleInfo()
+
     this.getexpensesheaderbyid(this.empinfo.employeeid)
     this.setDate()
     this.getAllEmployeeId()
@@ -151,31 +151,21 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         this.updateModuleInfo();
       });
   }
-  initiateUpdateModuleInfoOnbehlafof() {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfoOnBehalfof();
-      });
-  }
+
 
   updateModuleInfo() {
     const url = this.router.url;
-    const routeToInfoMap: { [key: string]: string } = {
-      '/claimsandexpenses/addexpense': MODULE_INFOS.EXPENSES_MODULE_INFO
-    };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
-  updateModuleInfoOnBehalfof() {
-    const url = this.router.url;
-    const routeToInfoMap: { [key: string]: string } = {
-      '/on-behalf-of/on-behalf-of-expenses/add': MODULE_INFOS.ONBEHALF_OF_ADD_EXPENSES_MODULE_INFO
-    };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
 
+    if (url.includes('/claimsandexpenses/addexpense')) {
+      this.moduleinfo = MODULE_INFOS.EXPENSES_MODULE_INFO;
+    }
+    else if (url.includes('/on-behalf-of/on-behalf-of-expenses/add')) {
+      this.moduleinfo = MODULE_INFOS.ONBEHALF_OF_ADD_EXPENSES_MODULE_INFO;
+    }
+    else {
+      this.moduleinfo = '';
+    }
+  }
   calculateTotalExpensesAmount(): void {
     this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
       const value = Number(item.get('expense_Amount')?.value) || 0;
@@ -436,7 +426,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.getexpensesheaderbyid(this.empinfo.employeeId);
-               this.getApprovalStatusCounts()
+              this.getApprovalStatusCounts()
             }
           },
           error: (error: any) => {
@@ -451,14 +441,14 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-               this.http.setnewcountDetailsforonBehalfof();
+              this.http.setnewcountDetailsforonBehalfof();
               this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.newExpenseForm.reset();
               this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
-               this.getApprovalStatusCounts();
+              this.getApprovalStatusCounts();
               this.spinnerLoader = false;
             }
           },
@@ -625,7 +615,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       );
     } else {
       submit$ = this.http.postdata(`Expenses_Header`, payload);
-         this.getApprovalStatusCounts();
+      this.getApprovalStatusCounts();
     }
 
     submit$.subscribe({
@@ -642,7 +632,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
         // 🔥 optional immediate fetch to update UI without waiting for event
         this.getexpensesheaderbyid(empToRefresh);
-           this.getApprovalStatusCounts();
+        this.getApprovalStatusCounts();
 
         this.spinnerLoader = false;
       },
@@ -652,14 +642,14 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.spinnerLoader = false;
-           this.getApprovalStatusCounts();
+        this.getApprovalStatusCounts();
       }
     });
   }
- getApprovalStatusCounts() {
+  getApprovalStatusCounts() {
     this.http.get(`PendingApproval/getApprovalStatusCounts?moduleId=19&EmployeeId=${this.empinfo.employeeId}`).subscribe((res: any) => {
       this.totalCount = res.reduce((acc: number, curr: any) => acc + curr.totalCount, 0);
-       this.http.updatePendingApprovalCounts(this.totalCount);
+      this.http.updatePendingApprovalCounts(this.totalCount);
     });
   }
   onAmountInput(event: Event): void {

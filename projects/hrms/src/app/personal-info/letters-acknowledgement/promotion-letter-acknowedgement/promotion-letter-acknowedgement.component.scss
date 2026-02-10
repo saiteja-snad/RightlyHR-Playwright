@@ -25,9 +25,8 @@
           height: 380mm;
           width: 270mm;
           position: relative;
-
+          // background-image: url('/images/claim-genius-watermark.png');
           background-repeat: no-repeat;
-          background-size: cover;
           background-position: center;
           box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
           overflow: hidden;
@@ -40,15 +39,37 @@
               text-align: justify;
           }
 
+          .letter-footer {
+              display: none;
+              width: 270mm;
+              background-color: #546e7a;
+              color: #fff;
+              position: absolute;
+              bottom: 0px;
+              padding: 0.625rem;
 
+              .company-name {
+                  font-size: var(--fontsize14);
+                  font-weight: 600;
+              }
+
+              .company-address {
+                  font-size: var(--fontsize12);
+                  font-weight: 500;
+              }
+          }
       }
   }
 
-  .soft-copy-letter {
-      background-image: url('/images/snad-new-letter-bg.png') !important;
-      padding-top: 8rem !important;
 
+  .letter-page-content:has(.soft-copy-letter ) {
+  background-image: url('/images/claim-genius-watermark.png');
+
+  .letter-footer{
+    display: block !important;
   }
+}
+
 
 
   .salary-details-table {
@@ -92,8 +113,8 @@
   }
 
   .secondtable tr:nth-child(4) td:nth-last-child(-n + 2) {
-    background: #fce4d6;
-}
+      background: #fce4d6;
+  }
 
 
   .letter-signature {

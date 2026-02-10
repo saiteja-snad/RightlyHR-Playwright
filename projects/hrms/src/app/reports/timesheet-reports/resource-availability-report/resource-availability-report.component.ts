@@ -49,7 +49,6 @@ export class ResourceAvailabilityReportComponent {
   employeeData: any[] = [];
   loading: boolean = true;
   noclientproject = false;
-  phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },

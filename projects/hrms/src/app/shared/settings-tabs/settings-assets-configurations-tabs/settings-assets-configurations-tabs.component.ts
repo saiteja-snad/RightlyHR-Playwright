@@ -28,14 +28,14 @@ export class SettingsAssetsConfigurationsTabsComponent {
     {
       label: 'Asset Category',
       link: '/settings/assets-configuration/asset-catagory',
-      permission: { feature: 'Asset Catagory', action: 'view' },
+      permission: { feature: 'Asset Category', action: 'view' },
       icon: '/images/assets-list.png',
       subjectText: MODULE_INFOS.SETTINGS_ASSET_CONFIGURATION_ASSET_CATEGORY,
     },
     {
       label: 'Asset Sub Category',
       link: '/settings/assets-configuration/asset-subcatagory',
-      permission: { feature: 'Asset Sub Catagory', action: 'view' },
+      permission: { feature: 'Asset Sub Category', action: 'view' },
       icon: '/settings-icon/leave-category-icon.png',
       subjectText: MODULE_INFOS.SETTINGS_ASSET_CONFIGURATION_ASSET_SUB_CATEGORY,
     }

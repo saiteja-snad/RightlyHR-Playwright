@@ -1138,13 +1138,13 @@ export class AccessNavigationService {
         break;
 
       case '/settings/assets-configuration/asset-catagory':
-        if (this.rbac.allowedToAccess('Asset Catagory.view')) {
+        if (this.rbac.allowedToAccess('Asset Category.view')) {
           return '/settings/assets-configuration/asset-catagory';
         }
         break;
 
       case '/settings/assets-configuration/asset-subcatagory':
-        if (this.rbac.allowedToAccess('Asset Sub Catagory.view')) {
+        if (this.rbac.allowedToAccess('Asset Sub Category.view')) {
           return '/settings/assets-configuration/asset-subcatagory';
         }
         break;

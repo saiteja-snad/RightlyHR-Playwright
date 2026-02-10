@@ -116,14 +116,16 @@ currentDate = new Date();
               this.address = this.employeeaddress.employeeAddresses.find(
                 (address: IAddress) =>
                   address.type.toLowerCase() ==
-                  this.promotiondata.addressType.toLowerCase()
+                  this.promotiondata?.addressType?.toLowerCase()
               );
-              this.promotiondata.addressLine1 = this.address.addressLine1;
-              this.promotiondata.addressLine2 = this.address.addressLine2;
-              this.promotiondata.city = this.address.city;
-              this.promotiondata.state = this.address.state;
-              this.promotiondata.country = this.address.country;
-              this.promotiondata.zipCode = this.address.zipCode;
+              this.promotiondata.addressLine1 = this.address?.addressLine1;
+              console.log(this.promotionDate.addressLine1);
+              
+              this.promotiondata.addressLine2 = this.address?.addressLine2;
+              this.promotiondata.city = this.address?.city;
+              this.promotiondata.state = this.address?.state;
+              this.promotiondata.country = this.address?.country;
+              this.promotiondata.zipCode = this.address?.zipCode;
             }
   
           },
@@ -211,7 +213,7 @@ currentDate = new Date();
         next: (data: any) => {
           if(!data || data.length == 0){
             this.jobErrorMessage = 'No Compensation details found for this employee.';
-            this.employeeForm.get('jobValid')?.setValue(false);
+           
           }else{
             // let res = data[0];
             let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
@@ -411,7 +413,7 @@ currentDate = new Date();
               Employee.esiPerAnnum
             );
             this.jobErrorMessage = '';
-            this.employeeForm.get('jobValid')?.setValue(true);
+           
           }
           }
       });

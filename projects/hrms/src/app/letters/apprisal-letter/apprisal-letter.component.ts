@@ -657,19 +657,19 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     const jobdata = {
       employeeId: data.employeeId,
       effectiveDate: this.employeeCompensationDetails.compeffectivedate,
-      locationid: data.locationid,
+      locationid: data?.locationid,
       sublocationid: data.sublocationid,
       jobRole: this.employeeForm.get('JobRole')?.value?.value,
       status: 'Active',
-      subdeptId: data.subdeptId,
-      createddate: data.createddate,
-      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
-      reportsto: data.reportsto,
-      shiftId: data.shiftId,
+      subdeptId: data?.subdeptId,
+      createddate: data?.createddate,
+      gradeId: this.gradeIdValue?.gradeId ? this.gradeIdValue?.gradeId : data?.gradeId,
+      reportsto: data?.reportsto,
+      shiftId: data?.shiftId,
       jobTypeId: data.jobTypeId,
-      lopcation: data.lopcation,
-      bussinessArea: data.bussinessArea,
-      updateddate: data.updateddate,
+      lopcation: data?.lopcation,
+      bussinessArea: data?.bussinessArea,
+      updateddate: data?.updateddate,
     };
     console.log(jobdata);
 
@@ -1076,9 +1076,9 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
           next: (data: any) => {
             this.conformationPopup.openSuccessModal('Email has been sent successfully'); // <-- Show popup here
             // Trigger job details POST API when promotion designation is selected
-      if (this.employeeForm.get('JobRole')?.value && this.appraisalData.employeeId) {
-        this.postPromotionJobDetails();
-      }
+      // if (this.employeeForm.get('JobRole')?.value && this.appraisalData.employeeId) {
+      //   this.postPromotionJobDetails();
+      // }
             setTimeout(() => {
               this.employeeForm.reset();
               this.appraisalData = {};

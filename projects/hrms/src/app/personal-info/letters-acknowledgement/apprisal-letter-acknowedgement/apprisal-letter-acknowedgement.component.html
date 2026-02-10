@@ -223,11 +223,11 @@
                     <ng-template #vamount> <b>{{appraisalData.variablePayAmount }}</b></ng-template>
                   </td>
                 </tr>
-                <tr>
+                <!-- <tr>
                   <td class="text-center"><b>Total CTC (Including Variable Pay & ESOP)</b></td>
                   <td colspan="2" class="text-center "><b>{{ (employeeCompensationDetails?.compensationamount || 0) +
                       (appraisalData?.variablePayAmount || 0) }} </b></td>
-                </tr>
+                </tr> -->
 
               </tbody>
             </table>
@@ -276,8 +276,7 @@
                 <u><b>{{appraisalData.dateofAppraisal| dateformat}}</b></u>.
               </p> -->
 
-          <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate |
-              dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
+          <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate | dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
           <!-- end of second table -->
 
           <p class="letter-sub-header mb-4"><b>For Claim Genius</b></p>

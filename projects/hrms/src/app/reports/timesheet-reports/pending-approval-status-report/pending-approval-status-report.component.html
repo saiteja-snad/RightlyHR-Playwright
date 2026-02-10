@@ -1,30 +1,26 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!-- Header -->
-    <app-reports-header/>
+    <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="PendingApprovalReportForm" (ngSubmit)="generatependingapprovalReport(page, pageSize, true, true)" *ngIf="PendingApprovalReportForm">
-      <div class="d-flex align-items-center gap-3">
+    <form autocomplete="off" [formGroup]="PendingApprovalReportForm"
+      (ngSubmit)="generatependingapprovalReport(page, pageSize, true, true)" *ngIf="PendingApprovalReportForm">
+      <div class="d-flex align-items-center flex-wrap  gap-3">
         @if(rbac.allowedToAccess('Pending Approval Status Report - Generate.view')){
-        <button
-  type="button"
-  class="clear-all-btn"
-  [disabled]="
-    PendingApprovalReportForm.get('clientId')?.value === null ||
-    PendingApprovalReportForm.get('clientId')?.value === undefined &&
-    PendingApprovalReportForm.get('projectId')?.value === null &&
-    PendingApprovalReportForm.get('employeid')?.value === null &&
-    PendingApprovalReportForm.get('dateRange')?.value == null &&
-    PendingApprovalReportForm.get('status')?.value == null
-  "
-  (click)="clearAllFilters()"
->
-  @if(isFilterApplied()) {
-    Clear All
-  }
-</button>
+        <button type="button" class="clear-all-btn" [disabled]="
+        PendingApprovalReportForm.get('clientId')?.value === null ||
+        PendingApprovalReportForm.get('clientId')?.value === undefined &&
+        PendingApprovalReportForm.get('projectId')?.value === null &&
+        PendingApprovalReportForm.get('employeid')?.value === null &&
+        PendingApprovalReportForm.get('dateRange')?.value == null &&
+        PendingApprovalReportForm.get('status')?.value == null
+      " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
+          Clear All
+          }
+        </button>
 
-          <!-- Client-->
+        <!-- Client-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
@@ -43,7 +39,7 @@
             </p-select>
           </div>
         </div>
-        
+
         <!-- Employee-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
@@ -52,23 +48,23 @@
               class="form-select custom-select"></p-multiSelect>
           </div>
         </div>
-       <!-- Date Range -->
+        <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
-      
-       <!-- Status-->
-       <div class="d-flex align-items-center gap-2">
+
+        <!-- Status-->
+        <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="TimesheetStatus" [filter]="true" optionLabel="key" filterBy="key"
               formControlName="status" placeholder="Please select status" class="form-select custom-select">
             </p-select>
           </div>
-        </div>   
-            }
+        </div>
+        }
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Pending Approval Status Report - Generate.view')){
@@ -111,50 +107,51 @@
         <th>Status</th>
         <th>Submitted</th>
       </thead>
-     <tbody>
-  @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
-    <tr>
-      <td colspan="6" class="text-center">
-        <app-no-data-found />
-      </td>
-    </tr>
-  }
-  @else {
-    @for (record of filteredpendingapprovalRecord; track $index) {
-      <tr>
-         <td>{{ record.entryDate ? (record.entryDate | date) : '-' }}</td>
-         <td>{{ record.fusionEmpId ?? '-' }}</td>
-        <td>{{ record.employee ?? '-' }}</td>
-        <td>{{ record.client ?? '-' }}</td>
-        <td>{{ record.project ?? '-' }}</td>
-        <td>
-          <div class="d-flex align-items-center gap-1">
-                <!-- Show info icon if description is present -->
-           <ng-container *ngIf="record.description && record.description.trim() !== ''&& record.description.trim() !== '-'; else noDescription">
-                  <div [ngbPopover]="popContent">
-                    <app-info-icon />
-                  </div>
-                </ng-container>
-              
-                <!-- Fallback when no description -->
-                <ng-template #noDescription>
-                  <div>-</div>
-                </ng-template>
-              
-                <!-- Popover content -->
-                <ng-template #popContent>
-                  {{ record.description }}
-                </ng-template>
-              </div>                 
+      <tbody>
+        @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
+        <tr>
+          <td colspan="6" class="text-center">
+            <app-no-data-found />
           </td>
-        <td>
-          {{ record.status ?? '-' }}
-        </td>
-        <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
-      </tr>
-    }
-  }
-</tbody>
+        </tr>
+        }
+        @else {
+        @for (record of filteredpendingapprovalRecord; track $index) {
+        <tr>
+          <td>{{ record.entryDate ? (record.entryDate | date) : '-' }}</td>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employee ?? '-' }}</td>
+          <td>{{ record.client ?? '-' }}</td>
+          <td>{{ record.project ?? '-' }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-1">
+              <!-- Show info icon if description is present -->
+              <ng-container
+                *ngIf="record.description && record.description.trim() !== ''&& record.description.trim() !== '-'; else noDescription">
+                <div [ngbPopover]="popContent">
+                  <app-info-icon />
+                </div>
+              </ng-container>
+
+              <!-- Fallback when no description -->
+              <ng-template #noDescription>
+                <div>-</div>
+              </ng-template>
+
+              <!-- Popover content -->
+              <ng-template #popContent>
+                {{ record.description }}
+              </ng-template>
+            </div>
+          </td>
+          <td>
+            {{ record.status ?? '-' }}
+          </td>
+          <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
 
     </table>
     }

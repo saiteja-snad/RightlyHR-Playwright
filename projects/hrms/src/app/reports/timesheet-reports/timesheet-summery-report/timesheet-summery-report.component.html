@@ -5,40 +5,50 @@
 
     <form autocomplete="off" [formGroup]="TimesheetSummeryReportForm"
       (ngSubmit)="generatetimesheetSummeryReport(page,pageSize,true,true)" *ngIf="TimesheetSummeryReportForm">
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center flex-wrap  gap-2">
         @if(rbac.allowedToAccess('Timesheet Summary Monthly Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
          TimesheetSummeryReportForm.get('clientId')?.value == null &&
           TimesheetSummeryReportForm.get('projectId')?.value == null &&
            TimesheetSummeryReportForm.get('employeid')?.value == null &&
           TimesheetSummeryReportForm.get('dateRange')?.value == null &&
-          TimesheetSummeryReportForm.get('belaible')?.value == null 
-        " (click)="clearAllFilters()">
+          TimesheetSummeryReportForm.get('belaible')?.value == null " [disabled]="!isFilterApplied()"
+          (click)="clearAllFilters()">
           @if(isFilterApplied()) {
           Clear All
           }
         </button>
 
         <!-- Client-->
-        <div class="custom-p-select-content">
-          <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
             formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
-            (onChange)="onClientChange($event)">
-          </p-select>
+            [maxSelectedLabels]="1" (onChange)="onClientChange($event)">
+          </p-multiSelect>
         </div>
 
         <!-- Project-->
-        <div class="custom-p-select-content">
-          <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+        <div class="custom-p-multiSelect-content">
+          <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
             placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
-            (onChange)="onProjectChange($event)">
-          </p-select>
+            [maxSelectedLabels]="1" (onChange)="onProjectChange($event)">
+          </p-multiSelect>
         </div>
+
+        <!-- Phases Dropdown -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+        <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" formControlName="phases" [maxSelectedLabels]="1"
+          placeholder="Please select phases" [filter]="true" class="form-select custom-select">
+        </p-multiSelect>
+          </div>
+        </div>
+
         <!-- Employee-->
         <div class="custom-p-multiSelect-content">
           <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-            defaultLabel="Please select resource" formControlName="employeid"
-            class="form-select custom-select"></p-multiSelect>
+            [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid"
+             class="form-select custom-select"></p-multiSelect>
         </div>
         <!-- Date Range -->
         <div>
@@ -59,7 +69,8 @@
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Timesheet Summary Monthly Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+          <button type="submit" class="custom-btn btn-secondary "
+            [disabled]="!isFilterApplied()||isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -72,7 +83,7 @@
           @if(rbac.allowedToAccess('Timesheet Summary Monthly Report - Generate.view') &&
           rbac.allowedToAccess('Timesheet Summary Monthly Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportTimesheetSummery()"
-            [disabled]="filteredtimesheetsummeryRecord.length == 0 || disableBtn">
+            [disabled]="!isFilterApplied()||filteredtimesheetsummeryRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -96,6 +107,7 @@
         <th>Department</th>
         <th>Client Name</th>
         <th>Project Name</th>
+        <th>Phase/Milestone</th>
         <th>Allocated Hrs</th>
         <th>Total Logged Hrs</th>
         <th>Billable Hrs</th>
@@ -118,6 +130,7 @@
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.clientName ?? '-' }}</td>
           <td>{{ record.projectName ?? '-' }}</td>
+          <td>{{ record.phaseName ?? '-' }}</td>
           <td>{{ record.allocatedHours ?? '-' }}</td>
           <td>{{ record.totalLoggedHours ?? '-' }}</td>
           <td>{{ record.billableHours ?? '-' }}</td>

@@ -21,8 +21,9 @@
         height: 380mm;
         width: 270mm;
         position: relative;
-        background-size: cover;
+
         background-repeat: no-repeat;
+        background-size: cover;
         background-position: center;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         overflow: hidden;
@@ -36,7 +37,7 @@
         }
 
         .letter-footer {
-            display: none;
+           display: none;
             width: 270mm;
             background-color: #546e7a;
             color: #fff;
@@ -54,16 +55,19 @@
                 font-weight: 500;
             }
         }
+
     }
 }
 
-.letter-page-content:has(.soft-copy-letter) {
-    background-image: url('/images/claim-genius-watermark.png');
+ .letter-page-content:has(.soft-copy-letter ) {
+  background-image: url('/images/claim-genius-watermark.png');
 
-    .letter-footer {
-        display: block !important;
-    }
+  .letter-footer{
+    display: block !important;
+  }
 }
+
+
 
 .letter-data-content {
     height: calc(100dvh - 16rem) !important;

@@ -127,7 +127,7 @@ export class ViewRateCardComponent {
     // Year and Effective from
   if (this.viewratecardData.effectiveFrom) {
     this.viewratecardForm.patchValue({
-      year: moment(this.viewratecardData.effectiveFrom).getFullYear(),
+      year: moment(this.viewratecardData.effectiveFrom).year(),
       effectivefrom: this.viewratecardData.effectiveFrom.split('T')[0]
       });
     }

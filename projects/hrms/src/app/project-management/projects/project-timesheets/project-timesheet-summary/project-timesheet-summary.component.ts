@@ -207,10 +207,10 @@ private triggerLiveFilterRefresh(): void {
     const queryParams: string[] = [];
 
     // Use the parameters passed in (from refreshAllCharts) — NOT the old stored ones!
-    if (startDate && endDate) {
-      queryParams.push(`startDate=${startDate}`);
-      queryParams.push(`endDate=${endDate}`);
-    }
+    // if (startDate && endDate) {
+    //   queryParams.push(`startDate=${startDate}`);
+    //   queryParams.push(`endDate=${endDate}`);
+    // }
     if (departmentIds?.length) {
       queryParams.push(`departmentIds=${departmentIds.join(',')}`);
     }

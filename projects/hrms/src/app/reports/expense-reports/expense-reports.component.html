@@ -124,6 +124,7 @@
             </tr>
             } @else {
             @for(record of filteredleaveRecord; track $index) {
+            @if(record.expenseId) {
             <tr>
                 <td>{{ record.fusionEmpId ?? '-' }}</td>
                 <td>{{ record.employeeName ?? '-' }}</td>
@@ -144,6 +145,7 @@
                     <ng-template #noDetails>-</ng-template>
                 </td>
             </tr>
+            }
             }
             }
         </table>

@@ -49,6 +49,7 @@ export class ResourceAvailabilityReportComponent {
   employeeData: any[] = [];
   loading: boolean = true;
   noclientproject = false;
+  phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
@@ -72,6 +73,7 @@ export class ResourceAvailabilityReportComponent {
   ];
   phasesData:any =[];
   today: Date = new Date();
+  employeeiddetails: any[] = [];
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -87,33 +89,44 @@ export class ResourceAvailabilityReportComponent {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getProjectsData();
+    this.getEmployeeData();
   }
 
   initializeForm() {
     this.ResourceAvailabilityReportForm = this.fb.group({
       projectId: [null],
-      employeid: [{ value: null, disabled: true }],
-      dateRange: [null]
+      employeid: [null],
+      dateRange: [null],
+      phases: [{ value: null, disabled: true }]
     });
     this.ResourceAvailabilityReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
-
   isFilterApplied(): boolean {
     const formValue = this.ResourceAvailabilityReportForm.value;
-    return (
-      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-      (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-    );
+    const isProjectSelected = Array.isArray(formValue.projectId) ? formValue.projectId.length > 0 : !!formValue.projectId;
+    const isEmployeeSelected = Array.isArray(formValue.employeid) ? formValue.employeid.length > 0 : !!formValue.employeid;
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
+    const isPhaseSelected = formValue.phases != null && formValue.phases.value != null;
+    return (isProjectSelected ||isEmployeeSelected ||isDateRangeSelected ||isPhaseSelected);
   }
-
+  filteredProjects: any[] | undefined | null;
   clearAllFilters(): void {
+    this.filteredProjects = null;
+    this.phasesData = [];
     this.ResourceAvailabilityReportForm.reset();
     this.filteredResourceAvailabilityRecord = [];
-    this.ResourceAvailabilityReportForm.get('employeid')?.disable();
+    // this.ResourceAvailabilityReportForm.get('employeid')?.disable();
+    this.ResourceAvailabilityReportForm.get('phases')?.setValue(null);
+    // reset specific controls properly
+    this.ResourceAvailabilityReportForm.get('employeid')?.setValue([]);
+    this.ResourceAvailabilityReportForm.get('projectId')?.setValue(null);
+    this.ResourceAvailabilityReportForm.get('dateRange')?.setValue(null);
+    this.ResourceAvailabilityReportForm.get('phases')?.setValue(null);
     this.collectionSize = 0;
+    this.ResourceAvailabilityReportForm.get('phases')?.disable();
+    this.getEmployeeData();
   }
   // called for pagination 
   onRowsChange() {
@@ -140,82 +153,211 @@ export class ResourceAvailabilityReportComponent {
     this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
   }
   // project data will show 
-  getProjectsData(): void {
+  getProjectsData() {
     this.loading = true;
-    this.http.getData(`Project?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getData('v2/Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.loading = false;
-        if (Array.isArray(res?.data)) {
-          // Store the raw project data
-          this.projectsList = res.data.map((project: any) => ({
-            label: project.projectName + (project.client?.clientName ? ` (${project.client.clientName})` : ''),
-            value: project.projectId
-          }));
-        } else {
-          this.projectsList = [];
+        this.projectsData = res?.data ?? [];
+        // Add "No Project" only if not already present
+        const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
+        if (!noProjectExists) {
+          this.projectsData.unshift({
+            projectId: 0,
+            projectName: 'No Project',
+            clientId: 0,
+            isNoClientProject: true,
+          });
         }
+        // Map for dropdown
+        this.projectsList = this.projectsData.map((project: any) => ({
+          label: project.projectName,
+          value: project.projectId,
+        }));
       },
       error: (err) => {
+        console.error('Error fetching projects data:', err);
         this.loading = false;
-        console.error('Error fetching projects:', err);
+        this.projectsData = [];
+        this.projectsList = [];
+      },
+      complete: () => {
+        this.loading = false;
       }
     });
   }
-
+  // admin access all employee
+  getEmployeeData() {
+    const loggedInUser = this.authService.getToken();
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({next: (data: any) => {
+        const employeedata = (data || []).map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
+            return {
+              ...employee,firstName,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          }).filter((employee: any) => employee.employeeId !== loggedInUser.employeeId).sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
+        // Store all employees (including “All Employees” at the top)
+        this.employeeiddetails = [
+          ...employeedata
+        ];
+        // Step 2: Map for the dropdown component
+        this.employeeData = this.employeeiddetails.map((e: any) => ({
+          id: e.employeeId,
+          name: e.fullName
+        }));
+        // (Optional) log to verify
+        console.log('Employee dropdown data:', this.employeeData);
+      },
+      error: (reason: any) => {
+        console.error('Error fetching employees:', reason);
+        this.employeeData = [];
+      },
+    });
+  }
   /** When project selected */
   onProjectChange(event: any) {
-    const selectedProjectId = event.value;
-    this.employeeData = [];
-    this.ResourceAvailabilityReportForm.get('employeid')?.setValue([]);
-    if (selectedProjectId && selectedProjectId !== 0) {
-      this.projectId = selectedProjectId;
-      this.ResourceAvailabilityReportForm.get('employeid')?.enable();
-      this.getAllActiveEmployees();
-    } else {
-      this.projectId = 0;
-      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+    const selectedProjectIds = event.value;
+    const selectedProjects: number[] = this.ResourceAvailabilityReportForm.get('projectId')?.value || [];
+    // ---- CASE 1: No project selected ----
+    if (selectedProjects.length === 0) {
+      this.disablePhaseDropdown();
+      this.ResourceAvailabilityReportForm.get('phases')?.setValue([]);
+      this.getEmployeeData();   // ← CALL THIS METHOD
+      return;
+    }
+    // ---- CASE 2: Only "No Project" selected (value = 0) ----
+    if (selectedProjects.length === 1 && selectedProjects[0] === 0) {
+      this.employeeData = [];
+      this.ResourceAvailabilityReportForm.get('employeid')?.setValue([]);
+      this.phasesData = []; 
+      this.ResourceAvailabilityReportForm.get('phases')?.setValue([]);
+      this.enablePhaseDropdown();
+      this.getTeamManagersDetails();
+      // Load fresh employee list ONLY from getTeamManagersDetails()
       setTimeout(() => {
         if (this.getEmployeeInfo?.length) {
           this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
             id: emp.employeeId,
             name: emp.fullName
           }));
-          this.ResourceAvailabilityReportForm.get('employeid')?.enable();
         }
       }, 300);
+      return;
     }
+    // ---- CASE 3: Real projects selected ----
+    this.enablePhaseDropdown();
+    this.projectId = selectedProjectIds;
+      this.getPhaseData();
+    this.getAllActiveEmployees();
   }
 
-  /** Get all active employees for selected project */
-  getAllActiveEmployees() {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
-           this.employeeData =
-          res?.data?.map((x: any) => ({
-            id: x.employee?.id,
-            name: x.employee?.fusionEmployeeId
-              ? `${x.employee.fusionEmployeeId} - ${x.employee.name}`
-              : x.employee?.name || 'Unknown'
-          })) ?? [];
-          // if (this.employeeData.length > 0) {
-          this.ResourceAvailabilityReportForm.get('employeid')?.enable();
-          // }
-        },
-        error: (err) => {
-          console.error('Error fetching employees:', err);
-          this.employeeData = [];
-        }
-      });
+  enablePhaseDropdown() {
+    this.ResourceAvailabilityReportForm.get('phases')?.enable();
   }
+
+  disablePhaseDropdown() {
+    this.ResourceAvailabilityReportForm.get('phases')?.disable();
+  }
+
+  getAllActiveEmployees() {
+    const previousSelected = this.ResourceAvailabilityReportForm.get('phases')?.value || [];
+    this.http.getData(`v2/ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        // Employee List
+        this.employeeData = res?.data?.map((x: any) => ({
+            id: x.employee?.id,
+            name: x.employee?.fusionEmployeeId? `${x.employee.fusionEmployeeId} - ${x.employee.name}`: x.employee?.name || 'Unknown'
+          })) ?? [];
+        // keep only employees that still exist in new employee list
+        const validEmployeeSelections = this.ResourceAvailabilityReportForm.get('employeid')?.value?.filter((selectedId: any) =>
+          this.employeeData.some((emp: any) => emp.id === selectedId)
+        ) || [];
+
+        // update employee selection
+        this.ResourceAvailabilityReportForm.get('employeid')?.setValue(validEmployeeSelections);
+      },
+      error: (err) => {
+        console.error("Error fetching employees:", err);
+        this.employeeData = [];
+        this.phasesData = [];
+
+        this.ResourceAvailabilityReportForm.get('phases')?.setValue([]);
+      }
+    });
+  }
+  removeDuplicatePhases(list: any[]) {
+    const map = new Map();
+    list.forEach(item => map.set(item.phaseId, item));
+    return Array.from(map.values());
+  }
+  // if no project selected to get resouces
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            employeeId: employee.employeeId,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
+          }));
+        } else {
+          this.getEmployeeInfo = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching team manager details:', err);
+        this.getEmployeeInfo = [];
+      }
+    });
+  }
+    getPhaseData() {
+  const previousSelected = this.ResourceAvailabilityReportForm.get('phases')?.value || [];
+  const params = {
+    projectId: this.projectId.join(','), 
+    status: 'yet to start,in progress,extended'
+  };
+  this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        // Extract all phases
+        this.phasesData = data?.data?.map((x: any) => ({
+          phaseId: x.phaseId,
+          projectId: x.project?.projectId,      // if you want project-wise grouping
+          phaseName: x.phaseName,
+          code: x.project?.meta?.graphData?.code ?? ''
+        })) ?? [];
+        // Remove duplicate phases
+        this.phasesData = this.removeDuplicatePhases(this.phasesData);
+        this.phasesData = this.phasesData.map((p: any) => ({
+        ...p,label: p.code ? `${p.phaseName} (${p.code})` : p.phaseName
+      }));
+        // Keep previously selected phases if still present
+        const validSelections = previousSelected.filter((selectedId: any) =>
+          this.phasesData.some((p: any) => p.phaseId === selectedId)
+        );
+        this.ResourceAvailabilityReportForm.get('phases')?.setValue(validSelections);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.phasesData = [];
+        this.ResourceAvailabilityReportForm.get('phases')?.setValue([]);
+      }
+    });
+}
   // generate,export button click call method for shoe,hide
   get isLeaveGenerateDisabled(): boolean {
-    const { projectId, employeid, dateRange } = this.ResourceAvailabilityReportForm.value;
+    const { projectId, employeid, dateRange, phases } = this.ResourceAvailabilityReportForm.value;
     const hasProject = projectId !== null && projectId !== undefined;
-    const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
+    // const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
+    const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
     const hasEmployeid = employeid !== null && employeid !== undefined;
-    return !(hasProject || hasDateRange || hasEmployeid);
+    const hasphase = phases !== null && phases !== undefined;
+    return !(hasProject || hasDateRange || hasEmployeid || hasphase);
   }
   // payload for resouce availability
   buildTimesheetReportParams() {
@@ -250,8 +392,13 @@ export class ResourceAvailabilityReportComponent {
       params.EmployeeIds = formValue.employeid;
     }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
+    if (formValue.phases !== null && formValue.phases !== undefined) {
+      params.PhaseIds = formValue.phases;
+    }
     return params;
   }
+
+
   // generate ther report
   generateResourceAvailabilityReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.ResourceAvailabilityReportForm.invalid) return;
@@ -275,7 +422,6 @@ export class ResourceAvailabilityReportComponent {
             this.first = 0;
             this.page = 1;
           }
-
           this.disableBtn = false;
         } else {
           this.filteredResourceAvailabilityRecord = [];

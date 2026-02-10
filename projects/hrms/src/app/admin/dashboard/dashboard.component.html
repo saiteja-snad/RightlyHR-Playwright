@@ -28,7 +28,7 @@
       }
 
       <!--Attendance Display-->
-      @if(this.rbac.allowedToAccess('Attendance.view')){
+      <!-- @if(this.rbac.allowedToAccess('Attendance.view')){
       @if(!attendanceLoader && attendanceData?.data?.attendanceData?.length){
       <div class="content-card attendance-content">
         <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
@@ -75,7 +75,7 @@
       }@else {
       <p-skeleton height="11rem" />
       }
-      }
+      } -->
 
       <!--Employee List Display-->
       @if(!chartLoader &&EmployeeInfoData){

@@ -1105,7 +1105,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
     this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
       dateofAppraisal: ['', Validators.required],
-      reviewdate: [{ value: '', disabled: true }, Validators.required],
+      reviewdate: [{ value: '', disabled: false }, Validators.required],
       JobRole: [''],
        Documenttype: [null, Validators.required],
       note: [''],

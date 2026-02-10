@@ -396,17 +396,22 @@ export class PremissionsComponent implements OnInit, OnDestroy {
 
           let errorMessage = 'An unexpected error occurred';
 
-          if (err?.error) {
-            // Case 1: backend returns plain string
-            if (typeof err.error === 'string') {
+          if (typeof err?.error === 'string') {
+            try {
+              // Try parsing JSON string
+              const parsedError = JSON.parse(err.error);
+              errorMessage = parsedError?.message ?? err.error;
+            } catch {
+              // Plain string (not JSON)
               errorMessage = err.error;
             }
-            // Case 2: backend returns { message: '' }
-            else if (err.error?.message) {
-              errorMessage = err.error.message;
-            }
           }
-       
+          else if (err?.error?.message) {
+            errorMessage = err.error.message;
+          }
+          else if (err?.message) {
+            errorMessage = err.message;
+          }
 
           this.sharedModalService.openErrorModal(errorMessage);
         },

@@ -1,4 +1,3 @@
-
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -50,6 +49,7 @@ export class ProjectEffortReportComponent {
   employeeData: any[] = [];
   loading: boolean = true;
   noclientproject = false;
+  phasesData: any[] = [];
   getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
@@ -87,35 +87,50 @@ export class ProjectEffortReportComponent {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getClientsData();
+    this.getProjectsData();
   }
 
   initializeForm() {
     this.ProjectEffortReportForm = this.fb.group({
       clientId: [null],
-      projectId: [{ value: null, disabled: true }],
+      projectId: [null],
       // employeid: [{ value: null, disabled: true }],
       dateRange: [null],
-      billable: [null]
+      billable: [null],
+      phases: [{ value: null, disabled: true }]
     });
     this.ProjectEffortReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
 
+
   isFilterApplied(): boolean {
     const formValue = this.ProjectEffortReportForm.value;
-    return (
-      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-    );
+    const isClientSelected = Array.isArray(formValue.clientId) ? formValue.clientId.length > 0 : !!formValue.clientId;
+    const isProjectSelected = Array.isArray(formValue.projectId) ? formValue.projectId.length > 0 : !!formValue.projectId;
+    const isBillableSelected = formValue.billable != null;
+    const isDateRangeSelected = Array.isArray(formValue.dateRange) ? formValue.dateRange.length > 0 : !!formValue.dateRange;
+    const isPhaseSelected = formValue.phases != null && formValue.phases.value != null;
+    return (isClientSelected ||isProjectSelected ||isBillableSelected ||isDateRangeSelected ||isPhaseSelected);
   }
+  filteredProjects: any[] | undefined | null = null;
   clearAllFilters(): void {
+    this.filteredProjects = null;
+    this.phasesData = [];
     this.ProjectEffortReportForm.reset();
     this.filteredpendingapprovalRecord = [];
-    this.ProjectEffortReportForm.get('projectId')?.disable();
+    this.ProjectEffortReportForm.get('phases')?.setValue(null);
+    // reset specific controls properly
+    this.ProjectEffortReportForm.get('employeid')?.setValue([]);
+    this.ProjectEffortReportForm.get('projectId')?.setValue(null);
+    this.ProjectEffortReportForm.get('clientId')?.setValue(null);
+    this.ProjectEffortReportForm.get('billable')?.setValue(null);
+    this.ProjectEffortReportForm.get('status')?.setValue(null);
+    this.ProjectEffortReportForm.get('dateRange')?.setValue(null);
+    this.ProjectEffortReportForm.get('phases')?.setValue(null);
     this.collectionSize = 0;
+    this.ProjectEffortReportForm.get('phases')?.disable();
   }
   // called for pagination 
   onRowsChange() {
@@ -142,8 +157,7 @@ export class ProjectEffortReportComponent {
   }
   // get client data
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
+    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({next: (res: any) => {
         this.loading = false;
         if (Array.isArray(res?.data)) {
           this.clients = res.data;
@@ -177,50 +191,171 @@ export class ProjectEffortReportComponent {
       }
     });
   }
-  // onchange of client 
-  onClientChange(event: any): void {
-    const clientId = event.value;
-    this.ProjectEffortReportForm.patchValue({ projectId: null }); // reset project
-    this.ProjectEffortReportForm.get('projectId')?.enable();
-    this.getProjectsByClientId(clientId);
+
+  // adin access all project
+  getProjectsData() {
+    this.loading = true;
+    this.http.getData('v2/Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({next: (res: any) => {
+        this.projectsData = res?.data ?? [];
+        // Add "No Project" only if not already present
+        const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
+        if (!noProjectExists) {
+          this.projectsData.unshift({
+            projectId: 0,
+            projectName: 'No Project',
+            clientId: 0,
+            isNoClientProject: true,
+          });
+        }
+
+        // Map for dropdown
+        this.projectsList = this.projectsData.map((project: any) => ({
+          label: project.projectName,
+          value: project.projectId,
+        }));
+      },
+
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.loading = false;
+        this.projectsData = [];
+        this.projectsList = [];
+      },
+
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
-  // call the method to get project based on client 
-  getProjectsByClientId(clientId: number): void {
-    //If "No Client" selected, show only "No Project"
-    if (clientId === 0) {
-      this.projectsList = [
-        { label: 'No Project', value: 0 }
-      ];
+  /** When project selected to get resources */
+  onProjectChange(event: any) {
+    const selectedProjectIds = event.value;
+    // CASE 1: No project is selected
+    if (!selectedProjectIds || selectedProjectIds.length === 0) {
+      this.projectId = [];
+      this.phasesData = [];
+      this.employeeData = [];
+      this.ProjectEffortReportForm.get('phases')?.setValue([]);
+      this.ProjectEffortReportForm.get('phases')?.disable();
+      this.getTeamManagersDetails();
+      this.projectId = 0;
+      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+      setTimeout(() => {
+        if (this.getEmployeeInfo?.length) {
+          this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+            id: emp.employeeId,
+            name: emp.fullName
+          }));
+        }
+      }, 300);
       return;
     }
-    if (!clientId) return;
-    this.loading = true;
-    this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+    // CASE 2: Project(s) selected
+    this.projectId = selectedProjectIds;
+    this.ProjectEffortReportForm.get('phases')?.enable();
+    this.getPhaseData();
+    this.getAllActiveEmployees();
+  }
+  getAllActiveEmployees() {
+    const previousSelected = this.ProjectEffortReportForm.get('phases')?.value || [];
+    this.http.getData(`v2/ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        // Employee List
+        this.employeeData = res?.data?.map((x: any) => ({
+            id: x.employee?.id,
+            name: x.employee?.fusionEmployeeId? `${x.employee.fusionEmployeeId} - ${x.employee.name}` : x.employee?.name || 'Unknown'})) ?? [];
+        // PHASE LIST extraction
+        // this.phasesData = res?.data?.filter((x: any) => x.phase).map((x: any) => ({
+        //       phaseId: x.phase.phaseId,
+        //       phaseName: x.phase.phaseName
+        //     })) ?? [];
+        // Remove duplicate phases
+        // this.phasesData = this.removeDuplicatePhases(this.phasesData);
+        // const validSelections = previousSelected.filter((selectedId: any) =>
+        //   this.phasesData.some((p: any) => p.phaseId === selectedId)
+        // );
+        // assign valid phases only
+       // this.ProjectEffortReportForm.get('phases')?.setValue(validSelections);
+      },
+      error: (err) => {
+        console.error("Error fetching employees:", err);
+        this.employeeData = [];
+        this.phasesData = [];
+
+        this.ProjectEffortReportForm.get('phases')?.setValue([]);
+      }
+    });
+  }
+
+  removeDuplicatePhases(list: any[]) {
+    const map = new Map();
+    list.forEach(item => map.set(item.phaseId, item));
+    return Array.from(map.values());
+  }
+    getPhaseData() {
+  const previousSelected = this.ProjectEffortReportForm.get('phases')?.value || [];
+  const params = {
+    projectId: this.projectId.join(','), 
+    status: 'yet to start,in progress,extended'
+  };
+  this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        // Extract all phases
+        this.phasesData = data?.data?.map((x: any) => ({
+          phaseId: x.phaseId,
+          projectId: x.project?.projectId,      // if you want project-wise grouping
+          phaseName: x.phaseName,
+          code: x.project?.meta?.graphData?.code ?? ''
+        })) ?? [];
+        // Remove duplicate phases
+        this.phasesData = this.removeDuplicatePhases(this.phasesData);
+        this.phasesData = this.phasesData.map((p: any) => ({
+        ...p,label: p.code ? `${p.phaseName} (${p.code})` : p.phaseName
+      }));
+        // Keep previously selected phases if still present
+        const validSelections = previousSelected.filter((selectedId: any) =>
+          this.phasesData.some((p: any) => p.phaseId === selectedId)
+        );
+        this.ProjectEffortReportForm.get('phases')?.setValue(validSelections);
         this.loading = false;
-        if (Array.isArray(res?.data)) {
-          this.projectsList = res.data.map((project: any) => ({
-            label: project.projectName,
-            value: project.projectId
+      },
+      error: () => {
+        this.loading = false;
+        this.phasesData = [];
+        this.ProjectEffortReportForm.get('phases')?.setValue([]);
+      }
+    });
+}
+  // if no project selected to get resouces
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            employeeId: employee.employeeId,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
           }));
         } else {
-          this.projectsList = [];
+          this.getEmployeeInfo = [];
         }
       },
       error: (err) => {
-        this.loading = false;
-        console.error('Error fetching projects:', err);
+        console.error('Error fetching team manager details:', err);
+        this.getEmployeeInfo = [];
       }
     });
   }
   // generate,export button show,hide
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, dateRange, billable } = this.ProjectEffortReportForm.value;
+    const { clientId, projectId, dateRange, billable, phases } = this.ProjectEffortReportForm.value;
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
-    const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
+    const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
     const hasbillable = billable !== null && billable !== undefined;
-    return !(hasClient || hasProject || hasDateRange || hasbillable);
+    const hasphase = phases !== null && phases !== undefined;
+    return !(hasClient || hasProject || hasDateRange || hasbillable || hasphase);
   }
   // payload for report
   buildTimesheetReportParams() {
@@ -249,6 +384,9 @@ export class ProjectEffortReportComponent {
       params.ProjectIds = formValue.projectId;
     }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
+    if (formValue.phases !== null && formValue.phases !== undefined) {
+      params.PhaseIds = formValue.phases;
+    }
     return params;
   }
   // generate button for method calling
@@ -259,7 +397,6 @@ export class ProjectEffortReportComponent {
       this.page = 1;
       this.first = 0;
     }
-
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
@@ -308,7 +445,6 @@ export class ProjectEffortReportComponent {
             filename = asciiFilenameMatch[1];
           }
         }
-
         //  Download the blob as before
         const blob = new Blob([response.body!], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -319,7 +455,6 @@ export class ProjectEffortReportComponent {
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
-
         console.log('Downloaded file:', filename);
         this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },

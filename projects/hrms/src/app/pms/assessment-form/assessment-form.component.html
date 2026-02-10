@@ -174,7 +174,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="4">Overall Ratings</td>
+              <td colspan="4"><b>Overall Ratings</b></td>
               <!-- Dynamically render the overall rating fields and comments for each role -->
               <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i=index">
                 <td *ngIf="response.name === 'Employee' && response.isRatingVisible">

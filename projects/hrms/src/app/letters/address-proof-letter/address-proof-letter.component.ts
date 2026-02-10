@@ -105,7 +105,7 @@ export class AddressProofLetterComponent implements OnInit,OnDestroy {
   ];
 
   navigateDashboard() {
-    this.router.navigate(['/employee-management/all-employees'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   initializeForm() {

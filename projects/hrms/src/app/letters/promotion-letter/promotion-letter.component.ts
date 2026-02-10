@@ -80,7 +80,7 @@ export class PromotionLetterComponent implements OnInit, OnDestroy {
   ) { }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/active-employees'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   DateValidation() {

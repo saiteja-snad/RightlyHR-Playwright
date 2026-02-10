@@ -90,7 +90,7 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     @if(rbac.allowedToAccess('Events(Upcoming Events).update')){
                     <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item">
-                        <i class="bi bi-trash3 me-2"></i>Update</a></li>
+                       <i class="bi bi-pencil me-2"></i>Update</a></li>
                     }
                     @if(rbac.allowedToAccess('Events(Upcoming Events).delete')){
                     <li (click)="setdata=item;openmodal(deleteconformation)"><a class="dropdown-item">
@@ -142,7 +142,7 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
                   @if(rbac.allowedToAccess('Events(Upcoming Events).update')){
                   <li (click)="openModalupdate(updateevets,event)"><a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Update</a></li>
+                     <i class="bi bi-pencil me-2"></i>Update</a></li>
                   }
                   @if(rbac.allowedToAccess('Events(Upcoming Events).delete')){
                   <li (click)="setdata=event;openmodal(deleteconformation)"><a class="dropdown-item">

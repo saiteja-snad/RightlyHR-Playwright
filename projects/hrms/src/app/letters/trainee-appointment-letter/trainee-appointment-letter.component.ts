@@ -201,7 +201,7 @@ export class TraineeAppointmentLetterComponent {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/letters/lettes-tabs'])
   }
 
   onclickSelectAddress(Value: any) {

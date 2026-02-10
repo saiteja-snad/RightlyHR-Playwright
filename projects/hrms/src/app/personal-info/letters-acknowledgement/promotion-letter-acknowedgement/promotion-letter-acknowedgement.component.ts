@@ -17,9 +17,10 @@ import { LettersheaderComponent } from "../../../shared/letters-shared-content/l
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { IAddress } from '../../../Interfaces/letters-model';
+import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-promotion-letter-acknowedgement',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, ConfirmationIconComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, ConfirmationIconComponent, LetterFooterComponent],
   templateUrl: './promotion-letter-acknowedgement.component.html',
   styleUrl: './promotion-letter-acknowedgement.component.scss'
 })

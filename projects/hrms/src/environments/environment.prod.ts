@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   webSocketUrl: 'ws://api.fusion.snadhr.com',
   ApiUrl:'https://claimgeniusapi.rightlyhr.com/api/',
-     viewUrl:"https://sasda001.blob.core.windows.net/fusionplusqa/'",
+     viewUrl:"https://sasda001.blob.core.windows.net/fusionplusqa/",
  modules: [
     { id: 20, moduleName: 'Probation' },
     { id: 24, moduleName: 'PMS' },

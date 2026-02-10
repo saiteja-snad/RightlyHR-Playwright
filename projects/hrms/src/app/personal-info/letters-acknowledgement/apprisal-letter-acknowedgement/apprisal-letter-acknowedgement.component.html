@@ -2,10 +2,15 @@
   <div class="letter-sub-data-content">
     <div>
       <!--page-1-->
-      <div class="letter-page-content" id="pdfContent1" [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+      <div class="letter-page-content" id="pdfContent1">
         <div class="letter-page-sub-content">
 
-
+          <div *ngIf="appraisalData.Documenttype; else doc" class="soft-copy-letter">
+            <app-lettersheader></app-lettersheader>
+          </div>
+          <ng-template #doc>
+            <div class="hard-copy-letter"></div>
+          </ng-template>
           <div class="mb-2 mt-2">
 
             <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
@@ -234,12 +239,20 @@
 
 
         </div>
+        <div class="letter-footer">
+          <app-letter-footer />
+        </div>
       </div>
 
       <!--page-2-->
-      <div class="letter-page-content my-4" id="pdfContent2"
-        [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+      <div class="letter-page-content my-4" id="pdfContent2">
         <div class="letter-page-sub-content my-5  py-5">
+          <div *ngIf="appraisalData.Documenttype; else doc" class="soft-copy-letter">
+            <app-lettersheader></app-lettersheader>
+          </div>
+          <ng-template #doc>
+            <div class="hard-copy-letter"></div>
+          </ng-template>
           @if(appraisalData.note ) {
           <b>Note:</b>
           <p><b>{{ appraisalData.note }}</b>.</p>
@@ -287,12 +300,16 @@
                 {{appraisalData.middleName}} {{appraisalData.lastName}}</span></p>
             <p><b>Date:</b><span class="employee-date ms-2"></span>{{currentDate | dateformat}}</p>
           </div>
-        </div>
 
+        </div>
+        <div class="letter-footer">
+          <app-letter-footer />
+        </div>
 
       </div>
 
     </div>
+
   </div>
 
   <div class="modal-footer">

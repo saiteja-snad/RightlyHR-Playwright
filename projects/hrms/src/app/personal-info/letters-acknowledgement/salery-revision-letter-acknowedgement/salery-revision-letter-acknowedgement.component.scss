@@ -72,14 +72,35 @@ input:focus {
             text-align: justify;
         }
 
+        .letter-footer {
+           display: none;
+            width: 270mm;
+            background-color: #546e7a;
+            color: #fff;
+            position: absolute;
+            bottom: 0px;
+            padding: 0.625rem;
+
+            .company-name {
+                font-size: var(--fontsize14);
+                font-weight: 600;
+            }
+
+            .company-address {
+                font-size: var(--fontsize12);
+                font-weight: 500;
+            }
+        }
 
     }
 }
 
-.soft-copy-letter {
-    background-image: url('/images/snad-new-letter-bg.png') !important;
-    padding-top: 8rem !important;
+ .letter-page-content:has(.soft-copy-letter ) {
+  background-image: url('/images/claim-genius-watermark.png');
 
+  .letter-footer{
+    display: block !important;
+  }
 }
 
 

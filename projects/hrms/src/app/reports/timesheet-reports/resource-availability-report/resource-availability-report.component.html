@@ -5,7 +5,7 @@
 
     <form autocomplete="off" [formGroup]="ResourceAvailabilityReportForm"
       (ngSubmit)="generateResourceAvailabilityReport(page, pageSize,true,true)" *ngIf="ResourceAvailabilityReportForm">
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center flex-wrap  gap-3">
         @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
           ResourceAvailabilityReportForm.get('projectId')?.value == null &&
@@ -17,34 +17,47 @@
           }
         </button>
 
-        <!-- Project-->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true" formControlName="projectId"
-              placeholder="Please select project" class="form-select custom-select" (onChange)="onProjectChange($event)">
-            </p-select>
-          </div>
-        </div>       
+
         <!-- Employee-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
-              defaultLabel="Please select resource" formControlName="employeid"
+              [maxSelectedLabels]="1" defaultLabel="Please select employee" formControlName="employeid"
               class="form-select custom-select"></p-multiSelect>
           </div>
-        </div>       
+        </div>
+        <!-- Project-->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true" 
+              formControlName="projectId" [maxSelectedLabels]="1" placeholder="Please select project"
+              class="form-select custom-select" (onChange)="onProjectChange($event)">
+            </p-multiSelect>
+          </div>
+        </div>
+        <!-- Phases Dropdown -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="phasesData" optionLabel="label" optionValue="phaseId" [filter]="true" [maxSelectedLabels]="1"
+              [resetFilterOnHide]="true" filterBy="phaseName" formControlName="phases"
+              placeholder="Please select phases" class="form-select custom-select">
+            </p-multiSelect>
+          </div>
+        </div>
+
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+              [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
         }
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+          <button type="submit" class="custom-btn btn-secondary "
+            [disabled]="!isFilterApplied() ||isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -56,7 +69,7 @@
 
           @if(rbac.allowedToAccess('Resource Availability Report - Generate.view') && rbac.allowedToAccess('Resource Availability Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportResourceAvailabilityReport()"
-            [disabled]="filteredResourceAvailabilityRecord.length == 0 || disableBtn">
+            [disabled]="!isFilterApplied() || filteredResourceAvailabilityRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -75,38 +88,42 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
 
-        <th>Employee ID</th>
+        <!-- <th>Employee ID</th> -->
         <th>Employee Name</th>
         <th>Department</th>
-        <th>Designation</th>
+        <th>Role</th>
+        <!-- <th>Designation</th> -->
         <th>Project Assigned</th>
-        <th>Allocated Form</th>
-        <th>Allocated To</th>
+        <th>Phase/Milestone</th>
+        <th>Project Start Date</th>
+        <th>Project End Date</th>
+        <!-- <th>Allocated To</th> -->
         <th>Available From</th>
       </thead>
-    <tbody>
-  @if (!filteredResourceAvailabilityRecord || filteredResourceAvailabilityRecord.length === 0) {
-    <tr>
-      <td colspan="8" class="text-center">
-        <app-no-data-found />
-      </td>
-    </tr>
-  }
-  @else {
-    @for (record of filteredResourceAvailabilityRecord; track $index) {
-      <tr>
-        <td>{{ record.fusionEmpId ?? '-' }}</td>
-        <td>{{ record.employeeName ?? '-' }}</td>
-        <td>{{ record.department ?? '-' }}</td>
-        <td>{{ record.designation ?? '-' }}</td>
-        <td>{{ record.projectAssigned ?? '-' }}</td>
-        <td>{{ record.projectStartDate ? (record.projectStartDate | date) : '-' }}</td>
-        <td>{{ record.projectEndDate ? (record.projectEndDate | date) : '-' }}</td>
-        <td>{{ record.availableFrom ? (record.availableFrom | date) : '-' }}</td>
-      </tr>
-    }
-  }
-</tbody>
+      <tbody>
+        @if (!filteredResourceAvailabilityRecord || filteredResourceAvailabilityRecord.length === 0) {
+        <tr>
+          <td colspan="8" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+        @else {
+        @for (record of filteredResourceAvailabilityRecord; track $index) {
+        <tr>
+          <!-- <td>{{ record.fusionEmpId ?? '-' }}</td> -->
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.designation ?? '-' }}</td>
+          <td>{{ record.projectAssigned ?? '-' }}</td>
+          <td>{{ record.phaseName ?? '-' }}</td>
+          <td>{{ record.projectStartDate ? (record.projectStartDate | date) : '-' }}</td>
+          <td>{{ record.projectEndDate ? (record.projectEndDate | date) : '-' }}</td>
+          <td>{{ record.availableFrom ? (record.availableFrom | date) : '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
 
 
 

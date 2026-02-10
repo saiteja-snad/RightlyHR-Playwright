@@ -16,9 +16,10 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 @Component({
   selector: 'app-salery-revision-letter-acknowedgement',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, ConfirmationIconComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, ConfirmationIconComponent, LetterFooterComponent],
   templateUrl: './salery-revision-letter-acknowedgement.component.html',
   styleUrl: './salery-revision-letter-acknowedgement.component.scss'
 })

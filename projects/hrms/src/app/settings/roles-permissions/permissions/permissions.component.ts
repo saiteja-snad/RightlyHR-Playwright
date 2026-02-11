@@ -538,8 +538,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsAssetConfigurationFields = [
     'Vendor Details',
-    'Asset Category',
-    'Asset Sub Category',
+    'Asset Catagory',
+    'Asset Sub Catagory',
   ];
   expensesTypeFields = ['Expenses Type', 'Expense Types Tab'];
   settingsDynamicFormsFields = [
